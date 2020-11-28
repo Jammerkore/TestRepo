@@ -28,6 +28,7 @@ namespace Logility.ROWeb
         //=======
 
         private PlanOpenParms _openParms;
+        protected bool _viewUpdated = false;
         protected ROPlanManager planManager;
         protected string sPrevUnitScaling = "1";
         protected string sPrevDollarScaling = "1";
@@ -126,6 +127,10 @@ namespace Logility.ROWeb
                     return GetVariables();
                 case eRORequest.GetComparatives:
                     return GetComparatives();
+                case eRORequest.GetViewDetails:
+                    return GetViewDetails();
+                case eRORequest.SaveViewDetails:
+                    return SaveViewDetails((ROPlanningViewDetailsParms)Parms);
             }
 
             return new RONoDataOut(eROReturnCode.Failure, "Invalid Request", ROInstanceID);
@@ -861,6 +866,190 @@ namespace Logility.ROWeb
         public ROOut SelectComparatives(RODataTableParms selecteComparables)
         {
             return SelectCubeValues(planManager.GetSelectableQuantityHeaders(), "Comparative", selecteComparables.dtValue, false);
+        }
+
+        public ROOut GetViewDetails()
+        {
+            ePlanType planType;
+
+            // Add variable groupings and selected variables
+            ArrayList variables = planManager.GetSelectableVariableHeaders();
+            if (planManager.OpenParms.PlanSessionType == ePlanSessionType.StoreMultiLevel
+                || planManager.OpenParms.PlanSessionType == ePlanSessionType.StoreSingleLevel)
+            {
+                planType = ePlanType.Store;
+            }
+            else
+            {
+                planType = ePlanType.Chain;
+            }
+
+            ApplicationSessionTransaction applicationSessionTransaction = SAB.ApplicationServerSession.CreateTransaction();
+            ArrayList al = applicationSessionTransaction.PlanComputations.PlanVariables.GetVariableGroupings();
+            ROVariableGroupings variableList = VariableGroupings.BuildVariableGroupings(planType, variables, al);
+
+            ROPlanningViewDetails viewDetails = new ROPlanningViewDetails(view: GetName.GetForecastViewName(key: OpenParms.ViewRID, userKey: SAB.ClientServerSession.UserRID),
+                ROVariableGroupings: variableList);
+
+            // Add comparatives
+            ArrayList comparatives = planManager.GetSelectableQuantityHeaders();
+
+            foreach (RowColProfileHeader comparative in comparatives)
+            {
+                viewDetails.Comparatives.Add(new ROSelectedField(fieldkey: comparative.Profile.Key.ToString(),
+                    field: comparative.Name,
+                    selected: comparative.IsDisplayed)
+                    );
+            }
+
+            //planManager.ShowYears
+            // Add time selections
+            bool selectYear;
+            bool selectSeason;
+            bool selectQuarter;
+            bool selectMonth;
+            bool selectWeek;
+
+            selectMonth = planManager.ShowMonths();
+            selectWeek = planManager.ShowWeeks();
+
+            if (planType == ePlanType.Chain)
+            {
+                selectYear = planManager.ShowYears();
+                selectSeason = planManager.ShowSeasons();
+                selectQuarter = planManager.ShowQuarters();
+
+                viewDetails.TimePeriods.Add(new ROSelectedField(fieldkey: ((int)eProfileType.Year).ToString(),
+                   field: "Show Years",
+                   selected: selectYear)
+                   );
+
+                viewDetails.TimePeriods.Add(new ROSelectedField(fieldkey: ((int)eProfileType.Season).ToString(),
+                   field: "Show Seasons",
+                   selected: selectSeason)
+                   );
+
+                viewDetails.TimePeriods.Add(new ROSelectedField(fieldkey: ((int)eProfileType.Quarter).ToString(),
+                   field: "Show Quarters",
+                   selected: selectQuarter)
+                   );
+
+                if (!selectYear && !selectSeason && !selectQuarter && !selectMonth && !selectWeek)
+                {
+                    selectMonth = true;
+                }
+            }
+            else
+            {
+                if (!selectMonth && !selectWeek)
+                {
+                    selectMonth = true;
+                }
+            }
+
+            viewDetails.TimePeriods.Add(new ROSelectedField(fieldkey: ((int)eProfileType.Month).ToString(),
+                   field: "Show Months",
+                   selected: selectMonth)
+                   );
+
+            viewDetails.TimePeriods.Add(new ROSelectedField(fieldkey: ((int)eProfileType.Week).ToString(),
+                   field: "Show Weeks",
+                   selected: selectWeek)
+                   );
+
+            return new ROPlanningViewDetailsOut(eROReturnCode.Successful, null, ROInstanceID, viewDetails);
+        }
+
+        public ROOut SaveViewDetails(ROPlanningViewDetailsParms viewDetails)
+        {
+            string message = null;
+            PlanViewData planViewData;
+            int viewRID, viewUserRID;
+
+            planViewData = new PlanViewData();
+
+            // Update variables
+            ArrayList selectableVariableHeaders = planManager.GetSelectableVariableHeaders();
+            foreach (RowColProfileHeader variable in selectableVariableHeaders)
+            {
+                ROSelectedField selectableVariable = viewDetails.ROPlanningViewDetails.VariableGroupings.SelectedVariables.Find(v => v.Field.Key == variable.Profile.Key.ToString());
+                if (selectableVariable != null)
+                {
+                    variable.IsDisplayed = true;
+                    variable.Sequence = viewDetails.ROPlanningViewDetails.VariableGroupings.SelectedVariables.FindIndex(v => v.Field.Key == variable.Profile.Key.ToString());
+                }
+                else
+                {
+                    variable.IsDisplayed = false;
+                    variable.Sequence = Include.Undefined;
+                }
+            }
+
+            // Update comparatives
+            ArrayList selectableQuantityHeaders = planManager.GetSelectableQuantityHeaders();
+            foreach (RowColProfileHeader comparative in selectableQuantityHeaders)
+            {
+                ROSelectedField selectableComparative = viewDetails.ROPlanningViewDetails.Comparatives.Find(v => v.Field.Key == comparative.Profile.Key.ToString());
+                if (selectableComparative != null)
+                {
+                    comparative.IsDisplayed = selectableComparative.IsSelected;
+                }
+                else
+                {
+                    comparative.IsDisplayed = false;
+                }
+            }
+
+            // Update time periods
+            ArrayList selectablePeriodHeaders = new ArrayList();
+
+            foreach (ROSelectedField timeSelection in viewDetails.ROPlanningViewDetails.TimePeriods)
+            {
+                selectablePeriodHeaders.Add(new RowColProfileHeader(timeSelection.Field.Value, timeSelection.IsSelected, Convert.ToInt32(timeSelection.Field.Key), null));
+            }
+
+            planViewData.OpenUpdateConnection();
+
+            try
+            {
+                if (viewDetails.ROPlanningViewDetails.IsUserView)
+                {
+                    viewUserRID = SAB.ClientServerSession.UserRID;
+                }
+                else
+                {
+                    viewUserRID = Include.GlobalUserRID;
+                }
+
+                viewRID = planViewData.PlanView_GetKey(viewUserRID, viewDetails.ROPlanningViewDetails.View.Value);
+
+                if (viewRID != -1)
+                {
+                    planViewData.PlanViewDetail_Delete(viewRID);
+                }
+                else
+                {
+                    viewRID = planViewData.PlanView_Insert(viewUserRID, viewDetails.ROPlanningViewDetails.View.Value, eStorePlanSelectedGroupBy.ByTimePeriod);
+                    string viewName = viewDetails.ROPlanningViewDetails.View.Value;
+                    viewDetails.ROPlanningViewDetails.View = new KeyValuePair<int, string>(viewRID, viewName);
+                }
+
+                planViewData.PlanViewDetail_Insert(viewRID, selectableVariableHeaders, selectableQuantityHeaders, selectablePeriodHeaders);
+                planViewData.CommitData();
+            }
+            catch (Exception exc)
+            {
+                planViewData.Rollback();
+                message = exc.ToString();
+                throw;
+            }
+            finally
+            {
+                _viewUpdated = true;
+                planViewData.CloseUpdateConnection();
+            }
+
+            return new ROPlanningViewDetailsOut(eROReturnCode.Successful, message, ROInstanceID, viewDetails.ROPlanningViewDetails);
         }
 
         private ROOut SelectCubeValues(ArrayList headersList, string sColumnName, DataTable dtSelected, bool setSequence)

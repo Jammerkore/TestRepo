@@ -14,6 +14,8 @@ using System.Collections.Generic;
 using MIDRetail.Business.Allocation;
 using System.Diagnostics;
 
+using Logility.ROWebSharedTypes;
+
 namespace MIDRetail.Business
 {
 	/// <summary>
@@ -328,6 +330,11 @@ namespace MIDRetail.Business
         private Dictionary<int,long> _instanceTracker = new Dictionary<int, long>(); 
 
         private bool _velocityStyleReviewLastDisplayed = false;
+
+        private int _currentProcessStep = 0;
+        private eMessagingStatus _messageStatus = eMessagingStatus.None;
+        private eMessageResponse _messageResponse;
+        private ROMessageDetails _messageResponseDetails;
 
 		//=============
 		// CONSTRUCTORS
@@ -1512,27 +1519,91 @@ namespace MIDRetail.Business
             }
         }
 
-		//========
-		// METHODS
-		//========
+        /// <summary>
+        /// Gets or sets value contianing the current processing step.
+        /// </summary>
 
-		//========================
-		// ProfileList functions
-		//========================
+        public int CurrentProcessStep
+        {
+            get
+            {
+                return _currentProcessStep;
+            }
+            set
+            {
+                _currentProcessStep = value;
+            }
+        }
 
-		/// <summary>
-		/// This method will retrieve the current ProfileList stored in this session.  If the ProfileList has not yet been created, the
-		/// values will be retrieved from other Sessions, if necessary.  If the information is not available in other sessions, an error will
-		/// be thrown.
-		/// </summary>
-		/// <param name="aProfileType">
-		/// The eProfileType of the ProfileList to retieve.
-		/// </param>
-		/// <returns>
-		/// The ProfileList object for the given eProfileType.
-		/// </returns>
+        /// <summary>
+        /// Gets or sets value containing the current messaging status.
+        /// </summary>
 
-		public ProfileList GetProfileList(eProfileType aProfileType)
+        public eMessagingStatus MessageStatus
+        {
+            get
+            {
+                return _messageStatus;
+            }
+            set
+            {
+                _messageStatus = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets value containing the message response.
+        /// </summary>
+
+        public eMessageResponse MessageResponse
+        {
+            get
+            {
+                return _messageResponse;
+            }
+            set
+            {
+                _messageResponse = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets value containing the message response details.
+        /// </summary>
+
+        public ROMessageDetails MessageResponseDetails
+        {
+            get
+            {
+                return _messageResponseDetails;
+            }
+            set
+            {
+                _messageResponseDetails = value;
+            }
+        }
+
+        //========
+        // METHODS
+        //========
+
+        //========================
+        // ProfileList functions
+        //========================
+
+        /// <summary>
+        /// This method will retrieve the current ProfileList stored in this session.  If the ProfileList has not yet been created, the
+        /// values will be retrieved from other Sessions, if necessary.  If the information is not available in other sessions, an error will
+        /// be thrown.
+        /// </summary>
+        /// <param name="aProfileType">
+        /// The eProfileType of the ProfileList to retieve.
+        /// </param>
+        /// <returns>
+        /// The ProfileList object for the given eProfileType.
+        /// </returns>
+
+        public ProfileList GetProfileList(eProfileType aProfileType)
 		{
 			ProfileList profileList;
 

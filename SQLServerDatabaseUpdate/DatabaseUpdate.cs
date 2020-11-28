@@ -3075,6 +3075,11 @@ namespace MIDRetail.DatabaseUpdate
                         aDatabaseType = eDatabaseType.SQLServer2017;
                         break;
                     // End TT#1952-MD - AGallagher - Support 2017
+                    // Begin - AGallagher - Support 2019
+                    case UpdateRoutines.CompatibilityLevel.SQL2019:
+                        aDatabaseType = eDatabaseType.SQLServer2019;
+                        break;
+                    // End - AGallagher - Support 2019
                     default:
                         aDatabaseType = eDatabaseType.None;
                         break;

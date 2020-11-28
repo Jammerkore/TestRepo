@@ -208,6 +208,22 @@ namespace Logility.ROWebSharedTypes
             { return _ROPlanningReviewSelectionProperties; }
         }
     };
+
+    [DataContract(Name = "ROPlanningViewDetailsOut", Namespace = "http://Logility.ROWeb/")]
+    public class ROPlanningViewDetailsOut : ROOut
+    {
+        [DataMember(IsRequired = true)]
+        private ROPlanningViewDetails _viewDetails;
+
+        public ROPlanningViewDetailsOut(eROReturnCode ROReturnCode, string sROMessage, long ROInstanceID, ROPlanningViewDetails ROPlanningViewDetails) :
+            base(ROReturnCode, sROMessage, ROInstanceID)
+        {
+            _viewDetails = ROPlanningViewDetails;
+        }
+
+        public ROPlanningViewDetails ROPlanningViewDetails { get { return _viewDetails; } }
+
+    }
 }
     
 

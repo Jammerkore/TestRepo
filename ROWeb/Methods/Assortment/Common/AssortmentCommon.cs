@@ -140,7 +140,7 @@ namespace Logility.ROWeb
         private Hashtable _loadHash;
         private bool _stopPageLoadThread;
 
-        //private AssortmentProfile _asp;
+        //private List<PlanCubeGroup> _cubeGroupList = null;
 
         private string _groupName;
         public string GroupName
@@ -391,6 +391,18 @@ namespace Logility.ROWeb
                     rOAssortmentProperties = new ROAssortmentProperties { StoreAttributeRid = _assortStoreGroupRid };
                 }
 
+                if (_assortmentProfile.TargetRevenue == Include.Undefined)
+                {
+                    rOAssortmentProperties.TargetRevenue = GetTargetRevenue();
+                    _assortmentProfile.CalculatedRevenue = rOAssortmentProperties.TargetRevenue;
+                }
+                else
+                {
+                    rOAssortmentProperties.TargetRevenue = _assortmentProfile.TargetRevenue;
+                    _assortmentProfile.CalculatedRevenue = GetTargetRevenue();
+                }
+                _assortmentProfile.TargetRevenue = rOAssortmentProperties.TargetRevenue;
+                
 
                 return rOAssortmentProperties;
             }
@@ -584,14 +596,26 @@ namespace Logility.ROWeb
 
                 SetSpecificFields(rOAssortmentProperties);
 
-                SetBaseValues(rOAssortmentProperties);
+                bool basisChanged;
+                SetBaseValues(rOAssortmentProperties, out basisChanged);
+
+                // User did not manually change target revenue so recalculate it.
+                if (_assortmentProfile.TargetRevenue == rOAssortmentProperties.TargetRevenue
+                    && basisChanged)
+                {
+                    rOAssortmentProperties.TargetRevenue = GetTargetRevenue();
+                }
+                _assortmentProfile.TargetRevenue = rOAssortmentProperties.TargetRevenue;
 
                 bool success = SaveAssortmentPropertiesData();
 
                 // set flag to recalculate summary
                 _isAsrtPropertyChanged = true;
 
-                return new ROIntOut(eROReturnCode.Successful, null, ROInstanceID, _assortmentProfile.Key);
+                rOAssortmentProperties.HeaderRid = _assortmentProfile.Key;
+
+                //return new ROIntOut(eROReturnCode.Successful, null, ROInstanceID, _assortmentProfile.Key);
+                return new ROAssortmentPropertiesOut(eROReturnCode.Successful, null, ROInstanceID, rOAssortmentProperties);
             }
             catch (Exception ex)
             {
@@ -677,7 +701,7 @@ namespace Logility.ROWeb
             }
         }
 
-        private void SetBaseValues(ROAssortmentProperties rOAssortmentProperties)
+        private void SetBaseValues(ROAssortmentProperties rOAssortmentProperties, out bool basisChanged)
         {
             try
             {
@@ -770,6 +794,31 @@ namespace Logility.ROWeb
                 _assortmentProfile.AssortmentIncludeOnhand = _assortInclOnhand;
                 _assortmentProfile.AssortmentIncludeIntransit = _assortInclIntransit;
 
+                // determine if basis has been changed
+                if (_assortmentProfile.AssortmentBasisList.Count != _basisList.Count)  // different number or obviously changed
+                {
+                    basisChanged = true;
+                }
+                else // must check each basis
+                {
+                    AssortmentBasis ab, newBasis;
+                    basisChanged = false;
+                    for (int i = 0; i < _assortmentProfile.AssortmentBasisList.Count; i++)
+                    {
+                        ab = _assortmentProfile.AssortmentBasisList[i];
+                        newBasis = _basisList[i];
+                        if (ab.HierarchyNodeProfile.Key != newBasis.HierarchyNodeProfile.Key
+                            || ab.HorizonDate.Key != newBasis.HorizonDate.Key
+                            || ab.HorizonDate.CompareTo(newBasis.HorizonDate) != 0
+                            || ab.VersionProfile.Key != newBasis.VersionProfile.Key
+                            || ab.Weight != newBasis.Weight
+                            )
+                        {
+                            basisChanged = true;
+                            break;
+                        }
+                    }
+                }
                 _assortmentProfile.AssortmentBasisList = _basisList;
 
                 _assortVariableNumber = _assortmentProfile.BasisReader.GetVariableNumber(_assortVariableType);
@@ -1036,8 +1085,8 @@ namespace Logility.ROWeb
                 }
 
                 SetSpecificFields(rOAssortmentProperties);
-
-                SetBaseValues(rOAssortmentProperties);
+                bool basisChanged;
+                SetBaseValues(rOAssortmentProperties, out basisChanged);
 
                 bool success = SaveAssortmentPropertiesData();
 
@@ -1050,6 +1099,114 @@ namespace Logility.ROWeb
             }
 
             return returnValue;
+        }
+
+        #endregion
+
+        #region "Target Revenue"
+        /// <summary>
+        /// Gets target revenue from basis entries
+        /// </summary>
+        /// <remarks>Uses single level chain cube to get values.</remarks>
+        /// <returns>Target Revenue</returns>
+        private int GetTargetRevenue()
+        {
+            PlanOpenParms planOpenParms;
+            double targetRevenue = 0;
+            PlanCubeGroup cubeGroup = null;
+
+            if (_basisList.Count > 0)
+            {
+                foreach (AssortmentBasis ab in _basisList)
+                {
+                    // Create chain cube with assortment basis as the basis items to obtain sales values.
+                    cubeGroup = (PlanCubeGroup)_applicationSessionTransaction.CreateChainPlanMaintCubeGroup();
+                    planOpenParms = new PlanOpenParms(ePlanSessionType.ChainSingleLevel, null);
+                    FillOpenParmForPlan(planOpenParms: planOpenParms, ab: ab);
+                    ((ChainPlanMaintCubeGroup)cubeGroup).OpenCubeGroup(planOpenParms);
+                    targetRevenue += GetValueFromCube(ab: ab, cubeGroup: cubeGroup);
+                    cubeGroup.Dispose();  // Releases resources in cube group
+                    cubeGroup = null;
+                }
+            }
+
+            return Convert.ToInt32(targetRevenue);
+        }
+
+        /// <summary>
+		/// Fills in the plan part of the CubeGroup open parms
+		/// </summary>
+		private void FillOpenParmForPlan(PlanOpenParms planOpenParms, AssortmentBasis ab)
+        {
+            planOpenParms.FunctionSecurityProfile = new FunctionSecurityProfile((int)eSecurityFunctions.NotSpecified);
+
+            planOpenParms.FunctionSecurityProfile.SetReadOnly();
+
+            planOpenParms.StoreGroupRID = SAB.ClientServerSession.GlobalOptions.OTSPlanStoreGroupRID;
+            planOpenParms.GroupBy = eStorePlanSelectedGroupBy.ByTimePeriod;
+            planOpenParms.ViewRID = Include.DefaultPlanViewRID;
+            planOpenParms.DisplayTimeBy = eDisplayTimeBy.ByWeek;
+            planOpenParms.IneligibleStores = false;
+            planOpenParms.SimilarStores = false;
+            planOpenParms.LowLevelsType = eLowLevelsType.None;
+            planOpenParms.IsMulti = false;
+            planOpenParms.IsTotRT = false;
+
+            planOpenParms.ChainHLPlanProfile.VersionProfile = ab.VersionProfile;
+            planOpenParms.ChainHLPlanProfile.NodeProfile = ab.HierarchyNodeProfile;
+            planOpenParms.DateRangeProfile = ab.HorizonDate;
+
+            planOpenParms.ComputationsMode = SAB.ApplicationServerSession.ComputationsCollection.GetDefaultComputations().Name;
+        }
+
+        private double GetValueFromCube(AssortmentBasis ab, PlanCubeGroup cubeGroup)
+        {
+            double targetRevenue = 0;
+            PlanCellReference planCellRef;
+            int variableKey;
+
+            variableKey = DetermineSalesVariable(planLevlType: ab.HierarchyNodeProfile.OTSPlanLevelType);
+
+            if (variableKey > 0)
+            {
+                planCellRef = (PlanCellReference)((PlanCube)cubeGroup.GetCube(eCubeType.ChainPlanDateTotal)).CreateCellReference();
+                planCellRef[eProfileType.Version] = ab.VersionProfile.Key;
+                planCellRef[eProfileType.HierarchyNode] = ab.HierarchyNodeProfile.Key;
+                planCellRef[eProfileType.TimeTotalVariable] = ((VariableProfile)_applicationSessionTransaction.PlanComputations.PlanVariables.VariableProfileList.FindKey(variableKey)).GetChainTimeTotalVariable(1).Key;
+                planCellRef[eProfileType.QuantityVariable] = _applicationSessionTransaction.PlanComputations.PlanQuantityVariables.ValueQuantity.Key;
+                planCellRef[eProfileType.Variable] = variableKey;
+
+                targetRevenue = planCellRef.CurrentCellValue * (ab.Weight / 100);
+            }
+
+            return targetRevenue;
+        }
+
+        private int DetermineSalesVariable(eOTSPlanLevelType planLevlType)
+        {
+            foreach (VariableProfile vp in _applicationSessionTransaction.PlanComputations.PlanVariables.VariableProfileList)
+            {
+                if (vp.VariableName == "Tot Sales $")
+                {
+                    return vp.Key;
+                }
+            }
+
+            foreach (VariableProfile vp in _applicationSessionTransaction.PlanComputations.PlanVariables.VariableProfileList)
+            {
+                if (planLevlType == eOTSPlanLevelType.Regular
+                    && vp.DatabaseColumnName == "SALES_REG")
+                {
+                    return vp.Key;
+                }
+                else if (planLevlType != eOTSPlanLevelType.Regular
+                    && vp.DatabaseColumnName == "SALES")
+                {
+                    return vp.Key;
+                }
+            }
+
+            return Include.Undefined;
         }
 
         #endregion

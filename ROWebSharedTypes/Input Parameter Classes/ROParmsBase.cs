@@ -273,6 +273,14 @@ namespace Logility.ROWebSharedTypes
     [KnownType(typeof(ROUserInformation))]
     [KnownType(typeof(RUserInformationParms))]
 
+    [KnownType(typeof(ROViewDetails))]
+    [KnownType(typeof(ROPlanningViewDetailsParms))]
+    [KnownType(typeof(ROPlanningViewDetails))]
+    [KnownType(typeof(ROAllocationReviewViewDetailsParms))]
+    [KnownType(typeof(ROAllocationReviewViewDetails))]
+
+    [KnownType(typeof(ROMessageResponseParms))]
+
     public abstract class ROParms
     {
         [DataMember(IsRequired = true)]

@@ -197,9 +197,11 @@ namespace Logility.ROWeb
             //RO-3156 and store group set key to get data for store single/multi level
             if (getDataParams.GridOrientation != planManager.Orientation
                 || viewRID != planManager.GetViewRID() || storeAttributeSetKey != planManager.StoreAttributeSetKey
-                || storeAttributeKey != planManager.OpenParms.StoreGroupRID || filterKey != planManager.OpenParms.FilterRID)
+                || storeAttributeKey != planManager.OpenParms.StoreGroupRID || filterKey != planManager.OpenParms.FilterRID
+                || _viewUpdated)
                 {
-                planManager.SetViewAndOrientation(viewRID, getDataParams.GridOrientation, storeAttributeSetKey, storeAttributeKey, filterKey); 
+                planManager.SetViewAndOrientation(viewRID, getDataParams.GridOrientation, storeAttributeSetKey, storeAttributeKey, filterKey);
+                _viewUpdated = false;
             }
 
             if (getDataParams.iStartingRowIndex != planManager.StartingRowIndex

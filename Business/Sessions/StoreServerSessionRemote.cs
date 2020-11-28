@@ -495,7 +495,7 @@ namespace MIDRetail.Business
                 //return load.ProcessStores(fileLocation, autoAddCharacteristics);
                 //// End TT#166
 
-                
+                StoreMgmt.LoadInitialStoresAndGroups(SAB: SAB, session: SAB.StoreServerSession, bDoingRefresh: true);  // RO-5310 - Store Attributes Disappearing
                 StoreLoadProcessManager load = new StoreLoadProcessManager(SAB);
                 return load.ProcessXmlFile(fileLocation, autoAddCharacteristics);
                 //End TT#1517-MD -jsobek -Store Service Optimization
@@ -539,6 +539,7 @@ namespace MIDRetail.Business
                 //// End TT#166
                 //// END TT#1401 - stodd - add resevation stores (IMO)
 
+                StoreMgmt.LoadInitialStoresAndGroups(SAB: SAB, session: SAB.StoreServerSession, bDoingRefresh: true);  // RO-5310 - Store Attributes Disappearing
                 StoreLoadProcessManager load = new StoreLoadProcessManager(SAB);
                 return load.ProcessDelimitedFile(fileLocation, delimiter, autoAddCharacteristics, characteristicDelimiter, useCharacteristicTransaction);
                 //End TT#1517-MD -jsobek -Store Service Optimization

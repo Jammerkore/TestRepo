@@ -805,6 +805,7 @@ namespace MIDRetail.DataCommon
         SQLServer2014,   // TT#1795-MD - JSmith - Support 2014
         SQLServer2016,   // TT#2130-MD - AGallagher - Support 2016
         SQLServer2017,   // TT#1952-MD - AGallagher - Support 2017
+        SQLServer2019,   //  AGallagher - Support 2017
         Oracle
     }
     //End Track #4616
@@ -3748,6 +3749,7 @@ namespace MIDRetail.DataCommon
         AssortmentActionsCancelCommitted = 856007,
         AssortmentActionsChargeIntransit = 856008,
         AssortmentActionsCancelIntransit = 856009,
+        AssortmentActionsCreatePlaceholdersBasedOnRevenue = 856010,
         // End TT#2
 
         Explorers = 860000,
@@ -4610,6 +4612,7 @@ namespace MIDRetail.DataCommon
         // Begin TT#1487-MD - stodd - ASST - Fill Size Holes does not work on a PH.
         //OpenReview = 802165 //TT#793-MD-DOConnell - Ran balance size billaterally on a receipt header in an assortment and receive a null reference exception
         // End TT#1487-MD - stodd - ASST - Fill Size Holes does not work on a PH.
+        CreatePlaceholdersBasedOnRevenue = 802170,
     }
 
     // Begin TT#1228 - stodd
@@ -10934,4 +10937,39 @@ namespace MIDRetail.DataCommon
         Reserve = 1,
     }
     // End TT#1652-MD
+
+    /// <summary>
+    /// Specifies which message is to be displayed.
+    /// </summary>
+    public enum eMessageRequest
+    {
+        None = 0,
+        CreatePlaceholderContinue = 1
+    }
+    
+    /// <summary>
+    /// Specifies identifiers to indicate the return value of a message.
+    /// </summary>
+    public enum eMessageResponse
+    {
+        None = 0,
+        OK = 1,
+        Cancel = 2,
+        Abort = 3,
+        Retry = 4,
+        Ignore = 5,
+        Yes = 6,
+        No = 7
+    }
+
+    /// <summary>
+    /// Specifies identifiers to indicate the status of a message.
+    /// </summary>
+    public enum eMessagingStatus
+    {
+        None = 0,
+        MessageSent = 1,
+        WaitingForResponse = 2,
+        ResponseReceived = 3
+    }
 }

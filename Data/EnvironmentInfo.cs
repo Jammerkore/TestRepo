@@ -34,7 +34,7 @@ namespace MIDRetail.Data
                 public string assemblyName = "MIDRetail.exe";
                 public string productName = "MID Retail";
                 public string productVersion = MIDText.GetTextOnly(eMIDTextCode.lbl_EnvUnavailable);
-                public string legalCopyright = "Copyright © Logility, Inc. 2018";
+                public string legalCopyright = "Copyright © Logility, Inc. 2020";
                 public string companyName = "MIDRetail, Inc.";
                 public string lastUpdate = MIDText.GetTextOnly(eMIDTextCode.lbl_EnvUnavailable);
                 public string systemVersion = MIDText.GetTextOnly(eMIDTextCode.lbl_EnvUnavailable);
@@ -105,7 +105,7 @@ namespace MIDRetail.Data
                         productName = fvi.ProductName;
                         productVersion = fvi.ProductVersion;
                         //legalCopyright = fvi.LegalCopyright;
-                        legalCopyright = "Copyright © Logility, Inc. 2018";
+                        legalCopyright = "Copyright © Logility, Inc. 2020";
 
                         companyName = fvi.CompanyName;
                     }
@@ -822,7 +822,12 @@ namespace MIDRetail.Data
                                                             case 5:
                                                                 name = "Windows Server 2016";
                                                                 break;
-                                                            // End TT#1952-MD - AGallagher - OS 2016 - Installer issues
+                                                        // End TT#1952-MD - AGallagher - OS 2016 - Installer issues
+                                                        // Begin - AGallagher - OS 2019 - Installer issues
+                                                        case 7:
+                                                            name = "Windows Server 2019";
+                                                            break;
+                                                            // End - AGallagher - OS 2019 - Installer issues
                                                     }
                                                     break;
                                                     // End TT#668-MD - JSmith - Windows 8 - Installer issues

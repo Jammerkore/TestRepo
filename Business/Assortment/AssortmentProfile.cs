@@ -128,6 +128,9 @@ namespace MIDRetail.Business
         private bool _setAllocationZero = false;  // TT#1772-MD - JSmith - GA-> ppk and bulk same style/color -> Velocity WOS , cannot balance remaining 14 units and headers have positive on pack and negative on bulk
         private bool _saveAssortmentMembers = false;  // TT#2109-MD - JSmith - Change the Beginning and Delivery Date in an Asst and the Delivery Date is incorrect.
 
+        private int _targetRevenue = 0;
+        private int _calculatedRevenue = 0;
+
         #endregion Fields
 
         #region Constructors
@@ -809,6 +812,18 @@ namespace MIDRetail.Business
         }
 		// End TT#4364 - stodd - processing a "Cancel Allocation" action against an individual header within a GA replaces the plan level and grades.
 		
+        public int TargetRevenue
+        {
+            get { return _targetRevenue; }
+            set { _targetRevenue = value; }
+        }
+
+        public int CalculatedRevenue
+        {
+            get { return _calculatedRevenue; }
+            set { _calculatedRevenue = value; }
+        }
+
         #endregion Assortment Properties
 
         // begin TT#488 - MD - Jellis - Group Allocation
@@ -10149,6 +10164,7 @@ namespace MIDRetail.Business
                     _assortGradeBoundary = eGradeBoundary.Unknown;
                     _assortCdrRid = Include.UndefinedCalendarDateRange;	// TT#2 - stodd - assortment
                     _assortBeginDayCdrRid = Include.UndefinedCalendarDateRange;   // TT#2066-MD - JSmith - Ship to Date validation.  Is this how it should be working
+                    _targetRevenue = Include.Undefined;
                     base.HeaderDay = DateTime.Now;
                     //base.HeaderType = eHeaderType.Assortment;
                     base.AsrtType = (int)eAssortmentType.PreReceipt;
@@ -10240,6 +10256,7 @@ namespace MIDRetail.Business
 					_assortAnchorNodeRid = Convert.ToInt32(dtAssortHeader.Rows[0]["ANCHOR_HN_RID"], CultureInfo.CurrentUICulture);
 					_assortUserRid = Convert.ToInt32(dtAssortHeader.Rows[0]["USER_RID"], CultureInfo.CurrentUICulture);
 					_assortLastProcessDt = Convert.ToDateTime(dtAssortHeader.Rows[0]["LAST_PROCESS_DATETIME"], CultureInfo.CurrentUICulture);
+                    _targetRevenue = Convert.ToInt32(dtAssortHeader.Rows[0]["TARGET_REVENUE"], CultureInfo.CurrentUICulture);
 				}
 				else
 				{
@@ -10268,6 +10285,7 @@ namespace MIDRetail.Business
 					_assortCdrRid = Include.UndefinedCalendarDateRange;	// TT#2 - stodd - assortment
                     _assortBeginDayCdrRid = Include.UndefinedCalendarDateRange;  // TT#2066-MD - JSmith - Ship to Date validation.  Is this how it should be working
 					_assortAnchorNodeRid = Include.NoRID;
+                    _targetRevenue = Include.Undefined;
 				}
 				// End TT#2 - stodd - assortment
 			}
@@ -11000,27 +11018,28 @@ namespace MIDRetail.Business
 		{
 			try
 			{
-				//===========================
-				// Write Assortment Header
-				//===========================
-				// Begin TT#2 - stodd - assortment
-				HeaderDataRecord.WriteAssortmentProperties(
-					this.Key,
-					_assortReserveAmount,
-					_assortReserveType,
-					_assortStoreGroupRid,
-					_assortVariableType,
-					_assortVariableNumber,
+                //===========================
+                // Write Assortment Header
+                //===========================
+                // Begin TT#2 - stodd - assortment
+                HeaderDataRecord.WriteAssortmentProperties(
+                    this.Key,
+                    _assortReserveAmount,
+                    _assortReserveType,
+                    _assortStoreGroupRid,
+                    _assortVariableType,
+                    _assortVariableNumber,
                     _assortInclOnhand,     //TT2016-MD - AGallagher - Assortment Review Navigation
                     _assortInclIntransit,  //TT2016-MD - AGallagher - Assortment Review Navigation
-					_assortInclSimStores,
-					_assortInclCommitted,
-					_assortAverageBy,
-					_assortCdrRid,
-					_assortAnchorNodeRid,
-					_assortUserRid,
-					_assortLastProcessDt,
-                    _assortBeginDayCdrRid);   // TT#2066-MD - JSmith - Ship to Date validation.  Is this how it should be working
+                    _assortInclSimStores,
+                    _assortInclCommitted,
+                    _assortAverageBy,
+                    _assortCdrRid,
+                    _assortAnchorNodeRid,
+                    _assortUserRid,
+                    _assortLastProcessDt,
+                    _assortBeginDayCdrRid,   // TT#2066-MD - JSmith - Ship to Date validation.  Is this how it should be working
+                    _targetRevenue);
 				// End TT#2 - stodd - assortment
 			}
 			catch

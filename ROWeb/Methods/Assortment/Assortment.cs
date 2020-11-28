@@ -14,6 +14,7 @@ namespace Logility.ROWeb
 {
     public partial class ROAssortment : ROAllocation 
     {
+        
 
         /// <summary>
         /// Creates an instance of the class 
@@ -32,94 +33,134 @@ namespace Logility.ROWeb
             {
                 _applicationSessionTransaction.DequeueHeaders();
             }
+
             base.CleanUp();
         }
 
         override public ROOut ProcessRequest(ROParms Parms)
         {
-            switch (Parms.RORequest)
+            try
             {
-                case eRORequest.AssortmentActions:
-                    return GetAssortmentActionsInfo();
+                if (Parms is ROMessageResponseParms
+                    && _applicationSessionTransaction.MessageStatus != eMessagingStatus.WaitingForResponse)
+                {
+                    return new RONoDataOut(eROReturnCode.Failure, "Not expecting a message response.", Parms.ROInstanceID);
+                }
 
-                case eRORequest.AssortmentFilters:
-                    return GetAssortmentFiltersInfo();
+                ROParms processingParms;
+                if (Parms.RORequest != eRORequest.RespondToMessage)
+                {
+                    _currentParms = Parms;
+                }
+                else
+                {
+                    ROMessageResponseParms responseParms = (ROMessageResponseParms)Parms;
+                    _applicationSessionTransaction.MessageStatus = eMessagingStatus.ResponseReceived;
+                    _applicationSessionTransaction.MessageResponse = responseParms.MessageResponse;
+                    _applicationSessionTransaction.MessageResponseDetails = responseParms.MessageDetails;
+                }
 
-                case eRORequest.AssortmentHeaderData:
-                    return GetAssortmentHeaderData();
+                processingParms = _currentParms;
 
-                case eRORequest.GetAssortmentWorklistViews:
-                    return GetAssortmentWorklistViews();
+                switch (processingParms.RORequest)
+                {
+                    case eRORequest.AssortmentActions:
+                        return GetAssortmentActionsInfo();
 
-                case eRORequest.GetAssortmentWorklistViewDetails:
-                    return GetAllocationWorklistViewDetails(rOKeyParams: (ROKeyParms)Parms);
+                    case eRORequest.AssortmentFilters:
+                        return GetAssortmentFiltersInfo();
 
-                case eRORequest.AssortmentSelectedFilterHeaderData:
-                    return GetAssortmentFilterHeaderData(headerFilterRID: (ROIntParms)Parms);
-                    
-                case eRORequest.GetAssortmentReviewViews:
-                    return GetAssortmentReviewViews();
+                    case eRORequest.AssortmentHeaderData:
+                        return GetAssortmentHeaderData();
 
-                case eRORequest.GetAssortmentProperties:
-                    return GetAssortmentPropertiesData(rOKeyParams: (ROKeyParms)Parms);
+                    case eRORequest.GetAssortmentWorklistViews:
+                        return GetAssortmentWorklistViews();
 
-                case eRORequest.GetAssortmentReviewSelection:
-                    return GetAssortmentReviewSelectionData(rOKeyParams: (ROKeyParms)Parms);
+                    case eRORequest.GetAssortmentWorklistViewDetails:
+                        return GetAllocationWorklistViewDetails(rOKeyParams: (ROKeyParms)processingParms);
 
-                case eRORequest.UpdateAssortmentReview:
-                    return UpdateAssortmentReviewSelection(roCubeParams: (ROCubeOpenParms)Parms);
+                    case eRORequest.AssortmentSelectedFilterHeaderData:
+                        return GetAssortmentFilterHeaderData(headerFilterRID: (ROIntParms)processingParms);
 
-                case eRORequest.UpdateAssortmentProperties:
-                    return UpdateAssortmentPropertiesData(rOAssortmentPropertiesParms: (ROAssortmentPropertiesParms)Parms);
+                    case eRORequest.GetAssortmentReviewViews:
+                        return GetAssortmentReviewViews();
 
-                case eRORequest.UpdateAssortmentSelection:
-                    return UpdateAssortmentSelection(rOAssortmentPropertiesParms: (ROAssortmentPropertiesParms)Parms);
+                    case eRORequest.GetAssortmentProperties:
+                        return GetAssortmentPropertiesData(rOKeyParams: (ROKeyParms)processingParms);
 
-                case eRORequest.GetAssortmentUserLastValues:
-                    return GetAssortmentUserLastValues();
+                    case eRORequest.GetAssortmentReviewSelection:
+                        return GetAssortmentReviewSelectionData(rOKeyParams: (ROKeyParms)processingParms);
 
-                case eRORequest.SaveAssortmentUserLastValues:
-                    return SaveAssortmentUserLastValues((ROAllocationWorklistLastDataParms)Parms);
+                    case eRORequest.UpdateAssortmentReview:
+                        return UpdateAssortmentReviewSelection(roCubeParams: (ROCubeOpenParms)processingParms);
 
-                case eRORequest.GetAssortmentReviewViewList:
-                    return GetAssortmentReviewViewList();
+                    case eRORequest.UpdateAssortmentProperties:
+                        return UpdateAssortmentPropertiesData(rOAssortmentPropertiesParms: (ROAssortmentPropertiesParms)processingParms);
 
-                case eRORequest.GetAssortmentReviewMatrixData:
-                    return GetAssortmentReviewMatrixData((ROAssortmentReviewOptionsParms)Parms);
+                    case eRORequest.UpdateAssortmentSelection:
+                        return UpdateAssortmentSelection(rOAssortmentPropertiesParms: (ROAssortmentPropertiesParms)processingParms);
 
-                case eRORequest.GetAssortmentContentCharacteristics:
-                    return GetAssortmentContentCharacteristics();
-					
-				case eRORequest.ProcessAssortmentAction:
-                    return ProcessAssortmentAction((ROAssortmentActionParms)Parms);
+                    case eRORequest.GetAssortmentUserLastValues:
+                        return GetAssortmentUserLastValues();
 
-                case eRORequest.ProcessAssortmentReviewAllocationAction:
-                    return ProcessAssortmentReviewAllocationAction((ROAssortmentAllocationActionParms)Parms);
+                    case eRORequest.SaveAssortmentUserLastValues:
+                        return SaveAssortmentUserLastValues((ROAllocationWorklistLastDataParms)processingParms);
 
-                case eRORequest.UpdateAssortmentContentCharacteristics:
-                    return UpdateAssortmentContentCharacteristics(rOAssortmentUpdateContentCharacteristicsParms: (ROAssortmentUpdateContentCharacteristicsParms)Parms);
+                    case eRORequest.GetAssortmentReviewViewList:
+                        return GetAssortmentReviewViewList();
+
+                    case eRORequest.GetAssortmentReviewMatrixData:
+                        return GetAssortmentReviewMatrixData((ROAssortmentReviewOptionsParms)processingParms);
+
+                    case eRORequest.GetAssortmentContentCharacteristics:
+                        return GetAssortmentContentCharacteristics();
+
+                    case eRORequest.ProcessAssortmentAction:
+                        return ProcessAssortmentAction((ROAssortmentActionParms)processingParms);
+
+                    case eRORequest.ProcessAssortmentReviewAllocationAction:
+                        return ProcessAssortmentReviewAllocationAction((ROAssortmentAllocationActionParms)processingParms);
+
+                    case eRORequest.UpdateAssortmentContentCharacteristics:
+                        return UpdateAssortmentContentCharacteristics(rOAssortmentUpdateContentCharacteristicsParms: (ROAssortmentUpdateContentCharacteristicsParms)processingParms);
 
 
-				case eRORequest.ApplyAssortmentReviewMatrixChanges:
-                    return ApplyAssortmentReviewMatrixCellChanges((ROGridChangesParms)Parms);
+                    case eRORequest.ApplyAssortmentReviewMatrixChanges:
+                        return ApplyAssortmentReviewMatrixCellChanges((ROGridChangesParms)processingParms);
 
-                case eRORequest.SaveAssortmentReviewChanges:
-                    return SaveAssortmentReviewChanges((RONoParms)Parms);
+                    case eRORequest.SaveAssortmentReviewChanges:
+                        return SaveAssortmentReviewChanges((RONoParms)processingParms);
 
-                case eRORequest.SetAssortmentSelectedHeaders:
-                    return SetAssortmentSelectedHeaders((ROListParms)Parms);
+                    case eRORequest.SetAssortmentSelectedHeaders:
+                        return SetAssortmentSelectedHeaders((ROListParms)processingParms);
 
-                case eRORequest.Rename:
-                    return RenameWorklistItems((ROBaseUpdateParms)Parms);
+                    case eRORequest.Rename:
+                        return RenameWorklistItems((ROBaseUpdateParms)processingParms);
 
-                case eRORequest.Delete:
-                    return DeleteWorklistItems((ROBaseUpdateParms)Parms);
+                    case eRORequest.Delete:
+                        return DeleteWorklistItems((ROBaseUpdateParms)processingParms);
 
-                case eRORequest.Copy:
-                    return CopyWorklistItems((ROBaseUpdateParms)Parms);
+                    case eRORequest.Copy:
+                        return CopyWorklistItems((ROBaseUpdateParms)processingParms);
 
-                default:
-                    return base.ProcessRequest(Parms);
+                    default:
+                        return base.ProcessRequest(processingParms);
+                }
+            }
+            catch (MessageRequestException ex)
+            {
+                _applicationSessionTransaction.MessageStatus = eMessagingStatus.WaitingForResponse;
+                return new ROMessageRequest(ROReturnCode: eROReturnCode.MessageRequest,
+                    sROMessage: null,
+                    ROInstanceID: ROInstanceID,
+                    messageRequest: ex.MessageRequest,
+                    messageDetails: ex.MessageDetails
+                    );
+            }
+            catch (Exception ex)
+            {
+                ROWebTools.LogMessage(eROMessageLevel.Error, Parms.RORequest.ToString() + " failed: " + ex.Message, ROWebTools.ROUserID, ROWebTools.ROSessionID);
+                throw;
             }
         }
     }

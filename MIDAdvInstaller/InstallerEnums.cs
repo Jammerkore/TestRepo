@@ -128,7 +128,8 @@ namespace MIDRetailInstaller
         WindowsServer2008R2,
         Windows8,
         WindowsServer2012,
-        WindowsServer2016  // TT#1952-MD - AGallagher - OS 2016 - Installer issues
+        WindowsServer2016,  // TT#1952-MD - AGallagher - OS 2016 - Installer issues
+        WindowsServer2019 
     }
     //End TT#883
 

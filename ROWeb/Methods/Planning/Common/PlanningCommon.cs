@@ -370,7 +370,7 @@ namespace Logility.ROWeb
 
             rOPlanningReviewSelectionProperties.Filter = GetName.GetFilterName(planOpenParms.FilterRID);
             rOPlanningReviewSelectionProperties.GroupBy = planOpenParms.GroupBy;
-            rOPlanningReviewSelectionProperties.View = GetName.GetViewName(planOpenParms.ViewRID);
+            rOPlanningReviewSelectionProperties.View = GetName.GetForecastViewName(key:planOpenParms.ViewRID, userKey: SAB.ClientServerSession.UserRID);
             rOPlanningReviewSelectionProperties.DisplayTimeBy = planOpenParms.DisplayTimeBy;
             rOPlanningReviewSelectionProperties.InEligibleStores = planOpenParms.IneligibleStores;
             rOPlanningReviewSelectionProperties.SimilarStores = planOpenParms.SimilarStores;
@@ -498,6 +498,10 @@ namespace Logility.ROWeb
             if (_applicationSessionTransaction == null
                 || getNewTransaction)
             {
+                if (_applicationSessionTransaction != null)
+                {
+                    _applicationSessionTransaction.Dispose();
+                }
                 _applicationSessionTransaction = SAB.ApplicationServerSession.CreateTransaction();
             }
             return _applicationSessionTransaction;

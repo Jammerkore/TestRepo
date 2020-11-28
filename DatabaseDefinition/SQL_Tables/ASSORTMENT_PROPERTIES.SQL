@@ -21,7 +21,8 @@ create table [dbo].[ASSORTMENT_PROPERTIES] (
 	"USER_RID" int not null,
 	"ANCHOR_HN_RID" int default -1 not null,		
 	"LAST_PROCESS_DATETIME" datetime not null,
-	"BEGIN_DAY_CDR_RID" int not null default 1
+	"BEGIN_DAY_CDR_RID" int not null default 1,
+	"TARGET_REVENUE" int default -1 not null
 	)  
 
 go

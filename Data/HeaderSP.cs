@@ -4749,8 +4749,10 @@ namespace MIDRetail.Data
 			    private intParameter ANCHOR_HN_RID;
 			    private datetimeParameter LAST_PROCESS_DATETIME;
                 private intParameter BEGIN_DAY_CDR_RID;  // TT#2066-MD - JSmith - Ship to Date validation.  Is this how it should be working
-			
-			    public MID_ASSORTMENT_PROPERTIES_INSERT_def()
+                private intParameter TARGET_REVENUE;
+
+
+                public MID_ASSORTMENT_PROPERTIES_INSERT_def()
 			    {
 			        base.procedureName = "MID_ASSORTMENT_PROPERTIES_INSERT";
 			        base.procedureType = storedProcedureTypes.Insert;
@@ -4771,7 +4773,9 @@ namespace MIDRetail.Data
 			        ANCHOR_HN_RID = new intParameter("@ANCHOR_HN_RID", base.inputParameterList);
 			        LAST_PROCESS_DATETIME = new datetimeParameter("@LAST_PROCESS_DATETIME", base.inputParameterList);
                     BEGIN_DAY_CDR_RID = new intParameter("@BEGIN_DAY_CDR_RID", base.inputParameterList);  // TT#2066-MD - JSmith - Ship to Date validation.  Is this how it should be working
-			    }
+                    TARGET_REVENUE = new intParameter("@TARGET_REVENUE", base.inputParameterList);
+
+                }
 			
 			    public int Insert(DatabaseAccess _dba, 
 			                      int? HDR_RID,
@@ -4789,8 +4793,9 @@ namespace MIDRetail.Data
 			                      int? USER_RID,
 			                      int? ANCHOR_HN_RID,
 			                      DateTime? LAST_PROCESS_DATETIME,
-                                  int? BEGIN_DAY_CDR_RID  // TT#2066-MD - JSmith - Ship to Date validation.  Is this how it should be working
-			                      )
+                                  int? BEGIN_DAY_CDR_RID,  // TT#2066-MD - JSmith - Ship to Date validation.  Is this how it should be working
+                                  int? TARGET_REVENUE
+                                  )
 			    {
                     lock (typeof(MID_ASSORTMENT_PROPERTIES_INSERT_def))
                     {
@@ -4810,6 +4815,7 @@ namespace MIDRetail.Data
                         this.ANCHOR_HN_RID.SetValue(ANCHOR_HN_RID);
                         this.LAST_PROCESS_DATETIME.SetValue(LAST_PROCESS_DATETIME);
                         this.BEGIN_DAY_CDR_RID.SetValue(BEGIN_DAY_CDR_RID);  // TT#2066-MD - JSmith - Ship to Date validation.  Is this how it should be working
+                        this.TARGET_REVENUE.SetValue(TARGET_REVENUE);
                         return ExecuteStoredProcedureForInsert(_dba);
                     }
 			    }

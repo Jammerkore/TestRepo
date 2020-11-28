@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Runtime.Serialization;
 using MIDRetail.DataCommon;
+using Logility.ROWebSharedTypes;
 
 namespace MIDRetail.Business
 {
@@ -480,5 +481,50 @@ namespace MIDRetail.Business
 			base.GetObjectData(aInfo, aContext);
 		}
 	}
-	//End TT#708 - JScott - Services need a Retry availalbe.
+    //End TT#708 - JScott - Services need a Retry availalbe.
+
+    [Serializable]
+    public class MessageRequestException : Exception
+    {
+        private eMessageRequest _messageRequest;
+        private ROMessageDetails _messageDetails;
+
+        public MessageRequestException()
+            : base()
+        {
+        }
+
+        public MessageRequestException(eMessageRequest messageRequest, ROMessageDetails messageDetails)
+            : base()
+        {
+            _messageRequest = messageRequest;
+            _messageDetails = messageDetails;
+        }
+
+        protected MessageRequestException(SerializationInfo aInfo, StreamingContext aContext)
+            : base(aInfo, aContext)
+        {
+        }
+
+        override public void GetObjectData(SerializationInfo aInfo, StreamingContext aContext)
+        {
+            base.GetObjectData(aInfo, aContext);
+        }
+
+        public eMessageRequest MessageRequest
+        {
+            get
+            {
+                return _messageRequest;
+            }
+        }
+
+        public ROMessageDetails MessageDetails
+        {
+            get
+            {
+                return _messageDetails;
+            }
+        }
+    }
 }

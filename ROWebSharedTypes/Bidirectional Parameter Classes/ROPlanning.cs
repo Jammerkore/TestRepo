@@ -1832,4 +1832,29 @@ namespace Logility.ROWebSharedTypes
         }
     }
 
+    [DataContract(Name = "ROPlanningViewDetails", Namespace = "http://Logility.ROWeb/")]
+    public class ROPlanningViewDetails : ROViewDetails
+    {
+        [DataMember(IsRequired = true)]
+        private ROVariableGroupings _variableGroupings;
+
+        [DataMember(IsRequired = true)]
+        private List<ROSelectedField> _comparatives;
+
+        [DataMember(IsRequired = true)]
+        private List<ROSelectedField> _timePeriods;
+
+        public ROPlanningViewDetails(KeyValuePair<int, string> view, ROVariableGroupings ROVariableGroupings) :
+            base(view)
+        {
+            _variableGroupings = ROVariableGroupings;
+            _comparatives = new List<ROSelectedField>();
+            _timePeriods = new List<ROSelectedField>();
+        }
+
+        public ROVariableGroupings VariableGroupings { get { return _variableGroupings; } }
+        public List<ROSelectedField> Comparatives { get { return _comparatives; } }
+        public List<ROSelectedField> TimePeriods { get { return _timePeriods; } }
+
+    }
 }

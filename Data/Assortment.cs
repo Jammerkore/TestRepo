@@ -588,7 +588,8 @@ namespace MIDRetail.Data
 			int aAnchorHnRid,		// TT#2 - stodd - assortment
 			int aUserRid,
 			DateTime aProcessDate,
-            int aBeginDayCdrRid)   // TT#2066-MD - JSmith - Ship to Date validation.  Is this how it should be working
+            int aBeginDayCdrRid,   // TT#2066-MD - JSmith - Ship to Date validation.  Is this how it should be working
+            int aTargetRevenue)
 		{
 			try
 			{
@@ -637,7 +638,8 @@ namespace MIDRetail.Data
                                                                          USER_RID: aUserRid,
                                                                          ANCHOR_HN_RID: aAnchorHnRid,
                                                                          LAST_PROCESS_DATETIME: aProcessDate,
-                                                                         BEGIN_DAY_CDR_RID: aBeginDayCdrRid);  // TT#2066-MD - JSmith - Ship to Date validation.  Is this how it should be working
+                                                                         BEGIN_DAY_CDR_RID: aBeginDayCdrRid,  // TT#2066-MD - JSmith - Ship to Date validation.  Is this how it should be working
+                                                                         TARGET_REVENUE: aTargetRevenue);
 
                     //if (!(_dba.ExecuteNonQuery(insertCommand, InParams) > 0))
                     if (rowsInserted == 0)  // TT#1307-MD - stodd - GA Matrix incorrect for newly created Group Allocation

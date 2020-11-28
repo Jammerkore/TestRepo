@@ -373,7 +373,7 @@ namespace MIDRetail.Business
         }
 
 
-        public static KeyValuePair<int, string> GetViewName(int key)
+        public static KeyValuePair<int, string> GetAllocationViewName(int key)
         {
             string name = string.Empty;
             if (key > Include.NoRID)
@@ -383,6 +383,25 @@ namespace MIDRetail.Business
                 if (row != null)
                 {
                     name = Convert.ToString(row["VIEW_ID"], CultureInfo.CurrentUICulture);
+                }
+            }
+            return new KeyValuePair<int, string>(key, name);
+        }
+
+        public static KeyValuePair<int, string> GetForecastViewName(int key, int userKey)
+        {
+            string name = string.Empty;
+            if (key > Include.NoRID)
+            {
+                PlanViewData planViewData = new PlanViewData();
+                ArrayList userRIDList = new ArrayList();
+                userRIDList.Add(Include.GlobalUserRID);
+                userRIDList.Add(userKey);
+                DataTable dt = planViewData.PlanView_Read(userRIDList);
+                DataRow[] dr = dt.Select(@"VIEW_RID = '" + key + @"'");
+                if (dr.Length > 0)
+                {
+                    name = Convert.ToString(dr[0]["VIEW_ID"], CultureInfo.CurrentUICulture);
                 }
             }
             return new KeyValuePair<int, string>(key, name);

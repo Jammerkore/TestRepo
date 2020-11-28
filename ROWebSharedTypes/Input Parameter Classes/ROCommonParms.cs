@@ -66,7 +66,7 @@ namespace Logility.ROWebSharedTypes
             _readOnly = readOnly;
         }
 
-        public eMethodType MethodType { get { return _methodType; } }
+        public eMethodType MethodType { get { return _methodType; } set { _methodType = value; } }
 
         public int Key { get { return _key; } }
 
@@ -605,5 +605,36 @@ namespace Logility.ROWebSharedTypes
         {
 
         }
+    }
+
+    [DataContract(Name = "ROMessageResponseParms", Namespace = "http://Logility.ROWeb/")]
+    public class ROMessageResponseParms : ROParms
+    {
+        [DataMember(IsRequired = true)]
+        private eMessageResponse _messageResponse;
+
+        [DataMember(IsRequired = true)]
+        private ROMessageDetails _messageDetails;
+
+        public ROMessageResponseParms(string sROUserID, string sROSessionID, eROClass ROClass, eRORequest RORequest, long ROInstanceID,
+                                        eMessageResponse messageResponse  = eMessageResponse.None, ROMessageDetails messageDetails = null)
+            : base(sROUserID, sROSessionID, ROClass, RORequest, ROInstanceID)
+        {
+            _messageResponse = messageResponse;
+            _messageDetails = messageDetails;
+        }
+
+        public eMessageResponse MessageResponse { get { return _messageResponse; } }
+
+        public bool MessageDetailsPresent
+        {
+            get { return _messageDetails != null; }
+        }
+
+        public ROMessageDetails MessageDetails
+        {
+            get { return _messageDetails; }
+        }
+
     }
 }

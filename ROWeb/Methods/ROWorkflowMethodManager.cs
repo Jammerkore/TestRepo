@@ -160,6 +160,10 @@ namespace Logility.ROWeb
             if (_applicationSessionTransaction == null
                 || getNewTransaction)
             {
+                if (_applicationSessionTransaction != null)
+                {
+                    _applicationSessionTransaction.Dispose();
+                }
                 _applicationSessionTransaction = SAB.ApplicationServerSession.CreateTransaction();
             }
             return _applicationSessionTransaction;
@@ -488,7 +492,8 @@ namespace Logility.ROWeb
                 return new RONoDataOut(eROReturnCode.Failure, null, ROInstanceID);
             }
 
-            ApplicationSessionTransaction applicationSessionTransaction = GetApplicationSessionTransaction(getNewTransaction: true);
+            // front end always uses new instance to add headers and process method.  So no need to always get new instance like in Windows code.
+            ApplicationSessionTransaction applicationSessionTransaction = GetApplicationSessionTransaction(getNewTransaction: false);
             bool allowProcess = true;
             if (Enum.IsDefined(typeof(eNoHeaderMethodType), (eNoHeaderMethodType)methodParm.MethodType))
             {
@@ -740,6 +745,14 @@ namespace Logility.ROWeb
         {
             if (_ABM == null)
             {
+                // need to determine type of method
+                if (!Enum.IsDefined(typeof(eMethodType), (int)methodParm.MethodType) ||
+                    methodParm.MethodType == eMethodType.NotSpecified)
+                {
+                    MethodBaseData DlMethodData = new MethodBaseData();
+                    methodParm.MethodType = DlMethodData.GetMethodType(methodParm.Key);
+                }
+
                 _ABM = (ApplicationBaseMethod)GetMethods.GetMethod(methodParm.Key, methodParm.MethodType);
                 FunctionSecurity = _ABM.GetFunctionSecurity();
                 if (_ABM is VelocityMethod)

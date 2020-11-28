@@ -61,6 +61,7 @@ namespace Logility.ROWebSharedTypes
         public DateTime AssortLastProcessDt { get; set; }
         public int AssortUserRid { get; set; }
         public eReserveType AssortReserveType { get; set; }
+        public int TargetRevenue { get; set; }
         public List<AssortmentPropertiesBasis> AssortmentPropertiesBasis { get; set; }
         public List<AssortmentPropertiesStoreGrades> AssortmentPropertiesStoreGrades { get; set; }
     }

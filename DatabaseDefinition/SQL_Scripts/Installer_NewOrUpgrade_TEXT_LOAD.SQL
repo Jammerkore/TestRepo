@@ -3623,6 +3623,8 @@ exec SP_MID_SET_TEXT 802167,'Create Master Headers',50,19,null,null,0 /* TT#1966
 exec SP_MID_SET_TEXT 802168,'DC Fulfillment',50,19,null,null,0 /* TT#1966-MD - JSmith - DC Fulfillment */	 
 exec SP_MID_SET_TEXT 802169,'Planning Extract',50,19,null,null,0 /* TT#2131-MD - JSmith - Halo Integration */
 
+exec SP_MID_SET_TEXT 802170,'Create Placeholders Based on Revenue',30,62,null,null,10
+
 /* eAllocationActionStatus */
 exec SP_MID_SET_TEXT 802250,'No Action Performed',30,48,null,null,0
 exec SP_MID_SET_TEXT 802251,'Action completed successfully',30,48,null,null,0
@@ -4449,6 +4451,7 @@ exec SP_MID_SET_TEXT 856006,'Charge Committed',50,19,null,null,0
 exec SP_MID_SET_TEXT 856007,'Cancel Committed',50,19,null,null,0
 exec SP_MID_SET_TEXT 856008,'Charge Intransit',50,19,null,null,0
 exec SP_MID_SET_TEXT 856009,'Cancel Intransit',50,19,null,null,0
+exec SP_MID_SET_TEXT 856010,'Create Placeholders Based on Revenue',50,19,null,null,0
 /* End New for Assortment */
 
 /* Explorers */

@@ -3875,6 +3875,13 @@ namespace MIDRetail.Windows
                                     DlFolder.CloseUpdateConnection();
                                 }
 
+                                if (_favoritesNode.HasChildren
+                                    && _favoritesNode.DisplayChildren
+                                    && !_favoritesNode.ChildrenLoaded)
+                                {
+                                    ExpandNode(_favoritesNode);
+                                }
+
                                 DeleteShortcuts(_favoritesNode, aNode);
                                 aNode.Remove();
                             }

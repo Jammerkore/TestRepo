@@ -115,4 +115,20 @@ namespace Logility.ROWebSharedTypes
         public bool IsVelocity { get { return _viewType == eAllocationSelectionViewType.Velocity; } }
 
     }
+
+    [DataContract(Name = "ROAllocationReviewViewDetailsParms", Namespace = "http://Logility.ROWeb/")]
+    public class ROAllocationReviewViewDetailsParms : ROParms
+    {
+        [DataMember(IsRequired = true)]
+        private ROAllocationReviewViewDetails _viewDetails;
+
+        public ROAllocationReviewViewDetailsParms(string sROUserID, string sROSessionID, eROClass ROClass, eRORequest RORequest, long ROInstanceID, ROAllocationReviewViewDetails ROAllocationReviewViewDetails) :
+            base(sROUserID, sROSessionID, ROClass, RORequest, ROInstanceID)
+        {
+            _viewDetails = ROAllocationReviewViewDetails;
+        }
+
+        public ROAllocationReviewViewDetails ROAllocationReviewViewDetails { get { return _viewDetails; } }
+
+    }
 }

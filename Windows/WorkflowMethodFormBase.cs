@@ -1381,48 +1381,75 @@ namespace MIDRetail.Windows
 					{
 						errMsg += "Do you wish to continue with the workflow as read-only?";
 
-						// Begin MID Track #5076 - JSmith - Added conflict to message
-//						if (MessageBox.Show (errMsg,  this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question)
-//							== DialogResult.Yes) 
-						if (MessageBox.Show (errMsg,  this.Text + " Conflict", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
-							== DialogResult.Yes) 
-						// End MID Track #5076
-						{
-							_lockStatus = eLockStatus.ReadOnly;
-						}
-						else
-						{
-							_lockStatus = eLockStatus.Cancel;
-						}
+                        if (MIDEnvironment.isWindows)
+                        {
+                            // Begin MID Track #5076 - JSmith - Added conflict to message
+                            //						if (MessageBox.Show (errMsg,  this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+                            //							== DialogResult.Yes) 
+                            if (MessageBox.Show(errMsg, this.Text + " Conflict", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+                            == DialogResult.Yes)
+                            // End MID Track #5076
+                            {
+                                _lockStatus = eLockStatus.ReadOnly;
+                            }
+                            else
+                            {
+                                _lockStatus = eLockStatus.Cancel;
+                            }
+                        }
+                        else
+                        {
+                            _lockStatus = eLockStatus.ReadOnly;
+                            MIDEnvironment.Message = errMsg;
+                            MIDEnvironment.isChangedToReadOnly = true;
+                        }
 					}
 					else
 						if (aChangeType == eChangeType.delete)
 					{
 						errMsg += "The selected workflow can not be deleted at this time.";
 
-						// Begin MID Track #5076 - JSmith - Added conflict to message
-//						if (MessageBox.Show (errMsg,  this.Text, MessageBoxButtons.OK, MessageBoxIcon.Warning)
-//							== DialogResult.OK) 
-						if (MessageBox.Show (errMsg,  this.Text + " Conflict", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-							== DialogResult.OK) 
-						// End MID Track #5076
-						{
-							_lockStatus = eLockStatus.Cancel;
-						}
+                        if (MIDEnvironment.isWindows)
+                        {
+                            // Begin MID Track #5076 - JSmith - Added conflict to message
+                            //						if (MessageBox.Show (errMsg,  this.Text, MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                            //							== DialogResult.OK) 
+                            if (MessageBox.Show(errMsg, this.Text + " Conflict", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                            == DialogResult.OK)
+                            // End MID Track #5076
+                            {
+                                _lockStatus = eLockStatus.Cancel;
+                            }
+                        }
+                        else
+                        {
+                            _lockStatus = eLockStatus.Cancel;
+                            MIDEnvironment.Message = errMsg;
+                            MIDEnvironment.requestFailed = true;
+                        }
 					}
 					else
 					{
 						errMsg += "The selected workflow can not be updated at this time.";
 
-						// Begin MID Track #5076 - JSmith - Added conflict to message
-//						if (MessageBox.Show (errMsg,  this.Text, MessageBoxButtons.OK, MessageBoxIcon.Warning)
-//							== DialogResult.OK) 
-						if (MessageBox.Show (errMsg,  this.Text + " Conflict", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-							== DialogResult.OK) 
-						// End MID Track #5076
-						{
-							_lockStatus = eLockStatus.Cancel;
-						}
+                        if (MIDEnvironment.isWindows)
+                        {
+                            // Begin MID Track #5076 - JSmith - Added conflict to message
+                            //						if (MessageBox.Show (errMsg,  this.Text, MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                            //							== DialogResult.OK) 
+                            if (MessageBox.Show(errMsg, this.Text + " Conflict", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                            == DialogResult.OK)
+                            // End MID Track #5076
+                            {
+                                _lockStatus = eLockStatus.Cancel;
+                            }
+                        }
+                        else
+                        {
+                            _lockStatus = eLockStatus.Cancel;
+                            MIDEnvironment.Message = errMsg;
+                            MIDEnvironment.requestFailed = true;
+                        }
 					}
 				}
 			}
@@ -1451,48 +1478,75 @@ namespace MIDRetail.Windows
 					{
 						errMsg += "Do you wish to continue with the method as read-only?";
 
-						// Begin MID Track #5076 - JSmith - Added conflict to message
-//						if (MessageBox.Show (errMsg,  this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question)
-//							== DialogResult.Yes) 
-						if (MessageBox.Show (errMsg,  this.Text + " Conflict", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
-							== DialogResult.Yes) 
-						// End MID Track #5076
-						{
-							_lockStatus = eLockStatus.ReadOnly;
-						}
-						else
-						{
-							_lockStatus = eLockStatus.Cancel;
-						}
+                        if (MIDEnvironment.isWindows)
+                        {
+                            // Begin MID Track #5076 - JSmith - Added conflict to message
+                            //						if (MessageBox.Show (errMsg,  this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+                            //							== DialogResult.Yes) 
+                            if (MessageBox.Show(errMsg, this.Text + " Conflict", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+                            == DialogResult.Yes)
+                            // End MID Track #5076
+                            {
+                                _lockStatus = eLockStatus.ReadOnly;
+                            }
+                            else
+                            {
+                                _lockStatus = eLockStatus.Cancel;
+                            }
+                        }
+                        else
+                        {
+                            _lockStatus = eLockStatus.ReadOnly;
+                            MIDEnvironment.Message = errMsg;
+                            MIDEnvironment.isChangedToReadOnly = true;
+                        }
 					}
 					else
 						if (aChangeType == eChangeType.delete)
 					{
 						errMsg += "The selected method can not be deleted at this time.";
 
-						// Begin MID Track #5076 - JSmith - Added conflict to message
-//						if (MessageBox.Show (errMsg,  this.Text, MessageBoxButtons.OK, MessageBoxIcon.Warning)
-//							== DialogResult.OK) 
-						if (MessageBox.Show (errMsg,  this.Text + " Conflict", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-							== DialogResult.OK) 
-						// End MID Track #5076
-						{
-							_lockStatus = eLockStatus.Cancel;
-						}
+                        if (MIDEnvironment.isWindows)
+                        {
+                            // Begin MID Track #5076 - JSmith - Added conflict to message
+                            //						if (MessageBox.Show (errMsg,  this.Text, MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                            //							== DialogResult.OK) 
+                            if (MessageBox.Show(errMsg, this.Text + " Conflict", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                            == DialogResult.OK)
+                            // End MID Track #5076
+                            {
+                                _lockStatus = eLockStatus.Cancel;
+                            }
+                        }
+                        else
+                        {
+                            _lockStatus = eLockStatus.Cancel;
+                            MIDEnvironment.Message = errMsg;
+                            MIDEnvironment.requestFailed = true;
+                        }
 					}
 					else
 					{
 						errMsg += "The selected method can not be updated at this time.";
 
-						// Begin MID Track #5076 - JSmith - Added conflict to message
-//						if (MessageBox.Show (errMsg,  this.Text, MessageBoxButtons.OK, MessageBoxIcon.Warning)
-//							== DialogResult.OK) 
-						if (MessageBox.Show (errMsg,  this.Text + " Conflict", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-							== DialogResult.OK) 
-						// End MID Track #5076
-						{
-							_lockStatus = eLockStatus.Cancel;
-						}
+                        if (MIDEnvironment.isWindows)
+                        {
+                            // Begin MID Track #5076 - JSmith - Added conflict to message
+                            //						if (MessageBox.Show (errMsg,  this.Text, MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                            //							== DialogResult.OK) 
+                            if (MessageBox.Show(errMsg, this.Text + " Conflict", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                            == DialogResult.OK)
+                            // End MID Track #5076
+                            {
+                                _lockStatus = eLockStatus.Cancel;
+                            }
+                        }
+                        else
+                        {
+                            _lockStatus = eLockStatus.Cancel;
+                            MIDEnvironment.Message = errMsg;
+                            MIDEnvironment.requestFailed = true;
+                        }
 					}
 				}
 			}

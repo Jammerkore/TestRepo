@@ -1061,6 +1061,7 @@ namespace Logility.ROWeb
             ROVariableGrouping grouping;
             List<ROVariableGrouping> variableGrouping = new List<ROVariableGrouping>();
             ROVariableGroupings variableGroupings = new ROVariableGroupings(variableGrouping);
+            SortedList<int, ROVariable> selectedList = new SortedList<int, ROVariable>();
 
             UpdateSelectableList(planType, variables);
 
@@ -1073,10 +1074,23 @@ namespace Logility.ROWeb
                     {
                         variable = new ROVariable(vp.Profile.Key, vp.Name, vp.IsSelectable, vp.IsDisplayed, vp.Sequence);
                         groupVariables.Add(variable);
+                        if (vp.IsDisplayed
+                            && vp.Sequence != Include.Undefined)
+                        {
+                            selectedList.Add(vp.Sequence, variable);
+                        }
                     }
                 }
                 grouping = new ROVariableGrouping(name: groupName, variables: groupVariables);
                 variableGroupings.VariableGrouping.Add(grouping);
+            }
+
+            foreach (KeyValuePair<int, ROVariable> selectedVariable in selectedList)
+            {
+                variableGroupings.SelectedVariables.Add(new ROSelectedField(fieldkey: selectedVariable.Value.Number.ToString(),
+                    field: selectedVariable.Value.Name,
+                    selected: selectedVariable.Value.IsDisplayed)
+                    );
             }
 
             return variableGroupings;

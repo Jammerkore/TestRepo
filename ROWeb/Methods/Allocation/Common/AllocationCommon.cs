@@ -119,7 +119,7 @@ namespace Logility.ROWeb
 
                 //store attribute
                 KeyValuePair<int, string> storeAttributeValue = GetName.GetAttributeName(_applicationSessionTransaction.AllocationStoreAttributeID);
-                KeyValuePair<int, string> views = GetName.GetViewName(_applicationSessionTransaction.AllocationViewRID);                                
+                KeyValuePair<int, string> views = GetName.GetAllocationViewName(_applicationSessionTransaction.AllocationViewRID);                                
                 KeyValuePair<int, string> sizeCurveValue = GetName.GetSizeCurveGroupName(_applicationSessionTransaction.SizeCurveRID);
 
                 _viewType = EnumTools.VerifyEnumValue(_viewType);

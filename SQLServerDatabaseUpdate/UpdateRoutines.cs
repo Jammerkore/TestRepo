@@ -2366,7 +2366,8 @@ namespace MIDRetail.DatabaseUpdate
             SQL2012 = 110,
             SQL2014 = 120,   // TT#1795-MD - JSmith - Support 2014
             SQL2016 = 130,   // TT#2130-MD - AGallagher - Support 2016
-            SQL2017 = 140    // TT#1952-MD - AGallagher - Support 2017
+            SQL2017 = 140,    // TT#1952-MD - AGallagher - Support 2017
+            SQL2019 = 150    // - AGallagher - Support 2019
         }
         // End TT#3497 - JSmith - Add Database Compatibility Level Check in Upgrade Process
         // Begin TT#3497 - JSmith - Add Database Compatibility Level Check in Upgrade Process
@@ -4646,11 +4647,11 @@ namespace MIDRetail.DatabaseUpdate
                     case eVariableDatabaseType.Integer:
                         if (aAllowNull)
                         {
-                            command = "[" + aVariableProfile.VariableName + "]" + " int null";
+                            command = "[" + aVariableProfile.VariableName + "]" + " bigint null";
                         }
                         else
                         {
-                            command = "[" + aVariableProfile.VariableName + "]" + " int not null";
+                            command = "[" + aVariableProfile.VariableName + "]" + " bigint not null";
                         }
                         break;
                     case eVariableDatabaseType.Real:
@@ -4754,11 +4755,11 @@ namespace MIDRetail.DatabaseUpdate
                     case eVariableDatabaseType.Integer:
                         if (aAllowNull)
                         {
-                            command = "[" + aVariableProfile.VariableName + "]" + " int null";
+                            command = "[" + aVariableProfile.VariableName + "]" + " bigint null";
                         }
                         else
                         {
-                            command = "[" + aVariableProfile.VariableName + "]" + " int not null";
+                            command = "[" + aVariableProfile.VariableName + "]" + " bigint not null";
                         }
                         break;
                     case eVariableDatabaseType.Real:
@@ -5449,7 +5450,7 @@ namespace MIDRetail.DatabaseUpdate
                     switch (databaseVariableType)
                     {
                         case eVariableDatabaseType.Integer:
-                            line += "int]";
+                            line += "bigint]";
                             break;
                         case eVariableDatabaseType.Float:
                             line += "float]";
@@ -5526,7 +5527,7 @@ namespace MIDRetail.DatabaseUpdate
                     switch (databaseVariableType)
                     {
                         case eVariableDatabaseType.Integer:
-                            line += "int]";
+                            line += "bigint]";
                             break;
                         case eVariableDatabaseType.Float:
                             line += "float]";
@@ -5611,7 +5612,7 @@ namespace MIDRetail.DatabaseUpdate
                     switch (databaseVariableType)
                     {
                         case eVariableDatabaseType.Integer:
-                            line += "int]";
+                            line += "bigint]";
                             break;
                         case eVariableDatabaseType.Float:
                             line += "float]";
@@ -5692,7 +5693,7 @@ namespace MIDRetail.DatabaseUpdate
                     switch (databaseVariableType)
                     {
                         case eVariableDatabaseType.Integer:
-                            line += "int]";
+                            line += "bigint]";
                             break;
                         case eVariableDatabaseType.Float:
                             line += "float]";
@@ -5776,7 +5777,7 @@ namespace MIDRetail.DatabaseUpdate
                     switch (databaseVariableType)
                     {
                         case eVariableDatabaseType.Integer:
-                            line += "int]";
+                            line += "bigint]";
                             break;
                         case eVariableDatabaseType.Float:
                             line += "float]";
@@ -5856,7 +5857,7 @@ namespace MIDRetail.DatabaseUpdate
                     switch (databaseVariableType)
                     {
                         case eVariableDatabaseType.Integer:
-                            line += "int]";
+                            line += "bigint]";
                             break;
                         case eVariableDatabaseType.Float:
                             line += "float]";

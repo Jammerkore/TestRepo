@@ -414,7 +414,7 @@ namespace MIDRetail.Windows
                         //allowDeleteAll = false;
                         showDialog = true;
 
-                        MIDEnvironment.Message = ((int)eMIDTextCode.msg_DeleteInUseWarning).ToString(CultureInfo.CurrentUICulture) + ":" + MIDText.GetText(textCode: eMIDTextCode.msg_DeleteInUseWarning);
+                        MIDEnvironment.Message = MIDText.GetText(textCode: eMIDTextCode.msg_DeleteInUseWarning);
                         MIDEnvironment.requestFailed = true;
                     }
                     DataTable dtinUseDataTable = dt.Clone();
@@ -516,7 +516,7 @@ namespace MIDRetail.Windows
                         //allowDeleteAll = false;
                         showDialog = true;
 
-                        MIDEnvironment.Message = ((int)eMIDTextCode.msg_DeleteInUseWarning).ToString(CultureInfo.CurrentUICulture) + ":" + MIDText.GetText(textCode: eMIDTextCode.msg_DeleteInUseWarning);
+                        MIDEnvironment.Message = MIDText.GetText(textCode: eMIDTextCode.msg_DeleteInUseWarning);
                         MIDEnvironment.requestFailed = true;
                     }
                     DataTable dtinUseDataTable = dt.Clone();

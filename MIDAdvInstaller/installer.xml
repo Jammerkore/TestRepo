@@ -90,6 +90,7 @@
   <!--<configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "APIFileProcessingDirection" lookupType = "child"  type = "list" id = "APIFileProcessingDirection"/> -->
   <!--End TT#581-MD - JSmith - Remove unwanted settings -->
   <!-- END TT#1766 - stodd - FIFO file processing -->
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "SellThruThreshold" lookupType = "child"  type = "text" id = "SellThruThreshold"/>
 
 
   <configuration config_file = "AllocationScheduler.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
@@ -665,6 +666,7 @@
   <description id = "RemoteOptions_ServerPort"  text = "The Remote System Options port to use on the control server, must be different than the control server port." defaultValue = "8090"/>
   <description id = "RemoteOptions_ClientInterval"  text = "The time (in milliseconds) to wait between receiving commands from the control server, required for Remote System Options." defaultValue = "3000"/>
   <description id = "RemoteOptions_ServerInterval"  text = "The time (in milliseconds) to wait between receiving commands from the client apps, required for Remote System Options." defaultValue = "3000"/>
+  <description id = "SellThruThreshold"  text = "The Sell Thru value that identifies a good selling rate.  Examples are '.8', and '1.2'." defaultValue = ""/>
   <!-- Job Service Settings -->
   <description id = "ROServerType"  text = "Indicates the purpose of the RO Web Job Service." defaultValue = "Single" list = "Single|Primary|Secondary"/>
   <description id = "SecondaryServers"  text = "Identifies the machine names and ports (machine:port) of secondary servers separated by semicolon (;)" defaultValue = " "/>

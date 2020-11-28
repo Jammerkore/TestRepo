@@ -410,23 +410,23 @@ namespace Logility.ROUI
             this.storeMultiLevelViewData.BuildTimeHeaders();
 
         }
-        public bool ShowYears()
+        override public bool ShowYears()
         {
             return storeMultiLevelViewData.selectYear;
         }
-        public bool ShowSeasons()
+        override public bool ShowSeasons()
         {
             return storeMultiLevelViewData.selectSeason;
         }
-        public bool ShowQuarters()
+        override public bool ShowQuarters()
         {
             return storeMultiLevelViewData.selectQuarter;
         }
-        public bool ShowMonths()
+        override public bool ShowMonths()
         {
             return storeMultiLevelViewData.selectMonth;
         }
-        public bool ShowWeeks()
+        override public bool ShowWeeks()
         {
             return storeMultiLevelViewData.selectWeek;
         }

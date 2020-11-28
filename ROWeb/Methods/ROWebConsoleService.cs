@@ -502,7 +502,12 @@ namespace Logility.ROWeb
         {
             if (_enhancedLogging)
             {
-                ROWebTools.LogMessage(eROMessageLevel.Debug, "Response: " + OutParms.ROReturnCode +  " : Instance:" + OutParms.ROInstanceID, Parms.ROUserID, Parms.ROSessionID);
+                string message = "Response: " + OutParms.ROReturnCode + " : Instance:" + OutParms.ROInstanceID;
+                if (!string.IsNullOrEmpty(OutParms.ROMessage))
+                {
+                    message += " : Message:" + OutParms.ROMessage;
+                }
+                ROWebTools.LogMessage(eROMessageLevel.Debug, message, Parms.ROUserID, Parms.ROSessionID);
             }
 
             if (OutParms is RODataTableOut)

@@ -21,9 +21,29 @@ namespace Logility.ROWeb
     {
         private eAssortmentReviewTabType assortmentTabType = eAssortmentReviewTabType.AssortmentReviewMatrix;
 
+        private ApplicationBaseAction _method = null;
+        private GeneralComponent _component = null;
+
         #region Assortment action process
         private ROOut ProcessAssortmentAction(ROAssortmentActionParms parms)
         {
+            eROReturnCode returnCode =  eROReturnCode.Successful;
+
+            if (_applicationSessionTransaction.MessageStatus == eMessagingStatus.ResponseReceived
+                && _applicationSessionTransaction.MessageResponse != eMessageResponse.Yes)
+            {
+                _method = null;
+                _component = null;
+                if (assortmentTabType == eAssortmentReviewTabType.AssortmentReviewMatrix)
+                {
+                    return new ROGridData(returnCode, "Action Cancelled", ROInstanceID, _asrtMatrixROData, 0, 0, 0, 0, 0, 0, 0, 0);
+                }
+                else
+                {
+                    return new ROIListOut(returnCode, "Action Cancelled", ROInstanceID, BuildAssortmentContentCharacteristics());
+                }
+            }
+
             int assortmentActionType = (int)(parms.ROAssortmentProperties.AssortmentActionType);
             assortmentTabType = parms.ROAssortmentProperties.AssortmentTabType;
 
@@ -36,7 +56,8 @@ namespace Logility.ROWeb
                     return new RONoDataOut(eROReturnCode.Successful, "Action is required", ROInstanceID); ;
                 }
 
-                if (assortmentActionType == (int)eAssortmentActionType.CreatePlaceholders
+                if ((assortmentActionType == (int)eAssortmentActionType.CreatePlaceholders
+                    || assortmentActionType == (int)eAssortmentActionType.CreatePlaceholdersBasedOnRevenue)
                     && _asrtCubeGroup.GetHeaderList().Count > 1)
                 {
                     _sROMessage = string.Format
@@ -47,8 +68,11 @@ namespace Logility.ROWeb
                     return new ROGridData(eROReturnCode.Failure, "Create Placeholders not valid", ROInstanceID, _asrtMatrixROData, 0, 0, 0, 0, 0, 0, 0, 0);
                 }
 
-                ApplicationBaseAction aMethod = _applicationSessionTransaction.CreateNewMethodAction((eMethodType)assortmentActionType);
-                GeneralComponent aComponent = new GeneralComponent(eGeneralComponentType.Total);
+                if (_applicationSessionTransaction.MessageStatus != eMessagingStatus.ResponseReceived)
+                {
+                    _method = _applicationSessionTransaction.CreateNewMethodAction((eMethodType)assortmentActionType);
+                    _component = new GeneralComponent(eGeneralComponentType.Total);
+                }
 
                 bool aReviewFlag = false;
                 bool aUseSystemTolerancePercent = true;
@@ -63,13 +87,16 @@ namespace Logility.ROWeb
                     _applicationSessionTransaction.ActionOrigin = eActionOrigin.Assortment;
                 }
 
-                if (assortmentActionType != (int)eAssortmentActionType.CreatePlaceholders && assortmentActionType != (int)eAssortmentActionType.SpreadAverage)
+                if (assortmentActionType != (int)eAssortmentActionType.CreatePlaceholders
+                    && assortmentActionType != (int)eAssortmentActionType.CreatePlaceholdersBasedOnRevenue
+                    && assortmentActionType != (int)eAssortmentActionType.SpreadAverage
+                    )
                 {
                     SaveChanges();
                 }
 
                 string actionText = string.Empty;
-                string messageSuccessfull = string.Empty;
+                string message = null;
 
 
                 eAssortmentActionType enumActionText = (eAssortmentActionType)assortmentActionType;
@@ -80,11 +107,11 @@ namespace Logility.ROWeb
                 if (Enum.IsDefined(typeof(eAssortmentActionType), (eAssortmentActionType)assortmentActionType))
                 {
                     bool noActionPerformed = false;
-                    shl = ProcessAssortmentMethod(ref _applicationSessionTransaction, assortmentActionType, aComponent, aMethod, aReviewFlag, aUseSystemTolerancePercent, aTolerancePercent, aStoreFilter, aWorkFlowStepKey, ref noActionPerformed, parms);
+                    shl = ProcessAssortmentMethod(ref _applicationSessionTransaction, assortmentActionType, _component, _method, aReviewFlag, aUseSystemTolerancePercent, aTolerancePercent, aStoreFilter, aWorkFlowStepKey, ref noActionPerformed, parms);
 
                     selectedHdrCount = shl.Count;
 
-                    messageSuccessfull = actionText + eAllocationActionStatus.ActionCompletedSuccessfully.ToString();
+                    //messageSuccessfull = actionText + eAllocationActionStatus.ActionCompletedSuccessfully.ToString();
 
 
                     if (noActionPerformed)
@@ -92,7 +119,7 @@ namespace Logility.ROWeb
                         foreach (SelectedHeaderProfile shp in shl.ArrayList)
                         {
                             _applicationSessionTransaction.SetAllocationActionStatus(shp.Key, eAllocationActionStatus.NoActionPerformed);
-                            messageSuccessfull = eAllocationActionStatus.NoActionPerformed.ToString();
+                            message = eAllocationActionStatus.NoActionPerformed.ToString();
                         }
                     }
                 }
@@ -100,27 +127,34 @@ namespace Logility.ROWeb
 
                 if (selectedHdrCount == 0)
                 {
-                    eAllocationActionStatus actionStatus = eAllocationActionStatus.NoActionPerformed;
+                    //eAllocationActionStatus actionStatus = eAllocationActionStatus.NoActionPerformed;
 
-                    messageSuccessfull = actionStatus.ToString();
+                    message = "No action performed";
 
                 }
                 else if (_applicationSessionTransaction != null)
                 {
                     eAllocationActionStatus actionStatus = _applicationSessionTransaction.AllocationActionAllHeaderStatus;
-
-                    messageSuccessfull = actionStatus.ToString();
+                    if (actionStatus == eAllocationActionStatus.ActionFailed)
+                    {
+                        returnCode = eROReturnCode.Failure;
+                        message = MIDEnvironment.Message;
+                    }
                 }
 
                 if (assortmentTabType == eAssortmentReviewTabType.AssortmentReviewMatrix)
                 {
-                    return new ROGridData(eROReturnCode.Successful, messageSuccessfull, ROInstanceID, _asrtMatrixROData, 0, 0, 0, 0, 0, 0, 0, 0);
+                    return new ROGridData(returnCode, message, ROInstanceID, _asrtMatrixROData, 0, 0, 0, 0, 0, 0, 0, 0);
                 }
                 else
                 {
-                    return new ROIListOut(eROReturnCode.Successful, null, ROInstanceID, BuildAssortmentContentCharacteristics());
+                    return new ROIListOut(returnCode, message, ROInstanceID, BuildAssortmentContentCharacteristics());
                 }
 
+            }
+            catch (MessageRequestException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -135,7 +169,10 @@ namespace Logility.ROWeb
                 if (actionStatus == eAllocationActionStatus.ActionCompletedSuccessfully)
                 {
                     // No reason to do the UpdateData for CreatePlaceholders
-                    if ((eAssortmentActionType)assortmentActionType != eAssortmentActionType.CreatePlaceholders && (eAssortmentActionType)assortmentActionType != eAssortmentActionType.BalanceAssortment)
+                    if ((eAssortmentActionType)assortmentActionType != eAssortmentActionType.CreatePlaceholders
+                        && (eAssortmentActionType)assortmentActionType != eAssortmentActionType.CreatePlaceholdersBasedOnRevenue
+                        && (eAssortmentActionType)assortmentActionType != eAssortmentActionType.BalanceAssortment
+                        )
                     {
                         SelectedHeaderList allocHdrList = GetSelectableHeaderList(assortmentActionType, _applicationSessionTransaction, false, parms);
 
@@ -195,13 +232,21 @@ namespace Logility.ROWeb
                 switch ((eAssortmentActionType)action)
                 {
                     case eAssortmentActionType.CreatePlaceholders:
+					case eAssortmentActionType.CreatePlaceholdersBasedOnRevenue:
 
                         //if (ChangePending)
                         //{
                         //    SaveChanges();
                         //}
 
-                        ((AssortmentAction)aMethod).AverageUnitList = ((ROAssortmentActionsCreateplaceHolders)parms.ROAssortmentProperties.AssortmentActionDetails).AverageUnit;
+                        if ((eAssortmentActionType)action == eAssortmentActionType.CreatePlaceholders)
+                        {
+                            ((AssortmentAction)aMethod).AverageUnitList = ((ROAssortmentActionsCreateplaceHolders)parms.ROAssortmentProperties.AssortmentActionDetails).AverageUnit;
+                        }
+                        else
+                        {
+                            ((AssortmentAction)aMethod).AverageUnitList = new List<int>();
+                        }
                         ((AssortmentAction)aMethod).ViewGroupBy = eAllocationAssortmentViewGroupBy.StoreGrade;
                         ((AssortmentAction)aMethod).StoreGroupRid = _lastStoreGroupValue;
                         aAssortmentWorkFlowStep
@@ -382,6 +427,10 @@ namespace Logility.ROWeb
                         actionTransaction.DoAssortmentAction(aAssortmentWorkFlowStep);
                         break;
                 }
+            }
+            catch (MessageRequestException)
+            {
+                throw;
             }
             catch (Exception ex)
             {

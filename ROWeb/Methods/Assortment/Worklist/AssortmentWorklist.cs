@@ -137,7 +137,7 @@ namespace Logility.ROWeb
 
         internal List<KeyValuePair<int, string>> BuildAssortmentActions()
         {
-            DataTable dtActions = MIDText.GetLabels((int)eAssortmentActionType.Redo, (int)eAssortmentActionType.CancelCommitted);
+            DataTable dtActions = MIDText.GetLabels((int)eAssortmentActionType.Redo, (int)eAssortmentActionType.CreatePlaceholdersBasedOnRevenue);
 
             List<DataRow> rowsToDelete = new List<DataRow>();
             foreach (DataRow aRow in dtActions.Rows)
@@ -310,6 +310,25 @@ namespace Logility.ROWeb
                 throw ex;
             }
             ROIListOut ROHeaderSummaryList = new ROIListOut(eROReturnCode.Successful, null, ROInstanceID, BuildHeaderSummaryList(_headerProfileArrayList));
+            // Add digital asset key
+            Header dlAssortment = new Header();
+            foreach (ROAllocationHeaderSummary ahs in ROHeaderSummaryList.ROIListOutput)
+            {
+                if (ahs.DigitalAssetKey <= 0)
+                {
+                    DataTable dtAssrtComponents = dlAssortment.GetAssormentComponents(ahs.Key);
+                    foreach (DataRow assrtRow in dtAssrtComponents.Rows)
+                    {
+                        int hnRid = Convert.ToInt32(assrtRow["STYLE_HNRID"]);
+                        HierarchyNodeProfile hnp = SAB.HierarchyServerSession.GetNodeData(hnRid);
+                        if (hnp.DigitalAssetKey > 0)
+                        {
+                            ahs.DigitalAssetKey = hnp.DigitalAssetKey;
+                            break;
+                        }
+                    }
+                }
+            }
             return ROHeaderSummaryList;
         }
 

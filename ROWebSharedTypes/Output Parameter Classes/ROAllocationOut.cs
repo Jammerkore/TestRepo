@@ -2456,4 +2456,21 @@ namespace Logility.ROWebSharedTypes
     }
 
     #endregion
+
+    [DataContract(Name = "ROAllocationReviewViewDetailsOut", Namespace = "http://Logility.ROWeb/")]
+    public class ROAllocationReviewViewDetailsOut : ROOut
+    {
+        [DataMember(IsRequired = true)]
+        private ROAllocationReviewViewDetails _viewDetails;
+
+        public ROAllocationReviewViewDetailsOut(eROReturnCode ROReturnCode, string sROMessage, long ROInstanceID, ROAllocationReviewViewDetails ROAllocationReviewViewDetails) :
+            base(ROReturnCode, sROMessage, ROInstanceID)
+        {
+            _viewDetails = ROAllocationReviewViewDetails;
+        }
+
+        public ROAllocationReviewViewDetails ROAllocationReviewViewDetails { get { return _viewDetails; } }
+
+    }
+
 }

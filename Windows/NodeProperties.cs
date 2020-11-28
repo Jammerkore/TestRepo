@@ -25487,6 +25487,13 @@ namespace MIDRetail.Windows
 						valueRID = Include.NoRID;
 						value = string.Empty;
 					}
+                    // Begin RO#1573 - JSmith - Product characteristic value through Hierarchy Load API
+                    // The key of the characteristic must be the value to get the correct value from the valuelist.
+                    if (valueRID != Include.NoRID)
+                    {
+                        value = valueRID.ToString();
+                    }
+                    // End RO#1573 - JSmith - Product characteristic value through Hierarchy Load API
 					_characteristicsDataSet.Tables["Characteristics"].Rows.Add(new object[] { pcp.ProductCharID, pcp.Key, isInherited, inheritedRID, 
 				                                                                         updated, valueRID, value});
 				}

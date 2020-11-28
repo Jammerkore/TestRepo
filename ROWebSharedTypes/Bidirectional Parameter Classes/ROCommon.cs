@@ -506,6 +506,15 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         private bool _isselected;
 
+        [DataMember(IsRequired = true)]
+        private eSortDirection _sortDirection;
+
+        [DataMember(IsRequired = true)]
+        private int _width;
+
+        [DataMember(IsRequired = true)]
+        private int _visiblePosition;
+
         #endregion
 
         #region "Public Properties"
@@ -521,16 +530,41 @@ namespace Logility.ROWebSharedTypes
             set { _isselected = value; }
         }
 
+        public eSortDirection SortDirection
+        {
+            get { return _sortDirection; }
+            set { _sortDirection = value; }
+        }
+
+        public int Width
+        {
+            get { return _width; }
+            set { _width = value; }
+        }
+
+        public int VisiblePosition
+        {
+            get { return _visiblePosition; }
+            set { _visiblePosition = value; }
+        }
+
         #endregion
 
         #region Constructor
-        public ROSelectedField(string fieldkey, string field, bool selected)
+        public ROSelectedField(string fieldkey, string field, bool selected, eSortDirection sortDirection = eSortDirection.None, int width = 0, int visiblePosition = 0)
         {
             _field = new KeyValuePair<string, string>(fieldkey, field);
             _isselected = selected;
-
+            _sortDirection = sortDirection;
+            _width = width;
+            _visiblePosition = visiblePosition;
         }
         #endregion  
+
+        override public string ToString()
+        {
+            return _field.Value;
+        }
     }
 
     #endregion
@@ -543,16 +577,25 @@ namespace Logility.ROWebSharedTypes
 
         private List<ROVariableGrouping> _variableGrouping;
 
+        [DataMember(IsRequired = true)]
+        private List<ROSelectedField> _selectedVariables;
+
         public List<ROVariableGrouping> VariableGrouping
         {
             get { return _variableGrouping; }
             set { _variableGrouping = value; }
         }
 
-       
-        public ROVariableGroupings(List<ROVariableGrouping> variableGrouping)
+        public List<ROSelectedField> SelectedVariables
+        {
+            get { return _selectedVariables; }
+            set { _selectedVariables = value; }
+        }
+
+        public ROVariableGroupings(List<ROVariableGrouping> variableGrouping = null)
         {
             _variableGrouping = variableGrouping;
+            _selectedVariables = new List<ROSelectedField>();
         }
 
     }
@@ -582,6 +625,11 @@ namespace Logility.ROWebSharedTypes
         {
             _name = name;
             _variables = variables;
+        }
+
+        override public string ToString()
+        {
+            return _name;
         }
 
     }
@@ -639,6 +687,11 @@ namespace Logility.ROWebSharedTypes
             _isSelectable = bIsSelectable;
             _isDisplayed = bIsDisplayed;
             _sequence = sequence;
+        }
+
+        override public string ToString()
+        {
+            return _name;
         }
     }
 
@@ -1031,4 +1084,24 @@ namespace Logility.ROWebSharedTypes
         }
     }
 
+    [DataContract(Name = "ROViewDetails", Namespace = "http://Logility.ROWeb/")]
+    public class ROViewDetails
+    {
+        [DataMember(IsRequired = true)]
+        protected KeyValuePair<int, string> _view;
+
+        [DataMember(IsRequired = true)]
+        protected bool _isUserView;
+
+        public ROViewDetails(KeyValuePair<int, string> view, bool isUserView = false)
+        {
+            _view = view;
+            _isUserView = isUserView;
+        }
+
+        public KeyValuePair<int, string> View { get { return _view; } set { _view = value; } }
+
+        public bool IsUserView { get { return _isUserView; } set { _isUserView = value; } }  
+
+    }
 }

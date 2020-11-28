@@ -52,6 +52,9 @@ namespace Logility.ROWebSharedTypes
 
     [KnownType(typeof(ROColorGroup))]
     [KnownType(typeof(ROColor))]
+    [KnownType(typeof(ROMessageRequest))]
+    [KnownType(typeof(ROMessageDetails))]
+    [KnownType(typeof(ROMessageDetailsCreatePlaceholders))]
 
     [KnownType(typeof(ROIListOut))]
     [KnownType(typeof(ROAllocationHeaderSummary))]
@@ -87,6 +90,8 @@ namespace Logility.ROWebSharedTypes
     [KnownType(typeof(VersionProfile))]
     [KnownType(typeof(Profile))]
     [KnownType (typeof(ROTreeNodeOut))]
+    [KnownType(typeof(ROTreeNodeData))]
+    [KnownType(typeof(ROTreeNodeDataHierarchy))]
 
     [KnownType(typeof(ROModelProfile))]
     [KnownType(typeof(SizeCodeProfile))]
@@ -299,6 +304,12 @@ namespace Logility.ROWebSharedTypes
 
     [KnownType(typeof(RONodePropertiesCharacteristicsValue))]
     [KnownType(typeof(RONodePropertiesCharacteristics))]
+
+    [KnownType(typeof(ROViewDetails))]
+	[KnownType(typeof(ROPlanningViewDetails))]
+	[KnownType(typeof(ROPlanningViewDetailsOut))]
+    [KnownType(typeof(ROAllocationReviewViewDetails))]
+    [KnownType(typeof(ROAllocationReviewViewDetailsOut))]
 
     public abstract class ROOut
     {

@@ -198,6 +198,12 @@ namespace Logility.ROWeb
                 case eRORequest.GetAllocationViewSelection:
                     return GetAllocationViewSeletionDetails(rOKeyParms: (ROKeyParms)Parms);
 
+                //Views
+                case eRORequest.GetViewDetails:
+                    return GetViewDetails();
+                case eRORequest.SaveViewDetails:
+                    return SaveViewDetails((ROAllocationReviewViewDetailsParms)Parms);
+
                 // Style Review
                 case eRORequest.AllocationStyleReviewViews:
                     return GetAllocationStyleReviewViewsInfo();
@@ -273,6 +279,30 @@ namespace Logility.ROWeb
         }
 
         
+
+    }
+
+    internal class AllocationViewColumn
+    {
+        private string _colKey;
+        private bool _isVisible;
+        private int _visiblePosition;
+        private eSortDirection _sortDirection;
+        private int _width;
+        public string ColKey { get { return _colKey; } set { _colKey = value; } }
+        public bool IsVisible { get { return _isVisible; } set { _isVisible = value; } }
+        public int VisiblePosition { get { return _visiblePosition; } set { _visiblePosition = value; } }
+        public eSortDirection SortDirection { get { return _sortDirection; } set { _sortDirection = value; } }
+        public int Width { get { return _width; } set { _width = value; } }
+
+        public AllocationViewColumn(string colKey, bool isVisible, int visiblePosition, eSortDirection sortDirection, int width = 0)
+        {
+            _colKey = colKey;
+            _isVisible = isVisible;
+            _visiblePosition = visiblePosition;
+            _sortDirection = sortDirection;
+            _width = width;
+        }
 
     }
 }

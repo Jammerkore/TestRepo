@@ -56,12 +56,14 @@ namespace Logility.ROWeb
             // populate modelProperties using Windows\NodeProperties.cs as a reference
 
             int attributeKey = SAB.ClientServerSession.GlobalOptions.OTSPlanStoreGroupRID;
+            int attributeSetKey = Include.NoRID;
             if (parms is RONodePropertyAttributeKeyParms)
             {
                 RONodePropertyAttributeKeyParms nodePropertyEligibilityParms = (RONodePropertyAttributeKeyParms)parms;
                 if (nodePropertyEligibilityParms.AttributeKey != Include.NoRID)
                 {
                     attributeKey = nodePropertyEligibilityParms.AttributeKey;
+                    attributeSetKey = nodePropertyEligibilityParms.AttributeSetKey;
                 }
             }
 
@@ -71,12 +73,13 @@ namespace Logility.ROWeb
                 );
 
             AddAttributeSets(nodeProperties: nodeProperties,
-                storeEligList: _storeEligList);
+                storeEligList: _storeEligList,
+                attributeSetKey: attributeSetKey);
 
             return nodeProperties;
         }
 
-        private void AddAttributeSets(RONodePropertiesEligibility nodeProperties, StoreEligibilityList storeEligList)
+        private void AddAttributeSets(RONodePropertiesEligibility nodeProperties, StoreEligibilityList storeEligList, int attributeSetKey)
         {
             RONodePropertiesEligibilityAttributeSet eligibilityAttributeSet;
             RONodePropertiesEligibilityStore eligibilityStore;
@@ -87,9 +90,17 @@ namespace Logility.ROWeb
             string inheritedFromText = MIDText.GetTextOnly(eMIDTextCode.lbl_Inherited_From);
 
             ProfileList storeEligibilityGroupLevelList = StoreMgmt.StoreGroup_GetLevelListViewList(nodeProperties.Attribute.Key, true);
+            if (attributeSetKey == Include.NoRID)
+            {
+                attributeSetKey = storeEligibilityGroupLevelList[0].Key;
+            }
 
             foreach (StoreGroupLevelListViewProfile sglp in storeEligibilityGroupLevelList)
             {
+                if (sglp.Key != attributeSetKey)
+                {
+                    continue;
+                }
                 eligibilityAttributeSet = new RONodePropertiesEligibilityAttributeSet(attributeSet: new KeyValuePair<int, string>(sglp.Key, sglp.Name));
                 similarStores = new List<KeyValuePair<int, string>>();
                 foreach (StoreProfile storeProfile in sglp.Stores)
@@ -242,7 +253,8 @@ namespace Logility.ROWeb
                     eligibilityAttributeSet.EligibilityStore.Add(eligibilityStore);
                 }
 
-                nodeProperties.EligibilityAttributeSet.Add(eligibilityAttributeSet);
+                //nodeProperties.EligibilityAttributeSet.Add(eligibilityAttributeSet);
+				nodeProperties.EligibilityAttributeSet = eligibilityAttributeSet;
             }
         }
 
@@ -284,7 +296,8 @@ namespace Logility.ROWeb
         {
             StoreEligibilityProfile sep;
 
-            foreach (RONodePropertiesEligibilityAttributeSet eligibilityAttributeSet in nodePropertiesEligibilityData.EligibilityAttributeSet)
+            //foreach (RONodePropertiesEligibilityAttributeSet eligibilityAttributeSet in nodePropertiesEligibilityData.EligibilityAttributeSet)
+            RONodePropertiesEligibilityAttributeSet eligibilityAttributeSet = nodePropertiesEligibilityData.EligibilityAttributeSet;
             {
                 foreach (RONodePropertiesEligibilityStore eligibilityStore in eligibilityAttributeSet.EligibilityStore)
                 {
@@ -1018,10 +1031,12 @@ namespace Logility.ROWeb
         override public ROProfileKeyParms NodePropertiesGetParms(RONodePropertiesParms parms, eProfileType profileType, int key, bool readOnly = false)
         {
             int attributeKey = Include.NoRID;
+            int attributeSetKey = Include.NoRID;
             if (parms.RONodeProperties is RONodePropertiesEligibility)
             {
                 RONodePropertiesEligibility nodePropertiesEligibilityData = (RONodePropertiesEligibility)parms.RONodeProperties;
                 attributeKey = nodePropertiesEligibilityData.Attribute.Key;
+                attributeSetKey = nodePropertiesEligibilityData.EligibilityAttributeSet.AttributeSet.Key;
             }
 
             RONodePropertyAttributeKeyParms profileKeyParms = new RONodePropertyAttributeKeyParms(sROUserID: parms.ROUserID,
@@ -1032,7 +1047,8 @@ namespace Logility.ROWeb
                 profileType: profileType,
                 key: key,
                 readOnly: readOnly,
-                attributeKey: attributeKey
+                attributeKey: attributeKey,
+                attributeSetKey: attributeSetKey
                 );
 
             return profileKeyParms;

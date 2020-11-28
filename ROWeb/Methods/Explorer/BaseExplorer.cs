@@ -103,7 +103,7 @@ namespace Logility.ROWeb
             return RONodeList;
         }
 
-        internal List<ROTreeNodeOut> BuildNodeList(System.Windows.Forms.TreeNodeCollection nodes, ROTreeNodeParms Parms)
+        internal List<ROTreeNodeOut> BuildNodeList(System.Windows.Forms.TreeNodeCollection nodes, ROTreeNodeParms Parms, bool checkChildren = true)
         {
             List<ROTreeNodeOut> nodeList = new List<ROTreeNodeOut>();
             eROApplicationType applicationType = eROApplicationType.All;
@@ -160,6 +160,7 @@ namespace Logility.ROWeb
                 bool canBeProcessed = node.NodeSecurityGroup.FunctionSecurityProfile == null ? false : node.FunctionSecurityProfile.AllowExecute;
                 bool canBeCopied = node.NodeSecurityGroup.FunctionSecurityProfile == null ? false : node.FunctionSecurityProfile.AllowMove;
                 bool canBeCut = node.NodeSecurityGroup.FunctionSecurityProfile == null ? false : node.FunctionSecurityProfile.AllowMove;
+                bool hasChildren = node.HasChildren;
 
                 if (_isWorkflowMethodData)
                 {
@@ -173,26 +174,66 @@ namespace Logility.ROWeb
                         canBeCopied: ref canBeCopied,
                         canBeCut: ref canBeCut
                         );
+
+                    // verify children of the parent match the application type.
+                    //if (node.NodeProfileType == eProfileType.WorkflowMethodMainFavoritesFolder
+                    //    && node.HasChildren
+                    //    && checkChildren)
+                    //{
+                    //    _treeView.ExpandNode(node);
+                    //    List<ROTreeNodeOut> children = BuildNodeList(nodes: node.Nodes, Parms: Parms, checkChildren: false);
+                    //    if (children.Count == 0)
+                    //    {
+                    //        hasChildren = false;
+                    //    }
+                    //}
                 }
 
                 node.BuildUniqueID();
 
+                ROTreeNodeData treeNodeData = null;
+
                 if (this is Logility.ROWeb.ROMerchandiseExplorer)
                 {
+                    HierarchyNodeProfile hnp = null;
                     if (((MIDHierarchyNode)node).HierarchyLevelType == eHierarchyLevelType.Color
                         || ((MIDHierarchyNode)node).HierarchyLevelType == eHierarchyLevelType.Size)
                     {
-                        HierarchyNodeProfile hnp = SAB.HierarchyServerSession.GetNodeData(((MIDHierarchyNode)node).NodeRID, true, true);
+                        hnp = SAB.HierarchyServerSession.GetNodeData(((MIDHierarchyNode)node).NodeRID, true, true);
                         qualifiedNodeID = hnp.Text;
+                    }
+                    else if (node.Profile is HierarchyNodeProfile)
+                    {
+                        hnp = (HierarchyNodeProfile)node.Profile;
+                    }
+                    if (hnp != null)
+                    {
+                        treeNodeData = new ROTreeNodeDataHierarchy(
+                        key: node.Profile.Key,
+                        profileType: node.Profile.ProfileType,
+                        hierarchyKey: hnp.HierarchyRID,
+                        homeHierarchyParentKey: hnp.HomeHierarchyParentRID,
+                        homeHierarchyKey: hnp.HomeHierarchyRID,
+                        homeHierarchyLevel: hnp.HomeHierarchyLevel,
+                        homeHierarchyType: hnp.HomeHierarchyType,
+                        homeHierarchyOwner: hnp.HomeHierarchyOwner,
+                        nodeType: hnp.LevelType
+                        );
                     }
                 }
 
+                if (treeNodeData == null)
+                {
+                    treeNodeData = new ROTreeNodeData(
+                        key: node.Profile.Key,
+                        profileType: node.Profile.ProfileType
+                        );
+                }
+
                 nodeList.Add(new ROTreeNodeOut(
-                    key: node.Profile.Key,
                     text: node.Text,
                     ownerUserRID: node.OwnerUserRID,
                     treeNodeType: node.TreeNodeType,
-                    profileType: node.Profile.ProfileType,
                     isReadOnly: isReadOnly,
                     canBeDeleted: canBeDeleted,
                     canCreateNewFolder: canCreateNewFolder,
@@ -200,10 +241,11 @@ namespace Logility.ROWeb
                     canBeProcessed: canBeProcessed,
                     canBeCopied: canBeCopied,
                     canBeCut: canBeCut,
-                    hasChildren: node.HasChildren,
+                    hasChildren: hasChildren,
                     ROApplicationType: applicationType,
                     uniqueID: node.UniqueID,
-                    qualifiedText: qualifiedNodeID
+                    qualifiedText: qualifiedNodeID,
+                    treeNodeData: treeNodeData
                     ));
 
             }
@@ -517,6 +559,8 @@ namespace Logility.ROWeb
                 _treeView.AddSelectedNode(aTreeNode: node);
 
                 _treeView.DeleteTreeNode();
+
+                _treeView.RemoveSelectedNode(aTreeNode: node);
             }
 
             if (MIDEnvironment.requestFailed)

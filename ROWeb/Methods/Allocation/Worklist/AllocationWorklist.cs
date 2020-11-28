@@ -803,6 +803,10 @@ namespace Logility.ROWeb
             if (_applicationSessionTransaction == null
                 || getNewTransaction)
             {
+                if (_applicationSessionTransaction != null)
+                {
+                    _applicationSessionTransaction.Dispose();
+                }
                 _applicationSessionTransaction = SAB.ApplicationServerSession.CreateTransaction();
                 _applicationSessionTransaction.NewAllocationMasterProfileList();
             }

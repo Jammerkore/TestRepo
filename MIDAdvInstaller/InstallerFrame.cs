@@ -37,7 +37,8 @@ namespace MIDRetailInstaller
         SQL2012 = 110,
         SQL2014 = 120,
         SQL2016 = 130,
-        SQL2017 = 140  // Begin TT#1952-MD - AGallagher - SQL 2017 - Installer issues
+        SQL2017 = 140,  // Begin TT#1952-MD - AGallagher - SQL 2017 - Installer issues
+        SQL2019 = 150  // Begin - AGallagher - SQL 2019 - Installer issues
     }
     // End TT#3506 - JSmith - Change One Click install to verify SQL Server and Database Compatibility Level before starting install
 
@@ -845,6 +846,10 @@ namespace MIDRetailInstaller
                                                 case 5:
                                                     return eOSType.WindowsServer2016;
                                                 // End TT#1952-MD - AGallagher - OS 2016 - Installer issues
+                                                // Begin - AGallagher - OS 2019 - Installer issues
+                                                case 7:
+                                                    return eOSType.WindowsServer2019;
+                                                // End - AGallagher - OS 2019 - Installer issues
                                             }
                                             break;
                                     }

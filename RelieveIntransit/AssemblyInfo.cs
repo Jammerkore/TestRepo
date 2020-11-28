@@ -11,7 +11,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyConfiguration("Base")]
 [assembly: AssemblyCompany("Logility, Inc.")]
 [assembly: AssemblyProduct("Logility - RO")]
-[assembly: AssemblyCopyright("Copyright © Logility, Inc. 2019")]
+[assembly: AssemblyCopyright("Copyright © Logility, Inc. 2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]		
 
@@ -26,7 +26,7 @@ using System.Runtime.CompilerServices;
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 
-[assembly: AssemblyVersion("20.01.*")]
+[assembly: AssemblyVersion("20.02.*")]
 
 
 //

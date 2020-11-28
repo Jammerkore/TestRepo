@@ -4,7 +4,8 @@
     {
         Successful = 0,
         Failure = 2,
-        ChangedToReadOnly = 3
+        ChangedToReadOnly = 3,
+        MessageRequest = 4
     };
 
     public enum eAssortmentReviewTabType
@@ -107,6 +108,7 @@
         GetActiveClassesAndInstances,
         RemoveInstance,
         GetActiveUsers,
+        RespondToMessage,
 
         // Administration
         GetUserInformation,
@@ -160,6 +162,8 @@
         AddFolder,
         DeleteFolder,
         SaveAs,
+        GetViewDetails,
+        SaveViewDetails,
 
         //Hierarchy
         GetHierarchies,

@@ -143,16 +143,20 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         private int _attributeKey;
 
+        [DataMember(IsRequired = true)]
+        private int _attributeSetKey;
 
         public RONodePropertyAttributeKeyParms(string sROUserID, string sROSessionID, eROClass ROClass, eRORequest RORequest, long ROInstanceID,
                                         eProfileType profileType, int key = Include.Undefined, bool readOnly = false,
-                                        int parentNodeKey = Include.NoRID, int attributeKey = Include.NoRID)
+                                        int parentNodeKey = Include.NoRID, int attributeKey = Include.NoRID, int attributeSetKey = Include.NoRID)
             : base(sROUserID, sROSessionID, ROClass, RORequest, ROInstanceID, profileType, key, readOnly, parentNodeKey)
         {
             _attributeKey = attributeKey;
+            _attributeSetKey = attributeSetKey;
         }
 
         public int AttributeKey { get { return _attributeKey; } }
+        public int AttributeSetKey { get { return _attributeSetKey; } }
 
     }
 

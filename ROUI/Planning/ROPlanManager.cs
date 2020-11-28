@@ -168,6 +168,12 @@ namespace Logility.ROUI
 
         abstract public void IncrementAddedColumnsCount(uint iColumnsAdded);
 
+        abstract public bool ShowYears();
+        abstract public bool ShowSeasons();
+        abstract public bool ShowQuarters();
+        abstract public bool ShowMonths();
+        abstract public bool ShowWeeks();
+
         #region "Scaling"
         public DataTable ScalingDollar_GetDataTable()
         {

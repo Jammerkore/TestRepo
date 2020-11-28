@@ -704,6 +704,7 @@ namespace MIDRetail.Business
             HierarchyProfile hpOrg = null;
             string message = null;
             ForecastVersion fv;
+            bool requestsBuiltSuccessfully = true;
             
 			try
 			{
@@ -969,30 +970,51 @@ namespace MIDRetail.Business
 								{
 									typeID = Convert.ToInt32(eRollType.chainWeeklyForecast);
 								}
-                                BuildRollupRequests(weekProfileList, phRID, hnp.HomeHierarchyType,
+                                requestsBuiltSuccessfully = BuildRollupRequests(weekProfileList, phRID, hnp.HomeHierarchyType,
                                     hnRID, versionRID,
                                     typeID, fromPhOffsetInd, fromLevel, toPhOffsetInd, toLevel, aSession, rollupDays, intransitOnly, aProcessID);
+                                if (requestsBuiltSuccessfully)
+                                {
 								_rd.CommitData();
 							}
+                                else
+                                {
+                                    return false;
+                                }
+                            }
 
 							if (rollStore || rollDayToWeek || rollDays)
 							{
 								if (rollDayToWeek)
 								{
 									typeID = Convert.ToInt32(eRollType.storeDailyHistoryToWeeks);
-                                    BuildRollupRequests(weekProfileList, phRID, hnp.HomeHierarchyType, 
+                                    requestsBuiltSuccessfully = BuildRollupRequests(weekProfileList, phRID, hnp.HomeHierarchyType, 
                                         hnRID, versionRID,
                                         typeID, fromPhOffsetInd, fromLevel, toPhOffsetInd, toLevel, aSession, rollupDays, intransitOnly, aProcessID);
+                                    if (requestsBuiltSuccessfully)
+                                    {
 									_rd.CommitData();
 								}
+                                    else
+                                    {
+                                        return false;
+                                    }
+                                }
 								if (rollDays &&
 									rollLevel)
 								{
 									typeID = Convert.ToInt32(eRollType.storeDailyHistory);
-                                    BuildRollupRequests(weekProfileList, phRID, hnp.HomeHierarchyType, 
+                                    requestsBuiltSuccessfully = BuildRollupRequests(weekProfileList, phRID, hnp.HomeHierarchyType, 
                                         hnRID, versionRID,
                                         typeID, fromPhOffsetInd, fromLevel, toPhOffsetInd, toLevel, aSession, rollupDays, intransitOnly, aProcessID);
+                                    if (requestsBuiltSuccessfully)
+                                    {
 									_rd.CommitData();
+                                    }
+                                    else
+                                    {
+                                        return false;
+                                    }
 								}
 								if (rollWeeks &&
 									rollLevel)
@@ -1005,27 +1027,48 @@ namespace MIDRetail.Business
 									{
 										typeID = Convert.ToInt32(eRollType.storeWeeklyForecast);
 									}
-                                    BuildRollupRequests(weekProfileList, phRID, hnp.HomeHierarchyType, 
+                                    requestsBuiltSuccessfully = BuildRollupRequests(weekProfileList, phRID, hnp.HomeHierarchyType, 
                                         hnRID, versionRID,
                                         typeID, fromPhOffsetInd, fromLevel, toPhOffsetInd, toLevel, aSession, rollupDays, intransitOnly, aProcessID);
+                                    if (requestsBuiltSuccessfully)
+                                    {
 									_rd.CommitData();
 								}
+                                    else
+                                    {
+                                        return false;
+                                    }
+                                }
 							}
 							if (rollStoreToChain)
 							{
 								typeID = Convert.ToInt32(eRollType.storeToChain);
-                                BuildRollupRequests(weekProfileList, phRID, hnp.HomeHierarchyType, 
+                                requestsBuiltSuccessfully = BuildRollupRequests(weekProfileList, phRID, hnp.HomeHierarchyType, 
                                     hnRID, versionRID,
                                     typeID, fromPhOffsetInd, fromLevel, toPhOffsetInd, toLevel, aSession, rollupDays, intransitOnly, aProcessID);
+                                if (requestsBuiltSuccessfully)
+                                {
 								_rd.CommitData();
 							}
+                                else
+                                {
+                                    return false;
+                                }
+                            }
 							if (rollIntransit)
 							{
 								typeID = Convert.ToInt32(eRollType.storeExternalIntransit);
-                                BuildRollupRequests(weekProfileList, phRID, hnp.HomeHierarchyType, 
+                                requestsBuiltSuccessfully = BuildRollupRequests(weekProfileList, phRID, hnp.HomeHierarchyType, 
                                     hnRID, Include.FV_ActualRID,
                                     typeID, fromPhOffsetInd, fromLevel, toPhOffsetInd, toLevel, aSession, rollupDays, intransitOnly, aProcessID);
+                                if (requestsBuiltSuccessfully)
+                                {
 								_rd.CommitData();
+                                }
+                                else
+                                {
+                                    return false;
+                                }
 							}
 						}
 					}
@@ -1513,8 +1556,9 @@ namespace MIDRetail.Business
                     { 
                         //BEGIN TT#4689 - DOConnell - OTS Forecast - Multi-Level Low Levels not being populated correctly
                         //int longestBranchCount = _SAB.HierarchyServerSession.GetLongestBranch(aHnRID, true);
+                        HierarchyNodeProfile merchandise = _SAB.HierarchyServerSession.GetNodeData(nodeRID: aHnRID);
                         DataTable hierarchyLevels = _SAB.HierarchyServerSession.GetHierarchyDescendantLevels(aHnRID);
-                        int longestBranchCount = hierarchyLevels.Rows.Count;
+                        int longestBranchCount = hierarchyLevels.Rows.Count + merchandise.HomeHierarchyLevel - 1;
                         //END TT#4689 - DOConnell - OTS Forecast - Multi-Level Low Levels not being populated correctly
 
                         if (!(aFromLevel <= longestBranchCount))

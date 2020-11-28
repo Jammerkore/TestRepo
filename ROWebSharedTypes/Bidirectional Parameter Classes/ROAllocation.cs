@@ -1,5 +1,6 @@
 ﻿using MIDRetail.DataCommon;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
@@ -4048,6 +4049,36 @@ namespace Logility.ROWebSharedTypes
             _numberOfStores = numberOfStores;
             _averageWOS = averageWOS;
         }
+
+    }
+
+    [DataContract(Name = "ROAllocationReviewViewDetails", Namespace = "http://Logility.ROWeb/")]
+    public class ROAllocationReviewViewDetails : ROViewDetails
+    {
+        [DataMember(IsRequired = true)]
+        private List<ROSelectedField> _summaryColumns;
+
+        [DataMember(IsRequired = true)]
+        private List<ROSelectedField> _totalColumns;
+
+        [DataMember(IsRequired = true)]
+        private List<ROSelectedField> _detailColumns;
+
+        public ROAllocationReviewViewDetails(KeyValuePair<int, string> view) :
+            base(view)
+        {
+            _summaryColumns = new List<ROSelectedField>();
+            _totalColumns = new List<ROSelectedField>();
+            _detailColumns = new List<ROSelectedField>();
+        }
+
+        public List<ROSelectedField> SummaryColumns { get { return _summaryColumns; } }
+        public List<ROSelectedField> TotalColumns { get { return _totalColumns; } }
+        public List<ROSelectedField> DetailColumns { get { return _detailColumns; } }
+
+        public List<ROSelectedField> SummaryColumnsByPosition { get { return _summaryColumns.OrderBy(hdr => hdr.VisiblePosition).ToList(); } }
+        public List<ROSelectedField> TotalColumnsByPosition { get { return _totalColumns.OrderBy(hdr => hdr.VisiblePosition).ToList(); } }
+        public List<ROSelectedField> DetailColumnsByPosition { get { return _detailColumns.OrderBy(hdr => hdr.VisiblePosition).ToList(); } }
 
     }
 }

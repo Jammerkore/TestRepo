@@ -33,6 +33,8 @@ namespace Logility.ROWeb
         private string _returnMessage = null;
         private List<eRORequest> _requestList;
 
+        protected ROParms _currentParms;
+
         //=============
         // CONSTRUCTORS
         //=============

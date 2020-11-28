@@ -678,6 +678,9 @@ namespace MIDRetail.Business
                     return;
                 }
 
+                StoreMaint storeMaintData = new StoreMaint();
+                DataSet dsValues = storeMaintData.ReadStoresFieldsForMaint(storeProfile.Key);
+
                 List<storeCharInfo> charList = null;
                 if (storeRecord.characteristicRecordList.Count > 0)
                 {
@@ -694,6 +697,51 @@ namespace MIDRetail.Business
 
                 if (storeRecord.hasError == false)
                 {
+                    // Determine changes for attribute rebuild
+                    if (charList != null)
+                    {
+                        List<int> currentCharGroups = new List<int>();
+
+                        if (charList.Count > 0)
+                        {
+                            foreach (DataRow drChar in dsValues.Tables[1].Rows)
+                            {
+
+                                int scgRID = Convert.ToInt32(drChar["SCG_RID"]);
+                                currentCharGroups.Add(scgRID);
+
+                                string charValue = string.Empty;
+                                if (drChar["CHAR_VALUE"] != DBNull.Value)
+                                {
+                                    charValue = Convert.ToString(drChar["CHAR_VALUE"]);
+                                }
+
+                                if (charList.Exists(x => x.scgRID == scgRID) == true)
+                                {
+                                    storeCharInfo charInfo = charList.Find(x => x.scgRID == scgRID && x.anyValue == charValue);
+                                    if (charInfo != null)
+                                    {
+                                        //the values match, so we do not include this scgRID
+                                    }
+                                    else
+                                    {
+                                        AddCharToChangedList(charChangedList, scgRID);
+                                    }
+                                }
+                            }
+                        }
+                        //now lets check for new characteristics
+                        foreach (storeCharInfo charInfo in charList)
+                        {
+                            int possibleNewScgRID = charInfo.scgRID;
+                            if (currentCharGroups.Exists(x => x == possibleNewScgRID) == false)
+                            {
+                                //this is a new char group so add to the change list.
+                                AddCharToChangedList(charChangedList, possibleNewScgRID);
+                            }
+                        }
+                    }
+
                     //Set the characteristic values on this store
                     bool tempbool = false;
                     StoreMgmt.ProgressBarOptions pOpt = new StoreMgmt.ProgressBarOptions();

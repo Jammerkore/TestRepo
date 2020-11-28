@@ -1786,7 +1786,7 @@ namespace Logility.ROWebSharedTypes
         KeyValuePair<int, string> _attribute;
 
         [DataMember(IsRequired = true)]
-        List<RONodePropertiesEligibilityAttributeSet> _eligibilityAttributeSet;
+        RONodePropertiesEligibilityAttributeSet _eligibilityAttributeSet;
 
         #region Public Properties
 
@@ -1795,9 +1795,10 @@ namespace Logility.ROWebSharedTypes
             get { return _attribute; }
             set { _attribute = value; }
         }
-        public List<RONodePropertiesEligibilityAttributeSet> EligibilityAttributeSet
+        public RONodePropertiesEligibilityAttributeSet EligibilityAttributeSet
         {
             get { return _eligibilityAttributeSet; }
+            set { _eligibilityAttributeSet = value; }
         }
 
         #endregion
@@ -1807,7 +1808,6 @@ namespace Logility.ROWebSharedTypes
 
         {
             _attribute = attribute;
-            _eligibilityAttributeSet = new List<RONodePropertiesEligibilityAttributeSet>();
         }
     }
 

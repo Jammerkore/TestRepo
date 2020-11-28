@@ -48,10 +48,12 @@ namespace Logility.ROWebSharedTypes
         private string _uniqueID;
         [DataMember(IsRequired = true)]
         private string _qualifiedText;
+        [DataMember(IsRequired = true)]
+        private ROTreeNodeData _treeNodeData;
         #endregion Fields
 
         #region "Properties"
-        public int Key { get { return _key; } }
+        public int Key { get { return _treeNodeData.Key; } }
 
         public string Text { get { return _text; } }
 
@@ -59,7 +61,7 @@ namespace Logility.ROWebSharedTypes
 
         public eTreeNodeType TreeNodeType { get { return _treeNodeType; } }
 
-        public eProfileType ProfileType { get { return _profileType; } }
+        public eProfileType ProfileType { get { return _treeNodeData.ProfileType; } }
 
         public bool IsReadOnly { get { return _isReadOnly; } }
 
@@ -92,6 +94,8 @@ namespace Logility.ROWebSharedTypes
             }
         }
 
+        public ROTreeNodeData TreeNodeData { get { return _treeNodeData; } }
+
         #endregion Properties
 
         #region "Constructor"
@@ -115,10 +119,76 @@ namespace Logility.ROWebSharedTypes
             _ROApplicationType = ROApplicationType;
             _uniqueID = uniqueID;
             _qualifiedText = qualifiedText;
+            _treeNodeData = new ROTreeNodeData(key: key, profileType: profileType);
+        }
+
+        public ROTreeNodeOut(string text, int ownerUserRID, eTreeNodeType treeNodeType,
+            bool isReadOnly, bool canBeDeleted, bool canBeCopied, bool canBeCut, bool canCreateNewFolder, bool canCreateNewItem, bool canBeProcessed,
+            bool hasChildren, eROApplicationType ROApplicationType = eROApplicationType.All, string uniqueID = null, string qualifiedText = null,
+            ROTreeNodeData treeNodeData = null)
+        {
+            _text = text;
+            _ownerUserRID = ownerUserRID;
+            _treeNodeType = treeNodeType;
+            _isReadOnly = isReadOnly;
+            _canBeDeleted = canBeDeleted;
+            _canBeCopied = canBeCopied;
+            _canBeCut = canBeCut;
+            _canCreateNewFolder = canCreateNewFolder;
+            _canCreateNewItem = canCreateNewItem;
+            _canBeProcessed = canBeProcessed;
+            _hasChildren = hasChildren;
+            _ROApplicationType = ROApplicationType;
+            _uniqueID = uniqueID;
+            _qualifiedText = qualifiedText;
+            _treeNodeData = treeNodeData;
         }
         #endregion
 
     };
+
+    /// <summary>
+    /// Used to retrieve data values specific to a tree node
+    /// </summary>
+
+    [DataContract(Name = "ROTreeNodeData", Namespace = "http://Logility.ROWeb/")]
+    public class ROTreeNodeData
+    {
+        #region "Fields"
+
+        [DataMember(IsRequired = true)]
+        private int _key;
+        [DataMember(IsRequired = true)]
+        private eProfileType _profileType;
+
+        #endregion
+
+        #region "Constructor"
+        /// <summary>
+        /// Used to construct an instance of the class.
+        /// </summary>
+        public ROTreeNodeData(int key, eProfileType profileType)
+        {
+            _key = key;
+            _profileType = profileType;
+        }
+
+        #endregion
+
+        #region "Properties"
+
+        /// <summary>
+        /// Gets the key for the tree node data.
+        /// </summary>
+        public int Key { get { return _key; } }
+
+        /// <summary>
+        /// Gets the eProfileType for the tree node data.
+        /// </summary>
+        public eProfileType ProfileType { get { return _profileType; } }
+
+        #endregion
+    }
 
     /// <summary>
     /// Used to retrieve and update information about a model
@@ -755,6 +825,105 @@ namespace Logility.ROWebSharedTypes
             _colorID = colorID;
             _colorName = colorName;
             _colorGroupName = colorGroupName;
+        }
+
+
+        #endregion
+    }
+
+    [DataContract(Name = "ROMessageRequest", Namespace = "http://Logility.ROWeb/")]
+    public class ROMessageRequest : ROOut
+    {
+        #region "DataMember"
+        //=======
+        // FIELDS
+        //=======
+
+        [DataMember(IsRequired = true)]
+        private eMessageRequest _messageRequest;
+
+        [DataMember(IsRequired = true)]
+        private ROMessageDetails _messageDetails;
+
+        #endregion Fields
+
+        #region "Properties"
+        public eMessageRequest MessageRequest
+        {
+            get { return _messageRequest; }
+        }
+
+        public bool MessageDetailsPresent
+        {
+            get { return _messageDetails != null; }
+        }
+
+        public ROMessageDetails MessageDetails
+        {
+            get { return _messageDetails; }
+        }
+        #endregion Properties
+
+        #region "Constructor"
+        public ROMessageRequest(eROReturnCode ROReturnCode, string sROMessage, long ROInstanceID, eMessageRequest messageRequest, ROMessageDetails messageDetails = null) :
+            base(ROReturnCode, sROMessage, ROInstanceID)
+        {
+            _messageRequest = messageRequest;
+            _messageDetails = messageDetails;
+        }
+
+
+        #endregion
+    }
+
+    [DataContract(Name = "ROMessageDetails", Namespace = "http://Logility.ROWeb/")]
+    public abstract class ROMessageDetails
+    {
+        #region "DataMember"
+        //=======
+        // FIELDS
+        //=======
+
+        #endregion Fields
+
+        #region "Properties"
+        #endregion Properties
+
+        #region "Constructor"
+        public ROMessageDetails() 
+        {
+
+        }
+
+
+        #endregion
+    }
+
+    [DataContract(Name = "ROMessageDetailsCreatePlaceholders", Namespace = "http://Logility.ROWeb/")]
+    public class ROMessageDetailsCreatePlaceholders : ROMessageDetails
+    {
+        #region "DataMember"
+        //=======
+        // FIELDS
+        //=======
+
+        [DataMember(IsRequired = true)]
+        private int _placeholderCount;
+
+        #endregion Fields
+
+        #region "Properties"
+        public int PlaceholderCount
+        {
+            get { return _placeholderCount; }
+        }
+        #endregion Properties
+
+        #region "Constructor"
+        public ROMessageDetailsCreatePlaceholders(int placeholderCount) :
+            base()
+        {
+            _placeholderCount = placeholderCount;
         }
 
 

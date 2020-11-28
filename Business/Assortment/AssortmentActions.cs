@@ -9,6 +9,8 @@ using MIDRetail.DataCommon;
 using MIDRetail.Common;
 using MIDRetail.Business.Allocation;
 
+using Logility.ROWebSharedTypes;
+
 namespace MIDRetail.Business
 {
 	[Serializable]
@@ -34,6 +36,7 @@ namespace MIDRetail.Business
 		private double _averageUnits;
 		private Hashtable _gradeAverageUnitsHash;
 		private int _currSglRid;
+        private int _placeholderCount = 0;
 		//========
 		// STRUCTS
 		//========
@@ -190,6 +193,9 @@ namespace MIDRetail.Business
 					case (eAssortmentActionType.CreatePlaceholders):
 						actionSuccessful = CreatePlaceholders(asp, writeToDB);
 						break;
+                    case (eAssortmentActionType.CreatePlaceholdersBasedOnRevenue):
+                        actionSuccessful = CreatePlaceholdersBasedOnRevenue(asp, writeToDB);
+                        break;
 					case (eAssortmentActionType.BalanceAssortment):
 						actionSuccessful = BalanceAssortment(asp, writeToDB);
 						break;
@@ -1149,8 +1155,571 @@ namespace MIDRetail.Business
 
 		}
 
+        private bool CreatePlaceholdersBasedOnRevenue(AssortmentProfile asp, bool commitToDb)
+        {
+            bool successful = true;
+            try
+            {
+                if (_transaction.CurrentProcessStep == 0)
+                {
+                    successful = CreatePlaceholdersBasedOnRevenue_DeterimePlaceholderCount(asp, commitToDb);
+                }
+                if (_transaction.CurrentProcessStep == 1
+                    && successful == true
+                    && _transaction.MessageResponse == eMessageResponse.Yes)
+                {
+                    successful = CreatePlaceholdersBasedOnRevenue_CreatePlaceholders(asp, commitToDb);
+                }
 
-		private bool Quantity(AssortmentProfile asp, bool commitToDb)
+                return successful;
+            }
+            catch 
+            {
+                throw;
+            }
+        }
+
+        private bool CreatePlaceholdersBasedOnRevenue_DeterimePlaceholderCount(AssortmentProfile asp, bool commitToDb)
+        {
+            NodeDescendantList colorNodeList;
+            PlanOpenParms planOpenParms;
+            PlanCubeGroup cubeGroup = null;
+            double colorRevenue = 0;
+            double colorSellThru = 0;
+            HierarchyNodeProfile nodeProfile;
+
+            int colorNodeCount = 0;   // count of color nodes for a basis to create placeholder
+            int totalColorNodeCount = 0;    // total count of color nodes across all basis
+            double sellThruThreshold = Include.Undefined;    // sell thru threshold from config
+            int currentStyleKey = 0;   // key of current style
+            int styleColorNodeCount = 0;   // count of color nodes for current style
+            int colorNodeCountWithRevenue = 0;   // count of color nodes for style whose sales > 0
+            int colorNodeCountThatExceedsSellThru = 0;   // count of color nodes for style whose sell thru exceeds the threshold
+            int thresholdAdjustment = 0;   // adjust for style adjustments based on threshold
+
+            string parmStr = MIDConfigurationManager.AppSettings["SellThruThreshold"];
+            if (parmStr != null)
+            {
+                try
+                {
+                    sellThruThreshold = Convert.ToDouble(parmStr);
+                }
+                catch
+                {
+                    SAB.ApplicationServerSession.Audit.Add_Msg(eMIDMessageLevel.Warning, "Sell Thru Threshold is invalid and will be ignored.", this.GetType().Name);
+                    sellThruThreshold = Include.Undefined;
+                }
+            }
+
+            if (sellThruThreshold == Include.Undefined)
+            {
+                SAB.ApplicationServerSession.Audit.Add_Msg(eMIDMessageLevel.Warning, "Adjustments based on Sell Thru Threshold will not be performed.", this.GetType().Name);
+            }
+
+            // Determine the starting number of style/colors for the basis with sales
+            foreach (AssortmentBasis ab in asp.AssortmentBasisList)
+            {
+                colorNodeCount = 0;
+                thresholdAdjustment = 0;
+                colorNodeList = SAB.HierarchyServerSession.GetNodeDescendantList(ab.HierarchyNodeProfile.Key, eHierarchyLevelType.Color, eNodeSelectType.NoVirtual);
+
+                foreach (NodeDescendantProfile colorProf in colorNodeList)
+                {
+                    nodeProfile = SAB.HierarchyServerSession.GetNodeData(nodeRID: colorProf.Key);
+                    if (nodeProfile.ColorOrSizeCodeRID > 0)
+                    {
+                        // adjust count based on sell thru
+                        if (currentStyleKey != 0
+                            && currentStyleKey != nodeProfile.HomeHierarchyParentRID)
+                        {
+                            if (styleColorNodeCount > 1
+                                && sellThruThreshold > 0
+                                && colorNodeCountWithRevenue > 0)
+                            {
+                                if (colorNodeCountThatExceedsSellThru > 1) // if multiple colors for a style sell thru exceed threshold increment count
+                                {
+                                    ++thresholdAdjustment;
+                                }
+                                else if (colorNodeCountThatExceedsSellThru == 0) // if no colors for a style sell thru exceed threshold decrement count
+                                {
+                                    --thresholdAdjustment;
+                                }
+                            }
+
+                            // reset counts for next style
+                            colorNodeCountThatExceedsSellThru = 0;
+                            styleColorNodeCount = 0;
+                            colorNodeCountWithRevenue = 0;
+                        }
+
+                        // Create chain cube with color basis as the basis items to obtain sales values.
+                        cubeGroup = (PlanCubeGroup)_transaction.CreateChainPlanMaintCubeGroup();
+                        planOpenParms = new PlanOpenParms(ePlanSessionType.ChainSingleLevel, null);
+                        FillOpenParmForPlan(planOpenParms: planOpenParms, ab: ab, nodeProfile: nodeProfile);
+                        ((ChainPlanMaintCubeGroup)cubeGroup).OpenCubeGroup(planOpenParms);
+                        colorRevenue = GetSalesValueFromCube(ab: ab, cubeGroup: cubeGroup, nodeProfile: nodeProfile);
+                        if (colorRevenue > 0)
+                        {
+                            ++colorNodeCount;
+                            ++colorNodeCountWithRevenue;
+                        }
+
+                        ++styleColorNodeCount;
+                        if (sellThruThreshold > 0)
+                        {
+                            colorSellThru = GetSellThruValueFromCube(ab: ab, cubeGroup: cubeGroup, nodeProfile: nodeProfile);
+                            if (colorSellThru >= sellThruThreshold)
+                            {
+                                ++colorNodeCountThatExceedsSellThru;
+                            }
+                        }
+                        // clean up cube resources
+                        cubeGroup.Dispose();
+                        cubeGroup = null;
+                    }
+
+                    currentStyleKey = nodeProfile.HomeHierarchyParentRID;
+                }  // end descendent loop
+
+                if (styleColorNodeCount > 1
+                    && sellThruThreshold > 0
+                    && colorNodeCountWithRevenue > 0)
+                {
+                    if (colorNodeCountThatExceedsSellThru > 1)
+                    {
+                        ++thresholdAdjustment;
+                    }
+                    else if (colorNodeCountThatExceedsSellThru == 0)
+                    {
+                        --thresholdAdjustment;
+                    }
+                }
+
+                if (asp.CalculatedRevenue > 0)
+                {
+                    // use decimal math for rounding
+                    colorNodeCount = Convert.ToInt32(((double)asp.TargetRevenue / (double)asp.CalculatedRevenue) * colorNodeCount);
+                }
+                colorNodeCount += thresholdAdjustment;
+
+                // Adjust the style/color node count with the basis percentage
+                totalColorNodeCount += Convert.ToInt32(colorNodeCount * (ab.Weight / 100));
+            }
+
+            if (totalColorNodeCount == 0)
+            {
+                MIDEnvironment.Message = "Revenue values not found.  Placeholders will not be created.";
+                MIDEnvironment.requestFailed = true;
+                SAB.ApplicationServerSession.Audit.Add_Msg(eMIDMessageLevel.Warning, "Revenue values not found.  Placeholders will not be created.", this.ToString());
+                return false;
+            }
+
+            _placeholderCount = totalColorNodeCount;
+            _transaction.CurrentProcessStep = 1;
+
+            int maximumPlaceholderCount = 100;
+
+            if (_placeholderCount > maximumPlaceholderCount)
+            {
+                throw new MessageRequestException(
+                    messageRequest: eMessageRequest.CreatePlaceholderContinue,
+                    messageDetails: new ROMessageDetailsCreatePlaceholders(placeholderCount: _placeholderCount)
+                    );
+            }
+
+            // set response to process will continue if no error occurs.
+            _transaction.MessageResponse = eMessageResponse.Yes;
+
+            return true;
+        }
+
+        private bool CreatePlaceholdersBasedOnRevenue_CreatePlaceholders(AssortmentProfile asp, bool commitToDb)
+        {
+            int placeHolderCount = _placeholderCount;
+
+            //int listCnt = this._averageUnitList.Count;
+
+            //List<int> asrtTotalList = new List<int>();
+            //List<int> numStoresList = new List<int>();
+            //List<int> avgStoreList = new List<int>();
+            //List<int> newPlaceholderList = new List<int>();
+            //for (int i = 0; i < listCnt; i++)
+            //{
+            //    asrtTotalList.Add(0);
+            //    numStoresList.Add(0);
+            //    avgStoreList.Add(0);
+            //    newPlaceholderList.Add(0);
+            //}
+            List<AssortStyleClosed> closedList = new List<AssortStyleClosed>();
+
+            AssortmentDetailData assortDetailData = _asrtCubeGroup.AssortmentDetailData;
+            try
+            {
+                DataTable dt = AssortmentProfile.CreateAssortmentComponentTable(_asrtCubeGroup.AssortmentComponentVariables);
+                PackColorProfileXRef packColorXRef = new PackColorProfileXRef();
+                asp.GetAssortmentComponents(this._asrtCubeGroup, dt, packColorXRef);
+
+                ProfileList gradeList = asp.GetAssortmentStoreGrades();
+                ProfileList sgll = _asrtCubeGroup.GetFilteredProfileList(eProfileType.StoreGroupLevel);
+
+                Cube myCube = _asrtCubeGroup.GetCube(eCubeType.AssortmentSummaryTotal);
+                AssortmentCellReference asrtCellRef = new AssortmentCellReference((AssortmentSummaryTotal)myCube);
+
+                //==============================
+                // Total num stores from cube
+                //==============================
+                double totNumStores = 0.0d;
+                asrtCellRef[eProfileType.AssortmentSummaryVariable] = _asrtCubeGroup.AssortmentComputations.AssortmentSummaryVariables.VariableProfileList.FindKey((int)eAssortmentSummaryVariables.NumStores).Key;
+                asrtCellRef[eProfileType.AssortmentQuantityVariable] = (int)eAssortmentQuantityVariables.Value;
+                totNumStores = asrtCellRef.CurrentCellValue;
+                Debug.WriteLine("Total Num Stores: " + totNumStores.ToString());
+
+                //================================
+                // Num stores from all set/grades
+                //================================
+                double cellValue = 0.0d;
+                int aIdx = -1;
+
+                myCube = _asrtCubeGroup.GetCube(eCubeType.AssortmentSummaryGrade);
+                asrtCellRef = new AssortmentCellReference((AssortmentSummaryGrade)myCube);
+
+                //foreach (StoreGradeProfile sgp in gradeList.ArrayList)
+                //{
+                //    aIdx++;
+                //    foreach (StoreGroupLevelProfile sglp in sgll.ArrayList)
+                //    {
+                //        asrtCellRef[eProfileType.StoreGroupLevel] = sglp.Key;
+                //        asrtCellRef[eProfileType.StoreGrade] = sgp.Key;
+                //        asrtCellRef[eProfileType.AssortmentSummaryVariable] = _asrtCubeGroup.AssortmentComputations.AssortmentSummaryVariables.VariableProfileList.FindKey((int)eAssortmentSummaryVariables.NumStores).Key;
+                //        asrtCellRef[eProfileType.AssortmentQuantityVariable] = (int)eAssortmentQuantityVariables.Value;
+                //        cellValue = asrtCellRef.CurrentCellValue;
+                //        numStoresList[aIdx] += (int)cellValue;
+
+                //        asrtCellRef[eProfileType.StoreGroupLevel] = sglp.Key;
+                //        asrtCellRef[eProfileType.StoreGrade] = sgp.Key;
+                //        asrtCellRef[eProfileType.AssortmentSummaryVariable] = _asrtCubeGroup.AssortmentComputations.AssortmentSummaryVariables.VariableProfileList.FindKey((int)eAssortmentSummaryVariables.Units).Key;
+                //        asrtCellRef[eProfileType.AssortmentQuantityVariable] = (int)eAssortmentQuantityVariables.Value;
+                //        cellValue = asrtCellRef.CurrentCellValue;
+                //        asrtTotalList[aIdx] += (int)cellValue;
+                //    }
+                //}
+
+                //==================================================================
+                // Find the average store per grade.
+                // then divide the average store per grade by the average units
+                // entered by the user.
+                //==================================================================
+                //for (int i = 0; i < listCnt; i++)
+                //{
+                //    if (numStoresList[i] > 0)
+                //    {
+                //        avgStoreList[i] = asrtTotalList[i] / numStoresList[i];
+                //        if (_averageUnitList[i] > 0)
+                //        {
+                //            newPlaceholderList[i] = avgStoreList[i] / _averageUnitList[i];
+                //        }
+                //    }
+                //}
+
+                //==============================================
+                // Determine the maximum number of placeholders
+                //==============================================
+                //int maxPlaceHolders = GetMaxPlaceholders(listCnt, newPlaceholderList);
+                int maxPlaceHolders = placeHolderCount;
+
+                //=============================================================
+                // Get new placeholder nodes and add placeholder style headers
+                //=============================================================
+                int placeholderCount = GetPlaceHolderStyleCount(dt);
+                ArrayList headerRids = new ArrayList();
+                if (maxPlaceHolders > placeholderCount)
+                {
+                    int numOfNewPlaceholders = maxPlaceHolders - placeholderCount;
+                    HierarchyNodeList hierNodeList = SAB.HierarchyServerSession.GetPlaceholderStyles(asp.AssortmentAnchorNodeRid,
+                            numOfNewPlaceholders, placeholderCount, asp.Key);
+
+                    AllocationProfile ap = null;
+                    int asrtPlaceholderSeq = 0;
+                    foreach (HierarchyNodeProfile hnp in hierNodeList)
+                    {
+                        placeholderCount++;
+                        string lblPhStyle = MIDText.GetTextOnly(eMIDTextCode.lbl_PhStyle);
+                        ap = new AllocationProfile(_transaction, asp.HeaderID + " " + lblPhStyle + " " + placeholderCount.ToString(CultureInfo.CurrentUICulture),
+                                Include.NoRID, SAB.ApplicationServerSession);
+
+                        ap.StyleHnRID = hnp.Key;
+                        ap.AsrtRID = asp.Key;
+                        ap.PlanHnRID = asp.PlanHnRID;
+                        MIDException midException;
+                        if (!ap.SetHeaderType(eHeaderType.Placeholder, out midException))
+                        {
+                            throw midException;
+                        }
+                        ap.AsrtPlaceholderSeq = ++asrtPlaceholderSeq;
+
+                        ap.HeaderDescription = hnp.NodeDescription;
+                        ap.HeaderDay = DateTime.Now;
+                        DateRangeProfile drp = SAB.ClientServerSession.Calendar.GetDateRange(asp.AssortmentCalendarDateRangeRid);
+                        ap.ShipToDay = SAB.ClientServerSession.Calendar.GetFirstDayOfRange(drp).Date;
+
+                        if (asp.AssortmentBeginDayCalendarDateRangeRid != Include.UndefinedCalendarDateRange)
+                        {
+                            DateRangeProfile drpBeginDay = SAB.ClientServerSession.Calendar.GetDateRange(asp.AssortmentBeginDayCalendarDateRangeRid);
+                            ap.BeginDay = SAB.ClientServerSession.Calendar.GetFirstDayOfRange(drpBeginDay).Date;
+                        }
+
+                        ap.WriteHeader();
+                        _transaction.AddAllocationProfile(ap);
+
+                        headerRids.Add(ap.Key);
+                        //AddToClosedList(listCnt, newPlaceholderList, closedList, gradeList, sgll, placeholderCount, ap);
+                    }
+                }
+
+                //=============================================
+                // Write Average values to new placeholders
+                //=============================================
+                assortDetailData.OpenUpdateConnection();
+                assortDetailData.Variable_XMLInit();
+                int writeCount = 0;
+                int totalAssortmentUnits = 0;
+                foreach (StoreGroupLevelProfile sglp in sgll.ArrayList)
+                {
+                    int gradeIdx = 0;
+                    foreach (StoreGradeProfile sgp in gradeList.ArrayList)
+                    {
+                        //int avg = _averageUnitList[gradeIdx++]; 
+                        int avg = 0;
+
+                        foreach (int headerRid in headerRids)
+                        {
+                            bool closedStyle = false;
+                            foreach (AssortStyleClosed asc in closedList)
+                            {
+                                if (asc.HeaderRid == headerRid && asc.StoreGroupLevelRid == sglp.Key && asc.Grade == sgp.Key)
+                                {
+                                    closedStyle = true;
+                                }
+                            }
+
+                            if (!closedStyle)
+                            {
+                                ProfileList storeList = _asrtCubeGroup.GetStoresInSetGrade(sglp.Key, sgp.Key);
+                                AllocationProfile ap = _transaction.GetAllocationProfile(headerRid);
+                                int value = storeList.Count * avg;
+                                ap.SetAllocatedUnits(storeList, value);
+                                totalAssortmentUnits += value;
+
+                                assortDetailData.AssortmentMatrixDetail_XMLInsert(
+                                    headerRid, int.MaxValue, int.MaxValue, sglp.Key, sgp.Key, avg, false);
+
+                                writeCount++;
+                                if (writeCount > MIDConnectionString.CommitLimit)
+                                {
+                                    assortDetailData.AssortmentMatrixDetail_XMLUpdate();
+                                    assortDetailData.Variable_XMLInit();
+                                    writeCount = 0;
+                                }
+                            }
+                        }
+
+                    }
+                }
+
+                foreach (int headerRid in headerRids)
+                {
+                    AllocationProfile ap = _transaction.GetAllocationProfile(headerRid);
+                    ap.WriteHeader();
+                }
+
+                // Update total assortment units
+                asp.WriteHeader();
+
+                if (writeCount > 0)
+                {
+                    assortDetailData.AssortmentMatrixDetail_XMLUpdate();
+                }
+
+                assortDetailData.CommitData();
+
+
+                InsertAssortStyleClosed(closedList);
+
+                if (commitToDb)
+                {
+                    asp.WriteHeader();
+                }
+                _transaction.SetAllocationActionStatus(asp.Key, eAllocationActionStatus.ActionCompletedSuccessfully);
+                string msg = MIDText.GetText(eMIDTextCode.msg_al_MethodCompletedSuccessfully);
+                msg = msg.Replace("{0}", "Assortment");
+                msg = msg.Replace("{1}", "Create Placeholders");
+                SAB.ApplicationServerSession.Audit.Add_Msg(eMIDMessageLevel.Information, msg, this.ToString());
+
+                _transaction.CurrentProcessStep = 2;
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _transaction.SetAllocationActionStatus(asp.Key, eAllocationActionStatus.ActionFailed);
+                SAB.ApplicationServerSession.Audit.Add_Msg(eMIDMessageLevel.Severe, ex.ToString(), this.ToString());
+                string msg = MIDText.GetText(eMIDTextCode.msg_al_MethodFailed);
+                msg = msg.Replace("{0}", "Assortment");
+                msg = msg.Replace("{1}", "Create Placeholders");
+                SAB.ApplicationServerSession.Audit.Add_Msg(eMIDMessageLevel.Severe, msg, this.ToString());
+                throw;
+            }
+            finally
+            {
+                if (assortDetailData.ConnectionIsOpen)
+                {
+                    assortDetailData.CloseUpdateConnection();
+                }
+            }
+        }
+
+        /// <summary>
+		/// Fills in the plan part of the CubeGroup open parms
+		/// </summary>
+		private void FillOpenParmForPlan(PlanOpenParms planOpenParms, AssortmentBasis ab, HierarchyNodeProfile nodeProfile)
+        {
+            planOpenParms.FunctionSecurityProfile = new FunctionSecurityProfile((int)eSecurityFunctions.NotSpecified);
+
+            planOpenParms.FunctionSecurityProfile.SetReadOnly();
+
+            planOpenParms.StoreGroupRID = SAB.ClientServerSession.GlobalOptions.OTSPlanStoreGroupRID;
+            planOpenParms.GroupBy = eStorePlanSelectedGroupBy.ByTimePeriod;
+            planOpenParms.ViewRID = Include.DefaultPlanViewRID;
+            planOpenParms.DisplayTimeBy = eDisplayTimeBy.ByWeek;
+            planOpenParms.IneligibleStores = false;
+            planOpenParms.SimilarStores = false;
+            planOpenParms.LowLevelsType = eLowLevelsType.None;
+            planOpenParms.IsMulti = false;
+            planOpenParms.IsTotRT = false;
+
+            planOpenParms.ChainHLPlanProfile.VersionProfile = ab.VersionProfile;
+            planOpenParms.ChainHLPlanProfile.NodeProfile = nodeProfile;
+            planOpenParms.DateRangeProfile = ab.HorizonDate;
+
+            planOpenParms.ComputationsMode = SAB.ApplicationServerSession.ComputationsCollection.GetDefaultComputations().Name;
+        }
+
+        private double GetSalesValueFromCube(AssortmentBasis ab, PlanCubeGroup cubeGroup, HierarchyNodeProfile nodeProfile)
+        {
+            double targetRevenue = 0;
+            PlanCellReference planCellRef;
+            int variableKey;
+
+            variableKey = DetermineSalesVariable(planLevlType: ab.HierarchyNodeProfile.OTSPlanLevelType);
+
+            if (variableKey > 0)
+            {
+                planCellRef = (PlanCellReference)((PlanCube)cubeGroup.GetCube(eCubeType.ChainPlanDateTotal)).CreateCellReference();
+                planCellRef[eProfileType.Version] = ab.VersionProfile.Key;
+                planCellRef[eProfileType.HierarchyNode] = nodeProfile.Key;
+                planCellRef[eProfileType.TimeTotalVariable] = ((VariableProfile)_transaction.PlanComputations.PlanVariables.VariableProfileList.FindKey(variableKey)).GetChainTimeTotalVariable(1).Key;
+                planCellRef[eProfileType.QuantityVariable] = _transaction.PlanComputations.PlanQuantityVariables.ValueQuantity.Key;
+                planCellRef[eProfileType.Variable] = variableKey;
+
+                targetRevenue = planCellRef.CurrentCellValue * (ab.Weight / 100);
+            }
+
+            return targetRevenue;
+        }
+
+        private int DetermineSalesVariable(eOTSPlanLevelType planLevlType)
+        {
+            foreach (VariableProfile vp in _transaction.PlanComputations.PlanVariables.VariableProfileList)
+            {
+                if (vp.VariableName.Trim() == "Tot Sales $")
+                {
+                    return vp.Key;
+                }
+            }
+
+            foreach (VariableProfile vp in _transaction.PlanComputations.PlanVariables.VariableProfileList)
+            {
+                if (planLevlType == eOTSPlanLevelType.Regular
+                    && vp.DatabaseColumnName == "SALES_REG_DLR")
+                {
+                    return vp.Key;
+                }
+                else if (planLevlType != eOTSPlanLevelType.Regular
+                    && vp.DatabaseColumnName == "TOT_STR_SALES_DLR")
+                {
+                    return vp.Key;
+                }
+            }
+
+            foreach (VariableProfile vp in _transaction.PlanComputations.PlanVariables.VariableProfileList)
+            {
+                if (planLevlType == eOTSPlanLevelType.Regular
+                    && vp.DatabaseColumnName == "SALES_REG")
+                {
+                    return vp.Key;
+                }
+                else if (planLevlType != eOTSPlanLevelType.Regular
+                    && vp.DatabaseColumnName == "SALES")
+                {
+                    return vp.Key;
+                }
+            }
+
+            return Include.Undefined;
+        }
+
+        private double GetSellThruValueFromCube(AssortmentBasis ab, PlanCubeGroup cubeGroup, HierarchyNodeProfile nodeProfile)
+        {
+            double sellThru = 0;
+            PlanCellReference planCellRef;
+            int variableKey;
+
+            variableKey = DetermineSellThruVariable(planLevlType: ab.HierarchyNodeProfile.OTSPlanLevelType);
+
+            if (variableKey > 0)
+            {
+                planCellRef = (PlanCellReference)((PlanCube)cubeGroup.GetCube(eCubeType.ChainPlanDateTotal)).CreateCellReference();
+                planCellRef[eProfileType.Version] = ab.VersionProfile.Key;
+                planCellRef[eProfileType.HierarchyNode] = nodeProfile.Key;
+                planCellRef[eProfileType.TimeTotalVariable] = ((VariableProfile)_transaction.PlanComputations.PlanVariables.VariableProfileList.FindKey(variableKey)).GetChainTimeTotalVariable(1).Key;
+                planCellRef[eProfileType.QuantityVariable] = _transaction.PlanComputations.PlanQuantityVariables.ValueQuantity.Key;
+                planCellRef[eProfileType.Variable] = variableKey;
+
+                //sell thru percentage is not affected by weighting
+                sellThru = planCellRef.CurrentCellValue;
+            }
+
+            return sellThru;
+        }
+
+        private int DetermineSellThruVariable(eOTSPlanLevelType planLevlType)
+        {
+            foreach (VariableProfile vp in _transaction.PlanComputations.PlanVariables.VariableProfileList)
+            {
+                if (vp.VariableName == "Str Sell Thru")
+                {
+                    return vp.Key;
+                }
+            }
+
+            foreach (VariableProfile vp in _transaction.PlanComputations.PlanVariables.VariableProfileList)
+            {
+                if (planLevlType == eOTSPlanLevelType.Regular
+                    && vp.VariableName == "Sell Thru % R/P")
+                {
+                    return vp.Key;
+                }
+                else if (planLevlType != eOTSPlanLevelType.Regular
+                    && vp.VariableName == "Sell Thru %")
+                {
+                    return vp.Key;
+                }
+            }
+
+            return Include.Undefined;
+        }
+
+        private bool Quantity(AssortmentProfile asp, bool commitToDb)
 		{
 			//List<int> asrtTotalList = new List<int>();
 			//List<int> numStoresList = new List<int>();
