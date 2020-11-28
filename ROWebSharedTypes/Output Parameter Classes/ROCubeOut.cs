@@ -574,16 +574,30 @@ namespace Logility.ROWebSharedTypes
         private bool _isColDisplayedInWindows;
         [DataMember(IsRequired = true)]
         private int _waferNo;
+        [DataMember(IsRequired = true)]
+        private int _width;
 
-        public ROColumnAttributes(string columnName, int columnIndex)
+        public ROColumnAttributes(
+            string columnName, 
+            int columnIndex, 
+            int width = 150
+            )
         {
             _columnName = columnName;
             _columnLabel = columnName;
             _groupName = "";
             _columnIndex = columnIndex;
-
+            _width = width;
         }
-        public ROColumnAttributes(string columnName, int columnIndex, int columnPosition, int colHeader, bool isColumnInWindows, int waferNo)
+        public ROColumnAttributes(
+            string columnName, 
+            int columnIndex, 
+            int columnPosition, 
+            int colHeader, 
+            bool isColumnInWindows, 
+            int waferNo, 
+            int width = 150
+            )
         {
             _columnName = columnName;
             _columnLabel = columnName;
@@ -593,15 +607,24 @@ namespace Logility.ROWebSharedTypes
             _colHeader = colHeader;
             _isColDisplayedInWindows = isColumnInWindows;
             _waferNo = waferNo;
+            _width = width;
         }
 
-        public ROColumnAttributes(string columnName, string label, string groupName, int columnIndex, int columnPosition)
+        public ROColumnAttributes(
+            string columnName, 
+            string label, 
+            string groupName, 
+            int columnIndex, 
+            int columnPosition, 
+            int width = Include.DefaultColumnWidth
+            )
         {
             _columnName = columnName;
             _columnLabel = label;
             _groupName = groupName;
             _columnIndex = columnIndex;
             _columnPosition = columnPosition;
+            _width = width;
         }
 
         public string Name { get { return _columnName; } }
@@ -614,6 +637,8 @@ namespace Logility.ROWebSharedTypes
         public int ColumnHeader { get { return _colHeader; } }
 
         public bool DisplayedInWindows { get { return _isColDisplayedInWindows; } }
+
+        public int Width { get { return _width; } }
     }
 
     [DataContract(Name = "RORowAttributes", Namespace = "http://Logility.ROWeb/")]

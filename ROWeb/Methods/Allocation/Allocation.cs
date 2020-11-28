@@ -162,6 +162,11 @@ namespace Logility.ROWeb
             }
         }
 
+        /// <summary>
+        /// Process the ROAllocation request
+        /// </summary>
+        /// <param name="Parms"></param>
+        /// <returns>Abstracted data per request</returns>
         override public ROOut ProcessRequest(ROParms Parms)
         {
             switch (Parms.RORequest)
@@ -179,8 +184,12 @@ namespace Logility.ROWeb
                 // Worklist
                 case eRORequest.AllocationWorklistView:
                     return GetAllocationWorklistViewDetails(rOKeyParams: (ROKeyParms)Parms);
+                case eRORequest.SaveAllocationWorklistView:
+                    return SaveAllocationWorklistViewDetails((ROAllocationWorklistViewDetailsParms)Parms);
                 case eRORequest.GetAllocationWorklistColumns:
                     return GetAllocationWorklistColumns();
+                case eRORequest.DeleteAllocationWorklistView:
+                    return DeleteAllocationWorklistViewDetails();
                 case eRORequest.GetAllocationHeaders:
                     return GetAllocationHeaderData();
                 case eRORequest.GetAllocationSelectedHeaderDetails:
@@ -203,6 +212,8 @@ namespace Logility.ROWeb
                     return GetViewDetails();
                 case eRORequest.SaveViewDetails:
                     return SaveViewDetails((ROAllocationReviewViewDetailsParms)Parms);
+                case eRORequest.DeleteViewDetails:
+                    return DeleteReviewViewDetails();
 
                 // Style Review
                 case eRORequest.AllocationStyleReviewViews:

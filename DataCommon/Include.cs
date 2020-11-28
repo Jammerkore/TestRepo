@@ -451,12 +451,12 @@ namespace MIDRetail.DataCommon
 		//End TT#724 - JScott - The "Available Stores" attribute set can be renamed in the Store Group Explorer and could cause processing problems
         public const string DefaultThemeName = "Modern 1";
         public const string NullForStringValue = "~NFSV~"; //TT#1310-MD -jsobek -Error when adding a new Store -changing null to ~NFSV~ so it will not be guessed easily by clients and wont interfere will characteristic code
+        public const int DefaultColumnWidth = 150;
 
-
-		// Batch constants
-//Begin Track #3727 - JScott - Write plans out in smaller chunks
-//		public const int DefaultCommitLimit = 10000;
-		public const int DefaultCommitLimit = 1000;
+        // Batch constants
+        //Begin Track #3727 - JScott - Write plans out in smaller chunks
+        //		public const int DefaultCommitLimit = 10000;
+        public const int DefaultCommitLimit = 1000;
 //End Track #3727 - JScott - Write plans out in smaller chunks
 		public const int DefaultBulkInsertBatchSize = 100000;
 		public const int DefaultBulkInsertRetryCount = 3;

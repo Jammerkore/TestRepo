@@ -24,6 +24,7 @@ namespace Logility.ROWeb
         private ArrayList _headerProfileArrayList;
         private HeaderCharGroupProfileList _headerCharGroupProfileList = null;
         private int _headerFilterRID = Include.NoRID;
+        private int _currentWorklistViewRID = Include.NoRID;
         private Hashtable _colorsForStyle = new Hashtable();
         private Hashtable _nodeDataHash = new Hashtable();
         internal AllocationProfileList _allocProfileList;
@@ -856,6 +857,11 @@ namespace Logility.ROWeb
         #endregion
 
         #region Allocation Workflow Steps
+        /// <summary>
+        /// Get the Allocation Worklist view
+        /// </summary>
+        /// <param name="rOKeyParams"></param>
+        /// <returns>List of ROAllocationWorklistOut containing information for each column in the view</returns>
         public ROOut GetAllocationWorklistViewDetails(ROKeyParms rOKeyParams)
         {
             try
@@ -929,11 +935,161 @@ namespace Logility.ROWeb
         internal DataTable BuildAllocationWorklistData(ROKeyParms roKeyParams)
         {
             GridViewData gridViewData = new GridViewData();
+            _currentWorklistViewRID = roKeyParams.Key;
             DataTable dtWorklistViewDetail = gridViewData.GridViewDetail_Read_ByPosition(roKeyParams.Key);
 
             return dtWorklistViewDetail;
         }
         #endregion
+
+        /// <summary>
+        /// Saves the Allocation Worklist view to the database
+        /// </summary>
+        /// <param name="viewDetails"></param>
+        /// <returns>List of ROAllocationWorklistOut containing information for each column in the view</returns>
+        public ROOut SaveAllocationWorklistViewDetails(ROAllocationWorklistViewDetailsParms viewDetails)
+        {
+            string message = null;
+            int viewKey, viewUserKey;
+            // columnType indicates the type of data.  "B" is base header value; "C" is header characteristic value.
+            string columnType;
+            int headerCharacteristicGroupKey;
+            GridViewData gridViewData = new GridViewData();
+            eLayoutID layoutID;
+            string columnKey;
+            int result;
+
+            try
+            {
+                // make sure at least one variable is selected
+                bool variableIsSelected = false;
+                foreach (ROAllocationWorklistEntry entry in viewDetails.ROAllocationWorklistViewDetails.ViewDetails)
+                {
+                    if (!entry.IsHidden)
+                    {
+                        variableIsSelected = true;
+                        break;
+                    }
+                }
+
+                if (!variableIsSelected)
+                {
+                    return new ROIListOut(
+                        ROReturnCode: eROReturnCode.Failure,
+                        sROMessage: SAB.ClientServerSession.Audit.GetText(messageCode: eMIDTextCode.msg_NeedAtLeastOneVariable, addToAuditReport: true),
+                        ROInstanceID: ROInstanceID,
+                        ROIListOutput: viewDetails.ROAllocationWorklistViewDetails.ViewDetails);
+                }
+
+                if (viewDetails.ROAllocationWorklistViewDetails.IsUserView)
+                {
+                    viewUserKey = SAB.ClientServerSession.UserRID;
+                }
+                else
+                {
+                    viewUserKey = Include.GlobalUserRID;
+                }
+
+                layoutID = eLayoutID.allocationWorkspaceGrid;
+                int workspaceFilterRID = Include.NoRID;
+                if (viewDetails.ROAllocationWorklistViewDetails.FilterIsSet)
+                {
+                    workspaceFilterRID = viewDetails.ROAllocationWorklistViewDetails.Filter.Key;
+                }
+                bool useFilterSorting = false;
+
+                gridViewData.OpenUpdateConnection();
+
+                try
+                {
+                    viewKey = gridViewData.GridView_GetKey(viewUserKey, (int)layoutID, viewDetails.ROAllocationWorklistViewDetails.View.Value);
+                    if (viewKey != Include.NoRID)
+                    {
+                        gridViewData.GridViewDetail_Delete(viewKey);
+                        gridViewData.GridView_Update(viewKey, false, Include.NoRID, Include.NoRID, false, workspaceFilterRID, useFilterSorting);
+                    }
+                    else
+                    {
+                        viewKey = gridViewData.GridView_Insert(viewUserKey, (int)layoutID, viewDetails.ROAllocationWorklistViewDetails.View.Value, false, Include.NoRID, Include.NoRID, false, workspaceFilterRID, useFilterSorting);
+                        string viewName = viewDetails.ROAllocationWorklistViewDetails.View.Value;
+                        viewDetails.ROAllocationWorklistViewDetails.View = new KeyValuePair<int, string>(viewKey, viewName);
+                    }
+
+                    columnType = "B";
+                    headerCharacteristicGroupKey = Include.NoRID;
+
+                    HeaderCharacteristicsData headerCharacteristicsData = new HeaderCharacteristicsData();
+
+                    foreach (ROAllocationWorklistEntry entry in viewDetails.ROAllocationWorklistViewDetails.ViewDetails)
+                    {
+                        columnKey = entry.ColumnKey;
+
+                        headerCharacteristicGroupKey = Include.NoRID;
+                        columnType = "B";
+                        if (!string.IsNullOrEmpty(entry.HeaderCharacteristicGroupKey))
+                        {
+                            if (int.TryParse(entry.HeaderCharacteristicGroupKey, out result))
+                            {
+                                headerCharacteristicGroupKey = result;
+                                DataTable HCGdt = headerCharacteristicsData.HeaderCharGroup_Read(headerCharacteristicGroupKey);
+                                if (HCGdt.Rows.Count > 0)
+                                {
+                                    DataRow HCGdr = HCGdt.Rows[0];
+                                    columnKey = (string)HCGdr["HCG_ID"];
+                                    columnType = "C";
+                                }
+                                else
+                                {
+                                    continue;
+                                }
+                            }
+                            else
+                            {
+                                continue;
+                            }
+                        }
+
+                        gridViewData.GridViewDetail_Insert(viewKey, "Header", columnKey, entry.VisiblePosition, entry.IsHidden,
+                                                  entry.IsGroupByColumn, entry.SortDirection, entry.SortSequence, entry.Width,
+                                                  columnType, headerCharacteristicGroupKey);
+
+                    }
+
+                    gridViewData.CommitData();
+                }
+                catch (Exception exc)
+                {
+                    gridViewData.Rollback();
+                    message = exc.ToString();
+                    throw;
+                }
+                finally
+                {
+                    gridViewData.CloseUpdateConnection();
+                }
+            }
+            catch (Exception exc)
+            {
+                message = exc.ToString();
+                throw;
+            }
+
+            ROKeyParms rOKeyParams = new ROKeyParms(
+                sROUserID: viewDetails.ROUserID,
+                sROSessionID: viewDetails.ROSessionID,
+                ROClass: viewDetails.ROClass,
+                RORequest: eRORequest.AllocationWorklistView,
+                ROInstanceID: viewDetails.ROInstanceID,
+                iKey: viewDetails.ROAllocationWorklistViewDetails.View.Key
+                );
+
+            return GetAllocationWorklistViewDetails(rOKeyParams);
+        }
+
+        public ROOut DeleteAllocationWorklistViewDetails()
+        {
+            return DeleteViewDetails(viewKey: _currentWorklistViewRID);
+        }
 
         #region Build Header View Field Mapping
         private void BuildHeaderViewFieldMapping()

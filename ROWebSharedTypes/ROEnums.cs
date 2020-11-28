@@ -164,6 +164,7 @@
         SaveAs,
         GetViewDetails,
         SaveViewDetails,
+        DeleteViewDetails,
 
         //Hierarchy
         GetHierarchies,
@@ -240,6 +241,8 @@
         SetAllocationSelectedHeaders,
         GetAllocationSelectedHeaderDetails,
         AllocationWorklistView,
+        SaveAllocationWorklistView,
+        DeleteAllocationWorklistView,
         SetAllocationSelectedFilterHeaders,
         AllocationStyleReviewViews,
         AllocationStyleReviewVelocityViews,

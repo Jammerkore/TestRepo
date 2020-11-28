@@ -4021,7 +4021,7 @@ namespace Logility.ROWeb
                     {                        
                         if (row == 0)
                         {
-                            asrtMatrixCells.Columns.Add(new ROColumnAttributes(_gridData[gridId][row, col].ValueAsString, 0));
+                            asrtMatrixCells.Columns.Add(new ROColumnAttributes(_gridData[gridId][row, col].ValueAsString, 0, Include.DefaultColumnWidth));
                         }
                         else
                         {                            
@@ -4054,7 +4054,7 @@ namespace Logility.ROWeb
                                 }
                                 else
                                 {
-                                    asrtMatrixCells.Columns.Add(new ROColumnAttributes(_gridData[gridId][r, c].ValueAsString, 0));
+                                    asrtMatrixCells.Columns.Add(new ROColumnAttributes(_gridData[gridId][r, c].ValueAsString, 0, Include.DefaultColumnWidth));
                                 }
                             }
                             else
@@ -4110,10 +4110,10 @@ namespace Logility.ROWeb
                 }
             }                      
 
-            asrtMatrixCells.Columns.Add(new ROColumnAttributes(sCol1, 0));
+            asrtMatrixCells.Columns.Add(new ROColumnAttributes(sCol1, 0, Include.DefaultColumnWidth));
 
             string sCol2 = _gridData[gridId][0, colIndex].ValueAsString;
-            asrtMatrixCells.Columns.Add(new ROColumnAttributes(sCol2, 1));
+            asrtMatrixCells.Columns.Add(new ROColumnAttributes(sCol2, 1, Include.DefaultColumnWidth));
 
             //To add row attributes, get the grid 5 row count and loopin 
             ROCells gridCells = _asrtMatrixROData.GetCells(eDataType.AssortmentDetailTotals);

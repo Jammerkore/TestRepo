@@ -276,7 +276,7 @@ namespace MIDRetail.CopyRelease
                 txtFTPPath.Tag = "Select the location where the client will retrive the release from the FTP site";
                 btnFTPPath.Tag = "Select the location where the client will retrive the release from the FTP site";
 
-                GetSCMInfo();
+                //GetSCMInfo();
 
             }
             catch (Exception ex)
@@ -445,8 +445,8 @@ namespace MIDRetail.CopyRelease
                 GenerateLicenseKey(true);
                 // End TT#881 - MD - stodd - Modify Copy Release to generate license key for QA release also
 
-                UpdateStatus("Renaming SCM Branch");
-                RenameSCMBranch();
+                //UpdateStatus("Renaming SCM Branch");
+                //RenameSCMBranch();
 
                 UpdateStatus("Done");
                 btnClose.Focus();

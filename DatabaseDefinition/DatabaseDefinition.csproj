@@ -144,6 +144,7 @@
     <Content Include="SQL_Constraints\METHOD_CREATE_MASTER_HEADERS_OVERRIDE_FK2.SQL" />
     <Content Include="SQL_Constraints\METHOD_CREATE_MASTER_HEADERS_OVERRIDE_FK1.SQL" />
     <Content Include="SQL_Constraints\METHOD_CREATE_MASTER_HEADERS_MERCHANDISE_FK2.SQL" />
+    <Content Include="SQL_Constraints\PLAN_VIEW_PLAN_VIEW_FORMAT_FK1.SQL" />
     <Content Include="SQL_Functions_Scalar\UDF_MID_GET_TIMEID_FROM_DATE.SQL" />
     <Content Include="SQL_StoredProcedures\MID_API_PROCESS_CONTROL_RULES_UPDATE.SQL" />
     <Content Include="SQL_StoredProcedures\MID_EXTRACT_PLANNING_CONTROL_CLEAR_EXTRACT_DATES.SQL" />
@@ -169,6 +170,9 @@
     <Content Include="SQL_StoredProcedures\MID_METHOD_PLANNING_EXTRACT_VARIABLES_DELETE.SQL" />
     <Content Include="SQL_StoredProcedures\MID_METHOD_PLANNING_EXTRACT_VARIABLES_INSERT.SQL" />
     <Content Include="SQL_StoredProcedures\MID_METHOD_PLANNING_EXTRACT_VARIABLES_READ.SQL" />
+    <Content Include="SQL_StoredProcedures\MID_PLAN_VIEW_FORMAT_DELETE.SQL" />
+    <Content Include="SQL_StoredProcedures\MID_PLAN_VIEW_FORMAT_INSERT.SQL" />
+    <Content Include="SQL_StoredProcedures\MID_PLAN_VIEW_FORMAT_READ.SQL" />
     <Content Include="SQL_StoredProcedures\MID_ROLLUP_ITEM_READ_PROCESSED.SQL" />
     <Content Include="SQL_StoredProcedures\MID_STORE_GROUP_COUNT.SQL" />
     <Content Include="SQL_StoredProcedures\MID_SYSTEM_OPTIONS_DC_FULFILLMENT_STORE_ORDER_DELETE_ALL.SQL" />
@@ -2542,6 +2546,7 @@
     <Content Include="SQL_Tables\METHOD_CREATE_MASTER_HEADERS.SQL" />
     <Content Include="SQL_Tables\METHOD_PLANNING_EXTRACT.SQL" />
     <Content Include="SQL_Tables\METHOD_PLANNING_EXTRACT_VARIABLES.SQL" />
+    <Content Include="SQL_Tables\PLAN_VIEW_FORMAT.SQL" />
     <Content Include="SQL_Tables\SYSTEM_OPTIONS_DC_FULFILLMENT_STORE_ORDER.SQL" />
     <Content Include="SQL_Tables\METHOD_DC_FULFILLMENT_STORE_ORDER.SQL" />
     <Content Include="SQL_Tables\METHOD_CREATE_MASTER_HEADERS_MERCHANDISE.SQL" />
@@ -3750,6 +3755,7 @@
     <Content Include="UpgradeVersions\ver18.01.0.03.SQL" />
     <Content Include="UpgradeVersions\ver18.01.0.02.SQL" />
     <Content Include="UpgradeVersions\ver19.03.0.02.SQL" />
+    <Content Include="UpgradeVersions\ver20.02.0.02.SQL" />
     <Content Include="UpgradeVersions\ver5.0.0.33.SQL" />
     <Content Include="UpgradeVersions\ver5.2.1.19.SQL" />
     <Content Include="UpgradeVersions\ver5.4.0.01.SQL" />

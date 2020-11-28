@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using MIDRetail.Business;
+using MIDRetail.Common;
 using MIDRetail.DataCommon;
 using MIDRetail.Data;
 using MIDRetail.Windows;
@@ -131,6 +132,8 @@ namespace Logility.ROWeb
                     return GetViewDetails();
                 case eRORequest.SaveViewDetails:
                     return SaveViewDetails((ROPlanningViewDetailsParms)Parms);
+                case eRORequest.DeleteViewDetails:
+                    return DeleteViewDetails();
             }
 
             return new RONoDataOut(eROReturnCode.Failure, "Invalid Request", ROInstanceID);
@@ -888,7 +891,8 @@ namespace Logility.ROWeb
             ArrayList al = applicationSessionTransaction.PlanComputations.PlanVariables.GetVariableGroupings();
             ROVariableGroupings variableList = VariableGroupings.BuildVariableGroupings(planType, variables, al);
 
-            ROPlanningViewDetails viewDetails = new ROPlanningViewDetails(view: GetName.GetForecastViewName(key: OpenParms.ViewRID, userKey: SAB.ClientServerSession.UserRID),
+            ROPlanningViewDetails viewDetails = new ROPlanningViewDetails(
+                view: GetName.GetForecastViewName(key: OpenParms.ViewRID, userKey: SAB.ClientServerSession.UserRID),
                 ROVariableGroupings: variableList);
 
             // Add comparatives
@@ -902,7 +906,6 @@ namespace Logility.ROWeb
                     );
             }
 
-            //planManager.ShowYears
             // Add time selections
             bool selectYear;
             bool selectSeason;
@@ -960,23 +963,42 @@ namespace Logility.ROWeb
             return new ROPlanningViewDetailsOut(eROReturnCode.Successful, null, ROInstanceID, viewDetails);
         }
 
+        /// <summary>
+        /// Save Planning View Details to the database.
+        /// </summary>
+        /// <param name="viewDetails">An instance of the ROPlanningViewDetailsParms class containing the view settings
+        /// </param>
+        /// <returns>An instance of the ROPlanningViewDetailsOut class with the updated view settings
+        /// </returns>
         public ROOut SaveViewDetails(ROPlanningViewDetailsParms viewDetails)
         {
             string message = null;
             PlanViewData planViewData;
-            int viewRID, viewUserRID;
+            int viewRID = Include.NoRID, viewUserRID;
+            Audit audit = SAB.ClientServerSession.Audit;
+
+            // make sure at least one variable is selected
+            if (viewDetails.ROPlanningViewDetails.VariableGroupings.SelectedVariables.Count == 0)
+            {
+                return new ROPlanningViewDetailsOut(
+                    ROReturnCode: eROReturnCode.Failure, 
+                    sROMessage: audit.GetText(messageCode: eMIDTextCode.msg_NeedAtLeastOneVariable, addToAuditReport: true), 
+                    ROInstanceID: ROInstanceID, 
+                    ROPlanningViewDetails: viewDetails.ROPlanningViewDetails);
+            }
 
             planViewData = new PlanViewData();
 
             // Update variables
             ArrayList selectableVariableHeaders = planManager.GetSelectableVariableHeaders();
+            List<ROSelectedField> selectedVariables = viewDetails.ROPlanningViewDetails.VariableGroupings.SelectedVariables;
             foreach (RowColProfileHeader variable in selectableVariableHeaders)
             {
-                ROSelectedField selectableVariable = viewDetails.ROPlanningViewDetails.VariableGroupings.SelectedVariables.Find(v => v.Field.Key == variable.Profile.Key.ToString());
+                ROSelectedField selectableVariable = selectedVariables.Find(v => v.Field.Key == variable.Profile.Key.ToString());
                 if (selectableVariable != null)
                 {
                     variable.IsDisplayed = true;
-                    variable.Sequence = viewDetails.ROPlanningViewDetails.VariableGroupings.SelectedVariables.FindIndex(v => v.Field.Key == variable.Profile.Key.ToString());
+                    variable.Sequence = selectedVariables.FindIndex(v => v.Field.Key == variable.Profile.Key.ToString());
                 }
                 else
                 {
@@ -987,9 +1009,10 @@ namespace Logility.ROWeb
 
             // Update comparatives
             ArrayList selectableQuantityHeaders = planManager.GetSelectableQuantityHeaders();
+            List<ROSelectedField> comparatives = viewDetails.ROPlanningViewDetails.Comparatives;
             foreach (RowColProfileHeader comparative in selectableQuantityHeaders)
             {
-                ROSelectedField selectableComparative = viewDetails.ROPlanningViewDetails.Comparatives.Find(v => v.Field.Key == comparative.Profile.Key.ToString());
+                ROSelectedField selectableComparative = comparatives.Find(v => v.Field.Key == comparative.Profile.Key.ToString());
                 if (selectableComparative != null)
                 {
                     comparative.IsDisplayed = selectableComparative.IsSelected;
@@ -1005,13 +1028,19 @@ namespace Logility.ROWeb
 
             foreach (ROSelectedField timeSelection in viewDetails.ROPlanningViewDetails.TimePeriods)
             {
-                selectablePeriodHeaders.Add(new RowColProfileHeader(timeSelection.Field.Value, timeSelection.IsSelected, Convert.ToInt32(timeSelection.Field.Key), null));
+                selectablePeriodHeaders.Add(
+                    new RowColProfileHeader(
+                        aName: timeSelection.Field.Value,
+                        aIsDisplayed: timeSelection.IsSelected,
+                        aSequence: Convert.ToInt32(timeSelection.Field.Key),
+                        aProfile: null)
+                );
             }
-
-            planViewData.OpenUpdateConnection();
 
             try
             {
+                planViewData.OpenUpdateConnection();
+
                 if (viewDetails.ROPlanningViewDetails.IsUserView)
                 {
                     viewUserRID = SAB.ClientServerSession.UserRID;
@@ -1021,20 +1050,34 @@ namespace Logility.ROWeb
                     viewUserRID = Include.GlobalUserRID;
                 }
 
-                viewRID = planViewData.PlanView_GetKey(viewUserRID, viewDetails.ROPlanningViewDetails.View.Value);
+                viewRID = planViewData.PlanView_GetKey(
+                    aUserRID: viewUserRID, 
+                    aViewID: viewDetails.ROPlanningViewDetails.View.Value
+                    );
 
                 if (viewRID != -1)
                 {
-                    planViewData.PlanViewDetail_Delete(viewRID);
+                    planViewData.PlanViewDetail_Delete(
+                        aViewRID: viewRID
+                        );
                 }
                 else
                 {
-                    viewRID = planViewData.PlanView_Insert(viewUserRID, viewDetails.ROPlanningViewDetails.View.Value, eStorePlanSelectedGroupBy.ByTimePeriod);
+                    viewRID = planViewData.PlanView_Insert(
+                        aUserRID: viewUserRID, 
+                        aViewID: viewDetails.ROPlanningViewDetails.View.Value, 
+                        aGroupBy: eStorePlanSelectedGroupBy.ByTimePeriod
+                        );
                     string viewName = viewDetails.ROPlanningViewDetails.View.Value;
                     viewDetails.ROPlanningViewDetails.View = new KeyValuePair<int, string>(viewRID, viewName);
                 }
 
-                planViewData.PlanViewDetail_Insert(viewRID, selectableVariableHeaders, selectableQuantityHeaders, selectablePeriodHeaders);
+                planViewData.PlanViewDetail_Insert(
+                    aViewRID: viewRID,
+                    aVariableHeaders: selectableVariableHeaders,
+                    aQuantityHeaders: selectableQuantityHeaders,
+                    aPeriodHeaders: selectablePeriodHeaders
+                    );
                 planViewData.CommitData();
             }
             catch (Exception exc)
@@ -1045,11 +1088,74 @@ namespace Logility.ROWeb
             }
             finally
             {
-                _viewUpdated = true;
                 planViewData.CloseUpdateConnection();
+                if (viewRID == planManager.GetViewRID())
+                {
+                    _viewUpdated = true;
+                }
             }
 
-            return new ROPlanningViewDetailsOut(eROReturnCode.Successful, message, ROInstanceID, viewDetails.ROPlanningViewDetails);
+            return new ROPlanningViewDetailsOut(
+                ROReturnCode: eROReturnCode.Successful,
+                sROMessage: message,
+                ROInstanceID: ROInstanceID,
+                ROPlanningViewDetails: viewDetails.ROPlanningViewDetails
+                );
+        }
+
+        public ROOut DeleteViewDetails()   
+        {
+            string message = null;
+            eROReturnCode returnCode = eROReturnCode.Successful;
+            bool successful = true;
+
+            int view_RID = planManager.GetViewRID();
+            if (view_RID == Include.DefaultPlanViewRID)
+            {
+                message = "Default view cannot be deleted";
+                returnCode = eROReturnCode.Failure;
+                successful = false;
+            }
+            else
+            {
+                PlanViewData data = new PlanViewData();
+
+                try
+                {
+                    if (view_RID > 0)
+                    {
+                        data.OpenUpdateConnection();
+                        if (data.PlanView_Delete(view_RID) > 0)
+                        {
+                            data.CommitData();
+                        }
+                        else
+                        {
+                            message = "View delete failed";
+                            returnCode = eROReturnCode.Failure;
+                            successful = false;
+                        }
+                    }
+                    else
+                    {
+                        message = "View not selected";
+                        returnCode = eROReturnCode.Failure;
+                        successful = false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    message = ex.Message;
+                    returnCode = eROReturnCode.Failure;
+                    successful = false;
+                }
+                finally
+                {
+                    data.CloseUpdateConnection();
+                }
+            }
+
+            return new ROBoolOut(returnCode, message, ROInstanceID, successful);
         }
 
         private ROOut SelectCubeValues(ArrayList headersList, string sColumnName, DataTable dtSelected, bool setSequence)

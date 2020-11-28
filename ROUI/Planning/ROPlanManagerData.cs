@@ -153,6 +153,7 @@ namespace Logility.ROUI
         private PlanProfile _currentStorePlanProfile;
         private PlanProfile _currentChainPlanProfile;
 
+        private Dictionary<int, Dictionary<int, int>> _viewWidths;
 
 
         public ROPlanViewData(ROPlanManagerData managerData)
@@ -514,7 +515,15 @@ namespace Logility.ROUI
 
                         if (_storeProfileList.Count == 0)  /// SMR HERE
                         {
-                            MessageBox.Show("Applied filter(s) have resulted in no displayable Stores.", "Filter Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                            if (MIDEnvironment.isWindows)
+                            {
+                                MessageBox.Show("Applied filter(s) have resulted in no displayable Stores.", "Filter Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                            }
+                            else
+                            {
+                                MIDEnvironment.Message = "Applied filter(s) have resulted in no displayable Stores.";
+                                MIDEnvironment.requestFailed = true;
+                            }
                         }
 
                         _workingDetailProfileList = _storeProfileList;
@@ -683,6 +692,65 @@ namespace Logility.ROUI
             }
         }
 
+        protected void GetViewFormatting (int viewKey)
+        {
+            PlanViewData planViewData = new PlanViewData();
+
+            _viewWidths = new Dictionary<int, Dictionary<int, int>>();
+
+            DataTable planViewDetail = planViewData.PlanViewDetail_Read(viewKey);
+
+            // load view widths
+            // AXIS: type of field (eViewAxis)
+            // PROFILE_TYPE: type of data (eProfileType)
+            // AXIS_SEQUENCE: order of the field or type of period if PROFILE_TYPE is Period
+            // PROFILE_KEY: Key of the field.  Not used for Period
+            // WIDTH: width of the field
+            //int axis, profileType, profileKey, axisSequence, width;
+            //Dictionary<int, int> widths;
+            //foreach (DataRow row in planViewDetail.Rows)
+            //{
+            //    axis = Convert.ToInt32(row["AXIS"], CultureInfo.CurrentUICulture);
+            //    axisSequence = Convert.ToInt32(row["AXIS_SEQUENCE"], CultureInfo.CurrentUICulture);
+            //    profileType = Convert.ToInt32(row["PROFILE_TYPE"], CultureInfo.CurrentUICulture);
+            //    profileKey = Convert.ToInt32(row["PROFILE_KEY"], CultureInfo.CurrentUICulture);
+            //    width = Convert.ToInt32(row["WIDTH"], CultureInfo.CurrentUICulture);
+            //    if (!_viewWidths.TryGetValue(axis, out widths))
+            //    {
+            //        widths = new Dictionary<int, int>();
+            //        _viewWidths.Add(axis, widths);
+            //    }
+            //    if (axis == (int)eViewAxis.Variable)
+            //    {
+            //        widths.Add(profileKey, width);
+            //    }
+            //    else if (axis == (int)eViewAxis.Quantity)
+            //    {
+            //        widths.Add(profileKey, width);
+            //    }
+            //    else if (axis == (int)eViewAxis.Period)
+            //    {
+            //        widths.Add(axisSequence, width);
+            //    }
+            //}
+        }
+
+        protected int GetColumnWidth (eViewAxis axis, int key)
+        {
+            int width = Include.DefaultColumnWidth;
+            Dictionary<int, int> widths;
+
+            //if (_viewWidths.TryGetValue((int)axis, out widths))
+            //{
+            //    if (widths.ContainsKey(key))
+            //    {
+            //        width = widths[key];
+            //    }
+            //}
+
+            return width;
+        }
+
         private void LoadView()
         {
             int i;
@@ -743,7 +811,15 @@ namespace Logility.ROUI
 
                 if (_sortedVariableHeaders.Count == 0)
                 {
-                    MessageBox.Show(MIDText.GetTextOnly(eMIDTextCode.msg_pl_NoDisplayableVariables), "No Displayable Variables", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    if (MIDEnvironment.isWindows)
+                    {
+                        MessageBox.Show(MIDText.GetTextOnly(eMIDTextCode.msg_pl_NoDisplayableVariables), "No Displayable Variables", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    }
+                    else
+                    {
+                        MIDEnvironment.Message = MIDText.GetText(eMIDTextCode.msg_pl_NoDisplayableVariables);
+                        MIDEnvironment.requestFailed = true;
+                    }
                 }
 
                 //Load rows

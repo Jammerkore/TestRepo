@@ -187,6 +187,7 @@ namespace Logility.ROWeb
         public void UnlockNode(int key)
         {
             SAB.HierarchyServerSession.DequeueNode(nodeRID: key);
+            _hierarchyNodeProfile.NodeLockStatus = eLockStatus.Undefined;
         }
 
         public eLockStatus LockNode(eModelType modelType, int key, string name, bool allowReadOnly, out string message)
@@ -199,6 +200,24 @@ namespace Logility.ROWeb
 
         public void SetSecurity(int key, int securityKey, bool setReadOnly)
         {
+            // Do not set security again if nothing changed
+            if (_hierarchyNodeProfile != null
+                && key == _hierarchyNodeProfile.Key)
+            {
+                // Already locked
+                if (!setReadOnly
+                    && _hierarchyNodeProfile.NodeLockStatus == eLockStatus.Locked)
+                {
+                    return;
+                }
+                // Already read only 
+                else if (setReadOnly
+                    && _hierarchyNodeProfile.NodeLockStatus != eLockStatus.Locked)
+                {
+                    return;
+                }
+            }
+
             if (_securityNodeProfile == null
                 || _securityNodeProfile.Key != securityKey)
             {
@@ -239,11 +258,19 @@ namespace Logility.ROWeb
                 {
                     _hierarchyNodeProfile = GetHierarchyNodeProfile(key: key, chaseHierarchy: true);
                     _hierarchyProfile = SAB.HierarchyServerSession.GetHierarchyData(_hierarchyNodeProfile.HomeHierarchyRID);
+                    if (!setReadOnly)
+                    {
+                        MIDEnvironment.isChangedToReadOnly = true;
+                    }
                 }
                 else
                 {
                     _hierarchyNodeProfile = SAB.HierarchyServerSession.GetNodeDataForUpdate(aNodeRID: key, aAllowReadOnly: true);
                     _hierarchyProfile = SAB.HierarchyServerSession.GetHierarchyData(_hierarchyNodeProfile.HomeHierarchyRID);
+                    if (_hierarchyNodeProfile.NodeLockStatus == eLockStatus.ReadOnly)
+                    {
+                        MIDEnvironment.isChangedToReadOnly = true;
+                    }
                 }
 
                 if (_securityNodeProfile.HomeHierarchyOwner != Include.GlobalUserRID)

@@ -248,7 +248,105 @@ namespace MIDRetail.Data
 			    }
 			}
 
-			//INSERT NEW STORED PROCEDURES ABOVE HERE
+
+            public static MID_PLAN_VIEW_FORMAT_READ_def MID_PLAN_VIEW_FORMAT_READ = new MID_PLAN_VIEW_FORMAT_READ_def();
+            public class MID_PLAN_VIEW_FORMAT_READ_def : baseStoredProcedure
+            {
+                //"file:///C:\SCMVS2010\gohere.html?filepath=DatabaseDefinition\SQL_StoredProcedures\MID_PLAN_VIEW_FORMAT_READ.SQL"
+
+                private intParameter VIEW_RID;
+
+                public MID_PLAN_VIEW_FORMAT_READ_def()
+                {
+                    base.procedureName = "MID_PLAN_VIEW_FORMAT_READ";
+                    base.procedureType = storedProcedureTypes.Read;
+                    base.tableNames.Add("PLAN_VIEW_FORMAT");
+                    VIEW_RID = new intParameter("@VIEW_RID", base.inputParameterList);
+                }
+
+                public DataTable Read(DatabaseAccess _dba, int? VIEW_RID)
+                {
+                    lock (typeof(MID_PLAN_VIEW_FORMAT_READ_def))
+                    {
+                        this.VIEW_RID.SetValue(VIEW_RID);
+                        return ExecuteStoredProcedureForRead(_dba);
+                    }
+                }
+            }
+
+            public static MID_PLAN_VIEW_FORMAT_INSERT_def MID_PLAN_VIEW_FORMAT_INSERT = new MID_PLAN_VIEW_FORMAT_INSERT_def();
+            public class MID_PLAN_VIEW_FORMAT_INSERT_def : baseStoredProcedure
+            {
+                //"file:///C:\SCMVS2010\gohere.html?filepath=DatabaseDefinition\SQL_StoredProcedures\MID_PLAN_VIEW_FORMAT_INSERT.SQL"
+
+                private intParameter VIEW_RID;
+                private intParameter PLAN_BASIS_TYPE;
+                private intParameter VARIABLE_NUMBER;
+                private intParameter QUANTITY_VARIABLE_KEY;
+                private intParameter TIME_PERIOD_TYPE;
+                private intParameter WIDTH;
+
+                public MID_PLAN_VIEW_FORMAT_INSERT_def()
+                {
+                    base.procedureName = "MID_PLAN_VIEW_FORMAT_INSERT";
+                    base.procedureType = storedProcedureTypes.Insert;
+                    base.tableNames.Add("PLAN_VIEW_FORMAT");
+                    VIEW_RID = new intParameter("@VIEW_RID", base.inputParameterList);
+                    PLAN_BASIS_TYPE = new intParameter("@PLAN_BASIS_TYPE", base.inputParameterList);
+                    VARIABLE_NUMBER = new intParameter("@VARIABLE_NUMBER", base.inputParameterList);
+                    QUANTITY_VARIABLE_KEY = new intParameter("@QUANTITY_VARIABLE_KEY", base.inputParameterList);
+                    TIME_PERIOD_TYPE = new intParameter("@TIME_PERIOD_TYPE", base.inputParameterList);
+                    WIDTH = new intParameter("@WIDTH", base.inputParameterList);
+                }
+
+                public int Insert(DatabaseAccess _dba,
+                                  int? VIEW_RID,
+                                  int? PLAN_BASIS_TYPE,
+                                  int? VARIABLE_NUMBER,
+                                  int? QUANTITY_VARIABLE_KEY,
+                                  int? TIME_PERIOD_TYPE,
+                                  int? WIDTH
+                                  )
+                {
+                    lock (typeof(MID_PLAN_VIEW_FORMAT_INSERT_def))
+                    {
+                        this.VIEW_RID.SetValue(VIEW_RID);
+                        this.PLAN_BASIS_TYPE.SetValue(PLAN_BASIS_TYPE);
+                        this.VARIABLE_NUMBER.SetValue(VARIABLE_NUMBER);
+                        this.QUANTITY_VARIABLE_KEY.SetValue(QUANTITY_VARIABLE_KEY);
+                        this.TIME_PERIOD_TYPE.SetValue(TIME_PERIOD_TYPE);
+                        this.WIDTH.SetValue(WIDTH);
+                        return ExecuteStoredProcedureForInsert(_dba);
+                    }
+                }
+            }
+
+            public static MID_PLAN_VIEW_FORMAT_DELETE_def MID_PLAN_VIEW_FORMAT_DELETE = new MID_PLAN_VIEW_FORMAT_DELETE_def();
+            public class MID_PLAN_VIEW_FORMAT_DELETE_def : baseStoredProcedure
+            {
+                //"file:///C:\SCMVS2010\gohere.html?filepath=DatabaseDefinition\SQL_StoredProcedures\MID_PLAN_VIEW_FORMAT_DELETE.SQL"
+
+                private intParameter VIEW_RID;
+
+                public MID_PLAN_VIEW_FORMAT_DELETE_def()
+                {
+                    base.procedureName = "MID_PLAN_VIEW_FORMAT_DELETE";
+                    base.procedureType = storedProcedureTypes.Delete;
+                    base.tableNames.Add("PLAN_VIEW_FORMAT");
+                    VIEW_RID = new intParameter("@VIEW_RID", base.inputParameterList);
+                }
+
+                public int Delete(DatabaseAccess _dba, int? VIEW_RID)
+                {
+                    lock (typeof(MID_PLAN_VIEW_FORMAT_DELETE_def))
+                    {
+                        this.VIEW_RID.SetValue(VIEW_RID);
+                        return ExecuteStoredProcedureForDelete(_dba);
+                    }
+                }
+            }
+
+            //INSERT NEW STORED PROCEDURES ABOVE HERE
         }
     }  
 }

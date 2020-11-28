@@ -82,7 +82,7 @@ namespace Logility.ROWeb
             }
             nodeProperties.PurgeCriteriaSettings.Add(purgeCriteriaSettings);
 
-            purgeCriteriaSettings = new RONodePropertiesPurgeCriteriaSettings(purgeDataType: ePurgeDataType.ForecastPlans, purgeLabel: "OTS Forecast");
+            purgeCriteriaSettings = new RONodePropertiesPurgeCriteriaSettings(purgeDataType: ePurgeDataType.ForecastPlans, purgeLabel: "Channel Plans");
             if (_hierarchyNodeProfile.PurgeOTSPlansAfter > Include.Undefined)
             {
                 purgeCriteriaSettings.PurgeValue = _hierarchyNodeProfile.PurgeOTSPlansAfter;
@@ -93,7 +93,7 @@ namespace Logility.ROWeb
             }
             nodeProperties.PurgeCriteriaSettings.Add(purgeCriteriaSettings);
 
-            purgeCriteriaSettings = new RONodePropertiesPurgeCriteriaSettings(purgeDataType: ePurgeDataType.HeaderASN, purgeLabel: "ASN");
+            purgeCriteriaSettings = new RONodePropertiesPurgeCriteriaSettings(purgeDataType: ePurgeDataType.HeaderASN, purgeLabel: "Worklist Line Type: ASN");
             if (_hierarchyNodeProfile.PurgeHtASNAfter > Include.Undefined)
             {
                 purgeCriteriaSettings.PurgeValue = _hierarchyNodeProfile.PurgeHtASNAfter;
@@ -104,7 +104,7 @@ namespace Logility.ROWeb
             }
             nodeProperties.PurgeCriteriaSettings.Add(purgeCriteriaSettings);
 
-            purgeCriteriaSettings = new RONodePropertiesPurgeCriteriaSettings(purgeDataType: ePurgeDataType.HeaderDropShip, purgeLabel: "Drop Ship");
+            purgeCriteriaSettings = new RONodePropertiesPurgeCriteriaSettings(purgeDataType: ePurgeDataType.HeaderDropShip, purgeLabel: "Worklist Line Type: Drop Ship");
             if (_hierarchyNodeProfile.PurgeHtDropShipAfter > Include.Undefined)
             {
                 purgeCriteriaSettings.PurgeValue = _hierarchyNodeProfile.PurgeHtDropShipAfter;
@@ -115,7 +115,7 @@ namespace Logility.ROWeb
             }
             nodeProperties.PurgeCriteriaSettings.Add(purgeCriteriaSettings);
 
-            purgeCriteriaSettings = new RONodePropertiesPurgeCriteriaSettings(purgeDataType: ePurgeDataType.HeaderDummy, purgeLabel: "Dummy");
+            purgeCriteriaSettings = new RONodePropertiesPurgeCriteriaSettings(purgeDataType: ePurgeDataType.HeaderDummy, purgeLabel: "Worklist Line Type: Dummy");
             if (_hierarchyNodeProfile.PurgeHtDummyAfter > Include.Undefined)
             {
                 purgeCriteriaSettings.PurgeValue = _hierarchyNodeProfile.PurgeHtDummyAfter;
@@ -126,7 +126,7 @@ namespace Logility.ROWeb
             }
             nodeProperties.PurgeCriteriaSettings.Add(purgeCriteriaSettings);
 
-            purgeCriteriaSettings = new RONodePropertiesPurgeCriteriaSettings(purgeDataType: ePurgeDataType.HeaderPurchaseOrder, purgeLabel: "Purchase Order");
+            purgeCriteriaSettings = new RONodePropertiesPurgeCriteriaSettings(purgeDataType: ePurgeDataType.HeaderPurchaseOrder, purgeLabel: "Worklist Line Type: Purchase Order");
             if (_hierarchyNodeProfile.PurgeHtPurchaseOrderAfter > Include.Undefined)
             {
                 purgeCriteriaSettings.PurgeValue = _hierarchyNodeProfile.PurgeHtPurchaseOrderAfter;
@@ -137,7 +137,7 @@ namespace Logility.ROWeb
             }
             nodeProperties.PurgeCriteriaSettings.Add(purgeCriteriaSettings);
 
-            purgeCriteriaSettings = new RONodePropertiesPurgeCriteriaSettings(purgeDataType: ePurgeDataType.HeaderReceipt, purgeLabel: "Receipt");
+            purgeCriteriaSettings = new RONodePropertiesPurgeCriteriaSettings(purgeDataType: ePurgeDataType.HeaderReceipt, purgeLabel: "Worklist Line Type: Receipt");
             if (_hierarchyNodeProfile.PurgeHtReceiptAfter > Include.Undefined)
             {
                 purgeCriteriaSettings.PurgeValue = _hierarchyNodeProfile.PurgeHtReceiptAfter;
@@ -148,7 +148,7 @@ namespace Logility.ROWeb
             }
             nodeProperties.PurgeCriteriaSettings.Add(purgeCriteriaSettings);
 
-            purgeCriteriaSettings = new RONodePropertiesPurgeCriteriaSettings(purgeDataType: ePurgeDataType.HeaderReserve, purgeLabel: "Reserve");
+            purgeCriteriaSettings = new RONodePropertiesPurgeCriteriaSettings(purgeDataType: ePurgeDataType.HeaderReserve, purgeLabel: "Worklist Line Type: Reserve");
             if (_hierarchyNodeProfile.PurgeHtReserveAfter > Include.Undefined)
             {
                 purgeCriteriaSettings.PurgeValue = _hierarchyNodeProfile.PurgeHtReserveAfter;
@@ -159,7 +159,7 @@ namespace Logility.ROWeb
             }
             nodeProperties.PurgeCriteriaSettings.Add(purgeCriteriaSettings);
 
-            purgeCriteriaSettings = new RONodePropertiesPurgeCriteriaSettings(purgeDataType: ePurgeDataType.HeaderVSW, purgeLabel: "VSW");
+            purgeCriteriaSettings = new RONodePropertiesPurgeCriteriaSettings(purgeDataType: ePurgeDataType.HeaderVSW, purgeLabel: "Worklist Line Type: VSW");
             if (_hierarchyNodeProfile.PurgeHtVSWAfter > Include.Undefined)
             {
                 purgeCriteriaSettings.PurgeValue = _hierarchyNodeProfile.PurgeHtVSWAfter;
@@ -170,7 +170,7 @@ namespace Logility.ROWeb
             }
             nodeProperties.PurgeCriteriaSettings.Add(purgeCriteriaSettings);
 
-            purgeCriteriaSettings = new RONodePropertiesPurgeCriteriaSettings(purgeDataType: ePurgeDataType.HeaderWorkUpBuy, purgeLabel: "Workup Total Buy");
+            purgeCriteriaSettings = new RONodePropertiesPurgeCriteriaSettings(purgeDataType: ePurgeDataType.HeaderWorkUpBuy, purgeLabel: "Worklist Line Type: Workup Total Buy");
             if (_hierarchyNodeProfile.PurgeHtWorkUpTotAfter > Include.Undefined)
             {
                 purgeCriteriaSettings.PurgeValue = _hierarchyNodeProfile.PurgeHtWorkUpTotAfter;

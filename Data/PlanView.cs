@@ -80,6 +80,7 @@ namespace MIDRetail.Data
 			try
 			{
 				this.PlanViewDetail_Delete(aViewRID);
+                this.PlanViewFormat_Delete(aViewRID);
 			}
 			catch
 			{
@@ -229,6 +230,61 @@ namespace MIDRetail.Data
 				throw;
 			}
 		}
+
+        public DataTable PlanViewFormat_Read(int aViewRID)
+        {
+            try
+            {
+                return StoredProcedures.MID_PLAN_VIEW_FORMAT_READ.Read(_dba, VIEW_RID: aViewRID);
+            }
+            catch (Exception exc)
+            {
+                string message = exc.ToString();
+                throw;
+            }
+        }
+
+
+        public void PlanViewFormat_Insert(
+            int aViewRID, 
+            ePlanBasisType planBasisType, 
+            int variableNumber, 
+            int quantityVariableKey,
+            int timePeriodType,
+            int width
+            )
+        {
+            try
+            {
+                StoredProcedures.MID_PLAN_VIEW_FORMAT_INSERT.Insert(_dba,
+                                                                    VIEW_RID: aViewRID,
+                                                                    PLAN_BASIS_TYPE: (int)planBasisType,
+                                                                    VARIABLE_NUMBER: variableNumber,
+                                                                    QUANTITY_VARIABLE_KEY: quantityVariableKey,
+                                                                    TIME_PERIOD_TYPE: timePeriodType,
+                                                                    WIDTH: width
+                                                                    );
+            }
+            catch (Exception exc)
+            {
+                string message = exc.ToString();
+                throw;
+            }
+        }
+
+        public void PlanViewFormat_Delete(int aViewRID)
+        {
+            try
+            {
+                StoredProcedures.MID_PLAN_VIEW_FORMAT_DELETE.Delete(_dba, VIEW_RID: aViewRID);
+            }
+            catch (Exception exc)
+            {
+                string message = exc.ToString();
+                throw;
+            }
+        }
+
         private DataTable BuildUserListAsDataset(ArrayList aValueList)
         {
             DataTable dtUserList = null;

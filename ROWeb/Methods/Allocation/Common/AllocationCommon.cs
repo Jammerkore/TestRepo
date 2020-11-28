@@ -253,5 +253,63 @@ namespace Logility.ROWeb
         }
 
         #endregion for AllocationViewSelection
+
+        internal ROOut DeleteViewDetails(int viewKey)
+        {
+            string message = null;
+            eROReturnCode returnCode = eROReturnCode.Successful;
+            bool successful = true;
+
+            if (viewKey == Include.DefaultVelocityMatrixViewRID
+                || viewKey == Include.DefaultVelocityDetailViewRID
+                || viewKey == Include.DefaultStyleViewRID
+                || viewKey == Include.DefaultSizeViewRID)
+            {
+                message = "Default view cannot be deleted";
+                returnCode = eROReturnCode.Failure;
+                successful = false;
+            }
+            else
+            {
+                GridViewData data = new GridViewData();
+
+                try
+                {
+                    if (viewKey > 0)
+                    {
+                        data.OpenUpdateConnection();
+                        if (data.GridView_Delete(viewKey) > 0)
+                        {
+                            data.CommitData();
+                        }
+                        else
+                        {
+                            message = "View delete failed";
+                            returnCode = eROReturnCode.Failure;
+                            successful = false;
+                        }
+                    }
+                    else
+                    {
+                        message = "View not selected";
+                        returnCode = eROReturnCode.Failure;
+                        successful = false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    message = ex.Message;
+                    returnCode = eROReturnCode.Failure;
+                    successful = false;
+                }
+                finally
+                {
+                    data.CloseUpdateConnection();
+                    _currentViewRID = Include.NoRID;
+                }
+            }
+
+            return new ROBoolOut(returnCode, message, ROInstanceID, successful);
+        }
     }
 }

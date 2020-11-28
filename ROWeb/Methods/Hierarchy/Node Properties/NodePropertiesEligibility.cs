@@ -117,8 +117,7 @@ namespace Logility.ROWeb
                             eligibilityStore.EligibilityValues.StoreIneligible = sep.StoreIneligible;
                         }
 
-                        if (sep.EligType == eEligibilitySettingType.Model
-                            && sep.EligModelRID != Include.NoRID)
+                        if (sep.EligModelRID != Include.NoRID)
                         {
                             eligibilityStore.EligibilityValues.EligibilityModel = new KeyValuePair<int, string>(sep.EligModelRID, sep.EligModelName);
                         }
@@ -255,6 +254,7 @@ namespace Logility.ROWeb
 
                 //nodeProperties.EligibilityAttributeSet.Add(eligibilityAttributeSet);
 				nodeProperties.EligibilityAttributeSet = eligibilityAttributeSet;
+                nodeProperties.AttributeSet = eligibilityAttributeSet.AttributeSet;
             }
         }
 
@@ -326,6 +326,7 @@ namespace Logility.ROWeb
                                     sep.EligModelName = eligibilityAttributeSet.EligibilityValues.EligibilityModel.Value;
                                     sep.EligIsInherited = false;
                                     sep.EligInheritedFromNodeRID = Include.NoRID;
+                                    sep.StoreIneligible = false;
                                 }
                                 break;
                             case eEligibilitySettingType.SetEligible:
@@ -355,17 +356,42 @@ namespace Logility.ROWeb
                                     sep.EligModelName = eligibilityStore.EligibilityValues.EligibilityModel.Value;
                                     sep.EligIsInherited = false;
                                     sep.EligInheritedFromNodeRID = Include.NoRID;
+                                    if (eligibilityStore.EligibilityValues.StoreIneligible.HasValue)
+                                    {
+                                        sep.StoreIneligible = Convert.ToBoolean(eligibilityStore.EligibilityValues.StoreIneligible);
+                                    }
+                                    else
+                                    {
+                                        sep.StoreIneligible = false;
+                                    }
                                 }
                                 break;
                             case eEligibilitySettingType.SetEligible:
                             case eEligibilitySettingType.SetIneligible:
+                                if (eligibilityStore.EligibilityValues.EligibilityModelIsSet)
+                                {
+                                    if (!eligibilityStore.EligibilityValues.EligibilityIsInherited
+                                        && eligibilityStore.EligibilityValues.StoreIneligible.HasValue
+                                        && !Convert.ToBoolean(eligibilityStore.EligibilityValues.StoreIneligible)
+                                        )
+                                    {
+                                        sep.EligModelRID = eligibilityStore.EligibilityValues.EligibilityModel.Key;
+                                        sep.EligModelName = eligibilityStore.EligibilityValues.EligibilityModel.Value;
+                                        sep.EligType = eEligibilitySettingType.Model;
+                                        sep.EligIsInherited = false;
+                                        sep.EligInheritedFromNodeRID = Include.NoRID;
+                                    }
+                                }
+                                else
+                                {
+                                    sep.EligModelRID = Include.NoRID;
+                                    sep.EligModelName = string.Empty;
+                                }
                                 if (sep.StoreIneligible != eligibilityStore.EligibilityValues.StoreIneligible)
                                 {
                                     sep.StoreIneligible = Convert.ToBoolean(eligibilityStore.EligibilityValues.StoreIneligible);
                                     sep.EligIsInherited = false;
                                     sep.EligInheritedFromNodeRID = Include.NoRID;
-                                    sep.EligModelRID = Include.NoRID;
-                                    sep.EligModelName = string.Empty;
                                 }
                                 break;
                             default:
@@ -377,6 +403,8 @@ namespace Logility.ROWeb
                         sep.EligType = eEligibilitySettingType.None;
                         sep.EligModelRID = Include.NoRID;
                         sep.StoreIneligible = false;
+                        sep.EligIsInherited = false;
+                        sep.EligInheritedFromNodeRID = Include.NoRID;
                     }
 
                     //stock modifier
@@ -445,6 +473,8 @@ namespace Logility.ROWeb
                         sep.StkModModelRID = Include.NoRID;
                         sep.StkModModelName = null;
                         sep.StkModPct = 0;
+                        sep.StkModIsInherited = false;
+                        sep.StkModInheritedFromNodeRID = Include.NoRID;
                     }
 
                     //sales modifier
@@ -513,6 +543,8 @@ namespace Logility.ROWeb
                         sep.SlsModModelRID = Include.NoRID;
                         sep.SlsModModelName = null;
                         sep.SlsModPct = 0;
+                        sep.SlsModIsInherited = false;
+                        sep.SlsModInheritedFromNodeRID = Include.NoRID;
                     }
 
                     //FWOS modifier
@@ -581,6 +613,8 @@ namespace Logility.ROWeb
                         sep.FWOSModModelRID = Include.NoRID;
                         sep.FWOSModModelName = null;
                         sep.FWOSModPct = 0;
+                        sep.FWOSModIsInherited = false;
+                        sep.FWOSModInheritedFromNodeRID = Include.NoRID;
                     }
 
                     // similar store
@@ -646,6 +680,8 @@ namespace Logility.ROWeb
                         sep.SimStoreRatio = 0;
                         sep.SimStoreUntilDateRangeRID = Include.NoRID;
                         sep.SimStoreDisplayDate = string.Empty;
+                        sep.SimStoreIsInherited = false;
+                        sep.SimStoreInheritedFromNodeRID = Include.NoRID;
                     }
 
                     if (eligibilityAttributeSet.EligibilityValues.SimilarStoreRatioIsSet)
@@ -710,6 +746,8 @@ namespace Logility.ROWeb
                     else if (sep.PresPlusSalesInd)  // clear value
                     {
                         sep.PresPlusSalesInd = false;
+                        sep.PresPlusSalesIsInherited = false;
+                        sep.PresPlusSalesInheritedFromNodeRID = Include.NoRID;
                     }
 
                     // stock lead weeks
@@ -731,6 +769,8 @@ namespace Logility.ROWeb
                     else if (sep.StkLeadWeeks != 0)  // clear value
                     {
                         sep.StkLeadWeeks = 0;
+                        sep.StkLeadWeeksInherited = false;
+                        sep.StkLeadWeeksInheritedRid = Include.NoRID;
                     }
                 }
             }
@@ -1036,7 +1076,14 @@ namespace Logility.ROWeb
             {
                 RONodePropertiesEligibility nodePropertiesEligibilityData = (RONodePropertiesEligibility)parms.RONodeProperties;
                 attributeKey = nodePropertiesEligibilityData.Attribute.Key;
-                attributeSetKey = nodePropertiesEligibilityData.EligibilityAttributeSet.AttributeSet.Key;
+                if (nodePropertiesEligibilityData.AttributeSetIsSet)
+                {
+                    attributeSetKey = nodePropertiesEligibilityData.AttributeSet.Key;
+                }
+                else if (nodePropertiesEligibilityData.EligibilityAttributeSet != null)
+                {
+                    attributeSetKey = nodePropertiesEligibilityData.EligibilityAttributeSet.AttributeSet.Key;
+                }
             }
 
             RONodePropertyAttributeKeyParms profileKeyParms = new RONodePropertyAttributeKeyParms(sROUserID: parms.ROUserID,

@@ -131,4 +131,26 @@ namespace Logility.ROWebSharedTypes
         public ROAllocationReviewViewDetails ROAllocationReviewViewDetails { get { return _viewDetails; } }
 
     }
+
+    
+
+    [DataContract(Name = "ROAllocationWorklistViewDetailsParms", Namespace = "http://Logility.ROWeb/")]
+    public class ROAllocationWorklistViewDetailsParms : ROParms
+    {
+
+        [DataMember(IsRequired = true)]
+        private ROAllocationWorklistViewDetails _viewDetails;
+
+        public ROAllocationWorklistViewDetailsParms(string sROUserID, string sROSessionID, eROClass ROClass, eRORequest RORequest, long ROInstanceID,
+            ROAllocationWorklistViewDetails ROAllocationWorklistViewDetails) :
+            base(sROUserID, sROSessionID, ROClass, RORequest, ROInstanceID)
+        {
+            _viewDetails = ROAllocationWorklistViewDetails;
+        }
+
+        public ROAllocationWorklistViewDetails ROAllocationWorklistViewDetails { get { return _viewDetails; } }
+
+    }
+
+    
 }

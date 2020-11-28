@@ -25,6 +25,7 @@ namespace Logility.ROWeb
         internal ROData allocationReviewData;
         internal SelectedHeaderList _selectedHeaderList;
         private int _currentViewRID = Include.NoRID;
+        private bool _viewHasBeenUpdated = false;
         private int _currentViewUserRID = Include.NoRID;
         internal Dictionary<eDataType, List<ROSelectedField>> _columnsList;
         private List<int> _selectedFieldKeys;
@@ -119,8 +120,9 @@ namespace Logility.ROWeb
             bool buildColumns, eAllocationSelectionViewType selectionViewType, out AllocationViewColumn viewColumn)
         {
             bool displayCol = false;
+            int width;
 
-            viewColumn = GetViewColumnIfExists(iWaferCol, waferCoordinate.Key.ToString());
+            viewColumn = GetViewColumnIfExists(iWaferCol, waferCoordinate.Key.ToString(), out width);
 
             //Passing default values when the tuple is null.
             if (viewColumn == null) { viewColumn = new AllocationViewColumn(string.Empty, false, int.MaxValue, eSortDirection.None, 0); }
@@ -208,7 +210,7 @@ namespace Logility.ROWeb
 
             colKey = waferCoordinateList[1].CoordinateSubType;
 
-            if (colKey == (int)eComponentType.Total)
+            if (viewColumn != null)
             { colPosition = viewColumn.VisiblePosition; }
             else
             { colPosition = colKey; }
@@ -387,7 +389,7 @@ namespace Logility.ROWeb
         public ROOut SaveViewDetails(ROAllocationReviewViewDetailsParms viewDetails)
         {
             string message = null;
-            int viewRID, viewUserRID;
+            int viewRID = Include.NoRID, viewUserRID;
             int visiblePosition, sortDirection, sortSequence, width;
             bool isHidden, isGroupByCol;
             string columnType;
@@ -397,6 +399,26 @@ namespace Logility.ROWeb
 
             try
             {
+                // make sure at least one variable is selected
+                bool variableIsSelected = false;
+                foreach (ROSelectedField field in viewDetails.ROAllocationReviewViewDetails.SummaryColumnsByPosition)
+                {
+                    if (field.IsSelected)
+                    {
+                        variableIsSelected = true;
+                        break;
+                    }
+                }
+
+                if (!variableIsSelected)
+                {
+                    return new ROAllocationReviewViewDetailsOut(
+                        ROReturnCode: eROReturnCode.Failure,
+                        sROMessage: SAB.ClientServerSession.Audit.GetText(messageCode: eMIDTextCode.msg_NeedAtLeastOneVariable, addToAuditReport: true),
+                        ROInstanceID: ROInstanceID,
+                        ROAllocationReviewViewDetails: viewDetails.ROAllocationReviewViewDetails);
+                }
+
                 if (viewDetails.ROAllocationReviewViewDetails.IsUserView)
                 {
                     viewUserRID = SAB.ClientServerSession.UserRID;
@@ -496,6 +518,10 @@ namespace Logility.ROWeb
                 finally
                 {
                     gridViewData.CloseUpdateConnection();
+                    if (viewRID == _currentViewRID)
+                    {
+                        _viewHasBeenUpdated = true;
+                    }
                 }
             }
             catch (Exception exc)
@@ -506,6 +532,11 @@ namespace Logility.ROWeb
 
 
             return new ROAllocationReviewViewDetailsOut(eROReturnCode.Successful, message, ROInstanceID, viewDetails.ROAllocationReviewViewDetails);
+        }
+
+        public ROOut DeleteReviewViewDetails()
+        {
+            return DeleteViewDetails(viewKey: _currentViewRID);
         }
 
         private ROData BuildAllocationReviewData(ROAllocationReviewOptionsParms reviewOptionsParms, eAllocationSelectionViewType selectionViewType, bool rebuildWafers = false)
@@ -629,7 +660,8 @@ namespace Logility.ROWeb
                 if (reviewOptionsParms.View.Key > 0)
                 { viewRID = reviewOptionsParms.View.Key; }
 
-                if (viewRID != _currentViewRID)
+                if (viewRID != _currentViewRID
+                    || _viewHasBeenUpdated)
                 {
                     _applicationSessionTransaction.BuildWaferColumns.Clear();
                     if (reviewOptionsParms.IsVelocity)
@@ -649,6 +681,7 @@ namespace Logility.ROWeb
 
                     AddViewColumns(viewRID, builtVariables);
                     _currentViewRID = viewRID;
+                    _viewHasBeenUpdated = false;
                 }
 
                 if (reviewOptionsParms.ListValues.Count > 0
@@ -974,9 +1007,10 @@ namespace Logility.ROWeb
                         // Add store column
                         if (dataType == eDataType.StoreSummary)
                         {
-                            viewColumn = GetViewColumnIfExists(0, _lblStore);
+                            int width;
+                            viewColumn = GetViewColumnIfExists(0, _lblStore, out width);
                             if (viewColumn == null) { viewColumn = new AllocationViewColumn(string.Empty, false, 0, eSortDirection.None, 0); }
-                            columns.Add(new ROSelectedField(fieldkey: _lblStore, field: _lblStore, selected: true, sortDirection: viewColumn.SortDirection, width: viewColumn.Width, visiblePosition: viewColumn.VisiblePosition));
+                            columns.Add(new ROSelectedField(fieldkey: _lblStore, field: "Channel", selected: true, sortDirection: viewColumn.SortDirection, width: viewColumn.Width, visiblePosition: viewColumn.VisiblePosition));
                         }
                     }
 
@@ -1041,7 +1075,7 @@ namespace Logility.ROWeb
 
                             cells.Columns.Add(new ROColumnAttributes(columnName.Trim(), indexValue, VisiblePosition,
                                 GetGroupByValueByAllocationGroupBy(waferCoordlist, reviewOptionsParms.GroupBy, reviewOptionsParms.SecondaryGroupBy),
-                                DisplayedInWindows, k));
+                                DisplayedInWindows, k, viewColumn.Width));
                             isDisplayed = true;
                             indexValue = indexValue + 1;
                         }
@@ -1153,13 +1187,14 @@ namespace Logility.ROWeb
 
                                 if (variableKey != Include.Undefined)
                                 {
-                                    viewColumn = GetViewColumnIfExists(0, variableKey.ToString());
+                                    int width;
+                                    viewColumn = GetViewColumnIfExists(0, variableKey.ToString(), out width);
                                     if (viewColumn == null)
                                     {
                                         viewColumn = new AllocationViewColumn(colKey: variableKey.ToString(),
                                             isVisible: true,
                                             sortDirection: eSortDirection.None,
-                                            width: 150,
+                                            width: width,
                                             visiblePosition: int.MaxValue
                                             );
                                     }
@@ -1335,27 +1370,35 @@ namespace Logility.ROWeb
 
             int k = cells.Columns.Count;
 
+            AllocationViewColumn viewColumn;
+            int width = 100;
             // use max so sorts to the end column
             if ((eAllocationSizeViewGroupBy)reviewOptionsParms.GroupBy == eAllocationSizeViewGroupBy.Header)
             {
-                cells.Columns.Add(new ROColumnAttributes(lblHeader, k, k, int.MaxValue, true, 0));
+                viewColumn = GetViewColumnIfExists(0, lblHeader, out width);
+                cells.Columns.Add(new ROColumnAttributes(lblHeader, k, k, int.MaxValue, true, 0, width));
                 k++;
-                cells.Columns.Add(new ROColumnAttributes(lblColor, k, k, int.MaxValue, true, 0));
+                viewColumn = GetViewColumnIfExists(0, lblColor, out width);
+                cells.Columns.Add(new ROColumnAttributes(lblColor, k, k, int.MaxValue, true, 0, width));
             }
             else
             {
-                cells.Columns.Add(new ROColumnAttributes(lblColor, k, k, int.MaxValue, true, 0));
+                viewColumn = GetViewColumnIfExists(0, lblColor, out width);
+                cells.Columns.Add(new ROColumnAttributes(lblColor, k, k, int.MaxValue, true, 0, width));
                 k++;
-                cells.Columns.Add(new ROColumnAttributes(lblHeader, k, k, int.MaxValue, true, 0));
+                viewColumn = GetViewColumnIfExists(0, lblHeader, out width);
+                cells.Columns.Add(new ROColumnAttributes(lblHeader, k, k, int.MaxValue, true, 0, width));
 
             }
             if (!reviewOptionsParms.ViewIsSequential)
             {
                 k++;
-                cells.Columns.Add(new ROColumnAttributes(lblDimension, k, k, int.MaxValue, true, 0));
+                viewColumn = GetViewColumnIfExists(0, lblDimension, out width);
+                cells.Columns.Add(new ROColumnAttributes(lblDimension, k, k, int.MaxValue, true, 0, width));
             }
             k++;
-            cells.Columns.Add(new ROColumnAttributes(lblVariable, k, k, int.MaxValue, true, 0));
+            viewColumn = GetViewColumnIfExists(0, lblVariable, out width);
+            cells.Columns.Add(new ROColumnAttributes(lblVariable, k, k, int.MaxValue, true, 0, width));
         }
 
         private void AddSizeLabelValues(ROCells cells, ROAllocationReviewOptionsParms reviewOptionsParms, AllocationWafer wafer, eDataType dataType)
@@ -1493,8 +1536,9 @@ namespace Logility.ROWeb
             return waferCoord;
         }
 
-        private AllocationViewColumn GetViewColumnIfExists(int waferCol, string coordKey)
+        private AllocationViewColumn GetViewColumnIfExists(int waferCol, string coordKey, out int width)
         {
+            width = Include.DefaultColumnWidth;
             AllocationViewColumn viewColumn2 = null;
             if (_viewColumns.TryGetValue("g" + (waferCol + 1), out Dictionary<string, AllocationViewColumn> gridKeyEntry))
             {
@@ -1503,6 +1547,10 @@ namespace Logility.ROWeb
                     viewColumn2 = columnView;
                     viewColumn2 = new AllocationViewColumn(columnView.ColKey, columnView.IsVisible, columnView.VisiblePosition, columnView.SortDirection, columnView.Width);
                 }
+            }
+            if (viewColumn2 != null)
+            {
+                width = viewColumn2.Width;
             }
             return viewColumn2;
         }

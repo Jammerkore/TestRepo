@@ -1869,11 +1869,11 @@ namespace Logility.ROUI
             Dictionary<string, int> columnMap = new Dictionary<string, int>();
             string columnName;
 
-            AddColumn("ParentRowKey", cells);
-            AddColumn("RowIndex", cells);
-            AddColumn("RowSortIndex", cells);
-            AddColumn("RowKey", cells);
-            AddColumn("RowKeyDisplay", cells);
+            AddColumn("ParentRowKey", cells, Include.DefaultColumnWidth);
+            AddColumn("RowIndex", cells, Include.DefaultColumnWidth);
+            AddColumn("RowSortIndex", cells, Include.DefaultColumnWidth);
+            AddColumn("RowKey", cells, Include.DefaultColumnWidth);
+            AddColumn("RowKeyDisplay", cells, Include.DefaultColumnWidth);
 
             _extraColumns = cells.Columns.Count;
 
@@ -1893,7 +1893,7 @@ namespace Logility.ROUI
 
                         case "ADJ":
                             varKey = rowHdrTag.CubeWaferCoorList.FindCoordinateType(eProfileType.Variable).Key;
-                            AddColumn(varKey.ToString() + "~" + rowHdrTag.RowHeading, cells);
+                            AddColumn(varKey.ToString() + "~" + rowHdrTag.RowHeading, cells, GetColumnWidth(axis: eViewAxis.Variable, key: varKey));
                             break;
 
                         case "% Change":
@@ -1918,21 +1918,23 @@ namespace Logility.ROUI
                             }
                             varKey = rowHdrTag.CubeWaferCoorList.FindCoordinateType(eProfileType.Variable).Key;
                             coord = rowHdrTag.CubeWaferCoorList.FindCoordinateType(eProfileType.Basis);
+                            int width = GetColumnWidth(axis: eViewAxis.Variable, key: varKey);
                             if (coord == null)
                             {
-                                AddColumn(varKey.ToString() + "~" + displayHeading, cells);
+                                AddColumn(varKey.ToString() + "~" + displayHeading, cells, width);
                             }
                             else
                             {
-                                AddColumn(varKey.ToString() + "~" + coord.Key.ToString() + " ~" + displayHeading, cells);
+                                AddColumn(varKey.ToString() + "~" + coord.Key.ToString() + " ~" + displayHeading, cells, width);
                             }
                             break;
 
                         default:
                             coord = rowHdrTag.CubeWaferCoorList.FindCoordinateType(eProfileType.Basis);
+                            varKey = rowHdrTag.CubeWaferCoorList.FindCoordinateType(eProfileType.Variable).Key;
                             if (coord == null)
                             {
-                                AddColumn(rowHdrTag.RowHeading, cells);
+                                AddColumn(rowHdrTag.RowHeading, cells, GetColumnWidth(axis: eViewAxis.Variable, key: varKey));
                             }
                             else
                             {
@@ -1959,7 +1961,7 @@ namespace Logility.ROUI
                                         }
                                     }
                                 }
-                                AddColumn(columnName, cells);
+                                AddColumn(columnName, cells, GetColumnWidth(axis: eViewAxis.Variable, key: varKey));
                             }
                             break;
                     }
@@ -1970,9 +1972,9 @@ namespace Logility.ROUI
             return columnMap;
         }
 
-        private void AddColumn(string columnName, ROCells cells)
+        private void AddColumn(string columnName, ROCells cells, int width)
         {
-            cells.Columns.Add(new ROColumnAttributes(columnName, cells.Columns.Count));
+            cells.Columns.Add(new ROColumnAttributes(columnName, cells.Columns.Count, width));
         }
 
         private void AddValues(ROData ROData)
@@ -3169,11 +3171,11 @@ namespace Logility.ROUI
             Dictionary<string, int> columnMap = new Dictionary<string, int>();
             string columnName;
 
-            AddColumn("ParentRowKey", cells);
-            AddColumn("RowIndex", cells);
-            AddColumn("RowSortIndex", cells);
-            AddColumn("RowKey", cells);
-            AddColumn("RowKeyDisplay", cells);
+            AddColumn("ParentRowKey", cells, Include.DefaultColumnWidth);
+            AddColumn("RowIndex", cells, Include.DefaultColumnWidth);
+            AddColumn("RowSortIndex", cells, Include.DefaultColumnWidth);
+            AddColumn("RowKey", cells, Include.DefaultColumnWidth);
+            AddColumn("RowKeyDisplay", cells, Include.DefaultColumnWidth);
 
             _extraColumns = cells.Columns.Count;
 
@@ -3209,7 +3211,7 @@ namespace Logility.ROUI
                             }
                         }
                     }
-                    AddColumn(columnName, cells);
+                    AddColumn(columnName, cells, Include.DefaultColumnWidth);
                 }
                 cubeColumnIndex++;
             }
@@ -3229,11 +3231,11 @@ namespace Logility.ROUI
             Dictionary<string, int> columnMap = new Dictionary<string, int>();
             string columnName;
 
-            AddColumn("ParentRowKey", cells);
-            AddColumn("RowIndex", cells);
-            AddColumn("RowSortIndex", cells);
-            AddColumn("RowKey", cells);
-            AddColumn("RowKeyDisplay", cells);
+            AddColumn("ParentRowKey", cells, Include.DefaultColumnWidth);
+            AddColumn("RowIndex", cells, Include.DefaultColumnWidth);
+            AddColumn("RowSortIndex", cells, Include.DefaultColumnWidth);
+            AddColumn("RowKey", cells, Include.DefaultColumnWidth);
+            AddColumn("RowKeyDisplay", cells, Include.DefaultColumnWidth);
 
             _extraColumns = cells.Columns.Count;
 
@@ -3242,15 +3244,15 @@ namespace Logility.ROUI
             //for totals grid two columns for each time tot variable (first is description, 2nd is total)
             for (int i = 0; i < maxTimeTotVars * 2; i++)
             {
-                AddColumn("Total" + i.ToString(), cells);
+                AddColumn("Total" + i.ToString(), cells, Include.DefaultColumnWidth);
             }
 
             return columnMap;
         }
 
-        private void AddColumn(string columnName, ROCells cells)
+        private void AddColumn(string columnName, ROCells cells, int width)
         {
-            cells.Columns.Add(new ROColumnAttributes(columnName, cells.Columns.Count));
+            cells.Columns.Add(new ROColumnAttributes(columnName, cells.Columns.Count, width));
         }
 
         private void AddValues(ROData ROData)

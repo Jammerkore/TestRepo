@@ -84,6 +84,7 @@ namespace Logility.ROWebSharedTypes
     [KnownType(typeof(ROOTSWorkflowStepOut))]
 
     [KnownType(typeof(ROAllocationWorklistOut))]
+    [KnownType(typeof(ROAllocationWorklistEntry))]
     [KnownType(typeof(StoreGradeProfile))]
     [KnownType(typeof(SecurityProfile))]
     [KnownType(typeof(VersionSecurityProfile))]

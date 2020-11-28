@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 namespace Logility.ROWebSharedTypes
 {
     [DataContract(Name = "ROBaseProperties", Namespace = "http://Logility.ROWeb/")]
-    public abstract class ROBaseProperties
+    public class ROBaseProperties
     {
         [DataMember(IsRequired = true)]
         protected bool _isReadOnly;
@@ -551,7 +551,14 @@ namespace Logility.ROWebSharedTypes
         #endregion
 
         #region Constructor
-        public ROSelectedField(string fieldkey, string field, bool selected, eSortDirection sortDirection = eSortDirection.None, int width = 0, int visiblePosition = 0)
+        public ROSelectedField(
+            string fieldkey, 
+            string field, 
+            bool selected, 
+            eSortDirection sortDirection = eSortDirection.None, 
+            int width = Include.DefaultColumnWidth, 
+            int visiblePosition = 0
+            )
         {
             _field = new KeyValuePair<string, string>(fieldkey, field);
             _isselected = selected;
@@ -1097,6 +1104,14 @@ namespace Logility.ROWebSharedTypes
         {
             _view = view;
             _isUserView = isUserView;
+        }
+
+        /// <summary>
+        /// Gets the flag identifying if the view has been set.
+        /// </summary>
+        public bool ViewIsSet
+        {
+            get { return !_view.Equals(default(KeyValuePair<int, string>)); }
         }
 
         public KeyValuePair<int, string> View { get { return _view; } set { _view = value; } }

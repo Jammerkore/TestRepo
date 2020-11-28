@@ -1859,7 +1859,7 @@ namespace Logility.ROUI
 
         private void AddColumn(string columnName, ROCells cells)
         {
-            cells.Columns.Add(new ROColumnAttributes(columnName, cells.Columns.Count));
+            cells.Columns.Add(new ROColumnAttributes(columnName, cells.Columns.Count, Include.DefaultColumnWidth));
         }
 
         private void AddValues(ROData ROData)

@@ -23,6 +23,7 @@ namespace Logility.ROWeb
         //=======
         private NodeStockMinMaxesProfile _nodeStockMinMaxesProfile = null;
         private StoreGradeList _storeGradeList = null;
+        private bool _stockMinMaxIsPopulated = false;
 
         //=============
         // CONSTRUCTORS
@@ -53,25 +54,51 @@ namespace Logility.ROWeb
         {
             _nodeStockMinMaxesProfile = (NodeStockMinMaxesProfile)nodePropertiesData;
 
+            int attributeKey = SAB.ClientServerSession.GlobalOptions.OTSPlanStoreGroupRID;
+            int attributeSetKey = Include.NoRID;
+            if (parms is RONodePropertyAttributeKeyParms)
+            {
+                RONodePropertyAttributeKeyParms nodePropertyStockMinMaxParms = (RONodePropertyAttributeKeyParms)parms;
+                if (nodePropertyStockMinMaxParms.AttributeKey != Include.NoRID)
+                {
+                    attributeKey = nodePropertyStockMinMaxParms.AttributeKey;
+                    attributeSetKey = nodePropertyStockMinMaxParms.AttributeSetKey;
+                }
+            }
+
             KeyValuePair<int, string> node = new KeyValuePair<int, string>(key: _hierarchyNodeProfile.Key, value: _hierarchyNodeProfile.Text);
-            RONodePropertiesStockMinMax nodeProperties = new RONodePropertiesStockMinMax(node: node);
+            RONodePropertiesStockMinMax nodeProperties = new RONodePropertiesStockMinMax(node: node,
+                attribute: GetName.GetAttributeName(key: attributeKey),
+                attributeSet: GetName.GetAttributeSetName(key: attributeSetKey)
+                );
 
             // populate modelProperties using Windows\NodeProperties.cs as a reference
-            AddAttributeSetStoreGrades(nodeProperties: nodeProperties, stockMinMaxesProfile: _nodeStockMinMaxesProfile, message: ref message);
+            AddAttributeSetStoreGrades(nodeProperties: nodeProperties, 
+                stockMinMaxesProfile: _nodeStockMinMaxesProfile,
+                attributeSetKey: attributeSetKey,
+                message: ref message);
 
+            _stockMinMaxIsPopulated = true;
             return nodeProperties;
         }
 
-        private void AddAttributeSetStoreGrades(RONodePropertiesStockMinMax nodeProperties, NodeStockMinMaxesProfile stockMinMaxesProfile, ref string message)
+        private void AddAttributeSetStoreGrades(RONodePropertiesStockMinMax nodeProperties, NodeStockMinMaxesProfile stockMinMaxesProfile, int attributeSetKey, ref string message)
         {
             RONodePropertiesStockMinMaxAttributeSet minMaxAttributeSet;
             HierarchyNodeProfile hnp = null;
             string inheritedFromText = MIDText.GetTextOnly(eMIDTextCode.lbl_Inherited_From);
 
-            int attributeKey = SAB.ClientServerSession.GlobalOptions.OTSPlanStoreGroupRID;
-            if (_nodeStockMinMaxesProfile.NodeStockMinMaxFound)
+            int attributeKey = nodeProperties.Attribute.Key;
+            if (!_stockMinMaxIsPopulated
+                && _nodeStockMinMaxesProfile.NodeStockMinMaxFound)
             {
                 attributeKey = _nodeStockMinMaxesProfile.NodeStockStoreGroupRID;
+            }
+            else if (attributeKey != _nodeStockMinMaxesProfile.NodeStockStoreGroupRID)
+            {
+                _nodeStockMinMaxesProfile.NodeStockStoreGroupRID = attributeKey;
+                _nodeStockMinMaxesProfile.NodeSetList.Clear();
+                _nodeStockMinMaxesProfile.NodeStockMinMaxsIsInherited = false;
             }
 
             if (_storeGradeList == null)
@@ -89,13 +116,25 @@ namespace Logility.ROWeb
 
             ProfileList attributeSets = StoreMgmt.StoreGroup_GetLevelListViewList(attributeKey);
 
+            // if attribute set is not a member of the selected attribute, remove the attribute set so the first set will be used
+            if (attributeSets.FindKey(nodeProperties.AttributeSet.Key) == null)
+            {
+                nodeProperties.AttributeSet = default(KeyValuePair<int, string>);
+            }
+
             if (!nodeProperties.AttributeSetIsSet)
             {
                 nodeProperties.AttributeSet = GetName.GetAttributeSetName(key: attributeSets[0].Key);
+                attributeSetKey = nodeProperties.AttributeSet.Key;
             }
 
             foreach (StoreGroupLevelListViewProfile sglp in attributeSets)
             {
+                if (sglp.Key != attributeSetKey)
+                {
+                    continue;
+                }
+
                 minMaxAttributeSet = new RONodePropertiesStockMinMaxAttributeSet(attributeSet: new KeyValuePair<int, string>(sglp.Key, sglp.Name));
 
                 NodeStockMinMaxSetProfile minMaxSetProfile = (NodeStockMinMaxSetProfile)_nodeStockMinMaxesProfile.NodeSetList.FindKey(sglp.Key);
@@ -104,7 +143,8 @@ namespace Logility.ROWeb
 
                 AddGradeEntries(minMaxAttributeSet: minMaxAttributeSet, minMaxSetProfile: minMaxSetProfile, message: ref message);
 
-                nodeProperties.AttributeSets.Add(minMaxAttributeSet);
+                nodeProperties.StockMinMaxAttributeSet = minMaxAttributeSet;
+                nodeProperties.AttributeSet = minMaxAttributeSet.AttributeSet;
             }
         }
 
@@ -284,7 +324,7 @@ namespace Logility.ROWeb
             else
             {
                 _nodeStockMinMaxesProfile.NodeStockMinMaxChangeType = eChangeType.update;
-                foreach (RONodePropertiesStockMinMaxAttributeSet attributeSet in nodePropertiesStockMinMaxData.AttributeSets)
+                RONodePropertiesStockMinMaxAttributeSet attributeSet = nodePropertiesStockMinMaxData.StockMinMaxAttributeSet;
                 {
                     addSet = false;
                     addedEntries = false;
@@ -440,5 +480,37 @@ namespace Logility.ROWeb
             }
         }
 
+        override public ROProfileKeyParms NodePropertiesGetParms(RONodePropertiesParms parms, eProfileType profileType, int key, bool readOnly = false)
+        {
+            int attributeKey = Include.NoRID;
+            int attributeSetKey = Include.NoRID;
+            if (parms.RONodeProperties is RONodePropertiesStockMinMax)
+            {
+                RONodePropertiesStockMinMax nodePropertiesStockMinMaxData = (RONodePropertiesStockMinMax)parms.RONodeProperties;
+                attributeKey = nodePropertiesStockMinMaxData.Attribute.Key;
+                if (nodePropertiesStockMinMaxData.AttributeSetIsSet)
+                {
+                    attributeSetKey = nodePropertiesStockMinMaxData.AttributeSet.Key;
+                }
+                else if (nodePropertiesStockMinMaxData.StockMinMaxAttributeSet != null)
+                {
+                    attributeSetKey = nodePropertiesStockMinMaxData.StockMinMaxAttributeSet.AttributeSet.Key;
+                }
+            }
+
+            RONodePropertyAttributeKeyParms profileKeyParms = new RONodePropertyAttributeKeyParms(sROUserID: parms.ROUserID,
+                sROSessionID: parms.ROSessionID,
+                ROClass: parms.ROClass,
+                RORequest: eRORequest.GetModel,
+                ROInstanceID: parms.ROInstanceID,
+                profileType: profileType,
+                key: key,
+                readOnly: readOnly,
+                attributeKey: attributeKey,
+                attributeSetKey: attributeSetKey
+                );
+
+            return profileKeyParms;
+        }
     }
 }

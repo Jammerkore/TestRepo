@@ -53,12 +53,17 @@ namespace Logility.ROWeb
             _VSWList = (IMOProfileList)nodePropertiesData;
 
             int attributeKey = SAB.ClientServerSession.GlobalOptions.OTSPlanStoreGroupRID;
+            int attributeSetKey = Include.NoRID;
             if (parms is RONodePropertyAttributeKeyParms)
             {
                 RONodePropertyAttributeKeyParms nodePropertyVSWParms = (RONodePropertyAttributeKeyParms)parms;
                 if (nodePropertyVSWParms.AttributeKey != Include.NoRID)
                 {
                     attributeKey = nodePropertyVSWParms.AttributeKey;
+                }
+                if (nodePropertyVSWParms.AttributeSetKey != Include.NoRID)
+                {
+                    attributeSetKey = nodePropertyVSWParms.AttributeSetKey;
                 }
             }
 
@@ -70,13 +75,14 @@ namespace Logility.ROWeb
             // populate modelProperties using Windows\NodeProperties.cs as a reference
 
             AddAttributeSets(nodeProperties: nodeProperties,
-                VSWList: _VSWList);
+                VSWList: _VSWList,
+                attributeSetKey: attributeSetKey);
 
 
             return nodeProperties;
         }
 
-        private void AddAttributeSets(RONodePropertiesVSW nodeProperties, IMOProfileList VSWList)
+        private void AddAttributeSets(RONodePropertiesVSW nodeProperties, IMOProfileList VSWList, int attributeSetKey)
         {
             RONodePropertiesVSWAttributeSet VSWAttributeSet;
             RONodePropertiesVSWStore VSWStore;
@@ -88,6 +94,11 @@ namespace Logility.ROWeb
 
             foreach (StoreGroupLevelListViewProfile sglp in storeVSWGroupLevelList)
             {
+                if (sglp.Key != attributeSetKey)
+                {
+                    continue;
+                }
+
                 VSWAttributeSet = new RONodePropertiesVSWAttributeSet(attributeSet: new KeyValuePair<int, string>(sglp.Key, sglp.Name));
                 foreach (StoreProfile storeProfile in sglp.Stores)
                 {
@@ -140,7 +151,8 @@ namespace Logility.ROWeb
                     VSWAttributeSet.Store.Add(VSWStore);
                 }
 
-                nodeProperties.AttributeSet.Add(VSWAttributeSet);
+                nodeProperties.VSWAttributeSet = VSWAttributeSet;
+                nodeProperties.AttributeSet = VSWAttributeSet.AttributeSet;
             }
         }
 
@@ -178,7 +190,8 @@ namespace Logility.ROWeb
             IMOProfile vsw;
             bool valueChanged = false;
 
-            foreach (RONodePropertiesVSWAttributeSet VSWAttributeSet in nodePropertiesVSWData.AttributeSet)
+            //foreach (RONodePropertiesVSWAttributeSet VSWAttributeSet in nodePropertiesVSWData.AttributeSet)
+            RONodePropertiesVSWAttributeSet VSWAttributeSet = nodePropertiesVSWData.VSWAttributeSet;
             {
                 foreach (RONodePropertiesVSWStore VSWStore in VSWAttributeSet.Store)
                 {
@@ -441,10 +454,19 @@ namespace Logility.ROWeb
         override public ROProfileKeyParms NodePropertiesGetParms(RONodePropertiesParms parms, eProfileType profileType, int key, bool readOnly = false)
         {
             int attributeKey = Include.NoRID;
+            int attributeSetKey = Include.NoRID;
             if (parms.RONodeProperties is RONodePropertiesVSW)
             {
                 RONodePropertiesVSW nodePropertiesVSWData = (RONodePropertiesVSW)parms.RONodeProperties;
                 attributeKey = nodePropertiesVSWData.Attribute.Key;
+                if (nodePropertiesVSWData.AttributeSetIsSet)
+                {
+                    attributeSetKey = nodePropertiesVSWData.AttributeSet.Key;
+                }
+                else if (nodePropertiesVSWData.VSWAttributeSet != null)
+                {
+                    attributeSetKey = nodePropertiesVSWData.VSWAttributeSet.AttributeSet.Key;
+                }
             }
 
             RONodePropertyAttributeKeyParms profileKeyParms = new RONodePropertyAttributeKeyParms(sROUserID: parms.ROUserID,
@@ -455,7 +477,8 @@ namespace Logility.ROWeb
                 profileType: profileType,
                 key: key,
                 readOnly: readOnly,
-                attributeKey: attributeKey
+                attributeKey: attributeKey,
+                attributeSetKey: attributeSetKey
                 );
 
             return profileKeyParms;

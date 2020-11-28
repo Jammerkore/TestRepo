@@ -4081,4 +4081,196 @@ namespace Logility.ROWebSharedTypes
         public List<ROSelectedField> DetailColumnsByPosition { get { return _detailColumns.OrderBy(hdr => hdr.VisiblePosition).ToList(); } }
 
     }
+
+    /// <summary>
+    /// Allocation Worklist View Column
+    /// </summary>
+    [DataContract(Name = "ROAllocationWorklistEntry", Namespace = "http://Logility.ROWeb/")]
+    public class ROAllocationWorklistEntry
+    {
+
+        #region MemberVariables
+        [DataMember(IsRequired = true)]
+        private int _viewKey;
+
+        [DataMember(IsRequired = true)]
+        private string _bandKey;
+
+        [DataMember(IsRequired = true)]
+        private string _columnKey;
+
+        [DataMember(IsRequired = true)]
+        private int _visiblePosition;
+
+        [DataMember(IsRequired = true)]
+        private bool _isHidden;
+
+        [DataMember(IsRequired = true)]
+        private bool _isGroupByColumn;
+
+        [DataMember(IsRequired = true)]
+        private int _sortDirection;
+
+        [DataMember(IsRequired = true)]
+        private int _sortSequence;
+
+        [DataMember(IsRequired = true)]
+        private int _width;
+
+        [DataMember(IsRequired = true)]
+        private string _columnType;
+
+        [DataMember(IsRequired = true)]
+        private string _headerCharacteristicGroupKey;
+
+        [DataMember(IsRequired = true)]
+        private string _label;
+
+        [DataMember(IsRequired = true)]
+        private string _itemField;
+
+        #endregion
+
+        #region Constructor
+        public ROAllocationWorklistEntry(int viewKey, string bandKey, string columnKey, int visiblePosition, bool isHidden, bool isGroupByColumn,
+               int sortDirection, int sortSequence, int width, string columnType, string headerCharacteristicGroupKey, string label, string itemField = null)
+        {
+            _viewKey = viewKey;
+            _bandKey = bandKey;
+            _columnKey = columnKey;
+            _visiblePosition = visiblePosition;
+            _isHidden = isHidden;
+            _isGroupByColumn = isGroupByColumn;
+            _sortDirection = sortDirection;
+            _sortSequence = sortSequence;
+            _width = width;
+            _columnType = columnType;
+            _headerCharacteristicGroupKey = headerCharacteristicGroupKey;
+            _label = label;
+            _itemField = itemField;
+
+        }
+        #endregion  
+
+        #region Public Properties
+        public int ViewRID
+        {
+            get { return _viewKey; }
+            set { _viewKey = value; }
+        }
+
+        public string BandKey
+        {
+            get { return _bandKey; }
+            set { _bandKey = value; }
+        }
+
+        public string ColumnKey
+        {
+            get { return _columnKey; }
+            set { _columnKey = value; }
+        }
+
+        public int VisiblePosition
+        {
+            get { return _visiblePosition; }
+            set { _visiblePosition = value; }
+        }
+
+        public bool IsHidden
+        {
+            get { return _isHidden; }
+            set { _isHidden = value; }
+        }
+
+        public bool IsGroupByColumn
+        {
+            get { return _isGroupByColumn; }
+            set { _isGroupByColumn = value; }
+        }
+
+        public int SortDirection
+        {
+            get { return _sortDirection; }
+            set { _sortDirection = value; }
+        }
+
+        public int SortSequence
+        {
+            get { return _sortSequence; }
+            set { _sortSequence = value; }
+        }
+
+        public int Width
+        {
+            get { return _width; }
+            set { _width = value; }
+        }
+
+        public bool IsCharacteristsicColumn
+        {
+            get { return _columnType == "C"; }
+        }
+
+        public string ColumnType
+        {
+            get { return _columnType; }
+            set { _columnType = value; }
+        }
+
+        public string HeaderCharacteristicGroupKey
+        {
+            get { return _headerCharacteristicGroupKey; }
+            set { _headerCharacteristicGroupKey = value; }
+        }
+
+        public string Label
+        {
+            get { return _label; }
+            set { _label = value; }
+        }
+
+        public string ItemField
+        {
+            get { return _itemField; }
+            set { _itemField = value; }
+        }
+        #endregion  
+    }
+
+    [DataContract(Name = "ROAllocationWorklistViewDetails", Namespace = "http://Logility.ROWeb/")]
+    public class ROAllocationWorklistViewDetails : ROViewDetails
+    {
+        [DataMember(IsRequired = true)]
+        protected KeyValuePair<int, string> _filter;
+
+        [DataMember(IsRequired = true)]
+        private List<ROAllocationWorklistEntry> _viewDetails;
+
+        public ROAllocationWorklistViewDetails(KeyValuePair<int, string> view, KeyValuePair<int, string> filter = default(KeyValuePair<int, string>)) :
+            base(view)
+        {
+            _viewDetails = new List<ROAllocationWorklistEntry>();
+            _filter = filter;
+        }
+
+        /// <summary>
+        /// Gets the flag identifying if the filter has been set.
+        /// </summary>
+        public bool FilterIsSet
+        {
+            get { return !_filter.Equals(default(KeyValuePair<int, string>)); }
+        }
+
+        /// <summary>
+        /// Gets or set the Key Value Pair for the filter.
+        /// </summary>
+		public KeyValuePair<int, string> Filter { get { return _filter; } set { _filter = value; } }
+
+        /// <summary>
+        /// Gets the list of view details.
+        /// </summary>
+        public List<ROAllocationWorklistEntry> ViewDetails { get { return _viewDetails; } }
+
+    }
 }

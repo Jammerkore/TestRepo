@@ -92,8 +92,22 @@ namespace Logility.ROWeb
         private bool NodePropertiesInitializeData(ROProfileKeyParms parms, out string message)
         {
             message = null;
+            bool getNewClass = false;
+            if (_nodePropertiesClass != null)
+            {
+                if (_nodePropertiesClass.HierarchyNodeProfile.NodeLockStatus == eLockStatus.Locked
+                    && parms.ReadOnly)
+                {
+                    getNewClass = true;
+                }
+                else if (_nodePropertiesClass.HierarchyNodeProfile.NodeLockStatus != eLockStatus.Locked
+                    && !parms.ReadOnly)
+                {
+                    getNewClass = true;
+                }
+            }
 
-            _nodePropertiesClass = GetNodePropertiesClass(profileType: parms.ProfileType);
+            _nodePropertiesClass = GetNodePropertiesClass(profileType: parms.ProfileType, getNewClass: getNewClass);
 
             if (_nodePropertiesClass == null)
             {
@@ -178,22 +192,22 @@ namespace Logility.ROWeb
 
             _nodePropertiesClass.SetSecurity(key: parms.RONodeProperties.Node.Key, securityKey: securityKey, setReadOnly: parms.ReadOnly);
 
-            if (!_nodePropertiesClass.AllowUpdate)
-            {
-                message = MIDText.GetText(eMIDTextCode.msg_NotAuthorized);
-                _ROWebTools.LogMessage(eROMessageLevel.Information, message);
-                MIDEnvironment.Message = message;
-                return new RONodePropertiesOut(eROReturnCode.Failure, message, _ROInstanceID, null);
-            }
+            //if (!_nodePropertiesClass.AllowUpdate)
+            //{
+            //    message = MIDText.GetText(eMIDTextCode.msg_NotAuthorized);
+            //    _ROWebTools.LogMessage(eROMessageLevel.Information, message);
+            //    MIDEnvironment.Message = message;
+            //    return new RONodePropertiesOut(eROReturnCode.Failure, message, _ROInstanceID, null);
+            //}
 
-            if (parms.RONodeProperties.Node.Key != Include.NoRID
-                && _nodePropertiesClass.HierarchyNodeProfile.NodeLockStatus != eLockStatus.Locked)
-            {
-                message = MIDText.GetText(eMIDTextCode.msg_DataNotLocked);
-                _ROWebTools.LogMessage(eROMessageLevel.Information, message);
-                MIDEnvironment.Message = message;
-                return new RONodePropertiesOut(eROReturnCode.Failure, message, _ROInstanceID, null);
-            }
+            //if (parms.RONodeProperties.Node.Key != Include.NoRID
+            //    && _nodePropertiesClass.HierarchyNodeProfile.NodeLockStatus != eLockStatus.Locked)
+            //{
+            //    message = MIDText.GetText(eMIDTextCode.msg_DataNotLocked);
+            //    _ROWebTools.LogMessage(eROMessageLevel.Information, message);
+            //    MIDEnvironment.Message = message;
+            //    return new RONodePropertiesOut(eROReturnCode.Failure, message, _ROInstanceID, null);
+            //}
 
             object data = _nodePropertiesClass.NodePropertiesUpdateData(nodeProperties: parms.RONodeProperties, cloneDates: false, message: ref message, successful: out successful, applyOnly: true);
 
@@ -290,7 +304,11 @@ namespace Logility.ROWeb
                 //MIDEnvironment.Message = message;
             }
 
-            NodePropertiesGetParms = _nodePropertiesClass.NodePropertiesGetParms(parms: parms, profileType: _currentDataType, key: _nodePropertiesClass.HierarchyNodeProfile.Key);
+            // Save is final so unlock node
+            _nodePropertiesClass.UnlockNode(key: _nodePropertiesClass.HierarchyNodeProfile.Key);
+
+            // get parameters to retrieve save data as read only
+            NodePropertiesGetParms = _nodePropertiesClass.NodePropertiesGetParms(parms: parms, profileType: _currentDataType, key: _nodePropertiesClass.HierarchyNodeProfile.Key, readOnly: true);
 
 
             if (parms.RONodeProperties.Node.Key == Include.NoRID
@@ -447,12 +465,22 @@ namespace Logility.ROWeb
         }
 
 
-        private NodePropertiesBase GetNodePropertiesClass(eProfileType profileType)
+        private NodePropertiesBase GetNodePropertiesClass(eProfileType profileType, bool getNewClass = false)
         {
-            if (_nodePropertiesClass != null
-                && _nodePropertiesClass.ProfileType == profileType)
+            if (_nodePropertiesClass != null)
             {
-                return _nodePropertiesClass;
+                if (_nodePropertiesClass.ProfileType == profileType
+                    && !getNewClass)
+                {
+                    return _nodePropertiesClass;
+                }
+                else
+                {
+                    CleanUp();
+                    _nodePropertiesClass = null;
+                    _currentDataType = eProfileType.None;
+                    _currentData = null;
+                }
             }
 
             switch (profileType)

@@ -2059,153 +2059,30 @@ namespace Logility.ROWebSharedTypes
         public int? Units { get; set; }
     }
 
-
+    /// <summary>
+    /// Allocation Worklist View Column Definition
+    /// </summary>
+    /// <remarks>Inherits ROAllocationWorklistEntry so fields can be used by other classes without changing existing methods</remarks>
     [DataContract(Name = "ROAllocationWorklistOut", Namespace = "http://Logility.ROWeb/")]
-    public class ROAllocationWorklistOut
+    public class ROAllocationWorklistOut : ROAllocationWorklistEntry
     {
 
         #region MemberVariables
-        [DataMember(IsRequired = true)]
-        private int _viewRid;
-
-        [DataMember(IsRequired = true)]
-        private string _bandKey;
-
-        [DataMember(IsRequired = true)]
-        private string _columnKey;
-
-        [DataMember(IsRequired = true)]
-        private int _visiblePosition;
-
-        [DataMember(IsRequired = true)]
-        private bool _isHidden;
-
-        [DataMember(IsRequired = true)]
-        private bool _isGroupByCol;
-
-        [DataMember(IsRequired = true)]
-        private int _sortDirection;
-
-        [DataMember(IsRequired = true)]
-        private int _sortSequence;
-
-        [DataMember(IsRequired = true)]
-        private int _width;
-
-        [DataMember(IsRequired = true)]
-        private string _columnType;
-
-        [DataMember(IsRequired = true)]
-        private string _hcgRid;
-
-        [DataMember(IsRequired = true)]
-        private string _label;
-
-        [DataMember(IsRequired = true)]
-        private string _itemField;
+        
 
         #endregion
 
         #region Constructor
-        public ROAllocationWorklistOut(int iViewRid, string sBandKey, string sColumnKey, int iVisiblePosition, bool isHidden, bool isGroupByCol,
-               int iSortDirection, int iSortSequence, int iWidth, string sColumnType, string sHCGRID, string label, string itemField)
+        public ROAllocationWorklistOut(int viewKey, string bandKey, string columnKey, int visiblePosition, bool isHidden, bool isGroupByColumn,
+               int sortDirection, int sortSequence, int width, string columnType, string headerCharacteristicGroupKey, string label, string itemField) :
+            base(viewKey, bandKey, columnKey, visiblePosition, isHidden, isGroupByColumn,
+               sortDirection, sortSequence, width, columnType, headerCharacteristicGroupKey, label, itemField)
         {
-            _viewRid = iViewRid;
-            _bandKey = sBandKey;
-            _columnKey = sColumnKey;
-            _visiblePosition = iVisiblePosition;
-            _isHidden = isHidden;
-            _isGroupByCol = isGroupByCol;
-            _sortDirection = iSortDirection;
-            _sortSequence = iSortSequence;
-            _width = iWidth;
-            _columnType = sColumnType;
-            _hcgRid = sHCGRID;
-            _label = label;
-            _itemField = itemField;
+
 
         }
         #endregion  
 
-        #region Public Properties
-        public int ViewRID
-        {
-            get { return _viewRid; }
-            set { _viewRid = value; }
-        }
-
-        public string BandKey
-        {
-            get { return _bandKey; }
-            set { _bandKey = value; }
-        }
-
-        public string ColumnKey
-        {
-            get { return _columnKey; }
-            set { _columnKey = value; }
-        }
-
-        public int VisiblePosition
-        {
-            get { return _visiblePosition; }
-            set { _visiblePosition = value; }
-        }
-
-        public bool IsHidden
-        {
-            get { return _isHidden; }
-            set { _isHidden = value; }
-        }
-
-        public bool IsGroupByCol
-        {
-            get { return _isGroupByCol; }
-            set { _isGroupByCol = value; }
-        }
-
-        public int SortDirection
-        {
-            get { return _sortDirection; }
-            set { _sortDirection = value; }
-        }
-
-        public int SortSequence
-        {
-            get { return _sortSequence; }
-            set { _sortSequence = value; }
-        }
-
-        public int Width
-        {
-            get { return _width; }
-            set { _width = value; }
-        }
-
-        public string ColumnType
-        {
-            get { return _columnType; }
-            set { _columnType = value; }
-        }
-
-        public string HCGRID
-        {
-            get { return _hcgRid; }
-            set { _hcgRid = value; }
-        }
-
-        public string Label
-        {
-            get { return _label; }
-            set { _label = value; }
-        }
-
-        public string ItemField
-        {
-            get { return _itemField; }
-            set { _itemField = value; }
-        }
-        #endregion  
     }
 
 

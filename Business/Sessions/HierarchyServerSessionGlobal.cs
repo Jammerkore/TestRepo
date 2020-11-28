@@ -15840,6 +15840,12 @@ namespace MIDRetail.Business
 									sep.StoreIneligible = sei.StoreIneligible;
 									sep.EligType = eEligibilitySettingType.SetIneligible;
 									sep.EligIsSet = true;
+                                    if (sei.EligModelRID > Include.NoRID)
+                                    {
+                                        sep.EligModelRID = sei.EligModelRID;
+                                        emi = (EligModelInfo)_eligModelsByRID[sei.EligModelRID];
+                                        sep.EligModelName = emi.ModelID;
+                                    }
 								}
 								else if (sei.EligModelRID > Include.NoRID)
 								{

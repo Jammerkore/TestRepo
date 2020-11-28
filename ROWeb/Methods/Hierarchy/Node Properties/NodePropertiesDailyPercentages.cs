@@ -53,12 +53,17 @@ namespace Logility.ROWeb
             _storeDailyPercentagesList = (StoreDailyPercentagesList)nodePropertiesData;
 
             int attributeKey = SAB.ClientServerSession.GlobalOptions.OTSPlanStoreGroupRID;
+            int attributeSetKey = Include.NoRID;
             if (parms is RONodePropertyAttributeKeyParms)
             {
                 RONodePropertyAttributeKeyParms nodePropertyDailyPercentagesParms = (RONodePropertyAttributeKeyParms)parms;
                 if (nodePropertyDailyPercentagesParms.AttributeKey != Include.NoRID)
                 {
                     attributeKey = nodePropertyDailyPercentagesParms.AttributeKey;
+                }
+                if (nodePropertyDailyPercentagesParms.AttributeSetKey != Include.NoRID)
+                {
+                    attributeSetKey = nodePropertyDailyPercentagesParms.AttributeSetKey;
                 }
             }
 
@@ -70,13 +75,14 @@ namespace Logility.ROWeb
             // populate nodeProperties using Windows\NodeProperties.cs as a reference
 
             AddAttributeSets(nodeProperties: nodeProperties,
-                dailyPercentagesList: _storeDailyPercentagesList);
+                dailyPercentagesList: _storeDailyPercentagesList,
+                attributeSetKey: attributeSetKey);
 
 
             return nodeProperties;
         }
 
-        private void AddAttributeSets(RONodePropertiesDailyPercentages nodeProperties, StoreDailyPercentagesList dailyPercentagesList)
+        private void AddAttributeSets(RONodePropertiesDailyPercentages nodeProperties, StoreDailyPercentagesList dailyPercentagesList, int attributeSetKey)
         {
             RONodePropertiesDailyPercentagesAttributeSet dailyPercentagesAttributeSet;
             RONodePropertiesDailyPercentagesStore dailyPercentagesStore;
@@ -89,6 +95,11 @@ namespace Logility.ROWeb
 
             foreach (StoreGroupLevelListViewProfile sglp in storeDailyPercentagesGroupLevelList)
             {
+                if (sglp.Key != attributeSetKey)
+                {
+                    continue;
+                }
+
                 dailyPercentagesAttributeSet = new RONodePropertiesDailyPercentagesAttributeSet(attributeSet: new KeyValuePair<int, string>(sglp.Key, sglp.Name));
                 foreach (StoreProfile storeProfile in sglp.Stores)
                 {
@@ -183,7 +194,8 @@ namespace Logility.ROWeb
                     dailyPercentagesAttributeSet.Store.Add(dailyPercentagesStore);
                 }
 
-                nodeProperties.AttributeSet.Add(dailyPercentagesAttributeSet);
+                nodeProperties.DailyPercentagesAttributeSet = dailyPercentagesAttributeSet;
+                nodeProperties.AttributeSet = dailyPercentagesAttributeSet.AttributeSet;
             }
         }
 
@@ -223,7 +235,8 @@ namespace Logility.ROWeb
             bool storeUpdated;
 
             // spread values
-            foreach (RONodePropertiesDailyPercentagesAttributeSet dailyPercentagesAttributeSet in nodePropertiesDailyPercentagesData.AttributeSet)
+            //foreach (RONodePropertiesDailyPercentagesAttributeSet dailyPercentagesAttributeSet in nodePropertiesDailyPercentagesData.AttributeSet)
+            RONodePropertiesDailyPercentagesAttributeSet dailyPercentagesAttributeSet = nodePropertiesDailyPercentagesData.DailyPercentagesAttributeSet;
             {
                 // balance set default
                 if (dailyPercentagesAttributeSet.DefaultDailyPercentagesValues.DailyPercentagesEntered)
@@ -271,7 +284,8 @@ namespace Logility.ROWeb
             DateRangeProfile applyStoreDateRange = null;
             RONodePropertiesDailyPercentagesValues applyStoreDateRangeValues = null;
 
-            foreach (RONodePropertiesDailyPercentagesAttributeSet dailyPercentagesAttributeSet in nodePropertiesDailyPercentagesData.AttributeSet)
+            //foreach (RONodePropertiesDailyPercentagesAttributeSet dailyPercentagesAttributeSet in nodePropertiesDailyPercentagesData.AttributeSet)
+            dailyPercentagesAttributeSet = nodePropertiesDailyPercentagesData.DailyPercentagesAttributeSet;
             {
                 // apply set defaults
                 if (dailyPercentagesAttributeSet.DefaultDailyPercentagesValues.DailyPercentagesEntered)
@@ -352,7 +366,8 @@ namespace Logility.ROWeb
             }
 
             // update values
-            foreach (RONodePropertiesDailyPercentagesAttributeSet dailyPercentagesAttributeSet in nodePropertiesDailyPercentagesData.AttributeSet)
+            //foreach (RONodePropertiesDailyPercentagesAttributeSet dailyPercentagesAttributeSet in nodePropertiesDailyPercentagesData.AttributeSet)
+            dailyPercentagesAttributeSet = nodePropertiesDailyPercentagesData.DailyPercentagesAttributeSet;
             {
                 // update stores
                 foreach (RONodePropertiesDailyPercentagesStore dailyPercentagesStore in dailyPercentagesAttributeSet.Store)
@@ -757,10 +772,19 @@ namespace Logility.ROWeb
         override public ROProfileKeyParms NodePropertiesGetParms(RONodePropertiesParms parms, eProfileType profileType, int key, bool readOnly = false)
         {
             int attributeKey = Include.NoRID;
+            int attributeSetKey = Include.NoRID;
             if (parms.RONodeProperties is RONodePropertiesDailyPercentages)
             {
                 RONodePropertiesDailyPercentages nodePropertiesDailyPercentagesData = (RONodePropertiesDailyPercentages)parms.RONodeProperties;
                 attributeKey = nodePropertiesDailyPercentagesData.Attribute.Key;
+                if (nodePropertiesDailyPercentagesData.AttributeSetIsSet)
+                {
+                    attributeSetKey = nodePropertiesDailyPercentagesData.AttributeSet.Key;
+                }
+                else if (nodePropertiesDailyPercentagesData.DailyPercentagesAttributeSet != null)
+                {
+                    attributeSetKey = nodePropertiesDailyPercentagesData.DailyPercentagesAttributeSet.AttributeSet.Key;
+                }
             }
 
             RONodePropertyAttributeKeyParms profileKeyParms = new RONodePropertyAttributeKeyParms(sROUserID: parms.ROUserID,
@@ -771,7 +795,8 @@ namespace Logility.ROWeb
                 profileType: profileType,
                 key: key,
                 readOnly: readOnly,
-                attributeKey: attributeKey
+                attributeKey: attributeKey,
+                attributeSetKey: attributeSetKey
                 );
 
             return profileKeyParms;

@@ -53,12 +53,14 @@ namespace Logility.ROWeb
             _storeCapacityList = (StoreCapacityList)nodePropertiesData;
 
             int attributeKey = SAB.ClientServerSession.GlobalOptions.AllocationStoreGroupRID;
+            int attributeSetKey = Include.NoRID;
             if (parms is RONodePropertyAttributeKeyParms)
             {
                 RONodePropertyAttributeKeyParms nodePropertyStoreCapacityParms = (RONodePropertyAttributeKeyParms)parms;
                 if (nodePropertyStoreCapacityParms.AttributeKey != Include.NoRID)
                 {
                     attributeKey = nodePropertyStoreCapacityParms.AttributeKey;
+                    attributeSetKey = nodePropertyStoreCapacityParms.AttributeSetKey;
                 }
             }
 
@@ -70,13 +72,14 @@ namespace Logility.ROWeb
             // populate modelProperties using Windows\NodeProperties.cs as a reference
 
             AddAttributeSets(nodeProperties: nodeProperties,
-                storeCapacityList: _storeCapacityList);
+                storeCapacityList: _storeCapacityList,
+                attributeSetKey: attributeSetKey);
 
 
             return nodeProperties;
         }
 
-        private void AddAttributeSets(RONodePropertiesStoreCapacity nodeProperties, StoreCapacityList storeCapacityList)
+        private void AddAttributeSets(RONodePropertiesStoreCapacity nodeProperties, StoreCapacityList storeCapacityList, int attributeSetKey)
         {
             RONodePropertiesStoreCapacityAttributeSet storeCapacityAttributeSet;
             RONodePropertiesStoreCapacityStore storeCapacityStore;
@@ -88,6 +91,11 @@ namespace Logility.ROWeb
 
             foreach (StoreGroupLevelListViewProfile sglp in storeStoreCapacityGroupLevelList)
             {
+                if (sglp.Key != attributeSetKey)
+                {
+                    continue;
+                }
+
                 storeCapacityAttributeSet = new RONodePropertiesStoreCapacityAttributeSet(attributeSet: new KeyValuePair<int, string>(sglp.Key, sglp.Name));
                 foreach (StoreProfile storeProfile in sglp.Stores)
                 {
@@ -114,7 +122,8 @@ namespace Logility.ROWeb
                     storeCapacityAttributeSet.Store.Add(storeCapacityStore);
                 }
 
-                nodeProperties.AttributeSet.Add(storeCapacityAttributeSet);
+                nodeProperties.StoreCapacityAttributeSet = storeCapacityAttributeSet;
+                nodeProperties.AttributeSet = storeCapacityAttributeSet.AttributeSet;
             }
         }
 
@@ -152,7 +161,8 @@ namespace Logility.ROWeb
             StoreCapacityProfile storeCapacity;
             bool valueChanged = false;
 
-            foreach (RONodePropertiesStoreCapacityAttributeSet storeCapacityAttributeSet in nodePropertiesStoreCapacityData.AttributeSet)
+            //foreach (RONodePropertiesStoreCapacityAttributeSet storeCapacityAttributeSet in nodePropertiesStoreCapacityData.AttributeSet)
+            RONodePropertiesStoreCapacityAttributeSet storeCapacityAttributeSet = nodePropertiesStoreCapacityData.StoreCapacityAttributeSet;
             {
                 foreach (RONodePropertiesStoreCapacityStore storeCapacityStore in storeCapacityAttributeSet.Store)
                 {
@@ -190,6 +200,8 @@ namespace Logility.ROWeb
                     else if (storeCapacity.StoreCapacity > Include.Undefined)  // clear value
                     {
                         storeCapacity.StoreCapacity = Include.Undefined;
+                        storeCapacity.StoreCapacityIsInherited = false;
+                        storeCapacity.StoreCapacityInheritedFromNodeRID = Include.NoRID;
                         valueChanged = true;
                     }
 
@@ -284,10 +296,19 @@ namespace Logility.ROWeb
         override public ROProfileKeyParms NodePropertiesGetParms(RONodePropertiesParms parms, eProfileType profileType, int key, bool readOnly = false)
         {
             int attributeKey = Include.NoRID;
+            int attributeSetKey = Include.NoRID;
             if (parms.RONodeProperties is RONodePropertiesStoreCapacity)
             {
                 RONodePropertiesStoreCapacity nodePropertiesStoreCapacityData = (RONodePropertiesStoreCapacity)parms.RONodeProperties;
                 attributeKey = nodePropertiesStoreCapacityData.Attribute.Key;
+                if (nodePropertiesStoreCapacityData.AttributeSetIsSet)
+                {
+                    attributeSetKey = nodePropertiesStoreCapacityData.AttributeSet.Key;
+                }
+                else if (nodePropertiesStoreCapacityData.StoreCapacityAttributeSet != null)
+                {
+                    attributeSetKey = nodePropertiesStoreCapacityData.StoreCapacityAttributeSet.AttributeSet.Key;
+                }
             }
 
             RONodePropertyAttributeKeyParms profileKeyParms = new RONodePropertyAttributeKeyParms(sROUserID: parms.ROUserID,
@@ -298,7 +319,8 @@ namespace Logility.ROWeb
                 profileType: profileType,
                 key: key,
                 readOnly: readOnly,
-                attributeKey: attributeKey
+                attributeKey: attributeKey,
+                attributeSetKey: attributeSetKey
                 );
 
             return profileKeyParms;

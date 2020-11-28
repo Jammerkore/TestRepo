@@ -15,8 +15,21 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         private ROPlanningViewDetails _viewDetails;
 
-        public ROPlanningViewDetailsParms(string sROUserID, string sROSessionID, eROClass ROClass, eRORequest RORequest, long ROInstanceID, ROPlanningViewDetails ROPlanningViewDetails) :
-            base(sROUserID, sROSessionID, ROClass, RORequest, ROInstanceID)
+        public ROPlanningViewDetailsParms(
+            string sROUserID, 
+            string sROSessionID, 
+            eROClass ROClass, 
+            eRORequest RORequest, 
+            long ROInstanceID, 
+            ROPlanningViewDetails ROPlanningViewDetails
+            )
+            : base(
+                  sROUserID: sROUserID,
+                  sROSessionID: sROSessionID,
+                  ROClass: ROClass,
+                  RORequest: RORequest,
+                  ROInstanceID: ROInstanceID
+                  )
         {
             _viewDetails = ROPlanningViewDetails;
         }

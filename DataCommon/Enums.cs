@@ -988,8 +988,8 @@ namespace MIDRetail.DataCommon
 
     public enum ePlanBasisType
     {
-        Plan,
-        Basis
+        Plan = 0,
+        Basis = 1
     }
 
     //Begin Track #5871 - stodd 

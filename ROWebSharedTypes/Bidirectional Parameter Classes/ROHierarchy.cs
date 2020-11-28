@@ -612,7 +612,7 @@ namespace Logility.ROWebSharedTypes
 
     // Node Property classes
     [DataContract(Name = "RONodeProperties", Namespace = "http://Logility.ROWeb/")]
-    public abstract class RONodeProperties : ROBaseProperties
+    public class RONodeProperties : ROBaseProperties
     {
         [DataMember(IsRequired = true)]
         protected KeyValuePair<int, string> _node;
@@ -1786,15 +1786,44 @@ namespace Logility.ROWebSharedTypes
         KeyValuePair<int, string> _attribute;
 
         [DataMember(IsRequired = true)]
-        RONodePropertiesEligibilityAttributeSet _eligibilityAttributeSet;
+        KeyValuePair<int, string> _attributeSet;
+
+        [DataMember(IsRequired = true)]
+        RONodePropertiesEligibilityAttributeSet _eligibilityAttributeSet = null;
 
         #region Public Properties
+
+        /// <summary>
+        /// Gets the flag identifying if the attribute has been set.
+        /// </summary>
+        public bool AttributeIsSet
+        {
+            get { return !Attribute.Equals(default(KeyValuePair<int, string>)); }
+        }
 
         public KeyValuePair<int, string> Attribute
         {
             get { return _attribute; }
             set { _attribute = value; }
         }
+
+        /// <summary>
+        /// Gets the flag identifying if the attribute has been set.
+        /// </summary>
+        public bool AttributeSetIsSet
+        {
+            get { return !AttributeSet.Equals(default(KeyValuePair<int, string>)); }
+        }
+
+        /// <summary>
+        /// Gets or sets the attribut for the criteria.
+        /// </summary>
+        public KeyValuePair<int, string> AttributeSet
+        {
+            get { return _attributeSet; }
+            set { _attributeSet = value; }
+        }
+
         public RONodePropertiesEligibilityAttributeSet EligibilityAttributeSet
         {
             get { return _eligibilityAttributeSet; }
@@ -1803,11 +1832,13 @@ namespace Logility.ROWebSharedTypes
 
         #endregion
         public RONodePropertiesEligibility(KeyValuePair<int, string> node,
-             KeyValuePair<int, string> attribute) :
+             KeyValuePair<int, string> attribute = default(KeyValuePair<int, string>),
+             KeyValuePair<int, string> attributeSet = default(KeyValuePair<int, string>)) :
             base(eProfileType.StoreEligibility, node)
 
         {
             _attribute = attribute;
+            _attributeSet = attributeSet;
         }
     }
 
@@ -2137,6 +2168,15 @@ namespace Logility.ROWebSharedTypes
             _storeGradesInheritedFromNode = default(KeyValuePair<int, string>);
             _minimumMaximumsInheritedFromNode = default(KeyValuePair<int, string>);
         }
+
+        public void ClearStoreGradesInheritance()
+        {
+            _storeGradesInheritedFromNode = default(KeyValuePair<int, string>);
+        }
+        public void ClearMinimumMaximumsInheritance()
+        {
+            _minimumMaximumsInheritedFromNode = default(KeyValuePair<int, string>);
+        }
     }
 
     [DataContract(Name = "RONodePropertiesStoreGrade", Namespace = "http://Logility.ROWeb/")]
@@ -2419,7 +2459,7 @@ namespace Logility.ROWebSharedTypes
         private KeyValuePair<int, string> _minimumMaximumsInheritedFromNode;
 
         [DataMember(IsRequired = true)]
-        private List<RONodePropertiesStockMinMaxAttributeSet> _attributeSets;
+        private RONodePropertiesStockMinMaxAttributeSet _stockMinMaxAttributeSet = null;
 
         #region Public Properties
 
@@ -2473,23 +2513,22 @@ namespace Logility.ROWebSharedTypes
             set { _minimumMaximumsInheritedFromNode = value; }
         }
 
-        /// <summary>
-        /// Gets the list of attribute.
-        /// </summary>
-        public List<RONodePropertiesStockMinMaxAttributeSet> AttributeSets
+        public RONodePropertiesStockMinMaxAttributeSet StockMinMaxAttributeSet
         {
-            get { return _attributeSets; }
+            get { return _stockMinMaxAttributeSet; }
+            set { _stockMinMaxAttributeSet = value; }
         }
 
         #endregion
-        public RONodePropertiesStockMinMax(KeyValuePair<int, string> node) :
+        public RONodePropertiesStockMinMax(KeyValuePair<int, string> node,
+            KeyValuePair<int, string> attribute = default(KeyValuePair<int, string>),
+            KeyValuePair<int, string> attributeSet = default(KeyValuePair<int, string>)) :
             base(eProfileType.StockMinMax, node)
 
         {
-            _attribute = default(KeyValuePair<int, string>);
-            _attributeSet = default(KeyValuePair<int, string>);
+            _attribute = attribute;
+            _attributeSet = attributeSet;
             _minimumMaximumsInheritedFromNode = default(KeyValuePair<int, string>);
-            _attributeSets = new List<RONodePropertiesStockMinMaxAttributeSet>();
         }
     }
 
@@ -2628,28 +2667,58 @@ namespace Logility.ROWebSharedTypes
         KeyValuePair<int, string> _attribute;
 
         [DataMember(IsRequired = true)]
-        List<RONodePropertiesStoreCapacityAttributeSet> _attributeSet;
+        KeyValuePair<int, string> _attributeSet;
+
+        [DataMember(IsRequired = true)]
+        RONodePropertiesStoreCapacityAttributeSet _storeCapacityAttributeSet = null;
 
         #region Public Properties
 
+        /// <summary>
+        /// Gets the flag identifying if the attribute has been set.
+        /// </summary>
+        public bool AttributeIsSet
+        {
+            get { return !Attribute.Equals(default(KeyValuePair<int, string>)); }
+        }
         public KeyValuePair<int, string> Attribute
         {
             get { return _attribute; }
             set { _attribute = value; }
         }
-        public List<RONodePropertiesStoreCapacityAttributeSet> AttributeSet
+
+        /// <summary>
+        /// Gets the flag identifying if the attribute has been set.
+        /// </summary>
+        public bool AttributeSetIsSet
+        {
+            get { return !AttributeSet.Equals(default(KeyValuePair<int, string>)); }
+        }
+
+        /// <summary>
+        /// Gets or sets the attribut for the criteria.
+        /// </summary>
+        public KeyValuePair<int, string> AttributeSet
         {
             get { return _attributeSet; }
+            set { _attributeSet = value; }
+        }
+
+        public RONodePropertiesStoreCapacityAttributeSet StoreCapacityAttributeSet
+        {
+            get { return _storeCapacityAttributeSet; }
+            set { _storeCapacityAttributeSet = value; }
         }
 
         #endregion
         public RONodePropertiesStoreCapacity(KeyValuePair<int, string> node,
-             KeyValuePair<int, string> attribute) :
+             KeyValuePair<int, string> attribute = default(KeyValuePair<int, string>),
+             KeyValuePair<int, string> attributeSet = default(KeyValuePair<int, string>)) :
             base(eProfileType.StoreCapacity, node)
 
         {
             _attribute = attribute;
-            _attributeSet = new List<RONodePropertiesStoreCapacityAttributeSet>();
+            _attributeSet = attributeSet;
         }
     }
 
@@ -2863,12 +2932,23 @@ namespace Logility.ROWebSharedTypes
         KeyValuePair<int, string> _attribute;
 
         [DataMember(IsRequired = true)]
-        List<RONodePropertiesDailyPercentagesAttributeSet> _attributeSet;
+        KeyValuePair<int, string> _attributeSet;
+
+        [DataMember(IsRequired = true)]
+        RONodePropertiesDailyPercentagesAttributeSet _dailyPercentagesAttributeSet = null;
 
         #region Public Properties
 
         /// <summary>
-        /// Gets or sets the attribute to use for the presentation.
+        /// Gets the flag identifying if the attribute has been set.
+        /// </summary>
+        public bool AttributeIsSet
+        {
+            get { return !Attribute.Equals(default(KeyValuePair<int, string>)); }
+        }
+
+        /// <summary>
+        /// Gets or sets the attribute for the criteria.
         /// </summary>
         public KeyValuePair<int, string> Attribute
         {
@@ -2877,21 +2957,37 @@ namespace Logility.ROWebSharedTypes
         }
 
         /// <summary>
-        /// Gets the list of attribute sets.
+        /// Gets the flag identifying if the attribute has been set.
         /// </summary>
-        public List<RONodePropertiesDailyPercentagesAttributeSet> AttributeSet
+        public bool AttributeSetIsSet
+        {
+            get { return !AttributeSet.Equals(default(KeyValuePair<int, string>)); }
+        }
+
+        /// <summary>
+        /// Gets or sets the attribut for the criteria.
+        /// </summary>
+        public KeyValuePair<int, string> AttributeSet
         {
             get { return _attributeSet; }
+            set { _attributeSet = value; }
+        }
+
+        public RONodePropertiesDailyPercentagesAttributeSet DailyPercentagesAttributeSet
+        {
+            get { return _dailyPercentagesAttributeSet; }
+            set { _dailyPercentagesAttributeSet = value; }
         }
 
         #endregion
         public RONodePropertiesDailyPercentages(KeyValuePair<int, string> node,
-             KeyValuePair<int, string> attribute) :
+             KeyValuePair<int, string> attribute = default(KeyValuePair<int, string>),
+             KeyValuePair<int, string> attributeSet = default(KeyValuePair<int, string>)) :
             base(eProfileType.DailyPercentages, node)
 
         {
             _attribute = attribute;
-            _attributeSet = new List<RONodePropertiesDailyPercentagesAttributeSet>();
+            _attributeSet = attributeSet;
         }
     }
 
@@ -4220,28 +4316,61 @@ namespace Logility.ROWebSharedTypes
         KeyValuePair<int, string> _attribute;
 
         [DataMember(IsRequired = true)]
-        List<RONodePropertiesVSWAttributeSet> _attributeSet;
+        KeyValuePair<int, string> _attributeSet;
+
+        [DataMember(IsRequired = true)]
+        RONodePropertiesVSWAttributeSet _VSWAttributeSet = null;
 
         #region Public Properties
 
+        /// <summary>
+        /// Gets the flag identifying if the attribute has been set.
+        /// </summary>
+        public bool AttributeIsSet
+        {
+            get { return !Attribute.Equals(default(KeyValuePair<int, string>)); }
+        }
+
+        /// <summary>
+        /// Gets or sets the attribute for the criteria.
+        /// </summary>
         public KeyValuePair<int, string> Attribute
         {
             get { return _attribute; }
             set { _attribute = value; }
         }
-        public List<RONodePropertiesVSWAttributeSet> AttributeSet
+
+        /// <summary>
+        /// Gets the flag identifying if the attribute has been set.
+        /// </summary>
+        public bool AttributeSetIsSet
+        {
+            get { return !AttributeSet.Equals(default(KeyValuePair<int, string>)); }
+        }
+
+        /// <summary>
+        /// Gets or sets the attribut for the criteria.
+        /// </summary>
+        public KeyValuePair<int, string> AttributeSet
         {
             get { return _attributeSet; }
+            set { _attributeSet = value; }
+        }
+        public RONodePropertiesVSWAttributeSet VSWAttributeSet
+        {
+            get { return _VSWAttributeSet; }
+            set { _VSWAttributeSet = value; }
         }
 
         #endregion
         public RONodePropertiesVSW(KeyValuePair<int, string> node,
-             KeyValuePair<int, string> attribute) :
+             KeyValuePair<int, string> attribute = default(KeyValuePair<int, string>),
+             KeyValuePair<int, string> attributeSet = default(KeyValuePair<int, string>)) :
             base(eProfileType.IMO, node)
 
         {
             _attribute = attribute;
-            _attributeSet = new List<RONodePropertiesVSWAttributeSet>();
+            _attributeSet = attributeSet;
         }
     }
 }

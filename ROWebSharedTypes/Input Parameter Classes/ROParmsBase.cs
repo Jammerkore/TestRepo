@@ -281,6 +281,11 @@ namespace Logility.ROWebSharedTypes
 
     [KnownType(typeof(ROMessageResponseParms))]
 
+    [KnownType(typeof(ROAllocationWorklistEntry))]
+
+    [KnownType(typeof(ROAllocationWorklistViewDetails))]
+    [KnownType(typeof(ROAllocationWorklistViewDetailsParms))]
+
     public abstract class ROParms
     {
         [DataMember(IsRequired = true)]

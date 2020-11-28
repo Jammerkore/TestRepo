@@ -21,8 +21,9 @@ namespace MIDRetail.Business
         private static List<StoreGroupLevelProfile> _levelList = new List<StoreGroupLevelProfile>();
         private static int ReaderLockTimeOut;
         private static int WriterLockTimeOut;
-        private static MIDReaderWriterLock stores_rwl = new MIDReaderWriterLock();
-        private static MIDReaderWriterLock storeGroup_rwl = new MIDReaderWriterLock();
+        //private static MIDReaderWriterLock stores_rwl = new MIDReaderWriterLock();
+        //private static MIDReaderWriterLock storeGroup_rwl = new MIDReaderWriterLock();
+        private static MIDReaderWriterLock StoreMgmt_rwl = new MIDReaderWriterLock();
         private static Audit _audit = null;
         private static SessionAddressBlock _SAB = null;
         private static Session _session;   // TT#1861-MD - JSmith - Serialization error accessing the Audit
@@ -76,9 +77,9 @@ namespace MIDRetail.Business
         // Begin TT#5664 - JSmith - All User Store Attributes appear in User Methods 
         public static void BuildUsersAssignedToMe()
         {
-            storeGroup_rwl.AcquireWriterLock(WriterLockTimeOut);
             try
             {
+                AcquireWriterLock();
                 _usersAssignedToMe = new List<int>();
                 SecurityAdmin dlSecurity = new SecurityAdmin();
                 DataTable dtUsers = dlSecurity.GetUsersAssignedToMe(_userID);
@@ -91,7 +92,7 @@ namespace MIDRetail.Business
             finally
             {
                 // Ensure that the lock is released.
-                storeGroup_rwl.ReleaseWriterLock();
+                ReleaseWriterLock();
             }
         }
         // End TT#5664 - JSmith - All User Store Attributes appear in User Methods 
@@ -99,13 +100,13 @@ namespace MIDRetail.Business
         // Begin TT#1861-MD - JSmith - Serialization error accessing the Audit
         //public static void LoadInitialStoresAndGroups(SessionAddressBlock SAB)
         // Begin TT#1957-MD - JSmith - Purge fails deleting users with personal attributes
-		//public static void LoadInitialStoresAndGroups(SessionAddressBlock SAB, Session session)
+        //public static void LoadInitialStoresAndGroups(SessionAddressBlock SAB, Session session)
         public static void LoadInitialStoresAndGroups(SessionAddressBlock SAB, Session session, bool bLoadInactiveGroups = false, bool bDoingRefresh = false)
         // End TT#1957-MD - JSmith - Purge fails deleting users with personal attributes
         // End TT#1861-MD - JSmith - Serialization error accessing the Audit
         {
             // Begin TT#5662 - JSmith - Object Reference error in Store Session Initialize
-            storeGroup_rwl.AcquireWriterLock(WriterLockTimeOut);
+            AcquireWriterLock();
             try
             {
                 // area already initialized
@@ -147,7 +148,7 @@ namespace MIDRetail.Business
             finally
             {
                 // Ensure that the lock is released.
-                storeGroup_rwl.ReleaseWriterLock();
+                ReleaseWriterLock();
             }
             // End TT#5662 - JSmith - Object Reference error in Store Session Initialize
         }
@@ -212,6 +213,7 @@ namespace MIDRetail.Business
         {
             try
             {
+                AcquireReaderLock();
                 ProfileList activeList = new ProfileList(eProfileType.Store);
                 foreach (StoreProfile sp in _allStoreList.ArrayList)
                 {
@@ -227,6 +229,11 @@ namespace MIDRetail.Business
             {
                 throw;
             }
+            finally
+            {
+                // Ensure that the lock is released.
+                ReleaseReaderLock();
+            }
         }
 
         // Begin TT#2078-MD - JSmith - Object Reference error updating Store Group
@@ -234,32 +241,42 @@ namespace MIDRetail.Business
         public static void StoreProfiles_RefreshFromService(bool refreshSessions)
         // End TT#2078-MD - JSmith - Object Reference error updating Store Group
         {
-            _allStoreList = _SAB.StoreServerSession.GetAllStoresList();
-            // Begin TT#1908-MD - JSmith - Versioning Test_ Interface in new Store_ process methods user arobinson_ process methods as user pam _ receive system argument exception
-            // Refresh sessions since store list refreshed.
-            // Begin TT#2078-MD - JSmith - Object Reference error updating Store Group
-            if (refreshSessions)
+            try
             {
-                // End TT#2078-MD - JSmith - Object Reference error updating Store Group
-                if (_SAB.ClientServerSession != null)
+                AcquireWriterLock();
+                _allStoreList = _SAB.StoreServerSession.GetAllStoresList();
+                // Begin TT#1908-MD - JSmith - Versioning Test_ Interface in new Store_ process methods user arobinson_ process methods as user pam _ receive system argument exception
+                // Refresh sessions since store list refreshed.
+                // Begin TT#2078-MD - JSmith - Object Reference error updating Store Group
+                if (refreshSessions)
                 {
-                    _SAB.ClientServerSession.Refresh();
-                }
-                if (_SAB.ApplicationServerSession != null)
-                {
-                    _SAB.ApplicationServerSession.Refresh();
-                }
-                if (_SAB.HierarchyServerSession != null)
-                {
-                    _SAB.HierarchyServerSession.Refresh();
-                }
-                if (_SAB.HeaderServerSession != null)
-                {
-                    _SAB.HeaderServerSession.Refresh();
-                }
-            }  // TT#2078-MD - JSmith - Object Reference error updating Store Group
-            // End TT#1908-MD - JSmith - Versioning Test_ Interface in new Store_ process methods user arobinson_ process methods as user pam _ receive system argument exception
+                    // End TT#2078-MD - JSmith - Object Reference error updating Store Group
+                    if (_SAB.ClientServerSession != null)
+                    {
+                        _SAB.ClientServerSession.Refresh();
+                    }
+                    if (_SAB.ApplicationServerSession != null)
+                    {
+                        _SAB.ApplicationServerSession.Refresh();
+                    }
+                    if (_SAB.HierarchyServerSession != null)
+                    {
+                        _SAB.HierarchyServerSession.Refresh();
+                    }
+                    if (_SAB.HeaderServerSession != null)
+                    {
+                        _SAB.HeaderServerSession.Refresh();
+                    }
+                }  // TT#2078-MD - JSmith - Object Reference error updating Store Group
+                   // End TT#1908-MD - JSmith - Versioning Test_ Interface in new Store_ process methods user arobinson_ process methods as user pam _ receive system argument exception
+            }
+            finally
+            {
+                // Ensure that the lock is released.
+                ReleaseWriterLock();
+            }
         }
+
         public static int StoreProfile_GetStoreRidFromId(string storeId)
         {
             try
@@ -284,6 +301,7 @@ namespace MIDRetail.Business
         {
             try
             {
+                AcquireReaderLock();
                 //Changed for removal of store datatable - stodd 2.11.2007
                 StoreProfile sp = null;
 
@@ -312,6 +330,11 @@ namespace MIDRetail.Business
 
                 throw;
             }
+            finally
+            {
+                // Ensure that the lock is released.
+                ReleaseReaderLock();
+            }
         }
 
         /// <summary>
@@ -323,6 +346,7 @@ namespace MIDRetail.Business
         {
             try
             {
+                AcquireReaderLock();
                 StoreProfile sp = (StoreProfile)_allStoreList.FindKey(storeRecId);
                 if (sp == null)
                 {
@@ -337,7 +361,11 @@ namespace MIDRetail.Business
 
                 throw;
             }
-
+            finally
+            {
+                // Ensure that the lock is released.
+                ReleaseReaderLock();
+            }
         }
 
         // Begin TT#1927-MD - JSmith - Able to Save a Dynamic and Manual Store Attribute with the same Name.  Would not think this would be allowed.
@@ -347,6 +375,7 @@ namespace MIDRetail.Business
         {
             try
             {
+                AcquireReaderLock();
                 //Changed for removal of store datatable - stodd 2.11.2007
                 //StoreGroupProfile sgp = GetStoreGroupProfile(storeId);
                 //Changed for removal of store datatable - stodd 2.11.2007
@@ -389,6 +418,11 @@ namespace MIDRetail.Business
                 //}
                 throw;
             }
+            finally
+            {
+                // Ensure that the lock is released.
+                ReleaseReaderLock();
+            }
         }
 
         /// <summary>
@@ -399,6 +433,7 @@ namespace MIDRetail.Business
         {
             try
             {
+                AcquireReaderLock();
                 Hashtable storeHash = new Hashtable();
 
                 foreach (StoreProfile sp in _allStoreList.ArrayList)
@@ -418,6 +453,11 @@ namespace MIDRetail.Business
                 //}
                 throw;
             }
+            finally
+            {
+                // Ensure that the lock is released.
+                ReleaseReaderLock();
+            }
         }
         public static string GetStoreDisplayText(int storeRid)
         {
@@ -426,17 +466,64 @@ namespace MIDRetail.Business
                 StoreProfile sp = StoreProfile_Get(storeRid);
                 return sp.Text;
             }
-            catch (Exception err)
+            catch (Exception)
             {
                 throw;
             }
         }
 
-        private static void AcquireStoreWriterLock()
+        private static void AcquireReaderLock()
         {
             try
             {
-                stores_rwl.AcquireWriterLock(WriterLockTimeOut);
+                StoreMgmt_rwl.AcquireReaderLock(ReaderLockTimeOut);
+            }
+            catch (ApplicationException ex)
+            {
+                if (_audit != null)
+                {
+                    _audit.Log_Exception(ex, _module);
+                }
+                throw new MIDException(eErrorLevel.severe, 0, "StoreManagement:AcquireReaderLock writer lock has timed out");
+            }
+            catch (Exception ex)
+            {
+                if (_audit != null)
+                {
+                    _audit.Log_Exception(ex, _module);
+                }
+                throw;
+            }
+        }
+        private static void ReleaseReaderLock()
+        {
+            try
+            {
+                StoreMgmt_rwl.ReleaseReaderLock();
+            }
+            catch (ApplicationException ex)
+            {
+                if (_audit != null)
+                {
+                    _audit.Log_Exception(ex, _module);
+                }
+                throw new MIDException(eErrorLevel.severe, 0, "StoreManagement:ReleaseReaderLock writer lock has timed out");
+            }
+            catch (Exception ex)
+            {
+                if (_audit != null)
+                {
+                    _audit.Log_Exception(ex, _module);
+                }
+                throw;
+            }
+        }
+
+        private static void AcquireWriterLock()
+        {
+            try
+            {
+                StoreMgmt_rwl.AcquireWriterLock(WriterLockTimeOut);
             }
             catch (ApplicationException ex)
             {
@@ -447,8 +534,8 @@ namespace MIDRetail.Business
                 }
                 // End TT#189
                 // The writer lock request timed out.
-                //EventLog.WriteEntry("MIDStoreService", "MIDStoreService:AcquireStoreWriterLock writer lock has timed out", EventLogEntryType.Error);
-                throw new MIDException(eErrorLevel.severe, 0, "StoreManagement:AcquireStoreWriterLock writer lock has timed out");
+                //EventLog.WriteEntry("MIDStoreService", "MIDStoreService:AcquireWriterLock writer lock has timed out", EventLogEntryType.Error);
+                throw new MIDException(eErrorLevel.severe, 0, "StoreManagement:AcquireWriterLock writer lock has timed out");
             }
             catch (Exception ex)
             {
@@ -460,11 +547,11 @@ namespace MIDRetail.Business
                 throw;
             }
         }
-        private static void ReleaseStoreWriterLock()
+        private static void ReleaseWriterLock()
         {
             try
             {
-                stores_rwl.ReleaseWriterLock();
+                StoreMgmt_rwl.ReleaseWriterLock();
             }
             catch (ApplicationException ex)
             {
@@ -475,8 +562,8 @@ namespace MIDRetail.Business
                 }
                 // End TT#189
                 // The writer lock request timed out.
-                //EventLog.WriteEntry("MIDStoreService", "MIDStoreService:ReleaseStoreWriterLock writer lock has timed out", EventLogEntryType.Error);
-                throw new MIDException(eErrorLevel.severe, 0, "StoreManagement:ReleaseStoreWriterLock writer lock has timed out");
+                //EventLog.WriteEntry("MIDStoreService", "MIDStoreService:ReleaseWriterLock writer lock has timed out", EventLogEntryType.Error);
+                throw new MIDException(eErrorLevel.severe, 0, "StoreManagement:ReleaseWriterLock writer lock has timed out");
             }
             catch (Exception ex)
             {
@@ -488,7 +575,6 @@ namespace MIDRetail.Business
                 throw;
             }
         }
-
 
 
 
@@ -497,7 +583,7 @@ namespace MIDRetail.Business
         {
             try
             {
-                AcquireStoreWriterLock();
+                AcquireWriterLock();
                 //AcquireStoreGroupWriterLock();
 
 
@@ -579,7 +665,7 @@ namespace MIDRetail.Business
                 // Update store Profile in List
                 _allStoreList.Add(store);
 
-                ReleaseStoreWriterLock();
+                //ReleaseWriterLock();
                 //ReleaseStoreGroupWriterLock();
 
 
@@ -600,6 +686,10 @@ namespace MIDRetail.Business
                 //    _audit.Log_Exception(err, GetType().Name);
                 //}
                 throw;
+            }
+            finally
+            {
+                ReleaseWriterLock();
             }
         }
 
@@ -892,7 +982,7 @@ namespace MIDRetail.Business
         {
             try
             {
-                AcquireStoreWriterLock();
+                AcquireWriterLock();
                 //AcquireStoreGroupWriterLock();
                 try
                 {
@@ -1051,7 +1141,7 @@ namespace MIDRetail.Business
                 }
                 finally
                 {
-                    ReleaseStoreWriterLock();
+                    ReleaseWriterLock();
                     //ReleaseStoreGroupWriterLock();
                 }
                 //Do special processing for the reserve store
@@ -1140,7 +1230,7 @@ namespace MIDRetail.Business
         {
             try
             {
-                AcquireStoreWriterLock();
+                AcquireWriterLock();
                 try
                 {
                     //if (sp.Characteristics != null)
@@ -1164,7 +1254,7 @@ namespace MIDRetail.Business
                 }
                 finally
                 {
-                    ReleaseStoreWriterLock();
+                    ReleaseWriterLock();
                 }
             }
             catch (Exception ex)
@@ -1431,16 +1521,17 @@ namespace MIDRetail.Business
         // Begin TT#4988 - JSmith - Performance
         //public static Hashtable GetStoreSalesStatusHash(int yearWeek, Session aSession)
         // Begin TT#1872-MD JSmith - Str Load API runninng.  User tries to open the OTS Forecast Review Screen and receives mssg that the Str Service is not available.
-		//public static Dictionary<int, eStoreStatus> GetStoreSalesStatusHash(int yearWeek, Session aSession)
+        //public static Dictionary<int, eStoreStatus> GetStoreSalesStatusHash(int yearWeek, Session aSession)
         public static Dictionary<int, eStoreStatus> GetStoreSalesStatusHash(int yearWeek, Session aSession, SessionAddressBlock SessionAddressBlock, ProfileList allStoreList)
         // End TT#1872-MD JSmith - Str Load API runninng.  User tries to open the OTS Forecast Review Screen and receives mssg that the Str Service is not available.
         // End TT#4988 - JSmith - Performance
         {
             try
             {
+                AcquireWriterLock();
                 // Begin TT#4988 - JSmith - Performance
                 //Hashtable storeStatusHash = new Hashtable();
-				// Begin TT#2090-MD - JSmith - Performance
+                // Begin TT#2090-MD - JSmith - Performance
                 //Dictionary<int, eStoreStatus> storeStatusHash = new Dictionary<int, eStoreStatus>();
                 Dictionary<int, eStoreStatus> storeStatusHash;
                 // End TT#4988 - JSmith - Performance
@@ -1465,7 +1556,7 @@ namespace MIDRetail.Business
                         }
                     }
                 }
-				// End TT#2090-MD - JSmith - Performance
+                // End TT#2090-MD - JSmith - Performance
 
                 //WeekProfile baseWeek = _SAB.StoreServerSession.CalendarGlobal.GetWeek(yearWeek); //Calendar.GetWeek(yearWeek);
                 WeekProfile baseWeek = aSession.Calendar.GetWeek(yearWeek); //Calendar.GetWeek(yearWeek); //TT#1517-MD Store Service Optimization - SRisch
@@ -1476,7 +1567,7 @@ namespace MIDRetail.Business
                 //    eStoreStatus storeStatus = _SAB.StoreServerSession.GetStoreStatus(baseWeek, sp.SellingOpenDt, sp.SellingCloseDt);  //StoreServerGlobal.GetStoreStatus(baseWeek, sp.SellingOpenDt, sp.SellingCloseDt);
                 //    storeStatusHash.Add(sp.Key, storeStatus);
                 //}
-				// Begin TT#2090-MD - JSmith - Performance
+                // Begin TT#2090-MD - JSmith - Performance
                 //foreach (StoreProfile sp in allStoreList.ArrayList)
                 //{
                 //    eStoreStatus storeStatus = SessionAddressBlock.StoreServerSession.GetStoreStatus(baseWeek, sp.SellingOpenDt, sp.SellingCloseDt);
@@ -1487,7 +1578,7 @@ namespace MIDRetail.Business
                 storeStatusHash = SessionAddressBlock.StoreServerSession.GetAllStoresSalesStatus(baseWeek, allStoreList.ArrayList);
 
                 _storeSalesStatusByWeek[yearWeek] = storeStatusHash;
-				// End TT#2090-MD - JSmith - Performance
+                // End TT#2090-MD - JSmith - Performance
 
                 return storeStatusHash;
             }
@@ -1501,7 +1592,13 @@ namespace MIDRetail.Business
                 //}
                 throw;
             }
+            finally
+            {
+                // Ensure that the lock is released.
+                ReleaseWriterLock();
+            }
         }
+
         /// <summary>
         /// Gets the stock status of each store for the year/week provided
         /// </summary>
@@ -1510,16 +1607,17 @@ namespace MIDRetail.Business
         // Begin TT#4988 - JSmith - Performance
         //public static Hashtable GetStoreSalesStatusHash(int yearWeek, Session aSession)
         // Begin TT#1872-MD JSmith - Str Load API runninng.  User tries to open the OTS Forecast Review Screen and receives mssg that the Str Service is not available.
-		//public static Dictionary<int, eStoreStatus> GetStoreStockStatusHash(int yearWeek, Session aSession)
+        //public static Dictionary<int, eStoreStatus> GetStoreStockStatusHash(int yearWeek, Session aSession)
         public static Dictionary<int, eStoreStatus> GetStoreStockStatusHash(int yearWeek, Session aSession, SessionAddressBlock SessionAddressBlock, ProfileList allStoreList)
         // End TT#1872-MD JSmith - Str Load API runninng.  User tries to open the OTS Forecast Review Screen and receives mssg that the Str Service is not available.
         // End TT#4988 - JSmith - Performance
         {
             try
             {
+                AcquireWriterLock();
                 // Begin TT#4988 - JSmith - Performance
                 //Hashtable storeStatusHash = new Hashtable();
-				// Begin TT#2090-MD - JSmith - Performance
+                // Begin TT#2090-MD - JSmith - Performance
                 //Dictionary<int, eStoreStatus> storeStatusHash = new Dictionary<int, eStoreStatus>();
                 Dictionary<int, eStoreStatus> storeStatusHash;
                 // End TT#4988 - JSmith - Performance
@@ -1543,7 +1641,7 @@ namespace MIDRetail.Business
                         }
                     }
                 }
-				// End TT#2090-MD - JSmith - Performance
+                // End TT#2090-MD - JSmith - Performance
 
                 WeekProfile baseWeek = aSession.Calendar.GetWeek(yearWeek); //Calendar.GetWeek(yearWeek);
 
@@ -1553,7 +1651,7 @@ namespace MIDRetail.Business
                 //    eStoreStatus storeStatus = _SAB.StoreServerSession.GetStoreStatus(baseWeek, sp.SellingOpenDt, sp.SellingCloseDt); //StoreServerGlobal.GetStoreStatus(baseWeek, sp.StockOpenDt, sp.StockCloseDt);
                 //    storeStatusHash.Add(sp.Key, storeStatus);
                 //}
-				// Begin TT#2090-MD - JSmith - Performance
+                // Begin TT#2090-MD - JSmith - Performance
                 //foreach (StoreProfile sp in allStoreList.ArrayList)
                 //{
                 //    eStoreStatus storeStatus = SessionAddressBlock.StoreServerSession.GetStoreStatus(baseWeek, sp.SellingOpenDt, sp.SellingCloseDt); //StoreServerGlobal.GetStoreStatus(baseWeek, sp.StockOpenDt, sp.StockCloseDt);
@@ -1564,7 +1662,7 @@ namespace MIDRetail.Business
                 storeStatusHash = SessionAddressBlock.StoreServerSession.GetAllStoresStockStatus(baseWeek, allStoreList.ArrayList);
 
                 _storeStockStatusByWeek[yearWeek] = storeStatusHash;
-				// End TT#2090-MD - JSmith - Performance
+                // End TT#2090-MD - JSmith - Performance
 
                 return storeStatusHash;
             }
@@ -1578,6 +1676,11 @@ namespace MIDRetail.Business
                 //}
                 throw;
             }
+            finally
+            {
+                // Ensure that the lock is released.
+                ReleaseWriterLock();
+            }
         }
 
         // BEGIN TT#739-MD - STodd - delete stores
@@ -1585,36 +1688,27 @@ namespace MIDRetail.Business
         {
             try
             {
-                AcquireStoreWriterLock();
-                //AcquireStoreGroupWriterLock();
-                try
-                {
-                    store.SetDeleteStore(markForDelete);	// TT#3272 - stodd - mark store fro delete not refreshing
-                    // updates on database
-                    //StoreServerGlobal.OpenUpdateConnection();
-                    //StoreServerGlobal.MarkStoreForDelete(store.Key, markForDelete);
-                    //StoreServerGlobal.CommitData();
-                    //StoreServerGlobal.CloseUpdateConnection();
+                AcquireWriterLock();
+                store.SetDeleteStore(markForDelete);    // TT#3272 - stodd - mark store fro delete not refreshing
+                                                        // updates on database
+                                                        //StoreServerGlobal.OpenUpdateConnection();
+                                                        //StoreServerGlobal.MarkStoreForDelete(store.Key, markForDelete);
+                                                        //StoreServerGlobal.CommitData();
+                                                        //StoreServerGlobal.CloseUpdateConnection();
 
-                    StoreData _storeData = new StoreData();
-                    _storeData.OpenUpdateConnection();
-                    _storeData.StoreProfile_MarkForDelete(store.Key, markForDelete);
-                    _storeData.CommitData();
-                    _storeData.CloseUpdateConnection();
+                StoreData _storeData = new StoreData();
+                _storeData.OpenUpdateConnection();
+                _storeData.StoreProfile_MarkForDelete(store.Key, markForDelete);
+                _storeData.CommitData();
+                _storeData.CloseUpdateConnection();
 
-                    // Begin TT#3272 - stodd - mark store fro delete not refreshing
-                    // update datatable
-                    //DeleteStoreProfileFromDataTable(store);
-                    //AddStoreProfileToDataTable(store);
-                    // Update store Profile in List
-                    StoreProfile_UpdateInList(store);
-                    // End TT#3272 - stodd - mark store fro delete not refreshing
-                }
-                finally
-                {
-                    ReleaseStoreWriterLock();
-                    //ReleaseStoreGroupWriterLock();
-                }
+                // Begin TT#3272 - stodd - mark store fro delete not refreshing
+                // update datatable
+                //DeleteStoreProfileFromDataTable(store);
+                //AddStoreProfileToDataTable(store);
+                // Update store Profile in List
+                StoreProfile_UpdateInList(store);
+                // End TT#3272 - stodd - mark store fro delete not refreshing
             }
             catch (Exception err)
             {
@@ -1626,6 +1720,12 @@ namespace MIDRetail.Business
                 //}
                 throw;
             }
+            finally
+            {
+                ReleaseWriterLock();
+                //ReleaseStoreGroupWriterLock();
+            }
+
         }
         // END TT#739-MD - STodd - delete stores
 
@@ -1667,7 +1767,7 @@ namespace MIDRetail.Business
                 StoreGroupMaint groupData = new StoreGroupMaint();
 
                 DataTable _dtStoreGroup;
-                //storeGroup_rwl.AcquireWriterLock(WriterLockTimeOut);
+                //AcquireWriterLock();
                 _bLoadInactiveGroups = bLoadInactiveGroups;     // TT#5799 - JSmith - Store Explorer not refreshing when new store is added through API, causing allocation workflows to fail
                 try
                 {
@@ -1680,10 +1780,10 @@ namespace MIDRetail.Business
                 finally
                 {
                     // Ensure that the lock is released.
-                    //storeGroup_rwl.ReleaseWriterLock();
+                    //ReleaseWriterLock();
                 }
                 DataTable _dtStoreGroupLevel;
-                //storeGroup_rwl.AcquireWriterLock(WriterLockTimeOut);
+                //AcquireWriterLock();
                 try
                 {
                     _dtStoreGroupLevel = groupData.StoreGroupLevel_ReadAll();
@@ -1696,11 +1796,11 @@ namespace MIDRetail.Business
                 finally
                 {
                     // Ensure that the lock is released.
-                    //storeGroup_rwl.ReleaseWriterLock();
+                    //ReleaseWriterLock();
                 }
 
                 //DataTable _dtStoreGroupLevelResults;
-                //storeGroup_rwl.AcquireWriterLock(WriterLockTimeOut);
+                //AcquireWriterLock();
                 try
                 {
                     //_dtStoreGroupLevelResults = groupData.StoreGroupLevelResults_ReadAll();
@@ -1708,7 +1808,7 @@ namespace MIDRetail.Business
                 finally
                 {
                     // Ensure that the lock is released.
-                    //storeGroup_rwl.ReleaseWriterLock();
+                    //ReleaseWriterLock();
                 }
 
 
@@ -1785,9 +1885,9 @@ namespace MIDRetail.Business
                     _groupList.Add(groupProf);
                 }
 
-                // Begin TT#3352 - JSmith - ANF Adults - AcquireStoreWriterLock errors
+                // Begin TT#3352 - JSmith - ANF Adults - AcquireWriterLock errors
                 StoreGroup_SortList();
-                // End TT#3352 - JSmith - ANF Adults - AcquireStoreWriterLock errors
+                // End TT#3352 - JSmith - ANF Adults - AcquireWriterLock errors
 
 
 
@@ -2849,7 +2949,7 @@ namespace MIDRetail.Business
                     sg.Name = sgp.Name;
                     sg.OwnerUserRID = sgp.OwnerUserRID;
 
-                    // Begin TT#3352 - JSmith - ANF Adults - AcquireStoreWriterLock errors
+                    // Begin TT#3352 - JSmith - ANF Adults - AcquireWriterLock errors
                     StoreGroup_SortList();
 
 
@@ -3292,10 +3392,10 @@ namespace MIDRetail.Business
 
 
 
-                // Begin TT#3352 - JSmith - ANF Adults - AcquireStoreWriterLock errors
-                //storeGroup_rwl.AcquireWriterLock(WriterLockTimeOut);
-                storeGroup_rwl.AcquireReaderLock(ReaderLockTimeOut);
-                // End TT#3352 - JSmith - ANF Adults - AcquireStoreWriterLock errors
+                // Begin TT#3352 - JSmith - ANF Adults - AcquireWriterLock errors
+                //AcquireWriterLock();
+                AcquireReaderLock();
+                // End TT#3352 - JSmith - ANF Adults - AcquireWriterLock errors
 
                 try
                 {
@@ -3322,10 +3422,10 @@ namespace MIDRetail.Business
                 finally
                 {
                     // Ensure that the lock is released.
-                    // Begin TT#3352 - JSmith - ANF Adults - AcquireStoreWriterLock errors
-                    //storeGroup_rwl.ReleaseWriterLock();
-                    storeGroup_rwl.ReleaseReaderLock();
-                    // End TT#3352 - JSmith - ANF Adults - AcquireStoreWriterLock errors
+                    // Begin TT#3352 - JSmith - ANF Adults - AcquireWriterLock errors
+                    //ReleaseWriterLock();
+                    ReleaseReaderLock();
+                    // End TT#3352 - JSmith - ANF Adults - AcquireWriterLock errors
                 }
             }
             catch (ApplicationException ex)
@@ -3354,6 +3454,7 @@ namespace MIDRetail.Business
         {
             try
             {
+                AcquireReaderLock();
                 return _groupList;
             }
             catch (Exception err)
@@ -3365,6 +3466,10 @@ namespace MIDRetail.Business
                 //    Audit.Log_Exception(err, GetType().Name);
                 //}
                 throw;
+            }
+            finally
+            {
+                ReleaseReaderLock();
             }
         }
 
