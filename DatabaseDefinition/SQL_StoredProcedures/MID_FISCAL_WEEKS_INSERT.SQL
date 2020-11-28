@@ -1,0 +1,22 @@
+--dv =============================================
+--dv Create date:	10/28/2013
+--dv Description:	Inserts a row into the fiscal weeks table
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_FISCAL_WEEKS_INSERT]
+	@ROW_SEQUENCE int,
+	@FISCAL_WEEK int,
+	@FIRST_DAY_OF_WEEK int,
+	@LAST_DAY_OF_WEEK int,
+	@FIRST_DAY_OF_WEEK_OFFSET int,
+	@LAST_DAY_OF_WEEK_OFFSET int
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	INSERT INTO FISCAL_WEEKS(ROW_SEQUENCE, FISCAL_WEEK, FIRST_DAY_OF_WEEK, LAST_DAY_OF_WEEK, FIRST_DAY_OF_WEEK_OFFSET, LAST_DAY_OF_WEEK_OFFSET)
+    VALUES (@ROW_SEQUENCE, @FISCAL_WEEK, @FIRST_DAY_OF_WEEK, @LAST_DAY_OF_WEEK, @FIRST_DAY_OF_WEEK_OFFSET, @LAST_DAY_OF_WEEK_OFFSET)	
+
+	SELECT @@ROWCOUNT;
+
+END
+GO

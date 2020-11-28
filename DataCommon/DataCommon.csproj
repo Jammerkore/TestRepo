@@ -1,0 +1,650 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{F33FC337-30FC-409C-898D-DF39A2016B6B}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>MIDRetail.DataCommon</AssemblyName>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>MIDRetail.DataCommon</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\midretailinccert.pfx</AssemblyOriginatorKeyFile>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>MID.MRS.DataCommon.xml</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>3</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release Oracle|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>MID.MRS.DataCommon.xml</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>3</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Full Debug SQL Server|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>MID.MRS.DataCommon.xml</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>3</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug SQL Server|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>MID.MRS.DataCommon.xml</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>3</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release SQL Server|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>3</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <DocumentationFile>MID.MRS.DataCommon.xml</DocumentationFile>
+    <WarningLevel>3</WarningLevel>
+    <FileAlignment>4096</FileAlignment>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <Optimize>true</Optimize>
+    <FileAlignment>4096</FileAlignment>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release Oracle|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Release Oracle\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <DocumentationFile>MID.MRS.DataCommon.xml</DocumentationFile>
+    <WarningLevel>3</WarningLevel>
+    <FileAlignment>4096</FileAlignment>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Full Debug SQL Server|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Full Debug SQL Server\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <DocumentationFile>MID.MRS.DataCommon.xml</DocumentationFile>
+    <WarningLevel>3</WarningLevel>
+    <FileAlignment>4096</FileAlignment>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug SQL Server|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug SQL Server\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <DocumentationFile>MID.MRS.DataCommon.xml</DocumentationFile>
+    <WarningLevel>3</WarningLevel>
+    <FileAlignment>4096</FileAlignment>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release SQL Server|x86' ">
+    <OutputPath>bin\x86\Release SQL Server\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <Optimize>true</Optimize>
+    <WarningLevel>3</WarningLevel>
+    <FileAlignment>4096</FileAlignment>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="C1.Win.C1FlexGrid.2, Version=2.6.20073.357, Culture=neutral, PublicKeyToken=79882d576c6336da, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Runtime.Remoting">
+      <Name>System.Runtime.Remoting</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AssortmentOpenParms.cs" />
+    <Compile Include="AssortmentProfiles.cs" />
+    <Compile Include="BasisSizeSubstitute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ClientIPInjectorSink.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ClipboardData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ComputationProfiles.cs" />
+    <Compile Include="ConsoleStatusBar.cs" />
+    <Compile Include="FilterHeaderOptions.cs" />
+    <Compile Include="FilterAssortmentProfiles.cs" />
+    <Compile Include="FilterStoreGroupProfiles.cs" />
+    <Compile Include="FilterHeaderProfiles.cs" />
+    <Compile Include="CubeType.cs" />
+    <Compile Include="DateProfiles.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DaysInWeek.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DBParameter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DeserializationBinder.cs" />
+    <Compile Include="EditMsgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Enums.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FilterStoreProfiles.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FilterTypes.cs" />
+    <Compile Include="FlagValues.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Folder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FolderItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FolderShortcut.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GridCellTag.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GridViews.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HierarchyProfiles.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Include.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Locks.cs" />
+    <Compile Include="LowLevelVersionOverride.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MethodOverrideClasses.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MIDConnectionString.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MIDEncryption.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MIDEnvironment.cs" />
+    <Compile Include="MIDExceptions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MIDHashtable.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MIDListBoxItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MIDMarshalByRefObject.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MIDMath.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MIDMenuEvent.cs" />
+    <Compile Include="MIDMultiDimDictionary.cs" />
+    <Compile Include="MIDObject.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MIDSQL.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MIDstringTools.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MIDTimer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MIDUserInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MIDFileReader.cs" />
+    <Compile Include="OTSForecastBalanceClasses.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="OTSForecastClasses.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="OTSPlanSelectionData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PackPattern.cs" />
+    <Compile Include="PlaceholderComponentLinks.cs" />
+    <Compile Include="PlanChainLadderViewGridComponent.cs" />
+    <Compile Include="PlanOpenParmsData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PlanProfiles.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ProfileList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ProfileXRef.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ScheduleProfiles.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Schema\ChainSetPercentLoadSchema.cs">
+      <DependentUpon>ChainSetPercentLoadSchema.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Schema\ChainSetPercentLoadSchema.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ChainSetPercentLoadSchema.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Schema\ColorCodesLoadSchema.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Schema\DailyPercentagesLoadSchema.cs">
+      <DependentUpon>DailyPercentagesLoadSchema.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Schema\headerloadschema.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Schema\HeaderLoadStatusSchema.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Schema\HeaderReleaseSchema.cs">
+      <DependentUpon>HeaderReleaseSchema.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Schema\HierarchyLevelMaintSchema.cs" />
+    <Compile Include="Schema\HierarchyLoadSchema.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Schema\HistoryPlanLoadSchema.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Schema\RelieveIntransitSchema.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Schema\RollupSchema.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Schema\SizeCodesLoadSchema.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Schema\SizeConstraintsLoadSchema.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Schema\SizeCurveGroupLoadSchema.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Schema\SizeCurveGroupLoadStatusSchema.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Schema\SizeCurveLoadSchema.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Schema\SizeCurveLoadStatusSchema.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Schema\StoreEligibilityLoadSchema.cs">
+      <DependentUpon>StoreEligibilityLoadSchema.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Schema\StoreLoadSchema.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Schema\VSWLoadSchema.cs">
+      <DependentUpon>VSWLoadSchema.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="SecurityProfiles.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="EnvironmentProfiles.cs" />
+    <Compile Include="SecurityStorage.cs" />
+    <Compile Include="Size.cs" />
+    <Compile Include="SizeAlternate.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SizeFringe.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SizeUnits.cs" />
+    <Compile Include="FilterMonitor.cs" />
+    <Compile Include="SQLMonitorList.cs" />
+    <Compile Include="SQL_TimeID.cs" />
+    <Compile Include="StoreProfiles.cs" />
+    <Compile Include="SysInfo.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Theme.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UserNameStorage.cs" />
+    <None Include="MIDSettings.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schema\ChainSetPercentLoadSchema.xsc">
+      <DependentUpon>ChainSetPercentLoadSchema.xsd</DependentUpon>
+    </None>
+    <None Include="Schema\ChainSetPercentLoadSchema.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>ChainSetPercentLoadSchema.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schema\ChainSetPercentLoadSchema.xss">
+      <DependentUpon>ChainSetPercentLoadSchema.xsd</DependentUpon>
+    </None>
+    <None Include="Schema\ColorCodesLoadSchema.xsx">
+      <DependentUpon>ColorCodesLoadSchema.xsd</DependentUpon>
+    </None>
+    <None Include="Schema\DailyPercentagesLoadSchema.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schema\HierarchyLevelMaintSchema.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schema\StoreEligibilityLoadSchema.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schema\HeaderLoadSchema.xsx">
+      <DependentUpon>HeaderLoadSchema.xsd</DependentUpon>
+    </None>
+    <None Include="Schema\HeaderLoadStatusSchema.xsx">
+      <DependentUpon>HeaderLoadStatusSchema.xsd</DependentUpon>
+    </None>
+    <None Include="Schema\HeaderReleaseSchema.xsx">
+      <DependentUpon>HeaderReleaseSchema.xsd</DependentUpon>
+    </None>
+    <None Include="Schema\HierarchyLoadSchema.xsx">
+      <DependentUpon>HierarchyLoadSchema.xsd</DependentUpon>
+    </None>
+    <None Include="Schema\HistoryPlanLoadSchema.xsx">
+      <DependentUpon>HistoryPlanLoadSchema.xsd</DependentUpon>
+    </None>
+    <None Include="Schema\RelieveIntransitSchema.xsx">
+      <DependentUpon>RelieveIntransitSchema.xsd</DependentUpon>
+    </None>
+    <None Include="Schema\RollupSchema.xsx">
+      <DependentUpon>RollupSchema.xsd</DependentUpon>
+    </None>
+    <None Include="Schema\SizeCodesLoadSchema.xsx">
+      <DependentUpon>SizeCodesLoadSchema.xsd</DependentUpon>
+    </None>
+    <None Include="Schema\SizeConstraintsLoadSchema.xsx">
+      <DependentUpon>SizeConstraintsLoadSchema.xsd</DependentUpon>
+    </None>
+    <None Include="Schema\SizeCurveGroupLoadSchema.xsx">
+      <DependentUpon>SizeCurveGroupLoadSchema.xsd</DependentUpon>
+    </None>
+    <None Include="Schema\SizeCurveGroupLoadStatusSchema.xsx">
+      <DependentUpon>SizeCurveGroupLoadStatusSchema.xsd</DependentUpon>
+    </None>
+    <None Include="Schema\SizeCurveLoadSchema.xsx">
+      <DependentUpon>SizeCurveLoadSchema.xsd</DependentUpon>
+    </None>
+    <None Include="Schema\SizeCurveLoadStatusSchema.xsx">
+      <DependentUpon>SizeCurveLoadStatusSchema.xsd</DependentUpon>
+    </None>
+    <None Include="Schema\StoreLoadSchema.xsx">
+      <DependentUpon>StoreLoadSchema.xsd</DependentUpon>
+    </None>
+    <Content Include="Schema\ColorCodesLoadSchema.xsd" />
+    <Content Include="Schema\HeaderLoadSchema.xsd" />
+    <Content Include="Schema\HeaderLoadStatusSchema.xsd" />
+    <Content Include="Schema\HeaderReleaseSchema.xsd" />
+    <Content Include="Schema\HierarchyLoadSchema.xsd" />
+    <Content Include="Schema\HistoryPlanLoadSchema.xsd" />
+    <Content Include="Schema\RelieveIntransitSchema.xsd" />
+    <Content Include="Schema\RollupSchema.xsd" />
+    <Content Include="Schema\SizeCodesLoadSchema.xsd" />
+    <Content Include="Schema\SizeConstraintsLoadSchema.xsd" />
+    <Content Include="Schema\SizeCurveGroupLoadSchema.xsd" />
+    <Content Include="Schema\SizeCurveGroupLoadStatusSchema.xsd" />
+    <Content Include="Schema\SizeCurveLoadSchema.xsd" />
+    <Content Include="Schema\SizeCurveLoadStatusSchema.xsd" />
+    <Content Include="Schema\StoreLoadSchema.xsd" />
+    <None Include="Schema\VSWLoadSchema.xsd">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Encryption\MIDEncryption.csproj">
+      <Project>{5E66518E-50F2-42EC-B525-1F6C42700379}</Project>
+      <Name>MIDEncryption</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

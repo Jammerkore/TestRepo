@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- edited with XMLSpy v2007 rel. 3 (http://www.altova.com) by Steve Todd (MID) -->
+<xs:schema xmlns="http://tempuri.org/HeaderReleaseSchema.xsd" xmlns:mstns="http://tempuri.org/HeaderReleaseSchema.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://tempuri.org/HeaderReleaseSchema.xsd" elementFormDefault="qualified" attributeFormDefault="unqualified" id="HeaderReleaseSchema">
+  <xs:element name="Releases">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Release" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Characteristic" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:attribute name="Name" type="xs:string" />
+                  <xs:attribute name="Value" type="xs:string" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="Pack" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="PackStore" minOccurs="0" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:attribute name="StoreID" type="xs:string" />
+                        <xs:attribute name="Packs" type="xs:int" />
+                        <xs:attribute name="VSWID" type="xs:string" />
+                        <xs:attribute name="VSWPacks" type="xs:int" />
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="PackColor" minOccurs="0" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="PackColorStore" minOccurs="0" maxOccurs="unbounded">
+                            <xs:complexType>
+                              <xs:attribute name="StoreID" type="xs:string" />
+                              <xs:attribute name="Units" type="xs:int" />
+                              <xs:attribute name="VSWID" type="xs:string" />
+                              <xs:attribute name="VSWUnits" type="xs:int" />
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="PackColorSize" minOccurs="0" maxOccurs="unbounded">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="PackColorSizeStore" minOccurs="0" maxOccurs="unbounded">
+                                  <xs:complexType>
+                                    <xs:attribute name="StoreID" type="xs:string" />
+                                    <xs:attribute name="Units" type="xs:int" />
+                                    <xs:attribute name="VSWID" type="xs:string" />
+                                    <xs:attribute name="VSWUnits" type="xs:int" />
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                              <xs:attribute name="SizeCodeID" type="xs:string" />
+                              <xs:attribute name="SizeCodeName" type="xs:string" />
+                              <xs:attribute name="SizeCodeDescription" type="xs:string" />
+                              <xs:attribute name="SizeCodePrimary" type="xs:string" />
+                              <xs:attribute name="SizeCodeSecondary" type="xs:string" />
+                              <xs:attribute name="SizeCodeProductCategory" type="xs:string" />
+                              <xs:attribute name="SizeUnits" type="xs:int" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="ColorCodeID" type="xs:string" />
+                        <xs:attribute name="ColorCodeName" type="xs:string" />
+                        <xs:attribute name="ColorCodeDescription" type="xs:string" />
+                        <xs:attribute name="ColorUnits" type="xs:int" />
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="PackSize" minOccurs="0" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="PackSizeStore" minOccurs="0" maxOccurs="unbounded">
+                            <xs:complexType>
+                              <xs:attribute name="StoreID" type="xs:string" />
+                              <xs:attribute name="Units" type="xs:int" />
+                              <xs:attribute name="VSWID" type="xs:string" />
+                              <xs:attribute name="VSWUnits" type="xs:int" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="SizeCodeID" type="xs:string" />
+                        <xs:attribute name="SizeCodeName" type="xs:string" />
+                        <xs:attribute name="SizeCodeDescription" type="xs:string" />
+                        <xs:attribute name="SizeCodePrimary" type="xs:string" />
+                        <xs:attribute name="SizeCodeSecondary" type="xs:string" />
+                        <xs:attribute name="SizeCodeProductCategory" type="xs:string" />
+                        <xs:attribute name="SizeUnits" type="xs:int" />
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="Name" type="xs:string" />
+                  <xs:attribute name="Multiple" type="xs:int" />
+                  <xs:attribute name="IsGeneric">
+                    <xs:simpleType>
+                      <xs:restriction base="xs:boolean">
+                        <xs:pattern value="true|false" />
+                      </xs:restriction>
+                    </xs:simpleType>
+                  </xs:attribute>
+                  <xs:attribute name="PackReceivedPacks" type="xs:int" />
+                  <xs:attribute name="PackAllocatedPacks" type="xs:int" />
+                  <xs:attribute name="PackReservePacks" type="xs:int" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="BulkColor" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="BulkColorStore" minOccurs="0" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:attribute name="StoreID" type="xs:string" />
+                        <xs:attribute name="Units" type="xs:int" />
+                        <xs:attribute name="VSWID" type="xs:string" />
+                        <xs:attribute name="VSWUnits" type="xs:int" />
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="BulkColorSize" minOccurs="0" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="BulkColorSizeStore" minOccurs="0" maxOccurs="unbounded">
+                            <xs:complexType>
+                              <xs:attribute name="StoreID" type="xs:string" />
+                              <xs:attribute name="Units" type="xs:int" />
+                              <xs:attribute name="VSWID" type="xs:string" />
+                              <xs:attribute name="VSWUnits" type="xs:int" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="SizeCodeID" type="xs:string" />
+                        <xs:attribute name="SizeCodeName" type="xs:string" />
+                        <xs:attribute name="SizeCodeDescription" type="xs:string" />
+                        <xs:attribute name="SizeCodePrimary" type="xs:string" />
+                        <xs:attribute name="SizeCodeSecondary" type="xs:string" />
+                        <xs:attribute name="SizeCodeProductCategory" type="xs:string" />
+                        <xs:attribute name="SizeReceivedUnits" type="xs:int" />
+                        <xs:attribute name="SizeAllocatedUnits" type="xs:int" />
+                        <xs:attribute name="SizeReserveUnits" type="xs:int" />
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="ColorCodeID" type="xs:string" />
+                  <xs:attribute name="ColorCodeName" type="xs:string" />
+                  <xs:attribute name="ColorCodeDescription" type="xs:string" />
+                  <xs:attribute name="ColorReceivedUnits" type="xs:int" />
+                  <xs:attribute name="ColorAllocatedUnits" type="xs:int" />
+                  <xs:attribute name="ColorReserveUnits" type="xs:int" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="Total" minOccurs="0">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="TotalStore" minOccurs="0" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:attribute name="StoreID" type="xs:string" />
+                        <xs:attribute name="Units" type="xs:int" />
+                        <xs:attribute name="VSWID" type="xs:string" />
+                        <xs:attribute name="VSWUnits" type="xs:int" />
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="Multiple" type="xs:int" />
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="HeaderId" type="xs:string" />
+            <xs:attribute name="HeaderDescription" type="xs:string" />
+            <xs:attribute name="HeaderDate" type="xs:date" />
+            <xs:attribute name="ReleaseDate" type="xs:date" />
+            <xs:attribute name="UserName" type="xs:string" />
+            <xs:attribute name="UnitRetail" type="xs:double" />
+            <xs:attribute name="UnitCost" type="xs:double" />
+            <xs:attribute name="TotalReceivedUnits" type="xs:int" />
+            <xs:attribute name="TotalAllocatedUnits" type="xs:int" />
+            <xs:attribute name="TotalVSWAllocatedUnits" type="xs:int" />
+            <xs:attribute name="TotalReserveUnits" type="xs:int" />
+            <xs:attribute name="StyleId" type="xs:string" />
+            <xs:attribute name="ParentOfStyleId" type="xs:string" />
+            <xs:attribute name="SizeGroupName" type="xs:string" use="optional" />
+            <xs:attribute name="BulkMultiple" type="xs:int" use="optional" />
+            <xs:attribute name="HeaderType" type="xs:string" />
+            <xs:attribute name="DistCenter" type="xs:string" />
+            <xs:attribute name="Vendor" type="xs:string" />
+            <xs:attribute name="PurchaseOrder" type="xs:string" />
+            <xs:attribute name="Notes" type="xs:string" />
+            <xs:attribute name="Master" type="xs:string" />
+            <xs:attribute name="AllocatedUnits" type="xs:int" />
+            <xs:attribute name="VSWAllocatedUnits" type="xs:int" />
+            <xs:attribute name="OrigAllocatedUnits" type="xs:int" />
+            <xs:attribute name="ReserveUnits" type="xs:int" />
+            <xs:attribute name="VSWID" type="xs:string" />
+            <xs:attribute name="VSWProcess" type="xs:string" />
+            <xs:attribute name="UnitsPerCarton" type="xs:string" use="optional" />
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

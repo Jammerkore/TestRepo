@@ -1,0 +1,27 @@
+This file contains the list of keys used by the Header Reconcile Process and the Header Load Process
+	to determine matching headers and to generate Header IDs.
+	
+Note: Key values must match XML names for header fields and/or Characteristic names for header
+      characteristic fields, and/or equal "Color" to match colors. For a header ID that is a generated 
+	  sequence number, specify 'Sequence" as the only key.
+========================================================================================================= 
+
+"HeaderKeysToMatch:" contains the header transaction keys to use to match the transaction with a 
+	header already in the application. Keys should be delimited by a comma (,).  
+	
+HeaderKeysToMatch: Undefined
+========================================================================================================= 
+
+"HeaderIdKeys:" contains the header transaction keys to use to create a unique Header ID. 
+	Keys should be delimited by a comma (,). A sequence number will automatically be appended to
+	the generated header ID.    
+	
+HeaderIdKeys: Undefined
+========================================================================================================= 
+
+"MasterHeaderIdKeys:" contains the header fields to use to create a unique Header ID. 
+	Keys should be delimited by a comma (,). A sequence number will automatically be appended to
+	the generated header ID.    
+	
+MasterHeaderIdKeys: Undefined
+========================================================================================================= 

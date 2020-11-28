@@ -1,0 +1,9 @@
+/*RELEASE 5.4.0.52 2-19-2015 TT#41558-MD - RMatelic - Add SQL to upgrade script to clean up bad Size Curve Method data */
+UPDATE METHOD_SIZE_CURVE_MRCH_BAS_DET 
+   SET OLL_RID = null 
+ WHERE OLL_RID = 1 
+  
+UPDATE METHOD_SIZE_CURVE_MRCH_BAS_DET 
+   SET CUSTOM_OLL_RID = null 
+ WHERE CUSTOM_OLL_RID = 1  
+GO

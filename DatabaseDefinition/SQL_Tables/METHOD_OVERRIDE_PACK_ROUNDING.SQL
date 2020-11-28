@@ -1,0 +1,18 @@
+--dv =============================================
+--dv Modified date: 3/26/2014
+--dv Notes:	
+--dv History: TT#616 - AGallagher - Allocation - Pack Rounding (#67)
+--dv ============================================= 
+CREATE TABLE [dbo].[METHOD_OVERRIDE_PACK_ROUNDING](
+	[METHOD_RID] [int] NOT NULL,
+	[PACK_MULTIPLE_RID] [int] NOT NULL,
+	[PACK_ROUNDING_1ST_PACK_PCT] FLOAT NULL,				
+	[PACK_ROUNDING_NTH_PACK_PCT] FLOAT NULL,				 
+ CONSTRAINT [PK_METHOD_OVERRIDE_PACK_ROUNDING] PRIMARY KEY CLUSTERED 
+(
+	[METHOD_RID] ASC,
+	[PACK_MULTIPLE_RID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO

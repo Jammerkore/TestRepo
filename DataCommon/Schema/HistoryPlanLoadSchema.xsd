@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema id="HistoryPlanLoadSchema" targetNamespace="http://tempuri.org/HistoryPlanLoadSchema.xsd"
+	elementFormDefault="qualified" xmlns="http://tempuri.org/HistoryPlanLoadSchema.xsd" xmlns:mstns="http://tempuri.org/HistoryPlanLoadSchema.xsd"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="ProductAmounts">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Options" minOccurs="0" maxOccurs="1">
+					<xs:complexType>
+						<xs:attribute name="SalesEndingDate" type="xs:string" use="optional"></xs:attribute>
+						<xs:attribute name="RollStoreDailyToWeekly" type="xs:boolean" use="optional"></xs:attribute>
+						<xs:attribute name="RollStoreDailyUpHierarchy" type="xs:boolean" use="optional"></xs:attribute>
+						<xs:attribute name="RollStoreWeeklyUpHierarchy" type="xs:boolean" use="optional"></xs:attribute>
+						<xs:attribute name="RollStoreToChain" type="xs:boolean" use="optional"></xs:attribute>
+						<xs:attribute name="RollChainUpHierarchy" type="xs:boolean" use="optional"></xs:attribute>
+						<xs:attribute name="RollIntransit" type="xs:boolean" use="optional"></xs:attribute>
+						<xs:attribute name="RollStockForward" type="xs:boolean" use="optional"></xs:attribute>
+						<xs:attribute name="ComputationModel" use="optional"></xs:attribute>
+						<xs:attribute name="TransactionHint" use="optional" default="NotSpecified">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:enumeration value="NotSpecified"></xs:enumeration>
+									<xs:enumeration value="All"></xs:enumeration>
+									<xs:enumeration value="StyleAndAbove"></xs:enumeration>
+									<xs:enumeration value="Color"></xs:enumeration>
+									<xs:enumeration value="Size"></xs:enumeration>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:attribute>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="ProductAmount" minOccurs="1" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="VariableAmount" minOccurs="1" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:attribute name="Variable" type="xs:string" use="required" />
+									<xs:attribute name="Amount" type="xs:string" use="required" />
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+						<xs:attribute name="Period" use="optional" default="Week">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:enumeration value="Week"></xs:enumeration>
+									<xs:enumeration value="Day"></xs:enumeration>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:attribute>
+						<xs:attribute name="Version" type="xs:string" use="optional" default="Actual" />
+						<xs:attribute name="Product" type="xs:string" use="required" />
+						<xs:attribute name="Store" type="xs:string" use="optional" default="Chain" />
+						<xs:attribute name="DateType" use="optional" default="Calendar">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:enumeration value="Calendar"></xs:enumeration>
+									<xs:enumeration value="Fiscal"></xs:enumeration>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:attribute>
+						<xs:attribute name="Date" type="xs:string" use="optional" />
+						<xs:attribute name="Parent" type="xs:string" use="optional" />
+						<xs:attribute name="SizeCodePrimary" type="xs:string" use="optional" />
+						<xs:attribute name="SizeCodeSecondary" type="xs:string" use="optional" />
+						<xs:attribute name="SizeCodeProductCategory" type="xs:string" use="optional" />
+						<xs:attribute name="ProductDescription" type="xs:string" use="optional" />
+						<xs:attribute name="ProductName" type="xs:string" use="optional" />
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

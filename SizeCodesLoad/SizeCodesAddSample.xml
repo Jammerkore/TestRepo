@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<Sizes xmlns="http://tempuri.org/SizeCodesLoadSchema.xsd">
+	<Size Code="71942" Primary="72" Secondary="Ounces" ProductCategory="Volume Measurements"></Size>
+	<Size Code="73203" Primary="64" Secondary="Ounces" ProductCategory="Volume Measurements"></Size>
+	<Size Code="10132" Primary="Small" Secondary="30" ProductCategory="Adult Males"></Size>
+	<Size Code="10133" Primary="Small" Secondary="36" ProductCategory="Adult Males"></Size>
+	<Size Code="10134" Primary="Medium" Secondary="30" ProductCategory="Adult Males"></Size>
+	<Size Code="10135" Primary="Large" Secondary="30" ProductCategory="Adult Males"></Size>,
+	<Size Code="10136" Primary="X Large" Secondary="30" ProductCategory="Adult Males"></Size>,
+	<Size Code="10137" Primary="XX Large" Secondary="30" ProductCategory="Adult Males"></Size>
+	<Size Code="10138" Primary="XX Large" Secondary="32" ProductCategory="Adult Males"></Size>
+	<Size Code="10139" Primary="XX Large" Secondary="34" ProductCategory="Adult Males"></Size>
+	<Size Code="10140" Primary="14" ProductCategory="Adult Males"></Size>
+	<Size Code="10141" Primary="14" Secondary="30-31" ProductCategory="Adult Males"></Size>
+	<Size Code="10142" Primary="14" Secondary="32" ProductCategory="Adult Males"></Size>,
+	<Size Code="10143" Primary="14" Secondary="32-33" ProductCategory="Adult Males"></Size>
+	<Size Code="10144" Primary="14" Secondary="34" ProductCategory="Adult Males"></Size>
+	<Size Code="10145" Primary="XX Large" Secondary="36" ProductCategory="Adult Males"></Size>
+	<Size Code="68227" Primary="Small" Secondary="6" ProductCategory="Hampers"></Size>
+	<Size Code="68205" Primary="Small" Secondary="8" ProductCategory="Hampers"></Size>
+	<Size Code="68161" Primary="Small" Secondary="10" ProductCategory="Hampers"></Size>
+	<Size Code="68315" Primary="Small" Secondary="12" ProductCategory="Hampers"></Size>
+	<Size Code="68183" Primary="Small" Secondary="14" ProductCategory="Hampers"></Size>
+	<Size Code="68293" Primary="Small" Secondary="16" ProductCategory="Hampers"></Size>
+	<Size Code="68271" Primary="Small" Secondary="18" ProductCategory="Hampers"></Size>
+	<Size Code="68249" Primary="Small" Secondary="20" ProductCategory="Hampers"></Size>
+	<Size Code="68228" Primary="Large" Secondary="6" ProductCategory="Hampers"></Size>
+	<Size Code="68206" Primary="Large" Secondary="8" ProductCategory="Hampers"></Size>
+	<Size Code="68162" Primary="Large" Secondary="10" ProductCategory="Hampers"></Size>
+	<Size Code="68316" Primary="Large" Secondary="12" ProductCategory="Hampers"></Size>
+	<Size Code="68184" Primary="Large" Secondary="14" ProductCategory="Hampers"></Size>
+	<Size Code="68294" Primary="Large" Secondary="16" ProductCategory="Hampers"></Size>
+	<Size Code="68272" Primary="Large" Secondary="18" ProductCategory="Hampers"></Size>
+	<Size Code="68250" Primary="Large" Secondary="20" ProductCategory="Hampers"></Size>
+</Sizes>

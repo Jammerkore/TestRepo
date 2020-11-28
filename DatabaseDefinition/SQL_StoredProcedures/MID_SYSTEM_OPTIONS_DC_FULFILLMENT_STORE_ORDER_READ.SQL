@@ -1,0 +1,21 @@
+--dv =============================================
+--dv Create date:	05/08/2017
+--dv Description:	Reads system DCF Store Order
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_SYSTEM_OPTIONS_DC_FULFILLMENT_STORE_ORDER_READ]
+	@SYSTEM_OPTION_RID int
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT 
+		COALESCE(SYSTEM_OPTION_RID, -1) SYSTEM_OPTION_RID,
+		SEQ,
+		DIST_CENTER,
+		SCG_RID
+    FROM SYSTEM_OPTIONS_DC_FULFILLMENT_STORE_ORDER 
+	WHERE SYSTEM_OPTION_RID = @SYSTEM_OPTION_RID
+    ORDER BY SEQ
+
+END
+GO

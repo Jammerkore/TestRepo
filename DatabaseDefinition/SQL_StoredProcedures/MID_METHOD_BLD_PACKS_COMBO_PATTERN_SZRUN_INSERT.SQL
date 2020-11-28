@@ -1,0 +1,35 @@
+--dv =============================================
+--dv Create date:	12/02/2013
+--dv Description:	Inserts a row on the METHOD_BLD_PACKS_COMBO_PATTERN_SZRUN table
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_METHOD_BLD_PACKS_COMBO_PATTERN_SZRUN_INSERT]
+	@METHOD_RID int,
+	@COMBO_RID int,
+	@PATTERN_PACK_RID int,
+	@SIZE_CODE_RID int, 
+	@PATTERN_SIZE_UNITS int
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	INSERT INTO METHOD_BLD_PACKS_COMBO_PATTERN_SZRUN 
+		(
+		METHOD_RID, 
+		COMBO_RID, 
+		PATTERN_PACK_RID, 
+		SIZE_CODE_RID, 
+		PATTERN_SIZE_UNITS
+		)
+    VALUES 
+		(
+		@METHOD_RID, 
+		@COMBO_RID, 
+		@PATTERN_PACK_RID, 
+		@SIZE_CODE_RID, 
+		@PATTERN_SIZE_UNITS
+		)
+
+	SELECT @@ROWCOUNT;
+
+END
+GO

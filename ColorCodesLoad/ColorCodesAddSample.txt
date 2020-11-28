@@ -1,0 +1,129 @@
+1,Black,Black Group
+2,Oxford,Black Group
+3,Oxford,Black Group
+4,Oxford,Black Group
+5,Black,Black Group
+6,Oxford,Black Group
+7,Oxford,Black Group
+8,Oxford,Black Group
+9,Oxford,Black Group
+100,White,White Group
+101,Natural,White Group
+102,Natural,White Group
+103,Natural,White Group
+104,Natural,White Group
+105,Natural,White Group
+106,Natural,White Group
+107,Natural,White Group
+108,Natural,White Group
+109,Natural,White Group
+10,Charcoal,Black Group
+11,Charcoal,Black Group
+12,Charcoal,Black Group
+13,Charcoal,Black Group
+14,Charcoal,Black Group
+15,Charcoal,Black Group
+16,Charcoal,Black Group
+17,Charcoal,Black Group
+18,Charcoal,Black Group
+19,Charcoal,Black Group
+600,Red,Red Group
+601,Dark Red,Red Group
+602,Dark Red,Red Group
+603,Dark Red,Red Group
+604,Dark Red,Red Group
+605,Dark Red,Red Group
+606,Dark Red,Red Group
+607,Dark Red,Red Group
+608,Dark Red,Red Group
+609,Dark Red,Red Group
+610,Medium Red,Red Group
+611,Medium Red,Red Group
+612,Medium Red,Red Group
+613,Medium Red,Red Group
+614,Medium Red,Red Group
+615,Medium Red,Red Group
+616,Medium Red,Red Group
+617,Medium Red,Red Group
+618,Medium Red,Red Group
+619,Medium Red,Red Group
+620,Bright Red,Red Group
+621,Bright Red,Red Group
+622,Bright Red,Red Group
+623,Bright Red,Red Group
+624,Bright Red,Red Group
+625,Bright Red,Red Group
+626,Bright Red,Red Group
+627,Bright Red,Red Group
+628,Bright Red,Red Group
+629,Bright Red,Red Group
+630,Light/Pastel Red,Red Group
+631,Light/Pastel Red,Red Group
+632,Light/Pastel Red,Red Group
+633,Light/Pastel Red,Red Group
+634,Light/Pastel Red,Red Group
+635,Light/Pastel Red,Red Group
+636,Light/Pastel Red,Red Group
+637,Light/Pastel Red,Red Group
+638,Light/Pastel Red,Red Group
+639,Light/Pastel Red,Red Group
+400,Blue,Blue Group
+401,Dark Blue,Blue Group
+402,Dark Blue,Blue Group
+403,Dark Blue,Blue Group
+404,Dark Blue,Blue Group
+405,Dark Blue,Blue Group
+406,Dark Blue,Blue Group
+407,Dark Blue,Blue Group
+408,Dark Blue,Blue Group
+409,Dark Blue,Blue Group
+410,Navy,Blue Group
+411,Navy,Blue Group
+412,Navy,Blue Group
+413,Navy,Blue Group
+414,Navy,Blue Group
+415,Navy,Blue Group
+416,Navy,Blue Group
+417,Navy,Blue Group
+418,Navy,Blue Group
+419,Navy,Blue Group
+420,Medium Blue,Blue Group
+421,Medium Blue,Blue Group
+422,Medium Blue,Blue Group
+423,Medium Blue,Blue Group
+424,Medium Blue,Blue Group
+425,Medium Blue,Blue Group
+426,Medium Blue,Blue Group
+427,Medium Blue,Blue Group
+428,Medium Blue,Blue Group
+429,Medium Blue,Blue Group
+430,Bright Blue,Blue Group
+431,Bright Blue,Blue Group
+432,Bright Blue,Blue Group
+433,Bright Blue,Blue Group
+434,Bright Blue,Blue Group
+435,Bright Blue,Blue Group
+436,Bright Blue,Blue Group
+437,Bright Blue,Blue Group
+438,Bright Blue,Blue Group
+439,Bright Blue,Blue Group
+440,Turquoise/Aqua,Blue Group
+441,Turquoise/Aqua,Blue Group
+442,Turquoise/Aqua,Blue Group
+443,Turquoise/Aqua,Blue Group
+444,Turquoise/Aqua,Blue Group
+445,Turquoise/Aqua,Blue Group
+446,Turquoise/Aqua,Blue Group
+447,Turquoise/Aqua,Blue Group
+448,Turquoise/Aqua,Blue Group
+449,Turquoise/Aqua,Blue Group
+450,Light/Pastel Blue,Blue Group
+451,Light/Pastel Blue,Blue Group
+452,Light/Pastel Blue,Blue Group
+453,Light/Pastel Blue,Blue Group
+454,Light/Pastel Blue,Blue Group
+455,Light/Pastel Blue,Blue Group
+456,Light/Pastel Blue,Blue Group
+457,Light/Pastel Blue,Blue Group
+458,Light/Pastel Blue,Blue Group
+459,Light/Pastel Blue,Blue Group

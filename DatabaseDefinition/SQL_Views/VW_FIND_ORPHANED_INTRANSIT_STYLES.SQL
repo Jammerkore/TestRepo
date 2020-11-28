@@ -1,0 +1,9 @@
+CREATE VIEW [dbo].[VW_FIND_ORPHANED_INTRANSIT_STYLES]
+AS 
+select * from BASE_NODE 
+where HN_RID 
+in (select HN_RID from HIERARCHY_NODE where HN_TYPE = 800202) 
+    and HN_RID IN (select HN_RID from STORE_INTRANSIT) 
+                   and HN_RID NOT in (select STYLE_HNRID from VW_FIND_HEADERS_WITH_ACTIVE_INTRANSIT)
+
+GO

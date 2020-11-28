@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="UserOptionsReviewDataSet2" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="UserOptionsReviewDataSet2" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_DataSetName="UserOptionsReviewDataSet2" msprop:Generator_UserDSName="UserOptionsReviewDataSet2">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="UserOptionsReviewDataTable" msprop:Generator_UserTableName="UserOptionsReviewDataTable" msprop:Generator_RowEvArgName="UserOptionsReviewDataTableRowChangeEvent" msprop:Generator_TableVarName="tableUserOptionsReviewDataTable" msprop:Generator_TablePropName="UserOptionsReviewDataTable" msprop:Generator_RowDeletingName="UserOptionsReviewDataTableRowDeleting" msprop:Generator_RowChangingName="UserOptionsReviewDataTableRowChanging" msprop:Generator_RowDeletedName="UserOptionsReviewDataTableRowDeleted" msprop:Generator_RowEvHandlerName="UserOptionsReviewDataTableRowChangeEventHandler" msprop:Generator_TableClassName="UserOptionsReviewDataTableDataTable" msprop:Generator_RowChangedName="UserOptionsReviewDataTableRowChanged" msprop:Generator_RowClassName="UserOptionsReviewDataTableRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="USER_FULLNAME" msprop:Generator_ColumnVarNameInTable="columnUSER_FULLNAME" msprop:Generator_ColumnPropNameInRow="USER_FULLNAME" msprop:Generator_ColumnPropNameInTable="USER_FULLNAMEColumn" msprop:Generator_UserColumnName="USER_FULLNAME" type="xs:int" minOccurs="0" />
+              <xs:element name="AUDIT_LOGGING_LEVEL" msdata:Caption="Node" msprop:Generator_ColumnVarNameInTable="columnAUDIT_LOGGING_LEVEL" msprop:Generator_ColumnPropNameInRow="AUDIT_LOGGING_LEVEL" msprop:Generator_ColumnPropNameInTable="AUDIT_LOGGING_LEVELColumn" msprop:Generator_UserColumnName="AUDIT_LOGGING_LEVEL" type="xs:string" minOccurs="0" />
+              <xs:element name="AUDIT_LOGGING_TEXT" msprop:Generator_ColumnVarNameInTable="columnAUDIT_LOGGING_TEXT" msprop:Generator_ColumnPropNameInRow="AUDIT_LOGGING_TEXT" msprop:Generator_ColumnPropNameInTable="AUDIT_LOGGING_TEXTColumn" msprop:Generator_UserColumnName="AUDIT_LOGGING_TEXT" type="xs:int" minOccurs="0" />
+              <xs:element name="FORECAST_MONITOR_ACTIVE" msprop:Generator_ColumnVarNameInTable="columnFORECAST_MONITOR_ACTIVE" msprop:Generator_ColumnPropNameInRow="FORECAST_MONITOR_ACTIVE" msprop:Generator_ColumnPropNameInTable="FORECAST_MONITOR_ACTIVEColumn" msprop:Generator_UserColumnName="FORECAST_MONITOR_ACTIVE" type="xs:int" minOccurs="0" />
+              <xs:element name="FORECAST_MONITOR_TEXT" msprop:Generator_ColumnVarNameInTable="columnFORECAST_MONITOR_TEXT" msprop:Generator_ColumnPropNameInRow="FORECAST_MONITOR_TEXT" msprop:Generator_ColumnPropNameInTable="FORECAST_MONITOR_TEXTColumn" msprop:Generator_UserColumnName="FORECAST_MONITOR_TEXT" type="xs:int" minOccurs="0" />
+              <xs:element name="MODIFY_SALES_MONITOR_ACTIVE" msprop:Generator_ColumnVarNameInTable="columnMODIFY_SALES_MONITOR_ACTIVE" msprop:Generator_ColumnPropNameInRow="MODIFY_SALES_MONITOR_ACTIVE" msprop:Generator_ColumnPropNameInTable="MODIFY_SALES_MONITOR_ACTIVEColumn" msprop:Generator_UserColumnName="MODIFY_SALES_MONITOR_ACTIVE" type="xs:int" minOccurs="0" />
+              <xs:element name="MODIFY_SALES_MONITOR_TEXT" msprop:Generator_ColumnVarNameInTable="columnMODIFY_SALES_MONITOR_TEXT" msprop:Generator_ColumnPropNameInRow="MODIFY_SALES_MONITOR_TEXT" msprop:Generator_ColumnPropNameInTable="MODIFY_SALES_MONITOR_TEXTColumn" msprop:Generator_UserColumnName="MODIFY_SALES_MONITOR_TEXT" type="xs:int" minOccurs="0" />
+              <xs:element name="DCFULFILLMENT_MONITOR_ACTIVE" msprop:Generator_ColumnVarNameInTable="columnDCFULFILLMENT_MONITOR_ACTIVE" msprop:Generator_ColumnPropNameInRow="DCFULFILLMENT_MONITOR_ACTIVE" msprop:Generator_ColumnPropNameInTable="DCFULFILLMENT_MONITOR_ACTIVEColumn" msprop:Generator_UserColumnName="DCFULFILLMENT_MONITOR_ACTIVE" type="xs:string" minOccurs="0" />
+              <xs:element name="DCFULFILLMENT_MONITOR_TEXT" msprop:Generator_ColumnVarNameInTable="columnDCFULFILLMENT_MONITOR_TEXT" msprop:Generator_ColumnPropNameInRow="DCFULFILLMENT_MONITOR_TEXT" msprop:Generator_ColumnPropNameInTable="DCFULFILLMENT_MONITOR_TEXTColumn" msprop:Generator_UserColumnName="DCFULFILLMENT_MONITOR_TEXT" type="xs:string" minOccurs="0" />
+              <xs:element name="USER_NAME" msprop:Generator_ColumnVarNameInTable="columnUSER_NAME" msprop:Generator_ColumnPropNameInRow="USER_NAME" msprop:Generator_ColumnPropNameInTable="USER_NAMEColumn" msprop:Generator_UserColumnName="USER_NAME" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

@@ -1,0 +1,6 @@
+CREATE TYPE [dbo].[TIME_ID_TYPE]  AS TABLE
+(
+	[TIME_ID] [int] 
+	PRIMARY KEY (TIME_ID) 
+)
+GO

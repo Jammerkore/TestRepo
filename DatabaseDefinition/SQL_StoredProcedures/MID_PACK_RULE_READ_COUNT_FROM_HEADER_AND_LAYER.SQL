@@ -1,0 +1,21 @@
+--dv =============================================
+--dv Create date:	2/6/2014
+--dv Description:	Reads a count of rules for the header and layer provided
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_PACK_RULE_READ_COUNT_FROM_HEADER_AND_LAYER]
+	@HDR_PACK_RID INT,
+	@LAYER_ID INT,
+	@ST_RID INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT
+		COUNT(*) MyCount 
+	FROM PACK_RULE 
+	WHERE HDR_PACK_RID = @HDR_PACK_RID 
+		  AND LAYER_ID = @LAYER_ID				
+		  AND ST_RID = @ST_RID
+
+END
+GO

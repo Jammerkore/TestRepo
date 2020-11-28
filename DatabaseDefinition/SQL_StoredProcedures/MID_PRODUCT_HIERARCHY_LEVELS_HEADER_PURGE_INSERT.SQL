@@ -1,0 +1,21 @@
+--dv =============================================
+--dv Create date:	10/21/2013
+--dv Description:	Inserts a row into the product hierarchy header levels purge
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_PRODUCT_HIERARCHY_LEVELS_HEADER_PURGE_INSERT]
+	@PH_RID int,
+	@PHL_SEQUENCE int,
+	@HEADER_TYPE int,
+	@PURGE_HEADERS_TIMEFRAME int,
+	@PURGE_HEADERS int
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	INSERT INTO PRODUCT_HIERARCHY_LEVELS_HEADER_PURGE(PH_RID, PHL_SEQUENCE, HEADER_TYPE, PURGE_HEADERS_TIMEFRAME, PURGE_HEADERS)
+    VALUES (@PH_RID, @PHL_SEQUENCE, @HEADER_TYPE, @PURGE_HEADERS_TIMEFRAME, @PURGE_HEADERS)
+
+	SELECT @@ROWCOUNT;
+
+END
+GO

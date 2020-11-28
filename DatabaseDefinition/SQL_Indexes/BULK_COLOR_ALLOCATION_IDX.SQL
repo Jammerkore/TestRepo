@@ -1,0 +1,3 @@
+﻿create clustered index "BULK_COLOR_ALLOCATION_IDX" ON "BULK_COLOR_ALLOCATION" ("HDR_RID", "HDR_BC_RID", "ST_RID")
+
+go

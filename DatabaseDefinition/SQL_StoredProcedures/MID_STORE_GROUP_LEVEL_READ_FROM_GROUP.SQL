@@ -1,0 +1,38 @@
+--dv =============================================
+--dv Create date: 12/12/2013
+--dv Description: Get store group level info.
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_STORE_GROUP_LEVEL_READ_FROM_GROUP]
+	@SG_RID INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	--SELECT 
+	--	SGL_RID,
+	--	SGL_SEQUENCE,
+	--	SG_RID,
+	--	SGL_ID
+	--FROM STORE_GROUP_LEVEL
+	--WHERE SG_RID = @SG_RID
+	--ORDER BY SGL_SEQUENCE
+
+	
+	SELECT 
+		sgj.SGL_RID, 
+		sgj.SGL_OVERRIDE_SEQUENCE AS SGL_SEQUENCE,
+		sgj.SG_RID, 
+		sgj.SGL_OVERRIDE_ID AS SGL_ID,
+		sgj.SGL_VERSION,
+		sgl.LEVEL_TYPE   
+	FROM 
+	STORE_GROUP sg WITH (NOLOCK) 
+	INNER JOIN STORE_GROUP_LEVEL sgl WITH (NOLOCK) ON sgl.SG_RID=sg.SG_RID 
+	INNER JOIN STORE_GROUP_JOIN sgj WITH (NOLOCK) ON sgl.SGL_RID=sgj.SGL_RID 
+	WHERE sg.SG_RID=@SG_RID AND sgj.SG_RID=sg.SG_RID AND sgj.SG_VERSION=sg.SG_VERSION AND sgj.SGL_VERSION=sgl.SGL_VERSION
+	ORDER BY sgl.SGL_SEQUENCE
+
+END
+GO
+
+

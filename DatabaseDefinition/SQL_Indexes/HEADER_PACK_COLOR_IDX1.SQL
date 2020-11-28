@@ -1,0 +1,3 @@
+﻿create clustered index "HEADER_PACK_COLOR_IDX1" ON "HEADER_PACK_COLOR"  ("HDR_PACK_RID", "HDR_PC_RID")
+
+go

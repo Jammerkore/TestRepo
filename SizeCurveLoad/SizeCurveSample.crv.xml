@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?> 
+<SizeCurves xmlns="http://tempuri.org/SizeCurveLoadSchema.xsd">
+	<!-- Size Curve Store Assign -->
+	<SizeCurve SizeCurveGroupName="Hampers">
+		<StoreSizeCurve StoreID="" SizeCurveName="Hampers, Small" />
+		<StoreSizeCurve StoreID="1101" SizeCurveName="Hampers, Small" />
+		<StoreSizeCurve StoreID="1102" SizeCurveName="Hampers, Large" />
+		<StoreSizeCurve StoreID="1103" SizeCurveName="Hampers, Small" />
+		<StoreSizeCurve StoreID="1104" SizeCurveName="Hampers, Large" />
+		<StoreSizeCurve StoreID="1105" SizeCurveName="Hampers, Small" />
+	</SizeCurve>
+	<SizeCurve SizeCurveGroupName="S-XXL">
+		<StoreSizeCurve StoreID="" SizeCurveName="AM002" />
+		<StoreSizeCurve StoreID="1101" SizeCurveName="AM001" />
+		<StoreSizeCurve StoreID="1102" SizeCurveName="AM002" />
+		<StoreSizeCurve StoreID="1103" SizeCurveName="AM001" />
+		<StoreSizeCurve StoreID="1104" SizeCurveName="AM002" />
+		<StoreSizeCurve StoreID="1105" SizeCurveName="AM001" />
+	</SizeCurve>
+</SizeCurves>

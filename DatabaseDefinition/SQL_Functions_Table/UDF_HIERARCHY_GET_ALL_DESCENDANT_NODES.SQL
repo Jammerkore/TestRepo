@@ -1,0 +1,49 @@
+--dv Create date:	9/15/2013
+--dv Modified:		9/15/2013
+--dv Description:	Retrieves all descendant node data from a starting node
+--dv				Excludes hidden color nodes
+--dv =============================================
+CREATE FUNCTION [dbo].[UDF_HIERARCHY_GET_ALL_DESCENDANT_NODES] 
+(	
+	@SELECTED_NODE_RID INT
+)
+RETURNS TABLE 
+AS
+RETURN 
+(
+	--Using a common table expression
+	WITH cte_descendants(HN_RID, HOME_LEVEL, PH_RID, PARENT_HN_RID)
+	AS (
+		SELECT
+			hn.HN_RID, hn.HOME_LEVEL, hnj.PH_RID, hnj.PARENT_HN_RID
+		FROM [dbo].[HIER_NODE_JOIN] hnj (NOLOCK)
+		INNER JOIN [dbo].[HIERARCHY_NODE] hn (NOLOCK) ON hn.HN_RID = hnj.HN_RID AND hn.HOME_PH_RID=hnj.PH_RID-- AND coalesce(hn.ACTIVE_IND, 1)=1
+		WHERE hn.HN_RID=@SELECTED_NODE_RID
+		UNION ALL
+		SELECT 
+			hn.HN_RID, hn.HOME_LEVEL, hnj.PH_RID, hnj.PARENT_HN_RID
+		FROM [dbo].[HIER_NODE_JOIN] hnj (NOLOCK)
+		INNER JOIN [dbo].[HIERARCHY_NODE] hn (NOLOCK) ON hn.HN_RID = hnj.HN_RID AND hn.HOME_PH_RID=hnj.PH_RID-- AND coalesce(hn.ACTIVE_IND, 1)=1
+		INNER JOIN cte_descendants AS cte ON hnj.PARENT_HN_RID= cte.HN_RID AND hnj.PH_RID=cte.PH_RID
+		)
+	SELECT 
+		q1.HN_RID, q1.HOME_LEVEL, ph.PH_RID, ph.PH_ID,  phl.PHL_ID, phl.PHL_TYPE, 
+		CASE 
+		WHEN PHL_TYPE=800203 THEN --Build Color Node Display ID
+			(SELECT [dbo].[UDF_HIERARCHY_BUILD_COLOR_NODE_DISPLAY_ID](phl.PHL_DISPLAY_OPTION_ID, cc.COLOR_CODE_ID, cc.COLOR_CODE_NAME, cn.COLOR_DESCRIPTION) FROM [dbo].[COLOR_NODE] cn (NOLOCK) INNER JOIN [dbo].[COLOR_CODE] cc (NOLOCK) on cc.COLOR_CODE_RID=cn.COLOR_CODE_RID WHERE cn.HN_RID=q1.HN_RID) 
+		WHEN PHL_TYPE=800204 THEN --Build Size Node Display ID
+			(SELECT [dbo].[UDF_HIERARCHY_BUILD_SIZE_NODE_DISPLAY_ID](phl.PHL_DISPLAY_OPTION_ID, sc.SIZE_CODE_ID, sc.SIZE_CODE_PRIMARY, sc.SIZE_CODE_SECONDARY) FROM [dbo].[SIZE_NODE] sn (NOLOCK) INNER JOIN [dbo].[SIZE_CODE] sc (NOLOCK) on sc.SIZE_CODE_RID=sn.SIZE_CODE_RID WHERE sn.HN_RID=q1.HN_RID) 
+		ELSE --Build Base Node Display ID
+			(SELECT [dbo].[UDF_HIERARCHY_BUILD_BASE_NODE_DISPLAY_ID](phl.PHL_DISPLAY_OPTION_ID, bn.BN_ID, bn.BN_NAME, bn.BN_DESCRIPTION) AS NODE_DISPLAY_ID FROM [dbo].[BASE_NODE] bn (NOLOCK) WHERE bn.HN_RID=q1.HN_RID)
+		END AS NODE_DISPLAY_ID
+	FROM
+	(
+	SELECT cte.HN_RID, cte.HOME_LEVEL, cte.PH_RID
+	FROM cte_descendants cte 
+	--Always exclude the hidden color nodes and their descendant size nodes  (aka Unknown Color, aka Color Size Total)
+	WHERE cte.HN_RID NOT IN (SELECT HN_RID FROM [dbo].[UDF_HIERARCHY_GET_ALL_DESCENDANT_HIDDEN_COLOR_AND_SIZE_NODE_RIDS_TO_EXCLUDE](@SELECTED_NODE_RID))
+	) q1
+	INNER JOIN [dbo].[PRODUCT_HIERARCHY_LEVELS] phl (NOLOCK) on phl.PHL_SEQUENCE=q1.HOME_LEVEL
+	LEFT OUTER JOIN [dbo].[PRODUCT_HIERARCHY] ph (NOLOCK) on ph.PH_RID=q1.PH_RID
+)
+GO

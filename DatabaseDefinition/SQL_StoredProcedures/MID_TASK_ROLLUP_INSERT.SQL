@@ -1,0 +1,91 @@
+--dv =============================================
+--dv Create date:	2/13/2013
+--dv Description:	Inserts a rollup task
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_TASK_ROLLUP_INSERT]
+	@TASKLIST_RID int,
+	@TASK_SEQUENCE int, 
+	@ROLLUP_SEQUENCE char(10), 
+	@HN_RID int, 
+	@FV_RID int, 
+	@ROLLUP_CDR_RID int, 
+	@FROM_PH_OFFSET_IND int, 
+	@FROM_PH_RID int, 
+	@FROM_PHL_SEQUENCE int, 
+	@FROM_OFFSET int,
+	@TO_PH_OFFSET_IND int, 
+	@TO_PH_RID int, 
+	@TO_PHL_SEQUENCE int, 
+	@TO_OFFSET int, 
+	@POSTING_IND char, 
+	@HIERARCHY_LEVELS_IND char, 
+	@DAY_TO_WEEK_IND char, 
+	@DAY_IND char, 
+	@WEEK_IND char,  
+	@STORE_IND char, 
+	@CHAIN_IND char, 
+	@STORE_TO_CHAIN_IND char, 
+	@INTRANSIT_IND char, 
+	@RECLASS_IND char
+AS
+BEGIN
+	SET NOCOUNT ON;
+	
+	INSERT INTO TASK_ROLLUP
+		(
+		TASKLIST_RID, 
+		TASK_SEQUENCE, 
+		ROLLUP_SEQUENCE, 
+		HN_RID, 
+		FV_RID, 
+		ROLLUP_CDR_RID, 
+		FROM_PH_OFFSET_IND, 
+		FROM_PH_RID, 
+		FROM_PHL_SEQUENCE, 
+		FROM_OFFSET,
+		TO_PH_OFFSET_IND, 
+		TO_PH_RID, 
+		TO_PHL_SEQUENCE, 
+		TO_OFFSET, 
+		POSTING_IND, 
+		HIERARCHY_LEVELS_IND, 
+		DAY_TO_WEEK_IND, 
+		DAY_IND, 
+		WEEK_IND, 
+		STORE_IND, 
+		CHAIN_IND, 
+		STORE_TO_CHAIN_IND, 
+		INTRANSIT_IND, 
+		RECLASS_IND
+		) 
+	VALUES
+		(
+		@TASKLIST_RID, 
+		@TASK_SEQUENCE, 
+		@ROLLUP_SEQUENCE, 
+		@HN_RID, 
+		@FV_RID, 
+		@ROLLUP_CDR_RID, 
+		@FROM_PH_OFFSET_IND, 
+		@FROM_PH_RID, 
+		@FROM_PHL_SEQUENCE, 
+		@FROM_OFFSET,
+		@TO_PH_OFFSET_IND, 
+		@TO_PH_RID, 
+		@TO_PHL_SEQUENCE, 
+		@TO_OFFSET, 
+		@POSTING_IND, 
+		@HIERARCHY_LEVELS_IND, 
+		@DAY_TO_WEEK_IND, 
+		@DAY_IND, 
+		@WEEK_IND, 
+		@STORE_IND, 
+		@CHAIN_IND, 
+		@STORE_TO_CHAIN_IND, 
+		@INTRANSIT_IND, 
+		@RECLASS_IND
+		)
+
+	SELECT @@ROWCOUNT;
+END
+GO

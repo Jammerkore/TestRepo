@@ -1,0 +1,4 @@
+create index "API_PROCESS_CONTROL_RULES_IDX1" on "API_PROCESS_CONTROL_RULES" (
+	"API_ID")  
+
+go

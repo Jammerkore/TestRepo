@@ -1,0 +1,60 @@
+--dv =============================================
+--dv Create date: 12/11/2013
+--dv Description:	Insert a workflow step allocation record.
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_WORKFLOW_STEP_ALLOCATION_INSERT]
+	@WORKFLOW_RID INT,
+	@STEP_NUMBER INT,
+	@ACTION_METHOD_TYPE INT,
+	@METHOD_RID INT,
+	@REVIEW_IND CHAR(1),
+	@PCT_TOLERANCE FLOAT,
+	@STORE_FILTER_RID INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	INSERT INTO WORKFLOW_STEP_ALLOCATION (
+		WORKFLOW_RID,
+		STEP_NUMBER,
+		ACTION_METHOD_TYPE,
+		METHOD_RID,
+		REVIEW_IND,
+		PCT_TOLERANCE,
+		STORE_FILTER_RID
+		)
+	VALUES (
+		@WORKFLOW_RID,
+		@STEP_NUMBER,
+		@ACTION_METHOD_TYPE,
+		@METHOD_RID,
+		@REVIEW_IND,
+		@PCT_TOLERANCE,
+		@STORE_FILTER_RID
+		)
+
+	SELECT @@ROWCOUNT
+
+END
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

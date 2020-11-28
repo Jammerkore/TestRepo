@@ -1,0 +1,1057 @@
+CREATE PROCEDURE [dbo].[SP_GET_FORECAST_AUDIT_BY_MERCHANDISE] 
+	@SELECTED_NODE_RID INT,
+	@LOWER_LEVEL INT,
+	@FV_RID INT,
+	@USER_RID INT,
+	@TIME_RANGE_BEGIN VARCHAR(50),
+	@TIME_RANGE_END VARCHAR(50),
+	@USER_GROUP_RID INT,
+	@PROCESS_FROM_DATE VARCHAR(50),
+	@PROCESS_TO_DATE VARCHAR(50)
+AS
+BEGIN
+	DECLARE @SELECTED_NODE_LEVEL AS INT
+
+	SELECT @SELECTED_NODE_LEVEL = HOME_LEVEL
+	FROM HIERARCHY_NODE
+	WHERE HN_RID = @SELECTED_NODE_RID
+
+	DECLARE @MAX_PHL_SEQUENCE AS INT
+
+	SELECT @MAX_PHL_SEQUENCE = MAX(PHL_SEQUENCE)
+	FROM PRODUCT_HIERARCHY_LEVELS
+
+	IF (@LOWER_LEVEL = 0)
+	BEGIN
+		SELECT @LOWER_LEVEL = @MAX_PHL_SEQUENCE
+	END
+
+	DECLARE @LEVEL AS INT
+
+	--SELECT @LEVEL = (@LOWER_LEVEL -  @SELECTED_NODE_LEVEL)+1
+	SELECT @LEVEL = @LOWER_LEVEL - 1
+
+	CREATE TABLE #TEMP (
+		PARENT_HN_RID INT,
+		HN_RID INT,
+		BN_ID VARCHAR(356) COLLATE Latin1_General_CS_AS,
+		BN_NAME VARCHAR(50) COLLATE Latin1_General_CS_AS,
+		BN_DESCRIPTION VARCHAR(250) COLLATE Latin1_General_CS_AS
+		)
+
+	INSERT #TEMP (
+		PARENT_HN_RID,
+		HN_RID,
+		BN_ID,
+		BN_NAME,
+		BN_DESCRIPTION
+		)
+	EXEC SP_GET_ALL_DESCENDANTS_BY_LEVEL_REPORT @SELECTED_NODE_RID,
+		@LEVEL
+
+	DECLARE @ST1 AS INT
+	DECLARE @ST2 AS INT
+	DECLARE @ST3 AS INT
+	DECLARE @ST4 AS INT
+	DECLARE @ST5 AS INT
+	DECLARE @ST6 AS INT
+	DECLARE @ST7 AS INT
+	DECLARE @ST8 AS INT
+	DECLARE @ST9 AS INT
+	DECLARE @ST10 AS INT
+
+	SELECT @ST1 = s.SELL_THRU
+	FROM (
+		SELECT SELL_THRU,
+			(
+				SELECT count(*) + 1 AS [IDX]
+				FROM (
+					SELECT DISTINCT SELL_THRU
+					FROM AUDIT_MODIFY_SALES_MATRIX
+					) s1
+				WHERE s1.SELL_THRU < s2.SELL_THRU
+				) AS [IDX]
+		FROM AUDIT_MODIFY_SALES_MATRIX s2
+		GROUP BY SELL_THRU
+		) s
+	WHERE s.IDX = 1
+
+	SELECT @ST2 = s.SELL_THRU
+	FROM (
+		SELECT SELL_THRU,
+			(
+				SELECT count(*) + 1 AS [IDX]
+				FROM (
+					SELECT DISTINCT SELL_THRU
+					FROM AUDIT_MODIFY_SALES_MATRIX
+					) s1
+				WHERE s1.SELL_THRU < s2.SELL_THRU
+				) AS [IDX]
+		FROM AUDIT_MODIFY_SALES_MATRIX s2
+		GROUP BY SELL_THRU
+		) s
+	WHERE s.IDX = 2
+
+	SELECT @ST3 = s.SELL_THRU
+	FROM (
+		SELECT SELL_THRU,
+			(
+				SELECT count(*) + 1 AS [IDX]
+				FROM (
+					SELECT DISTINCT SELL_THRU
+					FROM AUDIT_MODIFY_SALES_MATRIX
+					) s1
+				WHERE s1.SELL_THRU < s2.SELL_THRU
+				) AS [IDX]
+		FROM AUDIT_MODIFY_SALES_MATRIX s2
+		GROUP BY SELL_THRU
+		) s
+	WHERE s.IDX = 3
+
+	SELECT @ST4 = s.SELL_THRU
+	FROM (
+		SELECT SELL_THRU,
+			(
+				SELECT count(*) + 1 AS [IDX]
+				FROM (
+					SELECT DISTINCT SELL_THRU
+					FROM AUDIT_MODIFY_SALES_MATRIX
+					) s1
+				WHERE s1.SELL_THRU < s2.SELL_THRU
+				) AS [IDX]
+		FROM AUDIT_MODIFY_SALES_MATRIX s2
+		GROUP BY SELL_THRU
+		) s
+	WHERE s.IDX = 4
+
+	SELECT @ST5 = s.SELL_THRU
+	FROM (
+		SELECT SELL_THRU,
+			(
+				SELECT count(*) + 1 AS [IDX]
+				FROM (
+					SELECT DISTINCT SELL_THRU
+					FROM AUDIT_MODIFY_SALES_MATRIX
+					) s1
+				WHERE s1.SELL_THRU < s2.SELL_THRU
+				) AS [IDX]
+		FROM AUDIT_MODIFY_SALES_MATRIX s2
+		GROUP BY SELL_THRU
+		) s
+	WHERE s.IDX = 5
+
+	SELECT @ST6 = s.SELL_THRU
+	FROM (
+		SELECT SELL_THRU,
+			(
+				SELECT count(*) + 1 AS [IDX]
+				FROM (
+					SELECT DISTINCT SELL_THRU
+					FROM AUDIT_MODIFY_SALES_MATRIX
+					) s1
+				WHERE s1.SELL_THRU < s2.SELL_THRU
+				) AS [IDX]
+		FROM AUDIT_MODIFY_SALES_MATRIX s2
+		GROUP BY SELL_THRU
+		) s
+	WHERE s.IDX = 6
+
+	SELECT @ST7 = s.SELL_THRU
+	FROM (
+		SELECT SELL_THRU,
+			(
+				SELECT count(*) + 1 AS [IDX]
+				FROM (
+					SELECT DISTINCT SELL_THRU
+					FROM AUDIT_MODIFY_SALES_MATRIX
+					) s1
+				WHERE s1.SELL_THRU < s2.SELL_THRU
+				) AS [IDX]
+		FROM AUDIT_MODIFY_SALES_MATRIX s2
+		GROUP BY SELL_THRU
+		) s
+	WHERE s.IDX = 7
+
+	SELECT @ST8 = s.SELL_THRU
+	FROM (
+		SELECT SELL_THRU,
+			(
+				SELECT count(*) + 1 AS [IDX]
+				FROM (
+					SELECT DISTINCT SELL_THRU
+					FROM AUDIT_MODIFY_SALES_MATRIX
+					) s1
+				WHERE s1.SELL_THRU < s2.SELL_THRU
+				) AS [IDX]
+		FROM AUDIT_MODIFY_SALES_MATRIX s2
+		GROUP BY SELL_THRU
+		) s
+	WHERE s.IDX = 8
+
+	SELECT @ST9 = s.SELL_THRU
+	FROM (
+		SELECT SELL_THRU,
+			(
+				SELECT count(*) + 1 AS [IDX]
+				FROM (
+					SELECT DISTINCT SELL_THRU
+					FROM AUDIT_MODIFY_SALES_MATRIX
+					) s1
+				WHERE s1.SELL_THRU < s2.SELL_THRU
+				) AS [IDX]
+		FROM AUDIT_MODIFY_SALES_MATRIX s2
+		GROUP BY SELL_THRU
+		) s
+	WHERE s.IDX = 9
+
+	SELECT @ST10 = s.SELL_THRU
+	FROM (
+		SELECT SELL_THRU,
+			(
+				SELECT count(*) + 1 AS [IDX]
+				FROM (
+					SELECT DISTINCT SELL_THRU
+					FROM AUDIT_MODIFY_SALES_MATRIX
+					) s1
+				WHERE s1.SELL_THRU < s2.SELL_THRU
+				) AS [IDX]
+		FROM AUDIT_MODIFY_SALES_MATRIX s2
+		GROUP BY SELL_THRU
+		) s
+	WHERE s.IDX = 10
+
+	SELECT hn.HN_RID,
+		hn.BN_ID,
+		hn.BN_NAME,
+		-- Begin TT#5382 - JSmith - Product descriptor not displayed when the Store Eligibility is set at the color level
+		dbo.UDF_MID_GET_NODE_DISPLAY (hn.HN_RID) AS [DISPLAY_TEXT],
+		--CASE 
+		--	WHEN phl.PHL_DISPLAY_OPTION_ID = 800701
+		--		THEN RTRIM(hn.BN_ID)
+		--	WHEN phl.PHL_DISPLAY_OPTION_ID = 800702
+		--		THEN RTRIM(hn.BN_DESCRIPTION)
+		--	WHEN phl.PHL_DISPLAY_OPTION_ID = 800703
+		--		THEN RTRIM(hn.BN_ID) + ' [' + RTRIM(hn.BN_NAME) + ']'
+		--	WHEN phl.PHL_DISPLAY_OPTION_ID = 800704
+		--		THEN RTRIM(hn.BN_ID) + ' [' + RTRIM(hn.BN_DESCRIPTION) + ']'
+		--	WHEN phl.PHL_DISPLAY_OPTION_ID = 800705
+		--		THEN RTRIM(hn.BN_NAME) + ' [' + RTRIM(hn.BN_DESCRIPTION) + ']'
+		--	WHEN phl.PHL_DISPLAY_OPTION_ID = 800706
+		--		THEN RTRIM(hn.BN_ID) + ' [' + RTRIM(hn.BN_NAME) + ']' + ' [' + RTRIM(hn.BN_DESCRIPTION) + ']'
+		--	ELSE RTRIM(hn.BN_ID) + ' [' + RTRIM(hn.BN_NAME) + ']'
+		--	END AS [DISPLAY_TEXT],
+		-- End TT#5382 - JSmith - Product descriptor not displayed when the Store Eligibility is set at the color level
+		af.MethodType,
+		af.StoreVersion,
+		af.ChainVersion,
+		convert(VARCHAR(50), af.PROCESS_DATE_TIME) AS [PROCESS_DATE_TIME],
+		af.MethodName,
+		af.TIME_RANGE_BEGIN,
+		TIME_RANGE_END,
+		af.FilterName,
+		af.StockMinMax,
+		af.Average,
+		af.USER_NAME,
+		af.AttributeSet1,
+		af.ForecastMethod,
+		af.BasisNode,
+		af.BasisVersion,
+		af.BasisTimePeriod,
+		af.BasisWeight,
+		af.BASIS_TYPE,
+		BASIS_TYPE_SORT_CODE,
+		af.Grade_Code,
+		af.Boundary,
+		af.STORES2,
+		af.RULE2,
+		af.QTY2,
+		af.ST2,
+		af.STORES3,
+		af.RULE3,
+		af.QTY3,
+		af.ST3,
+		af.STORES4,
+		af.RULE4,
+		af.QTY4,
+		af.ST4,
+		af.STORES5,
+		af.RULE5,
+		af.QTY5,
+		af.ST5,
+		af.STORES6,
+		af.RULE6,
+		af.QTY6,
+		af.ST6,
+		af.STORES7,
+		af.RULE7,
+		af.QTY7,
+		af.ST7,
+		af.STORES8,
+		af.RULE8,
+		af.QTY8,
+		af.ST8,
+		af.STORES9,
+		af.RULE9,
+		af.QTY9,
+		af.ST9,
+		af.STORES10,
+		af.RULE10,
+		af.QTY10,
+		af.ST10,
+		af.STORES11,
+		af.RULE11,
+		af.QTY11,
+		af.ST11
+	FROM HIERARCHY_NODE hyn
+	LEFT OUTER JOIN PRODUCT_HIERARCHY_LEVELS phl ON phl.PHL_SEQUENCE = hyn.HOME_LEVEL
+	INNER JOIN (
+		SELECT PARENT_HN_RID,
+			HN_RID,
+			BN_ID,
+			BN_NAME,
+			BN_DESCRIPTION
+		FROM #TEMP
+		) hn ON hn.HN_RID = hyn.HN_RID
+	INNER JOIN (
+		SELECT af.HN_RID,
+			apt.TEXT_VALUE AS [MethodType],
+			fvs.DESCRIPTION AS [StoreVersion],
+			fvc.DESCRIPTION AS [ChainVersion],
+			af.METHOD_NAME AS [MethodName],
+			convert(VARCHAR(50), af.PROCESS_DATE_TIME) AS [PROCESS_DATE_TIME],
+			'Week ' + SUBSTRING(CONVERT(VARCHAR(20), af.TIME_RANGE_BEGIN), 5, 6) + '/' + SUBSTRING(CONVERT(VARCHAR(20), af.TIME_RANGE_BEGIN), 1, 4) AS [TIME_RANGE_BEGIN],
+			'Week ' + SUBSTRING(CONVERT(VARCHAR(20), af.TIME_RANGE_END), 5, 6) + '/' + SUBSTRING(CONVERT(VARCHAR(20), af.TIME_RANGE_END), 1, 4) AS [TIME_RANGE_END],
+			NULL AS [FilterName],
+			aofs.StockMinMax,
+			NULL AS [Average],
+			au.USER_NAME,
+			aofs.AttributeSet1,
+			aofs.ForecastMethod,
+			aofs.BasisNode,
+			aofs.BasisVersion,
+			aofs.BasisTimePeriod,
+			aofs.BasisWeight,
+			aofs.BASIS_TYPE,
+			aofs.BASIS_TYPE_SORT_CODE,
+			NULL AS [Grade_Code],
+			NULL AS [Boundary],
+			NULL AS [STORES2],
+			NULL AS [RULE2],
+			NULL AS [QTY2],
+			NULL AS [ST2],
+			NULL AS [STORES3],
+			NULL AS [RULE3],
+			NULL AS [QTY3],
+			NULL AS [ST3],
+			NULL AS [STORES4],
+			NULL AS [RULE4],
+			NULL AS [QTY4],
+			NULL AS [ST4],
+			NULL AS [STORES5],
+			NULL AS [RULE5],
+			NULL AS [QTY5],
+			NULL AS [ST5],
+			NULL AS [STORES6],
+			NULL AS [RULE6],
+			NULL AS [QTY6],
+			NULL AS [ST6],
+			NULL AS [STORES7],
+			NULL AS [RULE7],
+			NULL AS [QTY7],
+			NULL AS [ST7],
+			NULL AS [STORES8],
+			NULL AS [RULE8],
+			NULL AS [QTY8],
+			NULL AS [ST8],
+			NULL AS [STORES9],
+			NULL AS [RULE9],
+			NULL AS [QTY9],
+			NULL AS [ST9],
+			NULL AS [STORES10],
+			NULL AS [RULE10],
+			NULL AS [QTY10],
+			NULL AS [ST10],
+			NULL AS [STORES11],
+			NULL AS [RULE11],
+			NULL AS [QTY11],
+			NULL AS [ST11]
+		FROM AUDIT_FORECAST af
+		INNER JOIN (
+			SELECT USER_RID
+			FROM APPLICATION_USER
+			WHERE USER_RID = @USER_RID
+				AND @USER_RID <> 0
+			
+			UNION
+			
+			SELECT USER_RID
+			FROM USER_GROUP_JOIN
+			WHERE GROUP_RID = @USER_GROUP_RID
+				AND @USER_GROUP_RID <> 0
+				AND @USER_RID = 0
+			) ug ON af.USER_RID = ug.USER_RID
+		INNER JOIN APPLICATION_TEXT apt ON apt.TEXT_CODE = af.METHOD_TYPE
+		INNER JOIN FORECAST_VERSION fvs ON af.STORE_FV_RID = fvs.FV_RID
+			AND (
+				(
+					@FV_RID > 0
+					AND fvs.FV_RID = @FV_RID
+					)
+				OR @FV_RID <= 0
+				)
+		/* Begin TT#1034 - JSmith - Forecast Audit Report when the Version is specified in the drop down and the Store and Chain plan Versions are different the report shows no results when pulled. */
+		--INNER JOIN FORECAST_VERSION fvc ON af.CHAIN_FV_RID = fvc.FV_RID AND ( (@FV_RID > 0 AND fvc.FV_RID = @FV_RID) OR @FV_RID <=0)
+		INNER JOIN FORECAST_VERSION fvc ON af.CHAIN_FV_RID = fvc.FV_RID
+		/* End TT#1034 */
+		INNER JOIN APPLICATION_USER au ON au.USER_RID = af.USER_RID
+		INNER JOIN (
+			--BEGIN tt#1049 - Forecast Audit and Trend Tab Apply to do not match on the merchandise levels - apicchetti - 01/12/2011
+			SELECT aofs.AUDIT_FORECAST_RID,
+				sg.SG_ID + '/' + sgl.SGL_ID AS [AttributeSet1],
+				aofsb.BASIS_HN_TEXT AS [BasisNode],
+				--CASE   WHEN phl.PHL_DISPLAY_OPTION_ID = 800701 THEN  RTRIM(bn1.BN_ID)
+				--WHEN phl.PHL_DISPLAY_OPTION_ID = 800702 THEN  RTRIM(bn1.BN_DESCRIPTION)
+				--WHEN phl.PHL_DISPLAY_OPTION_ID = 800703 THEN  RTRIM(bn1.BN_ID)  + ' [' +  RTRIM(bn1.BN_NAME) + ']'
+				--WHEN phl.PHL_DISPLAY_OPTION_ID = 800704 THEN  RTRIM(bn1.BN_ID) + ' [' + RTRIM(bn1.BN_DESCRIPTION) + ']'
+				--WHEN phl.PHL_DISPLAY_OPTION_ID = 800705 THEN  RTRIM(bn1.BN_NAME)  + ' [' + RTRIM(bn1.BN_DESCRIPTION) + ']'
+				--WHEN phl.PHL_DISPLAY_OPTION_ID = 800706 THEN  RTRIM(bn1.BN_ID) + ' [' +  RTRIM(bn1.BN_NAME) + ']' + ' [' + RTRIM(bn1.BN_DESCRIPTION) + ']'
+				--ELSE  RTRIM(bn1.BN_ID) + ' [' +  RTRIM(bn1.BN_NAME) + ']'
+				--END as [BasisNode],
+				fvb.DESCRIPTION AS [BasisVersion],
+				CASE 
+					WHEN aofsb.BASIS_TIME_PERIOD IS NULL
+						THEN ''
+					ELSE aofsb.BASIS_TIME_PERIOD
+					END AS [BasisTimePeriod],
+				aofsb.BASIS_WEIGHT AS [BasisWeight],
+				CASE 
+					WHEN aofs.STOCK_MIN_MAX = 1
+						THEN 'Yes'
+					ELSE 'No'
+					END AS [StockMinMax],
+				aofs.FORECAST_METHOD_TYPE AS [ForecastMethod],
+				aofsb.BASIS_TYPE,
+				aofsb.BASIS_TYPE_SORT_CODE
+			FROM AUDIT_OTS_FORECAST_SET aofs
+			INNER JOIN STORE_GROUP_LEVEL sgl ON sgl.SGL_RID = aofs.SGL_RID
+			INNER JOIN STORE_GROUP sg ON sg.SG_RID = sgl.SG_RID
+			INNER JOIN AUDIT_OTS_FORECAST_SET_BASIS aofsb ON aofs.SGL_RID = aofsb.SGL_RID
+				AND aofs.AUDIT_FORECAST_RID = aofsb.AUDIT_FORECAST_RID
+			--INNER JOIN BASE_NODE bn1 ON bn1.HN_RID = aofsb.BASIS_HN_RID
+			--INNER JOIN  HIERARCHY_NODE hn ON bn1.HN_RID = hn.HN_RID
+			--LEFT OUTER JOIN PRODUCT_HIERARCHY_LEVELS phl ON phl.PHL_SEQUENCE = hn.HOME_LEVEL
+			INNER JOIN FORECAST_VERSION fvb ON aofsb.BASIS_FV_RID = fvb.FV_RID
+			GROUP BY aofs.AUDIT_FORECAST_RID,
+				sg.SG_ID,
+				sgl.SGL_ID,
+				aofsb.BASIS_HN_TEXT,
+				fvb.DESCRIPTION, --bn1.BN_ID,bn1.BN_NAME,BN_DESCRIPTION,
+				aofsb.BASIS_TIME_PERIOD,
+				aofsb.BASIS_WEIGHT,
+				aofs.STOCK_MIN_MAX,
+				aofs.FORECAST_METHOD_TYPE,
+				aofsb.BASIS_TYPE,
+				BASIS_TYPE_SORT_CODE --,phl.PHL_DISPLAY_OPTION_ID
+				--END tt#1049 - Forecast Audit and Trend Tab Apply to do not match on the merchandise levels - apicchetti - 01/12/2011
+			) aofs ON aofs.AUDIT_FORECAST_RID = af.AUDIT_FORECAST_RID
+		WHERE (
+				(
+					@TIME_RANGE_BEGIN <> ''
+					AND @TIME_RANGE_END <> ''
+					AND (
+						af.TIME_RANGE_BEGIN BETWEEN @TIME_RANGE_BEGIN
+							AND @TIME_RANGE_END
+						OR af.TIME_RANGE_END BETWEEN @TIME_RANGE_BEGIN
+							AND @TIME_RANGE_END
+						)
+					)
+				OR (
+					@TIME_RANGE_BEGIN = ''
+					AND @TIME_RANGE_END <> ''
+					AND (
+						af.TIME_RANGE_BEGIN <= @TIME_RANGE_END
+						OR af.TIME_RANGE_END <= @TIME_RANGE_END
+						)
+					)
+				OR (
+					@TIME_RANGE_BEGIN <> ''
+					AND @TIME_RANGE_END = ''
+					AND (
+						af.TIME_RANGE_BEGIN >= @TIME_RANGE_BEGIN
+						OR af.TIME_RANGE_END >= @TIME_RANGE_BEGIN
+						)
+					)
+				OR (
+					@TIME_RANGE_BEGIN = ''
+					AND @TIME_RANGE_END = ''
+					)
+				)
+			AND convert(VARCHAR, af.PROCESS_DATE_TIME, 112) BETWEEN @PROCESS_FROM_DATE
+				AND @PROCESS_TO_DATE
+		
+		UNION
+		
+		SELECT af.HN_RID,
+			apt.TEXT_VALUE AS [MethodType],
+			NULL AS [StoreVersion],
+			NULL AS [ChainVersion],
+			af.METHOD_NAME AS [MethodName],
+			convert(VARCHAR(50), af.PROCESS_DATE_TIME),
+			'Week ' + SUBSTRING(CONVERT(VARCHAR(20), af.TIME_RANGE_BEGIN), 5, 6) + '/' + SUBSTRING(CONVERT(VARCHAR(20), af.TIME_RANGE_BEGIN), 1, 4) AS [TIME_RANGE_BEGIN],
+			'Week ' + SUBSTRING(CONVERT(VARCHAR(20), af.TIME_RANGE_END), 5, 6) + '/' + SUBSTRING(CONVERT(VARCHAR(20), af.TIME_RANGE_END), 1, 4) AS [TIME_RANGE_END],
+			ams.FILTER_NAME AS [FilterName],
+			NULL AS [StockMinMax],
+			ams.AVERAGE_BY AS [Average],
+			au.USER_NAME,
+			sg.SG_ID + '/' + sgl.SGL_ID AS [AttributeSet1],
+			NULL AS [ForecastMethod],
+			NULL AS [BasisNode],
+			NULL AS [BasisVersion],
+			NULL AS [BasisTimePeriod],
+			NULL AS [BasisWeight],
+			NULL AS [BASIS_TYPE],
+			NULL AS BASIS_TYPE_SORT_CODE,
+			amsm.GRADE_CODE AS [Grade_Code],
+			amsm.BOUNDARY AS [Boundary],
+			amsm.STORES2,
+			amsm.RULE2,
+			amsm.QTY2,
+			amsm.ST2,
+			amsm.STORES3,
+			amsm.RULE3,
+			amsm.QTY3,
+			amsm.ST3,
+			amsm.STORES4,
+			amsm.RULE4,
+			amsm.QTY4,
+			amsm.ST4,
+			amsm.STORES5,
+			amsm.RULE5,
+			amsm.QTY5,
+			amsm.ST5,
+			amsm.STORES6,
+			amsm.RULE6,
+			amsm.QTY6,
+			amsm.ST6,
+			amsm.STORES7,
+			amsm.RULE7,
+			amsm.QTY7,
+			amsm.ST7,
+			amsm.STORES8,
+			amsm.RULE8,
+			amsm.QTY8,
+			amsm.ST8,
+			amsm.STORES9,
+			amsm.RULE9,
+			amsm.QTY9,
+			amsm.ST9,
+			amsm.STORES10,
+			amsm.RULE10,
+			amsm.QTY10,
+			amsm.ST10,
+			amsm.STORES11,
+			amsm.RULE11,
+			amsm.QTY11,
+			amsm.ST11
+		FROM AUDIT_FORECAST af
+		INNER JOIN (
+			SELECT USER_RID
+			FROM APPLICATION_USER
+			WHERE USER_RID = @USER_RID
+				AND @USER_RID <> 0
+			
+			UNION
+			
+			SELECT USER_RID
+			FROM USER_GROUP_JOIN
+			WHERE GROUP_RID = @USER_GROUP_RID
+				AND @USER_GROUP_RID <> 0
+				AND @USER_RID = 0
+			) ug ON af.USER_RID = ug.USER_RID
+		INNER JOIN APPLICATION_TEXT apt ON apt.TEXT_CODE = af.METHOD_TYPE
+		INNER JOIN AUDIT_MODIFY_SALES ams ON ams.AUDIT_FORECAST_RID = af.AUDIT_FORECAST_RID
+		INNER JOIN APPLICATION_USER au ON au.USER_RID = af.USER_RID
+		INNER JOIN (
+			SELECT amsm.AUDIT_FORECAST_RID,
+				amsm.GRADE_CODE AS [GRADE_CODE],
+				amsm.BOUNDARY AS [BOUNDARY],
+				amsm.NUMBER_OF_STORES [STORES2],
+				amsm.SGL_RID,
+				ap.TEXT_VALUE AS [RULE2],
+				CASE 
+					WHEN amsm.MATRIX_RULE = 802430
+						THEN NULL
+					ELSE amsm.MATRIX_RULE_QUANTITY
+					END AS [QTY2],
+				CASE 
+					WHEN @ST1 IS NOT NULL
+						AND @ST2 IS NOT NULL
+						THEN CONVERT(VARCHAR(30), @ST1) + '-' + CONVERT(VARCHAR(30), @ST2)
+					ELSE '>' + CONVERT(VARCHAR(30), @ST1)
+					END AS [ST2],
+				amsm1.NUMBER_OF_STORES [STORES3],
+				amsm1.MATRIX_RULE [RULE3],
+				amsm1.MATRIX_RULE_QUANTITY [QTY3],
+				amsm1.ST3,
+				amsm2.NUMBER_OF_STORES [STORES4],
+				amsm2.MATRIX_RULE [RULE4],
+				amsm2.MATRIX_RULE_QUANTITY [QTY4],
+				amsm2.ST4,
+				amsm3.NUMBER_OF_STORES [STORES5],
+				amsm3.MATRIX_RULE [RULE5],
+				amsm3.MATRIX_RULE_QUANTITY [QTY5],
+				amsm3.ST5,
+				amsm4.NUMBER_OF_STORES [STORES6],
+				amsm4.MATRIX_RULE [RULE6],
+				amsm4.MATRIX_RULE_QUANTITY [QTY6],
+				amsm4.ST6,
+				amsm5.NUMBER_OF_STORES [STORES7],
+				amsm5.MATRIX_RULE [RULE7],
+				amsm5.MATRIX_RULE_QUANTITY [QTY7],
+				amsm5.ST7,
+				amsm6.NUMBER_OF_STORES [STORES8],
+				amsm6.MATRIX_RULE [RULE8],
+				amsm6.MATRIX_RULE_QUANTITY [QTY8],
+				amsm6.ST8,
+				amsm7.NUMBER_OF_STORES [STORES9],
+				amsm7.MATRIX_RULE [RULE9],
+				amsm7.MATRIX_RULE_QUANTITY [QTY9],
+				amsm7.ST9,
+				amsm8.NUMBER_OF_STORES [STORES10],
+				amsm8.MATRIX_RULE [RULE10],
+				amsm8.MATRIX_RULE_QUANTITY [QTY10],
+				amsm8.ST10,
+				amsm9.NUMBER_OF_STORES [STORES11],
+				amsm9.MATRIX_RULE [RULE11],
+				amsm9.MATRIX_RULE_QUANTITY [QTY11],
+				amsm9.ST11
+			FROM AUDIT_MODIFY_SALES_MATRIX amsm
+			INNER JOIN APPLICATION_TEXT ap ON ap.TEXT_CODE = amsm.MATRIX_RULE
+			INNER JOIN STORE_GROUP_LEVEL sgl ON sgl.SGL_RID = amsm.SGL_RID
+			LEFT OUTER JOIN (
+				SELECT AUDIT_FORECAST_RID,
+					GRADE_CODE,
+					NUMBER_OF_STORES,
+					ap.TEXT_VALUE AS [MATRIX_RULE],
+					CASE 
+						WHEN am.MATRIX_RULE = 802430
+							THEN NULL
+						ELSE am.MATRIX_RULE_QUANTITY
+						END AS [MATRIX_RULE_QUANTITY],
+					am.SGL_RID,
+					am.SELL_THRU,
+					CASE 
+						WHEN @ST2 IS NOT NULL
+							AND @ST3 IS NOT NULL
+							THEN CONVERT(VARCHAR(30), @ST2 + 1) + '-' + CONVERT(VARCHAR(30), @ST3)
+						ELSE '>' + CONVERT(VARCHAR(30), @ST2)
+						END AS [ST3]
+				FROM AUDIT_MODIFY_SALES_MATRIX am
+				INNER JOIN APPLICATION_TEXT ap ON ap.TEXT_CODE = am.MATRIX_RULE
+				WHERE (
+						@ST2 IS NOT NULL
+						AND @ST3 IS NOT NULL
+						AND am.SELL_THRU BETWEEN @ST2
+							AND @ST3 - 1
+						)
+					OR (
+						@ST2 IS NOT NULL
+						AND @ST3 IS NULL
+						AND am.SELL_THRU >= @ST2
+						)
+				) amsm1 ON amsm.AUDIT_FORECAST_RID = amsm1.AUDIT_FORECAST_RID
+				AND amsm.GRADE_CODE = amsm1.GRADE_CODE
+				AND amsm.SGL_RID = amsm1.SGL_RID
+			LEFT OUTER JOIN (
+				SELECT AUDIT_FORECAST_RID,
+					GRADE_CODE,
+					NUMBER_OF_STORES,
+					ap.TEXT_VALUE AS [MATRIX_RULE],
+					CASE 
+						WHEN am.MATRIX_RULE = 802430
+							THEN NULL
+						ELSE am.MATRIX_RULE_QUANTITY
+						END AS [MATRIX_RULE_QUANTITY],
+					am.SGL_RID,
+					am.SELL_THRU,
+					CASE 
+						WHEN @ST3 IS NOT NULL
+							AND @ST4 IS NOT NULL
+							THEN CONVERT(VARCHAR(30), @ST3 + 1) + '-' + CONVERT(VARCHAR(30), @ST4)
+						ELSE '>' + CONVERT(VARCHAR(30), @ST3)
+						END AS [ST4]
+				FROM AUDIT_MODIFY_SALES_MATRIX am
+				INNER JOIN APPLICATION_TEXT ap ON ap.TEXT_CODE = am.MATRIX_RULE
+				WHERE (
+						@ST3 IS NOT NULL
+						AND @ST4 IS NOT NULL
+						AND am.SELL_THRU BETWEEN @ST3
+							AND @ST4 - 1
+						)
+					OR (
+						@ST3 IS NOT NULL
+						AND @ST4 IS NULL
+						AND am.SELL_THRU >= @ST3
+						)
+				) amsm2 ON amsm.AUDIT_FORECAST_RID = amsm2.AUDIT_FORECAST_RID
+				AND amsm.GRADE_CODE = amsm2.GRADE_CODE
+				AND amsm.SGL_RID = amsm2.SGL_RID
+			LEFT OUTER JOIN (
+				SELECT AUDIT_FORECAST_RID,
+					GRADE_CODE,
+					NUMBER_OF_STORES,
+					ap.TEXT_VALUE AS [MATRIX_RULE],
+					CASE 
+						WHEN am.MATRIX_RULE = 802430
+							THEN NULL
+						ELSE am.MATRIX_RULE_QUANTITY
+						END AS [MATRIX_RULE_QUANTITY],
+					am.SGL_RID,
+					am.SELL_THRU,
+					CASE 
+						WHEN @ST4 IS NOT NULL
+							AND @ST5 IS NOT NULL
+							THEN CONVERT(VARCHAR(30), @ST4 + 1) + '-' + CONVERT(VARCHAR(30), @ST5)
+						ELSE '>' + CONVERT(VARCHAR(30), @ST4)
+						END AS [ST5]
+				FROM AUDIT_MODIFY_SALES_MATRIX am
+				INNER JOIN APPLICATION_TEXT ap ON ap.TEXT_CODE = am.MATRIX_RULE
+				WHERE (
+						@ST4 IS NOT NULL
+						AND @ST5 IS NOT NULL
+						AND am.SELL_THRU BETWEEN @ST4
+							AND @ST5 - 1
+						)
+					OR (
+						@ST4 IS NOT NULL
+						AND @ST5 IS NULL
+						AND am.SELL_THRU >= @ST4
+						)
+				) amsm3 ON amsm.AUDIT_FORECAST_RID = amsm3.AUDIT_FORECAST_RID
+				AND amsm.GRADE_CODE = amsm3.GRADE_CODE
+				AND amsm.SGL_RID = amsm3.SGL_RID
+			LEFT OUTER JOIN (
+				SELECT AUDIT_FORECAST_RID,
+					GRADE_CODE,
+					NUMBER_OF_STORES,
+					ap.TEXT_VALUE AS [MATRIX_RULE],
+					CASE 
+						WHEN am.MATRIX_RULE = 802430
+							THEN NULL
+						ELSE am.MATRIX_RULE_QUANTITY
+						END AS [MATRIX_RULE_QUANTITY],
+					am.SGL_RID,
+					am.SELL_THRU,
+					CASE 
+						WHEN @ST5 IS NOT NULL
+							AND @ST6 IS NOT NULL
+							THEN CONVERT(VARCHAR(30), @ST5 + 1) + '-' + CONVERT(VARCHAR(30), @ST6)
+						ELSE '>' + CONVERT(VARCHAR(30), @ST5)
+						END AS [ST6]
+				FROM AUDIT_MODIFY_SALES_MATRIX am
+				INNER JOIN APPLICATION_TEXT ap ON ap.TEXT_CODE = am.MATRIX_RULE
+				WHERE (
+						@ST5 IS NOT NULL
+						AND @ST6 IS NOT NULL
+						AND am.SELL_THRU BETWEEN @ST5
+							AND @ST6 - 1
+						)
+					OR (
+						@ST5 IS NOT NULL
+						AND @ST6 IS NULL
+						AND am.SELL_THRU >= @ST5
+						)
+				) amsm4 ON amsm.AUDIT_FORECAST_RID = amsm4.AUDIT_FORECAST_RID
+				AND amsm.GRADE_CODE = amsm4.GRADE_CODE
+				AND amsm.SGL_RID = amsm4.SGL_RID
+			LEFT OUTER JOIN (
+				SELECT AUDIT_FORECAST_RID,
+					GRADE_CODE,
+					NUMBER_OF_STORES,
+					ap.TEXT_VALUE AS [MATRIX_RULE],
+					CASE 
+						WHEN am.MATRIX_RULE = 802430
+							THEN NULL
+						ELSE am.MATRIX_RULE_QUANTITY
+						END AS [MATRIX_RULE_QUANTITY],
+					am.SGL_RID,
+					am.SELL_THRU,
+					CASE 
+						WHEN @ST6 IS NOT NULL
+							AND @ST7 IS NOT NULL
+							THEN CONVERT(VARCHAR(30), @ST6 + 1) + '-' + CONVERT(VARCHAR(30), @ST7)
+						ELSE '>' + CONVERT(VARCHAR(30), @ST6)
+						END AS [ST7]
+				FROM AUDIT_MODIFY_SALES_MATRIX am
+				INNER JOIN APPLICATION_TEXT ap ON ap.TEXT_CODE = am.MATRIX_RULE
+				WHERE (
+						@ST6 IS NOT NULL
+						AND @ST7 IS NOT NULL
+						AND am.SELL_THRU BETWEEN @ST6
+							AND @ST7 - 1
+						)
+					OR (
+						@ST6 IS NOT NULL
+						AND @ST7 IS NULL
+						AND am.SELL_THRU >= @ST6
+						)
+				) amsm5 ON amsm.AUDIT_FORECAST_RID = amsm5.AUDIT_FORECAST_RID
+				AND amsm.GRADE_CODE = amsm5.GRADE_CODE
+				AND amsm.SGL_RID = amsm5.SGL_RID
+			LEFT OUTER JOIN (
+				SELECT AUDIT_FORECAST_RID,
+					GRADE_CODE,
+					NUMBER_OF_STORES,
+					ap.TEXT_VALUE AS [MATRIX_RULE],
+					CASE 
+						WHEN am.MATRIX_RULE = 802430
+							THEN NULL
+						ELSE am.MATRIX_RULE_QUANTITY
+						END AS [MATRIX_RULE_QUANTITY],
+					am.SGL_RID,
+					am.SELL_THRU,
+					CASE 
+						WHEN @ST7 IS NOT NULL
+							AND @ST8 IS NOT NULL
+							THEN CONVERT(VARCHAR(30), @ST7 + 1) + '-' + CONVERT(VARCHAR(30), @ST8)
+						ELSE '>' + CONVERT(VARCHAR(30), @ST7)
+						END AS [ST8]
+				FROM AUDIT_MODIFY_SALES_MATRIX am
+				INNER JOIN APPLICATION_TEXT ap ON ap.TEXT_CODE = am.MATRIX_RULE
+				WHERE (
+						@ST7 IS NOT NULL
+						AND @ST8 IS NOT NULL
+						AND am.SELL_THRU BETWEEN @ST7
+							AND @ST8 - 1
+						)
+					OR (
+						@ST7 IS NOT NULL
+						AND @ST8 IS NULL
+						AND am.SELL_THRU >= @ST7
+						)
+				) amsm6 ON amsm.AUDIT_FORECAST_RID = amsm6.AUDIT_FORECAST_RID
+				AND amsm.GRADE_CODE = amsm6.GRADE_CODE
+				AND amsm.SGL_RID = amsm6.SGL_RID
+			LEFT OUTER JOIN (
+				SELECT AUDIT_FORECAST_RID,
+					GRADE_CODE,
+					NUMBER_OF_STORES,
+					ap.TEXT_VALUE AS [MATRIX_RULE],
+					CASE 
+						WHEN am.MATRIX_RULE = 802430
+							THEN NULL
+						ELSE am.MATRIX_RULE_QUANTITY
+						END AS [MATRIX_RULE_QUANTITY],
+					am.SGL_RID,
+					am.SELL_THRU,
+					CASE 
+						WHEN @ST8 IS NOT NULL
+							AND @ST9 IS NOT NULL
+							THEN CONVERT(VARCHAR(30), @ST8 + 1) + '-' + CONVERT(VARCHAR(30), @ST9)
+						ELSE '>' + CONVERT(VARCHAR(30), @ST8)
+						END AS [ST9]
+				FROM AUDIT_MODIFY_SALES_MATRIX am
+				INNER JOIN APPLICATION_TEXT ap ON ap.TEXT_CODE = am.MATRIX_RULE
+				WHERE (
+						@ST8 IS NOT NULL
+						AND @ST9 IS NOT NULL
+						AND am.SELL_THRU BETWEEN @ST8
+							AND @ST9 - 1
+						)
+					OR (
+						@ST8 IS NOT NULL
+						AND @ST9 IS NULL
+						AND am.SELL_THRU >= @ST8
+						)
+				) amsm7 ON amsm.AUDIT_FORECAST_RID = amsm7.AUDIT_FORECAST_RID
+				AND amsm.GRADE_CODE = amsm7.GRADE_CODE
+				AND amsm.SGL_RID = amsm7.SGL_RID
+			LEFT OUTER JOIN (
+				SELECT AUDIT_FORECAST_RID,
+					GRADE_CODE,
+					NUMBER_OF_STORES,
+					ap.TEXT_VALUE AS [MATRIX_RULE],
+					CASE 
+						WHEN am.MATRIX_RULE = 802430
+							THEN NULL
+						ELSE am.MATRIX_RULE_QUANTITY
+						END AS [MATRIX_RULE_QUANTITY],
+					am.SGL_RID,
+					am.SELL_THRU,
+					CASE 
+						WHEN @ST9 IS NOT NULL
+							AND @ST10 IS NOT NULL
+							THEN CONVERT(VARCHAR(30), @ST9 + 1) + '-' + CONVERT(VARCHAR(30), @ST10)
+						ELSE '>' + CONVERT(VARCHAR(30), @ST9)
+						END AS [ST10]
+				FROM AUDIT_MODIFY_SALES_MATRIX am
+				INNER JOIN APPLICATION_TEXT ap ON ap.TEXT_CODE = am.MATRIX_RULE
+				WHERE (
+						@ST9 IS NOT NULL
+						AND @ST10 IS NOT NULL
+						AND am.SELL_THRU BETWEEN @ST9
+							AND @ST10 - 1
+						)
+					OR (
+						@ST9 IS NOT NULL
+						AND @ST10 IS NULL
+						AND am.SELL_THRU >= @ST9
+						)
+				) amsm8 ON amsm.AUDIT_FORECAST_RID = amsm8.AUDIT_FORECAST_RID
+				AND amsm.GRADE_CODE = amsm8.GRADE_CODE
+				AND amsm.SGL_RID = amsm8.SGL_RID
+			LEFT OUTER JOIN (
+				SELECT AUDIT_FORECAST_RID,
+					GRADE_CODE,
+					NUMBER_OF_STORES,
+					ap.TEXT_VALUE AS [MATRIX_RULE],
+					CASE 
+						WHEN am.MATRIX_RULE = 802430
+							THEN NULL
+						ELSE am.MATRIX_RULE_QUANTITY
+						END AS [MATRIX_RULE_QUANTITY],
+					am.SGL_RID,
+					am.SELL_THRU,
+					'>' + CONVERT(VARCHAR(30), @ST10) AS [ST11]
+				FROM AUDIT_MODIFY_SALES_MATRIX am
+				INNER JOIN APPLICATION_TEXT ap ON ap.TEXT_CODE = am.MATRIX_RULE
+				WHERE @ST10 IS NOT NULL
+					AND am.SELL_THRU >= @ST10
+				) amsm9 ON amsm.AUDIT_FORECAST_RID = amsm9.AUDIT_FORECAST_RID
+				AND amsm.GRADE_CODE = amsm9.GRADE_CODE
+				AND amsm.SGL_RID = amsm9.SGL_RID
+			WHERE (
+					@ST1 IS NOT NULL
+					AND @ST2 IS NOT NULL
+					AND amsm.SELL_THRU BETWEEN @ST1
+						AND @ST2 - 1
+					)
+				OR (
+					@ST1 IS NOT NULL
+					AND @ST2 IS NULL
+					AND amsm.SELL_THRU >= @ST1
+					)
+			) amsm ON amsm.AUDIT_FORECAST_RID = af.AUDIT_FORECAST_RID
+		INNER JOIN STORE_GROUP_LEVEL sgl ON sgl.SGL_RID = amsm.SGL_RID
+		INNER JOIN STORE_GROUP sg ON sg.SG_RID = sgl.SG_RID
+		WHERE (
+				(
+					@TIME_RANGE_BEGIN <> ''
+					AND @TIME_RANGE_END <> ''
+					AND (
+						af.TIME_RANGE_BEGIN BETWEEN @TIME_RANGE_BEGIN
+							AND @TIME_RANGE_END
+						OR af.TIME_RANGE_END BETWEEN @TIME_RANGE_BEGIN
+							AND @TIME_RANGE_END
+						)
+					)
+				OR (
+					@TIME_RANGE_BEGIN = ''
+					AND @TIME_RANGE_END <> ''
+					AND (
+						af.TIME_RANGE_BEGIN <= @TIME_RANGE_END
+						OR af.TIME_RANGE_END <= @TIME_RANGE_END
+						)
+					)
+				OR (
+					@TIME_RANGE_BEGIN <> ''
+					AND @TIME_RANGE_END = ''
+					AND (
+						af.TIME_RANGE_BEGIN >= @TIME_RANGE_BEGIN
+						OR af.TIME_RANGE_END >= @TIME_RANGE_BEGIN
+						)
+					)
+				OR (
+					@TIME_RANGE_BEGIN = ''
+					AND @TIME_RANGE_END = ''
+					)
+				)
+			AND convert(VARCHAR, af.PROCESS_DATE_TIME, 112) BETWEEN @PROCESS_FROM_DATE
+				AND @PROCESS_TO_DATE
+		) af ON hn.HN_RID = af.HN_RID
+	GROUP BY hn.HN_RID,
+		hn.BN_ID,
+		hn.BN_NAME,
+		hn.BN_DESCRIPTION,
+		af.MethodType,
+		af.StoreVersion,
+		af.ChainVersion,
+		af.PROCESS_DATE_TIME,
+		af.MethodName,
+		af.TIME_RANGE_BEGIN,
+		TIME_RANGE_END,
+		af.FilterName,
+		af.StockMinMax,
+		af.Average,
+		af.USER_NAME,
+		af.AttributeSet1,
+		af.ForecastMethod,
+		af.BasisNode,
+		af.BasisVersion,
+		af.BasisTimePeriod,
+		af.BasisWeight,
+		af.BASIS_TYPE,
+		BASIS_TYPE_SORT_CODE,
+		af.Grade_Code,
+		af.Boundary,
+		af.STORES2,
+		af.RULE2,
+		af.QTY2,
+		af.ST2,
+		af.STORES3,
+		af.RULE3,
+		af.QTY3,
+		af.ST3,
+		af.STORES4,
+		af.RULE4,
+		af.QTY4,
+		af.ST4,
+		af.STORES5,
+		af.RULE5,
+		af.QTY5,
+		af.ST5,
+		af.STORES6,
+		af.RULE6,
+		af.QTY6,
+		af.ST6,
+		af.STORES7,
+		af.RULE7,
+		af.QTY7,
+		af.ST7,
+		af.STORES8,
+		af.RULE8,
+		af.QTY8,
+		af.ST8,
+		af.STORES9,
+		af.RULE9,
+		af.QTY9,
+		af.ST9,
+		af.STORES10,
+		af.RULE10,
+		af.QTY10,
+		af.ST10,
+		af.STORES11,
+		af.RULE11,
+		af.QTY11,
+		af.ST11,
+		phl.PHL_DISPLAY_OPTION_ID
+	ORDER BY hn.HN_RID,
+		hn.BN_ID,
+		hn.BN_NAME,
+		hn.BN_DESCRIPTION,
+		af.MethodType,
+		af.MethodName,
+		PROCESS_DATE_TIME,
+		AttributeSet1,
+		BASIS_TYPE_SORT_CODE,
+		Grade_Code,
+		Boundary
+
+	IF (
+			SELECT object_id('tempdb.dbo.#TEMP')
+			) > 0
+		DROP TABLE #TEMP
+END
+GO
+
+

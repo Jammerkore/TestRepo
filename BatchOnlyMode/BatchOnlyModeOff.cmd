@@ -1,0 +1,1 @@
+BatchOnlyMode.exe TurnOff > BatchOnlyModeTurnOffResult.txt

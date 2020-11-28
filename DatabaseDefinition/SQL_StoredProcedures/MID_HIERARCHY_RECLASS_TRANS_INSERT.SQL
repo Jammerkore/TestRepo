@@ -1,0 +1,44 @@
+--dv =============================================
+--dv Create date:	11/27/2013
+--dv Description:	Inserts a hierarchy reclass transaction
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_HIERARCHY_RECLASS_TRANS_INSERT] 
+	@TRANS_PROCESS_ID int,
+	@TRANS_SEQUENCE int, 
+	@TRANS_ORIGINAL varchar(5000), 
+	@TRANS_HIERARCHY_ID varchar(50),
+	@TRANS_PARENT_ID varchar(100), 
+	@TRANS_PRODUCT_ID varchar(50), 
+	@TRANS_PRODUCT_NAME varchar(50), 
+	@TRANS_PRODUCT_DESC varchar(250)
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	INSERT INTO HIERARCHY_RECLASS_TRANS 
+		(
+		TRANS_PROCESS_ID, 
+		TRANS_SEQUENCE, 
+		TRANS_ORIGINAL, 
+		TRANS_HIERARCHY_ID,
+		TRANS_PARENT_ID, 
+		TRANS_PRODUCT_ID, 
+		TRANS_PRODUCT_NAME, 
+		TRANS_PRODUCT_DESC
+		)
+	VALUES 
+		(
+		@TRANS_PROCESS_ID, 
+		@TRANS_SEQUENCE, 
+		@TRANS_ORIGINAL, 
+		@TRANS_HIERARCHY_ID,
+		@TRANS_PARENT_ID, 
+		@TRANS_PRODUCT_ID, 
+		@TRANS_PRODUCT_NAME, 
+		@TRANS_PRODUCT_DESC
+		)
+	
+	SELECT @@ROWCOUNT;
+
+END
+GO

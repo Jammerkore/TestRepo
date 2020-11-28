@@ -1,0 +1,27 @@
+--dv =============================================
+--dv Create date:	10/23/2013
+--dv Description:	Reads store grades for the hierarchy node passed in
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_STORE_GRADES_READ]
+	@HN_RID int
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT 
+		HN_RID, 
+		GRADE_CODE, 
+		BOUNDARY, 
+		COALESCE(WOS_INDEX, -1) WOS_INDEX, 
+		COALESCE(MINIMUM_STOCK, -1) MINIMUM_STOCK, 
+		COALESCE(MAXIMUM_STOCK, -1) MAXIMUM_STOCK,
+		COALESCE(MINIMUM_AD, -1) MINIMUM_AD, 
+		COALESCE(MINIMUM_COLOR, -1) MINIMUM_COLOR, 
+		COALESCE(MAXIMUM_COLOR, -1) MAXIMUM_COLOR, 
+		COALESCE(SHIP_UP_TO, -1) SHIP_UP_TO 
+	 FROM STORE_GRADES 
+	 WHERE HN_RID=@HN_RID
+	 ORDER BY BOUNDARY DESC 
+
+END
+GO

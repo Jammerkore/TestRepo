@@ -1,0 +1,21 @@
+CREATE TYPE [dbo].[BULK_ALLOCATION_TYPE] AS TABLE(
+	[HDR_RID] [int],
+	[ST_RID] [int],
+	[UNITS_ALLOCATED] [int],
+	[UNITS_ALLOCATED_BY_AUTO] [int],
+	[UNITS_ALLOCATED_BY_RULE] [int],
+	[CHOSEN_RULE_TYPE_ID] [int],
+	[CHOSEN_RULE_LAYER_ID] [int],
+	[NEED_DAY] [smalldatetime],
+	[UNIT_NEED_BEFORE] [int],
+	[PERCENT_NEED_BEFORE] [float],
+	[MINIMUM] [int],
+	[MAXIMUM] [int],
+	[PRIMARY_MAX] [int],
+	[ALLOC_STORE_DET_AUDIT_FLAGS] [int],
+	[CHOSEN_RULE_UNITS] [int],
+	[ITEM_UNITS_ALLOCATED] [int]
+	PRIMARY KEY (HDR_RID, ST_RID)
+	)
+
+GO

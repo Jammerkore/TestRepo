@@ -1,0 +1,9 @@
+﻿alter table "METHOD_GROUP_ALLOCATION"
+	add constraint "METHOD_GROUP_ALLOCATION_PHL_FK6" foreign key (
+		"MERCH_PH_RID",
+		"MERCH_PHL_SEQUENCE")
+	 references "PRODUCT_HIERARCHY_LEVELS" (
+		"PH_RID",
+		"PHL_SEQUENCE")  
+
+go

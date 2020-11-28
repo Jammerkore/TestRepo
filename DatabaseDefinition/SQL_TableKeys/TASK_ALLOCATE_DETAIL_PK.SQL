@@ -1,0 +1,6 @@
+alter table "TASK_ALLOCATE_DETAIL"
+	add constraint "TASK_ALLOCATE_DETAIL_PK" primary key clustered ("TASK_SEQUENCE", "TASKLIST_RID", "ALLOCATE_SEQUENCE", "DETAIL_SEQUENCE")   
+
+
+
+GO

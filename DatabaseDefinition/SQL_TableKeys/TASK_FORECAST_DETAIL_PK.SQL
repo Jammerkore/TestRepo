@@ -1,0 +1,6 @@
+alter table "TASK_FORECAST_DETAIL"
+	add constraint "TASK_FORECAST_DETAIL_PK" primary key clustered ("TASK_SEQUENCE", "TASKLIST_RID", "FORECAST_SEQUENCE", "DETAIL_SEQUENCE")   
+
+
+
+GO

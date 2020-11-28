@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://tempuri.org/ClientsSchema.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="Clients">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element maxOccurs="unbounded" name="Client">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="Name" type="xs:string" use="required" />
+								<xs:attribute name="ProdVersion" type="xs:string" use="required"/>
+								<xs:attribute name="ShipVersion" type="xs:string" use="required"/>
+								<xs:attribute name="CalcLocation" type="xs:string" use="optional"/>
+								<xs:attribute name="DevelopmentBuildLocation" type="xs:string" use="optional"/>
+                <xs:attribute name="QABuildLocation" type="xs:string" use="optional"/>
+								<xs:attribute name="ReleaseLocation" type="xs:string" use="required"/>
+								<xs:attribute name="DocumentationMainline" type="xs:string" use="required"/>
+                <xs:attribute name="DocumentationBranch" type="xs:string" use="required"/>
+								<xs:attribute name="FTPLocation" type="xs:string" use="required"/>
+                <xs:attribute name="ReleaseType" type="xs:string" use="required"/>
+								<xs:attribute name="CustomReports" type="xs:boolean" use="optional" default="false"/>
+                <xs:attribute name="AllocationInstalled" type="xs:boolean" use="optional" default="true"/>
+                <xs:attribute name="PlanningInstalled" type="xs:boolean" use="optional" default="true"/>
+                <xs:attribute name="SizeInstalled" type="xs:boolean" use="optional" default="true"/>
+                <xs:attribute name="AssortmentInstalled" type="xs:boolean" use="optional" default="false"/>
+                <xs:attribute name="GroupAllocationInstalled" type="xs:boolean" use="optional" default="false"/>
+                <xs:attribute name="MasterInstalled" type="xs:boolean" use="optional" default="false"/>
+                <xs:attribute name="ShipAsISO" type="xs:boolean" use="optional" default="true"/>
+                <xs:attribute name="Notdaa" type="xs:boolean" use="optional" default="false"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

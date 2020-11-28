@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<RelieveIntransits xmlns="http://tempuri.org/RelieveIntransitSchema.xsd">
+<!-- The following sample transactions do not specify an allocation header id -->
+    <RelieveIntransit HeaderID="" ProductID="741963582645">
+        <RelieveStore StoreID="1101" Units="5" />
+        <RelieveStore StoreID="1102" Units="5" />
+        <RelieveStore StoreID="1103" Units="5" />
+        <RelieveStore StoreID="1104" Units="5" />
+        <RelieveStore StoreID="1105" Units="5" />
+    </RelieveIntransit>
+
+<!-- The following sample transactions do specify an allocation header id WITH NO override for [RelieveAllStores]-->
+    <RelieveIntransit HeaderID="TestAPI-0001" ProductID="Button Fly">
+        <RelieveStore StoreID="1101" Units="10" />
+        <RelieveStore StoreID="1102" Units="10" />
+        <RelieveStore StoreID="1103" Units="10" />
+        <RelieveStore StoreID="1104" Units="10" />
+        <RelieveStore StoreID="1105" Units="10" />
+    </RelieveIntransit>
+<!-- The following sample transactions do specify an allocation header id WITH override for [RelieveAllStores]-->
+<!--    NOTE: [RelieveAllStores] must be either "true" or "false" when specified.                             -->
+    <RelieveIntransit HeaderID="TestAPI-0002" ProductID="Button Fly">
+        <RelieveStore RelieveAllStores="true" />
+    </RelieveIntransit>
+</RelieveIntransits>
+
+

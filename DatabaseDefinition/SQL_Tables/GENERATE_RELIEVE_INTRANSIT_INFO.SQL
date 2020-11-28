@@ -1,0 +1,17 @@
+--dv =============================================
+--dv Modified date: 3/26/2014
+--dv Notes:	
+--dv History: 
+--dv ============================================= 
+CREATE TABLE [dbo].[GENERATE_RELIEVE_INTRANSIT_INFO](
+	[PROCESS_RID] [int] NOT NULL,
+	[HEADERS_TO_RELIEVE] [int] NOT NULL,
+	[FILES_GENERATED] [int] NOT NULL,
+	[TOTAL_ERRORS] [int] NOT NULL,
+ CONSTRAINT [PK_GENERATE_RELIEVE_INTRANSIT_INFO] PRIMARY KEY CLUSTERED 
+(
+	[PROCESS_RID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [AUDIT]
+
+go

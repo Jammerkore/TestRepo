@@ -1,0 +1,29 @@
+--dv =============================================
+--dv Create date:	10/21/2013
+--dv Description:	Update the posting date
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_POSTING_DATE_UPDATE]
+	@PH_RID int,
+	@POSTINGDATE datetime,
+	@POSTINGDATEYYYYDDD int,
+	@POSTINGDATEOFFSET int,
+	@CURRENTDATE datetime,
+	@CURRENTDATEYYYYDDD int,
+	@CURRENTDATEOFFSET int
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	UPDATE POSTING_DATE WITH (ROWLOCK) SET 
+		POSTING_DATE = @POSTINGDATE,
+        POSTING_DATE_YYYYDDD = @POSTINGDATEYYYYDDD,
+        POSTING_DATE_OFFSET = @POSTINGDATEOFFSET,
+        CURR_DATE = @CURRENTDATE,
+        CURR_DATE_YYYYDDD = @CURRENTDATEYYYYDDD,
+        CURR_DATE_OFFSET = @CURRENTDATEOFFSET
+    WHERE PH_RID = @PH_RID
+
+	SELECT @@ROWCOUNT;
+
+END
+GO

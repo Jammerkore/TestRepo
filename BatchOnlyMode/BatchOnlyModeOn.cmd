@@ -1,0 +1,1 @@
+BatchOnlyMode.exe TurnOn > BatchOnlyModeTurnOnResult.txt

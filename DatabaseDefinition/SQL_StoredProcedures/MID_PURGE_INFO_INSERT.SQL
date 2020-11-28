@@ -1,0 +1,66 @@
+--dv =============================================
+--dv Create date:	10/29/2013
+--dv Description:	Inserts a row into the purge info table
+--dv History:		3/6/2015 TT#1576-MD -jsobek -Data Layer Request - Add VSW Revision Records to Purge
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_PURGE_INFO_INSERT]
+	@PROCESS_RID int,
+	@STORE_DAILY_HISTORY int, 
+	@CHAIN_WEEKLY_HISTORY int,
+    @STORE_WEEKLY_HISTORY int, 
+	@CHAIN_WEEKLY_FORECAST int, 
+	@STORE_WEEKLY_FORECAST int, 
+	@HEADERS int,
+    @INTRANSIT int, 
+	@INTRANSIT_REV int, 
+	@USERS int, 
+	@GROUPS int, 
+	@DAILY_PERCENTAGES int, 
+	@EMPTY_ATTRIBUTE_SETS int, 
+	@AUDITS int,
+	@IMO_REV int
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	INSERT INTO PURGE_INFO
+		(
+		PROCESS_RID, 
+		STORE_DAILY_HISTORY, 
+		CHAIN_WEEKLY_HISTORY,
+        STORE_WEEKLY_HISTORY, 
+		CHAIN_WEEKLY_FORECAST, 
+		STORE_WEEKLY_FORECAST, 
+		HEADERS,
+        INTRANSIT, 
+		INTRANSIT_REV, 
+		USERS, 
+		GROUPS, 
+		DAILY_PERCENTAGES, 
+		EMPTY_ATTRIBUTE_SETS, 
+		AUDITS,
+		IMO_REV
+		) 
+	VALUES
+		(
+		@PROCESS_RID, 
+		@STORE_DAILY_HISTORY, 
+		@CHAIN_WEEKLY_HISTORY,
+        @STORE_WEEKLY_HISTORY, 
+		@CHAIN_WEEKLY_FORECAST, 
+		@STORE_WEEKLY_FORECAST, 
+		@HEADERS,
+        @INTRANSIT, 
+		@INTRANSIT_REV, 
+		@USERS, 
+		@GROUPS, 
+		@DAILY_PERCENTAGES, 
+		@EMPTY_ATTRIBUTE_SETS, 
+		@AUDITS,
+		@IMO_REV
+		)
+		
+	SELECT @@ROWCOUNT;
+		
+END
+GO

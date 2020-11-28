@@ -1,0 +1,3 @@
+﻿create clustered index "PACK_ALLOCATION_IDX1" ON "PACK_ALLOCATION" ("HDR_RID", "HDR_PACK_RID", "ST_RID")
+
+go

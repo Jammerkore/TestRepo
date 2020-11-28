@@ -1,0 +1,9 @@
+alter table "METHOD_VELOCITY_MATRIX"
+	add constraint "MD_VEL_SELL_TH_MD_VEL_MTRX_FK1" foreign key (
+		"METHOD_RID",
+		"VELOCITY_SELL_THRU_INDEX")
+	 references "METHOD_VELOCITY_SELL_THRU" (
+		"METHOD_RID",
+		"VELOCITY_SELL_THRU_INDEX")  
+
+go

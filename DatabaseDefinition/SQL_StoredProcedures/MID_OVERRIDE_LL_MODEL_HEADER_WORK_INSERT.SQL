@@ -1,0 +1,58 @@
+--dv =============================================
+--dv Create date:	11/30/2013
+--dv Description:	Inserts a Header Work Override Low Level Model
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_OVERRIDE_LL_MODEL_HEADER_WORK_INSERT]
+	@NAME varchar(250),
+	@OLL_RID int,
+	@HN_RID int,
+	@HIGH_LEVEL_HN_RID int,
+	@HIGH_LEVEL_SEQ int,
+	@HIGH_LEVEL_OFFEST int,
+	@HIGH_LEVEL_TYPE int,
+	@LOW_LEVEL_SEQ int,
+	@LOW_LEVEL_OFFEST int,
+	@LOW_LEVEL_TYPE int,
+	@USER_RID int,
+	@ACTIVE_ONLY_IND char(1)
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	INSERT INTO OVERRIDE_LL_MODEL_HEADER_WORK  
+		(
+		OLL_RID,
+		NAME,
+		HN_RID,
+		HIGH_LEVEL_HN_RID,
+		HIGH_LEVEL_SEQ,
+		HIGH_LEVEL_OFFSET,
+		HIGH_LEVEL_TYPE,
+		LOW_LEVEL_SEQ,
+		LOW_LEVEL_OFFSET,
+		LOW_LEVEL_TYPE,
+		USER_RID,
+		ACTIVE_ONLY_IND
+		)
+		VALUES
+		( 
+		@OLL_RID,
+		@NAME,
+		@HN_RID,
+		@HIGH_LEVEL_HN_RID,
+		@HIGH_LEVEL_SEQ,
+        @HIGH_LEVEL_OFFEST,
+		@HIGH_LEVEL_TYPE,
+		@LOW_LEVEL_SEQ,
+		@LOW_LEVEL_OFFEST,
+		@LOW_LEVEL_TYPE,
+		@USER_RID,
+		@ACTIVE_ONLY_IND
+		)
+
+	SELECT @@ROWCOUNT;
+END
+GO
+
+
+

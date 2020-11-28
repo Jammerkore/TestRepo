@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema id="SizeConstraintsLoadSchema" targetNamespace="http://tempuri.org/SizeConstraintsLoadSchema.xsd"
+	elementFormDefault="qualified" xmlns="http://tempuri.org/SizeConstraintsLoadSchema.xsd"
+	xmlns:mstns="http://tempuri.org/SizeConstraintsLoadSchema.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="SizeConstraintsModels">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="SizeConstraintsModel" minOccurs="1" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Set" minOccurs="1" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence></xs:sequence>
+									<xs:attribute name="SetName" type="xs:string" use="optional" />
+									<xs:attribute name="ColorCode" type="xs:string" use="optional" />
+									<xs:attribute name="SizePrimary" type="xs:string" use="optional" />
+									<xs:attribute name="SizeSecondary" type="xs:string" use="optional" />
+									<xs:attribute name="SizeCode" type="xs:string" use="optional" />
+									<xs:attribute name="SizeMin" type="xs:positiveInteger" use="optional" />
+									<xs:attribute name="SizeMax" type="xs:positiveInteger" use="optional" />
+									<xs:attribute name="SizeMult" type="xs:positiveInteger" use="optional" />
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+						<xs:attribute name="Action" use="required">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:enumeration value="Create" />
+									<xs:enumeration value="Modify" />
+									<xs:enumeration value="Remove" />
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:attribute>
+						<xs:attribute name="ModelName" type="xs:string" use="optional" />
+						<xs:attribute name="SizeCurve" type="xs:string" use="optional" />
+						<xs:attribute name="SizeGroup" type="xs:string" use="optional" />
+						<xs:attribute name="Attribute" type="xs:string" />
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

@@ -1,0 +1,5 @@
+create index "SC_PRODUCT_CATEGORY" on "SIZE_CODE" (
+	"SIZE_CODE_PRODUCT_CATEGORY")  
+
+
+go

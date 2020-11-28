@@ -1,0 +1,24 @@
+--dv =============================================
+--dv Create date: 02/05/2014
+--dv Description: Update purge dates for VSW weeks.
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_PURGE_DATES_UPDATE_VSW_DATES]
+	@PURGE_HEADERS_VSW_DATETIME datetime,
+	@PURGE_HEADERS_VSW INT,
+	@PURGE_HEADERS_WEEKS_VSW INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	UPDATE PURGE_DATES
+	SET PURGE_HEADERS_VSW_DATETIME = @PURGE_HEADERS_VSW_DATETIME,
+		PURGE_HEADERS_VSW = @PURGE_HEADERS_VSW
+	WHERE PURGE_HEADERS_WEEKS_VSW = @PURGE_HEADERS_WEEKS_VSW
+
+	SELECT @@ROWCOUNT
+END
+GO
+
+
+
+

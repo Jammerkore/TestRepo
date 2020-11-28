@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<DailyPercentages xmlns="http://tempuri.org/DailyPercentagesLoadSchema.xsd">
+  <Product ID="20333" >
+    <Store ID="1101" >
+      <FiscalPeriod BeginDate="0" EndDate="0" Day1="12" Day2="13" Day3="13" Day4 ="14" Day5="15" Day6="16" Day7="17"/>
+    </Store>
+    <Store ID="1102" >
+      <FiscalPeriod BeginDate="201244" EndDate="201245" Day1="11" Day2="12" Day3="13" Day4 ="15" Day5="16" Day6="17" Day7="16"/>
+    </Store>
+    <Store ID="1103" >
+      <FiscalPeriod BeginDate="2012-11-1" EndDate="2012-11-15" Day1="10" Day2="12" Day3="14" Day4 ="15" Day5="16" Day6="16" Day7="17"/>
+    </Store>
+  </Product>
+</DailyPercentages>

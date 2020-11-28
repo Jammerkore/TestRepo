@@ -1,0 +1,23 @@
+--dv =============================================
+--dv Create date:	02/7/2014
+--dv Description:	Returns Primary and Secondary Size Codes
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_SIZE_CODE_READ_PRIMARY_AND_SECONDARY]
+	@SIZE_CODE_PRIMARY varchar(100),
+	@SIZE_CODE_SECONDARY varchar(100)
+AS
+BEGIN 
+	SET NOCOUNT ON;
+
+ 	SELECT 
+		SIZE_CODE_RID,
+		SIZE_CODE_ID,
+		SIZE_CODE_PRIMARY,
+		CASE WHEN SIZE_CODE_SECONDARY IS NULL THEN 'None' ELSE SIZE_CODE_SECONDARY END AS SIZE_CODE_SECONDARY,
+		SIZE_CODE_PRODUCT_CATEGORY
+    FROM SIZE_CODE	
+    WHERE SIZE_CODE_PRIMARY = @SIZE_CODE_PRIMARY
+	AND	SIZE_CODE_SECONDARY = @SIZE_CODE_SECONDARY
+ 
+END
+GO

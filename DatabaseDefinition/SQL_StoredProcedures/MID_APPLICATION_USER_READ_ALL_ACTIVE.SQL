@@ -1,0 +1,24 @@
+--dv =============================================
+--dv Create date: 1/16/2014
+--dv Description: Reads all active users
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_APPLICATION_USER_READ_ALL_ACTIVE]
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT 
+		USER_RID, 
+		USER_NAME, 
+		COALESCE(USER_FULLNAME,' ') USER_FULLNAME, 
+		COALESCE(USER_DESCRIPTION,' ') USER_DESCRIPTION, 
+		USER_ACTIVE_IND,
+		COALESCE(USER_DELETE_IND,'0') USER_DELETE_IND
+	FROM APPLICATION_USER 
+	WHERE USER_RID > 1 
+		  AND USER_ACTIVE_IND = '1'
+		  AND (USER_DELETE_IND IS NULL OR USER_DELETE_IND = '0') 
+	ORDER BY USER_NAME
+
+END
+GO

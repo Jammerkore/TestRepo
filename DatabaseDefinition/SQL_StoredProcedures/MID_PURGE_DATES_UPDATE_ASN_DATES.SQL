@@ -1,0 +1,24 @@
+--dv =============================================
+--dv Create date: 02/04/2014
+--dv Description: Update purge dates for ASN weeks.
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_PURGE_DATES_UPDATE_ASN_DATES]
+	@PURGE_HEADERS_ASN_DATETIME datetime,
+	@PURGE_HEADERS_ASN INT,
+	@PURGE_HEADERS_WEEKS_ASN INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	UPDATE PURGE_DATES
+	SET PURGE_HEADERS_ASN_DATETIME = @PURGE_HEADERS_ASN_DATETIME,
+		PURGE_HEADERS_ASN = @PURGE_HEADERS_ASN
+	WHERE PURGE_HEADERS_WEEKS_ASN = @PURGE_HEADERS_WEEKS_ASN
+
+	SELECT @@ROWCOUNT
+END
+GO
+
+
+
+

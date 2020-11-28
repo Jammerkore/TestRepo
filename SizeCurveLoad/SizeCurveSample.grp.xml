@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8" ?> 
+<SizeCurveGroups xmlns="http://tempuri.org/SizeCurveGroupLoadSchema.xsd">
+	<!-- Size Curve Group Create - 2 Size Curves / By Size Code ID -->
+	<SizeCurveGroup SizeCurveGroupName="Hampers" SizeCurveGroupAction ="Create">
+		<SizeCurve SizeCurveName="Hampers, Small" SizeCurveAction="Create">
+			<Size CodeID="68227" SizeAction="Create" Value="1.0" />
+			<Size CodeID="68205" SizeAction="Create" Value="1.0" />
+			<Size CodeID="68161" SizeAction="Create" Value="1.0" />
+			<Size CodeID="68315" SizeAction="Create" Value="1.0" />
+			<Size CodeID="68183" SizeAction="Create" Value="1.0" />
+			<Size CodeID="68293" SizeAction="Create" Value="1.0" />
+			<Size CodeID="68271" SizeAction="Create" Value="1.0" />
+			<Size CodeID="68249" SizeAction="Create" Value="1.0" />
+		</SizeCurve>
+		<SizeCurve SizeCurveName="Hampers, Large" SizeCurveAction="Create">
+			<Size CodeID="68228" SizeAction="Create" Value="1.0" />
+			<Size CodeID="68206" SizeAction="Create" Value="1.0" />
+			<Size CodeID="68162" SizeAction="Create" Value="1.0" />
+			<Size CodeID="68316" SizeAction="Create" Value="1.0" />
+			<Size CodeID="68184" SizeAction="Create" Value="1.0" />
+			<Size CodeID="68294" SizeAction="Create" Value="1.0" />
+			<Size CodeID="68272" SizeAction="Create" Value="1.0" />
+			<Size CodeID="68250" SizeAction="Create" Value="1.0" />
+		</SizeCurve>
+	</SizeCurveGroup>
+	<!-- Size Curve Group Create - 1 Size Curve / By Product Category, Primary / Secondary -->
+	<SizeCurveGroup SizeCurveGroupName="S-XXL" SizeCurveGroupAction ="Create">
+		<SizeCurve SizeCurveName="" ProductCategory="Adult Males" SizeCurveAction="Create">
+            <Size CodeID="10132" SizeAction="Create" Value="7" />
+            <Size CodeID="10134" SizeAction="Create" Value="15.5" />
+            <Size CodeID="10135" SizeAction="Create" Value="15.5" />
+            <Size CodeID="10136" SizeAction="Create" Value="62" />
+        </SizeCurve>
+        <SizeCurve SizeCurveName="AM001" ProductCategory="Adult Males" SizeCurveAction="Create">
+            <Size CodeID="10132" SizeAction="Create" Value="7" />
+            <Size CodeID="10134" SizeAction="Create" Value="7" />
+            <Size CodeID="10135" SizeAction="Create" Value="79" />
+            <Size CodeID="10136" SizeAction="Create" Value="7" />
+        </SizeCurve>
+        <SizeCurve SizeCurveName="AM002" ProductCategory="Adult Males" SizeCurveAction="Create">
+            <Size CodeID="10132" SizeAction="Create" Value="7" />
+            <Size CodeID="10134" SizeAction="Create" Value="7" />
+            <Size CodeID="10135" SizeAction="Create" Value="57.34" />
+            <Size CodeID="10136" SizeAction="Create" Value="28.66" />
+        </SizeCurve>
+	</SizeCurveGroup>
+	<!-- Size Curve Group Modify -->
+	<!-- <SizeCurveGroup SizeCurveGroupName="Hampers" SizeCurveGroupAction ="Modify"> -->
+		<!-- <SizeCurve SizeCurveName="Hampers, Small" SizeCurveAction="Modify"> -->
+			<!-- <Size CodeID="68227" SizeAction="Modify" Value="7.137" /> -->
+			<!-- <Size CodeID="68205" SizeAction="Modify" Value="8.291" /> -->
+			<!-- <Size CodeID="68161" SizeAction="Modify" Value="11.483" /> -->
+			<!-- <Size CodeID="68315" SizeAction="Modify" Value="1.628" /> -->
+			<!-- <Size CodeID="68183" SizeAction="Modify" Value="4.727" /> -->
+			<!-- <Size CodeID="68293" SizeAction="Modify" Value="10.936" /> -->
+			<!-- <Size CodeID="68271" SizeAction="Modify" Value="5.286" /> -->
+			<!-- <Size CodeID="68249" SizeAction="Modify" Value="6.195" /> -->
+		<!-- </SizeCurve> -->
+	<!-- </SizeCurveGroup> -->
+	<!-- Size Curve Group Remove -->
+	<!-- <SizeCurveGroup SizeCurveGroupName="Hampers" SizeCurveGroupAction ="Remove" /> -->
+</SizeCurveGroups>

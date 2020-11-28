@@ -1,0 +1,8 @@
+CREATE TYPE [dbo].[MID_ST_HIS_DAY_READ_TYPE] AS TABLE(
+  [HN_MOD] [int],
+  [HN_RID] [int],
+  [TIME_ID] [int],
+
+PRIMARY KEY (HN_MOD, HN_RID, TIME_ID)
+)
+GO

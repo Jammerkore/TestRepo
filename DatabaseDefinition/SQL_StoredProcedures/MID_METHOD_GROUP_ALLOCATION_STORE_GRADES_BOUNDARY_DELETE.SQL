@@ -1,0 +1,18 @@
+--dv =============================================
+--dv Create date:	8/15/2014
+--dv Description:	Deletes group allocation method store grade boundries
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_METHOD_GROUP_ALLOCATION_STORE_GRADES_BOUNDARY_DELETE]
+	@METHOD_RID int
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	DELETE 
+	FROM METHOD_GROUP_ALLOCATION_STORE_GRADES_BOUNDARY
+	WHERE METHOD_RID = @METHOD_RID
+
+	SELECT @@ROWCOUNT;
+
+END
+GO

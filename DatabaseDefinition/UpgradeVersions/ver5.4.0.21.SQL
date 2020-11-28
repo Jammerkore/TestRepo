@@ -1,0 +1,12 @@
+/*RELEASE 5.4.0.21 11-12-2014 -TT#1380-MD -jsobek -Remove unused TEXT_XREF table */
+IF (SELECT object_id('dbo.TEXT_XREF')) > 0
+BEGIN
+	DROP TABLE TEXT_XREF
+END
+GO
+
+IF (SELECT object_id('dbo.SYSTEM_CHAR_REF')) > 0
+BEGIN
+	DROP TABLE SYSTEM_CHAR_REF
+END
+GO

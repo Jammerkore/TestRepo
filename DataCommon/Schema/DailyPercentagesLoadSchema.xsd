@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema id="DailyPercentagesSchema" targetNamespace="http://tempuri.org/DailyPercentagesLoadSchema.xsd"
+	elementFormDefault="qualified" xmlns="http://tempuri.org/DailyPercentagesLoadSchema.xsd" xmlns:mstns="http://tempuri.org/DailyPercentagesLoadSchema.xsd"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="DailyPercentages">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Product" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Store" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="FiscalPeriod" minOccurs="1" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:attribute name="BeginDate" type="xs:string" use="optional" />
+                        <xs:attribute name="EndDate" type="xs:string" use="optional" />
+                        <xs:attribute name="Day1" type="xs:float" use="required" />
+                        <xs:attribute name="Day2" type="xs:float" use="required" />
+                        <xs:attribute name="Day3" type="xs:float" use="required" />
+                        <xs:attribute name="Day4" type="xs:float" use="required" />
+                        <xs:attribute name="Day5" type="xs:float" use="required" />
+                        <xs:attribute name="Day6" type="xs:float" use="required" />
+                        <xs:attribute name="Day7" type="xs:float" use="required" />
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="ID" type="xs:string" use="required" />
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="ID" type="xs:string" use="required" />
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

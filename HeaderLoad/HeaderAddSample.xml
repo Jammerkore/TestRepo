@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Headers xmlns="http://tempuri.org/HeaderLoadSchema.xsd">
+	<Options AutoAddCharacteristics="true"/>
+	<!-- Header Create -->
+	<Header HeaderId="2007042100001A" HeaderAction="Create" HeaderDescription="Header Create" HeaderDate="2011-09-06"
+		UnitRetail="10.00" UnitCost="1.00" TotalUnits="1000" StyleId="54101" StyleName="Style Name" ParentOfStyleId="541" SizeGroupName=""
+		BulkMultiple="1" HeaderType="Receipt" DistCenter="Indianapolis, IN" Vendor="MIDRetail, Inc." Workflow="" WorkflowTrigger="false"
+		Notes="Header Create">
+	<Characteristic Name="AssortmentTest" Value="summer" CharType = "Text" Protect="true"></Characteristic>
+	<Characteristic Name="Test Date" Value="2009-06-15" CharType = "Date" Protect="false"></Characteristic>
+	<Characteristic Name="Test Number" Value="1234" CharType = "Number" Protect="true"></Characteristic>		
+	</Header>
+	<!-- Header Create - Pack -->
+	<Header HeaderId="2007042100001" HeaderAction="Create" HeaderDescription="Header Create - Pack" HeaderDate="2011-09-06"
+		UnitRetail="10.00" UnitCost="1.00" TotalUnits="1000" StyleId="54101" ParentOfStyleId="541" SizeGroupName=""
+		BulkMultiple="1" HeaderType="Receipt" DistCenter="Indianapolis, IN" Vendor="MIDRetail, Inc." Workflow="" WorkflowTrigger="false"
+		Notes="Header Create - Pack">
+    	<Pack Name="Pack-01" Packs="200" Multiple="5" IsGeneric="true" />
+	</Header>
+	<!-- Header Create - Pack / Color -->
+	<Header HeaderId="2007042100002" HeaderAction="Create" HeaderDescription="Header Create - Pack / Color" HeaderDate="2011-09-06"
+		UnitRetail="10.00" UnitCost="1.00" TotalUnits="1000" StyleId="54101" ParentOfStyleId="541" SizeGroupName=""
+		BulkMultiple="1" HeaderType="Receipt" DistCenter="Indianapolis, IN" Vendor="MIDRetail, Inc." Workflow="" WorkflowTrigger="false"
+		Notes="Header Create - Pack / Color">
+    		<Pack Name="Pack-02" Packs="200" Multiple="5" IsGeneric="true">
+			<PackColor ColorCodeID="1" ColorCodeName="Black" ColorCodeDescription="Black" ColorCodeGroup="Colors" Units="5" />
+		</Pack>
+	</Header>
+	<!-- Header Create - Pack / Color / Size -->
+	<Header HeaderId="2007042100003" HeaderAction="Create" HeaderDescription="Header Create - Pack / Color / Size" HeaderDate="2011-09-06"
+		UnitRetail="10.00" UnitCost="1.00" TotalUnits="1000" StyleId="54101" ParentOfStyleId="541" SizeGroupName=""
+		BulkMultiple="1" HeaderType="Receipt" DistCenter="Indianapolis, IN" Vendor="MIDRetail, Inc." Workflow="" WorkflowTrigger="false"
+		Notes="Header Create - Pack / Color / Size">
+    		<Pack Name="Pack-03" Packs="200" Multiple="5" IsGeneric="true">
+			<PackColor ColorCodeID="103" ColorCodeName="Natural" ColorCodeDescription="Natural" ColorCodeGroup="Colors" Units="5">
+				<PackColorSize SizeCodeID="10132" SizeCodeName="10132" SizeCodePrimary="Small" SizeCodeSecondary="30" SizeCodeProductCategory="Adult Males" Units="1" />
+				<PackColorSize SizeCodeID="10133" SizeCodeName="10133" SizeCodePrimary="Small" SizeCodeSecondary="36" SizeCodeProductCategory="Adult Males" Units="1" />
+				<PackColorSize SizeCodeID="10134" SizeCodeName="10134" SizeCodePrimary="Medium" SizeCodeSecondary="30" SizeCodeProductCategory="Adult Males" Units="1" />
+				<PackColorSize SizeCodeID="10135" SizeCodeName="10135" SizeCodePrimary="Large" SizeCodeSecondary="30" SizeCodeProductCategory="Adult Males" Units="1" />
+				<PackColorSize SizeCodeID="10136" SizeCodeName="10136" SizeCodePrimary="X Large" SizeCodeSecondary="30" SizeCodeProductCategory="Adult Males" Units="1" />
+			</PackColor>
+		</Pack>
+	</Header>
+	<!-- Header Create - Pack / Size -->
+	<Header HeaderId="2007042100004" HeaderAction="Create" HeaderDescription="Header Create - Pack / Size" HeaderDate="2011-09-06"
+		UnitRetail="10.00" UnitCost="1.00" TotalUnits="1000" StyleId="54101" ParentOfStyleId="541" SizeGroupName=""
+		BulkMultiple="1" HeaderType="Receipt" DistCenter="Indianapolis, IN" Vendor="MIDRetail, Inc." Workflow="" WorkflowTrigger="false"
+		Notes="Header Create - Pack / Size">
+    		<Pack Name="Pack-04" Packs="200" Multiple="5" IsGeneric="true">
+			<PackSize SizeCodeID="10132" SizeCodeName="10132" SizeCodePrimary="Small" SizeCodeSecondary="30" SizeCodeProductCategory="Adult Males" Units="1" />
+        		<PackSize SizeCodeID="10133" SizeCodeName="10133" SizeCodePrimary="Small" SizeCodeSecondary="36" SizeCodeProductCategory="Adult Males" Units="1" />
+        		<PackSize SizeCodeID="10134" SizeCodeName="10134" SizeCodePrimary="Medium" SizeCodeSecondary="30" SizeCodeProductCategory="Adult Males" Units="1" />
+        		<PackSize SizeCodeID="10135" SizeCodeName="10135" SizeCodePrimary="Large" SizeCodeSecondary="30" SizeCodeProductCategory="Adult Males" Units="1" />
+        		<PackSize SizeCodeID="10136" SizeCodeName="10136" SizeCodePrimary="X Large" SizeCodeSecondary="30" SizeCodeProductCategory="Adult Males" Units="1" />
+		</Pack>
+	</Header>
+	<!-- Header Create - Bulk / Color -->
+	<Header HeaderId="2007042100005" HeaderAction="Create" HeaderDescription="Header Create - Bulk / Color" HeaderDate="2011-09-06"
+		UnitRetail="10.00" UnitCost="1.00" TotalUnits="1000" StyleId="54101" ParentOfStyleId="541" SizeGroupName=""
+		BulkMultiple="1" HeaderType="Receipt" DistCenter="Indianapolis, IN" Vendor="MIDRetail, Inc." Workflow="" WorkflowTrigger="false"
+		Notes="Header Create - Bulk / Color">
+		<BulkColor ColorCodeID="15" ColorCodeName="Charcoal" ColorCodeDescription="Charcoal" ColorCodeGroup="Colors" Units="1000" />
+	</Header>
+	<!-- Header Create - Bulk / Color / Size -->
+	<Header HeaderId="2007042100006" HeaderAction="Create" HeaderDescription="Header Create - Bulk / Color / Size" HeaderDate="2011-09-06"
+		UnitRetail="10.00" UnitCost="1.00" TotalUnits="1000" StyleId="54101" ParentOfStyleId="541" SizeGroupName=""
+		BulkMultiple="1" HeaderType="Receipt" DistCenter="Indianapolis, IN" Vendor="MIDRetail, Inc." Workflow="" WorkflowTrigger="false"
+		Notes="Header Create - Bulk / Color / Size">
+		<BulkColor ColorCodeID="6" ColorCodeName="Oxford" ColorCodeDescription="Oxford" ColorCodeGroup="Colors" Units="1000">
+			<BulkColorSize SizeCodeID="10132" SizeCodeName="10132" SizeCodePrimary="Small" SizeCodeSecondary="30" SizeCodeProductCategory="Adult Males" Units="1" />
+      			<BulkColorSize SizeCodeID="10133" SizeCodeName="10133" SizeCodePrimary="Small" SizeCodeSecondary="36" SizeCodeProductCategory="Adult Males" Units="1" />
+      			<BulkColorSize SizeCodeID="10134" SizeCodeName="10134" SizeCodePrimary="Medium" SizeCodeSecondary="30" SizeCodeProductCategory="Adult Males" Units="1" />
+      			<BulkColorSize SizeCodeID="10135" SizeCodeName="10135" SizeCodePrimary="Large" SizeCodeSecondary="30" SizeCodeProductCategory="Adult Males" Units="1" />
+      			<BulkColorSize SizeCodeID="10136" SizeCodeName="10136" SizeCodePrimary="X Large" SizeCodeSecondary="30" SizeCodeProductCategory="Adult Males" Units="1" />
+		</BulkColor>
+	</Header>
+	<!-- Header Modify -->
+	<!-- <Header HeaderId="2007042100001A" NewHeaderId="2007042100007" HeaderAction="Modify" /> -->
+	<!-- Header Remove -->
+	<!-- <Header HeaderId="2007042100008" HeaderAction="Remove" /> -->
+	<!-- Header Reset -->
+	<!-- <Header HeaderId="2007042100009" HeaderAction="Reset" /> -->
+  <!-- VSW Header Create (VSW Onhand REPLACED: Either specify optional parameter AdjustVSW as FALSE or do not include it as a parameter (as shown here)-->
+  <Header HeaderId="2007042100001A" HeaderAction="Create" HeaderDescription="Header Create" HeaderDate="2011-09-06"
+		UnitRetail="10.00" UnitCost="1.00" TotalUnits="1000" StyleId="54101" StyleName="Style Name" ParentOfStyleId="541" SizeGroupName=""
+		BulkMultiple="1" HeaderType="VSW" DistCenter="Indianapolis, IN" Vendor="MIDRetail, Inc." Workflow="" WorkflowTrigger="false" VSWID="R00234"
+		Notes="Reservation Header Create">
+    <Characteristic Name="AssortmentTest" Value="summer" CharType = "Text" Protect="true"></Characteristic>
+    <Characteristic Name="Test Date" Value="2009-06-15" CharType = "Date" Protect="false"></Characteristic>
+    <Characteristic Name="Test Number" Value="1234" CharType = "Number" Protect="true"></Characteristic>
+  </Header>
+  <!-- VSW Header Create (VSW Onhand ADJUSTED: specify optional parameter AdjustVSW as TRUE-->
+  <Header HeaderId="2007042100001A" HeaderAction="Create" HeaderDescription="Header Create" HeaderDate="2011-09-06"
+	  UnitRetail="10.00" UnitCost="1.00" TotalUnits="1000" StyleId="54101" StyleName="Style Name" ParentOfStyleId="541" SizeGroupName=""
+	  BulkMultiple="1" HeaderType="VSW" DistCenter="Indianapolis, IN" Vendor="MIDRetail, Inc." Workflow="" WorkflowTrigger="false" VSWID="R00234"  VSWProcess="Replace"
+	  Notes="Reservation Header Create">
+		<Characteristic Name="AssortmentTest" Value="summer" CharType = "Text" Protect="true"></Characteristic>
+		<Characteristic Name="Test Date" Value="2009-06-15" CharType = "Date" Protect="false"></Characteristic>
+		<Characteristic Name="Test Number" Value="1234" CharType = "Number" Protect="true"></Characteristic>
+  </Header>
+</Headers>

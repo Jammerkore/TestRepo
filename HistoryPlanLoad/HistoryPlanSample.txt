@@ -1,0 +1,54 @@
+options~sales ending date~roll store day to week~roll store day~roll store week~roll store to chain~roll chain~roll stock forward
+period~version~product~store~date type~date~variable~amount~parent~size category~size primary~size secondary~product description~product name
+
+options~02/28/2009
+W~actual~54101~1101~C~02/28/2009~Sales Reg~726
+W~actual~54101~1101~C~02/28/2009~Sales Mkdn~817
+W~actual~54101~1102~C~02/28/2009~Sales Reg~768
+W~actual~54101~1102~C~02/28/2009~Sales Mkdn~558
+W~actual~54101~1103~C~02/28/2009~Sales Reg~206
+W~actual~54101~1103~C~02/28/2009~Sales Mkdn~558
+W~actual~54101~1104~C~02/28/2009~Sales Reg~906
+W~actual~54101~1104~C~02/28/2009~Sales Mkdn~442
+W~actual~54101~1105~C~02/28/2009~Sales Reg~977
+W~actual~54101~1105~C~02/28/2009~Sales Mkdn~273
+W~actual~54102~1101~C~02/28/2009~Sales Reg~291
+W~actual~54102~1101~C~02/28/2009~Sales Mkdn~467
+W~actual~54102~1102~C~02/28/2009~Sales Reg~632
+W~actual~54102~1102~C~02/28/2009~Sales Mkdn~469
+W~actual~54102~1103~C~02/28/2009~Sales Reg~982
+W~actual~54102~1103~C~02/28/2009~Sales Mkdn~30
+W~actual~54102~1104~C~02/28/2009~Sales Reg~862
+W~actual~54102~1104~C~02/28/2009~Sales Mkdn~995
+W~actual~54102~1105~C~02/28/2009~Sales Reg~677
+W~actual~54102~1105~C~02/28/2009~Sales Mkdn~314
+W~actual~54103~1101~C~02/28/2009~Sales Reg~816
+W~actual~54103~1101~C~02/28/2009~Sales Mkdn~848
+W~actual~54103~1102~C~02/28/2009~Sales Reg~991
+W~actual~54103~1102~C~02/28/2009~Sales Mkdn~32
+W~actual~54103~1103~C~02/28/2009~Sales Reg~699
+W~actual~54103~1103~C~02/28/2009~Sales Mkdn~526
+W~actual~54103~1104~C~02/28/2009~Sales Reg~934
+W~actual~54103~1104~C~02/28/2009~Sales Mkdn~687
+W~actual~54103~1105~C~02/28/2009~Sales Reg~546
+W~actual~54103~1105~C~02/28/2009~Sales Mkdn~81
+W~actual~54104~1101~C~02/28/2009~Sales Reg~187
+W~actual~54104~1101~C~02/28/2009~Sales Mkdn~453
+W~actual~54104~1102~C~02/28/2009~Sales Reg~297
+W~actual~54104~1102~C~02/28/2009~Sales Mkdn~988
+W~actual~54104~1103~C~02/28/2009~Sales Reg~642
+W~actual~54104~1103~C~02/28/2009~Sales Mkdn~762
+W~actual~54104~1104~C~02/28/2009~Sales Reg~30
+W~actual~54104~1104~C~02/28/2009~Sales Mkdn~381
+W~actual~54104~1105~C~02/28/2009~Sales Reg~343
+W~actual~54104~1105~C~02/28/2009~Sales Mkdn~957
+W~actual~54105~1101~C~02/28/2009~Sales Reg~505
+W~actual~54105~1101~C~02/28/2009~Sales Mkdn~715
+W~actual~54105~1102~C~02/28/2009~Sales Reg~118
+W~actual~54105~1102~C~02/28/2009~Sales Mkdn~273
+W~actual~54105~1103~C~02/28/2009~Sales Reg~907
+W~actual~54105~1103~C~02/28/2009~Sales Mkdn~794
+W~actual~54105~1104~C~02/28/2009~Sales Reg~337
+W~actual~54105~1104~C~02/28/2009~Sales Mkdn~457
+W~actual~54105~1105~C~02/28/2009~Sales Reg~146
+W~actual~54105~1105~C~02/28/2009~Sales Mkdn~221

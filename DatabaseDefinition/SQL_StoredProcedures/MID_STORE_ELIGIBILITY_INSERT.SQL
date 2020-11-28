@@ -1,0 +1,77 @@
+--dv =============================================
+--dv Create date:	10/24/2013
+--dv Description:	Inserts a row into the store eligibility table
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_STORE_ELIGIBILITY_INSERT]
+	@HN_RID int, 
+	@ST_RID int, 
+	@EM_RID int, 
+	@USE_ELIGIBILITY char, 
+	@INELIGIBLE char,
+	@STKMOD_TYPE int, 
+	@STKMOD_RID int, 
+	@STKMOD_PCT float, 
+	@SLSMOD_TYPE int, 
+	@SLSMOD_RID int, 
+	@SLSMOD_PCT float,
+	@FWOSMOD_TYPE int, 
+	@FWOSMOD_RID int, 
+	@FWOSMOD_PCT float,
+	@SIMILAR_STORE_TYPE int, 
+	@SIMILAR_STORE_RATIO float, 
+	@UNTIL_DATE int, 
+	@PRESENTATION_PLUS_SALES_IND char,
+	@STOCK_LEAD_WEEKS int
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	INSERT INTO STORE_ELIGIBILITY
+		(
+		HN_RID, 
+		ST_RID, 
+		EM_RID, 
+		USE_ELIGIBILITY, 
+		INELIGIBLE,
+		STKMOD_TYPE, 
+		STKMOD_RID, 
+		STKMOD_PCT, 
+		SLSMOD_TYPE, 
+		SLSMOD_RID, 
+		SLSMOD_PCT,
+		FWOSMOD_TYPE, 
+		FWOSMOD_RID, 
+		FWOSMOD_PCT,
+		SIMILAR_STORE_TYPE, 
+		SIMILAR_STORE_RATIO, 
+		UNTIL_DATE, 
+		PRESENTATION_PLUS_SALES_IND,
+		STOCK_LEAD_WEEKS
+		)
+    VALUES
+		(
+		@HN_RID, 
+		@ST_RID, 
+		@EM_RID, 
+		@USE_ELIGIBILITY, 
+		@INELIGIBLE,
+		@STKMOD_TYPE, 
+		@STKMOD_RID, 
+		@STKMOD_PCT, 
+		@SLSMOD_TYPE, 
+		@SLSMOD_RID, 
+		@SLSMOD_PCT,
+		@FWOSMOD_TYPE, 
+		@FWOSMOD_RID, 
+		@FWOSMOD_PCT,
+		@SIMILAR_STORE_TYPE, 
+		@SIMILAR_STORE_RATIO, 
+		@UNTIL_DATE, 
+		@PRESENTATION_PLUS_SALES_IND,
+		@STOCK_LEAD_WEEKS
+		)
+
+	SELECT @@ROWCOUNT;
+
+END
+GO

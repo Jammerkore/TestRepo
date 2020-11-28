@@ -1,0 +1,3 @@
+/*RELEASE 5.4.0.42 01-28-2015 - TT#1485-MD -stodd - removing dropping/removing header with packs does not adjust PH qty */
+exec SP_MID_UPDATE_TEXT 085111,'There is a mismatch between the colors on the selected header(s) and the placeholder. Either the header has no colors and the placeholder does or the header colors cannot be matched with the placeholder colors to adjust the placeholder''s quantity.', 250,0,5,null,0
+GO

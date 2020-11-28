@@ -1,0 +1,60 @@
+CREATE PROCEDURE [dbo].[SP_MID_GET_SIZE_RIDS] 
+	(
+	@xmlDoc NTEXT,
+	@debug BIT = 0
+	)
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	DECLARE @idoc INT
+
+	EXEC sp_xml_preparedocument @idoc OUTPUT,
+		@xmlDoc
+
+	CREATE TABLE #SZ_IDS (
+		NODE_ID VARCHAR(250) COLLATE database_default NOT NULL,
+		STYLE_ID VARCHAR(50) COLLATE database_default NOT NULL,
+		COLOR_ID VARCHAR(50) COLLATE database_default NULL,
+		SIZE_ID VARCHAR(50) COLLATE database_default NULL
+		)
+
+	CREATE INDEX #SZ_IDS_IDX_1 ON #SZ_IDS (STYLE_ID)
+
+	CREATE INDEX #SZ_IDS_IDX_2 ON #SZ_IDS (COLOR_ID)
+
+	CREATE INDEX #SZ_IDS_IDX_3 ON #SZ_IDS (SIZE_ID)
+
+	-- Process records
+	INSERT #SZ_IDS (
+		NODE_ID,
+		STYLE_ID,
+		COLOR_ID,
+		SIZE_ID
+		)
+	SELECT xmlID,
+		xmlSTYLE_ID,
+		xmlCOLOR_ID,
+		xmlSIZE_ID
+	FROM OPENXML(@idoc, '/root/node', 2) WITH (
+			xmlID VARCHAR(250) '@ID',
+			xmlSTYLE_ID VARCHAR(50) '@STYLE_ID',
+			xmlCOLOR_ID VARCHAR(50) '@COLOR_ID',
+			xmlSIZE_ID VARCHAR(50) '@SIZE_ID'
+			) xmlnodes
+
+	SELECT sz.NODE_ID,
+		sn.HN_RID
+	FROM SIZE_NODE sn,
+		#SZ_IDS sz,
+		SIZE_CODE sc
+	WHERE sz.STYLE_ID = sn.STYLE_NODE_ID
+		AND sz.COLOR_ID = sn.COLOR_NODE_ID
+		AND sz.SIZE_ID = sc.SIZE_CODE_ID
+		AND sc.SIZE_CODE_RID = sn.SIZE_CODE_RID
+
+	SET NOCOUNT OFF
+END
+GO
+
+

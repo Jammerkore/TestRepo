@@ -1,0 +1,43 @@
+--dv =============================================
+--dv Create date: 4/10/2015
+--dv Description:	Inserts a store group join entry
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_STORE_GROUP_JOIN_INSERT] 
+	@SG_RID INT,
+	@SG_VERSION INT,
+	@SGL_RID INT,
+	@SGL_VERSION INT,
+	@STORE_COUNT INT,
+	@SGL_OVERRIDE_ID VARCHAR(50),
+	@SGL_OVERRIDE_SEQUENCE INT,
+	@SGJ_RID INT OUTPUT
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	INSERT INTO STORE_GROUP_JOIN 
+		(
+		SG_RID,
+		SG_VERSION,
+		SGL_RID,
+		SGL_VERSION,
+		STORE_COUNT,
+		SGL_OVERRIDE_ID,
+		SGL_OVERRIDE_SEQUENCE
+		)
+	VALUES 
+		(
+		@SG_RID,
+		@SG_VERSION,
+		@SGL_RID,
+		@SGL_VERSION,
+		@STORE_COUNT,
+		@SGL_OVERRIDE_ID,
+		@SGL_OVERRIDE_SEQUENCE
+		)
+
+	SELECT @SGJ_RID = SCOPE_IDENTITY();
+END
+GO
+
+

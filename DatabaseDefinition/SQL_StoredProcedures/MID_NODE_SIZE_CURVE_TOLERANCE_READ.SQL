@@ -1,0 +1,27 @@
+--dv =============================================
+--dv Create date:	10/25/2013
+--dv Description:	Reads size curve tolerance for the hierarchy node passed in
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_NODE_SIZE_CURVE_TOLERANCE_READ]
+	@HN_RID int
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT 
+		NSCT.HN_RID, 
+		NSCT.MINIMUM_AVERAGE, 
+		NSCT.PH_OFFSET_IND, 
+		COALESCE(NSCT.PH_RID, -1) PH_RID, 
+		COALESCE(NSCT.PHL_SEQUENCE, -1) PHL_SEQUENCE,
+        COALESCE(NSCT.PHL_OFFSET, -1) PHL_OFFSET, 
+		NSCT.SALES_TOLERANCE, 
+		NSCT.INDEX_UNITS_TYPE, 
+		NSCT.MIN_TOLERANCE, 
+		NSCT.MAX_TOLERANCE,
+        COALESCE(APPLY_MIN_TO_ZERO_TOLERANCE_IND,'0') APPLY_MIN_TO_ZERO_TOLERANCE_IND
+    FROM NODE_SIZE_CURVE_TOLERANCE NSCT
+	WHERE NSCT.HN_RID = @HN_RID
+
+END
+GO

@@ -1,0 +1,5 @@
+alter table "METHOD_BLD_PACKS_COMBO_PATTERN"
+    add constraint "METHOD_BLD_PACKS_COMBO_PATTERN_PK" primary key ("PATTERN_PACK_RID")
+
+
+GO

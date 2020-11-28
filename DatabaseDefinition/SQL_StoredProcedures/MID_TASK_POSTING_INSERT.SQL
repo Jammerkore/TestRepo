@@ -1,0 +1,44 @@
+--dv =============================================
+--dv Create date:	2/13/2013
+--dv Description:	Inserts a posting task
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_TASK_POSTING_INSERT]
+	@TASKLIST_RID int,
+	@TASK_SEQUENCE int, 
+	@INPUT_DIRECTORY varchar(150), 
+	@FILE_MASK varchar(50), 
+	@CONCURRENT_FILES int, 
+	@RUN_UNTIL_FILE_PRESENT_IND char, 
+	@RUN_UNTIL_FILE_MASK varchar(50), 
+	@FILE_PROCESSING_DIRECTION int
+AS
+BEGIN
+	SET NOCOUNT ON;
+	
+	INSERT INTO TASK_POSTING
+		(
+		TASKLIST_RID, 
+		TASK_SEQUENCE, 
+		INPUT_DIRECTORY, 
+		FILE_MASK, 
+		CONCURRENT_FILES, 
+		RUN_UNTIL_FILE_PRESENT_IND, 
+		RUN_UNTIL_FILE_MASK, 
+		FILE_PROCESSING_DIRECTION
+		)
+    VALUES
+		(
+		@TASKLIST_RID, 
+		@TASK_SEQUENCE, 
+		@INPUT_DIRECTORY, 
+		@FILE_MASK, 
+		@CONCURRENT_FILES, 
+		@RUN_UNTIL_FILE_PRESENT_IND, 
+		@RUN_UNTIL_FILE_MASK, 
+		@FILE_PROCESSING_DIRECTION
+		)
+
+	SELECT @@ROWCOUNT;
+
+END
+GO

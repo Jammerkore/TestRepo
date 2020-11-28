@@ -1,0 +1,5 @@
+CREATE TYPE [dbo].[HN_RID_TYPE] AS TABLE(
+	[HN_RID] [int]
+	PRIMARY KEY (HN_RID)
+	)
+GO

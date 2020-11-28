@@ -1,0 +1,44 @@
+--dv =============================================
+--dv Create date:	2/13/2013
+--dv Description:	Inserts an allocation task detail
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_TASK_ALLOCATE_DETAIL_INSERT]
+	@TASKLIST_RID int,
+	@TASK_SEQUENCE int, 
+	@ALLOCATE_SEQUENCE int, 
+	@DETAIL_SEQUENCE int, 
+	@WORKFLOW_METHOD_IND int, 
+	@METHOD_RID int, 
+	@WORKFLOW_RID int, 
+	@EXECUTE_CDR_RID int
+AS
+BEGIN
+	SET NOCOUNT ON;
+	
+	INSERT INTO TASK_ALLOCATE_DETAIL
+		(
+		TASKLIST_RID, 
+		TASK_SEQUENCE, 
+		ALLOCATE_SEQUENCE, 
+		DETAIL_SEQUENCE, 
+		WORKFLOW_METHOD_IND, 
+		METHOD_RID, 
+		WORKFLOW_RID, 
+		EXECUTE_CDR_RID
+		)
+	VALUES
+		(
+		@TASKLIST_RID, 
+		@TASK_SEQUENCE, 
+		@ALLOCATE_SEQUENCE, 
+		@DETAIL_SEQUENCE, 
+		@WORKFLOW_METHOD_IND, 
+		@METHOD_RID, 
+		@WORKFLOW_RID, 
+		@EXECUTE_CDR_RID
+		)
+
+	SELECT @@ROWCOUNT;
+
+END
+GO

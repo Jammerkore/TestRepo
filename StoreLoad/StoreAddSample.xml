@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Stores xmlns="http://tempuri.org/StoreLoadSchema.xsd">
+	<Options AutoAddCharacteristics="true"/>
+	<Store ID="1101" Name="Brea Mall" Description="Brea Mall" City="Brea" State="CA" SellingSquareFeet="10000" SellingOpenDate="2003-03-11" LeadTime="3" ShipDate="M,W,F" VSWID="IMO932" ActiveIndicator="true">
+		<Characteristic Name="District" Value="1" CharType="Number" />
+		<Characteristic Name="Type" Value="Suburban Mall" CharType="Text" />
+		<Characteristic Name="Warehouse" Value="West Coast" CharType="Text" />
+	</Store>
+	<Store ID="1102" Name="Fashion Valley Mall" Description="Fashion Valley Mall" City="San Diego" State="CA" SellingSquareFeet="15000" LeadTime="3" ShipDate="TU,W,TH" VSWID="IMO932" ActiveIndicator="true">
+		<Characteristic Name="District" Value="1" CharType="Number" />
+		<Characteristic Name="Type" Value="Urban Mall" CharType="Text" />
+		<Characteristic Name="Warehouse" Value="West Coast" CharType="Text" />
+	</Store>
+	<Store ID="1103" Name="Laguna Hills Mall" Description="Laguna Hills Mall" City="Laguna Hills" State="CA" SellingSquareFeet="20000" LeadTime="3" ShipDate="TU,TH" VSWID="IMO932" ActiveIndicator="true">
+		<Characteristic Name="District" Value="1" CharType="Number" />
+		<Characteristic Name="Type" Value="Suburban Mall" CharType="Text" />
+		<Characteristic Name="Warehouse" Value="West Coast" CharType="Text" />
+	</Store>
+	<Store ID="1104" Name="Santa Rosa Plaza" Description="Santa Rosa Plaza" City="Santa Rosa" State="CA" SellingSquareFeet="25000" LeadTime="3" ShipDate="M" VSWID="IMO932" ActiveIndicator="true">
+		<Characteristic Name="District" Value="2" CharType="Number" />
+		<Characteristic Name="Type" Value="Strip Center" CharType="Text" />
+		<Characteristic Name="Warehouse" Value="West Coast" CharType="Text" />
+	</Store>
+	<Store ID="1105" Name="Shops at Mission Viejo" Description="Shops at Mission Viejo" City="Mission Viejo" State="CA" SellingSquareFeet="30000" LeadTime="3" ShipDate="TU" VSWID="IMO932" ActiveIndicator="true">
+		<Characteristic Name="District" Value="2" CharType="Number" />
+		<Characteristic Name="Type" Value="Outlet" CharType="Text" />
+		<Characteristic Name="Warehouse" Value="West Coast" CharType="Text" />
+	</Store>
+</Stores>

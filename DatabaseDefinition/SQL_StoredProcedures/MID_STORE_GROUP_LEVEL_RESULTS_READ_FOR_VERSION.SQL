@@ -1,0 +1,38 @@
+--dv =============================================
+--dv Create date: 4/21/2015
+--dv Description: Get stores for the specified group and its levels for a specific version.
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_STORE_GROUP_LEVEL_RESULTS_READ_FOR_VERSION]
+	@SG_RID INT,
+	@SG_VERSION INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+
+	DECLARE @CURRENT_SG_VERSION INT;
+	SELECT @CURRENT_SG_VERSION=@SG_VERSION FROM STORE_GROUP sg WHERE sg.SG_RID=@SG_RID
+
+	IF (@SG_VERSION = @CURRENT_SG_VERSION) --Read from current tables
+	BEGIN
+		SELECT 
+			r.SGL_RID, 
+			r.ST_RID
+		FROM STORE_GROUP_JOIN  sjh
+		INNER JOIN STORE_GROUP_LEVEL_RESULTS r on r.SGL_RID = sjh.SGL_RID AND r.SGL_VERSION=sjh.SGL_VERSION
+		WHERE sjh.SG_RID = @SG_RID AND sjh.SG_VERSION = @SG_VERSION
+	END
+	ELSE
+	BEGIN
+		SELECT 
+			r.SGL_RID, 
+			r.ST_RID
+		FROM STORE_GROUP_JOIN_HISTORY  sjh
+		INNER JOIN STORE_GROUP_LEVEL_RESULTS_HISTORY r on r.SGL_RID = sjh.SGL_RID AND r.SGL_VERSION=sjh.SGL_VERSION
+		WHERE sjh.SG_RID = @SG_RID AND sjh.SG_VERSION = @SG_VERSION
+	END
+
+END
+GO
+
+

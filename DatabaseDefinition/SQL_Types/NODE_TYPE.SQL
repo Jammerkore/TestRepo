@@ -1,0 +1,6 @@
+CREATE TYPE [dbo].[NODE_TYPE] AS TABLE(
+	[PH_RID] [int],
+	[HN_RID] [int]
+	PRIMARY KEY (PH_RID, HN_RID)
+	)
+GO

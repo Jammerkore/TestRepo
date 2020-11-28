@@ -1,0 +1,24 @@
+--dv =============================================
+--dv Create date: 1/31/2014
+--dv Description: Updates a size curve group
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_SIZE_CURVE_GROUP_UPDATE]
+	@SIZE_CURVE_GROUP_RID int,
+	@SIZE_CURVE_GROUP_NAME varchar(250),
+	@DEFAULT_SIZE_CURVE_RID int,
+	@DEFINED_SIZE_GROUP_RID int
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	UPDATE SIZE_CURVE_GROUP 
+	SET
+		SIZE_CURVE_GROUP_NAME = @SIZE_CURVE_GROUP_NAME,
+		DEFAULT_SIZE_CURVE_RID = @DEFAULT_SIZE_CURVE_RID,
+		DEFINED_SIZE_GROUP_RID = @DEFINED_SIZE_GROUP_RID
+	WHERE SIZE_CURVE_GROUP_RID = @SIZE_CURVE_GROUP_RID
+
+	SELECT @@ROWCOUNT;
+END
+GO
+

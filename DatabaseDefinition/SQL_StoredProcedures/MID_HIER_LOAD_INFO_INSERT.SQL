@@ -1,0 +1,26 @@
+--dv =============================================
+--dv Create date:	10/28/2013
+--dv Description:	Inserts a row into the hierarchy load info table
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_HIER_LOAD_INFO_INSERT]
+	@PROCESS_RID int,
+	@HIER_RECS int,
+	@LEVEL_RECS int,
+	@MERCH_RECS int,
+	@MOVE_RECS int,
+	@RENAME_RECS int,
+	@DELETE_RECS int,
+	@MERCH_ADDED int,
+	@MERCH_UPDATED int,
+	@RECS_WITH_ERRORS int
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	INSERT INTO HIER_LOAD_INFO (PROCESS_RID, HIER_RECS, LEVEL_RECS, MERCH_RECS, MOVE_RECS, RENAME_RECS, DELETE_RECS, MERCH_ADDED, MERCH_UPDATED, RECS_WITH_ERRORS)
+    VALUES (@PROCESS_RID, @HIER_RECS, @LEVEL_RECS, @MERCH_RECS, @MOVE_RECS, @RENAME_RECS, @DELETE_RECS, @MERCH_ADDED, @MERCH_UPDATED, @RECS_WITH_ERRORS)
+
+	SELECT @@ROWCOUNT;
+
+END
+GO

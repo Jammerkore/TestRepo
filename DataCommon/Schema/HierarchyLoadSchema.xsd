@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema id="HierarchyLoadSchema" targetNamespace="http://tempuri.org/HierarchyLoadSchema.xsd"
+	elementFormDefault="qualified" xmlns="http://tempuri.org/HierarchyLoadSchema.xsd" xmlns:mstns="http://tempuri.org/HierarchyLoadSchema.xsd"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="Hierarchies">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Options" minOccurs="0" maxOccurs="1">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="ReclassForecastVersion" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:attribute name="Name" type="xs:string" use="required" />
+									<xs:attribute name="Rollup" type="xs:boolean" use="required" />
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+						<xs:attribute name="RollExternalIntransit" type="xs:boolean" use="optional" default="false"></xs:attribute>
+						<xs:attribute name="RollAlternateHierarchies" type="xs:boolean" use="optional" default="false"></xs:attribute>
+						<xs:attribute name="ReclassPreview" type="xs:boolean" use="optional" default="false"></xs:attribute>
+            <xs:attribute name="AutoAddCharacteristics" type="xs:boolean" use="optional"></xs:attribute>
+            <xs:attribute name="AllowDeletes" type="xs:boolean" use="optional"></xs:attribute>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Hierarchy" minOccurs="1" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Level" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:attribute name="Name" type="xs:string" use="required" />
+									<xs:attribute name="Type" use="optional" default="Undefined">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:enumeration value="Undefined"></xs:enumeration>
+												<xs:enumeration value="Style"></xs:enumeration>
+												<xs:enumeration value="Color"></xs:enumeration>
+												<xs:enumeration value="Size"></xs:enumeration>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:attribute>
+									<xs:attribute name="PlanLevelType" use="optional" default="Undefined">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:enumeration value="Undefined"></xs:enumeration>
+												<xs:enumeration value="Regular"></xs:enumeration>
+												<xs:enumeration value="Total"></xs:enumeration>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:attribute>
+									<xs:attribute name="LengthType" use="optional" default="Unrestricted">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:enumeration value="Unrestricted"></xs:enumeration>
+												<xs:enumeration value="Required"></xs:enumeration>
+												<xs:enumeration value="Range"></xs:enumeration>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:attribute>
+									<xs:attribute name="RequiredSize" type="xs:int" use="optional" default="0" />
+									<xs:attribute name="SizeRangeFrom" type="xs:int" use="optional" default="0" />
+									<xs:attribute name="SizeRangeTo" type="xs:int" use="optional" default="0" />
+									<xs:attribute name="Color" type="xs:string" use="optional" default="default" />
+									<xs:attribute name="IsOTSForecastLevel" type="xs:boolean" use="optional" default="false" />
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="Product" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Characteristic" minOccurs="0" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:attribute name="Name" type="xs:string" use="required" />
+												<xs:attribute name="Value" type="xs:string" use="required" />
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+									<xs:attribute name="Action" use="optional" default="Update">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:enumeration value="Update"></xs:enumeration>
+												<xs:enumeration value="Move"></xs:enumeration>
+												<xs:enumeration value="Delete"></xs:enumeration>
+												<xs:enumeration value="Rename"></xs:enumeration>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:attribute>
+									<xs:attribute name="Parent" type="xs:string" use="required" />
+									<xs:attribute name="ToParent" type="xs:string" use="optional" />
+									<xs:attribute name="ID" type="xs:string" use="required" />
+									<xs:attribute name="NewID" type="xs:string" use="optional" />
+									<xs:attribute name="Name" type="xs:string" use="optional" />
+									<xs:attribute name="Description" type="xs:string" use="optional" />
+									<xs:attribute name="Type" use="optional" default="Undefined">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:enumeration value="Undefined"></xs:enumeration>
+												<xs:enumeration value="Hardlines"></xs:enumeration>
+												<xs:enumeration value="Softlines"></xs:enumeration>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:attribute>
+									<xs:attribute name="SizeCodePrimary" type="xs:string" use="optional" />
+									<xs:attribute name="SizeCodeSecondary" type="xs:string" use="optional" />
+									<xs:attribute name="SizeCodeProductCategory" type="xs:string" use="optional" />
+									<xs:attribute name="ReplaceWith" type="xs:string" use="optional" />
+									<xs:attribute name="ForceDelete" type="xs:boolean" use="optional" default="false" />
+									<xs:attribute name="OTSForecastLevelHierarchy" type="xs:string" use="optional" />
+									<xs:attribute name="OTSForecastLevelSelect" use="optional">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:enumeration value="Undefined"></xs:enumeration>
+												<xs:enumeration value="Level"></xs:enumeration>
+												<xs:enumeration value="Node"></xs:enumeration>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:attribute>
+									<xs:attribute name="OTSForecastLevel" type="xs:string" use="optional" />
+									<xs:attribute name="OTSForecastNodeSearch" use="optional">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:enumeration value="Undefined"></xs:enumeration>
+												<xs:enumeration value="ID"></xs:enumeration>
+												<xs:enumeration value="Name"></xs:enumeration>
+												<xs:enumeration value="Description"></xs:enumeration>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:attribute>
+									<xs:attribute name="OTSForecastStartsWith" type="xs:string" use="optional" />
+                  <xs:attribute name="ApplyNodeProperties" type="xs:string" use="optional" />
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+						<xs:attribute name="ID" type="xs:string" use="required" />
+						<xs:attribute name="UpdateDefinition" type="xs:boolean" use="optional" default="false" />
+						<xs:attribute name="Type" use="optional" default="Open">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:enumeration value="Organizational"></xs:enumeration>
+									<xs:enumeration value="Open"></xs:enumeration>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:attribute>
+						<xs:attribute name="Color" type="xs:string" use="optional" default="default" />
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

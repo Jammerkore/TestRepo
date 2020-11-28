@@ -1,0 +1,56 @@
+CREATE PROCEDURE [dbo].[SP_MID_MTH_RULE_CS_INS] 
+	(
+	@METHODRID INT,
+	@SGLRID INT,
+	@COLORCODERID INT,
+	@SIZESRID INT,
+	@SIZECODERID INT,
+	@RULE INT = NULL,
+	@QTY INT = NULL,
+	@ROWTYPEID INT,
+	@DIMENSIONS_RID INT
+	)
+AS
+BEGIN
+	SET NOCOUNT ON
+	SET ANSI_PADDING ON
+
+	/*****************************************************************************************/
+	/* CREATED: 3/31/2005 - STEVE TODD                                                   */
+	/* PURPOSE: INSERTS OR UPDATES DATA IN SIZE_MTH_RULE_COLOR_SIZE		                 */
+	/*****************************************************************************************/
+	/*UPDATE IS NOT IMPLEMENTED BECAUSE THE RECORDS ARE DELETED PRIOR TO SAVING, SO THE INSERT WOULD 
+	  HAPPEN EACH TIME*/
+	BEGIN
+		INSERT INTO SIZE_MTH_RULE_COLOR_SIZE (
+			ROW_TYPE_ID,
+			METHOD_RID,
+			SGL_RID,
+			COLOR_CODE_RID,
+			SIZES_RID,
+			SIZE_CODE_RID,
+			SIZE_RULE,
+			SIZE_QUANTITY,
+			DIMENSIONS_RID
+			)
+		VALUES (
+			@ROWTYPEID,
+			@METHODRID,
+			@SGLRID,
+			@COLORCODERID,
+			@SIZESRID,
+			@SIZECODERID,
+			@RULE,
+			@QTY,
+			@DIMENSIONS_RID
+			)
+	END
+
+	SELECT @@ROWCOUNT
+
+	SET NOCOUNT OFF
+	SET ANSI_PADDING OFF
+END
+GO
+
+

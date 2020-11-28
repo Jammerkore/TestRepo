@@ -1,0 +1,4 @@
+create index "ROLLUP_PROCESS_PROCESS_RID_IDX" on "ROLLUP_PROCESS" (
+	"PROCESS_RID")  
+
+go

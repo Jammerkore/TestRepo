@@ -1,0 +1,100 @@
+CREATE PROCEDURE [dbo].[SP_MID_DELETE_OVERRIDES] 
+	@MODEL_RID AS INT,
+	@HN_RID AS INT,
+	@debug BIT = 0
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	DECLARE @Loop INT,
+		@LoopCount INT,
+		@HOME_PH_RID INT,
+		@Level INT
+
+	-- get home hierarchy of node
+	SELECT @HOME_PH_RID = hn.HOME_PH_RID
+	FROM HIERARCHY_NODE hn WITH (NOLOCK)
+	WHERE hn.HN_RID = @HN_RID
+
+	-- get level of model node
+	SELECT @Level = hn.HOME_LEVEL
+	FROM HIERARCHY_NODE hn WITH (NOLOCK)
+	WHERE hn.HN_RID = @HN_RID
+
+	-- create work table
+	CREATE TABLE #OVERRIDES (
+		HN_RID INT NOT NULL,
+		PARENT_HN_RID INT NULL,
+		HOME_LEVEL INT NULL
+		)
+
+	-- insert the root node into the temp table
+	INSERT #OVERRIDES (
+		HN_RID,
+		PARENT_HN_RID,
+		HOME_LEVEL
+		)
+	SELECT hn.HN_RID,
+		0,
+		hn.HOME_LEVEL
+	FROM HIERARCHY_NODE hn
+	WHERE hn.HN_RID = @HN_RID
+
+	SET @Loop = @@ROWCOUNT
+	SET @LoopCount = 0;
+
+	-- chase all paths until you get to the lowest leaf that belongs to the hierarchy
+	WHILE @Loop > 0
+	BEGIN
+		INSERT #OVERRIDES (
+			HN_RID,
+			PARENT_HN_RID,
+			HOME_LEVEL
+			)
+		SELECT hnj.HN_RID,
+			ovr.HN_RID,
+			hn.HOME_LEVEL
+		FROM HIER_NODE_JOIN hnj WITH (NOLOCK)
+		JOIN HIERARCHY_NODE hn WITH (NOLOCK) ON hn.HN_RID = hnj.HN_RID
+		JOIN #OVERRIDES ovr ON hnj.PARENT_HN_RID = ovr.HN_RID
+		WHERE ovr.HOME_LEVEL = @Level
+			AND hn.HOME_PH_RID = @HOME_PH_RID
+			AND hnj.PH_RID = @HOME_PH_RID
+
+		SET @Loop = @@ROWCOUNT
+		SET @Level = @Level + 1
+		SET @LoopCount = @LoopCount + 1
+	END
+
+	IF (@debug <> 0)
+		SELECT *
+		FROM #OVERRIDES
+
+	IF (@debug <> 0)
+	BEGIN
+		SELECT *
+		FROM OVERRIDE_LL_MODEL_DETAIL
+		WHERE OLL_RID = @MODEL_RID
+			AND HN_RID IN (
+				SELECT HN_RID
+				FROM #OVERRIDES
+				WHERE PARENT_HN_RID > 0
+				)
+	END
+	ELSE
+	BEGIN
+		DELETE
+		FROM OVERRIDE_LL_MODEL_DETAIL
+		WHERE OLL_RID = @MODEL_RID
+			AND HN_RID IN (
+				SELECT HN_RID
+				FROM #OVERRIDES
+				WHERE PARENT_HN_RID > 0
+				)
+
+		SELECT @@ROWCOUNT;
+	END
+END
+GO
+
+

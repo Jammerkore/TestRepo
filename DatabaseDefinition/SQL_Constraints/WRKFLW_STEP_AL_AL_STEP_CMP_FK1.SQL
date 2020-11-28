@@ -1,0 +1,9 @@
+alter table "ALLOCATION_STEP_COMPONENT"
+	add constraint "WRKFLW_STEP_AL_AL_STEP_CMP_FK1" foreign key (
+		"WORKFLOW_RID",
+		"STEP_NUMBER")
+	 references "WORKFLOW_STEP_ALLOCATION" (
+		"WORKFLOW_RID",
+		"STEP_NUMBER")  
+
+go

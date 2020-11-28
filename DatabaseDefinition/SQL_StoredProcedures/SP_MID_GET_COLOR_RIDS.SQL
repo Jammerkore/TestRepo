@@ -1,0 +1,53 @@
+CREATE PROCEDURE [dbo].[SP_MID_GET_COLOR_RIDS] 
+	(
+	@xmlDoc NTEXT,
+	@debug BIT = 0
+	)
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	DECLARE @idoc INT
+
+	EXEC sp_xml_preparedocument @idoc OUTPUT,
+		@xmlDoc
+
+	CREATE TABLE #CLR_IDS (
+		NODE_ID VARCHAR(250) COLLATE database_default NOT NULL,
+		STYLE_ID VARCHAR(50) COLLATE database_default NOT NULL,
+		COLOR_ID VARCHAR(50) COLLATE database_default NULL
+		)
+
+	CREATE INDEX #CLR_IDS_IDX_1 ON #CLR_IDS (STYLE_ID)
+
+	CREATE INDEX #CLR_IDS_IDX_2 ON #CLR_IDS (COLOR_ID)
+
+	-- Process records
+	INSERT #CLR_IDS (
+		NODE_ID,
+		STYLE_ID,
+		COLOR_ID
+		)
+	SELECT xmlID,
+		xmlSTYLE_ID,
+		xmlCOLOR_ID
+	FROM OPENXML(@idoc, '/root/node', 2) WITH (
+			xmlID VARCHAR(250) '@ID',
+			xmlSTYLE_ID VARCHAR(50) '@STYLE_ID',
+			xmlCOLOR_ID VARCHAR(50) '@COLOR_ID'
+			) xmlnodes
+
+	SELECT cl.NODE_ID,
+		cn.HN_RID
+	FROM COLOR_NODE cn,
+		#CLR_IDS cl,
+		COLOR_CODE cc
+	WHERE cl.STYLE_ID = cn.STYLE_NODE_ID
+		AND cl.COLOR_ID = cc.COLOR_CODE_ID
+		AND cc.COLOR_CODE_RID = cn.COLOR_CODE_RID
+
+	SET NOCOUNT OFF
+END
+GO
+
+

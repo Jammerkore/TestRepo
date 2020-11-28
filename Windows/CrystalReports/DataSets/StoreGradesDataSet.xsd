@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="StoreGradesDataSet" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="StoreGradesDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_UserDSName="StoreGradesDataSet" msprop:Generator_DataSetName="StoreGradesDataSet">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="StoreGradesDataTable" msprop:Generator_UserTableName="StoreGradesDataTable" msprop:Generator_RowDeletedName="StoreGradesDataTableRowDeleted" msprop:Generator_RowChangedName="StoreGradesDataTableRowChanged" msprop:Generator_RowClassName="StoreGradesDataTableRow" msprop:Generator_RowChangingName="StoreGradesDataTableRowChanging" msprop:Generator_RowEvArgName="StoreGradesDataTableRowChangeEvent" msprop:Generator_RowEvHandlerName="StoreGradesDataTableRowChangeEventHandler" msprop:Generator_TableClassName="StoreGradesDataTableDataTable" msprop:Generator_TableVarName="tableStoreGradesDataTable" msprop:Generator_RowDeletingName="StoreGradesDataTableRowDeleting" msprop:Generator_TablePropName="StoreGradesDataTable">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="BN_ID" msprop:Generator_UserColumnName="BN_ID" msprop:Generator_ColumnVarNameInTable="columnBN_ID" msprop:Generator_ColumnPropNameInRow="BN_ID" msprop:Generator_ColumnPropNameInTable="BN_IDColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="GRADE_CODE" msprop:Generator_UserColumnName="GRADE_CODE" msprop:Generator_ColumnVarNameInTable="columnGRADE_CODE" msprop:Generator_ColumnPropNameInRow="GRADE_CODE" msprop:Generator_ColumnPropNameInTable="GRADE_CODEColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="BOUNDARY" msprop:Generator_UserColumnName="BOUNDARY" msprop:Generator_ColumnVarNameInTable="columnBOUNDARY" msprop:Generator_ColumnPropNameInRow="BOUNDARY" msprop:Generator_ColumnPropNameInTable="BOUNDARYColumn" type="xs:int" minOccurs="0" />
+              <xs:element name="WOS_INDEX" msprop:Generator_UserColumnName="WOS_INDEX" msprop:Generator_ColumnVarNameInTable="columnWOS_INDEX" msprop:Generator_ColumnPropNameInRow="WOS_INDEX" msprop:Generator_ColumnPropNameInTable="WOS_INDEXColumn" type="xs:int" minOccurs="0" />
+              <xs:element name="MINIMUM_STOCK" msprop:Generator_UserColumnName="MINIMUM_STOCK" msprop:Generator_ColumnVarNameInTable="columnMINIMUM_STOCK" msprop:Generator_ColumnPropNameInRow="MINIMUM_STOCK" msprop:Generator_ColumnPropNameInTable="MINIMUM_STOCKColumn" type="xs:int" minOccurs="0" />
+              <xs:element name="MAXIMUM_STOCK" msprop:Generator_UserColumnName="MAXIMUM_STOCK" msprop:Generator_ColumnVarNameInTable="columnMAXIMUM_STOCK" msprop:Generator_ColumnPropNameInRow="MAXIMUM_STOCK" msprop:Generator_ColumnPropNameInTable="MAXIMUM_STOCKColumn" type="xs:int" minOccurs="0" />
+              <xs:element name="MINIMUM_AD" msprop:Generator_UserColumnName="MINIMUM_AD" msprop:Generator_ColumnVarNameInTable="columnMINIMUM_AD" msprop:Generator_ColumnPropNameInRow="MINIMUM_AD" msprop:Generator_ColumnPropNameInTable="MINIMUM_ADColumn" type="xs:int" minOccurs="0" />
+              <xs:element name="MINIMUM_COLOR" msprop:Generator_UserColumnName="MINIMUM_COLOR" msprop:Generator_ColumnVarNameInTable="columnMINIMUM_COLOR" msprop:Generator_ColumnPropNameInRow="MINIMUM_COLOR" msprop:Generator_ColumnPropNameInTable="MINIMUM_COLORColumn" type="xs:int" minOccurs="0" />
+              <xs:element name="MAXIMUM_COLOR" msprop:Generator_UserColumnName="MAXIMUM_COLOR" msprop:Generator_ColumnVarNameInTable="columnMAXIMUM_COLOR" msprop:Generator_ColumnPropNameInRow="MAXIMUM_COLOR" msprop:Generator_ColumnPropNameInTable="MAXIMUM_COLORColumn" type="xs:int" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

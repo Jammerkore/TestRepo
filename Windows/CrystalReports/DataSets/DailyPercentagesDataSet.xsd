@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="DailyPercentagesDataSet" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="DailyPercentagesDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_UserDSName="DailyPercentagesDataSet" msprop:Generator_DataSetName="DailyPercentagesDataSet">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="DailyPercentagesDataTable" msprop:Generator_UserTableName="DailyPercentagesDataTable" msprop:Generator_RowDeletedName="DailyPercentagesDataTableRowDeleted" msprop:Generator_RowChangedName="DailyPercentagesDataTableRowChanged" msprop:Generator_RowClassName="DailyPercentagesDataTableRow" msprop:Generator_RowChangingName="DailyPercentagesDataTableRowChanging" msprop:Generator_RowEvArgName="DailyPercentagesDataTableRowChangeEvent" msprop:Generator_RowEvHandlerName="DailyPercentagesDataTableRowChangeEventHandler" msprop:Generator_TableClassName="DailyPercentagesDataTableDataTable" msprop:Generator_TableVarName="tableDailyPercentagesDataTable" msprop:Generator_RowDeletingName="DailyPercentagesDataTableRowDeleting" msprop:Generator_TablePropName="DailyPercentagesDataTable">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Type" msprop:Generator_UserColumnName="Type" msprop:Generator_ColumnVarNameInTable="columnType" msprop:Generator_ColumnPropNameInRow="Type" msprop:Generator_ColumnPropNameInTable="TypeColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="PARENT_HN_RID" msprop:Generator_UserColumnName="PARENT_HN_RID" msprop:Generator_ColumnVarNameInTable="columnPARENT_HN_RID" msprop:Generator_ColumnPropNameInRow="PARENT_HN_RID" msprop:Generator_ColumnPropNameInTable="PARENT_HN_RIDColumn" type="xs:int" minOccurs="0" />
+              <xs:element name="HN_RID" msprop:Generator_UserColumnName="HN_RID" msprop:Generator_ColumnVarNameInTable="columnHN_RID" msprop:Generator_ColumnPropNameInRow="HN_RID" msprop:Generator_ColumnPropNameInTable="HN_RIDColumn" type="xs:int" minOccurs="0" />
+              <xs:element name="DateRange" msprop:Generator_UserColumnName="DateRange" msprop:Generator_ColumnVarNameInTable="columnDateRange" msprop:Generator_ColumnPropNameInRow="DateRange" msprop:Generator_ColumnPropNameInTable="DateRangeColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="ST_ID" msprop:Generator_UserColumnName="ST_ID" msprop:Generator_ColumnVarNameInTable="columnST_ID" msprop:Generator_ColumnPropNameInRow="ST_ID" msprop:Generator_ColumnPropNameInTable="ST_IDColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="STORE_NAME" msprop:Generator_UserColumnName="STORE_NAME" msprop:Generator_ColumnVarNameInTable="columnSTORE_NAME" msprop:Generator_ColumnPropNameInRow="STORE_NAME" msprop:Generator_ColumnPropNameInTable="STORE_NAMEColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="BN_ID" msprop:Generator_UserColumnName="BN_ID" msprop:Generator_ColumnVarNameInTable="columnBN_ID" msprop:Generator_ColumnPropNameInRow="BN_ID" msprop:Generator_ColumnPropNameInTable="BN_IDColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="BN_NAME" msprop:Generator_UserColumnName="BN_NAME" msprop:Generator_ColumnVarNameInTable="columnBN_NAME" msprop:Generator_ColumnPropNameInRow="BN_NAME" msprop:Generator_ColumnPropNameInTable="BN_NAMEColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="DISPLAY_TEXT" msprop:Generator_UserColumnName="DISPLAY_TEXT" msprop:Generator_ColumnVarNameInTable="columnDISPLAY_TEXT" msprop:Generator_ColumnPropNameInRow="DISPLAY_TEXT" msprop:Generator_ColumnPropNameInTable="DISPLAY_TEXTColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="DAY1" msprop:Generator_UserColumnName="DAY1" msprop:Generator_ColumnVarNameInTable="columnDAY1" msprop:Generator_ColumnPropNameInRow="DAY1" msprop:Generator_ColumnPropNameInTable="DAY1Column" type="xs:int" minOccurs="0" />
+              <xs:element name="DAY2" msprop:Generator_UserColumnName="DAY2" msprop:Generator_ColumnVarNameInTable="columnDAY2" msprop:Generator_ColumnPropNameInRow="DAY2" msprop:Generator_ColumnPropNameInTable="DAY2Column" type="xs:int" minOccurs="0" />
+              <xs:element name="DAY3" msprop:Generator_UserColumnName="DAY3" msprop:Generator_ColumnVarNameInTable="columnDAY3" msprop:Generator_ColumnPropNameInRow="DAY3" msprop:Generator_ColumnPropNameInTable="DAY3Column" type="xs:int" minOccurs="0" />
+              <xs:element name="DAY4" msprop:Generator_UserColumnName="DAY4" msprop:Generator_ColumnVarNameInTable="columnDAY4" msprop:Generator_ColumnPropNameInRow="DAY4" msprop:Generator_ColumnPropNameInTable="DAY4Column" type="xs:int" minOccurs="0" />
+              <xs:element name="DAY5" msprop:Generator_UserColumnName="DAY5" msprop:Generator_ColumnVarNameInTable="columnDAY5" msprop:Generator_ColumnPropNameInRow="DAY5" msprop:Generator_ColumnPropNameInTable="DAY5Column" type="xs:int" minOccurs="0" />
+              <xs:element name="DAY6" msprop:Generator_UserColumnName="DAY6" msprop:Generator_ColumnVarNameInTable="columnDAY6" msprop:Generator_ColumnPropNameInRow="DAY6" msprop:Generator_ColumnPropNameInTable="DAY6Column" type="xs:int" minOccurs="0" />
+              <xs:element name="DAY7" msprop:Generator_UserColumnName="DAY7" msprop:Generator_ColumnVarNameInTable="columnDAY7" msprop:Generator_ColumnPropNameInRow="DAY7" msprop:Generator_ColumnPropNameInTable="DAY7Column" type="xs:int" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

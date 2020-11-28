@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema id="SizeCurveLoadStatusSchema" targetNamespace="http://tempuri.org/SizeCurveLoadStatusSchema.xsd"
+	elementFormDefault="qualified" xmlns="http://tempuri.org/SizeCurveLoadStatusSchema.xsd" xmlns:mstns="http://tempuri.org/SizeCurveLoadStatusSchema.xsd"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="SizeCurveLoadStatus">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="SizeCurveStatus" minOccurs="1" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:attribute name="SizeCurveGroupName" type="xs:string" />
+						<xs:attribute name="LoadStatus">
+							<xs:simpleType>
+								<xs:restriction base="xs:boolean">
+									<xs:pattern value="True|False" />
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:attribute>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

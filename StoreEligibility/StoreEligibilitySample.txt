@@ -1,0 +1,7 @@
+20344,1101,False,1103\1105\1108,,201301,201312,Eligibility,,stk 10 -13,SalesModifier,1.2,,MinPlusSales,true,
+20344,1102,False,1181,1.2,,201335,Eligibility,2.2,,SalesModifier,,DV-1.5 for wks 33-35/09,StockModifier,1.4,,MinPlusSales,false,
+20345,1131,False,,,,,SalesModifier,1.25,,MinPlusSales,false,
+20345,1192,False,1101\1105\1108,,201301,201312,Eligibility,,New201301-1,SalesModifier,1.2,,StockModifier,,BLIIssue,MinPlusSales,true,
+20344,1103,False,1103\1105\1108,,201301,201312,Eligibility,,stk 10 -13,SalesModifier,1.2,,FWOSModifier,1,
+20344,1104,False,1181,1.2,,201335,SalesModifier,2.2,,StockModifier,1.4,,MinPlusSales,false,
+20344,1105,True,,,,,

@@ -1,0 +1,63 @@
+--dv =============================================
+--dv Create date: 12/11/2013
+--dv Description: Inserts a general allocation method
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_METHOD_GENERAL_ALLOCATION_INSERT] 
+	@METHOD_RID int, 
+	@BEGIN_CDR_RID int, 
+	@SHIP_TO_CDR_RID int,
+	@MERCH_HN_RID int, 
+	@MERCH_PH_RID int, 
+	@MERCH_PHL_SEQUENCE int,
+	@GEN_ALLOC_HDR_RID int, 
+	@RESERVE float, 
+	@PERCENT_IND char(1), 
+	@MERCH_TYPE int, 
+	@RESERVE_AS_BULK float, 
+	@RESERVE_AS_PACKS float
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	INSERT INTO METHOD_GENERAL_ALLOCATION
+		(
+		METHOD_RID, 
+		BEGIN_CDR_RID, 
+		SHIP_TO_CDR_RID,
+		MERCH_HN_RID, 
+		MERCH_PH_RID, 
+		MERCH_PHL_SEQUENCE,
+		GEN_ALLOC_HDR_RID, 
+		RESERVE, 
+		PERCENT_IND, 
+		MERCH_TYPE, 
+		RESERVE_AS_BULK, 
+		RESERVE_AS_PACKS
+		)
+	VALUES 
+		(
+		@METHOD_RID, 
+		@BEGIN_CDR_RID, 
+		@SHIP_TO_CDR_RID,
+		@MERCH_HN_RID, 
+		@MERCH_PH_RID, 
+		@MERCH_PHL_SEQUENCE,
+		@GEN_ALLOC_HDR_RID, 
+		@RESERVE, 
+		@PERCENT_IND, 
+		@MERCH_TYPE, 
+		@RESERVE_AS_BULK, 
+		@RESERVE_AS_PACKS
+		)
+
+	SELECT @@ROWCOUNT;
+
+END
+GO
+
+
+
+
+
+
+

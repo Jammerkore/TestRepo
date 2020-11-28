@@ -1,0 +1,9 @@
+alter table "METHOD_FILL_SIZE_HOLES"
+	add constraint "PRD_HIER_LVLS_MTHD_FILL_SZ_HLS_FK2" foreign key (
+		"GENCURVE_PH_RID",
+		"GENCURVE_PHL_SEQUENCE")
+	 references "PRODUCT_HIERARCHY_LEVELS" (
+		"PH_RID",
+		"PHL_SEQUENCE")  
+
+go

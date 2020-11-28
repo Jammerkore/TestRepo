@@ -1,0 +1,59 @@
+CREATE PROCEDURE [dbo].[SP_MID_SZ_CONSTR_MODEL_UP_INS] 
+	(
+	@RID INT,
+	@NAME VARCHAR(50),
+	@SIZEGROUPRID INT,
+	@SIZECURVEGROUPRID INT,
+	@SGRID INT,
+	@NEWRID INT OUTPUT
+	)
+AS
+BEGIN
+	SET NOCOUNT ON
+	SET ANSI_PADDING ON
+
+	/*****************************************************************************************/
+	/* CREATED: 2/16/2005 - Steve Todd                                                       */
+	/* PURPOSE: INSERTS OR UPDATES DATA IN SIZE_CONSTRAINT_MODEL                             */
+	/*****************************************************************************************/
+	IF NOT EXISTS (
+			SELECT *
+			FROM SIZE_CONSTRAINT_MODEL
+			WHERE SIZE_CONSTRAINT_RID = @RID
+			)
+		--INSERT
+	BEGIN
+		INSERT INTO SIZE_CONSTRAINT_MODEL (
+			SIZE_CONSTRAINT_NAME,
+			SG_RID,
+			SIZE_GROUP_RID,
+			SIZE_CURVE_GROUP_RID
+			)
+		VALUES (
+			@NAME,
+			@SGRID,
+			@SIZEGROUPRID,
+			@SIZECURVEGROUPRID
+			)
+
+		SELECT @NEWRID = SCOPE_IDENTITY() -- TT#3256 - JSmith - Replace @@IDENTITY with SCOPE_IDENTITY()
+	END
+	ELSE
+		--UPDATE
+	BEGIN
+		UPDATE SIZE_CONSTRAINT_MODEL
+		SET SIZE_CONSTRAINT_NAME = @NAME,
+			SG_RID = @SGRID,
+			SIZE_GROUP_RID = @SIZEGROUPRID,
+			SIZE_CURVE_GROUP_RID = @SIZECURVEGROUPRID
+		WHERE SIZE_CONSTRAINT_RID = @RID
+
+		SELECT @NEWRID = @RID
+	END
+
+	SET NOCOUNT OFF
+	SET ANSI_PADDING OFF
+END
+GO
+
+

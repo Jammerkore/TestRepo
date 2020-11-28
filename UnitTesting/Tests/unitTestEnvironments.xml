@@ -1,0 +1,24 @@
+<?xml version="1.0" standalone="yes"?>
+<NewDataSet>
+  <Environments>
+    <environmentName>TQA</environmentName>
+    <connectionString>server=MIDretail27;database=midver54_Dev;uid=sa;pwd=Midsa1;</connectionString>
+    <server>MIDretail27</server>
+    <databaseName>midver54_Dev</databaseName>
+    <bakFilePath>c:\Backup1\TechQA_521_SQL.bak</bakFilePath>
+  </Environments>
+  <Environments>
+    <environmentName>ANF</environmentName>
+    <connectionString>server=MIDretail27;database=MIDHOLPROD_010514_AG;uid=sa;pwd=Midsa1;</connectionString>
+    <server>MIDretail29</server>
+    <databaseName>MIDHOLPROD_010514_AG</databaseName>
+    <bakFilePath />
+  </Environments>
+  <Environments>
+    <environmentName>FreePeepsGA</environmentName>
+    <connectionString>server=MIDretail29;database=MID_Freepeople_GA;uid=sa;pwd=Midsa1;</connectionString>
+    <server>MIDRetail29</server>
+    <databaseName>MID_Freepeople_GA</databaseName>
+    <bakFilePath />
+  </Environments>
+</NewDataSet>

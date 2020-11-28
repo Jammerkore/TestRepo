@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="SizeCurveToleranceDataSet" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="SizeCurveToleranceDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_DataSetName="SizeCurveToleranceDataSet" msprop:Generator_UserDSName="SizeCurveToleranceDataSet">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="SizeCurveToleranceDataTable" msprop:Generator_UserTableName="SizeCurveToleranceDataTable" msprop:Generator_RowEvArgName="SizeCurveToleranceDataTableRowChangeEvent" msprop:Generator_TableVarName="tableSizeCurveToleranceDataTable" msprop:Generator_TablePropName="SizeCurveToleranceDataTable" msprop:Generator_RowDeletingName="SizeCurveToleranceDataTableRowDeleting" msprop:Generator_RowChangingName="SizeCurveToleranceDataTableRowChanging" msprop:Generator_RowDeletedName="SizeCurveToleranceDataTableRowDeleted" msprop:Generator_RowEvHandlerName="SizeCurveToleranceDataTableRowChangeEventHandler" msprop:Generator_TableClassName="SizeCurveToleranceDataTableDataTable" msprop:Generator_RowChangedName="SizeCurveToleranceDataTableRowChanged" msprop:Generator_RowClassName="SizeCurveToleranceDataTableRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="HN_RID" msprop:Generator_ColumnVarNameInTable="columnHN_RID" msprop:Generator_ColumnPropNameInRow="HN_RID" msprop:Generator_ColumnPropNameInTable="HN_RIDColumn" msprop:Generator_UserColumnName="HN_RID" type="xs:int" minOccurs="0" />
+              <xs:element name="BN_ID" msdata:Caption="Node" msprop:Generator_ColumnVarNameInTable="columnBN_ID" msprop:Generator_ColumnPropNameInRow="BN_ID" msprop:Generator_ColumnPropNameInTable="BN_IDColumn" msprop:Generator_UserColumnName="BN_ID" type="xs:string" minOccurs="0" />
+              <xs:element name="HIGHEST_LEVEL_PHL_ID" msprop:nullValue="_empty" msprop:Generator_ColumnPropNameInRow="HIGHEST_LEVEL_PHL_ID" msprop:Generator_ColumnVarNameInTable="columnHIGHEST_LEVEL_PHL_ID" msprop:Generator_ColumnPropNameInTable="HIGHEST_LEVEL_PHL_IDColumn" msprop:Generator_UserColumnName="HIGHEST_LEVEL_PHL_ID" type="xs:string" minOccurs="0" />
+              <xs:element name="MINIMUM_AVERAGE_PER_SIZE" msprop:nullValue="_empty" msprop:Generator_ColumnPropNameInRow="MINIMUM_AVERAGE_PER_SIZE" msprop:Generator_ColumnVarNameInTable="columnMINIMUM_AVERAGE_PER_SIZE" msprop:Generator_ColumnPropNameInTable="MINIMUM_AVERAGE_PER_SIZEColumn" msprop:Generator_UserColumnName="MINIMUM_AVERAGE_PER_SIZE" type="xs:string" minOccurs="0" />
+              <xs:element name="SALES_TOLERANCE" msprop:nullValue="_empty" msprop:Generator_ColumnPropNameInRow="SALES_TOLERANCE" msprop:Generator_ColumnVarNameInTable="columnSALES_TOLERANCE" msprop:Generator_ColumnPropNameInTable="SALES_TOLERANCEColumn" msprop:Generator_UserColumnName="SALES_TOLERANCE" type="xs:string" minOccurs="0" />
+              <xs:element name="INDEX_UNITS_TYPE_DESCRIPTION" msprop:nullValue="_empty" msprop:Generator_ColumnPropNameInRow="INDEX_UNITS_TYPE_DESCRIPTION" msprop:Generator_ColumnVarNameInTable="columnINDEX_UNITS_TYPE_DESCRIPTION" msprop:Generator_ColumnPropNameInTable="INDEX_UNITS_TYPE_DESCRIPTIONColumn" msprop:Generator_UserColumnName="INDEX_UNITS_TYPE_DESCRIPTION" type="xs:string" minOccurs="0" />
+              <xs:element name="MIN_TOLERANCE" msprop:Generator_ColumnVarNameInTable="columnMIN_TOLERANCE" msprop:Generator_ColumnPropNameInRow="MIN_TOLERANCE" msprop:Generator_ColumnPropNameInTable="MIN_TOLERANCEColumn" msprop:Generator_UserColumnName="MIN_TOLERANCE" type="xs:string" minOccurs="0" />
+              <xs:element name="MAX_TOLERANCE" msprop:Generator_ColumnVarNameInTable="columnMAX_TOLERANCE" msprop:Generator_ColumnPropNameInRow="MAX_TOLERANCE" msprop:Generator_ColumnPropNameInTable="MAX_TOLERANCEColumn" msprop:Generator_UserColumnName="MAX_TOLERANCE" type="xs:string" minOccurs="0" />
+              <xs:element name="APPLY_MIN_TO_ZERO_TOLERANCE" msprop:Generator_ColumnVarNameInTable="columnAPPLY_MIN_TO_ZERO_TOLERANCE" msprop:Generator_ColumnPropNameInRow="APPLY_MIN_TO_ZERO_TOLERANCE" msprop:Generator_ColumnPropNameInTable="APPLY_MIN_TO_ZERO_TOLERANCEColumn" msprop:Generator_UserColumnName="APPLY_MIN_TO_ZERO_TOLERANCE" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

@@ -1,0 +1,9 @@
+alter table "METHOD_SIZE_NEED"
+	add constraint "PRD_HIER_LVLS_MT_SZ_NEED_FK3" foreign key (
+		"GENCONSTRAINT_PH_RID",
+		"GENCONSTRAINT_PHL_SEQUENCE")
+	 references "PRODUCT_HIERARCHY_LEVELS" (
+		"PH_RID",
+		"PHL_SEQUENCE")  
+
+go

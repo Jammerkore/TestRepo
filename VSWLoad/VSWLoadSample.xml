@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<VSW xmlns="http://tempuri.org/VSWLoadSchema.xsd">
+  <Merchandise ID="20344">
+    <Store ID="1101" MinShipQty="" PctThreshold="" ItemMax="50" FWOSMaxValue="5" FWOSMaxModel="" PushToBkStk="10" />
+    <Store ID="1102" MinShipQty="1" PctThreshold="20" ItemMax="1" FWOSMaxValue="1" FWOSMaxModel="" PushToBkStk="1" />
+    <Store ID="1109" MinShipQty="" PctThreshold="15.5" ItemMax="10" FWOSMaxValue="" FWOSMaxModel="DV-Def 2-4 recur wks 35-37" PushToBkStk="" />
+  </Merchandise>
+  <Merchandise ID="20345">
+    <Store ID="1101" MinShipQty="" PctThreshold="" ItemMax="50" FWOSMaxValue="5" FWOSMaxModel="" PushToBkStk="10" />
+    <Store ID="1102" MinShipQty="1" PctThreshold="20" ItemMax="1" FWOSMaxValue="1" FWOSMaxModel="" PushToBkStk="1" />
+    <Store ID="1109" MinShipQty="" PctThreshold="14.5" ItemMax="10" FWOSMaxValue="" FWOSMaxModel="DV-Def 2-4 recur wks 35-37" PushToBkStk="" />
+  </Merchandise>
+  <Merchandise ID="20341">
+    <Store ID="1101" MinShipQty="" PctThreshold="" ItemMax="50" FWOSMaxValue="5" FWOSMaxModel="" PushToBkStk="10" />
+    <Store ID="1102" MinShipQty="1" PctThreshold="20" ItemMax="1" FWOSMaxValue="1" FWOSMaxModel="" PushToBkStk="1" />
+    <Store ID="1109" MinShipQty="" PctThreshold="15.5" ItemMax="10" FWOSMaxValue="" FWOSMaxModel="DV-Def 2-4 recur wks 35-37" PushToBkStk="" />
+  </Merchandise>
+</VSW>

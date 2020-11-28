@@ -1,0 +1,45 @@
+--dv =============================================
+--dv Create date:	12/10/2013
+--dv Description:	Updates a row on the method copy forecast table
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_METHOD_COPY_FORECAST_UPDATE]
+	@METHOD_RID int,
+	@HN_RID int, 
+	@FV_RID int, 
+	@CDR_RID int, 
+	@PLAN_TYPE int, 
+	@STORE_FILTER_RID int, 
+	@MULTI_LEVEL_IND bit, 
+    @FROM_LEVEL_TYPE int, 
+	@FROM_LEVEL_SEQ int, 
+	@FROM_LEVEL_OFFSET int, 
+	@TO_LEVEL_TYPE int, 
+	@TO_LEVEL_SEQ int, 
+	@TO_LEVEL_OFFSET int, 
+	@OLL_RID int, 
+	@PREINIT_VALUES_IND char(1)
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	UPDATE METHOD_COPY_FORECAST 
+	SET 
+		HN_RID = @HN_RID, 
+		FV_RID = @FV_RID, 
+		CDR_RID = @CDR_RID, 
+		PLAN_TYPE = @PLAN_TYPE, 
+		STORE_FILTER_RID = @STORE_FILTER_RID, 
+		MULTI_LEVEL_IND = @MULTI_LEVEL_IND, 
+		FROM_LEVEL_TYPE = @FROM_LEVEL_TYPE,
+		FROM_LEVEL_SEQ = @FROM_LEVEL_SEQ,
+		FROM_LEVEL_OFFSET = @FROM_LEVEL_OFFSET,
+		TO_LEVEL_TYPE = @TO_LEVEL_TYPE,
+		TO_LEVEL_SEQ = @TO_LEVEL_SEQ,
+		TO_LEVEL_OFFSET = @TO_LEVEL_OFFSET,
+		PREINIT_VALUES_IND = @PREINIT_VALUES_IND,
+		OLL_RID = @OLL_RID 
+	WHERE METHOD_RID = @METHOD_RID
+
+	SELECT @@ROWCOUNT
+END
+GO

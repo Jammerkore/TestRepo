@@ -1,0 +1,33 @@
+--dv =============================================
+--dv Create date:	6/30/2014
+--dv Description:	Reads filters and parent folders for the users passed in
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_FILTER_READ_PARENT_FROM_USERS]
+	@FILTER_TYPE INT,
+	@FILTER_PROFILE_TYPE INT,
+	@USER_RID_LIST USER_RID_TYPE READONLY
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT 
+		f.FILTER_RID, 
+		ui.USER_RID, 
+		f.FILTER_NAME, 
+		COALESCE(fjt.PARENT_FOLDER_RID, -1) PARENT_FOLDER_RID, 
+		ui.OWNER_USER_RID,
+		f.IS_LIMITED,
+		f.RESULT_LIMIT
+	FROM FILTER f
+	LEFT OUTER JOIN FOLDER_JOIN fjt ON f.FILTER_RID = fjt.CHILD_ITEM_RID
+	INNER JOIN USER_ITEM ui ON f.FILTER_RID = ui.ITEM_RID  
+	WHERE f.FILTER_TYPE = @FILTER_TYPE
+		  AND ui.ITEM_TYPE = @FILTER_PROFILE_TYPE
+		  AND (fjt.CHILD_ITEM_TYPE = @FILTER_PROFILE_TYPE OR fjt.CHILD_ITEM_TYPE IS NULL)
+		  AND ui.USER_RID IN (SELECT USER_RID FROM @USER_RID_LIST)
+
+
+END
+GO
+
+

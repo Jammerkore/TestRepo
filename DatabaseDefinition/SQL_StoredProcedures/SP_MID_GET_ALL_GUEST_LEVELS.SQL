@@ -1,0 +1,73 @@
+CREATE PROCEDURE [dbo].[SP_MID_GET_ALL_GUEST_LEVELS] 
+	@HN_RID INT
+AS
+SET NOCOUNT ON
+
+DECLARE @Loop INT,
+	@LoopCount INT,
+	@NextLoopCount INT
+
+SET @LoopCount = 0
+
+CREATE TABLE #TREE (
+	LOOPCOUNT INT NOT NULL,
+	PARENT_HN_RID INT NOT NULL,
+	HOME_PH_RID INT,
+	PH_TYPE INT,
+	HN_RID INT NOT NULL,
+	HOME_LEVEL INT NOT NULL
+	)
+
+-- insert the children of the node into the temp table
+INSERT #TREE (
+	LOOPCOUNT,
+	PARENT_HN_RID,
+	HOME_PH_RID,
+	PH_TYPE,
+	HN_RID,
+	HOME_LEVEL
+	)
+SELECT @LoopCount AS LOOPCOUNT,
+	@HN_RID AS PARENT_HN_RID,
+	hn.HOME_PH_RID,
+	ph.PH_TYPE,
+	hnj.HN_RID,
+	hn.HOME_LEVEL
+FROM [dbo].[HIER_NODE_JOIN] hnj WITH (NOLOCK)
+JOIN [dbo].[HIERARCHY_NODE] hn WITH (NOLOCK) ON hn.HN_RID = hnj.HN_RID
+JOIN [dbo].[PRODUCT_HIERARCHY] ph WITH (NOLOCK) ON ph.PH_RID = hn.HOME_PH_RID
+WHERE @HN_RID = hnj.PARENT_HN_RID
+  AND hnj.NODE_DELETE_IND = '0' -- TT#3630 - JSmith - Delete My Hierarchy
+
+SET @Loop = @@ROWCOUNT
+-- chase all paths until you get the main hierarchy (type 800000) or the lowest leaf
+SET @NextLoopCount = @LoopCount + 1
+
+WHILE @Loop > 0
+BEGIN
+	INSERT #TREE
+	SELECT @NextLoopCount AS LOOPCOUNT,
+		hnj.PARENT_HN_RID,
+		hn.HOME_PH_RID,
+		ph.PH_TYPE,
+		hnj.HN_RID,
+		hn.HOME_LEVEL
+	FROM [dbo].[HIER_NODE_JOIN] hnj WITH (NOLOCK)
+	JOIN [dbo].[HIERARCHY_NODE] hn WITH (NOLOCK) ON hn.HN_RID = hnj.HN_RID
+	JOIN [dbo].[PRODUCT_HIERARCHY] ph WITH (NOLOCK) ON ph.PH_RID = hn.HOME_PH_RID
+	JOIN #TREE t ON hnj.PARENT_HN_RID = t.HN_RID
+	WHERE t.LOOPCOUNT = @LoopCount
+		AND t.PH_TYPE <> 800000
+		AND hnj.NODE_DELETE_IND = '0' -- TT#3630 - JSmith - Delete My Hierarchy
+
+	SET @Loop = @@ROWCOUNT
+	SET @LoopCount = @LoopCount + 1
+	SET @NextLoopCount = @LoopCount + 1
+END
+
+SELECT DISTINCT HOME_LEVEL
+FROM #TREE
+WHERE PH_TYPE = 800000
+GO
+
+

@@ -1,0 +1,6 @@
+alter table "COMPUTATION_MODEL_ENTRY"
+	add constraint "COMPUTATION_MODEL_ENTRY_PK" primary key ("COMP_MODEL_RID", "COMP_MODEL_SEQUENCE")   
+
+
+
+GO

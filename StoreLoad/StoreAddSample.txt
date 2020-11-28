@@ -1,0 +1,29 @@
+
+DESCRIPTION
+Sample transactions which DO NOT use the Transaction Types.
+Note: This transaction format does not have a column for Reservation Store. You must use
+      Transaction Types (the second example) to include Reservation Store.
+
+
+Options~True~\~False
+1101~Brea Mall~~Brea~CA~10000~~~11/3/2003~~TRUE~3~M W F~District~1~Type~Suburban Mall~Warehouse~West Coast
+1102~Fashion Valley Mall~~San Diego~CA~15000~~~~~TRUE~3~TU W TH~District~1~Type~Urban Mall~Warehouse~West Coast
+1103~Laguna Hills Mall~~Laguna Hills~CA~20000~~~~~TRUE~3~TU TH~District~1~Type~Suburban Mall~Warehouse~West Coast
+1104~Santa Rosa Plaza~~Santa Rosa~CA~25000~~~~~TRUE~3~M~District~2~Type~Strip Center~Warehouse~West Coast
+1105~Shops at Mission Viejo~~Mission Viejo~CA~30000~~~~~TRUE~3~TU~District~2~Type~Outlet~Warehouse~West Coast
+
+
+DESCRIPTION
+Sample transactions which DO use Transaction Types.
+
+Options~True~\~True
+S~1101~Brea Mall~~Brea~CA~10000~~~11/3/2003~~TRUE~3~M W F~RS003
+C~1101~District~1~Type~Suburban Mall~Warehouse~West Coast
+S~1102~Fashion Valley Mall~~San Diego~CA~15000~~~~~TRUE~3~TU W TH~RS003
+C~1102~District~1~Type~Urban Mall~Warehouse~West Coast
+S~1103~Laguna Hills Mall~~Laguna Hills~CA~20000~~~~~TRUE~3~TU TH~
+C~1103~District~1~Type~Suburban Mall~Warehouse~West Coast
+S~1104~Santa Rosa Plaza~~Santa Rosa~CA~25000~~~~~TRUE~3~M~
+C~1104~District~2~Type~Strip Center~Warehouse~West Coast
+S~1105~Shops at Mission Viejo~~Mission Viejo~CA~30000~~~~~TRUE~3~TU~RS002
+C~1105~District~2~Type~Outlet~Warehouse~West Coast

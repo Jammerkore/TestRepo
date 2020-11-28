@@ -1,0 +1,87 @@
+--dv =============================================
+--dv Modified date: 4/18/2017
+--dv Notes:	
+--dv History: TT#1966-MD - JSmith- DC Fulfillment
+--dv ============================================= 
+
+CREATE PROCEDURE [dbo].[MID_METHOD_DC_FULFILLMENT_UPSERT] 
+	@METHOD_RID int, 
+	@SPLIT_OPTION int,
+	@APPLY_MINIMUMS_IND char(1),
+	@PRIORITIZE_TYPE char(1),
+	@HEADER_FIELD int,
+	@HCG_RID int,
+	@HEADERS_ORDER int,
+	@STORES_ORDER int,
+	@FIELD_DATA_TYPE int,
+	@SPLIT_BY_OPTION int,      				
+	@SPLIT_BY_RESERVE int,      			
+	@APPLY_BY int,
+	@WITHIN_DC int,
+	@STORE_ORDER DC_FULFILLMENT_STORE_ORDER_TYPE READONLY
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	EXEC [dbo].[MID_METHOD_DC_FULFILLMENT_DELETE] @METHOD_RID
+
+	IF @HCG_RID = -1 
+	   SET @HCG_RID = null
+
+	INSERT INTO [dbo].[METHOD_DC_FULFILLMENT]
+		(
+		METHOD_RID, 
+		SPLIT_OPTION,
+		APPLY_MINIMUMS_IND,
+		PRIORITIZE_TYPE,
+		HEADER_FIELD,
+		HCG_RID,
+		HEADERS_ORDER,
+		STORES_ORDER,
+		FIELD_DATA_TYPE,
+		SPLIT_BY_OPTION,      				
+		SPLIT_BY_RESERVE,      			
+		APPLY_BY,
+		WITHIN_DC 
+		)
+	VALUES 
+		(
+		@METHOD_RID, 
+		@SPLIT_OPTION,
+		@APPLY_MINIMUMS_IND,
+		@PRIORITIZE_TYPE,
+		@HEADER_FIELD,
+		@HCG_RID,
+		@HEADERS_ORDER,
+		@STORES_ORDER,
+		@FIELD_DATA_TYPE,
+		@SPLIT_BY_OPTION,      				
+		@SPLIT_BY_RESERVE,      			
+		@APPLY_BY,
+		@WITHIN_DC 
+		)
+
+	INSERT INTO [dbo].[METHOD_DC_FULFILLMENT_STORE_ORDER] 
+		(
+		METHOD_RID,
+		SEQ,
+		DIST_CENTER,
+		SCG_RID
+		)
+	SELECT @METHOD_RID,
+		SEQ,
+		DIST_CENTER,
+		SCG_RID
+	FROM @STORE_ORDER
+
+	SELECT @@ROWCOUNT;
+
+END
+GO
+
+
+
+
+
+
+

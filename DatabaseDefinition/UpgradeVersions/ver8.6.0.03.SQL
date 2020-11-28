@@ -1,0 +1,4 @@
+﻿/*RELEASE 8.6.0.03 8-10-2016 TT#1800-MD-JSmith-Store Attribute - RESERVE STORE switching sets. */
+UPDATE STORES SET LEAD_TIME = 0 where LEAD_TIME is null
+UPDATE STORES SET SELLING_SQ_FT = 0 where SELLING_SQ_FT is null
+GO

@@ -1,0 +1,9 @@
+/* Begin TT#43 - stodd - projected sales */
+/* Add foreign key constraints to table "METHOD_GLOBAL_LOCK_GRP_LVL".                       */
+ALTER TABLE "METHOD_GLOBAL_LOCK_GRP_LVL"
+	ADD CONSTRAINT "MT_GL_L_MT_GL_L_GRP_LVL_FK1" FOREIGN KEY (
+		"METHOD_RID")
+	 REFERENCES "METHOD_GLOBAL_LOCK" (
+		"METHOD_RID") ON UPDATE NO ACTION ON DELETE NO ACTION  
+
+GO

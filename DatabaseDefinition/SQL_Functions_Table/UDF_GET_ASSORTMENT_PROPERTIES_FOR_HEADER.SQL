@@ -1,0 +1,34 @@
+--dv Create date:	9/30/2013
+--dv Description:	Gets assortment data for a header
+--dv History:  TT#2066-MD - JSmith - Ship to Date validation.  Is this how it should be working
+--dv =============================================
+CREATE FUNCTION [dbo].[UDF_GET_ASSORTMENT_PROPERTIES_FOR_HEADER]
+(	
+	@headerRID int
+)
+RETURNS TABLE 
+AS
+RETURN 
+(
+	SELECT 
+		HDR_RID, 
+		COALESCE(RESERVE,0) as RESERVE, 
+		COALESCE(RESERVE_TYPE_IND,0) as RESERVE_TYPE_IND, 
+		COALESCE(SG_RID,-1) as SG_RID, 
+		COALESCE(VARIABLE_TYPE,0) as VARIABLE_TYPE, 
+		VARIABLE_NUMBER, 
+		INCL_ONHAND, 
+		INCL_INTRANSIT, 
+		INCL_SIMILAR_STORES, 
+		INCL_COMMITTED, 
+		AVERAGE_BY, 
+		COALESCE(GRADE_BOUNDARY_IND,0) as GRADE_BOUNDARY_IND, 
+		CDR_RID, 
+		COALESCE(ANCHOR_HN_RID,-1) as ANCHOR_HN_RID, 
+		COALESCE(USER_RID,1) as USER_RID, 
+		LAST_PROCESS_DATETIME,
+		BEGIN_DAY_CDR_RID 
+	FROM ASSORTMENT_PROPERTIES 
+	WHERE HDR_RID = @headerRID
+)
+GO

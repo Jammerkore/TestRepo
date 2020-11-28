@@ -1,0 +1,9 @@
+﻿alter table "METHOD_GROUP_ALLOCATION"
+	add constraint "METHOD_GROUP_ALLOCATION_PHL_FK7" foreign key (
+		"ON_HAND_PH_RID",
+		"ON_HAND_PHL_SEQUENCE")
+	 references "PRODUCT_HIERARCHY_LEVELS" (
+		"PH_RID",
+		"PHL_SEQUENCE")  
+
+go

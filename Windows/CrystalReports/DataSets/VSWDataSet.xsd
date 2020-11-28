@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="VSWDataSet" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="VSWDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_DataSetName="VSWDataSet" msprop:Generator_UserDSName="VSWDataSet">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="VSWDataTable" msprop:Generator_UserTableName="VSWDataTable" msprop:Generator_RowEvArgName="VSWDataTableRowChangeEvent" msprop:Generator_TableVarName="tableVSWDataTable" msprop:Generator_TablePropName="VSWDataTable" msprop:Generator_RowDeletingName="VSWDataTableRowDeleting" msprop:Generator_RowChangingName="VSWDataTableRowChanging" msprop:Generator_RowDeletedName="VSWDataTableRowDeleted" msprop:Generator_RowEvHandlerName="VSWDataTableRowChangeEventHandler" msprop:Generator_TableClassName="VSWDataTableDataTable" msprop:Generator_RowChangedName="VSWDataTableRowChanged" msprop:Generator_RowClassName="VSWDataTableRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="HN_RID" msprop:Generator_ColumnVarNameInTable="columnHN_RID" msprop:Generator_ColumnPropNameInRow="HN_RID" msprop:Generator_ColumnPropNameInTable="HN_RIDColumn" msprop:Generator_UserColumnName="HN_RID" type="xs:int" minOccurs="0" />
+              <xs:element name="BN_ID" msdata:Caption="Characteristic" msprop:Generator_ColumnVarNameInTable="columnBN_ID" msprop:Generator_ColumnPropNameInRow="BN_ID" msprop:Generator_ColumnPropNameInTable="BN_IDColumn" msprop:Generator_UserColumnName="BN_ID" type="xs:string" minOccurs="0" />
+              <xs:element name="ST_ID" msdata:Caption="Value" msprop:Generator_ColumnVarNameInTable="columnST_ID" msprop:Generator_ColumnPropNameInRow="ST_ID" msprop:Generator_ColumnPropNameInTable="ST_IDColumn" msprop:Generator_UserColumnName="ST_ID" type="xs:string" minOccurs="0" />
+              <xs:element name="STORE_NAME" msprop:Generator_ColumnVarNameInTable="columnSTORE_NAME" msprop:Generator_ColumnPropNameInRow="STORE_NAME" msprop:Generator_ColumnPropNameInTable="STORE_NAMEColumn" msprop:Generator_UserColumnName="STORE_NAME" type="xs:string" minOccurs="0" />
+              <xs:element name="STORE_TEXT" msprop:Generator_ColumnVarNameInTable="columnSTORE_TEXT" msprop:Generator_ColumnPropNameInRow="STORE_TEXT" msprop:Generator_ColumnPropNameInTable="STORE_TEXTColumn" msprop:Generator_UserColumnName="STORE_TEXT" type="xs:string" minOccurs="0" />
+              <xs:element name="SG_RID" msprop:Generator_ColumnVarNameInTable="columnSG_RID" msprop:Generator_ColumnPropNameInRow="SG_RID" msprop:Generator_ColumnPropNameInTable="SG_RIDColumn" msprop:Generator_UserColumnName="SG_RID" type="xs:int" minOccurs="0" />
+              <xs:element name="SG_ID" msprop:nullValue="_empty" msprop:Generator_ColumnPropNameInRow="SG_ID" msprop:Generator_ColumnVarNameInTable="columnSG_ID" msprop:Generator_ColumnPropNameInTable="SG_IDColumn" msprop:Generator_UserColumnName="SG_ID" type="xs:string" minOccurs="0" />
+              <xs:element name="SGL_RID" msprop:Generator_ColumnVarNameInTable="columnSGL_RID" msprop:Generator_ColumnPropNameInRow="SGL_RID" msprop:Generator_ColumnPropNameInTable="SGL_RIDColumn" msprop:Generator_UserColumnName="SGL_RID" type="xs:int" minOccurs="0" />
+              <xs:element name="SGL_ID" msprop:Generator_ColumnVarNameInTable="columnSGL_ID" msprop:Generator_ColumnPropNameInRow="SGL_ID" msprop:Generator_ColumnPropNameInTable="SGL_IDColumn" msprop:Generator_UserColumnName="SGL_ID" type="xs:string" minOccurs="0" />
+              <xs:element name="VSW" msprop:Generator_ColumnVarNameInTable="columnVSW" msprop:Generator_ColumnPropNameInRow="VSW" msprop:Generator_ColumnPropNameInTable="VSWColumn" msprop:Generator_UserColumnName="VSW" type="xs:string" minOccurs="0" />
+              <xs:element name="MIN_SHIP_QTY" msprop:Generator_ColumnVarNameInTable="columnMIN_SHIP_QTY" msprop:Generator_ColumnPropNameInRow="MIN_SHIP_QTY" msprop:Generator_ColumnPropNameInTable="MIN_SHIP_QTYColumn" msprop:Generator_UserColumnName="MIN_SHIP_QTY" type="xs:int" minOccurs="0" />
+              <xs:element name="PERCENT_PACK_THRESHOLD" msprop:Generator_ColumnVarNameInTable="columnPERCENT_PACK_THRESHOLD" msprop:Generator_ColumnPropNameInRow="PERCENT_PACK_THRESHOLD" msprop:Generator_ColumnPropNameInTable="PERCENT_PACK_THRESHOLDColumn" msprop:Generator_UserColumnName="PERCENT_PACK_THRESHOLD" type="xs:decimal" minOccurs="0" />
+              <xs:element name="ITEM_MAX_VALUE" msprop:Generator_ColumnVarNameInTable="columnITEM_MAX_VALUE" msprop:Generator_ColumnPropNameInRow="ITEM_MAX_VALUE" msprop:Generator_ColumnPropNameInTable="ITEM_MAX_VALUEColumn" msprop:Generator_UserColumnName="ITEM_MAX_VALUE" type="xs:int" minOccurs="0" />
+              <xs:element name="FWOS_MAX_MODEL_NAME_OR_FLOAT" msprop:Generator_ColumnVarNameInTable="columnFWOS_MAX_MODEL_NAME_OR_FLOAT" msprop:Generator_ColumnPropNameInRow="FWOS_MAX_MODEL_NAME_OR_FLOAT" msprop:Generator_ColumnPropNameInTable="FWOS_MAX_MODEL_NAME_OR_FLOATColumn" msprop:Generator_UserColumnName="FWOS_MAX_MODEL_NAME_OR_FLOAT" type="xs:string" minOccurs="0" />
+              <xs:element name="FWOS_MAX_TYPE" msprop:Generator_ColumnVarNameInTable="columnFWOS_MAX_TYPE" msprop:Generator_ColumnPropNameInRow="FWOS_MAX_TYPE" msprop:Generator_ColumnPropNameInTable="FWOS_MAX_TYPEColumn" msprop:Generator_UserColumnName="FWOS_MAX_TYPE" type="xs:int" minOccurs="0" />
+              <xs:element name="PUSH_TO_BACKSTOCK" msprop:Generator_ColumnVarNameInTable="columnPUSH_TO_BACKSTOCK" msprop:Generator_ColumnPropNameInRow="PUSH_TO_BACKSTOCK" msprop:Generator_ColumnPropNameInTable="PUSH_TO_BACKSTOCKColumn" msprop:Generator_UserColumnName="PUSH_TO_BACKSTOCK" type="xs:int" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

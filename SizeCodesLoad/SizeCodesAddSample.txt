@@ -1,0 +1,16 @@
+71942,72,Ounces,Volume Measurements
+73203,64,Ounces,Volume Measurements
+10132,Small,30,Adult Males
+10133,Small,36,Adult Males
+10134,Medium,30,Adult Males
+10135,Large,30,Adult Males,
+10136,X Large,30,Adult Males,
+10137,XX Large,30,Adult Males
+10138,XX Large,32,Adult Males
+10139,XX Large,34,Adult Males
+10140,14,Adult Males
+10141,14,30-31,Adult Males
+10142,14,32,Adult Males,
+10143,14,32-33,Adult Males
+10144,14,34,Adult Males
+10145,XX Large,36,Adult Males

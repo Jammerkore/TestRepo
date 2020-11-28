@@ -1,0 +1,2390 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{77CC9E63-AF51-4736-9A26-43C12B66491B}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>MIDRetail.Windows</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>MIDRetail.Windows</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\midretailinccert.pfx</AssemblyOriginatorKeyFile>
+    <PublishUrl>http://localhost/MIDRetail.Windows/</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug Oracle|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>MIDRetail.Windows.xml</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>3</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release Oracle|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>MIDRetail.Windows.xml</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>3</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Full Debug SQL Server|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug SQL Server|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release SQL Server|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <FileAlignment>4096</FileAlignment>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <Optimize>true</Optimize>
+    <FileAlignment>4096</FileAlignment>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug Oracle|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug Oracle\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <DocumentationFile>MIDRetail.Windows.xml</DocumentationFile>
+    <WarningLevel>3</WarningLevel>
+    <FileAlignment>4096</FileAlignment>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release Oracle|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Release Oracle\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <DocumentationFile>MIDRetail.Windows.xml</DocumentationFile>
+    <WarningLevel>3</WarningLevel>
+    <FileAlignment>4096</FileAlignment>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Full Debug SQL Server|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Full Debug SQL Server\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <FileAlignment>4096</FileAlignment>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug SQL Server|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug SQL Server\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <FileAlignment>4096</FileAlignment>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release SQL Server|x86' ">
+    <OutputPath>bin\x86\Release SQL Server\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <Optimize>true</Optimize>
+    <FileAlignment>4096</FileAlignment>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Infragistics4.Documents.Reports.v14.1, Version=14.1.20141.2082, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.UltraWinDataSource.v14.1, Version=14.1.20141.2082, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.UltraWinEditors.v14.1, Version=14.1.20141.2082, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.UltraWinStatusBar.v14.1, Version=14.1.20141.2082, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.UltraWinTabControl.v14.1, Version=14.1.20141.2082, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.v14.1, Version=14.1.20141.2082, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.UltraWinTree.v14.1, Version=14.1.20141.2082, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.UltraWinToolbars.v14.1, Version=14.1.20141.2082, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.UltraWinMaskedEdit.v14.1, Version=14.1.20141.2082, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.UltraWinListBar.v14.1, Version=14.1.20141.2082, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.UltraWinGrid.v14.1, Version=14.1.20141.2082, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.UltraWinGrid.ExcelExport.v14.1, Version=14.1.20141.2082, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.UltraWinDock.v14.1, Version=14.1.20141.2082, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.UltraWinChart.v14.1, Version=14.1.20141.2082, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.Misc.v14.1, Version=14.1.20141.2082, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Shared.v14.1, Version=14.1.20141.2082, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Documents.Excel.v14.1, Version=14.1.20141.2082, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Documents.Core.v14.1, Version=14.1.20141.2082, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CrystalDecisions.CrystalReports.Engine, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
+    <Reference Include="CrystalDecisions.ReportSource, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
+    <Reference Include="CrystalDecisions.Shared, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
+    <Reference Include="CrystalDecisions.Windows.Forms, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
+    <Reference Include="C1.Win.C1FlexGrid.2, Version=2.6.20073.357, Culture=neutral, PublicKeyToken=79882d576c6336da, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Microsoft.VisualBasic">
+      <Name>Microsoft.VisualBasic</Name>
+    </Reference>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Design">
+      <Name>System.Design</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Drawing.Design">
+      <Name>System.Drawing.Design</Name>
+    </Reference>
+    <Reference Include="System.Runtime.Remoting">
+      <Name>System.Runtime.Remoting</Name>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization.Formatters.Soap">
+      <Name>System.Runtime.Serialization.Formatters.Soap</Name>
+    </Reference>
+    <Reference Include="System.Web.Services">
+      <Name>System.Web.Services</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+    <COMReference Include="Microsoft.Office.Interop.Excel">
+      <Guid>{00020813-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>6</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+    </COMReference>
+    <COMReference Include="stdole">
+      <Guid>{00020430-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+    </COMReference>
+    <COMReference Include="VBIDE">
+      <Guid>{0002E157-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>5</VersionMajor>
+      <VersionMinor>3</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+    </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="About.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AddToFavorites.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AddToFavorites.Designer.cs">
+      <DependentUpon>AddToFavorites.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AddToFavoritesCreateFolder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AddToFavoritesCreateFolder.Designer.cs">
+      <DependentUpon>AddToFavoritesCreateFolder.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AdvancedStoreEligibility.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MethodCreateMasterHeaders.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MethodDCFulfillment.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MethodDCCartonRounding.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ProcessControlForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ProcessControlForm.Designer.cs">
+      <DependentUpon>ProcessControlForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="HeaderCharacteristics.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="HeaderCharacteristics.Designer.cs">
+      <DependentUpon>HeaderCharacteristics.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LoginMessageDisplay.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MethodDCCartonRounding.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MethodDCCartonRounding.resx</DependentUpon>
+    </Compile>
+    <Compile Include="MIDFilterStoreGroupTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ProgressForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ProgressForm.Designer.cs">
+      <DependentUpon>ProgressForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SchedulerJobManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SchedulerJobManager.Designer.cs">
+      <DependentUpon>SchedulerJobManager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SearchResultsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SearchResultsForm.Designer.cs">
+      <DependentUpon>SearchResultsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AllocationAnalysisForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AllocationAnalysisForm.Designer.cs">
+      <DependentUpon>AllocationAnalysisForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AllocationViewSelection.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AllocationWorkflow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AllocationWorkspaceExplorer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="AllocationWorkspaceExplorer.Designer.cs">
+      <DependentUpon>AllocationWorkspaceExplorer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AssignUser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AssortmentBasisBase.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AssortmentExplorer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="AssortmentExplorer.Designer.cs">
+      <DependentUpon>AssortmentExplorer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AssortmentViewSelection.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AssortmentViewSelection.Designer.cs">
+      <DependentUpon>AssortmentViewSelection.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AssortmentView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AssortmentView.designer.cs">
+      <DependentUpon>AssortmentView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AssortmentView.Extended.cs">
+      <DependentUpon>AssortmentView.cs</DependentUpon>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AssortmentViewSave.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AssortmentViewSave.designer.cs">
+      <DependentUpon>AssortmentViewSave.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AssortmentWorkspaceExplorer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="AssortmentWorkspaceExplorer.Designer.cs">
+      <DependentUpon>AssortmentWorkspaceExplorer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AuditViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AuditViewer.Designer.cs">
+      <DependentUpon>AuditViewer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AuditFilter.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AuditReclassViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AverageUnitDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AverageUnitDialog.designer.cs">
+      <DependentUpon>AverageUnitDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="BaseWindowsRoutines.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BasisSizeMethod.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="BuildsPacksMethod.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CalendarDateSelector.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CalendarDisplay.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CalendarModelList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CalendarModelMaint.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CalendarWeek53Selector.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ChangePassword.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Charts.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ClientStartup.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ColorBrowser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ColorBrowser.designer.cs">
+      <DependentUpon>ColorBrowser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ColorNodeSearch.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ColorNodeSearch.designer.cs">
+      <DependentUpon>ColorNodeSearch.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ColorSelect.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ComponentMatch.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ComponentMatch.designer.cs">
+      <DependentUpon>ComponentMatch.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FilterAssortmentExplorer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FilterAssortmentExplorer.Designer.cs">
+      <DependentUpon>FilterAssortmentExplorer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FilterHeaderExplorer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FilterHeaderExplorer.Designer.cs">
+      <DependentUpon>FilterHeaderExplorer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MIDFilterAssortmentTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="MIDFilterHeaderTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FilterBuilder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ForecastAnalysisForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ForecastAnalysisForm.Designer.cs">
+      <DependentUpon>ForecastAnalysisForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CrystalReports\AllocationByStore1.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AllocationByStore.rpt</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CrystalReports\DataSets\AllocationByStore.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AllocationByStore.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="MIDFilterStoreTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ReportAllocationByStoreForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ReportAllocationByStoreForm.Designer.cs">
+      <DependentUpon>ReportAllocationByStoreForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PlanChainLadderChart.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CrystalReports\DataSets\UserOptionsReviewDataSet.cs">
+      <DependentUpon>UserOptionsReviewDataSet.xsd</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CrystalReports\UserOptionsReview.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>UserOptionsReview.rpt</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="PlanChainLadderManager.cs" />
+    <Compile Include="PlanChainLadderManagerData.cs" />
+    <Compile Include="PlanChainLadderView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PlanChainLadderView.Designer.cs">
+      <DependentUpon>PlanChainLadderView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PlanViewRT.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PlanViewRT.Designer.cs">
+      <DependentUpon>PlanViewRT.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GroupAllocationMethod.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ReportUserOptionsReviewForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ReportUserOptionsReviewForm.Designer.cs">
+      <DependentUpon>ReportUserOptionsReviewForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CrystalReports\AuditReclassReport2.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AuditReclassReport2.rpt</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CopyForecastMethod.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CrystalReports\DataSets\AllocationAuditDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AllocationAuditDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="CrystalReports\DataSets\AuditReclassDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AuditReclassDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="CrystalReports\DataSets\ChainSetPercentDataSet.cs">
+      <DependentUpon>ChainSetPercentDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="CrystalReports\DataSets\CharacteristicDataSet.Designer.cs">
+      <DependentUpon>CharacteristicDataSet.xsd</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="CrystalReports\DataSets\ChainSetPercentDataSet.Designer.cs">
+      <DependentUpon>ChainSetPercentDataSet.xsd</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="CrystalReports\DataSets\UserOptionsReviewDataSet.Designer.cs">
+      <DependentUpon>UserOptionsReviewDataSet.xsd</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="CrystalReports\DataSets\SizeCurveSimilarStoresDataSet1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SizeCurveSimilarStoresDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="CrystalReports\DataSets\SizeCurveToleranceDataSet.Designer.cs">
+      <DependentUpon>SizeCurveToleranceDataSet.xsd</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="CrystalReports\DataSets\SizeCurveDataSet.Designer.cs">
+      <DependentUpon>SizeCurveDataSet.xsd</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="CrystalReports\DataSets\VSWDataSet.Designer.cs">
+      <DependentUpon>VSWDataSet.xsd</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="CrystalReports\DataSets\DailyPercentagesDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DailyPercentagesDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="CrystalReports\DataSets\ForecastAuditMerchandiseDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ForecastAuditMerchandiseDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="CrystalReports\DataSets\ForecastAuditModifySalesDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ForecastAuditModifySalesDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="CrystalReports\DataSets\ForecastAuditOTSForecastDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ForecastAuditOTSForecastDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="CrystalReports\DataSets\ForecastLevelDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ForecastLevelDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="CrystalReports\DataSets\ForecastReportNamesDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ForecastReportNamesDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="CrystalReports\DataSets\ForecastTypeDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ForecastTypeDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="CrystalReports\DataSets\GetReportsDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>GetReportsDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="CrystalReports\DataSets\PurgeDatesDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PurgeDatesDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="CrystalReports\DataSets\StockMinMaxDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>StockMinMaxDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="CrystalReports\DataSets\StoreCapacityDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>StoreCapacityDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="CrystalReports\DataSets\StoreEligibilityDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>StoreEligibilityDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="CrystalReports\DataSets\StoreGradesDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>StoreGradesDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="CrystalReports\DataSets\VelocityGradesDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>VelocityGradesDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="CustomWindowsRoutines.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DailyPctModelMaint.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DateSelectorSingle.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DisplayMessages.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DynamicSwitchDateSelector.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EligibilityModelMaint.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EmailMessageForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EmailMessageForm.Designer.cs">
+      <DependentUpon>EmailMessageForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ExcludeLowLevels.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Explorer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ExplorerAddressBlock.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExplorerBase.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ExplorerBase.Designer.cs">
+      <DependentUpon>ExplorerBase.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ExportMethod.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ExportMethod.Designer.cs">
+      <DependentUpon>ExportMethod.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FillSizeHolesMethod.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FilterStoreExplorer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FilterStoreExplorer.Designer.cs">
+      <DependentUpon>FilterStoreExplorer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FilterProperties.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ForecastBalance.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ForecastBalModelMaint.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ForecastingModelMaint.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ForecastModifySales.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ForecastSpreadMethod.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ForecastWorkflow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormInterfaces.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FWOSMaxModelMaint.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FWOSModifierModelMaint.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GeneralAllocationMethod.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AssortmentProperties.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GlobalOptions.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GlobalOptionsSMTP.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GlobalOptionsSMTP.Designer.cs">
+      <DependentUpon>GlobalOptionsSMTP.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GlobalUnlockMethod.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="HeaderInformation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="HierarchyDetails.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="HierarchyListViewItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HierarchyProperties.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="IndexToAverageDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="IndexToAverageDialog.Designer.cs">
+      <DependentUpon>IndexToAverageDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="InUseDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="JobProperties.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ListViewItemComparer.cs" />
+    <Compile Include="Login.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MaskedEdit.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="MatrixMethod.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MemoryViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MerchandiseExplorer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MIDAssortmentNode.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="MIDColorNode.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="MIDExport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MIDExport.designer.cs">
+      <DependentUpon>MIDExport.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MIDFilterNode.cs" />
+    <Compile Include="MIDFormBase.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MIDHierarchyNode.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="MIDMessageBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MIDMessageBox.designer.cs">
+      <DependentUpon>MIDMessageBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MIDProductCharNode.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="MIDStoreNode.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="MIDTag.cs" />
+    <Compile Include="MIDTaskListNode.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="MIDWorkflowMethodTreeNode.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ModelFormBase.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NameDescriptionDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NameDescriptionDialog.Designer.cs">
+      <DependentUpon>NameDescriptionDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NameDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NodeProperties.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NodeProperties.Designer.cs">
+      <DependentUpon>NodeProperties.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OTSPlanMethod.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OTSPlanSelection.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OTSViewMaintenance.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OverrideLowLevelModel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OverrideLowLevelModel.designer.cs">
+      <DependentUpon>OverrideLowLevelModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OverrideLowLevelVersions.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OverrideMethod.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PlanView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PlanView.Designer.cs">
+      <DependentUpon>PlanView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PlanViewSave.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PlanViewSave.Designer.cs">
+      <DependentUpon>PlanViewSave.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ProductCharacteristicMaint.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ProductCharacteristicMaint.designer.cs">
+      <DependentUpon>ProductCharacteristicMaint.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ProductCharProperties.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ProductCharProperties.designer.cs">
+      <DependentUpon>ProductCharProperties.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ProductCharSearch.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ProductCharSearch.designer.cs">
+      <DependentUpon>ProductCharSearch.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="QuickFilter.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ReleaseResources.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ReportAllocationAuditSetup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ReportForcastAuditSetup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ReportFormBase.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ReportNodePropertiesOverridesSetup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ReportParam.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CrystalReports\AllocationAudit.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AllocationAudit.rpt</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CrystalReports\ForecastAuditMerchandise.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ForecastAuditMerchandise.rpt</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CrystalReports\ForecastAuditMethod.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ForecastAuditMethod.rpt</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CrystalReports\NodePropertiesOverrides.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>NodePropertiesOverrides.rpt</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ReportViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RollupMethod.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RowColChooser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RowColChooserComponentPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="RowColChooserComponentPanel.designer.cs">
+      <DependentUpon>RowColChooserComponentPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RowColChooserOrderPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="RowColChooserPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="RowColChooserSimplePanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="RuleMethod.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SalesModifierModelMaint.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SaveAs.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SaveDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ScheduleBrowser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ScheduleBrowserFlexGrid.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ScheduleProperties.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Security.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SecurityInheritance.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SelectSizeCode.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SharedRoutines.cs" />
+    <Compile Include="SimilarStoreSelect.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SizeAlternatesMaint.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SizeCodeMaint.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SizeConstraintsFormBase.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SizeConstraintsMaint.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SizeCurveMaint.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SizeCurveMethod.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SizeCurveMethod.Designer.cs">
+      <DependentUpon>SizeCurveMethod.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SizeFringeMaint.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SizeGroup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SizeMethodsFormBase.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SizeNeedMethod.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SizeView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SizeWarehouseMethod.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SortGridViews.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SpecialRequestProperties.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FilterMonitorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FilterMonitorForm.Designer.cs">
+      <DependentUpon>FilterMonitorForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SQLMonitorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SQLMonitorForm.Designer.cs">
+      <DependentUpon>SQLMonitorForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StatusBarWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="StatusBarWindow.Designer.cs">
+      <DependentUpon>StatusBarWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StockModifierModelMaint.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="StoreCharacteristics.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="StoreCharacteristics.Designer.cs">
+      <DependentUpon>StoreCharacteristics.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CharacteristicsEditorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CharacteristicsEditorForm.Designer.cs">
+      <DependentUpon>CharacteristicsEditorForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StoreGroupExplorer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="StoreGroupExplorer.Designer.cs">
+      <DependentUpon>StoreGroupExplorer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StoreProfileMaintFieldsByCol.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="StoreProfileMaintFieldsByCol.Designer.cs">
+      <DependentUpon>StoreProfileMaintFieldsByCol.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StoreProfileMaintSingleStore.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="StoreProfileMaintSingleStore.Designer.cs">
+      <DependentUpon>StoreProfileMaintSingleStore.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StoreProfileMaintForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="StoreProfileMaintForm.Designer.cs">
+      <DependentUpon>StoreProfileMaintForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StyleView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SummaryView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TaskListExplorer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TaskListExplorer.Designer.cs">
+      <DependentUpon>TaskListExplorer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TaskListProperties.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TextDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TextEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ThemeProperties.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UltraGridSearchReplace.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UltraTree DropHightLight DrawFilter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UserActivityControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserActivityControl.Designer.cs">
+      <DependentUpon>UserActivityControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserActvityExplorer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserOptions.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="VelocityMethod.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ViewSave.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ViewSave.designer.cs">
+      <DependentUpon>ViewSave.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WindowsUtilities.cs" />
+    <Compile Include="WorkflowMethodExplorer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WorkflowMethodFormBase.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <EmbeddedResource Include="About.resx">
+      <DependentUpon>About.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AddToFavorites.resx">
+      <DependentUpon>AddToFavorites.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AddToFavoritesCreateFolder.resx">
+      <DependentUpon>AddToFavoritesCreateFolder.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AdvancedStoreEligibility.resx">
+      <DependentUpon>AdvancedStoreEligibility.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MethodCreateMasterHeaders.resx">
+      <DependentUpon>MethodCreateMasterHeaders.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MethodDCCartonRounding.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MethodDCCartonRounding.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HeaderCharacteristics.resx">
+      <DependentUpon>HeaderCharacteristics.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LoginMessageDisplay.resx">
+      <DependentUpon>LoginMessageDisplay.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MethodDCFulfillment.resx">
+      <DependentUpon>MethodDCFulfillment.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProcessControlForm.resx">
+      <DependentUpon>ProcessControlForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProgressForm.resx">
+      <DependentUpon>ProgressForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SchedulerJobManager.resx">
+      <DependentUpon>SchedulerJobManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SearchResultsForm.resx">
+      <DependentUpon>SearchResultsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AllocationAnalysisForm.resx">
+      <DependentUpon>AllocationAnalysisForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AllocationViewSelection.resx">
+      <DependentUpon>AllocationViewSelection.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AllocationWorkflow.resx">
+      <DependentUpon>AllocationWorkflow.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AllocationWorkspaceExplorer.resx">
+      <DependentUpon>AllocationWorkspaceExplorer.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AssignUser.resx">
+      <DependentUpon>AssignUser.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AssortmentBasisBase.resx">
+      <DependentUpon>AssortmentBasisBase.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AssortmentExplorer.resx">
+      <DependentUpon>AssortmentExplorer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AssortmentViewSelection.resx">
+      <DependentUpon>AssortmentViewSelection.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AssortmentView.resx">
+      <DependentUpon>AssortmentView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AssortmentViewSave.resx">
+      <DependentUpon>AssortmentViewSave.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AssortmentWorkspaceExplorer.resx">
+      <DependentUpon>AssortmentWorkspaceExplorer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AuditViewer.resx">
+      <DependentUpon>AuditViewer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AuditFilter.resx">
+      <DependentUpon>AuditFilter.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AuditReclassViewer.resx">
+      <DependentUpon>AuditReclassViewer.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AverageUnitDialog.resx">
+      <DependentUpon>AverageUnitDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="BasisSizeMethod.resx">
+      <DependentUpon>BasisSizeMethod.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="BuildsPacksMethod.resx">
+      <DependentUpon>BuildsPacksMethod.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CalendarDateSelector.resx">
+      <DependentUpon>CalendarDateSelector.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CalendarDisplay.resx">
+      <DependentUpon>CalendarDisplay.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CalendarModelList.resx">
+      <DependentUpon>CalendarModelList.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CalendarModelMaint.resx">
+      <DependentUpon>CalendarModelMaint.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CalendarWeek53Selector.resx">
+      <DependentUpon>CalendarWeek53Selector.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ChangePassword.resx">
+      <DependentUpon>ChangePassword.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Charts.resx">
+      <DependentUpon>Charts.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ColorBrowser.resx">
+      <DependentUpon>ColorBrowser.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ColorNodeSearch.resx">
+      <DependentUpon>ColorNodeSearch.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ColorSelect.resx">
+      <DependentUpon>ColorSelect.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ComponentMatch.resx">
+      <DependentUpon>ComponentMatch.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FilterAssortmentExplorer.resx">
+      <DependentUpon>FilterAssortmentExplorer.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FilterHeaderExplorer.resx">
+      <DependentUpon>FilterHeaderExplorer.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FilterBuilder.resx">
+      <DependentUpon>FilterBuilder.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ForecastAnalysisForm.resx">
+      <DependentUpon>ForecastAnalysisForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CrystalReports\AllocationByStore.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>AllocationByStore1.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ReportAllocationByStoreForm.resx">
+      <DependentUpon>ReportAllocationByStoreForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PlanChainLadderChart.resx">
+      <DependentUpon>PlanChainLadderChart.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CrystalReports\UserOptionsReview.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>UserOptionsReview.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PlanChainLadderView.resx">
+      <DependentUpon>PlanChainLadderView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PlanViewRT.resx">
+      <DependentUpon>PlanViewRT.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GroupAllocationMethod.resx">
+      <DependentUpon>GroupAllocationMethod.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ReportUserOptionsReviewForm.resx">
+      <DependentUpon>ReportUserOptionsReviewForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CrystalReports\AuditReclassReport2.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>AuditReclassReport2.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CopyForecastMethod.resx">
+      <DependentUpon>CopyForecastMethod.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DailyPctModelMaint.resx">
+      <DependentUpon>DailyPctModelMaint.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DateSelectorSingle.resx">
+      <DependentUpon>DateSelectorSingle.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DynamicSwitchDateSelector.resx">
+      <DependentUpon>DynamicSwitchDateSelector.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EligibilityModelMaint.resx">
+      <DependentUpon>EligibilityModelMaint.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EmailMessageForm.resx">
+      <DependentUpon>EmailMessageForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExcludeLowLevels.resx">
+      <DependentUpon>ExcludeLowLevels.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Explorer.resx">
+      <DependentUpon>Explorer.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExplorerBase.resx">
+      <DependentUpon>ExplorerBase.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExportMethod.resx">
+      <DependentUpon>ExportMethod.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FillSizeHolesMethod.resx">
+      <DependentUpon>FillSizeHolesMethod.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FilterStoreExplorer.resx">
+      <DependentUpon>FilterStoreExplorer.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FilterProperties.resx">
+      <DependentUpon>FilterProperties.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ForecastBalance.resx">
+      <DependentUpon>ForecastBalance.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ForecastBalModelMaint.resx">
+      <DependentUpon>ForecastBalModelMaint.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ForecastingModelMaint.resx">
+      <DependentUpon>ForecastingModelMaint.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ForecastModifySales.resx">
+      <DependentUpon>ForecastModifySales.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ForecastSpreadMethod.resx">
+      <DependentUpon>ForecastSpreadMethod.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ForecastWorkflow.resx">
+      <DependentUpon>ForecastWorkflow.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FWOSMaxModelMaint.resx">
+      <DependentUpon>FWOSMaxModelMaint.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FWOSModifierModelMaint.resx">
+      <DependentUpon>FWOSModifierModelMaint.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GeneralAllocationMethod.resx">
+      <DependentUpon>GeneralAllocationMethod.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AssortmentProperties.resx">
+      <DependentUpon>AssortmentProperties.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GlobalOptions.resx">
+      <DependentUpon>GlobalOptions.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GlobalOptionsSMTP.resx">
+      <DependentUpon>GlobalOptionsSMTP.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GlobalUnlockMethod.resx">
+      <DependentUpon>GlobalUnlockMethod.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HeaderInformation.resx">
+      <DependentUpon>HeaderInformation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HierarchyDetails.resx">
+      <DependentUpon>HierarchyDetails.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HierarchyProperties.resx">
+      <DependentUpon>HierarchyProperties.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="IndexToAverageDialog.resx">
+      <DependentUpon>IndexToAverageDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InUseDialog.resx">
+      <DependentUpon>InUseDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="JobProperties.resx">
+      <DependentUpon>JobProperties.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="licenses.licx" />
+    <EmbeddedResource Include="Login.resx">
+      <DependentUpon>Login.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MaskedEdit.resx">
+      <DependentUpon>MaskedEdit.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MatrixMethod.resx">
+      <DependentUpon>MatrixMethod.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MemoryViewer.resx">
+      <DependentUpon>MemoryViewer.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MerchandiseExplorer.resx">
+      <DependentUpon>MerchandiseExplorer.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MIDExport.resx">
+      <DependentUpon>MIDExport.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MIDFormBase.resx">
+      <DependentUpon>MIDFormBase.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MIDMessageBox.resx">
+      <DependentUpon>MIDMessageBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ModelFormBase.resx">
+      <DependentUpon>ModelFormBase.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NameDescriptionDialog.resx">
+      <DependentUpon>NameDescriptionDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NameDialog.resx">
+      <DependentUpon>NameDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NodeProperties.resx">
+      <DependentUpon>NodeProperties.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OTSPlanMethod.resx">
+      <DependentUpon>OTSPlanMethod.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OTSPlanSelection.resx">
+      <DependentUpon>OTSPlanSelection.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OTSViewMaintenance.resx">
+      <DependentUpon>OTSViewMaintenance.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OverrideLowLevelModel.resx">
+      <DependentUpon>OverrideLowLevelModel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OverrideLowLevelVersions.resx">
+      <DependentUpon>OverrideLowLevelVersions.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OverrideMethod.resx">
+      <DependentUpon>OverrideMethod.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PlanView.resx">
+      <DependentUpon>PlanView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PlanViewSave.resx">
+      <DependentUpon>PlanViewSave.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProductCharacteristicMaint.resx">
+      <DependentUpon>ProductCharacteristicMaint.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProductCharProperties.resx">
+      <DependentUpon>ProductCharProperties.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProductCharSearch.resx">
+      <DependentUpon>ProductCharSearch.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="QuickFilter.resx">
+      <DependentUpon>QuickFilter.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ReleaseResources.resx">
+      <DependentUpon>ReleaseResources.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ReportAllocationAuditSetup.resx">
+      <DependentUpon>ReportAllocationAuditSetup.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ReportForcastAuditSetup.resx">
+      <DependentUpon>ReportForcastAuditSetup.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ReportFormBase.resx">
+      <DependentUpon>ReportFormBase.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ReportNodePropertiesOverridesSetup.resx">
+      <DependentUpon>ReportNodePropertiesOverridesSetup.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ReportParam.resx">
+      <DependentUpon>ReportParam.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CrystalReports\AllocationAudit.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>AllocationAudit.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CrystalReports\ForecastAuditMerchandise.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>ForecastAuditMerchandise.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CrystalReports\ForecastAuditMethod.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>ForecastAuditMethod.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CrystalReports\NodePropertiesOverrides.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>NodePropertiesOverrides.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ReportViewer.resx">
+      <DependentUpon>ReportViewer.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RollupMethod.resx">
+      <DependentUpon>RollupMethod.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RowColChooser.resx">
+      <DependentUpon>RowColChooser.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RowColChooserComponentPanel.resx">
+      <DependentUpon>RowColChooserComponentPanel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RowColChooserOrderPanel.resx">
+      <DependentUpon>RowColChooserOrderPanel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RowColChooserPanel.resx">
+      <DependentUpon>RowColChooserPanel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RowColChooserSimplePanel.resx">
+      <DependentUpon>RowColChooserSimplePanel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RuleMethod.resx">
+      <DependentUpon>RuleMethod.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SalesModifierModelMaint.resx">
+      <DependentUpon>SalesModifierModelMaint.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SaveAs.resx">
+      <DependentUpon>SaveAs.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SaveDialog.resx">
+      <DependentUpon>SaveDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ScheduleBrowser.resx">
+      <DependentUpon>ScheduleBrowser.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ScheduleBrowserFlexGrid.resx">
+      <DependentUpon>ScheduleBrowserFlexGrid.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ScheduleProperties.resx">
+      <DependentUpon>ScheduleProperties.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Security.resx">
+      <DependentUpon>Security.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SecurityInheritance.resx">
+      <DependentUpon>SecurityInheritance.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SelectSizeCode.resx">
+      <DependentUpon>SelectSizeCode.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SimilarStoreSelect.resx">
+      <DependentUpon>SimilarStoreSelect.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SizeAlternatesMaint.resx">
+      <DependentUpon>SizeAlternatesMaint.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SizeCodeMaint.resx">
+      <DependentUpon>SizeCodeMaint.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SizeConstraintsFormBase.resx">
+      <DependentUpon>SizeConstraintsFormBase.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SizeConstraintsMaint.resx">
+      <DependentUpon>SizeConstraintsMaint.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SizeCurveMaint.resx">
+      <DependentUpon>SizeCurveMaint.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SizeCurveMethod.resx">
+      <DependentUpon>SizeCurveMethod.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SizeFringeMaint.resx">
+      <DependentUpon>SizeFringeMaint.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SizeGroup.resx">
+      <DependentUpon>SizeGroup.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SizeMethodsFormBase.resx">
+      <DependentUpon>SizeMethodsFormBase.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SizeNeedMethod.resx">
+      <DependentUpon>SizeNeedMethod.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SizeView.resx">
+      <DependentUpon>SizeView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SizeWarehouseMethod.resx">
+      <DependentUpon>SizeWarehouseMethod.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SortGridViews.resx">
+      <DependentUpon>SortGridViews.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SpecialRequestProperties.resx">
+      <DependentUpon>SpecialRequestProperties.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FilterMonitorForm.resx">
+      <DependentUpon>FilterMonitorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SQLMonitorForm.resx">
+      <DependentUpon>SQLMonitorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StatusBarWindow.resx">
+      <DependentUpon>StatusBarWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StockModifierModelMaint.resx">
+      <DependentUpon>StockModifierModelMaint.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StoreCharacteristics.resx">
+      <DependentUpon>StoreCharacteristics.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CharacteristicsEditorForm.resx">
+      <DependentUpon>CharacteristicsEditorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StoreGroupExplorer.resx">
+      <DependentUpon>StoreGroupExplorer.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StoreProfileMaintFieldsByCol.resx">
+      <DependentUpon>StoreProfileMaintFieldsByCol.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StoreProfileMaintSingleStore.resx">
+      <DependentUpon>StoreProfileMaintSingleStore.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StoreProfileMaintForm.resx">
+      <DependentUpon>StoreProfileMaintForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StyleView.resx">
+      <DependentUpon>StyleView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SummaryView.resx">
+      <DependentUpon>SummaryView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TaskListExplorer.resx">
+      <DependentUpon>TaskListExplorer.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TaskListProperties.resx">
+      <DependentUpon>TaskListProperties.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TextDialog.resx">
+      <DependentUpon>TextDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TextEditor.resx">
+      <DependentUpon>TextEditor.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ThemeProperties.resx">
+      <DependentUpon>ThemeProperties.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UltraGridSearchReplace.resx">
+      <DependentUpon>UltraGridSearchReplace.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserActivityControl.resx">
+      <DependentUpon>UserActivityControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserActvityExplorer.resx">
+      <DependentUpon>UserActvityExplorer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserOptions.resx">
+      <DependentUpon>UserOptions.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="VelocityMethod.resx">
+      <DependentUpon>VelocityMethod.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ViewSave.resx">
+      <DependentUpon>ViewSave.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WorkflowMethodExplorer.resx">
+      <DependentUpon>WorkflowMethodExplorer.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WorkflowMethodFormBase.resx">
+      <DependentUpon>WorkflowMethodFormBase.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{967B4E0D-AD0C-4609-AB67-0FA40C0206D8}" />
+    <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
+    <Service Include="{CF845C55-C321-4742-B673-E6212D061ED9}" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CrystalReports\DataSets\AllocationAuditDataSet.xsc">
+      <DependentUpon>AllocationAuditDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\AllocationAuditDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>AllocationAuditDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="CrystalReports\DataSets\AllocationAuditDataSet.xss">
+      <DependentUpon>AllocationAuditDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\AllocationByStore.xsc">
+      <DependentUpon>AllocationByStore.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\AllocationByStore.xsd">
+      <SubType>Designer</SubType>
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>AllocationByStore.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="CrystalReports\DataSets\AllocationByStore.xss">
+      <DependentUpon>AllocationByStore.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\AuditReclassDataSet.xsc">
+      <DependentUpon>AuditReclassDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\AuditReclassDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>AuditReclassDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="CrystalReports\DataSets\AuditReclassDataSet.xss">
+      <DependentUpon>AuditReclassDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\CharacteristicDataSet.xsc">
+      <DependentUpon>CharacteristicDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\CharacteristicDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>CharacteristicDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="CrystalReports\DataSets\CharacteristicDataSet.xss">
+      <DependentUpon>CharacteristicDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\ChainSetPercentDataSet.xsc">
+      <DependentUpon>ChainSetPercentDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\ChainSetPercentDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>ChainSetPercentDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="CrystalReports\DataSets\ChainSetPercentDataSet.xss">
+      <DependentUpon>ChainSetPercentDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\UserOptionsReviewDataSet.xsc">
+      <DependentUpon>UserOptionsReviewDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\UserOptionsReviewDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>UserOptionsReviewDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="CrystalReports\DataSets\UserOptionsReviewDataSet.xss">
+      <DependentUpon>UserOptionsReviewDataSet.xsd</DependentUpon>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="CrystalReports\DataSets\SizeCurveSimilarStoresDataSet.xsc">
+      <DependentUpon>SizeCurveSimilarStoresDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\SizeCurveSimilarStoresDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>SizeCurveSimilarStoresDataSet1.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="CrystalReports\DataSets\SizeCurveSimilarStoresDataSet.xss">
+      <DependentUpon>SizeCurveSimilarStoresDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\SizeCurveToleranceDataSet.xsc">
+      <DependentUpon>SizeCurveToleranceDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\SizeCurveToleranceDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>SizeCurveToleranceDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="CrystalReports\DataSets\SizeCurveToleranceDataSet.xss">
+      <DependentUpon>SizeCurveToleranceDataSet.xsd</DependentUpon>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="CrystalReports\DataSets\SizeCurveDataSet.xsc">
+      <DependentUpon>SizeCurveDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\SizeCurveDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>SizeCurveDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="CrystalReports\DataSets\SizeCurveDataSet.xss">
+      <DependentUpon>SizeCurveDataSet.xsd</DependentUpon>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="CrystalReports\DataSets\VSWDataSet.xsc">
+      <DependentUpon>VSWDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\VSWDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>VSWDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="CrystalReports\DataSets\VSWDataSet.xss">
+      <DependentUpon>VSWDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\DailyPercentagesDataSet.xsc">
+      <DependentUpon>DailyPercentagesDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\DailyPercentagesDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>DailyPercentagesDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="CrystalReports\DataSets\DailyPercentagesDataSet.xss">
+      <DependentUpon>DailyPercentagesDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\ForecastAuditMerchandiseDataSet.xsc">
+      <DependentUpon>ForecastAuditMerchandiseDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\ForecastAuditMerchandiseDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>ForecastAuditMerchandiseDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="CrystalReports\DataSets\ForecastAuditMerchandiseDataSet.xss">
+      <DependentUpon>ForecastAuditMerchandiseDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\ForecastAuditModifySalesDataSet.xsc">
+      <DependentUpon>ForecastAuditModifySalesDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\ForecastAuditModifySalesDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>ForecastAuditModifySalesDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="CrystalReports\DataSets\ForecastAuditModifySalesDataSet.xss">
+      <DependentUpon>ForecastAuditModifySalesDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\ForecastAuditOTSForecastDataSet.xsc">
+      <DependentUpon>ForecastAuditOTSForecastDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\ForecastAuditOTSForecastDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>ForecastAuditOTSForecastDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="CrystalReports\DataSets\ForecastAuditOTSForecastDataSet.xss">
+      <DependentUpon>ForecastAuditOTSForecastDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\ForecastLevelDataSet.xsc">
+      <DependentUpon>ForecastLevelDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\ForecastLevelDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>ForecastLevelDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="CrystalReports\DataSets\ForecastLevelDataSet.xss">
+      <DependentUpon>ForecastLevelDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\ForecastReportNamesDataSet.xsc">
+      <DependentUpon>ForecastReportNamesDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\ForecastReportNamesDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>ForecastReportNamesDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="CrystalReports\DataSets\ForecastReportNamesDataSet.xss">
+      <DependentUpon>ForecastReportNamesDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\ForecastTypeDataSet.xsc">
+      <DependentUpon>ForecastTypeDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\ForecastTypeDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>ForecastTypeDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="CrystalReports\DataSets\ForecastTypeDataSet.xss">
+      <DependentUpon>ForecastTypeDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\GetReportsDataSet.xsc">
+      <DependentUpon>GetReportsDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\GetReportsDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>GetReportsDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="CrystalReports\DataSets\GetReportsDataSet.xss">
+      <DependentUpon>GetReportsDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\PurgeDatesDataSet.xsc">
+      <DependentUpon>PurgeDatesDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\PurgeDatesDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>PurgeDatesDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="CrystalReports\DataSets\PurgeDatesDataSet.xss">
+      <DependentUpon>PurgeDatesDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\StockMinMaxDataSet.xsc">
+      <DependentUpon>StockMinMaxDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\StockMinMaxDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>StockMinMaxDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="CrystalReports\DataSets\StockMinMaxDataSet.xss">
+      <DependentUpon>StockMinMaxDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\StoreCapacityDataSet.xsc">
+      <DependentUpon>StoreCapacityDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\StoreCapacityDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>StoreCapacityDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="CrystalReports\DataSets\StoreCapacityDataSet.xss">
+      <DependentUpon>StoreCapacityDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\StoreEligibilityDataSet.xsc">
+      <DependentUpon>StoreEligibilityDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\StoreEligibilityDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>StoreEligibilityDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="CrystalReports\DataSets\StoreEligibilityDataSet.xss">
+      <DependentUpon>StoreEligibilityDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\StoreGradesDataSet.xsc">
+      <DependentUpon>StoreGradesDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\StoreGradesDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>StoreGradesDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="CrystalReports\DataSets\StoreGradesDataSet.xss">
+      <DependentUpon>StoreGradesDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\VelocityGradesDataSet.xsc">
+      <DependentUpon>VelocityGradesDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="CrystalReports\DataSets\VelocityGradesDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>VelocityGradesDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="CrystalReports\DataSets\VelocityGradesDataSet.xss">
+      <DependentUpon>VelocityGradesDataSet.xsd</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Business\Business.csproj">
+      <Project>{934F0067-9BD4-4283-9580-F0B024C2D29D}</Project>
+      <Name>Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{BC3ABAD0-6C39-4385-8229-850E87DD22D0}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CONTROL\Windows.Controls.csproj">
+      <Project>{C589F61C-B85C-4E2F-BBB6-9B250AD08124}</Project>
+      <Name>Windows.Controls</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DataCommon\DataCommon.csproj">
+      <Project>{F33FC337-30FC-409C-898D-DF39A2016B6B}</Project>
+      <Name>DataCommon</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Data\Data.csproj">
+      <Project>{90D34E6E-6872-4531-8283-F9A7450C4BAF}</Project>
+      <Name>Data</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,34 @@
+--dv =============================================
+--dv Create date:	10/28/2013
+--dv Description:	Updates a calendar date range
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_CALENDAR_DATE_RANGE_UPDATE]
+	@CDR_RID int,
+	@CDR_START int,
+	@CDR_END int,
+	@CDR_RANGE_TYPE_ID int,
+	@CDR_DATE_TYPE_ID int,
+	@CDR_RELATIVE_TO int,
+	@CDR_NAME varchar(50),
+	@CDR_DYNAMIC_SWITCH char,
+	@CDR_DYNAMIC_SWITCH_DATE int
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	UPDATE CALENDAR_DATE_RANGE 
+	SET 
+		CDR_START = @CDR_START,
+		CDR_END = @CDR_END,
+		CDR_RANGE_TYPE_ID = @CDR_RANGE_TYPE_ID,
+		CDR_DATE_TYPE_ID = @CDR_DATE_TYPE_ID,
+		CDR_RELATIVE_TO = @CDR_RELATIVE_TO,
+		CDR_NAME = @CDR_NAME,
+		CDR_DYNAMIC_SWITCH = @CDR_DYNAMIC_SWITCH,
+		CDR_DYNAMIC_SWITCH_DATE = @CDR_DYNAMIC_SWITCH_DATE
+	WHERE CDR_RID = @CDR_RID
+
+	SELECT @@ROWCOUNT;
+
+END
+GO

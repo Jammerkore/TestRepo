@@ -1,0 +1,94 @@
+CREATE VIEW [dbo].[VW_GET_HEADERS]
+
+AS
+
+
+select *,
+case
+  when h.Receipt = 1 then '800730'
+  when h.Dummy = 1 then '800732'
+  when h.Reserve = 1 then '800735'
+  when h.MultiHeader = 1 then '800734'
+  when h.PurchaseOrder = 1 then '800738'
+  when h.ASN = 1 then '800731'
+  when h.DropShip = 1 then '800733'
+  when h.WorkUpTotalBuy = 1 then '800737'
+  when h.Assortment = 1 then '800739'
+  when h.Placeholder = 1 then '800740'
+  when h.VSWHeader = 1 then '800741'
+  else '0'
+ end as Header_Type
+from
+(
+SELECT HDR_RID,HDR_ID,HDR_DESC,HDR_DAY,ORIG_DAY,UNIT_RETAIL,UNIT_COST,UNITS_RECEIVED,
+       STYLE_HNRID,PLAN_HNRID,ON_HAND_HNRID,BULK_MULTIPLE,ALLOCATION_MULTIPLE,ALLOCATION_MULTIPLE_DEFAULT,VENDOR, /* MID Track 5761 Allocation Multiple not saved to database */
+       PURCHASE_ORDER,BEGIN_DAY,NEED_DAY,SHIP_TO_DAY,RELEASE_DATETIME,RELEASE_APPROVED_DATETIME,
+       HDR_GROUP_RID,SIZE_GROUP_RID,WORKFLOW_RID,METHOD_RID,
+       dbo.UDF_MID_FLAGTOBIT (ALLOCATION_STATUS_FLAGS,0) as ReceivedInBalance,
+       dbo.UDF_MID_FLAGTOBIT (ALLOCATION_STATUS_FLAGS,1) as BottomUpSizePerformed,
+       dbo.UDF_MID_FLAGTOBIT (ALLOCATION_STATUS_FLAGS,2) as RulesDefinedAndProcessed,
+       dbo.UDF_MID_FLAGTOBIT (ALLOCATION_STATUS_FLAGS,3) as NeedAllocationPerformed,
+       dbo.UDF_MID_FLAGTOBIT (ALLOCATION_STATUS_FLAGS,4) as PackBreakoutByContent,
+       dbo.UDF_MID_FLAGTOBIT (ALLOCATION_STATUS_FLAGS,5) as BulkSizeBreakoutPerformed,
+       dbo.UDF_MID_FLAGTOBIT (ALLOCATION_STATUS_FLAGS,6) as ReleaseApproved,
+       dbo.UDF_MID_FLAGTOBIT (ALLOCATION_STATUS_FLAGS,7) as Released,
+       dbo.UDF_MID_FLAGTOBIT (ALLOCATION_STATUS_FLAGS,8) as UnitsAllocated,
+       dbo.UDF_MID_FLAGTOBIT (ALLOCATION_STATUS_FLAGS,9) as GradeDefinitionOverride,
+       dbo.UDF_MID_FLAGTOBIT (ALLOCATION_STATUS_FLAGS,11) as ReapplyTotalAllocationPerformed,	/* TT#785 - stodd */
+       dbo.UDF_MID_FLAGTOBIT (ALLOCATION_STATUS_FLAGS,13) as IdentifyIncludedStores,	/* TT#589-MD - JSmith - Add Missing Fields to VW_GET_HEADERS */
+       dbo.UDF_MID_FLAGTOBIT (ALLOCATION_STATUS_FLAGS,14) as ImoCriteriaOverridden,	/* TT#589-MD - JSmith - Add Missing Fields to VW_GET_HEADERS */
+       dbo.UDF_MID_FLAGTOBIT (ALLOCATION_STATUS_FLAGS,15) as LoadImoCriteria,	/* TT#589-MD - JSmith - Add Missing Fields to VW_GET_HEADERS */
+       dbo.UDF_MID_FLAGTOBIT (BALANCE_STATUS_FLAGS,0) as SizeReceiptsBalanceToColor,
+       dbo.UDF_MID_FLAGTOBIT (BALANCE_STATUS_FLAGS,1) as ColorReceiptsBalanceToBulk,
+       dbo.UDF_MID_FLAGTOBIT (BALANCE_STATUS_FLAGS,2) as PackSizesBalanceToPackColor,
+       dbo.UDF_MID_FLAGTOBIT (BALANCE_STATUS_FLAGS,3) as PackColorsBalanceToPack,
+       dbo.UDF_MID_FLAGTOBIT (BALANCE_STATUS_FLAGS,4) as PackBulkReceiptsBalanceToTotal,
+       dbo.UDF_MID_FLAGTOBIT (BALANCE_STATUS_FLAGS,5) as PackAllocationInBalance,
+       dbo.UDF_MID_FLAGTOBIT (BALANCE_STATUS_FLAGS,6) as BulkColorAllocationInBalance,
+       dbo.UDF_MID_FLAGTOBIT (BALANCE_STATUS_FLAGS,7) as BulkPlusPackAllocationInBalance,
+       dbo.UDF_MID_FLAGTOBIT (BALANCE_STATUS_FLAGS,8) as BulkSizeAllocationInBalance,
+       dbo.UDF_MID_FLAGTOBIT (BALANCE_STATUS_FLAGS,9) as StoreSizeAllocationsInBalanceToColor,	/* TT#589-MD - JSmith - Add Missing Fields to VW_GET_HEADERS */
+       dbo.UDF_MID_FLAGTOBIT (BALANCE_STATUS_FLAGS,10) as BulkSizeAllocations_GT_SizeReceipts,	/* TT#589-MD - JSmith - Add Missing Fields to VW_GET_HEADERS */
+       dbo.UDF_MID_FLAGTOBIT (BALANCE_STATUS_FLAGS,11) as BulkColorAllocations_GT_ColorReceipts,	/* TT#589-MD - JSmith - Add Missing Fields to VW_GET_HEADERS */
+       dbo.UDF_MID_FLAGTOBIT (BALANCE_STATUS_FLAGS,12) as AtLeastOneSizeAllocated,	/* TT#589-MD - JSmith - Add Missing Fields to VW_GET_HEADERS */
+       dbo.UDF_MID_FLAGTOBIT (SHIPPING_STATUS_FLAGS,0) as ShippingStarted,
+       dbo.UDF_MID_FLAGTOBIT (SHIPPING_STATUS_FLAGS,1) as ShippingComplete,
+       dbo.UDF_MID_FLAGTOBIT (SHIPPING_STATUS_FLAGS,2) as ShippingOnHold,
+       dbo.UDF_MID_FLAGTOBIT (ALLOCATION_TYPE_FLAGS,0) as WorkUpBulkColorBuy,
+       dbo.UDF_MID_FLAGTOBIT (ALLOCATION_TYPE_FLAGS,1) as WorkUpBulkSizeBuy,
+       dbo.UDF_MID_FLAGTOBIT (ALLOCATION_TYPE_FLAGS,2) as WorkUpPackColorBuy,
+       dbo.UDF_MID_FLAGTOBIT (ALLOCATION_TYPE_FLAGS,3) as WorkUpPackSizeBuy,
+       dbo.UDF_MID_FLAGTOBIT (ALLOCATION_TYPE_FLAGS,4) as Dummy,
+       dbo.UDF_MID_FLAGTOBIT (ALLOCATION_TYPE_FLAGS,5) as HasPrimaryAllocation,
+       dbo.UDF_MID_FLAGTOBIT (ALLOCATION_TYPE_FLAGS,6) as HasSecondaryAllocation,
+       dbo.UDF_MID_FLAGTOBIT (ALLOCATION_TYPE_FLAGS,7) as Reserve,
+       dbo.UDF_MID_FLAGTOBIT (ALLOCATION_TYPE_FLAGS,8) as MultiHeader,
+       dbo.UDF_MID_FLAGTOBIT (ALLOCATION_TYPE_FLAGS,9) as Receipt,
+       dbo.UDF_MID_FLAGTOBIT (ALLOCATION_TYPE_FLAGS,10) as PurchaseOrder,
+       dbo.UDF_MID_FLAGTOBIT (ALLOCATION_TYPE_FLAGS,11) as ASN,
+       dbo.UDF_MID_FLAGTOBIT (ALLOCATION_TYPE_FLAGS,12) as DropShip,
+       dbo.UDF_MID_FLAGTOBIT (ALLOCATION_TYPE_FLAGS,13) as InUse,
+       dbo.UDF_MID_FLAGTOBIT (ALLOCATION_TYPE_FLAGS,14) as BulkIsDetail,
+       dbo.UDF_MID_FLAGTOBIT (ALLOCATION_TYPE_FLAGS,15) as WorkUpTotalBuy,
+       dbo.UDF_MID_FLAGTOBIT (ALLOCATION_TYPE_FLAGS,16) as Interfaced,
+       dbo.UDF_MID_FLAGTOBIT (ALLOCATION_TYPE_FLAGS,17) as Assortment,
+       dbo.UDF_MID_FLAGTOBIT (ALLOCATION_TYPE_FLAGS,18) as Placeholder,
+       dbo.UDF_MID_FLAGTOBIT (ALLOCATION_TYPE_FLAGS,19) AS VSWHeader, 
+       dbo.UDF_MID_FLAGTOBIT (ALLOCATION_TYPE_FLAGS,20) AS VSWProcess, 
+       dbo.UDF_MID_FLAGTOBIT (INTRANSIT_STATUS_FLAGS,0) as StyleIntransitUpdated,
+       dbo.UDF_MID_FLAGTOBIT (INTRANSIT_STATUS_FLAGS,1) as BulkColorIntransitUpdated,
+       dbo.UDF_MID_FLAGTOBIT (INTRANSIT_STATUS_FLAGS,2) as BulkSizeIntransitUpdated,
+       PERCENT_NEED_LIMIT,PLAN_PERCENT_FACTOR,RESERVE_UNITS,GRADE_WEEK_COUNT,DIST_CENTER,
+       HEADER_NOTES,WORKFLOW_TRIGGER,EARLIEST_SHIP_DAY,API_WORKFLOW_RID,API_WORKFLOW_TRIGGER,GRADE_SG_RID,
+       ALLOCATED_UNITS,ORIG_ALLOCATED_UNITS,RELEASE_COUNT,RSV_ALLOCATED_UNITS,MANUALLYCHGDSTRSTYLALOCTNCNT,	/* TT#589-MD - JSmith - Add Missing Fields to VW_GET_HEADERS */
+       MANUALLYCHGDSTRSIZEALOCTNCNT,STORES_WITH_ALOCTN_COUNT,MANUALLYCHGDSTRSTYLEALOCTN,MANUALLYCHGDSTRSIZEALOCTN,	/* TT#589-MD - JSmith - Add Missing Fields to VW_GET_HEADERS */
+       HORIZON_OVERRIDE,DISPLAY_STATUS,DISPLAY_TYPE,DISPLAY_INTRANSIT,DISPLAY_SHIP_STATUS,	/* TT#589-MD - JSmith - Add Missing Fields to VW_GET_HEADERS */
+       GRADE_INVENTORY_IND,GRADE_INVENTORY_HNRID,	/* TT#589-MD - JSmith - Add Missing Fields to VW_GET_HEADERS */
+       ASRT_RID,PLACEHOLDER_RID,ASRT_TYPE,ASRT_PLACEHOLDER_SEQ,ASRT_HEADER_SEQ,
+       IMO_ID, ITEM_UNITS_ALLOCATED, ITEM_ORIG_UNITS_ALLOCATED,	/* TT#1401 - stodd - VSW */ 
+	   UNITS_PER_CARTON,	/* TT#1652-MD - stodd - DC Carton Rounding */
+	   DC_FULFILLMENT_PROCESSED_IND   /* TT#1966-MD - JSmith- DC Fulfillment  */
+FROM HEADER 
+) as h
+
+GO

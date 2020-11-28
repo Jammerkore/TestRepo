@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="utf-8"?>
+<InstallDescription xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ServicesText>MIDRetail Services</ServicesText>
+  <ProductName>MIDRetail</ProductName>
+  <MIDSettingsName>MIDRetail Configuration File</MIDSettingsName>
+  <ConfigValues>
+    <ConfigItem>
+      <Key>LocalApplicationServer</Key>
+      <DefaultValue>True</DefaultValue>
+      <Description>"True" or "Yes" indicate the Application Session is to be created locally</Description>
+      <MyType>Boolean</MyType>
+      <DisplayTrueValue>Local</DisplayTrueValue>
+      <DisplayFalseValue>Remote</DisplayFalseValue>
+    </ConfigItem>
+    <ConfigItem>
+      <Key>LocalStoreServer</Key>
+      <DefaultValue>True</DefaultValue>
+      <Description>"True" or "Yes" indicate the Store Session is to be created locally</Description>
+      <MyType>Boolean</MyType>
+      <DisplayTrueValue>Local</DisplayTrueValue>
+      <DisplayFalseValue>Remote</DisplayFalseValue>
+    </ConfigItem>
+    <ConfigItem>
+      <Key>LocalHierarchyServer</Key>
+      <DefaultValue>True</DefaultValue>
+      <Description>"True" or "Yes" indicate the Hierarchy Session is to be created locally</Description>
+      <MyType>Boolean</MyType>
+      <DisplayTrueValue>Local</DisplayTrueValue>
+      <DisplayFalseValue>Remote</DisplayFalseValue>
+    </ConfigItem>
+    <ConfigItem>
+      <Key>ControlServer</Key>
+      <DefaultValue>10.5.2.97:8086</DefaultValue>
+      <Description>Indicates the IP Address and port where the Control Server is listening.  The Control Server will return a Client, Store, Hierarchy, and Application Server where remote sessions can be created.  If this key is not assigned, all sessions will be created locally (in the address space of the client)</Description>
+      <MyType>String</MyType>
+    </ConfigItem>
+    <ConfigItem>
+      <Key>ConnectionString</Key>
+      <DefaultValue>server=servername;database=databasename;uid=username;pwd=password;</DefaultValue>
+      <Description>Indicates the connection string to connect to the database</Description>
+      <MyType>String</MyType>
+    </ConfigItem>
+    <ConfigItem>
+      <Key>MyPort</Key>
+      <DefaultValue>8087</DefaultValue>
+      <Description>Indicates the port where the Server Server is communicating.</Description>
+      <MyType>String</MyType>
+    </ConfigItem>
+    <ConfigItem>
+      <Key>ReaderLockTimeOut</Key>
+      <DefaultValue>10000</DefaultValue>
+      <Description>The amount of time in milliseconds to hold a read lock on data</Description>
+      <MyType>String</MyType>
+    </ConfigItem>
+    <ConfigItem>
+      <Key>WriterLockTimeOut</Key>
+      <DefaultValue>10000</DefaultValue>
+      <Description>The amount of time in milliseconds to hold a write lock on data</Description>
+      <MyType>String</MyType>
+    </ConfigItem>
+    <ConfigItem>
+      <Key>StoreServers</Key>
+      <DefaultValue>localhost:8087</DefaultValue>
+      <Description>Indicates a list of IP Addresses and ports where the Store Servers are listening.</Description>
+      <MyType>String</MyType>
+    </ConfigItem>
+    <ConfigItem>
+      <Key>HierarchyServers</Key>
+      <DefaultValue>localhost:8088</DefaultValue>
+      <Description>Indicates a list of IP Addresses and ports where the Hierarchy Servers are listening.</Description>
+      <MyType>String</MyType>
+    </ConfigItem>
+    <ConfigItem>
+      <Key>ApplicationServers</Key>
+      <DefaultValue>localhost:8089,localhost:8090</DefaultValue>
+      <Description>Indicates a list of IP Addresses and ports where the Application Servers are listening.</Description>
+      <MyType>String</MyType>
+    </ConfigItem>
+    <ConfigItem>
+      <Key>SchedulerServer</Key>
+      <DefaultValue>localhost:8091</DefaultValue>
+      <Description>Indicates a list of IP Addresses and ports where the Scheduler Server is listening.</Description>
+      <MyType>String</MyType>
+    </ConfigItem>
+    <ConfigItem>
+      <Key>MonitorForecastFilePath</Key>
+      <DefaultValue>\MID\logs</DefaultValue>
+      <Description>When running Remote, this is the file path the Monitor Forecast Logs will be written to</Description>
+      <MyType>String</MyType>
+    </ConfigItem>
+    <ConfigItem>
+      <Key>HeaderReleaseFilePath</Key>
+      <DefaultValue>\MID\Release</DefaultValue>
+      <Description>When running Remote, this is the file path the Header Release XML will be written to</Description>
+      <MyType>String</MyType>
+    </ConfigItem>
+    <ConfigItem>
+      <Key>User</Key>
+      <DefaultValue>administrator</DefaultValue>
+      <Description>The ID of the user to log into the application with</Description>
+      <MyType>String</MyType>
+    </ConfigItem>
+    <ConfigItem>
+      <Key>Password</Key>
+      <DefaultValue>administrator</DefaultValue>
+      <Description>The password of the user</Description>
+      <MyType>String</MyType>
+    </ConfigItem>
+    <ConfigItem>
+      <Key>InputFile</Key>
+      <DefaultValue>.\StoreAddSample.xml</DefaultValue>
+      <Description>The directory and name of the input transactions</Description>
+      <MyType>String</MyType>
+      <PropagateChanges>false</PropagateChanges>
+    </ConfigItem>
+    <ConfigItem>
+      <Key>ExceptionFile</Key>
+      <DefaultValue>.\exceptions.txt</DefaultValue>
+      <Description>The directory and name of the file where exceptions are to be written</Description>
+      <MyType>String</MyType>
+    </ConfigItem>
+    <ConfigItem>
+      <Key>Delimiter</Key>
+      <DefaultValue>~</DefaultValue>
+      <Description>If the InputFile is delimited, indicates the character used to seperate each field in the transaction.</Description>
+      <MyType>String</MyType>
+    </ConfigItem>
+    <ConfigItem>
+      <Key>CommitLimit</Key>
+      <DefaultValue>1000</DefaultValue>
+      <Description>The commitlimit for the database activity</Description>
+      <MyType>String</MyType>
+    </ConfigItem>
+    <ConfigItem>
+      <Key>SerializeXMLFile</Key>
+      <DefaultValue>False</DefaultValue>
+      <Description>This option identifies that the XML input file can be serialized. This option should only be enabled if sufficient resources are available.</Description>
+      <MyType>Boolean</MyType>
+      <DisplayTrueValue>Yes</DisplayTrueValue>
+      <DisplayFalseValue>No</DisplayFalseValue>
+    </ConfigItem>
+    <ConfigItem>
+      <Key>HeaderIDsPresent</Key>
+      <DefaultValue>False</DefaultValue>
+      <Description>This option identifies whether allocation header ids are present in the input transactions.</Description>
+      <MyType>Boolean</MyType>
+      <DisplayTrueValue>Yes</DisplayTrueValue>
+      <DisplayFalseValue>No</DisplayFalseValue>
+    </ConfigItem>
+    <ConfigItem>
+      <Key>AllowAutoAdds</Key>
+      <DefaultValue>True</DefaultValue>
+      <Description>This option identifies that the process should attempt to add a product if not defined.</Description>
+      <MyType>Boolean</MyType>
+      <DisplayTrueValue>Yes</DisplayTrueValue>
+      <DisplayFalseValue>No</DisplayFalseValue>
+    </ConfigItem>
+    <ConfigItem>
+      <Key>RollupValues</Key>
+      <DefaultValue>False</DefaultValue>
+      <Description>This option identifies that the process is to generate rollup items for the rollup process.</Description>
+      <MyType>Boolean</MyType>
+      <DisplayTrueValue>Yes</DisplayTrueValue>
+      <DisplayFalseValue>No</DisplayFalseValue>
+    </ConfigItem>
+    <ConfigItem>
+      <Key>SumDaysToWeeks</Key>
+      <DefaultValue>False</DefaultValue>
+      <Description>This option identifies that the process is to add daily values to determine weekly values.</Description>
+      <MyType>Boolean</MyType>
+      <DisplayTrueValue>Yes</DisplayTrueValue>
+      <DisplayFalseValue>No</DisplayFalseValue>
+    </ConfigItem>
+    <ConfigItem>
+      <Key>UseBulkInsert</Key>
+      <DefaultValue>False</DefaultValue>
+      <Description>This is a SQL Server only option.  This option should only be used if all database activity will be inserts.</Description>
+      <MyType>Boolean</MyType>
+      <DisplayTrueValue>Yes</DisplayTrueValue>
+      <DisplayFalseValue>No</DisplayFalseValue>
+    </ConfigItem>
+    <ConfigItem>
+      <Key>StockType</Key>
+      <DefaultValue>ENDING</DefaultValue>
+      <Description>This option identifies the type of stock in the transactions "BEGINNING" or "ENDING"</Description>
+      <MyType>String</MyType>
+    </ConfigItem>
+    <ConfigItem>
+      <Key>BulkInsertRetryCount</Key>
+      <DefaultValue>3</DefaultValue>
+      <Description>This is the number of times a bulk insert is to be attempted before producing an error.</Description>
+      <MyType>String</MyType>
+    </ConfigItem>
+    <ConfigItem>
+      <Key>BulkInsertCommandTimeout</Key>
+      <DefaultValue>60</DefaultValue>
+      <Description>This is the number of seconds a bulk insert command is to wait before terminating the attempt to execute the command.</Description>
+      <MyType>String</MyType>
+    </ConfigItem>
+    <ConfigItem>
+      <Key>BulkInsertProcessReference</Key>
+      <DefaultValue>C:\Shared</DefaultValue>
+      <Description>This is the location for the process to use to create bulk insert files. If this is a remote location, it must be accessible from where the process is running using either a mapped drive or by specifying a valid path using the Universal Naming Convention (UNC) name</Description>
+      <MyType>String</MyType>
+    </ConfigItem>
+    <ConfigItem>
+      <Key>BulkInsertDatabaseReference</Key>
+      <DefaultValue>\\ProcessMachine\Shared</DefaultValue>
+      <Description>This is the location where the database is to find the bulk insert files. If this is a remote location, it must be accessible from where the database is running using either a mapped drive or by specifying a valid path using the Universal Naming Convention (UNC) name</Description>
+      <MyType>String</MyType>
+    </ConfigItem>
+    <ConfigItem>
+      <Key>BulkInsertBatchSize</Key>
+      <DefaultValue>100000</DefaultValue>
+      <Description>Specifies the number of rows in a bulk insert transaction.</Description>
+      <MyType>String</MyType>
+    </ConfigItem>
+    <ConfigItem>
+      <Key>ReportFile</Key>
+      <DefaultValue>.\hierarchyReport.txt</DefaultValue>
+      <Description>The directory and name of the file where reports are to be written</Description>
+      <MyType>String</MyType>
+    </ConfigItem>
+    <ConfigItem>
+      <Key>ApplicationRoot</Key>
+      <DefaultValue>.</DefaultValue>
+      <Description>The root directory of the application</Description>
+      <MyType>String</MyType>
+    </ConfigItem>
+    <ConfigItem>
+      <Key>MonitorForecast</Key>
+      <DefaultValue>False</DefaultValue>
+      <Description>When true, writes out a log of forecasting details when a forecast is process</Description>
+      <MyType>Boolean</MyType>
+      <DisplayTrueValue>Yes</DisplayTrueValue>
+      <DisplayFalseValue>No</DisplayFalseValue>
+    </ConfigItem>
+  </ConfigValues>
+  <ServicesAvailable>
+    <AvailableItem>
+      <Location>Services\Application.msi</Location>
+	  <Location64>Services\Application64.msi</Location64>
+      <Description>This Windows service processes application requests</Description>
+      <FriendlyName>Application Service</FriendlyName>
+    </AvailableItem>
+    <AvailableItem>
+      <Location>Services\Store.msi</Location>
+	  <Location64>Services\Store64.msi</Location64>
+      <Description>This Windows service manages store information</Description>
+      <FriendlyName>Store Service</FriendlyName>
+    </AvailableItem>
+    <AvailableItem>
+      <Location>Services\Hierarchy.msi</Location>
+	  <Location64>Services\Hierarchy64.msi</Location64>
+      <Description>This Windows service manages hierarchy information</Description>
+      <FriendlyName>Hierarchy Service</FriendlyName>
+    </AvailableItem>
+    <AvailableItem>
+      <Location>Services\Scheduler.msi</Location>
+	  <Location64>Services\Scheduler64.msi</Location64>
+      <Description>This Windows service processes scheduler requests</Description>
+      <FriendlyName>Scheduler Service</FriendlyName>
+    </AvailableItem>
+  </ServicesAvailable>
+  <ModuleDescriptors>
+    <AvailableItem>
+      <Location>Client</Location>
+      <Description>Logility RO Client</Description>
+      <FriendlyName>Logility RO Client</FriendlyName>
+      <MyType>Client</MyType>
+      <ShortCutExe>MIDRetail\MIDRetail.exe</ShortCutExe>
+    </AvailableItem>
+    <AvailableItem>
+      <Location>StoreLoad</Location>
+      <Description>Load store information</Description>
+      <FriendlyName>Store Load</FriendlyName>
+      <MyType>API</MyType>
+    </AvailableItem>
+    <AvailableItem>
+      <Location>HierarchyLoad</Location>
+      <Description>Load hierarchies</Description>
+      <FriendlyName>Hierarchy Load</FriendlyName>
+      <MyType>API</MyType>
+    </AvailableItem>
+    <AvailableItem>
+      <Location>HistoryPlanLoad</Location>
+      <Description>Load history or plan values</Description>
+      <FriendlyName>History Plan Load</FriendlyName>
+      <MyType>API</MyType>
+    </AvailableItem>
+    <AvailableItem>
+      <Location>PlanForecasting</Location>
+      <Description>Generate forecasts</Description>
+      <FriendlyName>Forecasting</FriendlyName>
+      <MyType>API</MyType>
+    </AvailableItem>
+    <AvailableItem>
+      <Location>HeaderLoad</Location>
+      <Description>Load headers</Description>
+      <FriendlyName>Header Load</FriendlyName>
+      <MyType>API</MyType>
+    </AvailableItem>
+    <AvailableItem>
+      <Location>AllocationScheduler</Location>
+      <Description>Allows Allocation processes to be scheduled</Description>
+      <FriendlyName>Allocation Scheduler</FriendlyName>
+      <MyType>API</MyType>
+    </AvailableItem>
+    <AvailableItem>
+      <Location>RelieveIntransit</Location>
+      <Description>Relieve intransit</Description>
+      <FriendlyName>Relieve Intransit</FriendlyName>
+      <MyType>API</MyType>
+    </AvailableItem>
+    <AvailableItem>
+      <Location>ColorCodesLoad</Location>
+      <Description>Load color codes</Description>
+      <FriendlyName>Color Codes Load</FriendlyName>
+      <MyType>API</MyType>
+    </AvailableItem>
+    <AvailableItem>
+      <Location>SizeCodesLoad</Location>
+      <Description>Load size codes</Description>
+      <FriendlyName>Size Codes Load</FriendlyName>
+      <MyType>API</MyType>
+    </AvailableItem>
+    <AvailableItem>
+      <Location>Purge</Location>
+      <Description>Purge old data</Description>
+      <FriendlyName>Purge</FriendlyName>
+      <MyType>API</MyType>
+    </AvailableItem>
+    <AvailableItem>
+      <Location>Rollup</Location>
+      <Description>Roll up history/plan values</Description>
+      <FriendlyName>Rollup</FriendlyName>
+      <MyType>API</MyType>
+    </AvailableItem>
+    <AvailableItem>
+      <Location>Samples</Location>
+      <Description>Transaction samples and schema definitions</Description>
+      <FriendlyName>Samples</FriendlyName>
+      <MyType>API</MyType>
+    </AvailableItem>
+  </ModuleDescriptors>
+  <Client>
+    <Location>Client\Client.SQLServer.msi</Location>
+	<Location64>Client\Client.SQLServer64.msi</Location64>
+	<Description>Application client</Description>
+    <FriendlyName>Logility RO Client</FriendlyName>
+    <AvailableConfigItems>
+		<AvailableConfigItem>
+			<Key>MyPort</Key>
+		</AvailableConfigItem>
+    </AvailableConfigItems>
+  </Client>
+  <ControlServer>
+	<Location>Services\Control.msi</Location>
+	<Location64>Services\Control64.msi</Location64>
+	<Description>This Windows service controls application environment</Description>
+	<FriendlyName>MIDRetail Control Service</FriendlyName>
+  </ControlServer>
+  <APIs>
+	<Location>Batch\Batch.msi</Location>
+	<Location64>Batch\Batch64.msi</Location64>
+    <Description>MIDRetail application APIs</Description>
+	<FriendlyName>MIDRetail APIs</FriendlyName>
+  </APIs>
+</InstallDescription>

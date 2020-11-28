@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Stores xmlns="http://tempuri.org/StoreLoadSchema.xsd">
+	<Store ID="1101" Name="Brea Mall" Description="Brea Mall" City="Brea" State="CA" SellingSquareFeet="10000" SellingOpenDate="2003-03-11" LeadTime="3" ShipDate="M,W,F" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1102" Name="Fashion Valley Mall" City="San Diego" State="CA" SellingSquareFeet="15000" LeadTime="3" ShipDate="TU,W,TH" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1103" Name="Laguna Hills Mall" City="Laguna Hills" State="CA" SellingSquareFeet="20000" LeadTime="3" ShipDate="TU,TH" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1104" Name="Santa Rosa Plaza" City="Santa Rosa" State="CA" SellingSquareFeet="25000" LeadTime="3" ShipDate="M" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1105" Name="Shops at Mission Viejo" City="Mission Viejo" State="CA" SellingSquareFeet="30000" LeadTime="3" ShipDate="TU" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1106" Name="Stanford Shopping Center" City="Polo Alto" State="CA" SellingSquareFeet="35000" LeadTime="2" ShipDate="W" VSWID="IMO803" ActiveIndicator="true"/>
+	<Store ID="1107" Name="Westminster Mall" City="Westminster" State="CA" SellingSquareFeet="40000" SellingOpenDate="2003-04-07" LeadTime="1" ShipDate="TH" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1108" Name="Gwinnette Place" City="Duluth" State="GA" SellingSquareFeet="45000" SellingOpenDate="2003-08-17" LeadTime="2" ShipDate="F" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1109" Name="Lenox Square" City="Atlanta" State="GA" SellingSquareFeet="10000" LeadTime="3" ShipDate="SA,SU" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1110" Name="Mall of Georgia" City="Buford" State="GA" SellingSquareFeet="15000" LeadTime="2" ShipDate="M,TU,W,TH,F" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1111" Name="Northlake Mall" City="Atlanta" State="GA" SellingSquareFeet="20000" LeadTime="1" ShipDate="M,TU,W,TH,F,SA,SU" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1112" Name="Phipps Plaza" City="Atlanta" State="GA" SellingSquareFeet="25000" LeadTime="2" ShipDate="TU,F" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1113" Name="Town Center at Cobb" City="Kennesaw" State="GA" SellingSquareFeet="30000" SellingOpenDate="2004-01-26" LeadTime="3" ShipDate="M,F" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1114" Name="Alton Square" City="Alton" State="IL" SellingSquareFeet="35000" LeadTime="2" ShipDate="M,W" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1115" Name="Lincolnwood Town Center" City="Lincolnwood" State="IL" SellingSquareFeet="40000" LeadTime="1" ShipDate="M,TU" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1116" Name="Northfield Square Mall" City="Bourbonnaise" State="IL" SellingSquareFeet="45000" LeadTime="3" ShipDate="TU,W" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1117" Name="Northwoods Mall" City="Peoria" State="IL" SellingSquareFeet="10000" LeadTime="2" ShipDate="W,TH" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1118" Name="Orland Square" City="Orland Park" State="IL" SellingSquareFeet="15000" LeadTime="3" ShipDate="TH,F" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1119" Name="River Oaks Center" City="Calumet" State="IL" SellingSquareFeet="20000" LeadTime="4" ShipDate="F,SA" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1120" Name="Southpark Mall" City="Moline" State="IL" SellingSquareFeet="25000" LeadTime="2" ShipDate="M,W,F" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1121" Name="White Oaks Mall" City="Springfield" State="IL" SellingSquareFeet="30000" SellingOpenDate="2004-09-19" StockOpenDate="2004-08-15" LeadTime="1" ShipDate="TU,W,TH" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1122" Name="Arsenal Mall" City="Watertown" State="MA" SellingSquareFeet="35000" LeadTime="3" ShipDate="TU,TH" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1123" Name="Atrium Mall" City="Chestnut Hills" State="MA" SellingSquareFeet="40000" LeadTime="2" ShipDate="M" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1124" Name="Auburn Mall" City="Auburn" State="MA" SellingSquareFeet="45000" LeadTime="3" ShipDate="TU" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1125" Name="Burlington Mall" City="Burlington" State="MA" SellingSquareFeet="10000" LeadTime="2" ShipDate="W" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1126" Name="Cape Cod Mall" City="Hyannis" State="MA" SellingSquareFeet="15000" LeadTime="3" ShipDate="TH" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1127" Name="Capley Place" City="Boston" State="MA" SellingSquareFeet="20000" LeadTime="3" ShipDate="F" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1128" Name="Emerald Square" City="North Attleboro" SellingSquareFeet="25000" LeadTime="2" ShipDate="SA,SU" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1129" Name="Greendale Mall" City="Worchester" State="MA" SellingSquareFeet="30000" SellingOpenDate="2003-10-27" LeadTime="3" ShipDate="M,TU,W,TH,F" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1130" Name="Liberty Tree Mall" City="Danvers" State="MA" SellingSquareFeet="35000" SellingOpenDate="2003-05-10" LeadTime="2" ShipDate="M,TU,W,TH,F,SA,SU" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1131" Name="Mall at Chestnut Hill" City="Chestnut Hill" State="MA" SellingSquareFeet="40000" LeadTime="3" ShipDate="TU,F" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1132" Name="Northshore Mall" City="Peabody" State="MA" SellingSquareFeet="45000" SellingCloseDate="2004-09-27" StockCloseDate="2004-08-01" LeadTime="2" ShipDate="M,F" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1133" Name="Solomon Pond Mall" City="Marlborough" State="MA" SellingSquareFeet="10000" LeadTime="3" ShipDate="M,W" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1134" Name="South Shore Plaza" City="Braintree" State="MA" SellingSquareFeet="15000" LeadTime="2" ShipDate="M,TU" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1135" Name="Square One Mall" City="Saugus" State="MA" SellingSquareFeet="20000" LeadTime="3" ShipDate="TU,W" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1136" Name="Chautauque Mall" City="Lakewood" State="NY" SellingSquareFeet="25000" LeadTime="4" ShipDate="W,TH" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1137" Name="Jefferson Valley Mall" City="Yorktown Heights" State="NY" SellingSquareFeet="30000" LeadTime="3" ShipDate="TH,F" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1138" Name="Nanuet Mall" City="Nanuet" State="NY" SellingSquareFeet="35000" SellingOpenDate="2003-07-04" LeadTime="2" ShipDate="F,SA" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1139" Name="Roosevelt Field" City="Garden City" State="NY" SellingSquareFeet="40000" LeadTime="3" ShipDate="M,W,F" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1140" Name="Smith Haven Mall" City="Lake Grove" State="NY" SellingSquareFeet="45000" LeadTime="1" ShipDate="TU,W,TH" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1141" Name="Mall at the Source" City="Westbury" State="NY" SellingSquareFeet="10000" LeadTime="1" ShipDate="TU,TH" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1142" Name="The Weschester" City="White Plains" State="NY" SellingSquareFeet="15000" LeadTime="3" ShipDate="M" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1143" Name="Walt Witman Mall" City="Huntington Station" State="NY" SellingSquareFeet="20000" LeadTime="2" ShipDate="TU" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1144" Name="Barton Creek Square" City="Austin" State="TX" SellingSquareFeet="25000" LeadTime="1" ShipDate="W" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1145" Name="Broadway Square Mall" City="Tyler" State="TX" SellingSquareFeet="30000" LeadTime="1" ShipDate="TH" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1146" Name="Cielo Vista Mall" City="El Paso" State="TX" SellingSquareFeet="35000" LeadTime="2" ShipDate="F" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1147" Name="The Galleria" City="Houston" State="TX" SellingSquareFeet="40000" LeadTime="1" ShipDate="SA,SU" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1148" Name="Golden Triangle Mall" City="Denton" State="TX" SellingSquareFeet="45000" LeadTime="2" ShipDate="M,TU,W,TH,F" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1149" Name="Ingram Park Mall" City="San Antonio" State="TX" SellingSquareFeet="10000" LeadTime="3" ShipDate="M,TU,W,TH,F,SA,SU" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1150" Name="Irving Mall" City="Irving" State="TX" SellingSquareFeet="15000" LeadTime="1" ShipDate="TU,F" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1151" Name="La Plaza Mall" City="McAllen" State="TX" SellingSquareFeet="20000" LeadTime="2" ShipDate="M,F" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1152" Name="Lakeline Mall" City="Austin" State="TX" SellingSquareFeet="25000" LeadTime="3" ShipDate="M,W" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1153" Name="Longview Mall" City="Longview" State="TX" SellingSquareFeet="30000" LeadTime="1" ShipDate="M,TU" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1154" Name="Midland Park Mall" City="Midland" State="TX" SellingSquareFeet="35000" LeadTime="2" ShipDate="TU,W" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1155" Name="Midway Mall" City="Sherman" State="TX" SellingSquareFeet="40000" LeadTime="3" ShipDate="W,TH" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1156" Name="North East Mall" City="Hurst" State="TX" SellingSquareFeet="45000" LeadTime="4" ShipDate="TH,F" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1157" Name="Richardson Square" City="Richardson" State="TX" SellingSquareFeet="10000" LeadTime="2" ShipDate="F,SA" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1158" Name="Rolling Oaks Mall" City="San Antonio" State="TX" SellingSquareFeet="15000" LeadTime="1" ShipDate="M,W,F" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1159" Name="Columbia Center" City="Kennewick" State="WA" SellingSquareFeet="20000" LeadTime="2" ShipDate="M,TU,W" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1160" Name="Northgate Mall" City="Seattle"  State="WA" SellingSquareFeet="25000" SellingOpenDate="2003-10-11" LeadTime="3" ShipDate="TU,TH" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1161" Name="Tacoma Mall" City="Tacoma" State="WA" SellingSquareFeet="30000" LeadTime="2" ShipDate="M" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1162" Name="Battlefield Mall" City="Springfield" State-="MO" SellingSquareFeet="35000" LeadTime="3" ShipDate="TU" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1163" Name="Independence Center" City="Independence" State="MO" SellingSquareFeet="40000" LeadTime="4" ShipDate="W" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1164" Name="Boynton Beach Mall" City="Boynton Beach" State="FL" SellingSquareFeet="45000" LeadTime="1" ShipDate="T" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1165" Name="Coral Springs" City="Coral Springs" State="FL" SellingSquareFeet="10000" LeadTime="2" ShipDate="F" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1166" Name="Cordova Mall" City="Pensacola" State="FL" SellingSquareFeet="15000" LeadTime="3" ShipDate="SA,SU" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1167" Name="Crystal River Mall" City="Crystal Rive" State="FL" SellingSquareFeet="20000" LeadTime="4" ShipDate="M,TU,W,TH,F" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1168" Name="Dadeland Mall" City="Miami" State="FL" SellingSquareFeet="25000" LeadTime="1" ShipDate="M,TU,W,TH,F,SA,SU" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1169" Name="DeSoto Square" City="Bradenton" State="FL" SellingSquareFeet="30000" LeadTime="3" ShipDate="TU,F" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1170" Name="Edison Mall" City="Fort Myers" State="FL" SellingSquareFeet="35000" LeadTime="4" ShipDate="M,F" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1171" Name="Florida Mall" City="Orlando" State="FL" SellingSquareFeet="40000" LeadTime="2" ShipDate="M,W" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1172" Name="Gulf View Square" City="Port Richey" State="FL" SellingSquareFeet="45000" SellingOpenDate="2004-02-12" StockOpenDate="2004-01-10" LeadTime="2" ShipDate="M,TU" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1173" Name="Indian River Mall" City="Vero Beach" State="FL" SellingSquareFeet="10000" LeadTime="3" ShipDate="TU,W" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1174" Name="Lake Square Mall" City="Leesburg" State="FL" SellingSquareFeet="15000" LeadTime="2" ShipDate="W,TH" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1175" Name="Melbourne Square" City="Melbourne" State="FL" SellingSquareFeet="20000" LeadTime="3" ShipDate="TH,F" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1176" Name="Miami International Mall" City="Miami" State="FL" SellingSquareFeet="25000" LeadTime="4" ShipDate="TH,F" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1177" Name="Orange Park Mall" City="Orange Park" State="FL" SellingSquareFeet="30000" LeadTime="3" ShipDate="M,W,F" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1178" Name="Paddock Mall" City="Ocale" State="FL" SellingSquareFeet="35000" LeadTime="2" ShipDate="TU,W,TH" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1179" Name="Palm Beach Mall" City="West Palm Beach" State="FL" SellingSquareFeet="40000" LeadTime="1" ShipDate="TU,TH" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1180" Name="Great Lakes Mall" City="Mentor" State="OH" SellingSquareFeet="45000" LeadTime="3" ShipDate="M" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1181" Name="Lima Mall" City="Lima" State="OH" SellingSquareFeet="10000" SellingOpenDate="2003-11-03" StockOpenDate="2003-10-13" LeadTime="4" ShipDate="TU" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1182" Name="Richmond Town Square" City="Richmond Heights" State="OH" LeadTime="2" ShipDate="W" VSWID="IMO803" ActiveIndicator="true" SellingSquareFeet="15000" />
+	<Store ID="1183" Name="Southern Park Mall" City="Youngstown" State="OH" SellingSquareFeet="20000" LeadTime="1" ShipDate="TH" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1184" Name="Summit Mall" City="Akron" State="OH" SellingSquareFeet="25000" LeadTime="3" ShipDate="F" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1185" Name="Upper Valley Mall" City="Springfield" State="OH" SellingSquareFeet="30000" LeadTime="1" ShipDate="SA,SU" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1186" Name="Woodville Mall" City="Northwood" State="OH" SellingSquareFeet="35000" LeadTime="2" ShipDate="M,TU,W,TH,F" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1187" Name="Apple Blossom Mall" City="Winchester" State="VA" SellingSquareFeet="40000" LeadTime="3" ShipDate="M,TU,W,TH,F,SA,SU" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1188" Name="Charlottesville Fashion Square" City="Charlottesville" State="VA" SellingSquareFeet="45000" LeadTime="4" ShipDate="TU,F" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1189" Name="Chesapeake Square" City="Chesapeake" State="VA" SellingSquareFeet="10000" LeadTime="2" ShipDate="M,F" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1190" Name="Fashion Center at the Pentagon" City="Arlington" State="VA" SellingSquareFeet="15000" LeadTime="1" ShipDate="M,W" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1191" Name="Valley Mall" City="Harrisonburg" State="VA" SellingSquareFeet="20000" LeadTime="3" ShipDate="M,TU" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1192" Name="Virginia Center Commons" City="Glen Allen" State="VA" SellingSquareFeet="25000" LeadTime="2" ShipDate="TU,W" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1193" Name="Knoxville Center" City="Knoxville" State="VA" SellingSquareFeet="30000" SellingOpenDate="2004-06-15" StockOpenDate="2004-05-01" LeadTime="4" ShipDate="W,TH" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1194" Name="Oak Court Mall" City="Memphis" State="TN" SellingSquareFeet="35000" LeadTime="1" ShipDate="TH,F" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1195" Name="Raleigh Springs" City="Memphis" State="TN" SellingSquareFeet="40000" LeadTime="2" ShipDate="TH,F" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1196" Name="West Town Mall" City="Knoxville" State="TN" SellingSquareFeet="45000" LeadTime="3" ShipDate="M,W,F" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1197" Name="Wolfchase Galleria" City="Memphis" State="TN" SellingSquareFeet="10000" LeadTime="4" ShipDate="TU,W,TH" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1198" Name="Castleton Square" City="Indianapolis" State="IN" SellingSquareFeet="15000" LeadTime="3" ShipDate="TU,TH" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1199" Name="Circle Center" City="Indianapolis" State="IN" SellingSquareFeet="20000" LeadTime="2" ShipDate="M" VSWID="IMO803" ActiveIndicator="true" />
+	<Store ID="1200" Name="Markland Mall" City="Kokomo" State="IN" SellingSquareFeet="25000" LeadTime="1" ShipDate="TU" VSWID="IMO803" ActiveIndicator="true" /> 
+</Stores>

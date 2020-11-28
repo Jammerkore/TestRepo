@@ -1,0 +1,4 @@
+﻿alter table "METHOD_GROUP_ALLOCATION_STORE_GRADES_VALUES"
+	add constraint "METHOD_GROUP_ALLOCATION_STORE_GRADES_VALUES_PK" primary key clustered ("METHOD_RID", "SGL_RID", "BOUNDARY")   
+
+go

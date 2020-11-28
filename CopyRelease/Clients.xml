@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<Clients xmlns="http://tempuri.org/ClientsSchema.xsd">
+
+	<Client
+		Name="Base 2.7"
+		ProdVersion="2.7"
+		ShipVersion="2.7"
+		CalcLocation=""
+		QABuildLocation="\\midretail14\MIDRetail\QA Build\Base 2.7"
+		ReleaseLocation="\\midretail14\MIDRetail\Client Releases"
+		DocumentationMainline="MIDRetail Documentation"
+		DocumentationBranch="Working 2.7"
+		FTPLocation="\\Iis02\ftproot\MID"
+		>
+	</Client>
+	<Client
+		Name="Base 3.0"
+		ProdVersion="3.0"
+		ShipVersion="3.0"
+		CalcLocation=""
+		QABuildLocation="\\midretail14\MIDRetail\QA Build\Base 3.0"
+		ReleaseLocation="\\midretail14\MIDRetail\Client Releases"
+		DocumentationMainline="MIDRetail Documentation"
+		DocumentationBranch="Version 3.0 - do not rebase"
+		FTPLocation="\\Iis02\ftproot\MID"
+		>
+	</Client>
+	<Client
+		Name="Base 3.1"
+		ProdVersion="3.1"
+		ShipVersion="3.1"
+		CalcLocation=""
+		QABuildLocation="\\midretail14\MIDRetail\QA Build\Base 3.1"
+		ReleaseLocation="\\midretail14\MIDRetail\Client Releases"
+		DocumentationMainline="MIDRetail Documentation 3"
+		DocumentationBranch="Version 3.1"
+		FTPLocation="\\Iis02\ftproot\MID"
+		>
+	</Client>
+	<Client
+		Name="Base 4.0"
+		ProdVersion="4.0"
+		ShipVersion="4.0"
+		CalcLocation=""
+		QABuildLocation="\\midretail14\MIDRetail\QA Build\Base 4.0"
+		ReleaseLocation="\\midretail14\MIDRetail\Client Releases"
+		DocumentationMainline="MIDRetail Documentation"
+		DocumentationBranch="Version 3.0 - do not rebase"
+		FTPLocation="\\Iis02\ftproot\MID"
+		>
+	</Client>
+	<Client
+		Name="A&amp;F"
+		ProdVersion="2.6"
+		ShipVersion="2.7"
+		CalcLocation="\\midretail14\MIDRetail\Documents\Abercrombie\Calcs"
+		QABuildLocation="\\midretail14\MIDRetail\QA Build\ANF"
+		ReleaseLocation="\\midretail14\MIDRetail\Client Releases\ANF"
+		DocumentationMainline="MIDRetail Documentation"
+		DocumentationBranch="Abercrombie &amp; Fitch 2.7"
+		CustomReports="true"
+		FTPLocation="\\Iis02\ftproot\ANFUser"
+		>
+	</Client>
+	<Client
+		Name="Annas"
+		ProdVersion="2.6"
+		ShipVersion="2.7"
+		CalcLocation=""
+		QABuildLocation="\\midretail14\MIDRetail\QA Build\"
+		ReleaseLocation="\\midretail14\MIDRetail\Client Releases\Annas"
+		DocumentationMainline="MIDRetail Documentation"
+		DocumentationBranch="Working 2.7"
+		CustomReports="true"
+		FTPLocation="\\Iis02\ftproot\Annas"
+		>
+	</Client>
+	<Client
+		Name="Big Lots"
+		ProdVersion="2.4"
+		ShipVersion="3.0"
+		CalcLocation=""
+		QABuildLocation="\\midretail14\MIDRetail\QA Build\Big Lots"
+		ReleaseLocation="\\midretail14\MIDRetail\Client Releases\Big Lots"
+		DocumentationMainline="MIDRetail Documentation"
+		DocumentationBranch="Version 3.0 - do not rebase"
+		FTPLocation="\\Iis02\ftproot\bglsuser"
+		>
+	</Client>
+	<Client
+		Name="BonTon"
+		ProdVersion="3.0"
+		ShipVersion="3.0"
+		CalcLocation="\\midretail14\MIDRetail\Documents\BonTon\Calcs"
+		QABuildLocation="\\midretail14\MIDRetail\QA Build\BonTon"
+		ReleaseLocation="\\midretail14\MIDRetail\Client Releases\BonTon"
+		DocumentationMainline="MIDRetail Documentation"
+		DocumentationBranch="Version 3.0 - do not rebase"
+		FTPLocation="\\Iis02\ftproot\BonTon"
+		>
+	</Client>
+	<Client
+		Name="Clarks"
+		ProdVersion="2.7"
+		ShipVersion="2.7"
+		CalcLocation="\\midretail14\MIDRetail\Documents\Clarks\Calcs"
+		QABuildLocation="\\midretail14\MIDRetail\QA Build\Clarks"
+		ReleaseLocation="\\midretail14\MIDRetail\Client Releases\Clarks"
+		DocumentationMainline="MIDRetail Documentation"
+		DocumentationBranch="Working 2.7"
+		FTPLocation="\\Iis02\ftproot\Clarks"
+		>
+	</Client>
+	<Client 
+		Name="Filenes" 
+		ProdVersion="2.6" 
+		ShipVersion="2.7" 
+		CalcLocation="\\midretail14\MIDRetail\Documents\Filene's\FilenesAlocCalcs" 
+		QABuildLocation="\\midretail14\MIDRetail\QA Build\Filenes"
+		ReleaseLocation="\\midretail14\MIDRetail\Client Releases\Filenes"
+		DocumentationMainline="MIDRetail Documentation"
+		DocumentationBranch="Working 2.7"
+		FTPLocation="\\Iis02\ftproot\Filenes"
+		> 
+	</Client>
+	<Client
+		Name="Maurices"
+		ProdVersion="2.6"
+		ShipVersion="2.7"
+		CalcLocation=""
+		QABuildLocation="\\midretail14\MIDRetail\QA Build"
+		ReleaseLocation="\\midretail14\MIDRetail\Client Releases\Maurices"
+		DocumentationMainline="MIDRetail Documentation"
+		DocumentationBranch="Working 2.7"
+		FTPLocation="\\Iis02\ftproot\Maurices"
+		>
+	</Client>
+	<Client 
+		Name="TMW" 
+		ProdVersion="3.0" 
+		ShipVersion="3.0" 
+		CalcLocation="" 
+		QABuildLocation="\\midretail14\MIDRetail\QA Build\TMW"
+		ReleaseLocation="\\midretail14\MIDRetail\Client Releases\TMW"
+		DocumentationMainline="MIDRetail Documentation"
+		DocumentationBranch="Version 3.0 - do not rebase"
+		FTPLocation="\\Iis02\ftproot\TMW"
+		> 
+	</Client>
+	<Client
+		Name="Wet Seal"
+		ProdVersion="2.6"
+		ShipVersion="2.7"
+		CalcLocation=""
+		QABuildLocation="\\midretail14\MIDRetail\QA Build"
+		ReleaseLocation="\\midretail14\MIDRetail\Client Releases\Wet Seal"
+		DocumentationMainline="MIDRetail Documentation"
+		DocumentationBranch="Working 2.7"
+		FTPLocation="\\Iis02\ftproot\WetSeal"
+		>
+	</Client>
+	<Client
+		Name="Groupe Dynamite"
+		ProdVersion="2.7"
+		ShipVersion="2.7"
+		CalcLocation=""
+		QABuildLocation="\\midretail14\MIDRetail\QA Build\"
+		ReleaseLocation="\\midretail14\MIDRetail\Client Releases\Groupe Dynamite"
+		DocumentationMainline="MIDRetail Documentation"
+		DocumentationBranch="Working 2.7"
+		FTPLocation="\\Iis02\ftproot\GroupD"
+		>
+	</Client>
+
+</Clients>

@@ -1,0 +1,61 @@
+--dv =============================================
+--dv Create date:	6/24/2014
+--dv Description:	Inserts a rule method
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_METHOD_RULE_INSERT] 
+	@METHOD_RID int,
+	@STORE_FILTER_RID int, 
+	@HDR_RID int, 
+	@STORE_ORDER int,
+    @HEADER_COMPONENT int, 
+	@HDR_PACK_RID int, 
+	@HDR_BC_RID int, 
+	@INCLUDED_STORES int, 
+	@INCLUDED_QUANTITY int,
+	@EXCLUDED_STORES int, 
+	@EXCLUDED_QUANTITY int, 
+	@SGL_RID int, 
+	@IS_HEADER_MASTER char,
+	@INCLUDE_RESERVE_IND char
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	INSERT INTO METHOD_RULE
+	(
+		METHOD_RID, 
+		STORE_FILTER_RID, 
+		HDR_RID, 
+		STORE_ORDER,
+        HEADER_COMPONENT, 
+		HDR_PACK_RID, 
+		HDR_BC_RID, 
+		INCLUDED_STORES, 
+		INCLUDED_QUANTITY,
+		EXCLUDED_STORES, 
+		EXCLUDED_QUANTITY, 
+		SGL_RID, 
+		IS_HEADER_MASTER,
+		INCLUDE_RESERVE_IND
+	)
+	VALUES 
+		(
+		@METHOD_RID, 
+		@STORE_FILTER_RID, 
+		@HDR_RID, 
+		@STORE_ORDER,
+        @HEADER_COMPONENT, 
+		@HDR_PACK_RID, 
+		@HDR_BC_RID, 
+		@INCLUDED_STORES, 
+		@INCLUDED_QUANTITY,
+		@EXCLUDED_STORES, 
+		@EXCLUDED_QUANTITY, 
+		@SGL_RID, 
+		@IS_HEADER_MASTER,
+		@INCLUDE_RESERVE_IND
+	)
+
+	SELECT @@ROWCOUNT;
+END
+GO

@@ -1,0 +1,28 @@
+--dv =============================================
+--dv Create date:	6/25/2014
+--dv Description:	Inserts filter condition list values
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_FILTER_CONDITION_LIST_VALUES_INSERT]
+   	@LIST_TABLE FILTER_LIST_VALUE_TYPE READONLY
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	INSERT FILTER_CONDITION_LIST_VALUES 
+	(
+	CONDITION_RID,
+	LIST_VALUE_TYPE_INDEX,
+	LIST_VALUE_INDEX,
+	LIST_VALUE_PARENT_INDEX
+	) 
+	SELECT 
+		CONDITION_RID,
+		LIST_VALUE_TYPE_INDEX,
+		LIST_VALUE_INDEX,
+		LIST_VALUE_PARENT_INDEX
+	FROM @LIST_TABLE
+
+	SELECT @@ROWCOUNT
+
+END
+GO

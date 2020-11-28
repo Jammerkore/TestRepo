@@ -1,0 +1,55 @@
+--dv =============================================
+--dv Create date:	2/12/2014
+--dv Description:	Inserts Assortment User
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_USER_ASSORTMENT_INSERT]
+	@USER_RID int, 
+	@SG_RID int, 
+	@GROUP_BY_ID int, 
+	@VIEW_RID int, 
+	@VARIABLE_TYPE int, 
+	@VARIABLE_NUMBER int,
+	@INCL_ONHAND char(1), 
+	@INCL_INTRANSIT char(1), 
+	@INCL_SIMILAR_STORES char(1), 
+	@INCL_COMMITTED char(1), 
+	@AVERAGE_BY int, 
+	@GRADE_BOUNDARY_IND int
+AS
+BEGIN
+	SET NOCOUNT ON
+	INSERT INTO USER_ASSORTMENT
+		(
+		USER_RID, 
+		SG_RID, 
+		GROUP_BY_ID, 
+		VIEW_RID, 
+		VARIABLE_TYPE, 
+		VARIABLE_NUMBER,
+		INCL_ONHAND, 
+		INCL_INTRANSIT, 
+		INCL_SIMILAR_STORES, 
+		INCL_COMMITTED, 
+		AVERAGE_BY, 
+		GRADE_BOUNDARY_IND
+		)		
+	VALUES
+		(
+		@USER_RID, 
+		@SG_RID, 
+		@GROUP_BY_ID, 
+		@VIEW_RID, 
+		@VARIABLE_TYPE, 
+		@VARIABLE_NUMBER,
+		@INCL_ONHAND, 
+		@INCL_INTRANSIT, 
+		@INCL_SIMILAR_STORES, 
+		@INCL_COMMITTED, 
+		@AVERAGE_BY, 
+		@GRADE_BOUNDARY_IND
+		)		
+
+    SELECT @@ROWCOUNT;
+END
+
+GO

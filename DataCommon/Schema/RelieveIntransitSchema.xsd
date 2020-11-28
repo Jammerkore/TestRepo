@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema id="RelieveIntransitSchema" targetNamespace="http://tempuri.org/RelieveIntransitSchema.xsd"
+	elementFormDefault="qualified" xmlns="http://tempuri.org/RelieveIntransitSchema.xsd" xmlns:mstns="http://tempuri.org/RelieveIntransitSchema.xsd"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="RelieveIntransits">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="RelieveIntransit" minOccurs="1" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="RelieveStore" minOccurs="1" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence></xs:sequence>
+									<xs:attribute name="StoreID" type="xs:string" />
+									<xs:attribute name="Units" type="xs:double" />
+									<xs:attribute name="RelieveAllStores" type="xs:boolean" />
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+						<xs:attribute name="HeaderID" type="xs:string" use="optional" />
+						<xs:attribute name="ProductID" type="xs:string" use="required" />
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

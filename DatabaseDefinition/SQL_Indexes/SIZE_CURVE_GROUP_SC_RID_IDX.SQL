@@ -1,0 +1,4 @@
+create index "SIZE_CURVE_GROUP_SC_RID_IDX" on "SIZE_CURVE_GROUP" (
+	"DEFAULT_SIZE_CURVE_RID")
+
+go

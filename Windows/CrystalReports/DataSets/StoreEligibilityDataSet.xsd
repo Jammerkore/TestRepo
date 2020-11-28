@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="StoreEligibilityDataSet" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="StoreEligibilityDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_UserDSName="StoreEligibilityDataSet" msprop:Generator_DataSetName="StoreEligibilityDataSet">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="StoreEligibilityDataTable" msprop:Generator_UserTableName="StoreEligibilityDataTable" msprop:Generator_RowDeletedName="StoreEligibilityDataTableRowDeleted" msprop:Generator_RowChangedName="StoreEligibilityDataTableRowChanged" msprop:Generator_RowClassName="StoreEligibilityDataTableRow" msprop:Generator_RowChangingName="StoreEligibilityDataTableRowChanging" msprop:Generator_RowEvArgName="StoreEligibilityDataTableRowChangeEvent" msprop:Generator_RowEvHandlerName="StoreEligibilityDataTableRowChangeEventHandler" msprop:Generator_TableClassName="StoreEligibilityDataTableDataTable" msprop:Generator_TableVarName="tableStoreEligibilityDataTable" msprop:Generator_RowDeletingName="StoreEligibilityDataTableRowDeleting" msprop:Generator_TablePropName="StoreEligibilityDataTable">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Type" msprop:Generator_UserColumnName="Type" msprop:Generator_ColumnPropNameInRow="Type" msprop:Generator_ColumnVarNameInTable="columnType" msprop:Generator_ColumnPropNameInTable="TypeColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="HOME_PH_RID" msprop:Generator_UserColumnName="HOME_PH_RID" msprop:Generator_ColumnPropNameInRow="HOME_PH_RID" msprop:Generator_ColumnVarNameInTable="columnHOME_PH_RID" msprop:Generator_ColumnPropNameInTable="HOME_PH_RIDColumn" type="xs:int" minOccurs="0" />
+              <xs:element name="PARENT_HN_RID" msprop:Generator_UserColumnName="PARENT_HN_RID" msprop:Generator_ColumnPropNameInRow="PARENT_HN_RID" msprop:Generator_ColumnVarNameInTable="columnPARENT_HN_RID" msprop:Generator_ColumnPropNameInTable="PARENT_HN_RIDColumn" type="xs:int" minOccurs="0" />
+              <xs:element name="HN_RID" msprop:Generator_UserColumnName="HN_RID" msprop:Generator_ColumnPropNameInRow="HN_RID" msprop:Generator_ColumnVarNameInTable="columnHN_RID" msprop:Generator_ColumnPropNameInTable="HN_RIDColumn" type="xs:int" minOccurs="0" />
+              <xs:element name="ST_ID" msprop:Generator_UserColumnName="ST_ID" msprop:Generator_ColumnPropNameInRow="ST_ID" msprop:Generator_ColumnVarNameInTable="columnST_ID" msprop:Generator_ColumnPropNameInTable="ST_IDColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="STORE_NAME" msprop:Generator_UserColumnName="STORE_NAME" msprop:Generator_ColumnPropNameInRow="STORE_NAME" msprop:Generator_ColumnVarNameInTable="columnSTORE_NAME" msprop:Generator_ColumnPropNameInTable="STORE_NAMEColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="BN_ID" msprop:Generator_UserColumnName="BN_ID" msprop:Generator_ColumnPropNameInRow="BN_ID" msprop:Generator_ColumnVarNameInTable="columnBN_ID" msprop:Generator_ColumnPropNameInTable="BN_IDColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="BN_NAME" msprop:Generator_UserColumnName="BN_NAME" msprop:Generator_ColumnPropNameInRow="BN_NAME" msprop:Generator_ColumnVarNameInTable="columnBN_NAME" msprop:Generator_ColumnPropNameInTable="BN_NAMEColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="DISPLAY_TExT" msprop:Generator_UserColumnName="DISPLAY_TExT" msprop:Generator_ColumnPropNameInRow="DISPLAY_TExT" msprop:Generator_ColumnVarNameInTable="columnDISPLAY_TExT" msprop:Generator_ColumnPropNameInTable="DISPLAY_TExTColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="EM_ID" msprop:Generator_UserColumnName="EM_ID" msprop:Generator_ColumnPropNameInRow="EM_ID" msprop:Generator_ColumnVarNameInTable="columnEM_ID" msprop:Generator_ColumnPropNameInTable="EM_IDColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="INELIGIBLE" msprop:Generator_UserColumnName="INELIGIBLE" msprop:Generator_ColumnPropNameInRow="INELIGIBLE" msprop:Generator_ColumnVarNameInTable="columnINELIGIBLE" msprop:Generator_ColumnPropNameInTable="INELIGIBLEColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="STKMOD_ID" msprop:Generator_UserColumnName="STKMOD_ID" msprop:Generator_ColumnPropNameInRow="STKMOD_ID" msprop:Generator_ColumnVarNameInTable="columnSTKMOD_ID" msprop:Generator_ColumnPropNameInTable="STKMOD_IDColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="SLSMOD_ID" msprop:Generator_UserColumnName="SLSMOD_ID" msprop:Generator_ColumnPropNameInRow="SLSMOD_ID" msprop:Generator_ColumnVarNameInTable="columnSLSMOD_ID" msprop:Generator_ColumnPropNameInTable="SLSMOD_IDColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="FWOSMOD_ID" msprop:Generator_UserColumnName="FWOSMOD_ID" msprop:Generator_ColumnPropNameInRow="FWOSMOD_ID" msprop:Generator_ColumnVarNameInTable="columnFWOSMOD_ID" msprop:Generator_ColumnPropNameInTable="FWOSMOD_IDColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="SimilarStore" msprop:Generator_UserColumnName="SimilarStore" msprop:Generator_ColumnPropNameInRow="SimilarStore" msprop:Generator_ColumnVarNameInTable="columnSimilarStore" msprop:Generator_ColumnPropNameInTable="SimilarStoreColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="SIMILAR_STORE_RATIO" msprop:Generator_UserColumnName="SIMILAR_STORE_RATIO" msprop:Generator_ColumnPropNameInRow="SIMILAR_STORE_RATIO" msprop:Generator_ColumnVarNameInTable="columnSIMILAR_STORE_RATIO" msprop:Generator_ColumnPropNameInTable="SIMILAR_STORE_RATIOColumn" type="xs:int" minOccurs="0" />
+              <xs:element name="PERIOD" msprop:Generator_UserColumnName="PERIOD" msprop:Generator_ColumnPropNameInRow="PERIOD" msprop:Generator_ColumnVarNameInTable="columnPERIOD" msprop:Generator_ColumnPropNameInTable="PERIODColumn" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

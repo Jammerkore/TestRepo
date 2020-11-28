@@ -1,0 +1,310 @@
+--dv =============================================
+--dv Modified date:	8/14/2014
+--dv Description:	Gets overrides for a hierarchy level
+--dv History:		TT#1268 - MD - RMatelic - 5.4 Merge
+--dv =============================================
+CREATE PROCEDURE [dbo].[SP_MID_GET_OVERRIDES_BY_LEVEL] 
+	@MODEL_RID AS INT,
+	@HN_RID AS INT,
+	@LEVEL_SEQ AS INT,
+	@HIGH_LEVEL_HN_RID AS INT,
+	@MAINTENANCE AS CHAR,
+	@debug BIT = 0
+AS
+SET NOCOUNT ON
+
+DECLARE @Loop INT,
+	@LoopCount INT,
+	@HIGH_LEVEL_NODE_LEVEL INT,
+	@MODEL_HN_RID INT,
+	@MODEL_PH_RID INT,
+	@Level INT,
+	@main_PH_RID INT
+
+-- this procedure uses different tables depending on the value of @MAINTENANCE
+SELECT @main_PH_RID = PH_RID
+FROM PRODUCT_HIERARCHY
+WHERE PH_TYPE = 800000
+
+-- get node of model if not passed as parameter
+IF @HN_RID = - 1
+BEGIN
+	IF @MAINTENANCE = '1'
+	BEGIN
+		SELECT @MODEL_HN_RID = om.HN_RID
+		FROM OVERRIDE_LL_MODEL_HEADER_WORK om WITH (NOLOCK)
+		WHERE om.OLL_RID = @MODEL_RID
+	END
+	ELSE
+	BEGIN
+		SELECT @MODEL_HN_RID = om.HN_RID
+		FROM OVERRIDE_LL_MODEL_HEADER om WITH (NOLOCK)
+		WHERE om.OLL_RID = @MODEL_RID
+	END
+END
+ELSE
+BEGIN
+	SET @MODEL_HN_RID = @HN_RID
+END
+
+-- get home hierarchy of model node
+SELECT @MODEL_PH_RID = hn.HOME_PH_RID
+FROM HIERARCHY_NODE hn WITH (NOLOCK)
+WHERE hn.HN_RID = @MODEL_HN_RID
+
+-- get level of high level node
+SELECT @HIGH_LEVEL_NODE_LEVEL = hn.HOME_LEVEL
+FROM HIERARCHY_NODE hn WITH (NOLOCK)
+WHERE hn.HN_RID = @HIGH_LEVEL_HN_RID
+
+-- get level of model node
+SELECT @Level = hn.HOME_LEVEL
+FROM HIERARCHY_NODE hn WITH (NOLOCK)
+WHERE hn.HN_RID = @MODEL_HN_RID
+
+-- create work table
+CREATE TABLE #OVERRIDES (
+	OFFSET INT NULL,
+	HN_RID INT NOT NULL,
+	PARENT_HN_RID INT NULL,
+	HOME_PH_RID INT NULL,
+	HOME_LEVEL INT NULL,
+	VERSION_RID INT NULL,
+	VERSION_INHERIT_HN_RID INT NULL,
+	EXCLUDE_IND CHAR COLLATE database_default NULL,
+	EXCLUDE_IND_INHERIT_HN_RID INT NULL,
+	VIRTUAL_IND CHAR(1) null 	-- TT#787 - MD - stodd  
+	)
+
+-- insert the root node into the temp table (do not use purge values, they will be applied last)
+IF @MAINTENANCE = '1'
+BEGIN
+	INSERT #OVERRIDES (
+		OFFSET,
+		HN_RID,
+		PARENT_HN_RID,
+		HOME_PH_RID,
+		HOME_LEVEL,
+		VERSION_RID,
+		EXCLUDE_IND,
+		VERSION_INHERIT_HN_RID,
+		EXCLUDE_IND_INHERIT_HN_RID,
+		VIRTUAL_IND		-- TT#787 - MD - stodd
+		)
+	SELECT 0,
+		hn.HN_RID,
+		0,
+		hn.HOME_PH_RID,
+		hn.HOME_LEVEL,
+		omd.VERSION_RID,
+		omd.EXCLUDE_IND,
+		hn.HN_RID,
+		hn.HN_RID,
+		hn.VIRTUAL_IND    -- TT#787 - MD - stodd
+	FROM HIERARCHY_NODE hn
+	LEFT OUTER JOIN OVERRIDE_LL_MODEL_DETAIL_WORK omd ON hn.HN_RID = omd.HN_RID
+		AND omd.OLL_RID = @MODEL_RID
+	WHERE hn.HN_RID = @MODEL_HN_RID
+END
+ELSE
+BEGIN
+	INSERT #OVERRIDES (
+		OFFSET,
+		HN_RID,
+		PARENT_HN_RID,
+		HOME_PH_RID,
+		HOME_LEVEL,
+		VERSION_RID,
+		EXCLUDE_IND,
+		VERSION_INHERIT_HN_RID,
+		EXCLUDE_IND_INHERIT_HN_RID,
+		VIRTUAL_IND		-- TT#787 - MD - stodd
+		)
+	SELECT 0,
+		hn.HN_RID,
+		0,
+		hn.HOME_PH_RID,
+		hn.HOME_LEVEL,
+		omd.VERSION_RID,
+		omd.EXCLUDE_IND,
+		hn.HN_RID,
+		hn.HN_RID,
+		hn.VIRTUAL_IND    -- TT#787 - MD - stodd
+	FROM HIERARCHY_NODE hn
+	LEFT OUTER JOIN OVERRIDE_LL_MODEL_DETAIL omd ON hn.HN_RID = omd.HN_RID
+		AND omd.OLL_RID = @MODEL_RID
+	WHERE hn.HN_RID = @MODEL_HN_RID
+END
+
+SET @Loop = @@ROWCOUNT
+SET @LoopCount = 0;
+
+-- chase all paths until you get to the lowest leaf that belongs to the hierarchy
+IF @LEVEL_SEQ > 0
+BEGIN
+	WHILE @Loop > 0
+	BEGIN
+		IF @MAINTENANCE = '1'
+		BEGIN
+			INSERT #OVERRIDES (
+				OFFSET,
+				HN_RID,
+				PARENT_HN_RID,
+				HOME_PH_RID,
+				HOME_LEVEL,
+				VERSION_RID,
+				EXCLUDE_IND,
+				VERSION_INHERIT_HN_RID,
+				EXCLUDE_IND_INHERIT_HN_RID,
+				VIRTUAL_IND		-- TT#787 - MD - stodd
+				)
+			SELECT @LoopCount + 1,
+				hnj.HN_RID,
+				ovr.HN_RID,
+				hn.HOME_PH_RID,
+				hn.HOME_LEVEL,
+				COALESCE(omd.VERSION_RID, ovr.VERSION_RID),
+				COALESCE(omd.EXCLUDE_IND, ovr.EXCLUDE_IND),
+				CASE 
+					WHEN omd.VERSION_RID IS NULL
+						THEN ovr.VERSION_INHERIT_HN_RID
+					ELSE hnj.HN_RID
+					END,
+				CASE 
+					WHEN omd.EXCLUDE_IND IS NULL
+						THEN ovr.EXCLUDE_IND_INHERIT_HN_RID
+					ELSE hnj.HN_RID
+					END,
+				hn.VIRTUAL_IND	-- TT#787 - MD - stodd
+			FROM HIER_NODE_JOIN hnj WITH (NOLOCK)
+			JOIN HIERARCHY_NODE hn WITH (NOLOCK) ON hn.HN_RID = hnj.HN_RID
+			LEFT OUTER JOIN OVERRIDE_LL_MODEL_DETAIL_WORK omd WITH (NOLOCK) ON omd.HN_RID = hnj.HN_RID
+				AND omd.OLL_RID = @MODEL_RID
+			JOIN #OVERRIDES ovr ON hnj.PARENT_HN_RID = ovr.HN_RID
+				AND hnj.PH_RID = ovr.HOME_PH_RID
+			WHERE ovr.OFFSET = @LoopCount
+				AND (
+					ovr.HOME_PH_RID <> @main_PH_RID
+					OR (
+						ovr.HOME_PH_RID = @main_PH_RID
+						AND ovr.HOME_LEVEL < @LEVEL_SEQ
+						)
+					)
+				AND hnj.NODE_DELETE_IND = '0' -- TT#3630 - JSmith - Delete My Hierarchy
+		END
+		ELSE
+		BEGIN
+			INSERT #OVERRIDES (
+				OFFSET,
+				HN_RID,
+				PARENT_HN_RID,
+				HOME_PH_RID,
+				HOME_LEVEL,
+				VERSION_RID,
+				EXCLUDE_IND,
+				VERSION_INHERIT_HN_RID,
+				EXCLUDE_IND_INHERIT_HN_RID,
+				VIRTUAL_IND		-- TT#787 - MD - stodd
+				)
+			SELECT @LoopCount + 1,
+				hnj.HN_RID,
+				ovr.HN_RID,
+				hn.HOME_PH_RID,
+				hn.HOME_LEVEL,
+				COALESCE(omd.VERSION_RID, ovr.VERSION_RID),
+				CASE 
+					WHEN ollmh.ACTIVE_ONLY_IND = '1'
+						AND hn.ACTIVE_IND = '0'
+						THEN '1'
+					ELSE COALESCE(omd.EXCLUDE_IND, ovr.EXCLUDE_IND)
+					END,
+				CASE 
+					WHEN omd.VERSION_RID IS NULL
+						THEN ovr.VERSION_INHERIT_HN_RID
+					ELSE hnj.HN_RID
+					END,
+				CASE 
+					WHEN omd.EXCLUDE_IND IS NULL
+						THEN ovr.EXCLUDE_IND_INHERIT_HN_RID
+					ELSE hnj.HN_RID
+					END,
+				hn.VIRTUAL_IND		-- TT#787 - MD - stodd
+			FROM HIER_NODE_JOIN hnj WITH (NOLOCK)
+			JOIN HIERARCHY_NODE hn WITH (NOLOCK) ON hn.HN_RID = hnj.HN_RID
+			LEFT OUTER JOIN OVERRIDE_LL_MODEL_HEADER ollmh WITH (NOLOCK) ON ollmh.OLL_RID = @MODEL_RID
+			LEFT OUTER JOIN OVERRIDE_LL_MODEL_DETAIL omd WITH (NOLOCK) ON omd.HN_RID = hnj.HN_RID
+				AND omd.OLL_RID = @MODEL_RID
+			JOIN #OVERRIDES ovr ON hnj.PARENT_HN_RID = ovr.HN_RID
+				AND hnj.PH_RID = ovr.HOME_PH_RID
+			WHERE ovr.OFFSET = @LoopCount
+				AND (
+					ovr.HOME_PH_RID <> @main_PH_RID
+					OR (
+						ovr.HOME_PH_RID = @main_PH_RID
+						AND ovr.HOME_LEVEL < @LEVEL_SEQ
+						)
+					)
+				AND hnj.NODE_DELETE_IND = '0' -- TT#3630 - JSmith - Delete My Hierarchy
+		END
+
+		SET @Loop = @@ROWCOUNT
+		SET @Level = @Level + 1
+		SET @LoopCount = @LoopCount + 1
+
+		DELETE
+		FROM #OVERRIDES
+		WHERE EXCLUDE_IND = '1'
+			AND EXCLUDE_IND_INHERIT_HN_RID <> HN_RID
+
+		-- check for filtering
+		IF @HIGH_LEVEL_HN_RID > - 1
+		BEGIN
+			-- if found filtering node, remove all other nodes from this level
+			IF EXISTS (
+					SELECT *
+					FROM #OVERRIDES
+					WHERE HN_RID = @HIGH_LEVEL_HN_RID
+						AND HOME_LEVEL = @Level
+					)
+			BEGIN
+				DELETE
+				FROM #OVERRIDES
+				WHERE HOME_LEVEL = @Level
+					AND HN_RID != @HIGH_LEVEL_HN_RID
+			END
+		END
+	END
+END
+
+IF (@debug <> 0)
+BEGIN
+	SELECT *
+	FROM #OVERRIDES
+
+	SELECT @Level '@Level'
+END
+ELSE
+BEGIN
+	IF @LEVEL_SEQ > - 1
+		AND (
+			@Level >= @LEVEL_SEQ
+			OR @MODEL_RID = - 1
+			)
+	BEGIN
+		SELECT *
+		FROM #OVERRIDES
+		WHERE HOME_LEVEL = @LEVEL_SEQ
+			AND HOME_PH_RID = @main_PH_RID
+			AND (VIRTUAL_IND IS NULL OR VIRTUAL_IND = 0)	-- TT#787 - MD - stodd 
+	END
+	ELSE
+	BEGIN
+		SELECT *
+		FROM #OVERRIDES
+		WHERE HOME_PH_RID = @main_PH_RID
+		AND (VIRTUAL_IND IS NULL OR VIRTUAL_IND = 0)	-- TT#787 - MD - stodd 
+	END
+END
+GO
+
+

@@ -1,0 +1,25 @@
+--dv =============================================
+--dv Create date:	10/17/2013
+--dv Description:	Inserts a row into the header store grade values table
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_HEADER_STORE_GRADE_VALUES_INSERT]
+	@HDR_RID int,
+	@BOUNDARY int,
+	@MINIMUM_STOCK int,
+	@MAXIMUM_STOCK int,
+	@MINIMUM_AD int,
+	@MINIMUM_COLOR int,
+	@MAXIMUM_COLOR int,
+	@SHIP_UP_TO int,
+	@SGL_RID int
+AS
+BEGIN
+	SET NOCOUNT ON;
+	
+	INSERT INTO HEADER_STORE_GRADE_VALUES WITH (ROWLOCK) (HDR_RID, BOUNDARY, MINIMUM_STOCK, MAXIMUM_STOCK, MINIMUM_AD, MINIMUM_COLOR, MAXIMUM_COLOR, SHIP_UP_TO, SGL_RID) 
+    VALUES (@HDR_RID, @BOUNDARY, @MINIMUM_STOCK, @MAXIMUM_STOCK, @MINIMUM_AD, @MINIMUM_COLOR, @MAXIMUM_COLOR, @SHIP_UP_TO, @SGL_RID)
+
+	SELECT @@ROWCOUNT;
+
+END
+GO

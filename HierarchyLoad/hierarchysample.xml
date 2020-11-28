@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?> 
+<Hierarchies xmlns="http://tempuri.org/HierarchyLoadSchema.xsd">
+	 <Hierarchy ID="MID Retail" UpdateDefinition="true" Type="Organizational" Color="red">
+		<Level Name="Division" Color="lightgreen"></Level>
+		<Level Name="Department" Color="lightblue"></Level>
+		<Level Name="Class" Color="kaki" IsOTSForecastLevel="true"></Level>
+		<Level Name="Style" Type="Style" Color="purple"></Level>
+		<Product Parent="MID Retail" ID="1" Name="Bath &amp; Body Division" Description="Bath &amp; Body Division" Type="Undefined"></Product>
+		<Product Parent="MID Retail" ID="2" Name="Childrens Division" Description="Childrens Division" Type="Undefined"></Product>
+		<Product Parent="MID Retail" ID="3" Name="Housewares Division" Description="Housewares Division" Type="Undefined"></Product>
+		<Product Parent="MID Retail" ID="4" Name="Jewelry Division" Description="Jewelry Division" Type="Undefined"></Product>
+		<Product Parent="MID Retail" ID="5" Name="Mens Division" Description="Mens Division" Type="Undefined"></Product>
+		<Product Parent="MID Retail" ID="6" Name="Outerwear Division" Description="Outerwear Division" Type="Undefined"></Product>
+		<Product Parent="MID Retail" ID="7" Name="Womens Division" Description="Womens Division" Type="Undefined"></Product>
+		<Product Parent="5" ID="51" Name="Mens' Casualwear" Description="Mens' Casualwear" Type="Undefined"></Product>
+		<Product Parent="5" ID="52" Name="Mens' Furnishings" Description="Mens' Furnishings" Type="Undefined"></Product>
+		<Product Parent="5" ID="53" Name="Mens' Suits" Description="Mens' Suits" Type="Undefined"></Product>
+		<Product Parent="5" ID="54" Name="Young Mens'" Description="Young Mens'" Type="Undefined"></Product>
+		<Product Parent="5" ID="55" Name="Collection Sportwear" Description="Collection Sportwear" Type="Undefined"></Product>
+		<Product Parent="54" ID="541" Name="Denim" Description="Denim" Type="Undefined"></Product>
+		<Product Parent="54" ID="542" Name="Separate Bottoms" Description="Separate Bottoms" Type="Undefined"></Product>
+		<Product Parent="54" ID="543" Name="Separate Tops" Description="Separate Tops" Type="Undefined"></Product>
+		<Product Parent="54" ID="544" Name="Slacks &amp; Separates" Description="Slacks &amp; Separates" Type="Undefined"></Product>
+		<Product Parent="54" ID="545" Name="Sweaters" Description="Sweaters" Type="Undefined"></Product>
+		<Product Parent="541" ID="54101" Name="16Oz Dark Wash Jacket"></Product>
+		<Product Parent="541" ID="54102" Name="16Oz stonewash Barn Jacket"></Product>
+		<Product Parent="541" ID="54103" Name="Basic Denim 5Pkt 12Oz Jeans Colors"></Product>
+		<Product Parent="541" ID="54104" Name="Basic Denim 5Pkt 12Oz Jeans Stonewash"></Product>
+		<Product Parent="541" ID="54105" Name="L/S Button Down 10Oz Shirt"></Product>
+		<Product Parent="541" ID="54106" Name="L/S Button Down Chambray Shirt"></Product>
+		<Product Parent="541" ID="54107" Name="Stonewash 12Oz Overall"></Product>
+		<Product Parent="541" ID="54108" Name="Stonewash 5Pkt 12Oz Short"></Product>
+		<Product Parent="541" ID="54109" Name="Stonewash Double Pleat 12Oz"></Product>
+	</Hierarchy>
+	<Hierarchy ID="Mens' Denim Tops" UpdateDefinition="true" Type="Open" Color="blue"></Hierarchy>
+	<Hierarchy ID="Mens' Wear Resort" UpdateDefinition="true" Type="Open" Color="blue"></Hierarchy>
+	<Hierarchy ID="Total Earrings" UpdateDefinition="true" Color="blue"></Hierarchy>
+</Hierarchies>

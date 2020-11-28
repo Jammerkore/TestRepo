@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<SizeConstraintsModels xmlns="http://tempuri.org/SizeConstraintsLoadSchema.xsd">
+	<SizeConstraintsModel Action="Modify" ModelName="Test 1" SizeGroup="S-XXL" Attribute="Store Type">
+	<!--The following transaction creates the "Default" level Size Constraint  -->
+		<Set SizeMin="6" SizeMax="24" SizeMult="2" />
+	<!--The following transactions creates a Size Min for Color "101" for each size -->
+		<Set SetName="Mall" ColorCode="101" SizePrimary="Small" SizeSecondary="" SizeCode="10132" SizeMin="12"/>
+		<Set SetName="Mall" ColorCode="101" SizePrimary="Medium" SizeSecondary="" SizeCode="10134" SizeMin="14"/>
+		<Set SetName="Mall" ColorCode="101" SizePrimary="Large" SizeSecondary="" SizeCode="10135" SizeMin="16"/>
+		<Set SetName="Mall" ColorCode="101" SizePrimary="X Large" SizeSecondary="" SizeCode="10136" SizeMin="12"/>
+		<Set SetName="Mall" ColorCode="101" SizePrimary="XX Large" SizeSecondary="" SizeCode="10137" SizeMin="8"/>
+	<!--The following transactions creates a Size Min for Color "02" for each size - note the SizePrimary may be used without the Size Code  -->
+		<Set SetName="Mall" ColorCode="102" SizePrimary="Small" SizeMin="12"/>
+		<Set SetName="Mall" ColorCode="102" SizePrimary="Medium" SizeMin="14"/>
+		<Set SetName="Mall" ColorCode="102" SizePrimary="Large" SizeMin="16"/>
+		<Set SetName="Mall" ColorCode="102" SizePrimary="X Large" SizeMin="12"/>
+		<Set SetName="Mall" ColorCode="102" SizePrimary="XX Large" SizeMin="8"/>
+	<!--The following transactions creates a Size Min for Color "03" for each size - note the SizeCode may be used without the SizePrimary and SizeSecondary -->
+		<Set SetName="Mall" ColorCode="103" SizeCode="10132" SizeMin="12"/>
+		<Set SetName="Mall" ColorCode="103" SizeCode="10134" SizeMin="14"/>
+		<Set SetName="Mall" ColorCode="103" SizeCode="10135" SizeMin="16"/>
+		<Set SetName="Mall" ColorCode="103" SizeCode="10136" SizeMin="12"/>
+		<Set SetName="Mall" ColorCode="103" SizeCode="10137" SizeMin="8"/>
+	<!--The following transactions are for a different Set -->
+		<Set SetName="Free Standing" ColorCode="101" SizePrimary="Small" SizeSecondary="" SizeCode="10132" SizeMin="6"/>
+		<Set SetName="Free Standing" ColorCode="101" SizePrimary="Medium" SizeSecondary="" SizeCode="10134" SizeMin="6"/>
+		<Set SetName="Free Standing" ColorCode="101" SizePrimary="Large" SizeSecondary="" SizeCode="10135" SizeMin="6"/>
+		<Set SetName="Free Standing" ColorCode="101" SizePrimary="X Large" SizeSecondary="" SizeCode="10136" SizeMin="4"/>
+		<Set SetName="Free Standing" ColorCode="101" SizePrimary="XX Large" SizeSecondary="" SizeCode="10137" SizeMin="4"/>
+	<!--The following transactions creates a Size Min for Color "02" for each size - note the SizePrimary may be used without the Size Code  -->
+		<Set SetName="Free Standing" ColorCode="102" SizePrimary="Small" SizeMin="6"/>
+		<Set SetName="Free Standing" ColorCode="102" SizePrimary="Medium" SizeMin="8"/>
+		<Set SetName="Free Standing" ColorCode="102" SizePrimary="Large" SizeMin="8"/>
+		<Set SetName="Free Standing" ColorCode="102" SizePrimary="X Large" SizeMin="6"/>
+		<Set SetName="Free Standing" ColorCode="102" SizePrimary="XX Large" SizeMin="6"/>
+	<!--The following transactions creates a Size Min for Color "03" for each size - note the SizeCode may be used without the SizePrimary and SizeSecondary -->
+		<Set SetName="Free Standing" ColorCode="103" SizeCode="10132" SizeMin="12"/>
+		<Set SetName="Free Standing" ColorCode="103" SizeCode="10134" SizeMin="12"/>
+		<Set SetName="Free Standing" ColorCode="103" SizeCode="10135" SizeMin="12"/>
+		<Set SetName="Free Standing" ColorCode="103" SizeCode="10136" SizeMin="12"/>
+		<Set SetName="Free Standing" ColorCode="103" SizeCode="10137" SizeMin="12"/>
+	</SizeConstraintsModel >
+	<SizeConstraintsModel Action="Modify" ModelName="Test 2" SizeGroup="S-XXL" Attribute="Store Type">
+		<Set SetName="Mall" ColorCode="101" SizePrimary="Small" SizeSecondary="" SizeCode="10132" SizeMin="12"/>
+		<Set SetName="Mall" ColorCode="101" SizePrimary="Medium" SizeSecondary="" SizeCode="10134" SizeMin="14"/>
+		<Set SetName="Mall" ColorCode="101" SizePrimary="Large" SizeSecondary="" SizeCode="10135" SizeMin="16"/>
+		<Set SetName="Mall" ColorCode="101" SizePrimary="X Large" SizeSecondary="" SizeCode="10136" SizeMin="12"/>
+		<Set SetName="Mall" ColorCode="101" SizePrimary="XX Large" SizeSecondary="" SizeCode="10137" SizeMin="8"/>
+		<Set SetName="Mall" ColorCode="102" SizePrimary="Small" SizeMin="12"/>
+		<Set SetName="Mall" ColorCode="102" SizePrimary="Medium" SizeMin="14"/>
+		<Set SetName="Mall" ColorCode="102" SizePrimary="Large" SizeMin="16"/>
+		<Set SetName="Mall" ColorCode="102" SizePrimary="X Large" SizeMin="12"/>
+		<Set SetName="Mall" ColorCode="102" SizePrimary="XX Large" SizeMin="8"/>
+		<Set SetName="Mall" ColorCode="103" SizeCode="10132" SizeMin="12"/>
+		<Set SetName="Mall" ColorCode="103" SizeCode="10134" SizeMin="14"/>
+		<Set SetName="Mall" ColorCode="103" SizeCode="10135" SizeMin="16"/>
+		<Set SetName="Mall" ColorCode="103" SizeCode="10136" SizeMin="12"/>
+		<Set SetName="Mall" ColorCode="103" SizeCode="10137" SizeMin="8"/>
+	<!--The following transactions are for a different Set -->
+		<Set SetName="Free Standing" ColorCode="101" SizePrimary="Small" SizeSecondary="" SizeCode="10132" SizeMin="6"/>
+		<Set SetName="Free Standing" ColorCode="101" SizePrimary="Medium" SizeSecondary="" SizeCode="10134" SizeMin="6"/>
+		<Set SetName="Free Standing" ColorCode="101" SizePrimary="Large" SizeSecondary="" SizeCode="10135" SizeMin="6"/>
+		<Set SetName="Free Standing" ColorCode="101" SizePrimary="X Large" SizeSecondary="" SizeCode="10136" SizeMin="4"/>
+		<Set SetName="Free Standing" ColorCode="101" SizePrimary="XX Large" SizeSecondary="" SizeCode="10137" SizeMin="4"/>
+		<Set SetName="Free Standing" ColorCode="102" SizePrimary="Small" SizeMin="6"/>
+		<Set SetName="Free Standing" ColorCode="102" SizePrimary="Medium" SizeMin="8"/>
+		<Set SetName="Free Standing" ColorCode="102" SizePrimary="Large" SizeMin="8"/>
+		<Set SetName="Free Standing" ColorCode="102" SizePrimary="X Large" SizeMin="6"/>
+		<Set SetName="Free Standing" ColorCode="102" SizePrimary="XX Large" SizeMin="6"/>
+		<Set SetName="Free Standing" ColorCode="103" SizeCode="10132" SizeMin="12"/>
+		<Set SetName="Free Standing" ColorCode="103" SizeCode="10134" SizeMin="12"/>
+		<Set SetName="Free Standing" ColorCode="103" SizeCode="10135" SizeMin="12"/>
+		<Set SetName="Free Standing" ColorCode="103" SizeCode="10136" SizeMin="12"/>
+		<Set SetName="Free Standing" ColorCode="103" SizeCode="10137" SizeMin="12"/>
+	<!--The following transactions are for a different Set -->
+		<Set SetName="Flagship" ColorCode="101" SizePrimary="Small" SizeSecondary="" SizeCode="10132" SizeMin="16"/>
+		<Set SetName="Flagship" ColorCode="101" SizePrimary="Medium" SizeSecondary="" SizeCode="10134" SizeMin="16"/>
+		<Set SetName="Flagship" ColorCode="101" SizePrimary="Large" SizeSecondary="" SizeCode="10135" SizeMin="16"/>
+		<Set SetName="Flagship" ColorCode="101" SizePrimary="X Large" SizeSecondary="" SizeCode="10136" SizeMin="14"/>
+		<Set SetName="Flagship" ColorCode="101" SizePrimary="XX Large" SizeSecondary="" SizeCode="10137" SizeMin="14"/>
+		<Set SetName="Flagship" ColorCode="102" SizePrimary="Small" SizeMin="12"/>
+		<Set SetName="Flagship" ColorCode="102" SizePrimary="Medium" SizeMin="14"/>
+		<Set SetName="Flagship" ColorCode="102" SizePrimary="Large" SizeMin="16"/>
+		<Set SetName="Flagship" ColorCode="102" SizePrimary="X Large" SizeMin="14"/>
+		<Set SetName="Flagship" ColorCode="102" SizePrimary="XX Large" SizeMin="12"/>
+		<Set SetName="Flagship" ColorCode="103" SizeCode="10132" SizeMin="20"/>
+		<Set SetName="Flagship" ColorCode="103" SizeCode="10134" SizeMin="20"/>
+		<Set SetName="Flagship" ColorCode="103" SizeCode="10135" SizeMin="24"/>
+		<Set SetName="Flagship" ColorCode="103" SizeCode="10136" SizeMin="24"/>
+		<Set SetName="Flagship" ColorCode="103" SizeCode="10137" SizeMin="20"/>
+	</SizeConstraintsModel >
+	<SizeConstraintsModel Action="Modify" ModelName="Test 3" SizeGroup="S-XXL" Attribute="Store Type">
+		<Set SetName="" ColorCode="All Colors" SizeCode="10132" SizeMin="12"/>
+	</SizeConstraintsModel >	
+</SizeConstraintsModels >

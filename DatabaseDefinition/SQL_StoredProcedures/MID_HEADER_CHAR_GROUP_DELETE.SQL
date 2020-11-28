@@ -1,0 +1,31 @@
+--dv =============================================
+--dv Create date: 3/19/2015
+--dv Description: Deletes a header characteristic group
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_HEADER_CHAR_GROUP_DELETE]
+	@HCG_RID INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	DELETE
+	FROM HEADER_CHAR_JOIN
+	WHERE HC_RID IN (SELECT HC_RID FROM HEADER_CHAR WHERE HCG_RID=@HCG_RID)
+
+	DELETE 
+	FROM HEADER_CHAR
+	WHERE HCG_RID = @HCG_RID
+
+	DELETE
+	FROM GRID_VIEW_DETAIL
+	WHERE HCG_RID = @HCG_RID
+
+	DELETE
+	FROM HEADER_CHAR_GROUP
+	WHERE HCG_RID = @HCG_RID
+
+	SELECT @@ROWCOUNT
+END
+GO
+
+

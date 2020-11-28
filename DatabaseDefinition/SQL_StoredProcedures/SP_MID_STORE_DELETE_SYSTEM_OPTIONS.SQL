@@ -1,0 +1,49 @@
+CREATE PROCEDURE [dbo].[SP_MID_STORE_DELETE_SYSTEM_OPTIONS] 
+	@BATCH_SIZE INT,
+	@RC INT OUTPUT
+AS
+BEGIN
+	DECLARE @cmd NVARCHAR(500)
+	DECLARE @parmDefinition NVARCHAR(500)
+	DECLARE @count INT
+	DECLARE @stop INT,
+		@rowCount INT,
+		@storeId VARCHAR(100)
+
+	SET @RC = 0
+	SET @parmDefinition = N'@countOUT int OUTPUT'
+	SET @count = 0
+	SET @stop = 0
+	SET @rowCount = 0
+
+	WHILE (1 = 1)
+	BEGIN
+		BEGIN TRANSACTION
+
+		UPDATE SYSTEM_OPTIONS
+		SET RESERVE_ST_RID = NULL
+		WHERE RESERVE_ST_RID IN (
+				SELECT ST_RID
+				FROM STORES
+				WHERE STORE_DELETE_IND = '1'
+				)
+
+		SET @rowCount = @@ROWCOUNT
+
+		COMMIT
+
+		IF @rowCount = 0
+			BREAK
+		ELSE
+		BEGIN
+			SET @RC = @RC + @rowCount
+
+			CONTINUE
+		END
+	END
+
+	RETURN @RC
+END
+GO
+
+

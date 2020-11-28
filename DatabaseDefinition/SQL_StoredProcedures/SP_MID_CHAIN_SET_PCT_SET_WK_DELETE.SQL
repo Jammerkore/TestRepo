@@ -1,0 +1,43 @@
+CREATE PROCEDURE [dbo].[SP_MID_CHAIN_SET_PCT_SET_WK_DELETE] 
+	@NODE_RID INT,
+	@YEAR_WEEK INT,
+	@RETURN INT OUTPUT
+AS
+BEGIN
+	DECLARE @hierNodeRid INT
+	DECLARE @timeId INT
+
+	--select @hierNodeRid = HN_RID from BASE_NODE where BN_ID = @NODE_ID
+	/* Convert YYYYWW to YYYYDDD */
+	SELECT @timeId = FIRST_DAY_OF_WEEK
+	FROM FISCAL_WEEKS
+	WHERE FISCAL_WEEK = @YEAR_WEEK
+
+	--SELECT @NODE_RID,@timeId
+
+	SET @RETURN = 0
+
+	IF @NODE_RID IS NULL
+		SET @RETURN = 1
+	ELSE IF @timeId IS NULL
+		SET @RETURN = 2
+
+	IF @RETURN <> 0
+	BEGIN
+	   --Return Code is set and passed out as an output parameter
+	   --Select a zero row count for consistency
+	   SELECT 0;
+	END
+	ELSE
+	BEGIN
+		DELETE
+		FROM dbo.CHAIN_SET_PERCENT_SET WITH (ROWLOCK)
+		WHERE HN_RID = @NODE_RID
+			AND TIME_ID = @timeId
+
+		SELECT @@ROWCOUNT;
+	END
+END
+GO
+
+

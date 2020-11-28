@@ -1,0 +1,166 @@
+CREATE PROCEDURE [dbo].[SP_MID_SIZE_CURVE_GROUP_DELETE] 
+	@SIZE_CURVE_GROUP_RID INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+	-- delete store size curve by group & size curve group join
+	DELETE STORE_SIZE_CURVE_BY_GROUP
+	WITH (ROWLOCK)
+	WHERE SIZE_CURVE_GROUP_RID = @SIZE_CURVE_GROUP_RID
+
+	-- disable foreign key constraints
+	SELECT ccu.TABLE_SCHEMA,
+		ccu.TABLE_NAME,
+		ccu.CONSTRAINT_NAME
+	INTO #t2
+	FROM INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ccu,
+		INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc
+	-- Begin TT#3142 - JSmith - Save As always creates a new Size Curve instead of updating an existing one
+	--WHERE (ccu.COLUMN_NAME like '%SIZE_CURVE_GROUP_RID' or ccu.COLUMN_NAME like '%SIZE_CURVE_RID')
+	WHERE (ccu.COLUMN_NAME LIKE '%SIZE_CURVE_RID')
+		-- End TT#3142 - JSmith - Save As always creates a new Size Curve instead of updating an existing one
+		AND ccu.CONSTRAINT_NAME = tc.CONSTRAINT_NAME
+		AND tc.CONSTRAINT_TYPE = 'FOREIGN KEY'
+
+	DECLARE @sql NVARCHAR(4000),
+		@tSchema VARCHAR(50),
+		@tName VARCHAR(50),
+		@cName VARCHAR(50)
+
+	DECLARE C1 CURSOR
+	FOR
+	SELECT TABLE_SCHEMA,
+		TABLE_NAME,
+		CONSTRAINT_NAME
+	FROM #t2
+
+	OPEN C1
+
+	FETCH NEXT
+	FROM C1
+	INTO @tSchema,
+		@tName,
+		@cName
+
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		SET @sql = 'ALTER TABLE [' + @tSchema + '].[' + @tName + '] NOCHECK CONSTRAINT ' + @cName
+
+		EXEC (@sql)
+
+		FETCH NEXT
+		FROM C1
+		INTO @tSchema,
+			@tName,
+			@cName
+	END
+
+	CLOSE C1
+
+	DEALLOCATE C1
+
+	-- delete Size Curves separately because cascade is inefficient
+	SELECT SIZE_CURVE_RID
+	INTO #t
+	FROM SIZE_CURVE_GROUP_JOIN
+	WHERE SIZE_CURVE_GROUP_RID = @SIZE_CURVE_GROUP_RID
+
+	-- get default size curve rid from size curve group
+	DECLARE @defaultSC INT
+
+	SELECT @defaultSC = DEFAULT_SIZE_CURVE_RID
+	FROM SIZE_CURVE_GROUP
+	WHERE SIZE_CURVE_GROUP_RID = @SIZE_CURVE_GROUP_RID
+
+	DECLARE @SC INT
+
+	DECLARE C2 CURSOR
+	FOR
+	SELECT SIZE_CURVE_RID
+	FROM #t
+
+	OPEN C2
+
+	FETCH NEXT
+	FROM C2
+	INTO @SC
+
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		DELETE SIZE_CURVE_JOIN
+		WITH (ROWLOCK)
+		WHERE SIZE_CURVE_RID = @SC
+
+		DELETE SIZE_CURVE
+		WITH (ROWLOCK)
+		WHERE SIZE_CURVE_RID = @SC
+
+		FETCH NEXT
+		FROM C2
+		INTO @SC
+	END
+
+	CLOSE C2
+
+	DEALLOCATE C2
+
+	DROP TABLE #t
+
+	-- delete default size curve  
+	DELETE SIZE_CURVE_JOIN
+	WITH (ROWLOCK)
+	WHERE SIZE_CURVE_RID = @defaultSC
+
+	-- delete size curve group  
+	DELETE SIZE_CURVE_GROUP_JOIN
+	WITH (ROWLOCK)
+	WHERE SIZE_CURVE_GROUP_RID = @SIZE_CURVE_GROUP_RID
+
+	DELETE SIZE_CURVE_GROUP
+	WITH (ROWLOCK)
+	WHERE SIZE_CURVE_GROUP_RID = @SIZE_CURVE_GROUP_RID
+
+	-- delete default size curve  
+	DELETE SIZE_CURVE
+	WITH (ROWLOCK)
+	WHERE SIZE_CURVE_RID = @defaultSC
+
+	-- enable foreign key constraints 
+	DECLARE C3 CURSOR
+	FOR
+	SELECT TABLE_SCHEMA,
+		TABLE_NAME,
+		CONSTRAINT_NAME
+	FROM #t2
+
+	OPEN C3
+
+	FETCH NEXT
+	FROM C3
+	INTO @tSchema,
+		@tName,
+		@cName
+
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		SET @sql = 'ALTER TABLE [' + @tSchema + '].[' + @tName + '] CHECK CONSTRAINT ' + @cName
+
+		EXEC (@sql)
+
+		FETCH NEXT
+		FROM C3
+		INTO @tSchema,
+			@tName,
+			@cName
+	END
+
+	CLOSE C3
+
+	DEALLOCATE C3
+
+	DROP TABLE #t2
+	SELECT @@ROWCOUNT;
+END
+GO
+
+

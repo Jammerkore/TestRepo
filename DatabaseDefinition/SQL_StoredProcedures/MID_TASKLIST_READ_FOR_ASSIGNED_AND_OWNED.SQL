@@ -1,0 +1,36 @@
+--dv =============================================
+--dv Create date:	2/11/2014
+--dv Description:	Reads tasklists for assigned and owner users
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_TASKLIST_READ_FOR_ASSIGNED_AND_OWNED]
+	@USER_LIST USER_RID_TYPE READONLY
+AS
+BEGIN
+	SET NOCOUNT ON;
+	
+	DECLARE @eProfileType_TaskList INT = 46;
+
+	SELECT 
+		t.TASKLIST_RID, 
+		t.TASKLIST_NAME, 
+		t.SYSTEM_GENERATED_IND,
+		t.CREATED_BY_USER_RID, 
+		t.CREATED_DATETIME, 
+		t.LAST_MODIFIED_BY_USER_RID, 
+		t.USER_RID as TASKLIST_USER_RID,
+		t.LAST_MODIFIED_DATETIME, 
+		ui.USER_RID, 
+		ui.ITEM_TYPE, 
+		ui.ITEM_RID, 
+		ui.OWNER_USER_RID,
+		COALESCE(fjt.PARENT_FOLDER_RID, -1) PARENT_FOLDER_RID, 
+		ui.OWNER_USER_RID
+	FROM TASKLIST t 
+		 LEFT OUTER JOIN FOLDER_JOIN fjt ON t.TASKLIST_RID = fjt.CHILD_ITEM_RID
+		 INNER JOIN USER_ITEM ui WITH (NOLOCK) ON ui.ITEM_RID = t.TASKLIST_RID AND ui.ITEM_TYPE = fjt.CHILD_ITEM_TYPE
+    WHERE ui.ITEM_TYPE = @eProfileType_TaskList
+		  AND ui.USER_RID IN (SELECT USER_RID FROM @USER_LIST)
+	ORDER BY ui.USER_RID, t.TASKLIST_NAME
+
+END
+GO

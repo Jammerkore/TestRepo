@@ -1,0 +1,66 @@
+--dv =============================================
+--dv Create date: 12/11/2013
+--dv Description: Inserts a spread forecast method
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_METHOD_SPREAD_FORECAST_INSERT] 
+	@METHOD_RID int,
+	@HN_RID int, 
+	@FV_RID int,
+	@CDR_RID int, 
+	@SPREAD_OPTION int, 
+	@IGNORE_LOCKS char(1), 
+	@MULTI_LEVEL_IND char(1), 
+	@FROM_LEVEL_TYPE int, 
+	@FROM_LEVEL_SEQ int, 
+	@FROM_LEVEL_OFFSET int, 
+	@TO_LEVEL_TYPE int, 
+	@TO_LEVEL_SEQ int, 
+	@TO_LEVEL_OFFSET int,
+	@EQUALIZE_WEIGHTING char(1), 
+	@OLL_RID int
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	INSERT INTO METHOD_SPREAD_FORECAST
+		(
+		METHOD_RID, 
+		HN_RID, 
+		FV_RID,
+		CDR_RID, 
+		SPREAD_OPTION, 
+		IGNORE_LOCKS,
+		MULTI_LEVEL_IND, 
+		FROM_LEVEL_TYPE, 
+		FROM_LEVEL_SEQ, 
+		FROM_LEVEL_OFFSET, 
+		TO_LEVEL_TYPE,
+		TO_LEVEL_SEQ, 
+		TO_LEVEL_OFFSET, 
+		EQUALIZE_WEIGHTING, 
+		OLL_RID
+		)
+    VALUES
+		(
+		@METHOD_RID, 
+		@HN_RID, 
+		@FV_RID,
+		@CDR_RID, 
+		@SPREAD_OPTION, 
+		@IGNORE_LOCKS, 
+		@MULTI_LEVEL_IND, 
+		@FROM_LEVEL_TYPE, 
+		@FROM_LEVEL_SEQ, 
+		@FROM_LEVEL_OFFSET, 
+		@TO_LEVEL_TYPE, 
+		@TO_LEVEL_SEQ, 
+		@TO_LEVEL_OFFSET,
+		@EQUALIZE_WEIGHTING, 
+		@OLL_RID
+		)
+
+	SELECT @@ROWCOUNT;
+
+END
+GO
+

@@ -1,0 +1,32 @@
+--dv =============================================
+--dv Create date: 4/17/2015
+--dv Description: Get stores for all group levels.
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_STORE_GROUP_LEVEL_RESULTS_READ_ALL]
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	--SELECT 
+	--	sg.SG_RID, 
+	--	r.SGL_RID, 
+	--	r.ST_RID
+	--FROM STORE_GROUP sg
+	--INNER JOIN STORE_GROUP_LEVEL sgl ON sgl.SG_RID=sg.SG_RID 
+	--INNER JOIN STORE_GROUP_JOIN sj on sj.SG_RID = sg.SG_RID AND sj.SG_VERSION=sg.SG_VERSION AND sj.SGL_RID=sgl.SGL_RID AND sj.SGL_VERSION=sgl.SGL_VERSION
+	--INNER JOIN STORE_GROUP_LEVEL_RESULTS r on r.SGL_RID = sj.SGL_RID AND r.SGL_VERSION=sj.SGL_VERSION
+
+	
+	SELECT 
+		sgl.SG_RID, 
+		r.SGL_RID, 
+		r.ST_RID
+	FROM STORE_GROUP_JOIN  sj
+	INNER JOIN STORE_GROUP_LEVEL sgl ON sgl.SGL_RID=sj.SGL_RID AND sgl.SGL_VERSION=sj.SGL_VERSION
+	INNER JOIN STORE_GROUP_LEVEL_RESULTS r on r.SGL_RID = sj.SGL_RID AND r.SGL_VERSION=sj.SGL_VERSION
+
+
+END
+GO
+
+

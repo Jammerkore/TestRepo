@@ -1,0 +1,1410 @@
+H,My Favorites,Open,red,,,,,
+H,MID Retail,organizational,black,,,,,
+H,Alternates,open,blue,,,,,
+
+L,MID Retail,Division,undefined,unrestricted,purple,,,
+L,MID Retail,Department,undefined,unrestricted,green,,,
+L,MID Retail,Class,undefined,unrestricted,brown,,,
+L,MID Retail,Sub-Class,undefined,unrestricted,yellow,,,,,true
+L,MID Retail,Style/SKU,style,unrestricted,pink,,,
+L,MID Retail,Color,color,unrestricted,orange,,,
+
+p,MID Retail,MID Retail,1,Mid Hardlines,,hardline
+p,MID Retail,1,101,Floor Covering,,
+p,MID Retail,101,1011, Wool Rugs,,
+p,MID Retail,1011,10111,Oriental,,
+p,MID Retail,10111,123456789012,8x8 bright,,
+p,MID Retail,10111,554687949000,10x12 bright,,
+p,MID Retail,10111,111188794569,12x12 bright,,
+p,MID Retail,10111,879654165544,8x8 neutral,,
+p,MID Retail,10111,123654898888,10x12 neutral,,
+p,MID Retail,10111,987654322112,12x12 neutral,,
+p,MID Retail,10111,587946123741,8x8 dark,,
+p,MID Retail,10111,456785215852,10x12 dark,,
+p,MID Retail,10111,741258719635,12x12 dark,,
+p,MID Retail,1011,10112,Floral,,
+p,MID Retail,10112,888794564789,10x12 blue hydrangeas,,
+p,MID Retail,10112,335435798546,10x12 pink hydrangeas,,
+p,MID Retail,10112,998745633333,10x12 pink tulips,,
+p,MID Retail,10112,887945621111,10x12 lavender tulips,,
+p,MID Retail,1011,10113,Solid,,
+p,MID Retail,10113,963696345777,4x4 blue,,
+p,MID Retail,10113,852585289665,6x6 blue,,
+p,MID Retail,10113,741258546798,6x4 blue,,
+p,MID Retail,10113,789654513528,4x4 red,,
+p,MID Retail,10113,741963582645,6x6 red,,
+p,MID Retail,10113,859878484563,6x4 red,,
+p,MID Retail,10113,123321287777,4x4 white,,
+p,MID Retail,10113,555444598698,6x6 white,,
+p,MID Retail,10113,666585642222,6x4 white,,
+p,MID Retail,101,1012,Cotton Throws,,
+p,MID Retail,1012,10121,Solid,,
+p,MID Retail,10121,555526547892,6x4 navy,,
+p,MID Retail,10121,444445878251,6x6 navy,,
+p,MID Retail,10121,666668588892,6x4 white
+p,MID Retail,10121,151777586422,6x6 white
+p,MID Retail,10121,884444422222,6x4 red
+p,MID Retail,10121,666845179956,6x6 red
+p,MID Retail,1012,10122,Pattern
+p,MID Retail,10122,546126578923,6x4 navy checked
+p,MID Retail,10122,333354821640,6x4 navy floral
+p,MID Retail,10122,121111147851,6x4 red checked
+p,MID Retail,10122,135165432862,6x4 red floral
+p,MID Retail,10122,222258888916,6x4 yellow checked
+p,MID Retail,10122,646464848752,6x4 green checked
+p,MID Retail,101,1013,Fabric Blend Throws
+p,MID Retail,1013,10131,Solid
+p,MID Retail,10131,585698748888,6x4 pink
+p,MID Retail,10131,441211145886,6x4 yellow
+p,MID Retail,10131,2685465554475,6x4 green 
+p,MID Retail,1013,10132,Pattern
+p,MID Retail,10132,999968666965,6x4 pink herringbone
+p,MID Retail,10132,111147441748,6x4 yellow herringbone
+p,MID Retail,10132,452123698567,6x4 green herringbone
+p,MID Retail,1,102,Lighting
+p,MID Retail,102,1021,Indoor
+p,MID Retail,1021,10211,Hanging
+p,MID Retail,10211,212333654745,chrome 6 light chandelier
+p,MID Retail,10211,511412584455,chrome 8 light chandelier
+p,MID Retail,10211,669687996369,nickel 6 light chandelier
+p,MID Retail,10211,126115111475,nickel 8 light chandelier
+p,MID Retail,1021,10212,Flush Mount
+p,MID Retail,10212,521315689744,chrome dome
+p,MID Retail,10212,114155889632,brass dome
+p,MID Retail,10212,255555856586,nickel dome
+p,MID Retail,10212,222254487821,chime/brass dome
+p,MID Retail,1021,10213,Pendant,,
+p,MID Retail,10213,887975648526,brushed glass - white,,
+p,MID Retail,10213,859987466689,color glass - blue,,
+p,MID Retail,10213,854778965854,chrome pendant,,
+p,MID Retail,10213,144412558538,nickel pendant,,
+p,MID Retail,1021,10214,Sconce,,
+p,MID Retail,10214,333659669878,white sconce,,
+p,MID Retail,10214,744458745821,chrome sconce,,
+p,MID Retail,10214,111477899654,nickel sconce,,
+p,MID Retail,10214,112333365692,brass sconce,,
+p,MID Retail,MID Retail,2,Mid Softlines,,softline
+p,MID Retail,2,201,Childrens,,
+p,MID Retail,201,2011,Newborns and Infants,,
+p,MID Retail,2011,20111,layettes,,
+p,MID Retail,20111,951456,Solid w/ ribbon closure,,
+p,MID Retail,951456,680,light pink,,
+p,MID Retail,951456,330,light green
+p,MID Retail,951456,450,light blue
+p,MID Retail,951456,740,light yellow
+p,MID Retail,20111,951457,Floral w/ ribbon closure
+p,MID Retail,951457,680,light pink
+p,MID Retail,951457,330,light green
+p,MID Retail,951457,450,light blue
+p,MID Retail,951457,740,light yellow
+p,MID Retail,2011,20112,booties
+p,MID Retail,20112,951467,Solid w/ elastic trim
+p,MID Retail,951467,680,light pink
+p,MID Retail,951467,330,light green
+p,MID Retail,951467,450,light blue
+p,MID Retail,951467,740,light yellow
+p,MID Retail,20112,951468,Floral w/ elastic trim
+p,MID Retail,951468,680,light pink
+p,MID Retail,951468,330,light green
+p,MID Retail,951468,450,light blue
+p,MID Retail,951468,740,light yellow
+p,MID Retail,2011,20113,sleepers
+p,MID Retail,20113,851468,Solid w/ plastic snaps
+p,MID Retail,851468,680,light pink
+p,MID Retail,851468,330,light green
+p,MID Retail,851468,450,light blue
+p,MID Retail,851468,740,light yellow
+p,MID Retail,20113,851469,Floral w/ plastic snaps
+p,MID Retail,851469,680,light pink
+p,MID Retail,851469,330,light green
+p,MID Retail,851469,450,light blue
+p,MID Retail,851469,740,light yellow
+p,MID Retail,2011,20114,bibs
+p,MID Retail,20114,851454,Solid w/ velcro back
+p,MID Retail,851454,680,light pink
+p,MID Retail,851454,330,light green
+p,MID Retail,851454,450,light blue
+p,MID Retail,851454,740,light yellow
+p,MID Retail,20114,851455,Floral w/ velcro back
+p,MID Retail,851455,680,light pink
+p,MID Retail,851455,330,light green
+p,MID Retail,851455,450,light blue
+p,MID Retail,851455,740,light yellow
+p,MID Retail,201,2012,Boys Toddler
+p,MID Retail,2012,20121,boys outerwear
+p,MID Retail,20121,855565,Slicker
+p,MID Retail,855565,620,Bright Red
+p,MID Retail,855565,410,Navy
+p,MID Retail,855565,320,Bright Green
+p,MID Retail,20121,855566,Fleece Pull over
+p,MID Retail,855566,620,Bright Red,,,
+p,MID Retail,855566,410,Navy,,,
+p,MID Retail,855566,320,Bright Green,,,
+p,MID Retail,2012,20123,boys bottoms,,,
+p,MID Retail,20123,669856,5 pkt jean,,,
+p,MID Retail,669856,459,light blue,light wash,,
+p,MID Retail,669856,409,dark blue,dark wash,,
+p,MID Retail,669856,005,Black,oxford,,
+p,MID Retail,20123,669866,Cargo Short,,,
+p,MID Retail,669866,410,Navy,,,
+p,MID Retail,669866,259,Dark Beige,Khaki,,
+p,MID Retail,669866,310,Medium Green,Olive,,
+p,MID Retail,20123,669876,Chino Trouser,,,
+p,MID Retail,669876,410,Navy,,,
+p,MID Retail,669876,259,Dark Beige,Khaki,,
+p,MID Retail,669876,310,Medium Green,Olive,,
+p,MID Retail,2012,20125,boys tops
+p,MID Retail,20125,225864,s/s tee
+p,MID Retail,225864,620,Bright Red
+p,MID Retail,225864,410,Navy
+p,MID Retail,225864,320,Bright Green
+p,MID Retail,225864,101,White
+p,MID Retail,20125,225865,s/s woven btn front
+p,MID Retail,225865,620,Bright Red
+p,MID Retail,225865,410,Navy
+p,MID Retail,225865,101,White
+p,MID Retail,20125,2258662,l/s woven btn front
+p,MID Retail,2258662,620,Bright Red
+p,MID Retail,2258662,410,Navy
+p,MID Retail,2258662,101,White
+p,MID Retail,2012,20127,boys swimwear
+p,MID Retail,20127,411215,Hawaiian floral trunks
+p,MID Retail,411215,620,Bright Red
+p,MID Retail,411215,410,Navy
+p,MID Retail,411215,320,Bright Green
+p,MID Retail,20127,411216,Solid trunks
+p,MID Retail,411216,620,Bright Red
+p,MID Retail,411216,410,Navy
+p,MID Retail,411216,320,Bright Green
+p,MID Retail,201,2013,Girls Toddler
+p,MID Retail,2013,20131,girls outerwear
+p,MID Retail,20131,323555,Slicker
+p,MID Retail,323555,620,Bright Red
+p,MID Retail,323555,410,Navy
+p,MID Retail,323555,320,Bright Green
+p,MID Retail,20131,323556,Fleece Pull over
+p,MID Retail,323556,620,Bright Red
+p,MID Retail,323556,410,Navy
+p,MID Retail,323556,320,Bright Green,
+p,MID Retail,2013,20132,girls bottoms,
+p,MID Retail,20132,456855,Flare leg denim w/ embrd,
+p,MID Retail,456855,101,white,
+p,MID Retail,456855,409,dark blue,dark wash
+p,MID Retail,456855,329,Bright green,Lime Green
+p,MID Retail,456855,670,hot pink,
+p,MID Retail,20132,456856,Knit short w/ drawstring tie,
+p,MID Retail,456856,101,white,
+p,MID Retail,456856,410,Navy,
+p,MID Retail,456856,329,Bright green,Lime Green
+p,MID Retail,456856,670,hot pink,
+p,MID Retail,20132,456857,Cargo short,
+p,MID Retail,456857,101,white,
+p,MID Retail,456857,410,Navy,
+p,MID Retail,456857,329,Bright green,Lime Green
+p,MID Retail,456857,670,hot pink,
+p,MID Retail,2013,20133,girls tops,
+p,MID Retail,20133,885999,s/s embrd knit tee,
+p,MID Retail,885999,101,white,
+p,MID Retail,885999,410,Navy,
+p,MID Retail,885999,329,Bright green,Lime Green
+p,MID Retail,885999,670,hot pink,
+p,MID Retail,20133,885998,s/s basic tee,
+p,MID Retail,885998,101,white,
+p,MID Retail,885998,410,Navy,
+p,MID Retail,885998,329,Bright green,Lime Green
+p,MID Retail,885998,670,hot pink,
+p,MID Retail,20133,885997,l/s embrd flare sleeve,
+p,MID Retail,885997,101,white,
+p,MID Retail,885997,329,Bright green,Lime Green
+p,MID Retail,885997,670,hot pink,
+p,MID Retail,2013,20134,girls swimwear,
+p,MID Retail,20134,441213,2 pc floral,
+p,MID Retail,441213,329,Bright green,Lime Green
+p,MID Retail,441213,670,hot pink,
+p,MID Retail,20134,441214,1 pc  floral,
+p,MID Retail,441214,329,Bright green,Lime Green
+p,MID Retail,441214,670,hot pink,
+p,MID Retail,20134,441215,2pc solid,
+p,MID Retail,441215,101,white,
+p,MID Retail,441215,410,Navy,
+p,MID Retail,441215,329,Bright green,Lime Green
+p,MID Retail,441215,670,hot pink,
+p,MID Retail,20134,441216,1 pc solid,
+p,MID Retail,441216,101,white,
+p,MID Retail,441216,410,Navy,
+p,MID Retail,441216,329,Bright green,Lime Green
+p,MID Retail,441216,670,hot pink,
+p,MID Retail,2,202,Mens,
+p,MID Retail,202,2021,Mens Casual,
+p,MID Retail,2021,20211,Shirts,
+p,MID Retail,20211,335211,s/s knit polo,
+p,MID Retail,335211,101,White,
+p,MID Retail,335211,005,Black,
+p,MID Retail,335211,421,Medium Blue,Slate Blue
+p,MID Retail,335211,609,Dark Red,Cranberry
+p,MID Retail,335211,720,Medium Yellow,Sunflower
+p,MID Retail,20211,335212,l/s button front,
+p,MID Retail,335212,101,White,
+p,MID Retail,335212,005,Black,
+p,MID Retail,20211,335213,s/s tee,
+p,MID Retail,335213,101,White,
+p,MID Retail,335213,005,Black,
+p,MID Retail,335213,421,Medium Blue,Slate Blue
+p,MID Retail,335213,609,Dark Red,Cranberry
+p,MID Retail,335213,720,Medium Yellow,Sunflower
+p,MID Retail,2021,20212,Trousers,
+p,MID Retail,20212,445785,Flat Front,
+p,MID Retail,445785,005,Black,
+p,MID Retail,445785,259,Dark Beige,Khaki
+p,MID Retail,20212,445786,Double Pleat w/ cuff,
+p,MID Retail,445786,005,Black,
+p,MID Retail,445786,259,Dark Beige,
+p,MID Retail,2021,20213,Sweaters,
+p,MID Retail,20213,665485,Cotton Nautical pull over,
+p,MID Retail,665485,101,White,
+p,MID Retail,665485,005,Black,
+p,MID Retail,665485,421,Medium Blue,Slate Blue
+p,MID Retail,665485,609,Dark Red,Cranberry
+p,MID Retail,665485,720,Medium Yellow,Sunflower
+p,MID Retail,20213,665486,Wool Zip front,
+p,MID Retail,665486,101,White,
+p,MID Retail,665486,005,Black,
+p,MID Retail,20213,665487,Fine Gauge Mock,
+p,MID Retail,665487,101,White,
+p,MID Retail,665487,005,Black,
+p,MID Retail,665487,421,Medium Blue,Slate Blue
+p,MID Retail,665487,609,Dark Red,Cranberry
+p,MID Retail,665487,720,Medium Yellow,Sunflower
+p,MID Retail,2021,20214,Denim,
+p,MID Retail,20214,787998,Basic 5 pkt (12oz),
+p,MID Retail,787998,005,Black,
+p,MID Retail,787998,409,Dark Wash,
+p,MID Retail,787998,459,Light Wash,
+p,MID Retail,20214,787997,Basic Denim Jacket (16oz),
+p,MID Retail,787997,005,Black,
+p,MID Retail,787997,409,Dark Wash,
+p,MID Retail,787997,459,Light Wash,
+p,MID Retail,20214,787996,L/S Denim Shirt (10oz),
+p,MID Retail,787996,409,Dark Wash,
+p,MID Retail,787996,459,Light Wash,
+p,MID Retail,2021,20215,Swimwear,
+p,MID Retail,20215,555856,Solid Trunks,
+p,MID Retail,555856,101,White,
+p,MID Retail,555856,005,Black,
+p,MID Retail,555856,421,Medium Blue,Slate Blue
+p,MID Retail,555856,609,Dark Red,Cranberry
+p,MID Retail,555856,720,Medium Yellow,Sunflower
+p,MID Retail,20215,555857,Nautical Trunks,
+p,MID Retail,555857,421,Medium Blue,Slate Blue
+p,MID Retail,555857,609,Dark Red,Cranberry
+p,MID Retail,555857,720,Medium Yellow,Sunflower
+p,MID Retail,2021,20216,outerwear,
+p,MID Retail,20216,478854,Zip front Leather Bomber,
+p,MID Retail,478854,005,Black,
+p,MID Retail,478854,240,Distressed Brown,
+p,MID Retail,20216,478855,Wool Overcoat,
+p,MID Retail,478855,005,Black,
+p,MID Retail,478855,259,Dark Beige,
+p,MID Retail,2021,20217,Accessories,
+p,MID Retail,20217,665895,Leather 3 fold wallet,
+p,MID Retail,665895,005,Black,
+p,MID Retail,665895,240,Distressed Brown,
+p,MID Retail,20217,665896,Leather 2 fold wallet,
+p,MID Retail,665896,005,Black,
+p,MID Retail,665896,240,Distressed Brown,
+p,MID Retail,202,2022,Mens Suits,
+p,MID Retail,2022,20221,Vendor 1
+p,MID Retail,20221,3325622,2 Button Jacket
+p,MID Retail,3325622,410,Navy
+p,MID Retail,3325622,5,Black
+p,MID Retail,3325622,10,Black herringbone
+p,MID Retail,3325622,219,Brown Tweed
+p,MID Retail,20221,3325632,3 Button Jacket
+p,MID Retail,3325632,410,Navy
+p,MID Retail,3325632,5,Black
+p,MID Retail,20221,332564,Double Breasted
+p,MID Retail,332564,410,Navy
+p,MID Retail,332564,5,Black
+p,MID Retail,332564,10,Black herringbone
+p,MID Retail,332564,219,Brown Tweed
+p,MID Retail,2022,20222,Vendor 2
+p,MID Retail,20222,856545,2 Button Jacket
+p,MID Retail,856545,410,Navy
+p,MID Retail,856545,5,Black
+p,MID Retail,20222,856546,3 Button Jacket
+p,MID Retail,856546,410,Navy
+p,MID Retail,856546,5,Black
+p,MID Retail,20222,856547,Double Breasted
+p,MID Retail,856547,410,Navy
+p,MID Retail,856547,5,Black
+p,MID Retail,202,2023,Young Mens
+p,MID Retail,2023,20231,Shirts
+p,MID Retail,20231,221585,s/s knit polo
+p,MID Retail,221585,101,White
+p,MID Retail,221585,5,Black
+p,MID Retail,221585,410,Navy
+p,MID Retail,221585,609,Dark Red
+p,MID Retail,20231,221584,l/s button front
+p,MID Retail,221584,101,White
+p,MID Retail,221584,5,Black
+p,MID Retail,221584,410,Navy
+p,MID Retail,20231,221583,s/s tee
+p,MID Retail,221583,101,White
+p,MID Retail,221583,5,Black
+p,MID Retail,221583,410,Navy
+p,MID Retail,221583,609,Dark Red
+p,MID Retail,2023,20232,Trousers
+p,MID Retail,20232,787477,Cargo Pant
+p,MID Retail,787477,101,White
+p,MID Retail,787477,5,Black
+p,MID Retail,787477,410,Navy
+p,MID Retail,20232,787476,Chino Pant
+p,MID Retail,787476,101,White
+p,MID Retail,787476,5,Black
+p,MID Retail,787476,410,Navy
+p,MID Retail,2023,20233,Sweaters
+p,MID Retail,20233,845441,Cotton Solid Pull over
+p,MID Retail,845441,101,White
+p,MID Retail,845441,5,Black
+p,MID Retail,845441,410,Navy
+p,MID Retail,2023,20234,Denim
+p,MID Retail,20234,544741,Basic 5 pkt (12oz)
+p,MID Retail,544741,5,Black
+p,MID Retail,544741,409,Dark Wash
+p,MID Retail,544741,459,Light Wash
+p,MID Retail,20234,544742,Basic Denim Jacket (16oz)
+p,MID Retail,544742,5,Black
+p,MID Retail,544742,409,Dark Wash
+p,MID Retail,544742,459,Light Wash
+p,MID Retail,20234,544743,L/S Denim Shirt (10oz)
+p,MID Retail,544743,409,Dark Wash,
+p,MID Retail,544743,459,Light Wash,
+p,MID Retail,20234,544744,Denim Short (12 oz),
+p,MID Retail,544744,005,Black,
+p,MID Retail,544744,409,Dark Wash,
+p,MID Retail,544744,459,Light Wash,
+p,MID Retail,2023,20235,Swimwear,
+p,MID Retail,20235,332112,Solid Trunks,
+p,MID Retail,332112,410,Navy,
+p,MID Retail,332112,005,Black,
+p,MID Retail,332112,259,Dark Beige,Khaki
+p,MID Retail,332112,620,Bright Red,
+p,MID Retail,20235,332113,Beach Bum Trunks,
+p,MID Retail,332113,410,Navy Hawaiian Floral,
+p,MID Retail,332113,5,Black Hawaiian Floral,
+p,MID Retail,332113,259,Dark Beige Hawaiian Floral,Khaki
+p,MID Retail,332113,620,Bright Red Hawaiian Floral,
+p,MID Retail,2,203,Womens,
+p,MID Retail,203,2031,Tops,
+p,MID Retail,2031,20311,l/s woven top,
+p,MID Retail,20311,885651,Basic Stretch button front,
+p,MID Retail,885651,430,Bright Blue,Periwinkle
+p,MID Retail,885651,101,White,
+p,MID Retail,885651,005,Black,
+p,MID Retail,885651,609,Dark Red,Cranberry
+p,MID Retail,885651,270,Light Beige,Taupe
+p,MID Retail,20311,885652,Silk Button front,
+p,MID Retail,885652,430,Bright Blue,Periwinkle
+p,MID Retail,885652,609,Dark Red,Cranberry
+p,MID Retail,885652,270,Light Beige,Taupe
+p,MID Retail,20311,885653,Linen Button front,
+p,MID Retail,885653,430,Bright Blue,Periwinkle
+p,MID Retail,885653,101,White,
+p,MID Retail,885653,005,Black,
+p,MID Retail,2031,20312,s/s woven top,
+p,MID Retail,20312,996561,Basic Stretch button front,
+p,MID Retail,996561,430,Bright Blue,Periwinkle
+p,MID Retail,996561,101,White,
+p,MID Retail,996561,005,Black,
+p,MID Retail,996561,609,Dark Red,Cranberry
+p,MID Retail,996561,270,Light Beige,Taupe
+p,MID Retail,20312,996563,Linen Button front,
+p,MID Retail,996563,430,Bright Blue,Periwinkle
+p,MID Retail,996563,101,White,
+p,MID Retail,996563,005,Black,
+p,MID Retail,2031,20313,sleeveless woven top,
+p,MID Retail,20313,221352,Linen V -neck tank,
+p,MID Retail,221352,430,Bright Blue,Periwinkle
+p,MID Retail,221352,101,White,
+p,MID Retail,221352,005,Black,
+p,MID Retail,221352,609,Dark Red,Cranberry
+p,MID Retail,221352,270,Light Beige,Taupe
+p,MID Retail,20313,221353,Silk Scoop Neck tank,
+p,MID Retail,221353,430,Bright Blue,Periwinkle
+p,MID Retail,221353,101,White,
+p,MID Retail,221353,005,Black,
+p,MID Retail,221353,609,Dark Red,Cranberry
+p,MID Retail,221353,270,Light Beige,Taupe
+p,MID Retail,20313,221354,Embroidered cotton tank,
+p,MID Retail,221354,430,Bright Blue,Periwinkle
+p,MID Retail,221354,101,White,
+p,MID Retail,221354,005,Black,
+p,MID Retail,221354,609,Dark Red,Cranberry
+p,MID Retail,221354,270,Light Beige,Taupe
+p,MID Retail,2031,20314,l/s knit top,
+p,MID Retail,20314,852121,Cotton Scoop neck,
+p,MID Retail,852121,430,Bright Blue,Periwinkle
+p,MID Retail,852121,101,White,
+p,MID Retail,852121,005,Black,
+p,MID Retail,852121,609,Dark Red,Cranberry
+p,MID Retail,852121,270,Light Beige,Taupe
+p,MID Retail,852121,410,Navy,
+p,MID Retail,852121,720,Medium Yellow,Sunflower
+p,MID Retail,20314,852122,Cotton Henley,
+p,MID Retail,852122,430,Bright Blue,Periwinkle
+p,MID Retail,852122,101,White,
+p,MID Retail,852122,005,Black,
+p,MID Retail,852122,609,Dark Red,Cranberry
+p,MID Retail,852122,270,Light Beige,Taupe
+p,MID Retail,852122,410,Navy,
+p,MID Retail,852122,720,Medium Yellow,Sunflower
+p,MID Retail,20314,852123,Floral Cotton Henley,
+p,MID Retail,852123,430,Bright Blue,Periwinkle
+p,MID Retail,852123,101,White,
+p,MID Retail,852123,005,Black,
+p,MID Retail,852123,609,Dark Red,Cranberry
+p,MID Retail,852123,270,Light Beige,Taupe
+p,MID Retail,852123,410,Navy,
+p,MID Retail,852123,720,Medium Yellow,Sunflower
+p,MID Retail,2031,20315,s/s knit top,
+p,MID Retail,20315,951231,Basic Tee,
+p,MID Retail,951231,430,Bright Blue,Periwinkle
+p,MID Retail,951231,101,White,
+p,MID Retail,951231,005,Black,
+p,MID Retail,951231,609,Dark Red,Cranberry
+p,MID Retail,951231,270,Light Beige,Taupe
+p,MID Retail,951231,410,Navy,
+p,MID Retail,951231,720,Medium Yellow,Sunflower
+p,MID Retail,20315,951232,Embroidered cotton tee,
+p,MID Retail,951232,430,Bright Blue,Periwinkle
+p,MID Retail,951232,101,White,
+p,MID Retail,951232,005,Black,
+p,MID Retail,951232,609,Dark Red,Cranberry
+p,MID Retail,951232,270,Light Beige,Taupe
+p,MID Retail,951232,410,Navy,
+p,MID Retail,951232,720,Medium Yellow,Sunflower
+p,MID Retail,20315,951233,Floral tee,
+p,MID Retail,951233,430,Bright Blue,Periwinkle
+p,MID Retail,951233,101,White,
+p,MID Retail,951233,005,Black,
+p,MID Retail,951233,609,Dark Red,Cranberry
+p,MID Retail,951233,270,Light Beige,Taupe
+p,MID Retail,951233,410,Navy,
+p,MID Retail,951233,720,Medium Yellow,Sunflower
+p,MID Retail,2031,20316,sleeveless knit top,
+p,MID Retail,20316,221232,Basic Tank,
+p,MID Retail,221232,430,Bright Blue,Periwinkle
+p,MID Retail,221232,101,White,
+p,MID Retail,221232,005,Black,
+p,MID Retail,221232,609,Dark Red,Cranberry
+p,MID Retail,221232,270,Light Beige,Taupe
+p,MID Retail,221232,410,Navy,
+p,MID Retail,221232,720,Medium Yellow,Sunflower
+p,MID Retail,20316,221233,Embroidered Tank,
+p,MID Retail,221233,430,Bright Blue,Periwinkle
+p,MID Retail,221233,101,White,
+p,MID Retail,221233,005,Black,
+p,MID Retail,221233,609,Dark Red,Cranberry
+p,MID Retail,221233,270,Light Beige,Taupe
+p,MID Retail,221233,410,Navy,
+p,MID Retail,221233,720,Medium Yellow,Sunflower
+p,MID Retail,203,2032,Bottoms,
+p,MID Retail,2032,20321,pants,
+p,MID Retail,20321,522231,Linen Trouser,
+p,MID Retail,522231,270,Light Beige,Taupe
+p,MID Retail,522231,410,Navy,
+p,MID Retail,522231,101,White,
+p,MID Retail,522231,005,Black,
+p,MID Retail,20321,522232,Silk Pull on,
+p,MID Retail,522232,270,Light Beige,Taupe
+p,MID Retail,522232,410,Navy,
+p,MID Retail,522232,101,White,
+p,MID Retail,522232,005,Black,
+p,MID Retail,2032,20322,Capri,
+p,MID Retail,20322,7411112,Linen embroidered edge,
+p,MID Retail,7411112,270,Light Beige,Taupe
+p,MID Retail,7411112,410,Navy,
+p,MID Retail,7411112,101,White,
+p,MID Retail,7411112,005,Black,
+p,MID Retail,20322,741112,Linen cuff,
+p,MID Retail,741112,270,Light Beige,Taupe
+p,MID Retail,741112,410,Navy,
+p,MID Retail,741112,101,White,
+p,MID Retail,741112,005,Black,
+p,MID Retail,2032,20323,shorts,
+p,MID Retail,20323,332121,Linen cuff,
+p,MID Retail,332121,270,Light Beige,Taupe
+p,MID Retail,332121,410,Navy,
+p,MID Retail,332121,101,White,
+p,MID Retail,332121,005,Black,
+p,MID Retail,2032,20324,skorts,
+p,MID Retail,20324,999632,Embroidered golf skort,
+p,MID Retail,999632,410,Navy,
+p,MID Retail,999632,101,White,
+p,MID Retail,20324,999633,Solid golf skort,
+p,MID Retail,999633,410,Navy,
+p,MID Retail,999633,101,White,
+p,MID Retail,999633,005,Black,
+p,MID Retail,20324,999634,Linen Skort,
+p,MID Retail,999634,270,Light Beige,Taupe
+p,MID Retail,999634,410,Navy,
+p,MID Retail,999634,101,White,
+p,MID Retail,999634,005,Black,
+p,MID Retail,2032,20325,skirts,
+p,MID Retail,20325,255821,"Linen basic 23"" skirt",
+p,MID Retail,255821,270,Light Beige,Taupe
+p,MID Retail,255821,410,Navy,
+p,MID Retail,255821,101,White,
+p,MID Retail,255821,005,Black,
+p,MID Retail,20325,255822,Long full linen skirt,
+p,MID Retail,255822,270,Light Beige,Taupe
+p,MID Retail,255822,410,Navy,
+p,MID Retail,255822,101,White,
+p,MID Retail,255822,005,Black,
+p,MID Retail,20325,255823,Long Silk print skirt,
+p,MID Retail,255823,430,Bright Blue,Periwinkle
+p,MID Retail,255823,101,White,
+p,MID Retail,255823,005,Black,
+p,MID Retail,255823,609,Dark Red,Cranberry
+p,MID Retail,255823,270,Light Beige,Taupe
+p,MID Retail,255823,410,Navy,
+p,MID Retail,255823,720,Medium Yellow,Sunflower
+p,MID Retail,203,2033,Sweaters,
+p,MID Retail,2033,20331,wool ,
+p,MID Retail,20331,526332,Solid zip wool,
+p,MID Retail,526332,430,Bright Blue,Periwinkle
+p,MID Retail,526332,005,Black,
+p,MID Retail,526332,609,Dark Red,Cranberry
+p,MID Retail,526332,270,Light Beige,Taupe
+p,MID Retail,526332,410,Navy,
+p,MID Retail,526332,720,Medium Yellow,Sunflower
+p,MID Retail,20331,526333,Solid pull over,
+p,MID Retail,526333,430,Bright Blue,Periwinkle
+p,MID Retail,526333,005,Black,
+p,MID Retail,526333,609,Dark Red,Cranberry
+p,MID Retail,526333,270,Light Beige,Taupe
+p,MID Retail,526333,410,Navy,
+p,MID Retail,20331,526334,Floral turtle,
+p,MID Retail,526334,430,Bright Blue,Periwinkle
+p,MID Retail,526334,005,Black,
+p,MID Retail,526334,609,Dark Red,Cranberry
+p,MID Retail,526334,270,Light Beige,Taupe
+p,MID Retail,526334,410,Navy,
+p,MID Retail,526334,720,Medium Yellow,Sunflower
+p,MID Retail,2033,20332,wool blends,
+p,MID Retail,20332,741111,Argyle Pattern V neck,
+p,MID Retail,741111,430,Bright Blue,Periwinkle
+p,MID Retail,741111,005,Black,
+p,MID Retail,741111,609,Dark Red,Cranberry
+p,MID Retail,741111,270,Light Beige,Taupe
+p,MID Retail,741111,410,Navy,
+p,MID Retail,20332,7411122,Pattern crew neck,
+p,MID Retail,7411122,430,Bright Blue,Periwinkle
+p,MID Retail,7411122,005,Black,
+p,MID Retail,7411122,609,Dark Red,Cranberry
+p,MID Retail,7411122,270,Light Beige,Taupe
+p,MID Retail,7411122,410,Navy,
+p,MID Retail,20332,741113,Solid Turtle,
+p,MID Retail,741113,430,Bright Blue,Periwinkle
+p,MID Retail,741113,005,Black,
+p,MID Retail,741113,609,Dark Red,Cranberry
+p,MID Retail,741113,270,Light Beige,Taupe
+p,MID Retail,741113,410,Navy,
+p,MID Retail,2033,20333,Cotton,
+p,MID Retail,20333,369621,Solid Cotton pullover,
+p,MID Retail,369621,430,Bright Blue,Periwinkle
+p,MID Retail,369621,005,Black,
+p,MID Retail,369621,609,Dark Red,Cranberry
+p,MID Retail,369621,270,Light Beige,Taupe
+p,MID Retail,369621,410,Navy,
+p,MID Retail,20333,369622,Plaid cotton vest,
+p,MID Retail,369622,430,Bright Blue,Periwinkle
+p,MID Retail,369622,005,Black,
+p,MID Retail,369622,609,Dark Red,Cranberry
+p,MID Retail,369622,270,Light Beige,Taupe
+p,MID Retail,369622,410,Navy,
+p,MID Retail,20333,369623,Floral Cotton Zip Front,
+p,MID Retail,369623,430,Bright Blue,Periwinkle
+p,MID Retail,369623,005,Black,
+p,MID Retail,369623,609,Dark Red,Cranberry
+p,MID Retail,369623,270,Light Beige,Taupe
+p,MID Retail,369623,410,Navy,
+p,MID Retail,2033,20334,ramie/cotton blend,
+p,MID Retail,20334,145221,s/s plaid pullover,
+p,MID Retail,145221,430,Bright Blue,Periwinkle
+p,MID Retail,145221,005,Black,
+p,MID Retail,145221,609,Dark Red,Cranberry
+p,MID Retail,145221,270,Light Beige,Taupe
+p,MID Retail,145221,410,Navy,
+p,MID Retail,20334,145222,Solid mock neck,
+p,MID Retail,145222,430,Bright Blue,Periwinkle
+p,MID Retail,145222,005,Black,
+p,MID Retail,145222,609,Dark Red,Cranberry
+p,MID Retail,145222,270,Light Beige,Taupe
+p,MID Retail,145222,410,Navy,
+p,MID Retail,20334,145223,Floral vest,
+p,MID Retail,145223,430,Bright Blue,Periwinkle
+p,MID Retail,145223,005,Black,
+p,MID Retail,145223,609,Dark Red,Cranberry
+p,MID Retail,145223,270,Light Beige,Taupe
+p,MID Retail,145223,410,Navy,
+p,MID Retail,2033,20335,acrylic,
+p,MID Retail,20335,755411,oversized turtleneck,
+p,MID Retail,755411,430,Bright Blue,Periwinkle
+p,MID Retail,755411,005,Black,
+p,MID Retail,755411,609,Dark Red,Cranberry
+p,MID Retail,755411,270,Light Beige,Taupe
+p,MID Retail,755411,410,Navy,
+p,MID Retail,20335,755412,open weave pullover,
+p,MID Retail,755412,430,Bright Blue,Periwinkle
+p,MID Retail,755412,005,Black,
+p,MID Retail,755412,609,Dark Red,Cranberry
+p,MID Retail,755412,270,Light Beige,Taupe
+p,MID Retail,755412,410,Navy,
+p,MID Retail,2033,20336,silk blends,
+p,MID Retail,20336,332561,solid tank,
+p,MID Retail,332561,430,Bright Blue,Periwinkle
+p,MID Retail,332561,005,Black,
+p,MID Retail,332561,609,Dark Red,Cranberry
+p,MID Retail,332561,270,Light Beige,Taupe
+p,MID Retail,332561,410,Navy,
+p,MID Retail,20336,332562,solid s/s pullover,
+p,MID Retail,332562,430,Bright Blue,Periwinkle
+p,MID Retail,332562,005,Black,
+p,MID Retail,332562,609,Dark Red,Cranberry
+p,MID Retail,332562,270,Light Beige,Taupe
+p,MID Retail,332562,410,Navy,
+p,MID Retail,20336,332563,solid cardigan,
+p,MID Retail,332563,430,Bright Blue,Periwinkle
+p,MID Retail,332563,005,Black,
+p,MID Retail,332563,609,Dark Red,Cranberry
+p,MID Retail,332563,270,Light Beige,Taupe
+p,MID Retail,332563,410,Navy,
+p,MID Retail,203,2034,Denim,
+p,MID Retail,2034,20341,jeans
+p,MID Retail,20341,444521,Basic 5 pkt (12oz)
+p,MID Retail,444521,5,Black
+p,MID Retail,444521,409,Dark Wash
+p,MID Retail,444521,459,Light Wash
+p,MID Retail,20341,444522,Embroidered jean (12oz)
+p,MID Retail,444522,5,Black
+p,MID Retail,444522,409,Dark Wash
+p,MID Retail,444522,459,Light Wash
+p,MID Retail,20341,444523,Cargo Jean (12oz)
+p,MID Retail,444523,5,Black
+p,MID Retail,444523,409,Dark Wash
+p,MID Retail,444523,459,Light Wash
+p,MID Retail,2034,20342,shorts
+p,MID Retail,20342,885212,Basic 5 pkt (12oz)
+p,MID Retail,885212,5,Black
+p,MID Retail,885212,409,Dark Wash
+p,MID Retail,885212,459,Light Wash
+p,MID Retail,20342,885213,Embroidered jean (12oz)
+p,MID Retail,885213,5,Black
+p,MID Retail,885213,409,Dark Wash
+p,MID Retail,885213,459,Light Wash
+p,MID Retail,20342,885214,Cargo Jean (12oz)
+p,MID Retail,885214,5,Black
+p,MID Retail,885214,409,Dark Wash
+p,MID Retail,885214,459,Light Wash
+p,MID Retail,2034,20343,jackets
+p,MID Retail,20343,774521,Basic Denim Jacket (16oz)
+p,MID Retail,774521,5,Black
+p,MID Retail,774521,409,Dark Wash
+p,MID Retail,774521,459,Light Wash
+p,MID Retail,20343,774522,Barn Jacket (16oz)
+p,MID Retail,774522,5,Black
+p,MID Retail,774522,409,Dark Wash
+p,MID Retail,774522,459,Light Wash
+p,MID Retail,20343,774523,Embroidered Jacket (12oz)
+p,MID Retail,774523,5,Black
+p,MID Retail,774523,409,Dark Wash
+p,MID Retail,774523,459,Light Wash
+p,MID Retail,2034,20344,shirts
+p,MID Retail,20344,885621,Basic L/S denim (12oz)
+p,MID Retail,885621,409,Dark Wash
+p,MID Retail,885621,459,Light Wash
+p,MID Retail,20344,885622,S/S button front (10oz)
+p,MID Retail,885622,409,Dark Wash
+p,MID Retail,885622,459,Light Wash
+p,MID Retail,20344,885623,Basic L/S denim (10oz)
+p,MID Retail,885623,409,Dark Wash
+p,MID Retail,885623,459,Light Wash
+p,MID Retail,20344,885624,Embroidered Shirt (10oz)
+p,MID Retail,885624,409,Dark Wash
+p,MID Retail,885624,459,Light Wash
+p,MID Retail,2034,20345,skirts
+p,MID Retail,20345,996323,long button front (10oz)
+p,MID Retail,996323,5,Black
+p,MID Retail,996323,409,Dark Wash
+p,MID Retail,996323,459,Light Wash
+p,MID Retail,20345,996324,short 5 pkt (12oz)
+p,MID Retail,996324,5,Black
+p,MID Retail,996324,409,Dark Wash
+p,MID Retail,996324,459,Light Wash
+p,MID Retail,20345,996325,Long 5 pkt (12oz)
+p,MID Retail,996325,5,Black
+p,MID Retail,996325,409,Dark Wash
+p,MID Retail,996325,459,Light Wash,
+p,MID Retail,203,2035,Swimwear,
+p,MID Retail,2035,20351,2 piece,
+p,MID Retail,20351,221523,Solid 2 piece,
+p,MID Retail,221523,430,Bright Blue,Periwinkle
+p,MID Retail,221523,005,Black,
+p,MID Retail,221523,609,Dark Red,Cranberry
+p,MID Retail,221523,270,Light Beige,Taupe
+p,MID Retail,221523,410,Navy,
+p,MID Retail,20351,221524,Floral 2 piece,
+p,MID Retail,221524,430,Bright Blue,Periwinkle
+p,MID Retail,221524,005,Black,
+p,MID Retail,221524,609,Dark Red,Cranberry
+p,MID Retail,221524,270,Light Beige,Taupe
+p,MID Retail,221524,410,Navy,
+p,MID Retail,2035,20352,1 piece,
+p,MID Retail,20352,756951,Solid 1 piece,
+p,MID Retail,756951,430,Bright Blue,Periwinkle
+p,MID Retail,756951,005,Black,
+p,MID Retail,756951,609,Dark Red,Cranberry
+p,MID Retail,756951,270,Light Beige,Taupe
+p,MID Retail,756951,410,Navy,
+p,MID Retail,20352,756952,Stripe 1 piece,
+p,MID Retail,756952,430,Bright Blue,Periwinkle
+p,MID Retail,756952,005,Black,
+p,MID Retail,756952,609,Dark Red,Cranberry
+p,MID Retail,756952,270,Light Beige,Taupe
+p,MID Retail,756952,410,Navy,
+p,MID Retail,2035,20353,coverup,
+p,MID Retail,20353,252321,terry pullover,
+p,MID Retail,252321,430,Bright Blue,Periwinkle
+p,MID Retail,252321,005,Black,
+p,MID Retail,252321,609,Dark Red,Cranberry
+p,MID Retail,252321,270,Light Beige,Taupe
+p,MID Retail,252321,410,Navy,
+p,MID Retail,20353,252322,knit zip front,
+p,MID Retail,252322,430,Bright Blue,Periwinkle
+p,MID Retail,252322,005,Black,
+p,MID Retail,252322,609,Dark Red,Cranberry
+p,MID Retail,252322,270,Light Beige,Taupe
+p,MID Retail,252322,410,Navy,
+p,MID Retail,203,2036,Outerwear,
+p,MID Retail,2036,20361,all weather coats,
+p,MID Retail,20361,878954,Long Trench,
+p,MID Retail,878954,270,Light Beige,Taupe
+p,MID Retail,878954,005,Black,
+p,MID Retail,878954,410,Navy,
+p,MID Retail,20361,878955,Short Trech,
+p,MID Retail,878955,005,Black,
+p,MID Retail,878955,609,Dark Red,Cranberry
+p,MID Retail,878955,270,Light Beige,Taupe
+p,MID Retail,878955,410,Navy,
+p,MID Retail,2036,20362,wool jackets,
+p,MID Retail,20362,112355,Short Double Breasted,
+p,MID Retail,112355,005,Black,
+p,MID Retail,112355,609,Dark Red,Cranberry
+p,MID Retail,112355,270,Light Beige,Taupe
+p,MID Retail,112355,410,Navy,
+p,MID Retail,20362,112356,Mid length single breasted,
+p,MID Retail,112356,005,Black,
+p,MID Retail,112356,609,Dark Red,Cranberry
+p,MID Retail,112356,270,Light Beige,Taupe
+p,MID Retail,112356,410,Navy,
+p,MID Retail,2036,20363,leather jackets,
+p,MID Retail,20363,758965,Lamb bomber,
+p,MID Retail,758965,005,Black,
+p,MID Retail,758965,240,Distressed Brown,
+p,MID Retail,20363,758966,Lamb Double breasted w/ tie,
+p,MID Retail,758966,005,Black,
+p,MID Retail,758966,240,Distressed Brown,
+p,MID Retail,2036,20364,faux fur coats,
+p,MID Retail,20364,774589,faux mink vest,
+p,MID Retail,774589,005,Black,
+p,MID Retail,20364,774590,faux fox vest,
+p,MID Retail,774590,005,Black,
+p,MID Retail,203,2037,Dresses,
+p,MID Retail,2037,20371,2 piece dresses,
+p,MID Retail,20371,521321,silk suit,
+p,MID Retail,521321,005,Black,
+p,MID Retail,521321,609,Dark Red,Cranberry
+p,MID Retail,521321,270,Light Beige,Taupe
+p,MID Retail,521321,410,Navy,
+p,MID Retail,2037,20372,evening dresses,
+p,MID Retail,20372,986998,Sequined sheath,
+p,MID Retail,986998,005,Black,
+p,MID Retail,986998,609,Dark Red,Cranberry
+p,MID Retail,20372,986997,Taffeta skirt w/ sheer wrap,
+p,MID Retail,986997,005,Black,
+p,MID Retail,2037,20373,casual dresses,
+p,MID Retail,20373,114752,Overall Jumper,
+p,MID Retail,114752,005,Black,
+p,MID Retail,114752,609,Dark Red,Cranberry
+p,MID Retail,114752,270,Light Beige,Taupe
+p,MID Retail,114752,410,Navy,
+p,MID Retail,20373,114753,Button Front Denim,
+p,MID Retail,114753,005,Black,
+p,MID Retail,114753,609,Dark Red,Cranberry
+p,MID Retail,114753,270,Light Beige,Taupe
+p,MID Retail,114753,410,Navy,
+p,MID Retail,20373,114754,Knit sheath,
+p,MID Retail,114754,005,Black,
+p,MID Retail,114754,609,Dark Red,Cranberry
+p,MID Retail,114754,270,Light Beige,Taupe
+p,MID Retail,114754,410,Navy,
+p,MID Retail,2037,20374,career dresses,
+p,MID Retail,20374,7785693,Double Breasted Coat dress,
+p,MID Retail,7785693,005,Black,
+p,MID Retail,7785693,609,Dark Red,Cranberry
+p,MID Retail,7785693,270,Light Beige,Taupe
+p,MID Retail,7785693,410,Navy,
+p,MID Retail,20374,7785694,Linen Sheath,
+p,MID Retail,7785694,005,Black,
+p,MID Retail,7785694,609,Dark Red,Cranberry
+p,MID Retail,7785694,270,Light Beige,Taupe
+p,MID Retail,7785694,410,Navy,
+p,MID Retail,20374,7785695,Silk Sheath,
+p,MID Retail,7785695,005,Black,
+p,MID Retail,7785695,609,Dark Red,Cranberry
+p,MID Retail,7785695,270,Light Beige,Taupe
+p,MID Retail,7785695,410,Navy,
+p,MID Retail,203,2038,Accessories,
+p,MID Retail,2038,20381,earrings,
+p,MID Retail,20381,789666,Small Hoop,
+p,MID Retail,789666,40,Silver,
+p,MID Retail,789666,710,Gold,
+p,MID Retail,20381,789667,Medium Hoop,
+p,MID Retail,789667,40,Silver,
+p,MID Retail,789667,710,Gold,
+p,MID Retail,20381,789668,Crystal drop,
+p,MID Retail,789668,40,Silver,
+p,MID Retail,789668,710,Gold,
+p,MID Retail,2038,20382,necklaces,
+p,MID Retail,20382,523658,"12"" Clear Crystal drop",
+p,MID Retail,523658,40,Silver,
+p,MID Retail,523658,710,Gold,
+p,MID Retail,20382,523657,"16"" Clear Crystal drop",
+p,MID Retail,523657,40,Silver,
+p,MID Retail,523657,710,Gold,
+p,MID Retail,20382,523656,"18"" Clear Crystal drop",
+p,MID Retail,523656,40,Silver,
+p,MID Retail,523656,710,Gold,
+p,MID Retail,20382,523655,"16"" semi -precious stone",
+p,MID Retail,523655,430,Bright Blue,Periwinkle
+p,MID Retail,523655,005,Black,
+p,MID Retail,523655,609,Dark Red,Cranberry
+p,MID Retail,20382,523654,"16"" coin neck",
+p,MID Retail,523654,40,Silver,
+p,MID Retail,523654,710,Gold,
+p,MID Retail,2038,20383,pins,
+p,MID Retail,2038,20384,scarves,
+p,MID Retail,2038,20385,handbags,
+p,MID Retail,2038,20386,hosiery,
+p,MID Retail,2038,20387,bracelets,
+p,MID Retail,2038,20388,rings,
+p,MID Retail,203,2039,Sleepwear,
+p,MID Retail,2039,20391,short sets,
+p,MID Retail,2039,20392,pant sets,
+p,MID Retail,2039,20393,robes,
+p,MID Retail,2039,20394,slippers,
+p,MID Retail,MID Retail,3,MID Combo,
+p,MID Retail,3,301,Athletic Shoes,,softline,
+p,MID Retail,301,3011,Nike,,,
+p,MID Retail,3011,30111,Air,,,
+p,MID Retail,30111,855641,Ladies Spirida,,,
+p,MID Retail,855641,101,White,,,
+p,MID Retail,855641,450,Light blue,,,
+p,MID Retail,30111,855642,Mens Spirida,,,
+p,MID Retail,855642,101,White,,,
+p,MID Retail,855642,005,Black,,,
+p,MID Retail,30111,9965632,Ladies Max,,,
+p,MID Retail,9965632,101,White,,,
+p,MID Retail,9965632,450,Light blue,,,
+p,MID Retail,30111,996564,Mens Max,,,
+p,MID Retail,996564,101,White,,,
+p,MID Retail,996564,005,Black,,,
+p,MID Retail,3011,30112,Cross- trainers,,,
+p,MID Retail,30112,212252,Ladies Zoom
+p,MID Retail,212252,101,White
+p,MID Retail,212252,620,Red
+p,MID Retail,30112,212253,Mens Zoom
+p,MID Retail,212253,101,White
+p,MID Retail,212253,410,Navy
+p,MID Retail,30112,144861,Ladies Shock
+p,MID Retail,144861,101,White
+p,MID Retail,144861,410,Navy
+p,MID Retail,30112,144862,Mens Shock
+p,MID Retail,144862,101,White
+p,MID Retail,144862,620,Red
+p,MID Retail,3011,30113, walking
+p,MID Retail,30113,889637,Ladies Skylon
+p,MID Retail,889637,101,White
+p,MID Retail,889637,620,Red
+p,MID Retail,30113,889638,Mens Skylon,
+p,MID Retail,889638,101,White,
+p,MID Retail,889638,410,Navy,
+p,MID Retail,30113,775692,Ladies Vista,
+p,MID Retail,775692,101,White,
+p,MID Retail,775692,680,Light pink,
+p,MID Retail,30113,775693,Mens Vista,
+p,MID Retail,775693,101,White,
+p,MID Retail,775693,620,Red,
+p,MID Retail,3011,30114,running,
+p,MID Retail,30114,745692,Ladies Pegasus,
+p,MID Retail,745692,101,White,
+p,MID Retail,30114,745693,Mens Pegasus,
+p,MID Retail,745693,101,White,
+p,MID Retail,30114,365289,Ladies Turbulence,
+p,MID Retail,365289,101,White,
+p,MID Retail,30114,365288,Mens Turbulence,
+p,MID Retail,365288,101,White,
+p,MID Retail,3011,30115,tennis,
+p,MID Retail,30115,458558,Ladies Structure,
+p,MID Retail,458558,101,White,
+p,MID Retail,30115,458559,Mens Structure,
+p,MID Retail,458559,101,White,
+p,MID Retail,30115,221365,Ladies Max,
+p,MID Retail,221365,101,White,
+p,MID Retail,30115,221366,Mens Max,
+p,MID Retail,221366,101,White,
+p,MID Retail,3011,30116,Golf,
+p,MID Retail,30116,778969,Ladies Gore-Tex Tradtional,
+p,MID Retail,778969,101,White,
+p,MID Retail,30116,778971,Mens Gore-Tex Traditional,
+p,MID Retail,778971,101,White,
+p,MID Retail,30116,554852,Ladies Gore-Tex MaxIII,
+p,MID Retail,554852,101,White,
+p,MID Retail,30116,554853,Mens Gore-Tex MaxIII,
+p,MID Retail,554853,101,White,
+p,MID Retail,301,3012,Adidas,
+p,MID Retail,3012,30121,Cross- trainers,
+p,MID Retail,30121,447411,Ladies Hyperspeed,
+p,MID Retail,447411,101,White,
+p,MID Retail,447411,450,Light Blue,
+p,MID Retail,30121,447412,Mens Hyperspeed,
+p,MID Retail,447412,101,White,
+p,MID Retail,447412,005,Black,
+p,MID Retail,30121,855569,Ladies Trainer A,
+p,MID Retail,855569,101,White,
+p,MID Retail,855569,410,Navy,
+p,MID Retail,30121,855570,Mens Trainer A,
+p,MID Retail,855570,101,White,
+p,MID Retail,855570,410,Navy,
+p,MID Retail,3012,30122,walking,
+p,MID Retail,30122,774841,Ladies Samba,
+p,MID Retail,774841,005,Black,
+p,MID Retail,30122,774842,Mens Samba,
+p,MID Retail,774842,005,Black,
+p,MID Retail,30122,881111,Ladies Samba II,
+p,MID Retail,881111,005,Black,
+p,MID Retail,30122,881112,Mens Samba II,
+p,MID Retail,881112,005,Black,
+p,MID Retail,3012,30123,running,
+p,MID Retail,30123,333512,Ladies Adistar,
+p,MID Retail,333512,101,White,
+p,MID Retail,30123,333513,Mens Adistar,
+p,MID Retail,333513,101,White,
+p,MID Retail,30123,333514,Ladies Cushion,
+p,MID Retail,333514,101,White,
+p,MID Retail,30123,333515,Mens Cushion,
+p,MID Retail,333515,101,White,
+p,MID Retail,3012,30124,tennis,
+p,MID Retail,30124,666669,Ladies Team Classic,
+p,MID Retail,666669,101,White,
+p,MID Retail,666669,410,Navy,
+p,MID Retail,30124,666668,Mens Team Classic,
+p,MID Retail,666668,101,White,
+p,MID Retail,666668,410,Navy,
+p,MID Retail,30124,445855,Ladies Barricade,
+p,MID Retail,445855,101,White,
+p,MID Retail,445855,40,Silver,
+p,MID Retail,30124,445856,Mens Barricade,
+p,MID Retail,445856,101,White,
+p,MID Retail,445856,005,Black,
+p,MID Retail,3012,30125, Golf,
+p,MID Retail,30125,774511,Ladies Predator,
+p,MID Retail,774511,101,White,
+p,MID Retail,774511,670,Red,
+p,MID Retail,30125,774512,Mens Predator,
+p,MID Retail,774512,101,White,
+p,MID Retail,774512,670,Red,
+p,MID Retail,30125,889997,Ladies Supernova,
+p,MID Retail,889997,101,White,
+p,MID Retail,889997,005,Black,
+p,MID Retail,30125,889996,Mens Supernova,
+p,MID Retail,889996,101,White,
+p,MID Retail,889996,005,Black,
+p,MID Retail,301,3013,Reebok,
+p,MID Retail,3013,30131,Cross- trainers,
+p,MID Retail,3013,30132,walking,
+p,MID Retail,3013,30133,running,
+p,MID Retail,30133,336991,Ladies Streak 1,
+p,MID Retail,336991,101,White,
+p,MID Retail,336991,460,Navy,
+p,MID Retail,30133,436991,Mens Streak 1,
+p,MID Retail,436991,101,White,
+p,MID Retail,436991,460,Navy,
+p,MID Retail,30133,336992,Ladies Streak 2,
+p,MID Retail,336992,101,White,
+p,MID Retail,336992,259,Dark Beige,Khaki
+p,MID Retail,30133,436992,Mens Streak 2,
+p,MID Retail,436992,101,White,
+p,MID Retail,436992,259,Dark Beige,Khaki
+p,MID Retail,30133,336993,Ladies Suede,
+p,MID Retail,336993,101,White,
+p,MID Retail,336993,005,Black,
+p,MID Retail,30133,436993,Mens Suede,
+p,MID Retail,436993,101,White,
+p,MID Retail,436993,005,Black,
+p,MID Retail,3013,30134,tennis,
+p,MID Retail,30134,775846,Ladies Supercourt,
+p,MID Retail,775846,101,White,
+p,MID Retail,775846,450,Light Blue,
+p,MID Retail,30134,775847,Mens Supercourt,
+p,MID Retail,775847,101,White ,
+p,MID Retail,775847,410,Navy,
+p,MID Retail,30134,775848,Ladies Valiant,
+p,MID Retail,775848,101,White,
+p,MID Retail,775848,620,Red,
+p,MID Retail,30134,775849,Mens Valiant,
+p,MID Retail,775849,101,White Red,
+p,MID Retail,775849,620,Red,
+p,MID Retail,3013,30135,Golf,
+p,MID Retail,301,3014,New Balance,
+p,MID Retail,3014,30141,Cross- trainers,
+p,MID Retail,30141,447841,Ladies CT442,
+p,MID Retail,447841,101,White,
+p,MID Retail,30141,447849,Mens CT442,
+p,MID Retail,447849,101,White,
+p,MID Retail,30141,856317,Ladies CT899,
+p,MID Retail,856317,101,White,
+p,MID Retail,30141,856318,Mens CT899,
+p,MID Retail,856318,101,White,
+p,MID Retail,3014,30142,walking,
+p,MID Retail,30142,225896,Ladies W604,
+p,MID Retail,225896,101,White,
+p,MID Retail,30142,225895,Mens W604,
+p,MID Retail,225895,101,White,
+p,MID Retail,30142,739145,Ladies W649,
+p,MID Retail,739145,101,White,
+p,MID Retail,30142,739144,Mens W649,
+p,MID Retail,739144,101,White,
+p,MID Retail,3014,30143,running,
+p,MID Retail,30143,859699,Ladies R115,
+p,MID Retail,859699,101,White,
+p,MID Retail,859699,30,Grey,
+p,MID Retail,30143,859698,Mens R115,
+p,MID Retail,859698,101,White,
+p,MID Retail,859698,30,Grey,
+p,MID Retail,30143,225866,Ladies R121,
+p,MID Retail,225866,101,White,
+p,MID Retail,225866,30,Grey,
+p,MID Retail,30143,225867,Mens R121,
+p,MID Retail,225867,101,White,,
+p,MID Retail,225867,30,Grey,,
+p,MID Retail,3014,30144,tennis,,
+p,MID Retail,30144,775693,Ladies T355,,
+p,MID Retail,775693,101,White,,
+p,MID Retail,30144,775694,Mens T355,,
+p,MID Retail,775694,101,White,,
+p,MID Retail,30144,852654,Ladies T389,,
+p,MID Retail,852654,101,White,,
+p,MID Retail,30144,852655,Mens T389,,
+p,MID Retail,852655,101,White,,
+p,MID Retail,3014,30145,Golf,,
+p,MID Retail,3,302,Athletic Wear,,softline
+p,MID Retail,302,3021,Ski Jackets,,
+p,MID Retail,3021,30211,Columbia,,
+p,MID Retail,30211,998563,Mens Alpine Parka,,
+p,MID Retail,998563,005,Black,
+p,MID Retail,998563,410,Navy,
+p,MID Retail,30211,998565,Womens Alpine Parka,
+p,MID Retail,998565,101,White,
+p,MID Retail,998565,530,Light Purple,
+p,MID Retail,30211,998567,Mens Sunrise Parka,
+p,MID Retail,998567,005,Black,
+p,MID Retail,998567,410,Navy,
+p,MID Retail,30211,998569,Womens Sunrise Parka,
+p,MID Retail,998569,101,White,
+p,MID Retail,998569,410,Navy,
+p,MID Retail,3021,30212,North Face,
+p,MID Retail,30212,447898,Mens Ice Snow Jacket,
+p,MID Retail,447898,410,Navy,
+p,MID Retail,447898,310,Medium Green,Olive
+p,MID Retail,30212,447895,Womens Ice Snow Jacket,
+p,MID Retail,447895,005,Black,
+p,MID Retail,447895,740,Yellow,
+p,MID Retail,30212,447892,Mens Down zip front jacket,
+p,MID Retail,447892,005,Black,
+p,MID Retail,447892,410,Navy,
+p,MID Retail,30212,447889,Womens Down zip front jacket,
+p,MID Retail,447889,005,Black,
+p,MID Retail,447889,101,White,
+p,MID Retail,3021,30213, Descente,
+p,MID Retail,30213,114578,Mens Sun Basin Jacket,
+p,MID Retail,114578,005,Black,
+p,MID Retail,114578,410,Navy,
+p,MID Retail,30213,114579,Womens Sun Basin Jacket,
+p,MID Retail,114579,410,Navy,
+p,MID Retail,114579,810,Meduim Orange,
+p,MID Retail,30213,114580,Mens Snow Rage Jacket,
+p,MID Retail,114580,005,Black,
+p,MID Retail,114580,620,Red,
+p,MID Retail,30213,114581,Womens Snow Rage Jacket,
+p,MID Retail,114581,005,Black,
+p,MID Retail,114581,620,Red,
+p,MID Retail,3021,30214,Padagonia,
+p,MID Retail,30214,589988,Mens Himalayan Jacket,
+p,MID Retail,589988,005,Black,
+p,MID Retail,589988,40,Silver,
+p,MID Retail,30214,589980,Womens Himalayan Jacket ,
+p,MID Retail,589980,005,Black,
+p,MID Retail,589980,40,Silver,
+p,MID Retail,30214,589972,Mens Powder Drift Jacket,
+p,MID Retail,589972,410,Navy,
+p,MID Retail,589972,301,Dark Green,
+p,MID Retail,30214,589964,Womens Powder Drift Jacket,
+p,MID Retail,589964,410,Navy
+p,MID Retail,589964,310,Dark Green
+p,MID Retail,302,3022,Ski Pants
+p,MID Retail,3022,30221,Columbia
+p,MID Retail,30221,447851,Mens North Glacier Pant
+p,MID Retail,447851,5,Black
+p,MID Retail,447851,410,Navy
+p,MID Retail,30221,447843,Womens North Glacier Pant
+p,MID Retail,447843,5,Black
+p,MID Retail,447843,410,Navy
+p,MID Retail,30221,447835,Mens Bugabib
+p,MID Retail,447835,5,Black
+p,MID Retail,447835,410,Navy
+p,MID Retail,30221,447827,Womens Bugabib
+p,MID Retail,447827,5,Black
+p,MID Retail,447827,410,Navy
+p,MID Retail,3022,30222,North Face
+p,MID Retail,30222,447596,Mens Snow Bowl Pant
+p,MID Retail,447596,5,Black
+p,MID Retail,447596,410,Navy
+p,MID Retail,30222,447595,Womens Snow Bowl Pant
+p,MID Retail,447595,5,Black
+p,MID Retail,447595,410,Navy
+p,MID Retail,30222,447594,Mens Overalls
+p,MID Retail,447594,5,Black
+p,MID Retail,447594,410,Navy
+p,MID Retail,30222,447593,Womens Overall
+p,MID Retail,447593,5,Black
+p,MID Retail,447593,410,Navy
+p,MID Retail,3022,30223,Descente
+p,MID Retail,30223,111457,Mens Free Stylin Pant
+p,MID Retail,111457,5,Black
+p,MID Retail,111457,410,Navy
+p,MID Retail,30223,111458,Womens Free Stylin Pant
+p,MID Retail,111458,5,Black
+p,MID Retail,111458,410,Navy
+p,MID Retail,3022,30224,Padagonia
+p,MID Retail,30224,998996,Mens High Cliff Pant
+p,MID Retail,998996,5,Black
+p,MID Retail,998996,410,Navy
+p,MID Retail,30224,998997,Womens High Cliff Pant
+p,MID Retail,998997,5,Black
+p,MID Retail,998997,410,Navy
+p,MID Retail,302,3023,Golf Wear
+p,MID Retail,3023,30231,Descente
+p,MID Retail,30231,101002,Mens Microfiber Windshirt
+p,MID Retail,101002,410,Navy
+p,MID Retail,101002,5,Black
+p,MID Retail,30231,200101,Womens Microfiber Windshirt
+p,MID Retail,200101,410,Navy
+p,MID Retail,200101,5,Black
+p,MID Retail,30231,101003,Mens Stripe pique polo
+p,MID Retail,101003,410,Navy
+p,MID Retail,101003,5,Black
+p,MID Retail,30231,300101,Womens Stripe pique polo
+p,MID Retail,300101,680,Pink
+p,MID Retail,300101,740,Yellow
+p,MID Retail,30231,101004,Mens V-neck Fleece pullover
+p,MID Retail,101004,620,Red
+p,MID Retail,101004,5,Black
+p,MID Retail,30231,400101,Womens V-neck Fleece pullover
+p,MID Retail,400101,620,Red
+p,MID Retail,400101,5,Black
+p,MID Retail,3023,30232,Ashworth
+p,MID Retail,30232,332005,Mens Microfiber Jacket,
+p,MID Retail,332005,620,Red,
+p,MID Retail,332005,410,Navy,
+p,MID Retail,30232,500233,Womens Microfiber Jacket,
+p,MID Retail,500233,620,Red,
+p,MID Retail,500233,410,Navy,
+p,MID Retail,30232,332006,Mens Half zip mircro fleece,
+p,MID Retail,332006,310,Green,
+p,MID Retail,332006,259,Dark Beige,Khaki
+p,MID Retail,30232,600233,Womens Half zip mircro fleece,
+p,MID Retail,600233,310,Green,
+p,MID Retail,600233,259,Dark Beige,Khaki
+p,MID Retail,3023,30233,Callaway,
+p,MID Retail,30233,585005,Mens Zip Fleece,
+p,MID Retail,585005,609,Dark Red,Cranberry
+p,MID Retail,585005,421,Meduim Blue,Slate Blue
+p,MID Retail,30233,500585,Womes Zip Fleece,
+p,MID Retail,500585,609,Dark Red,Cranberry
+p,MID Retail,500585,421,Meduim Blue,Slate Blue
+p,MID Retail,30233,585006,Mens Microfiber pullover,
+p,MID Retail,585006,609,Dark Red,Cranberry
+p,MID Retail,585006,421,Meduim Blue,Slate Blue
+p,MID Retail,30233,600585,Womens Microfiber pullover,
+p,MID Retail,600585,609,Dark Red,Cranberry
+p,MID Retail,600585,421,Meduim Blue,Slate Blue
+p,MID Retail,302,3024,Yoga Wear,
+p,MID Retail,3024,30241,Pant,
+p,MID Retail,3024,30242,Capri,
+p,MID Retail,3024,30243,Tank ,
+p,MID Retail,3024,30244,Tee,
+p,MID Retail,302,3025,Branded Jerseys,
+p,MID Retail,3025,30251,NFL Logos -American,
+p,MID Retail,30251,856004,Baltimore Ravens
+p,MID Retail,30251,856003,Buffalo Bills
+p,MID Retail,30251,856002,Cincinnati Bengals
+p,MID Retail,30251,856001,Cleveland Browns
+p,MID Retail,30251,856000,Denver Broncos
+p,MID Retail,30251,855999,Houston Texans
+p,MID Retail,30251,855998,Indianapolis Colts
+p,MID Retail,30251,855997,Jacksonville Jaguars
+p,MID Retail,30251,855996,Kansas City Chiefs
+p,MID Retail,30251,855995,Miami Dolphins
+p,MID Retail,30251,855994,New England Patriots
+p,MID Retail,3025,30252,NFL Logos -National
+p,MID Retail,30252,778502,Arizona Cardinals
+p,MID Retail,30252,778504,Atlanta Falcons
+p,MID Retail,30252,778506,Carolina Panthers
+p,MID Retail,30252,778508,Chicago Bears
+p,MID Retail,30252,778510,Dallas Cowboys,,
+p,MID Retail,30252,778512,Detroit Lions,,
+p,MID Retail,30252,778514,Green Bay Packers,,
+p,MID Retail,30252,778516,Minnesota Vickings,,
+p,MID Retail,30252,778518,New Orleans Saints,,
+p,MID Retail,30252,778520,New York Giants,,
+p,MID Retail,30252,778522,Philadelphia Eagles,,
+p,MID Retail,3,303,Ski Equipment,,
+p,MID Retail,303,3031,Snow Skis,,hardline
+p,MID Retail,3031,30311,Atomic,,
+p,MID Retail,30311,741002512302,SX9-153,,
+p,MID Retail,30311,741002512301,SX9-160,,
+p,MID Retail,30311,741002512300,SX9-167,,
+p,MID Retail,30311,741002512299,SX9-174,,
+p,MID Retail,30311,741002512298,SX9-181,,
+p,MID Retail,30311,741002512292,C11-153,,
+p,MID Retail,30311,741002512290,C11-160
+p,MID Retail,30311,741002512288,C11-167
+p,MID Retail,30311,741002512286,C11-174
+p,MID Retail,30311,741002512284,C11-181
+p,MID Retail,3031,30312,Salomon
+p,MID Retail,30312,225369865200,CrossMax-153
+p,MID Retail,30312,225369865202,CrossMax-160
+p,MID Retail,30312,225369865204,CrossMax-167
+p,MID Retail,30312,225369865206,CrossMax-174
+p,MID Retail,30312,225369865208,CrossMax-181
+p,MID Retail,30312,225369865205,Verse-153
+p,MID Retail,30312,225369865180,Verse-160
+p,MID Retail,30312,225369865155,Verse-167
+p,MID Retail,30312,225369865130,Verse-174
+p,MID Retail,30312,225369865105,Verse-181
+p,MID Retail,3031,30313,Rossignol
+p,MID Retail,30313,445698562351,Bandit-153
+p,MID Retail,30313,445698562381,Bandit-160
+p,MID Retail,30313,445698562411,Bandit-167
+p,MID Retail,30313,445698562441,Bandit-174
+p,MID Retail,30313,445698562471,Bandit-181
+p,MID Retail,30313,445698562352,Cobra-153
+p,MID Retail,30313,445698562322,Cobra-160
+p,MID Retail,30313,445698562292,Cobra-167
+p,MID Retail,30313,445698562262,Cobra-174
+p,MID Retail,30313,445698562232,Cobra-181
+p,MID Retail,3031,30314,Elan
+p,MID Retail,30314,112558965322,Axis SR-153
+p,MID Retail,30314,112558965332,Axis SR-160
+p,MID Retail,30314,112558965342,Axis SR-167
+p,MID Retail,30314,112558965352,Axis SR-174
+p,MID Retail,30314,112558965362,Axis SR-181
+p,MID Retail,30314,112558965323,Skicross-153
+p,MID Retail,30314,112558965318,Skicross-160
+p,MID Retail,30314,112558965313,Skicross-167
+p,MID Retail,30314,112558965308,Skicross-174
+p,MID Retail,30314,112558965303,Skicross-181
+p,MID Retail,3031,30315,K2
+p,MID Retail,30315,885698542012,Escape 4500 - 153
+p,MID Retail,30315,885698541934,Escape 4500 - 160
+p,MID Retail,30315,885698541856,Escape 4500 - 167
+p,MID Retail,30315,885698541778,Escape 4500 - 174
+p,MID Retail,30315,885698541700,Escape 4500 - 181
+p,MID Retail,30315,885698542013,Escape 3500-153
+p,MID Retail,30315,885698542025,Escape 3500-160
+p,MID Retail,30315,885698542037,Escape 3500-167
+p,MID Retail,30315,885698542049,Escape 3500-174
+p,MID Retail,30315,885698542061,Escape 3500-181
+p,MID Retail,303,3032,Ski Boots,,softline
+p,MID Retail,3032,30321,Atomic,,
+p,MID Retail,30321,785451,Powder,,
+p,MID Retail,785451,005,Black,,
+p,MID Retail,785451,620,Red,,
+p,MID Retail,785451,40,Silver,,
+p,MID Retail,30321,785459,Bandit,,
+p,MID Retail,785459,005,Black,,
+p,MID Retail,785459,620,Red,,
+p,MID Retail,785459,40,Silver,,
+p,MID Retail,3032,30322,Salomon,,
+p,MID Retail,30322,758961,Alto,,
+p,MID Retail,758961,620,Red,,
+p,MID Retail,758961,40,Silver,,
+p,MID Retail,30322,758962,Saphir,,
+p,MID Retail,758962,620,Red,,
+p,MID Retail,758962,40,Silver,,
+p,MID Retail,3032,30323,Rossignol,,
+p,MID Retail,30323,745801,Axium,,
+p,MID Retail,745801,005,Black,,
+p,MID Retail,745801,620,Red,,
+p,MID Retail,30323,745800,Liberty,,
+p,MID Retail,745800,005,Black,,
+p,MID Retail,745800,620,Red,,
+p,MID Retail,303,3033,Ski Poles,,softline
+p,MID Retail,3033,30331,Atomic,,
+p,MID Retail,3033,30332, Salomon,,
+p,MID Retail,30332,152300,Saphir,,
+p,MID Retail,152300,40,Silver,,
+p,MID Retail,152300,005,Black,,
+p,MID Retail,30332,152301,Scratch,,
+p,MID Retail,152301,40,Silver,,
+p,MID Retail,152301,005,Black,,
+p,MID Retail,3033,30333,Rossignol,,
+p,MID Retail,30333,785200,T-Powder,,
+p,MID Retail,785200,620,Red,,
+p,MID Retail,785200,40,Silver,,
+p,MID Retail,30333,985220,RPM,,
+p,MID Retail,985220,620,Red,,
+p,MID Retail,985220,40,Silver,,
+p,MID Retail,303,3034,Ski Gloves,,softline
+p,MID Retail,3034,30341,Turtlefur,,
+p,MID Retail,30341,987002,Basic leather palm mitten,,
+p,MID Retail,987002,005,Black,,
+p,MID Retail,987002,620,Red,,
+p,MID Retail,987002,410,Navy,,
+p,MID Retail,30341,987003,Basic leather palm glove,,
+p,MID Retail,987003,005,Black,,
+p,MID Retail,987003,620,Red
+p,MID Retail,987003,410,Navy
+p,MID Retail,3034,30342,Bolle
+p,MID Retail,3034,30343,Reusch
+p,MID Retail,3034,30344,Columbia
+p,MID Retail,30344,445210,Hood Mitten
+p,MID Retail,445210,5,Black
+p,MID Retail,445210,620,Red
+p,MID Retail,30344,445211,Whirlbird Glove
+p,MID Retail,445211,410,Blue 
+p,MID Retail,445211,40,Silver
+p,MID Retail,445211,620,Red
+p,MID Retail,445211,5,Black
+p,MID Retail,30344,452112,Snow Squall Glove
+p,MID Retail,452112,410,Blue 
+p,MID Retail,452112,40,Silver
+p,MID Retail,452112,620,Red
+p,MID Retail,452112,5,Black
+p,MID Retail,30344,452113,Crystal Pass Mitten
+p,MID Retail,452113,410,Blue 
+p,MID Retail,452113,40,Silver
+p,MID Retail,452113,620,Red
+p,MID Retail,452113,5,Black

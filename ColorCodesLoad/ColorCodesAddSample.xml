@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<Colors xmlns="http://tempuri.org/ColorCodesLoadSchema.xsd">
+
+	<Color Name="Black" Group="Black Group" Code="1"> </Color>
+	<Color Name="Oxford" Group="Black Group" Code="2"> </Color>
+	<Color Name="Oxford" Group="Black Group" Code="3"> </Color>
+	<Color Name="Oxford" Group="Black Group" Code="4"> </Color>
+	<Color Name="Black" Group="Black Group" Code="5"> </Color>
+	<Color Name="Oxford" Group="Black Group" Code="6"> </Color>
+	<Color Name="Oxford" Group="Black Group" Code="7"> </Color>
+	<Color Name="Oxford" Group="Black Group" Code="8"> </Color>
+	<Color Name="Oxford" Group="Black Group" Code="9"> </Color>
+	<Color Name="White" Group="White Group" Code="100"> </Color>
+	<Color Name="Natural" Group="White Group" Code="101"> </Color>
+	<Color Name="Natural" Group="White Group" Code="102"> </Color>
+	<Color Name="Natural" Group="White Group" Code="103"> </Color>
+	<Color Name="Natural" Group="White Group" Code="104"> </Color>
+	<Color Name="Natural" Group="White Group" Code="105"> </Color>
+	<Color Name="Natural" Group="White Group" Code="106"> </Color>
+	<Color Name="Natural" Group="White Group" Code="107"> </Color>
+	<Color Name="Natural" Group="White Group" Code="108"> </Color>
+	<Color Name="Natural" Group="White Group" Code="109"> </Color>
+	<Color Name="Charcoal" Group="Black Group" Code="10"> </Color>
+	<Color Name="Charcoal" Group="Black Group" Code="11"> </Color>
+	<Color Name="Charcoal" Group="Black Group" Code="12"> </Color>
+	<Color Name="Charcoal" Group="Black Group" Code="13"> </Color>
+	<Color Name="Charcoal" Group="Black Group" Code="14"> </Color>
+	<Color Name="Charcoal" Group="Black Group" Code="15"> </Color>
+	<Color Name="Charcoal" Group="Black Group" Code="16"> </Color>
+	<Color Name="Charcoal" Group="Black Group" Code="17"> </Color>
+	<Color Name="Charcoal" Group="Black Group" Code="18"> </Color>
+	<Color Name="Charcoal" Group="Black Group" Code="19"> </Color>
+	<Color Name="Red" Group="Red Group" Code="600"> </Color>
+	<Color Name="Dark Red" Group="Red Group" Code="601"> </Color>
+	<Color Name="Dark Red" Group="Red Group" Code="602"> </Color>
+	<Color Name="Dark Red" Group="Red Group" Code="603"> </Color>
+	<Color Name="Dark Red" Group="Red Group" Code="604"> </Color>
+	<Color Name="Dark Red" Group="Red Group" Code="605"> </Color>
+	<Color Name="Dark Red" Group="Red Group" Code="606"> </Color>
+	<Color Name="Dark Red" Group="Red Group" Code="607"> </Color>
+	<Color Name="Dark Red" Group="Red Group" Code="608"> </Color>
+	<Color Name="Dark Red" Group="Red Group" Code="609"> </Color>
+	<Color Name="Medium Red" Group="Red Group" Code="610"> </Color>
+	<Color Name="Medium Red" Group="Red Group" Code="611"> </Color>
+	<Color Name="Medium Red" Group="Red Group" Code="612"> </Color>
+	<Color Name="Medium Red" Group="Red Group" Code="613"> </Color>
+	<Color Name="Medium Red" Group="Red Group" Code="614"> </Color>
+	<Color Name="Medium Red" Group="Red Group" Code="615"> </Color>
+	<Color Name="Medium Red" Group="Red Group" Code="616"> </Color>
+	<Color Name="Medium Red" Group="Red Group" Code="617"> </Color>
+	<Color Name="Medium Red" Group="Red Group" Code="618"> </Color>
+	<Color Name="Medium Red" Group="Red Group" Code="619"> </Color>
+	<Color Name="Bright Red" Group="Red Group" Code="620"> </Color>
+	<Color Name="Bright Red" Group="Red Group" Code="621"> </Color>
+	<Color Name="Bright Red" Group="Red Group" Code="622"> </Color>
+	<Color Name="Bright Red" Group="Red Group" Code="623"> </Color>
+	<Color Name="Bright Red" Group="Red Group" Code="624"> </Color>
+	<Color Name="Bright Red" Group="Red Group" Code="625"> </Color>
+	<Color Name="Bright Red" Group="Red Group" Code="626"> </Color>
+	<Color Name="Bright Red" Group="Red Group" Code="627"> </Color>
+	<Color Name="Bright Red" Group="Red Group" Code="628"> </Color>
+	<Color Name="Bright Red" Group="Red Group" Code="629"> </Color>
+	<Color Name="Light/Pastel Red" Group="Red Group" Code="630"> </Color>
+	<Color Name="Light/Pastel Red" Group="Red Group" Code="631"> </Color>
+	<Color Name="Light/Pastel Red" Group="Red Group" Code="632"> </Color>
+	<Color Name="Light/Pastel Red" Group="Red Group" Code="633"> </Color>
+	<Color Name="Light/Pastel Red" Group="Red Group" Code="634"> </Color>
+	<Color Name="Light/Pastel Red" Group="Red Group" Code="635"> </Color>
+	<Color Name="Light/Pastel Red" Group="Red Group" Code="636"> </Color>
+	<Color Name="Light/Pastel Red" Group="Red Group" Code="637"> </Color>
+	<Color Name="Light/Pastel Red" Group="Red Group" Code="638"> </Color>
+	<Color Name="Light/Pastel Red" Group="Red Group" Code="639"> </Color>
+	<Color Name="Blue" Group="Blue Group" Code="400"> </Color>
+	<Color Name="Dark Blue" Group="Blue Group" Code="401"> </Color>
+	<Color Name="Dark Blue" Group="Blue Group" Code="402"> </Color>
+	<Color Name="Dark Blue" Group="Blue Group" Code="403"> </Color>
+	<Color Name="Dark Blue" Group="Blue Group" Code="404"> </Color>
+	<Color Name="Dark Blue" Group="Blue Group" Code="405"> </Color>
+	<Color Name="Dark Blue" Group="Blue Group" Code="406"> </Color>
+	<Color Name="Dark Blue" Group="Blue Group" Code="407"> </Color>
+	<Color Name="Dark Blue" Group="Blue Group" Code="408"> </Color>
+	<Color Name="Dark Blue" Group="Blue Group" Code="409"> </Color>
+	<Color Name="Navy" Group="Blue Group" Code="410"> </Color>
+	<Color Name="Navy" Group="Blue Group" Code="411"> </Color>
+	<Color Name="Navy" Group="Blue Group" Code="412"> </Color>
+	<Color Name="Navy" Group="Blue Group" Code="413"> </Color>
+	<Color Name="Navy" Group="Blue Group" Code="414"> </Color>
+	<Color Name="Navy" Group="Blue Group" Code="415"> </Color>
+	<Color Name="Navy" Group="Blue Group" Code="416"> </Color>
+	<Color Name="Navy" Group="Blue Group" Code="417"> </Color>
+	<Color Name="Navy" Group="Blue Group" Code="418"> </Color>
+	<Color Name="Navy" Group="Blue Group" Code="419"> </Color>
+	<Color Name="Medium Blue" Group="Blue Group" Code="420"> </Color>
+	<Color Name="Medium Blue" Group="Blue Group" Code="421"> </Color>
+	<Color Name="Medium Blue" Group="Blue Group" Code="422"> </Color>
+	<Color Name="Medium Blue" Group="Blue Group" Code="423"> </Color>
+	<Color Name="Medium Blue" Group="Blue Group" Code="424"> </Color>
+	<Color Name="Medium Blue" Group="Blue Group" Code="425"> </Color>
+	<Color Name="Medium Blue" Group="Blue Group" Code="426"> </Color>
+	<Color Name="Medium Blue" Group="Blue Group" Code="427"> </Color>
+	<Color Name="Medium Blue" Group="Blue Group" Code="428"> </Color>
+	<Color Name="Medium Blue" Group="Blue Group" Code="429"> </Color>
+	<Color Name="Bright Blue" Group="Blue Group" Code="430"> </Color>
+	<Color Name="Bright Blue" Group="Blue Group" Code="431"> </Color>
+	<Color Name="Bright Blue" Group="Blue Group" Code="432"> </Color>
+	<Color Name="Bright Blue" Group="Blue Group" Code="433"> </Color>
+	<Color Name="Bright Blue" Group="Blue Group" Code="434"> </Color>
+	<Color Name="Bright Blue" Group="Blue Group" Code="435"> </Color>
+	<Color Name="Bright Blue" Group="Blue Group" Code="436"> </Color>
+	<Color Name="Bright Blue" Group="Blue Group" Code="437"> </Color>
+	<Color Name="Bright Blue" Group="Blue Group" Code="438"> </Color>
+	<Color Name="Bright Blue" Group="Blue Group" Code="439"> </Color>
+	<Color Name="Turquoise/Aqua" Group="Blue Group" Code="440"> </Color>
+	<Color Name="Turquoise/Aqua" Group="Blue Group" Code="441"> </Color>
+	<Color Name="Turquoise/Aqua" Group="Blue Group" Code="442"> </Color>
+	<Color Name="Turquoise/Aqua" Group="Blue Group" Code="443"> </Color>
+	<Color Name="Turquoise/Aqua" Group="Blue Group" Code="444"> </Color>
+	<Color Name="Turquoise/Aqua" Group="Blue Group" Code="445"> </Color>
+	<Color Name="Turquoise/Aqua" Group="Blue Group" Code="446"> </Color>
+	<Color Name="Turquoise/Aqua" Group="Blue Group" Code="447"> </Color>
+	<Color Name="Turquoise/Aqua" Group="Blue Group" Code="448"> </Color>
+	<Color Name="Turquoise/Aqua" Group="Blue Group" Code="449"> </Color>
+	<Color Name="Light/Pastel Blue" Group="Blue Group" Code="450"> </Color>
+	<Color Name="Light/Pastel Blue" Group="Blue Group" Code="451"> </Color>
+	<Color Name="Light/Pastel Blue" Group="Blue Group" Code="452"> </Color>
+	<Color Name="Light/Pastel Blue" Group="Blue Group" Code="453"> </Color>
+	<Color Name="Light/Pastel Blue" Group="Blue Group" Code="454"> </Color>
+	<Color Name="Light/Pastel Blue" Group="Blue Group" Code="455"> </Color>
+	<Color Name="Light/Pastel Blue" Group="Blue Group" Code="456"> </Color>
+	<Color Name="Light/Pastel Blue" Group="Blue Group" Code="457"> </Color>
+	<Color Name="Light/Pastel Blue" Group="Blue Group" Code="458"> </Color>
+	<Color Name="Light/Pastel Blue" Group="Blue Group" Code="459"> </Color>
+</Colors>

@@ -1,0 +1,140 @@
+CREATE PROCEDURE [dbo].[SP_MID_GET_DESCENDANTS_BY_LEVEL] 
+	@HN_RID INT,
+	@LEVEL_SEQ INT
+	WITH RECOMPILE
+AS
+SET NOCOUNT ON
+
+DECLARE @Loop INT,
+	@LoopCount INT,
+	@NextLoopCount INT,
+	@main_PH_RID INT
+
+SELECT @main_PH_RID = PH_RID
+FROM PRODUCT_HIERARCHY
+WHERE PH_TYPE = 800000
+
+SET @LoopCount = 0
+
+CREATE TABLE #TREE (
+	LOOPCOUNT INT NOT NULL,
+	PARENT_HN_RID INT NOT NULL,
+	HOME_PH_RID INT,
+	PH_TYPE INT,
+	HN_RID INT NOT NULL,
+	HOME_LEVEL INT NOT NULL,
+	LEVEL_TYPE INT,
+	VIRTUAL_IND CHAR(1)
+	)
+
+-- insert the children of the node into the temp table
+INSERT #TREE (
+	LOOPCOUNT,
+	PARENT_HN_RID,
+	HOME_PH_RID,
+	PH_TYPE,
+	HN_RID,
+	HOME_LEVEL,
+	VIRTUAL_IND
+	)
+SELECT @LoopCount AS LOOPCOUNT,
+	@HN_RID AS PARENT_HN_RID,
+	hn.HOME_PH_RID,
+	ph.PH_TYPE,
+	hnj.HN_RID,
+	hn.HOME_LEVEL,
+	hn.VIRTUAL_IND
+FROM [dbo].[HIER_NODE_JOIN] hnj WITH (NOLOCK)
+JOIN [dbo].[HIERARCHY_NODE] hn WITH (NOLOCK) ON hn.HN_RID = hnj.HN_RID
+JOIN [dbo].[PRODUCT_HIERARCHY] ph WITH (NOLOCK) ON ph.PH_RID = hn.HOME_PH_RID
+JOIN [dbo].[HIER_NODE_JOIN] parent WITH (NOLOCK) ON hn.HN_RID = parent.HN_RID
+	AND parent.PH_RID = hn.HOME_PH_RID
+WHERE @HN_RID = hnj.PARENT_HN_RID
+  AND hnj.NODE_DELETE_IND = '0'-- TT#3630 - JSmith - Delete My Hierarchy
+OPTION (MAXDOP 1)
+
+SET @Loop = @@ROWCOUNT
+
+-- add level type
+BEGIN TRANSACTION
+
+UPDATE #TREE
+SET LEVEL_TYPE = (
+		SELECT phl.PHL_TYPE
+		FROM [dbo].[PRODUCT_HIERARCHY_LEVELS] phl WITH (NOLOCK)
+		WHERE #TREE.LOOPCOUNT = @LoopCount
+			AND #TREE.HOME_PH_RID = phl.PH_RID
+			AND #TREE.HOME_LEVEL = phl.PHL_SEQUENCE
+		)
+
+COMMIT
+
+-- chase all paths until you get the correct level type
+SET @NextLoopCount = @LoopCount + 1
+
+WHILE @Loop > 0
+BEGIN
+	INSERT #TREE
+	SELECT @NextLoopCount AS LOOPCOUNT,
+		hnj.PARENT_HN_RID,
+		hn.HOME_PH_RID,
+		ph.PH_TYPE,
+		hnj.HN_RID,
+		hn.HOME_LEVEL,
+		NULL,
+		hn.VIRTUAL_IND
+	FROM [dbo].[HIER_NODE_JOIN] hnj WITH (NOLOCK)
+	JOIN #TREE t ON hnj.PARENT_HN_RID = t.HN_RID
+		AND hnj.PH_RID = t.HOME_PH_RID
+	JOIN [dbo].[HIERARCHY_NODE] hn WITH (NOLOCK) ON hn.HN_RID = hnj.HN_RID
+	JOIN [dbo].[PRODUCT_HIERARCHY] ph WITH (NOLOCK) ON ph.PH_RID = hn.HOME_PH_RID
+	JOIN [dbo].[HIER_NODE_JOIN] parent WITH (NOLOCK) ON hn.HN_RID = parent.HN_RID
+		AND parent.PH_RID = hn.HOME_PH_RID
+	WHERE t.LOOPCOUNT = @LoopCount
+		AND (
+			t.HOME_PH_RID <> @main_PH_RID
+			OR (
+				t.HOME_PH_RID = @main_PH_RID
+				AND t.HOME_LEVEL < @LEVEL_SEQ
+				)
+			)
+		AND hnj.NODE_DELETE_IND = '0' -- TT#3630 - JSmith - Delete My Hierarchy
+	OPTION (MAXDOP 1)
+
+	SET @Loop = @@ROWCOUNT
+	-- update counters
+	SET @LoopCount = @LoopCount + 1
+	SET @NextLoopCount = @LoopCount + 1
+
+	-- add level type
+	BEGIN TRANSACTION
+
+	UPDATE #TREE
+	SET LEVEL_TYPE = (
+			SELECT phl.PHL_TYPE
+			FROM [dbo].[PRODUCT_HIERARCHY_LEVELS] phl WITH (NOLOCK)
+			WHERE #TREE.LOOPCOUNT = @LoopCount
+				AND #TREE.HOME_PH_RID = phl.PH_RID
+				AND #TREE.HOME_LEVEL = phl.PHL_SEQUENCE
+			)
+	WHERE LEVEL_TYPE IS NULL
+		AND #TREE.LOOPCOUNT = @LoopCount
+
+	COMMIT
+END
+
+SELECT HN_RID,
+	LEVEL_TYPE,
+	coalesce(VIRTUAL_IND, '0') VIRTUAL_IND,
+	HOME_LEVEL
+FROM #TREE
+WHERE HOME_PH_RID = @main_PH_RID
+	AND HOME_LEVEL = @LEVEL_SEQ
+
+IF (
+		SELECT object_id('tempdb.dbo.#TREE')
+		) > 0
+	DROP TABLE #TREE
+GO
+
+

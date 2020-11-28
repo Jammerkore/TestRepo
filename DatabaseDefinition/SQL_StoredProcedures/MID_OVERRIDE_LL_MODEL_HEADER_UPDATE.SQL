@@ -1,0 +1,38 @@
+--dv =============================================
+--dv Create date:	11/30/2013
+--dv Description:	Updates User Plan table removes FK for Header Override OLL Model
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_OVERRIDE_LL_MODEL_HEADER_UPDATE]
+	@NAME varchar(250),
+	@OLL_RID int,
+	@HN_RID int,
+	@HIGH_LEVEL_HN_RID int,
+	@HIGH_LEVEL_SEQ int,
+	@HIGH_LEVEL_OFFSET int,
+	@HIGH_LEVEL_TYPE int,
+	@LOW_LEVEL_SEQ int,
+	@LOW_LEVEL_OFFSET int,
+	@LOW_LEVEL_TYPE int,
+	@ACTIVE_ONLY_IND char(1)
+
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	UPDATE OVERRIDE_LL_MODEL_HEADER 
+	SET 
+		NAME = @NAME,
+		HN_RID = @HN_RID,
+		HIGH_LEVEL_HN_RID = @HIGH_LEVEL_HN_RID,
+		HIGH_LEVEL_SEQ = @HIGH_LEVEL_SEQ, 
+		HIGH_LEVEL_OFFSET = @HIGH_LEVEL_OFFSET, 
+		HIGH_LEVEL_TYPE = @HIGH_LEVEL_TYPE,
+		LOW_LEVEL_SEQ = @LOW_LEVEL_SEQ, 
+		LOW_LEVEL_OFFSET = @LOW_LEVEL_OFFSET, 
+		LOW_LEVEL_TYPE = @LOW_LEVEL_TYPE,
+		ACTIVE_ONLY_IND = @ACTIVE_ONLY_IND
+	WHERE OLL_RID = @OLL_RID
+
+	SELECT @@ROWCOUNT;
+END
+GO

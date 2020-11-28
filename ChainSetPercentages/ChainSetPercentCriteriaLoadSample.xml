@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ChainSetPercent>
+  <Line yearWeek="200932" nodeId="20335" storeAttribute="Loaction" storeAttributeSet="Mall" percentage="45.0"> </Line>
+  <Line yearWeek="200932" nodeId="20335" storeAttribute="Location" storeAttributeSet="Strip Center" percentage="30.0"> </Line>
+  <Line yearWeek="200932" nodeId="20335" storeAttribute="Location" storeAttributeSet="Free Standing" percentage="15.0"> </Line>
+  <Line yearWeek="200932" nodeId="20335" storeAttribute="Location" storeAttributeSet="Web" percentage="10.0"> </Line>
+  <Line yearWeek="200933" nodeId="mid2" storeAttribute="Location" storeAttributeSet="Mall" percentage="45.0"> </Line>
+  <Line yearWeek="200933" nodeId="mid2" storeAttribute="Location" storeAttributeSet="Strip Center" percentage="30.0"> </Line>
+  <Line yearWeek="200933" nodeId="mid2" storeAttribute="Location" storeAttributeSet="Free Standing" percentage="15.0"> </Line>
+  <Line yearWeek="200933" nodeId="mid2" storeAttribute="Location" storeAttributeSet="Web" percentage="10.0"> </Line>
+</ChainSetPercent>

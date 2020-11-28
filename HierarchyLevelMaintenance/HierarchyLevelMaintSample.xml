@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<HierarchyLevelMaint xmlns="http://tempuri.org/HierarchyLevelMaintSchema.xsd">
+	<Hierarchy ID="MID Retail" Action="Add" LevelName="Division" NewLevel="NewLevel"></Hierarchy>
+  <Hierarchy ID="Alternate" Action="Add" LevelName="1" NewLevel="2"></Hierarchy>
+
+  <Hierarchy ID="MID Retail" Action="Remove" LevelName="NewLevel" NewLevel=""></Hierarchy>
+  <Hierarchy ID="Alternate" Action="Remove" LevelName="2" NewLevel=""></Hierarchy>
+</HierarchyLevelMaint>
+
+

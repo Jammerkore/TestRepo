@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema id="HeaderLoadSchema" targetNamespace="http://tempuri.org/HeaderLoadSchema.xsd"
+	elementFormDefault="qualified" xmlns="http://tempuri.org/HeaderLoadSchema.xsd" xmlns:mstns="http://tempuri.org/HeaderLoadSchema.xsd"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="Headers">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Options" minOccurs="0" maxOccurs="1">
+					<xs:complexType>
+						<xs:attribute name="AutoAddCharacteristics" type="xs:boolean" use="optional"></xs:attribute>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Header" minOccurs="1" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="BulkColor" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="BulkColorSize" minOccurs="0" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:attribute name="SizeCodeID" type="xs:string" use="required" />
+												<xs:attribute name="SizeCodeName" type="xs:string" use="optional" />
+												<xs:attribute name="SizeCodeDescription" type="xs:string" use="optional" />
+												<xs:attribute name="SizeCodePrimary" type="xs:string" use="optional" />
+												<xs:attribute name="SizeCodeSecondary" type="xs:string" use="optional" />
+												<xs:attribute name="SizeCodeProductCategory" type="xs:string" use="optional" />
+												<xs:attribute name="Units" type="xs:int" use="required" />
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+									<xs:attribute name="ColorCodeID" type="xs:string" use="required" />
+									<xs:attribute name="ColorCodeName" type="xs:string" use="optional" />
+									<xs:attribute name="ColorCodeDescription" type="xs:string" use="optional" />
+									<xs:attribute name="ColorCodeGroup" type="xs:string" use="optional" />
+									<xs:attribute name="Units" type="xs:int" use="required" />
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="Pack" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="PackColor" minOccurs="0" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="PackColorSize" minOccurs="0" maxOccurs="unbounded">
+														<xs:complexType>
+															<xs:attribute name="SizeCodeID" type="xs:string" use="required" />
+															<xs:attribute name="SizeCodeName" type="xs:string" use="optional" />
+															<xs:attribute name="SizeCodeDescription" type="xs:string" use="optional" />
+															<xs:attribute name="SizeCodePrimary" type="xs:string" use="optional" />
+															<xs:attribute name="SizeCodeSecondary" type="xs:string" use="optional" />
+															<xs:attribute name="SizeCodeProductCategory" type="xs:string" use="optional" />
+															<xs:attribute name="Units" type="xs:int" use="required" />
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+												<xs:attribute name="ColorCodeID" type="xs:string" use="required" />
+												<xs:attribute name="ColorCodeName" type="xs:string" use="optional" />
+												<xs:attribute name="ColorCodeDescription" type="xs:string" use="optional" />
+												<xs:attribute name="ColorCodeGroup" type="xs:string" use="optional" />
+												<xs:attribute name="Units" type="xs:int" use="required" />
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="PackSize" minOccurs="0" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:attribute name="SizeCodeID" type="xs:string" use="required" />
+												<xs:attribute name="SizeCodeName" type="xs:string" use="optional" />
+												<xs:attribute name="SizeCodeDescription" type="xs:string" use="optional" />
+												<xs:attribute name="SizeCodePrimary" type="xs:string" use="optional" />
+												<xs:attribute name="SizeCodeSecondary" type="xs:string" use="optional" />
+												<xs:attribute name="SizeCodeProductCategory" type="xs:string" use="optional" />
+												<xs:attribute name="Units" type="xs:int" use="required" />
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+									<xs:attribute name="Name" type="xs:string" use="required" />
+									<xs:attribute name="Packs" type="xs:int" use="required" />
+									<xs:attribute name="Multiple" type="xs:int" use="required" />
+									<xs:attribute name="IsGeneric">
+										<xs:simpleType>
+											<xs:restriction base="xs:boolean">
+												<xs:pattern value="true|false" />
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:attribute>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="Characteristic" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:attribute name="Name" type="xs:string" use="required" />
+									<xs:attribute name="Value" type="xs:string" use="required" />
+									<xs:attribute name="Protect" type="xs:boolean" use="optional" default="true"/>
+									<xs:attribute name="CharType" use="optional" default="Unknown">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:enumeration value="Text" />
+												<xs:enumeration value="Date" />
+												<xs:enumeration value="Number" />
+												<xs:enumeration value="Dollar" />
+                        <xs:enumeration value="Unknown" />
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:attribute>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="Methods">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Method" maxOccurs="unbounded" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence></xs:sequence>
+												<xs:attribute name="Type">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:enumeration value="General Allocation" />
+															<xs:enumeration value="Allocation Override" />
+															<xs:enumeration value="Rule" />
+															<xs:enumeration value="Velocity" />
+															<xs:enumeration value="Fill Sizes" />
+															<xs:enumeration value="Basis Size" />
+															<xs:enumeration value="Size Need" />
+															<xs:enumeration value="Action" />
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:attribute>
+												<xs:attribute name="Name" type="xs:string" />
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+						<xs:attribute name="HeaderId" type="xs:string" use="required" />
+						<xs:attribute name="NewHeaderId" type="xs:string" use="optional" />
+						<xs:attribute name="HeaderAction">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:enumeration value="Create" />
+									<xs:enumeration value="Modify" />
+									<xs:enumeration value="Remove" />
+									<xs:enumeration value="Reset" />
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:attribute>
+						<xs:attribute name="HeaderDescription" type="xs:string" use="optional" />
+						<xs:attribute name="HeaderDate" type="xs:date" use="optional" />
+						<xs:attribute name="UnitRetail" type="xs:double" use="optional" />
+						<xs:attribute name="UnitCost" type="xs:double" use="optional" />
+						<xs:attribute name="TotalUnits" type="xs:int" use="optional" />
+						<xs:attribute name="StyleId" type="xs:string" use="required" />
+						<xs:attribute name="ParentOfStyleId" type="xs:string" use="required" />
+						<xs:attribute name="SizeGroupName" type="xs:string" use="optional" />
+						<xs:attribute name="BulkMultiple" type="xs:int" use="optional" />
+						<xs:attribute name="HeaderType">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:enumeration value="Receipt" />
+									<xs:enumeration value="PO" />
+									<xs:enumeration value="ASN" />
+									<xs:enumeration value="Dummy" />
+									<xs:enumeration value="DropShip" />
+									<xs:enumeration value="Reserve" />
+									<xs:enumeration value="WorkupTotalBuy" />
+                  <xs:enumeration value="VSW" />
+                </xs:restriction>
+							</xs:simpleType>
+						</xs:attribute>
+						<xs:attribute name="DistCenter" type="xs:string" use="optional" />
+						<xs:attribute name="Vendor" type="xs:string" use="optional" />
+						<xs:attribute name="PurchaseOrder" type="xs:string" use="optional" />
+						<xs:attribute name="Workflow" type="xs:string" use="optional" />
+						<xs:attribute name="WorkflowTrigger">
+							<xs:simpleType>
+								<xs:restriction base="xs:boolean">
+									<xs:pattern value="true|false" />
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:attribute>
+						<xs:attribute name="Notes" type="xs:string" use="optional" />
+						<xs:attribute name="StyleName" type="xs:string" use="optional" />
+            <xs:attribute name="VSWID" type="xs:string" use="optional" />
+			<xs:attribute name="VSWProcess" use="optional" default="Replace">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+            <xs:enumeration value="Adjust" />
+            <xs:enumeration value="Replace" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+            <xs:attribute name="UnitsPerCarton" type="xs:string" use="optional" />
+          </xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

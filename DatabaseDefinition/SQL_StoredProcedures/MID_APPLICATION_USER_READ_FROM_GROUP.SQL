@@ -1,0 +1,25 @@
+--dv =============================================
+--dv Create date: 1/16/2014
+--dv Description: Reads all users in the specified group
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_APPLICATION_USER_READ_FROM_GROUP]
+	@GROUP_RID int
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT 
+		AU.USER_RID, 
+		USER_NAME, 
+		COALESCE(USER_FULLNAME,' ') USER_FULLNAME, 
+		COALESCE(USER_DESCRIPTION,' ') USER_DESCRIPTION, 
+		USER_ACTIVE_IND
+	FROM APPLICATION_USER AU, 
+		 USER_GROUP_JOIN UGJ
+	WHERE AU.USER_RID > 1 
+		  AND AU.USER_RID = UGJ.USER_RID 
+		  AND UGJ.GROUP_RID = @GROUP_RID
+	ORDER BY USER_ACTIVE_IND DESC, USER_NAME	
+
+END
+GO

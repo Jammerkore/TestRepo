@@ -1,0 +1,35 @@
+CREATE PROCEDURE [dbo].[SP_MID_XML_COLOR_RULE_WRITE] 
+	@HDR_RID INT, /*  MID TRack 6166 - Null Reference when using Color Min */
+	@HDR_BC_RID INT,
+	@LAYER_ID INT,
+	@RULE_TABLE COLOR_RULE_TYPE READONLY
+AS
+SET NOCOUNT ON
+
+/*-- Delete previous records */
+DELETE
+FROM BULK_COLOR_RULE
+WHERE HDR_BC_RID = @HDR_BC_RID
+	AND LAYER_ID = @LAYER_ID
+
+/*-- Process records */
+INSERT BULK_COLOR_RULE (
+	HDR_RID,
+	HDR_BC_RID,
+	LAYER_ID,
+	ST_RID,
+	RULE_TYPE_ID,
+	UNITS
+	) /* MID Track 6166 - Null Reference using Color Min */
+SELECT @HDR_RID,
+	@HDR_BC_RID,
+	@LAYER_ID,
+	ST_RID,
+	RULE_TYPE,
+	UNITS
+FROM @RULE_TABLE
+
+RETURN
+GO
+
+

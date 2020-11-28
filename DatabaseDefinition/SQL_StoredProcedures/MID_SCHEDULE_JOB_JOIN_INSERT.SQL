@@ -1,0 +1,47 @@
+--dv =============================================
+--dv Create date:	2/11/2014
+--dv Description:	Inserts a schedule job join
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_SCHEDULE_JOB_JOIN_INSERT]
+	@SCHED_RID int, 
+	@JOB_RID int, 
+	@USER_RID int, 
+	@EXECUTION_STATUS int, 
+	@LAST_COMPLETION_STATUS int, 
+	@LAST_RUN_DATETIME datetime, 
+	@LAST_COMPLETION_DATETIME datetime,
+	@NEXT_RUN_DATETIME datetime, 
+	@REPEAT_UNTIL_DATETIME datetime
+AS
+BEGIN
+	SET NOCOUNT ON;
+	
+	INSERT INTO SCHEDULE_JOB_JOIN
+		(
+		SCHED_RID, 
+		JOB_RID, 
+		USER_RID, 
+		EXECUTION_STATUS, 
+		LAST_COMPLETION_STATUS, 
+		LAST_RUN_DATETIME, 
+		LAST_COMPLETION_DATETIME, 
+		NEXT_RUN_DATETIME, 
+		REPEAT_UNTIL_DATETIME
+		)
+	VALUES
+		(
+		@SCHED_RID, 
+		@JOB_RID, 
+		@USER_RID, 
+		@EXECUTION_STATUS, 
+		@LAST_COMPLETION_STATUS, 
+		@LAST_RUN_DATETIME, 
+		@LAST_COMPLETION_DATETIME,
+		@NEXT_RUN_DATETIME, 
+		@REPEAT_UNTIL_DATETIME
+		)
+
+	SELECT @@ROWCOUNT;
+
+END
+GO

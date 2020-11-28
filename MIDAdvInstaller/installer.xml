@@ -1,0 +1,944 @@
+﻿<?xml version="1.0" standalone="yes"?>
+<installer>
+  <install_file application = "Client" folder = "Client" name = "Client.zip" platform = "32-bit"/>
+  <install_file application = "Client" folder = "Client" name = "Client_64.zip" platform = "64-bit"/>
+  <install_file application = "Graphics" folder = "Graphics" name = "Graphics.zip" platform = "32-bit"/>
+  <install_file application = "Graphics" folder = "Graphics" name = "Graphics.zip" platform = "64-bit"/>
+  <install_file application = "Application Service" folder = "Application Service" name = "ApplicationService.zip" platform = "32-bit"/>
+  <install_file application = "Application Service" folder = "Application Service" name = "ApplicationService_64.zip" platform = "64-bit"/>
+  <install_file application = "API" folder = "Batch" name = "Batch.zip" platform = "32-bit"/>
+  <install_file application = "API" folder = "Batch" name = "Batch_64.zip" platform = "64-bit"/>
+  <install_file application = "Control Service" folder = "Control Service" name = "ControlService.zip" platform = "32-bit"/>
+  <install_file application = "Control Service" folder = "Control Service" name = "ControlService_64.zip" platform = "64-bit"/>
+  <install_file application = "Hierarchy Service" folder = "Hierarchy Service" name = "HierarchyService.zip" platform = "32-bit"/>
+  <install_file application = "Hierarchy Service" folder = "Hierarchy Service" name = "HierarchyService_64.zip" platform = "64-bit"/>
+  <install_file application = "Scheduler Service" folder = "Scheduler Service" name = "SchedulerService.zip" platform = "32-bit"/>
+  <install_file application = "Scheduler Service" folder = "Scheduler Service" name = "SchedulerService_64.zip" platform = "64-bit"/>
+  <install_file application = "Store Service" folder = "Store Service" name = "StoreService.zip" platform = "32-bit"/>
+  <install_file application = "Store Service" folder = "Store Service" name = "StoreService_64.zip" platform = "64-bit"/>
+  <upgrade_file application = "Client" folder = "Client" name = "Client.zip" platform = "32-bit"/>
+  <upgrade_file application = "Client" folder = "Client" name = "Client_64.zip" platform = "64-bit"/>
+  <upgrade_file application = "Graphics" folder = "Graphics" name = "Graphics.zip" platform = "32-bit"/>
+  <upgrade_file application = "Graphics" folder = "Graphics" name = "Graphics.zip" platform = "64-bit"/>
+  <upgrade_file application = "Application Service" folder = "Application Service" name = "ApplicationService.zip" platform = "32-bit"/>
+  <upgrade_file application = "Application Service" folder = "Application Service" name = "ApplicationService_64.zip" platform = "64-bit"/>
+  <upgrade_file application = "API" folder = "Batch" name = "Batch.zip" platform = "32-bit"/>
+  <upgrade_file application = "API" folder = "Batch" name = "Batch_64.zip" platform = "64-bit"/>
+  <upgrade_file application = "Control Service" folder = "Control Service" name = "ControlService.zip" platform = "32-bit"/>
+  <upgrade_file application = "Control Service" folder = "Control Service" name = "ControlService_64.zip" platform = "64-bit"/>
+  <upgrade_file application = "Hierarchy Service" folder = "Hierarchy Service" name = "HierarchyService.zip" platform = "32-bit"/>
+  <upgrade_file application = "Hierarchy Service" folder = "Hierarchy Service" name = "HierarchyService_64.zip" platform = "64-bit"/>
+  <upgrade_file application = "Scheduler Service" folder = "Scheduler Service" name = "SchedulerService.zip" platform = "32-bit"/>
+  <upgrade_file application = "Scheduler Service" folder = "Scheduler Service" name = "SchedulerService_64.zip" platform = "64-bit"/>
+  <upgrade_file application = "Store Service" folder = "Store Service" name = "StoreService.zip" platform = "32-bit"/>
+  <upgrade_file application = "Store Service" folder = "Store Service" name = "StoreService_64.zip" platform = "64-bit"/>
+  <upgrade_file application = "MIDConfig" folder = "ConfigFile" name = "MIDConfig.zip" platform = "32-bit"/>
+  <upgrade_file application = "MIDConfig" folder = "ConfigFile" name = "MIDConfig.zip" platform = "64-bit"/>
+  
+  <configuration config_file = "MIDSettings.config" setting = "MIDEnvironment" type = "text" id = "MIDEnvironment"/>
+  <configuration config_file = "MIDSettings.config" setting = "ControlServer" type = "text" id = "ControlServer"/>
+  <configuration config_file = "MIDSettings.config" setting = "LocalHierarchyServer" type = "boolean" id = "LocalServer"/>
+  <configuration config_file = "MIDSettings.config" setting = "LocalStoreServer" type = "boolean" id = "LocalServer"/>
+  <configuration config_file = "MIDSettings.config" setting = "LocalApplicationServer" type = "boolean" id = "LocalServer"/>
+  <configuration config_file = "MIDSettings.config" setting = "HeaderReleaseFilePath" type = "directory" id = "HeaderReleaseFilePath"/>
+  <configuration config_file = "MIDSettings.config" setting = "ReleaseFileTriggerExtension" type = "text" id = "ReleaseFileTriggerExtension"/>
+  <configuration config_file = "MIDSettings.config" setting = "AutoUpgradeClient" type = "boolean" id = "AutoUpgradeClient"/>
+  <configuration config_file = "MIDSettings.config" setting = "AutoUpgradePath" type = "directory" id = "AutoUpgradePath"/>
+  <configuration config_file = "MIDSettings.config" setting = "User" type = "text" id = "User"/>
+  <configuration config_file = "MIDSettings.config" setting = "Password" type = "password" id = "password"/>
+  <configuration config_file = "MIDSettings.config" setting = "Delimiter" type = "text" id = "Delimiter"/>
+  <!-- BEGIN TT#1966-MD - JSmith - DC Fulfillment -->
+  <configuration config_file = "MIDSettings.config" setting = "HeaderProcessingKeysFile" type = "open_file" id = "HeaderProcessingKeysFile"/>
+  <configuration config_file = "MIDSettings.config" setting = "HeaderIdSequenceLength" type = "numeric" id = "HeaderIdSequenceLength"/>
+  <configuration config_file = "MIDSettings.config" setting = "HeaderIdDelimiter" type = "text" id = "HeaderIdDelimiter"/>
+  <!-- END TT#1966-MD - JSmith - DC Fulfillment -->
+  <configuration config_file = "MIDSettings.config" setting = "ReaderLockTimeOut" type = "thousands" id = "ReaderLockTimeOut"/>
+  <configuration config_file = "MIDSettings.config" setting = "WriterLockTimeOut" type = "thousands" id = "WriterLockTimeOut"/>
+  <configuration config_file = "MIDSettings.config" setting = "Export_FileFormat" type = "text" id = "Export_FileFormat"/>
+  <configuration config_file = "MIDSettings.config" setting = "Export_CSVDelimeter" type = "text" id = "Export_CSVDelimeter"/>
+  <configuration config_file = "MIDSettings.config" setting = "Export_CSVFileSuffix" type = "text" id = "Export_CSVFileSuffix"/>
+  <configuration config_file = "MIDSettings.config" setting = "Export_DateType" type = "text" id = "Export_DateType"/>
+  <configuration config_file = "MIDSettings.config" setting = "Export_PreinitValues" type = "boolean" id = "Export_PreinitValues"/>
+  <configuration config_file = "MIDSettings.config" setting = "Export_ExcludeZeroValues" type = "boolean" id = "Export_ExcludeZeroValues"/>
+  <configuration config_file = "MIDSettings.config" setting = "Export_FilePath" type = "directory" id = "Export_FilePath"/>
+  <configuration config_file = "MIDSettings.config" setting = "Export_AddDateStampToFileName" type = "boolean" id = "Export_AddDateStampToFileName"/>
+  <configuration config_file = "MIDSettings.config" setting = "Export_AddTimeStampToFileName" type = "boolean" id = "Export_AddTimeStampToFileName"/>
+  <configuration config_file = "MIDSettings.config" setting = "Export_SplitFiles" type = "text" id = "Export_SplitFiles"/>
+  <configuration config_file = "MIDSettings.config" setting = "Export_SplitNumberOfEntries" type = "thousands" id = "Export_SplitNumberOfEntries"/>
+  <configuration config_file = "MIDSettings.config" setting = "Export_ConcurrentProcesses" type = "tens" id = "Export_ConcurrentProcesses"/>
+  <configuration config_file = "MIDSettings.config" setting = "Export_CreateFlagFile" type = "boolean" id = "Export_CreateFlagFile"/>
+  <configuration config_file = "MIDSettings.config" setting = "Export_FlagFileSuffix" type = "text" id = "Export_FlagFileSuffix"/>
+  <configuration config_file = "MIDSettings.config" setting = "Export_CreateEndFile" type = "boolean" id = "Export_CreateEndFile"/>
+  <configuration config_file = "MIDSettings.config" setting = "Export_EndFileSuffix" type = "text" id = "Export_EndFileSuffix"/>
+  <configuration config_file = "MIDSettings.config" setting = "ConnectionString" type = "sql_connect" id = "ConnectionString"/>
+  <configuration config_file = "MIDSettings.config" setting = "IncludeEnvironmentOnStatus" type = "boolean" id = "IncludeEnvironmentOnStatus"/>
+  <configuration config_file = "MIDSettings.config" setting = "RemoteOptions_ServerName" type = "text" id = "RemoteOptions_ServerName"/>
+  <configuration config_file = "MIDSettings.config" setting = "RemoteOptions_ServerPort" type = "text" id = "RemoteOptions_ServerPort"/>
+  <configuration config_file = "MIDSettings.config" setting = "RemoteOptions_ClientInterval" type = "thousands" id = "RemoteOptions_ClientInterval"/>
+  <configuration config_file = "MIDSettings.config" setting = "RemoteOptions_ServerInterval" type = "thousands" id = "RemoteOptions_ServerInterval"/>
+  <!-- BEGIN TT#1766 - stodd - FIFO file processing -->
+  <!--Begin TT#581-MD - JSmith - Remove unwanted settings -->
+  <!--<configuration config_file = "MIDSettings.config" setting = "APIFileProcessingDirection" type = "list" id = "APIFileProcessingDirection"/> -->
+  <!--End TT#581-MD - JSmith - Remove unwanted settings -->
+  <!-- END TT#1766 - stodd - FIFO file processing -->
+
+
+  <configuration config_file = "AllocationScheduler.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "AllocationScheduler.exe.config" setting = "MonitorForecast" type = "boolean" id = "MonitorForecast"/>
+  <configuration config_file = "AllocationScheduler.exe.config" setting = "MonitorForecastFilePath" type = "directory" id = "MonitorForecastFilePath"/>
+  <!-- BEGIN TT#1966-MD - JSmith - DC Fulfillment -->
+  <configuration config_file = "AllocationScheduler.exe.config" setting = "MonitorDCFulfillment" type = "boolean" id = "MonitorDCFulfillment"/>
+  <configuration config_file = "AllocationScheduler.exe.config" setting = "MonitorDCFulfillmentFilePath" type = "directory" id = "MonitorDCFulfillmentFilePath"/>
+  <!-- END TT#1966-MD - JSmith - DC Fulfillment -->
+
+  <!-- BEGIN TT#1631-MD - stodd - Batch Comp -->
+  <configuration config_file = "BatchComp.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <!-- BEGIN TT#1631-MD - stodd - Batch Comp -->
+  
+  <configuration config_file = "BuildPackCriteriaLoad.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "BuildPackCriteriaLoad.exe.config" setting = "InputFile" type = "open_file" id = "InputFile"/>
+
+  <configuration config_file = "ChainForecasting.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "ChainForecasting.exe.config" setting = "ConcurrentProcesses" type = "numeric" id = "ConcurrentProcesses"/>
+
+  <configuration config_file = "ChainSetPercentages.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "ChainSetPercentages.exe.config" setting = "InputFile" type = "open_file" id = "InputFile"/>
+  <configuration config_file = "ChainSetPercentages.exe.config" setting = "Delimiter" type = "text" id = "Delimiter"/>
+
+  <!--BEGIN TT#844 -MD-DOConnell-The Installer does not have the options to update the new API’s conf -->
+  <configuration config_file = "StoreEligibilityLoad.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "StoreEligibilityLoad.exe.config" setting = "InputFile" type = "open_file" id = "InputFile"/>
+  <configuration config_file = "StoreEligibilityLoad.exe.config" setting = "Delimiter" type = "text" id = "Delimiter"/>
+
+  <configuration config_file = "VSWLoad.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "VSWLoad.exe.config" setting = "InputFile" type = "open_file" id = "InputFile"/>
+  <configuration config_file = "VSWLoad.exe.config" setting = "Delimiter" type = "text" id = "Delimiter"/>
+  <!--END TT#844 -MD-DOConnell-The Installer does not have the options to update the new API’s conf -->
+  
+  <configuration config_file = "ColorCodesLoad.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "ColorCodesLoad.exe.config" setting = "InputFile" type = "open_file" id = "InputFile"/>
+  <configuration config_file = "ColorCodesLoad.exe.config" setting = "Delimiter" type = "text" id = "Delimiter"/>
+
+  <configuration config_file = "ConvertFilters.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  
+  <configuration config_file = "DailyPercentages.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "DailyPercentages.exe.config" setting = "InputFile" type = "open_file" id = "InputFile"/>
+  <configuration config_file = "DailyPercentages.exe.config" setting = "Delimiter" type = "text" id = "Delimiter"/>
+
+  <configuration config_file = "DetermineHierarchyActivity.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "DetermineHierarchyActivity.exe.config" setting = "FromOffset" type = "numeric" id = "FromOffset"/>
+  <configuration config_file = "DetermineHierarchyActivity.exe.config" setting = "ToOffset" type = "numeric" id = "ToOffset"/>
+  <configuration config_file = "DetermineHierarchyActivity.exe.config" setting = "ForecastOffset" type = "numeric" id = "ForecastOffset"/>
+  <configuration config_file = "DetermineHierarchyActivity.exe.config" setting = "IntransitOffset" type = "numeric" id = "IntransitOffset"/>
+  <!-- BEGIN TT#632-MD - JSmith - Add Concurrent Processes to Determine Hierarchy Activity -->
+  <configuration config_file = "DetermineHierarchyActivity.exe.config" setting = "ConcurrentProcesses" type = "numeric" id = "ConcurrentProcesses"/>
+  <!-- END TT#632-MD - JSmith - Add Concurrent Processes to Determine Hierarchy Activity -->
+  
+  <configuration config_file = "HeaderAllocationLoad.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "HeaderAllocationLoad.exe.config" setting = "CustomBulkTableName" type = "text" id = "CustomBulkTableName"/>
+  <configuration config_file = "HeaderAllocationLoad.exe.config" setting = "CustomPackTableName" type = "text" id = "CustomPackTableName"/>
+  <configuration config_file = "HeaderAllocationLoad.exe.config" setting = "HeaderReleaseFilePath" type = "directory" id = "HeaderReleaseFilePath"/>
+  
+  <configuration config_file = "HeaderLoad.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "HeaderLoad.exe.config" setting = "InputFile" type = "open_file" id = "InputFile"/>
+  <configuration config_file = "HeaderLoad.exe.config" setting = "UpdateStyleDescription" type = "boolean" id = "UpdateStyleDescription"/>
+  <configuration config_file = "HeaderLoad.exe.config" setting = "CreateOnModify" type = "boolean" id = "CreateOnModify"/>
+  <configuration config_file = "HeaderLoad.exe.config" setting = "EndSuffix" type = "text" id = "EndSuffix"/>
+  <configuration config_file = "HeaderLoad.exe.config" setting = "AutoAddCharacteristics" type = "boolean" id = "AutoAddCharacteristics"/>
+  <configuration config_file = "HeaderLoad.exe.config" setting = "HeaderReleaseFilePath" type = "directory" id = "HeaderReleaseFilePath"/>
+  <!-- BEGIN TT#1766 - stodd - FIFO file processing -->
+  <configuration config_file = "HeaderLoad.exe.config" setting = "APIFileProcessingDirection" type = "list" id = "APIFileProcessingDirection"/>
+  <!-- END TT#1766 - stodd - FIFO file processing -->
+  <!-- BEGIN TT#1581-MD - stodd - Header Reconcile -->
+  <configuration config_file = "HeaderLoad.exe.config" setting = "GenerateHeaderID" type = "boolean" id = "GenerateHeaderID"/>
+  <configuration config_file = "HeaderLoad.exe.config" setting = "HeaderIdSequenceLength" type = "numeric" id = "HeaderIdSequenceLength"/>
+  <configuration config_file = "HeaderLoad.exe.config" setting = "HeaderIdDelimiter" type = "text" id = "HeaderIdDelimiter"/>
+  <!-- BEGIN TT#1966-MD - JSmith - DC Fulfillment -->
+  <!--<configuration config_file = "HeaderLoad.exe.config" setting = "HeaderProcessingKeysFile" type = "open_file" id = "HeaderProcessingKeysFile"/>-->
+  <!-- END TT#1966-MD - JSmith - DC Fulfillment -->
+  <!-- END TT#1581-MD - stodd - Header Reconcile -->
+
+  <!-- BEGIN TT#1581-MD - stodd - Header Reconcile -->
+  <configuration config_file = "HeaderReconcile.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "HeaderReconcile.exe.config" setting = "InputDirectory" type = "directory" id = "InputDirectory"/>
+  <configuration config_file = "HeaderReconcile.exe.config" setting = "OutputDirectory" type = "directory" id = "OutputDirectory"/>
+  <configuration config_file = "HeaderReconcile.exe.config" setting = "TriggerSuffix" type = "text" id = "TriggerSuffix"/>
+  <configuration config_file = "HeaderReconcile.exe.config" setting = "HeaderTypes" type = "text" id = "HeaderTypes"/>
+  <!-- BEGIN TT#1966-MD - JSmith - DC Fulfillment -->
+  <!--<configuration config_file = "HeaderReconcile.exe.config" setting = "HeaderProcessingKeysFile" type = "open_file" id = "HeaderProcessingKeysFile"/>-->
+  <!-- END TT#1966-MD - JSmith - DC Fulfillment -->
+  <configuration config_file = "HeaderReconcile.exe.config" setting = "RemoveTransactionsFileName" type = "text" id = "RemoveTransactionsFileName"/>
+  <configuration config_file = "HeaderReconcile.exe.config" setting = "RemoveTransactionsTriggerSuffix" type = "text" id = "RemoveTransactionsTriggerSuffix"/>
+  <!-- END TT#1581-MD - stodd - Header Reconcile -->
+
+  <!-- Begin TT#1646-MD - jsmith - Add or Remove Hierarchy Levels -->
+  <configuration config_file = "HierarchyLevelMaintenance.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "HierarchyLevelMaintenance.exe.config" setting = "InputFile" type = "open_file" id = "InputFile"/>
+  <configuration config_file = "HierarchyLevelMaintenance.exe.config" setting = "Delimiter" type = "text" id = "Delimiter"/>
+  <!-- End TT#1646-MD - jsmith - Add or Remove Hierarchy Levels -->
+
+  <configuration config_file = "HierarchyLoad.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "HierarchyLoad.exe.config" setting = "InputFile" type = "open_file" id = "InputFile"/>
+  <configuration config_file = "HierarchyLoad.exe.config" setting = "Delimiter" type = "text" id = "Delimiter"/>
+  <configuration config_file = "HierarchyLoad.exe.config" setting = "AutoAddCharacteristics" type = "boolean" id = "AutoAddCharacteristics"/>
+  <!--begin TT#2010 - JSmith - Split merchandise characteristics to separate delimited transaction layout -->
+  <configuration config_file = "HierarchyLoad.exe.config" setting = "UseCharacteristicTransaction" type = "boolean" id = "UseCharacteristicTransaction"/>
+  <!--Ends TT#2010 -->
+  
+  <configuration config_file = "HistoryPlanLoad.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "HistoryPlanLoad.exe.config" setting = "InputFile" type = "open_file" id = "InputFile"/>
+  <configuration config_file = "HistoryPlanLoad.exe.config" setting = "RollStockForward" type = "boolean" id = "RollStockForward"/>
+  <configuration config_file = "HistoryPlanLoad.exe.config" setting = "SerializeXMLFile" type = "boolean" id = "SerializeXMLFile"/>
+  <configuration config_file = "HistoryPlanLoad.exe.config" setting = "AllowAutoAdds" type = "boolean" id = "AllowAutoAdds"/>
+  <configuration config_file = "HistoryPlanLoad.exe.config" setting = "RollStoreDailyToWeekly" type = "boolean" id = "RollStoreDailyToWeekly"/>
+  <configuration config_file = "HistoryPlanLoad.exe.config" setting = "RollStoreDailyUpHierarchy" type = "boolean" id = "RollStoreDailyUpHierarchy"/>
+  <configuration config_file = "HistoryPlanLoad.exe.config" setting = "RollStoreWeeklyUpHierarchy" type = "boolean" id = "RollStoreWeeklyUpHierarchy"/>
+  <configuration config_file = "HistoryPlanLoad.exe.config" setting = "RollStoreToChain" type = "boolean" id = "RollStoreToChain"/>
+  <configuration config_file = "HistoryPlanLoad.exe.config" setting = "RollChainUpHierarchy" type = "boolean" id = "RollChainUpHierarchy"/>
+  <configuration config_file = "HistoryPlanLoad.exe.config" setting = "RollIntransit" type = "boolean" id = "RollIntransit"/>
+  <configuration config_file = "HistoryPlanLoad.exe.config" setting = "Delimiter" type = "text" id = "Delimiter"/>
+  <configuration config_file = "HistoryPlanLoad.exe.config" setting = "ComputationModel" type = "text" id = "ComputationModel"/>
+
+  <configuration config_file = "HierarchyReclass.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "HierarchyReclass.exe.config" setting = "InputDirectory" type = "directory" id = "InputDirectory"/>
+  <configuration config_file = "HierarchyReclass.exe.config" setting = "OutputDirectory" type = "directory" id = "OutputDirectory"/>
+  <configuration config_file = "HierarchyReclass.exe.config" setting = "Delimiter" type = "text" id = "Delimiter"/>
+  <configuration config_file = "HierarchyReclass.exe.config" setting = "TriggerSuffix" type = "text" id = "TriggerSuffix"/>
+  <configuration config_file = "HierarchyReclass.exe.config" setting = "ReclassMoveTriggerSuffix" type = "text" id = "ReclassMoveTriggerSuffix"/>
+  <configuration config_file = "HierarchyReclass.exe.config" setting = "ReclassDeleteTriggerSuffix" type = "text" id = "ReclassDeleteTriggerSuffix"/>
+  <configuration config_file = "HierarchyReclass.exe.config" setting = "MaximumRecordsPerOutputFile" type = "hundreds" id = "MaximumRecordsPerOutputFile"/>
+  <configuration config_file = "HierarchyReclass.exe.config" setting = "AllowDeletes" type = "boolean" id = "AllowDeletes"/>
+  <!-- Begin TT#223 MD - JSmith - Add file order processsing (FIFO, LIFO) -->
+  <configuration config_file = "HierarchyReclass.exe.config" setting = "APIFileProcessingDirection" type = "list" id = "APIFileProcessingDirectionFIFO"/>
+  <!-- End TT#2186 -->
+  
+  <configuration config_file = "PlanForecasting.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "PlanForecasting.exe.config" setting = "MonitorForecast" type = "boolean" id = "MonitorForecast"/>
+  <configuration config_file = "PlanForecasting.exe.config" setting = "MonitorForecastFilePath" type = "directory" id = "MonitorForecastFilePath"/>
+  
+  <configuration config_file = "Purge.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "Purge.exe.config" setting = "DaysToKeepAudit" type = "numeric" id = "DaysToKeepAudit"/>
+  <configuration config_file = "Purge.exe.config" setting = "DaysToKeepCompletedSchedules" type = "tens" id = "DaysToKeepCompletedSchedules"/>
+  <!-- <configuration config_file = "Purge.exe.config" setting = "DaysToKeepCompletedSchedules" type = "tens" id = "DaysToKeepCompletedSchedules"/>  TT#847-MD - JSmith - Purge option displays twice in the installer -->
+  <configuration config_file = "Purge.exe.config" setting = "DeleteUsers" type = "boolean" id = "DeleteUsers"/>
+  <configuration config_file = "Purge.exe.config" setting = "DaysToKeepDeletedUsers" type = "numeric" id = "DaysToKeepDeletedUsers"/>
+  <configuration config_file = "Purge.exe.config" setting = "DeleteGroups" type = "boolean" id = "DeleteGroups"/>
+  <configuration config_file = "Purge.exe.config" setting = "DaysToKeepDeletedGroups" type = "numeric" id = "DaysToKeepDeletedGroups"/>
+  <configuration config_file = "Purge.exe.config" setting = "PurgeRowsWithAllZeros" type = "boolean" id = "PurgeRowsWithAllZeros"/>
+  <configuration config_file = "Purge.exe.config" setting = "PurgeRowsWithAllUnlocked" type = "boolean" id = "PurgeRowsWithAllUnlocked"/>
+  <configuration config_file = "Purge.exe.config" setting = "ConcurrentProcesses" type = "numeric" id = "ConcurrentProcesses"/>
+  <!-- BEGIN TT#739-MD - STodd - delete stores -->
+  <!-- <configuration config_file = "Purge.exe.config" setting = "DeleteEmptyStoreSets" type = "boolean" id = "DeleteEmptyStoreSets"/> -->
+  <!-- END TT#739-MD - STodd - delete stores -->
+  <!-- Begin TT#3822 - JSmith - Add Stop Time to Purge -->
+  <configuration config_file = "Purge.exe.config" setting = "PurgeCutoffTime" type = "text" id = "PurgeCutoffTime"/>
+  <!-- End TT#3822 - JSmith - Add Stop Time to Purge -->
+  
+  <configuration config_file = "PushToBackStock.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  
+  <configuration config_file = "RelieveHeaders.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "RelieveHeaders.exe.config" setting = "HeaderSQL" type = "open_file" id = "HeaderSQL"/>
+  <configuration config_file = "RelieveHeaders.exe.config" setting = "RelieveIntransitFilePath" type = "directory" id = "RelieveIntransitFilePath"/>
+  <configuration config_file = "RelieveHeaders.exe.config" setting = "RelieveIntransitFile" type = "text" id = "RelieveIntransitFile"/>
+  <configuration config_file = "RelieveHeaders.exe.config" setting = "HeadersPerFile" type = "hundreds" id = "HeadersPerFile"/>
+  <configuration config_file = "RelieveHeaders.exe.config" setting = "FlagFileSuffix" type = "text" id = "FlagFileSuffix"/>
+    
+  <configuration config_file = "RelieveIntransit.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "RelieveIntransit.exe.config" setting = "InputFile" type = "open_file" id = "InputFile"/>
+  <configuration config_file = "RelieveIntransit.exe.config" setting = "SerializeXMLFile" type = "boolean" id = "SerializeXMLFile"/>
+  <configuration config_file = "RelieveIntransit.exe.config" setting = "HeaderIDsPresent" type = "boolean" id = "HeaderIDsPresent"/>
+  <configuration config_file = "RelieveIntransit.exe.config" setting = "Delimiter" type = "text" id = "Delimiter"/>
+  <configuration config_file = "RelieveIntransit.exe.config" setting = "RelieveAllStores" type = "boolean" id = "RelieveAllStores"/>
+  
+  <configuration config_file = "Rollup.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "Rollup.exe.config" setting = "InputFile" type = "open_file" id = "InputFile"/>
+  <configuration config_file = "Rollup.exe.config" setting = "BatchSize" type = "hundreds" id = "BatchSize"/>
+  <configuration config_file = "Rollup.exe.config" setting = "ConcurrentProcesses" type = "numeric" id = "ConcurrentProcesses"/>
+  <configuration config_file = "Rollup.exe.config" setting = "IncludeZeroInAverage" type = "boolean" id = "IncludeZeroInAverage"/>
+  
+  <configuration config_file = "ScheduleInterface.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "ScheduleInterface.exe.config" setting = "User" type = "text" id = "User"/>
+  <configuration config_file = "ScheduleInterface.exe.config" setting = "Password" type = "password" id = "Password"/>
+  <configuration config_file = "ScheduleInterface.exe.config" setting = "ScheduleScanInterval" type = "thousands" id = "ScheduleScanInterval"/>
+  <configuration config_file = "ScheduleInterface.exe.config" setting = "CheckForTerminateInterval" type = "thousands" id = "CheckForTerminateInterval"/>
+  <configuration config_file = "ScheduleInterface.exe.config" setting = "StartedProcessWindowStyle" type = "window_style" id = "StartedProcessWindowStyle"/>
+  <configuration config_file = "ScheduleInterface.exe.config" setting = "ForecastExecutablePath" type = "open_file" id = "ForecastExecutablePath"/>
+  <configuration config_file = "ScheduleInterface.exe.config" setting = "AllocateExecutablePath" type = "open_file" id = "AllocateExecutablePath"/>
+  <configuration config_file = "ScheduleInterface.exe.config" setting = "RollupExecutablePath" type = "open_file" id = "RollupExecutablePath"/>
+  <configuration config_file = "ScheduleInterface.exe.config" setting = "PurgeExecutablePath" type = "open_file" id = "PurgeExecutablePath"/>
+  <!-- BEGIN TT#1401 - AGallagher - VSW -->
+  <configuration config_file = "ScheduleInterface.exe.config" setting = "PushToBackStockLoadExecutablePath" type = "open_file" id = "PushToBackStockLoadExecutablePath"/>
+  <!-- END TT#1401 -->
+  <configuration config_file = "ScheduleInterface.exe.config" setting = "RelieveIntransitExecutablePath" type = "open_file" id = "RelieveIntransitExecutablePath"/>
+  <configuration config_file = "ScheduleInterface.exe.config" setting = "ColorCodesLoadExecutablePath" type = "open_file" id = "ColorCodesLoadExecutablePath"/>
+  <configuration config_file = "ScheduleInterface.exe.config" setting = "HeaderReconcileExecutablePath" type = "open_file" id = "HeaderReconcileExecutablePath"/>
+  <configuration config_file = "ScheduleInterface.exe.config" setting = "HeaderLoadExecutablePath" type = "open_file" id = "HeaderLoadExecutablePath"/>
+  <configuration config_file = "ScheduleInterface.exe.config" setting = "HierarchyLoadExecutablePath" type = "open_file" id = "HierarchyLoadExecutablePath"/>
+  <configuration config_file = "ScheduleInterface.exe.config" setting = "HistoryPlanLoadExecutablePath" type = "open_file" id = "HistoryPlanLoadExecutablePath"/>
+  <configuration config_file = "ScheduleInterface.exe.config" setting = "SizeCodesLoadExecutablePath" type = "open_file" id = "SizeCodesLoadExecutablePath"/>
+  <configuration config_file = "ScheduleInterface.exe.config" setting = "SizeCurveLoadExecutablePath" type = "open_file" id = "SizeCurveLoadExecutablePath"/>
+  <configuration config_file = "ScheduleInterface.exe.config" setting = "SizeCurveGenerateExecutablePath" type = "open_file" id = "SizeCurveGenerateExecutablePath"/>  
+  <configuration config_file = "ScheduleInterface.exe.config" setting = "StoreLoadExecutablePath" type = "open_file" id = "StoreLoadExecutablePath"/>
+  <configuration config_file = "ScheduleInterface.exe.config" setting = "SizeConstraintsLoadExecutablePath" type = "open_file" id = "SizeConstraintsLoadExecutablePath"/>
+  <!--begin TT#1077 - Installer fixes... updates to Installer.xml file and protect files search - apicchetti - 1/17/2011 -->
+  <configuration config_file = "ScheduleInterface.exe.config" setting = "ComputationDriverExecutablePath" type = "open_file" id = "ComputationDriverExecutablePath"/>
+  <configuration config_file = "ScheduleInterface.exe.config" setting = "BuildPackCriteriaLoadExecutablePath" type = "open_file" id = "BuildPackCriteriaLoadExecutablePath"/>
+  <configuration config_file = "ScheduleInterface.exe.config" setting = "SizeDayToWeekSummaryExecutablePath " type = "open_file" id = "SizeDayToWeekSummaryExecutablePath"/>
+  <!--end TT#1077 - Installer fixes... updates to Installer.xml file and protect files search - apicchetti - 1/17/2011 -->
+  <!--Begin TT#1067 - JSmith - Add option to allow return codes be consistent with other processes -->
+  <configuration config_file = "ScheduleInterface.exe.config" setting = "ReturnMIDMessageLevel" type = "boolean" id = "ReturnMIDMessageLevel"/>
+  <!--End TT#1067 -->
+  <!-- BEGIN TT#1766 - stodd - FIFO file processing -->
+  <configuration config_file = "ScheduleInterface.exe.config" setting = "APIFileProcessingDirection" type = "list" id = "APIFileProcessingDirection"/>
+  <!-- END TT#1766 - stodd - FIFO file processing -->
+  <!-- BEGIN TT#1631-MD - stodd - FIFO file processing -->
+  <configuration config_file = "ScheduleInterface.exe.config" setting = "BatchCompExecutablePath" type = "open_file" id = "BatchCompExecutablePath"/>
+  <!-- End TT#1631-MD - stodd - Batch Comp -->
+
+
+
+  <configuration config_file = "SizeCodesLoad.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "SizeCodesLoad.exe.config" setting = "InputFile" type = "open_file" id = "InputFile"/>
+  <configuration config_file = "SizeCodesLoad.exe.config" setting = "Delimiter" type = "text" id = "Delimiter"/>
+  
+  <configuration config_file = "SizeConstraintsLoad.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "SizeConstraintsLoad.exe.config" setting = "SizeConstraintsTransFile" type = "open_file" id = "SizeConstraintsTransFile"/>
+  <configuration config_file = "SizeConstraintsLoad.exe.config" setting = "Delimiter" type = "text" id = "Delimiter"/>
+
+  <configuration config_file = "SizeCurveGenerate.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "SizeCurveGenerate.exe.config" setting = "ReaderLockTimeOut" type = "thousands" id = "ReaderLockTimeOut"/>
+  <configuration config_file = "SizeCurveGenerate.exe.config" setting = "WriterLockTimeOut" type = "thousands" id = "WriterLockTimeOut"/>
+  <configuration config_file = "SizeCurveGenerate.exe.config" setting = "ConcurrentProcesses" type = "numeric" id = "ConcurrentProcesses"/>
+  
+  <configuration config_file = "SizeCurveLoad.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "SizeCurveLoad.exe.config" setting = "CodesPresent" type = "boolean" id = "CodesPresent"/>
+  <configuration config_file = "SizeCurveLoad.exe.config" setting = "CurveTransFile" type = "open_file" id = "CurveTransFile"/>
+  <configuration config_file = "SizeCurveLoad.exe.config" setting = "CurveGroupTransFile" type = "open_file" id = "CurveGroupTransFile"/>
+  <configuration config_file = "SizeCurveLoad.exe.config" setting = "CreateOnModify" type = "boolean" id = "CreateOnModify"/>
+  <configuration config_file = "SizeCurveLoad.exe.config" setting = "Delimiter" type = "text" id = "Delimiter"/>
+
+  <configuration config_file = "SizeDayToWeekSummary.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "SizeDayToWeekSummary.exe.config" setting = "SizeDayToWeekSummaryLog" type = "boolean" id = "SizeDayToWeekSummaryLog"/>
+  <configuration config_file = "SizeDayToWeekSummary.exe.config" setting = "SizeDayToWeekSummaryLogFilePath" type = "open_file" id = "SizeDayToWeekSummaryLogFilePath"/>
+  <configuration config_file = "SizeDayToWeekSummary.exe.config" setting = "ConcurrentProcesses" type = "numeric" id = "ConcurrentProcesses"/>
+  
+  <configuration config_file = "SpecialRequest.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "SpecialRequest.exe.config" setting = "ScheduleScanInterval" type = "thousands" id = "ScheduleScanInterval"/>
+  <configuration config_file = "SpecialRequest.exe.config" setting = "CheckForTerminateInterval" type = "thousands" id = "CheckForTerminateInterval"/>
+  <configuration config_file = "SpecialRequest.exe.config" setting = "StartedProcessWindowStyle" type = "text" id = "StartedProcessWindowStyle"/>
+  <configuration config_file = "SpecialRequest.exe.config" setting = "ForecastExecutablePath" type = "open_file" id = "ForecastExecutablePath"/>
+  <configuration config_file = "SpecialRequest.exe.config" setting = "AllocateExecutablePath" type = "open_file" id = "AllocateExecutablePath"/>
+  <configuration config_file = "SpecialRequest.exe.config" setting = "RollupExecutablePath" type = "open_file" id = "RollupExecutablePath"/>
+  <configuration config_file = "SpecialRequest.exe.config" setting = "PurgeExecutablePath" type = "open_file" id = "PurgeExecutablePath"/>
+  <configuration config_file = "SpecialRequest.exe.config" setting = "RelieveIntransitExecutablePath" type = "open_file" id = "RelieveIntransitExecutablePath"/>
+  <configuration config_file = "SpecialRequest.exe.config" setting = "ColorCodesLoadExecutablePath" type = "open_file" id = "ColorCodesLoadExecutablePath"/>
+  <configuration config_file = "SpecialRequest.exe.config" setting = "HeaderReconcileExecutablePath" type = "open_file" id = "HeaderReconcileExecutablePath"/>
+  <configuration config_file = "SpecialRequest.exe.config" setting = "HeaderLoadExecutablePath" type = "open_file" id = "HeaderLoadExecutablePath"/>
+  <configuration config_file = "SpecialRequest.exe.config" setting = "HierarchyLoadExecutablePath" type = "open_file" id = "HierarchyLoadExecutablePath"/>
+  <configuration config_file = "SpecialRequest.exe.config" setting = "HistoryPlanLoadExecutablePath" type = "open_file" id = "HistoryPlanLoadExecutablePath"/>
+  <configuration config_file = "SpecialRequest.exe.config" setting = "SizeCodesLoadExecutablePath" type = "open_file" id = "SizeCodesLoadExecutablePath"/>
+  <configuration config_file = "SpecialRequest.exe.config" setting = "SizeCurveLoadExecutablePath" type = "open_file" id = "SizeCurveLoadExecutablePath"/>
+  <configuration config_file = "SpecialRequest.exe.config" setting = "StoreLoadExecutablePath" type = "open_file" id = "StoreLoadExecutablePath"/>
+  <configuration config_file = "SpecialRequest.exe.config" setting = "SizeConstraintsLoadExecutablePath" type = "open_file" id = "SizeConstraintsLoadExecutablePath"/>
+  <configuration config_file = "SpecialRequest.exe.config" setting = "ComputationDriverExecutablePath" type = "open_file" id = "ComputationDriverExecutablePath"/>
+  <!--begin TT#1077 - Installer fixes... updates to Installer.xml file and protect files search - apicchetti - 1/17/2011 -->
+  <configuration config_file = "SpecialRequest.exe.config" setting = "SizeCurveGenerateExecutablePath" type = "open_file" id = "SizeCurveGenerateExecutablePath"/>
+  <configuration config_file = "SpecialRequest.exe.config" setting = "BuildPackCriteriaLoadExecutablePath" type = "open_file" id = "BuildPackCriteriaLoadExecutablePath"/>
+  <configuration config_file = "SpecialRequest.exe.config" setting = "SizeDayToWeekSummaryExecutablePath " type = "open_file" id = "SizeDayToWeekSummaryExecutablePath"/>
+  <!--end TT#1077 - Installer fixes... updates to Installer.xml file and protect files search - apicchetti - 1/17/2011 -->
+  
+  <configuration config_file = "StoreLoad.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "StoreLoad.exe.config" setting = "InputFile" type = "open_file" id = "InputFile"/>
+  <configuration config_file = "StoreLoad.exe.config" setting = "Delimiter" type = "text" id = "Delimiter"/>
+  <configuration config_file = "StoreLoad.exe.config" setting = "AutoAddCharacteristics" type = "boolean" id = "AutoAddCharacteristics"/>
+  <!--begin TT#1401 - stodd - added transaction types -->
+  <configuration config_file = "StoreLoad.exe.config" setting = "UseCharacteristicTransaction" type = "boolean" id = "UseCharacteristicTransaction"/>
+  <!--Ends TT#1401 -->
+
+  <configuration config_file = "MIDRetailApplicationService.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "MIDRetailApplicationService.exe.config" setting = "MyPort" type = "text" id = "MyPort"/>
+  <configuration config_file = "MIDRetailApplicationService.exe.config" setting = "ReaderLockTimeOut" type = "thousands" id = "ReaderLockTimeOut"/>
+  <configuration config_file = "MIDRetailApplicationService.exe.config" setting = "WriterLockTimeOut" type = "thousands" id = "WriterLockTimeOut"/>
+  <configuration config_file = "MIDRetailApplicationService.exe.config" setting = "MonitorForecastFilePath" type = "directory" id = "MonitorForecastFilePath"/>
+  <configuration config_file = "MIDRetailApplicationService.exe.config" setting = "GCCollectWaitSeconds" type = "numeric" id = "GCCollectWaitSeconds"/>
+  <configuration config_file = "MIDRetailApplicationService.exe.config" setting = "HeaderReleaseFilePath" type = "directory" id = "HeaderReleaseFilePath"/>
+  
+  <configuration config_file = "MIDRetailControlService.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "MIDRetailControlService.exe.config" setting = "MyPort" type = "text" id = "MyPort"/>
+  <configuration config_file = "MIDRetailControlService.exe.config" setting = "ReaderLockTimeOut" type = "thousands" id = "ReaderLockTimeOut"/>
+  <configuration config_file = "MIDRetailControlService.exe.config" setting = "WriterLockTimeOut" type = "thousands" id = "WriterLockTimeOut"/>
+  <configuration config_file = "MIDRetailControlService.exe.config" setting = "StoreServers" type = "text" id = "StoreServers"/>
+  <configuration config_file = "MIDRetailControlService.exe.config" setting = "HierarchyServers" type = "text" id = "HierarchyServers"/>
+  <configuration config_file = "MIDRetailControlService.exe.config" setting = "ApplicationServers" type = "text" id = "ApplicationServers"/>
+  <configuration config_file = "MIDRetailControlService.exe.config" setting = "SchedulerServer" type = "text" id = "SchedulerServer"/>
+  <!--Begin TT#581-MD - JSmith - Remove unwanted settings -->
+  <!--<configuration config_file = "MIDRetailControlService.exe.config" setting = "ConnectionString" type = "sql_connect" id = "ConnectionString"/> -->
+  <!--ENd TT#581-MD - JSmith - Remove unwanted settings -->
+    
+  <configuration config_file = "MIDRetailHierarchyService.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "MIDRetailHierarchyService.exe.config" setting = "MyPort" type = "text" id = "MyPort"/>
+  <configuration config_file = "MIDRetailHierarchyService.exe.config" setting = "ReaderLockTimeOut" type = "thousands" id = "ReaderLockTimeOut"/>
+  <configuration config_file = "MIDRetailHierarchyService.exe.config" setting = "WriterLockTimeOut" type = "thousands" id = "WriterLockTimeOut"/>
+  <configuration config_file = "MIDRetailHierarchyService.exe.config" setting = "GCCollectWaitSeconds" type = "numeric" id = "GCCollectWaitSeconds"/>
+  <configuration config_file = "MIDRetailHierarchyService.exe.config" setting = "CacheSize" type = "thousands" id = "CacheSize"/>
+  <configuration config_file = "MIDRetailHierarchyService.exe.config" setting = "ColorSizeIDCacheSize" type = "thousands" id = "ColorSizeIDCacheSize"/>
+  <configuration config_file = "MIDRetailHierarchyService.exe.config" setting = "CacheGroupSize" type = "thousands" id = "CacheGroupSize"/>
+  <configuration config_file = "MIDRetailHierarchyService.exe.config" setting = "RebuildIDs" type = "boolean" id = "RebuildIDs"/>
+  
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "MyPort" type = "text" id = "MyPort"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "ReaderLockTimeOut" type = "thousands" id = "ReaderLockTimeOut"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "WriterLockTimeOut" type = "thousands" id = "WriterLockTimeOut"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "ScheduleScanInterval" type = "thousands" id = "ScheduleScanInterval"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "CheckForTerminateInterval" type = "thousands" id = "CheckForTerminateInterval"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "StartedProcessWindowStyle" type = "window_style" id = "StartedProcessWindowStyle"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "ForecastExecutablePath" type = "open_file" id = "ForecastExecutablePath"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "AllocateExecutablePath" type = "open_file" id = "AllocateExecutablePath"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "RollupExecutablePath" type = "open_file" id = "RollupExecutablePath"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "PurgeExecutablePath" type = "open_file" id = "PurgeExecutablePath"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "RelieveIntransitExecutablePath" type = "open_file" id = "RelieveIntransitExecutablePath"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "ColorCodesLoadExecutablePath" type = "open_file" id = "ColorCodesLoadExecutablePath"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "HeaderReconcileExecutablePath" type = "open_file" id = "HeaderReconcileExecutablePath"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "HeaderLoadExecutablePath" type = "open_file" id = "HeaderLoadExecutablePath"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "HierarchyLoadExecutablePath" type = "open_file" id = "HierarchyLoadExecutablePath"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "HistoryPlanLoadExecutablePath" type = "open_file" id = "HistoryPlanLoadExecutablePath"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "SizeCodesLoadExecutablePath" type = "open_file" id = "SizeCodesLoadExecutablePath"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "SizeCurveLoadExecutablePath" type = "open_file" id = "SizeCurveLoadExecutablePath"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "StoreLoadExecutablePath" type = "open_file" id = "StoreLoadExecutablePath"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "SizeConstraintsLoadExecutablePath" type = "open_file" id = "SizeConstraintsLoadExecutablePath"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "ComputationDriverExecutablePath" type = "open_file" id = "ComputationDriverExecutablePath"/>
+  <!--begin TT#1077 - Installer fixes... updates to Installer.xml file and protect files search - apicchetti - 1/17/2011 -->
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "SizeCurveGenerateExecutablePath" type = "open_file" id = "SizeCurveGenerateExecutablePath"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "BuildPackCriteriaLoadExecutablePath" type = "open_file" id = "BuildPackCriteriaLoadExecutablePath"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "SizeDayToWeekSummaryExecutablePath " type = "open_file" id = "SizeDayToWeekSummaryExecutablePath"/>
+  <!--end TT#1077 - Installer fixes... updates to Installer.xml file and protect files search - apicchetti - 1/17/2011 -->
+  <!-- BEGIN TT#1766 - stodd - FIFO file processing -->
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "APIFileProcessingDirection" type = "list" id = "APIFileProcessingDirection"/>
+  <!-- END TT#1766 - stodd - Batch Comp -->
+  <!-- BEGIN TT#1631-MD - stodd - FIFO file processing -->
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "BatchCompExecutablePath" type = "open_file" id = "BatchCompExecutablePath"/>
+  <!-- End TT#1631-MD - stodd - Batch Comp -->
+  
+  <!-- BEGIN TT#1401 - AGallagher - VSW -->
+  <configuration config_file = "PushToBackStock.exe.config" setting = "DateComparisonCharacteristic" type = "text" id = "DateComparisonCharacteristic"/>
+  <configuration config_file = "PushToBackStock.exe.config" setting = "ForceToBackStockCharacteristic" type = "text" id = "ForceToBackStockCharacteristic"/>
+  <!-- END TT#1401 -->
+  <!-- BEGIN TT#1401 - STodd - VSW -->
+  <configuration config_file = "PushToBackStock.exe.config" setting = "ForceToBackStockValue" type = "text" id = "ForceToBackStockValue"/>
+  <!-- END TT#1401 -->
+  
+  <configuration config_file = "MIDRetailStoreService.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "MIDRetailStoreService.exe.config" setting = "MyPort" type = "text" id = "MyPort"/>
+  <configuration config_file = "MIDRetailStoreService.exe.config" setting = "ReaderLockTimeOut" type = "thousands" id = "ReaderLockTimeOut"/>
+  <configuration config_file = "MIDRetailStoreService.exe.config" setting = "WriterLockTimeOut" type = "thousands" id = "WriterLockTimeOut"/>
+  <configuration config_file = "MIDRetailStoreService.exe.config" setting = "GCCollectWaitSeconds" type = "numeric" id = "GCCollectWaitSeconds"/>
+  <configuration config_file = "MIDRetailStoreService.exe.config" setting = "SkipGroupLevelCleanUp" type = "boolean" id = "SkipGroupLevelCleanUp"/>
+
+  <configuration config_file = "MIDRetail.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "MIDRetail.exe.config" setting = "MonitorForecast" type = "boolean" id = "MonitorForecast"/>
+  <configuration config_file = "MIDRetail.exe.config" setting = "AutoUpgradeLog" type = "open_file" id = "AutoUpgradeLog"/>
+  <configuration config_file = "MIDRetail.exe.config" setting = "MonitorForecastFilePath" type = "directory" id = "MonitorForecastFilePath"/>
+  <configuration config_file = "MIDRetail.exe.config" setting = "SupressMissingSchedulerServiceMessage" type = "boolean" id = "SupressMissingSchedulerServiceMessage"/>
+  <configuration config_file = "MIDRetail.exe.config" setting = "HeaderReleaseFilePath" type = "directory" id = "HeaderReleaseFilePath"/>
+
+  <!-- BEGIN TT#1966-MD - JSmith - DC Fulfillment -->
+  <configuration config_file = "MIDRetail.exe.config" setting = "MonitorDCFulfillment" type = "boolean" id = "MonitorDCFulfillment"/>
+  <configuration config_file = "MIDRetail.exe.config" setting = "MonitorDCFulfillmentFilePath" type = "directory" id = "MonitorDCFulfillmentFilePath"/>
+  <!-- END TT#1966-MD - JSmith - DC Fulfillment -->
+  
+  <configuration config_file = "ALL" setting = "AuditLoggingLevel" type = "list" id = "AuditLoggingLevel"/>
+  <configuration config_file = "ALL" setting = "CommitLimit" type = "text" id = "CommitLimit"/>
+  <configuration config_file = "ALL" setting = "DatabaseCommandTimeOut" type = "tens" id = "DatabaseCommandTimeOut"/>
+  <configuration config_file = "ALL" setting = "DatabaseRetryCount" type = "numeric" id = "DatabaseRetryCount"/>
+  <configuration config_file = "ALL" setting = "DatabaseRetryInterval" type = "thousands" id = "DatabaseRetryInterval"/>
+  <configuration config_file = "ALL" setting = "AuditCommitLimit" type = "numeric" id = "AuditCommitLimit"/>
+  <configuration config_file = "ALL" setting = "AuditConnectionTimeOut" type = "numeric" id = "AuditConnectionTimeOut"/>
+  
+  <boolean setting = "True"/>
+  <boolean setting = "False"/>
+  
+  <window_style setting = "Normal"/>
+  <window_style setting = "Maximized"/>
+  <window_style setting = "Minimized"/>
+  <window_style setting = "Hidden"/>
+  
+  <description id = "MIDSettings"  text = "Indicates the location of the global application settings.  This is typically a shared location on the application server." defaultValue = ""/>
+  <description id = "UpdateStyleDescription"  text = "Indicates if the style descriptions are to be updated if the style already exists.  The default is false." defaultValue = "False"/>
+  <description id = "RollStockForward"  text = "Designates that the stock values in the file are ending stock values (EOD or EOW) and will be rolled to beginning stock (BOD or BOW) values." defaultValue = ""/>
+  <description id = "AllowAutoAdds"  text = "'True' indicates that the process is to automatically add new items to the hierarchy.  'False' indicates the items should be rejected." defaultValue = ""/>
+  <description id = "RollStoreDailyToWeekly"  text = "This option identifies that the process is to generate rollup items for the rollup process to create store weekly history values from daily values.  The rollup process must then be run with the 'posting' option to complete the rollup process." defaultValue = ""/>
+  <description id = "RollStoreDailyUpHierarchy"  text = "This option identifies that the process is to generate rollup items for the rollup process to aggregate store daily history values up the hierarchy.  The rollup process must then be run with the 'posting' option to complete the rollup process." defaultValue = ""/>
+  <description id = "RollStoreWeeklyUpHierarchy"  text = "This option identifies that the process is to generate rollup items for the rollup process to aggregate store weekly history and forecast values up the hierarchy.  The rollup process must then be run with the 'posting' option to complete the rollup process." defaultValue = ""/>
+  <description id = "RollStoreToChain"  text = "This option identifies that the process is to generate rollup items for the rollup process to aggregate store weekly history and forecast values to chain values.  The rollup process must then be run with the 'posting' option to complete the rollup process." defaultValue = ""/>
+  <description id = "RollChainUpHierarchy"  text = "This option identifies that the process is to generate rollup items for the rollup process to aggregate chain weekly history and forecast values up the hierarchy.  The rollup process must then be run with the 'posting' option to complete the rollup process." defaultValue = ""/>
+  <description id = "RollIntransit"  text = "This option identifies that the process is to generate rollup items for the rollup process to aggregate intransit values up the hierarchy.  The rollup process must then be run with the 'posting' option to complete the rollup process." defaultValue = ""/>
+  <description id = "MIDEnvironment"  text = "Indicates the 'environment' for the specific installation.  Examples are 'production', 'test', and 'acceptance'.   This setting must be unique for each installation of the application." defaultValue = ""/>
+  <description id = "ControlServer"  text = "Indicates the IP Address and port where the Control Server is listening.  The Control Server will return a Client, Store, Hierarchy, and Application Server where remote sessions can be created.  If this key is not assigned, all sessions will be created locally (in the address space of the client)." defaultValue = ""/>
+  <description id = "LocalServer"  text = "'True' indicates the Session is to be created locally.  'False' indicates the Session is remote." defaultValue = ""/>
+  <description id = "HeaderReleaseFilePath"  text = "This is the file path the Header Release XML will be written to." defaultValue = ""/>
+  <!-- BEGIN TT#1766 - stodd - FIFO file processing -->
+  <description id = "APIFileProcessingDirection"  text = "Indicates the transaction file processing order and is based upon the filed modified date. Valid options are 'FIFO', 'FILO' and 'Default'. Default = 'Default'. 'Default' means file order is not significant." defaultValue = "" list = "FIFO|FILO|Default"/>
+  <!-- END TT#1766 - stodd - FIFO file processing -->
+  <!-- Begin TT#223 MD - JSmith - Add file order processsing (FIFO, LIFO) -->
+  <description id = "APIFileProcessingDirectionFIFO"  text = "Indicates the transaction file processing order and is based upon the filed modified date. Valid options are 'FIFO', 'FILO' and 'Default'. Default = 'FIFO'. 'Default' means file order is not significant." defaultValue = "FIFO" list = "FIFO|FILO|Default"/>
+  <!-- End TT#2186 -->
+
+  <description id = "ReleaseFileTriggerExtension"  text = "This is the trigger file's extension that will be created for a Header Release.  Do not specify '.'.  If not specified, trigger file will not be created." defaultValue = ""/>
+  <description id = "AutoUpgradeClient"  text = "Identifies if the client to be automatically upgraded if a different version if found at the AutoUpgradePath." defaultValue = "False"/>
+  <description id = "AutoUpgradePath"  text = "Identifies the network path to locate the client to be used for the upgrade. The Windows user will need at least read authority to this location." defaultValue = ""/>
+  <description id = "AutoUpgradeLog"  text = "Identifies the path and name for the client upgrade log. The default is C:\MIDRetail\upgrade.log." defaultValue = "[Install Location]\upgrade.log"/>
+  <description id = "Delimiter"  text = "Indicates the character to use to separate non-XML input transactions." defaultValue = "~"/>
+  <description id = "Export_FileFormat"  text = "Identifies the format of the output file.  The options are XML or CSV. If CSV is selected, then the delimiter character (comma, tilde, etc.) and the file suffix must be specified. The file suffix for and XML file is '.xml'. The default is 'CSV'." defaultValue = "CSV"/>
+  <description id = "Export_CSVDelimeter"  text = "Identifies the delimiter to use in the CSV format to separate the fields. The default is ','." defaultValue = ","/>
+  <description id = "Export_CSVFileSuffix"  text = "Identifies the characters to use in the suffix of the csv file.  The default is 'csv'." defaultValue = "csv"/>
+  <description id = "Export_DateType"  text = "Identifies the format of dates that are exported.  The options are Calendar and Fiscal.  The default is Fiscal." defaultValue = "Fiscal"/>
+  <description id = "Export_PreinitValues"  text = "Identifies if values are to be exported prior to being initialized with the forecast computations.  The default is False." defaultValue = "False"/>
+  <description id = "Export_ExcludeZeroValues"  text = "Identifies if values are to be excluded from being exporteddue to zero values.  The default is False." defaultValue = "False"/>
+  <description id = "Export_FilePath"  text = "Identifies the location of the output files.  The default is C:\MIDRetail\MID Advanced Allocation for SQL Server\ExportOutput." defaultValue = "[Install Location]\Client\ExportOutput"/>
+  <description id = "Export_AddDateStampToFileName"  text = "Identifies if a date stamp is to be added to the file name.  The default is False." defaultValue = "False"/>
+  <description id = "Export_AddTimeStampToFileName"  text = "Identifies if a time stamp is to be added to the file name.  The default is False." defaultValue = "False"/>
+  <description id = "Export_SplitFiles"  text = "Identifies if the data is to be split by specific data criteria.  The options are None, Merchandise, and NumberOfEntries.  The default is None." defaultValue = "None"/>
+  <description id = "Export_SplitNumberOfEntries"  text = "Identifies the number of rows by which to split a file if the Export_SplitFiles is set to NumberOfEntries. The default is 10000." defaultValue = "10000"/>
+  <description id = "Export_ConcurrentProcesses"  text = "Identifies if the Export_SplitFiles option is merchandise, then a separate file will be created for each merchandise node to be exported. This specification allows multiple export processes to run concurrently, one per node. This is useful to improve performance in terms of overall run time.  The default is 10." defaultValue = "10"/>
+  <description id = "Export_CreateFlagFile"  text = "Identifies if the process will generate a 'flag' file which is an empty file whose name is the same as the export file name, suffixed with the suffix specified. The purpose of this feature is to allow creation of 'trigger' files to instruct other processes monitoring this folder that a file exists.  The default is False." defaultValue = "False"/>
+  <description id = "Export_FlagFileSuffix"  text = "Identifies the suffix to use if Export_CreateFlagFile is set to True. The default is 'flg'" defaultValue = "flg"/>
+  <description id = "Export_CreateEndFile"  text = "Identifies if the process is to create an end file which signifies that all values have been output.  The default is False." defaultValue = "False"/>
+  <description id = "Export_EndFileSuffix"  text = "Identifies the suffix to use for the end file if Export_CreateEndFile is set to True. The default is 'end'." defaultValue = "end"/>
+  <description id = "DaysToKeepAudit"  text = "The number of days to keep audit history." defaultValue = ""/>
+  <description id = "DaysToKeepCompletedSchedules"  text = "The number of days to keep completed schedule history." defaultValue = ""/>
+  <description id = "SerializeXMLFile"  text = "This is a performance tuning option.  'True' indicates the Input file can be serialized during loading.  'False' indicates the InputFile will be read a field at a time.  This option should only be set to 'True' if the machine where the job is executing has twice the available memory as the size of the input file." defaultValue = ""/>
+  <description id = "HeaderIDsPresent"  text = "This option identifies whether allocation header IDs are present in the input transactions." defaultValue = ""/>
+  <description id = "User"  text = "Indicates the application user ID for non-client processes to use when logging into the application." defaultValue = "administrator"/>
+  <description id = "Password"  text = "Indicates the password for the User." defaultValue = "administrator"/>
+  <description id = "SizeConstraintsTransFile"  text = "The directory and name of the Size Constraints input transactions" defaultValue = ""/>
+  <description id = "CodesPresent"  text = "This option identifies whether size codes are being sent in the input transactions" defaultValue = ""/>
+  <description id = "CurveTransFile"  text = "The directory and name of the size curve (attach to stores) input transactions" defaultValue = ""/>
+  <description id = "CurveGroupTransFile"  text = "The directory and name of the size curve group input transactions" defaultValue = ""/>
+  <description id = "ReportFile"  text = "The path to the report file." defaultValue = ""/>
+  <description id = "ExceptionFile"  text = "The directory and name of the file where exceptions are to be written" defaultValue = ""/>
+  <description id = "CreateOnModify"  text = "Identifies the process is to create components if a modify action is requested and the component does not exist" defaultValue = "False"/>
+  <description id = "InputFile"  text = "The directory and name of the input transactions.  The file name can be overridden using an input argument." defaultValue = ""/>
+  <description id = "StoreServers"  text = "Indicates a list of port(s) where the Store Server(s) are listening.  It is recommended that only a single Store Server is used." defaultValue = ""/>
+  <description id = "HierarchyServers"  text = "Indicates a list of port(s) where the Hierarchy Server(s) are listening.  It is recommended that only a single the Hierarchy Server is used." defaultValue = ""/>
+  <description id = "ApplicationServers"  text = "Indicates a list of port(s) where the Application Server(s) are listening." defaultValue = ""/>
+  <description id = "SchedulerServer"  text = "Indicates a list of port(s) where the Scheduler Server(s) are listening.  It is recommended that only a single Scheduler Server is used." defaultValue = ""/>
+  <description id = "ScheduleScanInterval"  text = "The amount of time in milliseconds between passes through the schedule." defaultValue = ""/>
+  <description id = "CheckForTerminateInterval"  text = "The amount of time in milliseconds before checking for termination while waiting in the scan interval." defaultValue = ""/>
+  <description id = "StartedProcessWindowStyle"  text = "The style of window for the started processes.  Can be 'Normal', 'Maximized', 'Minimized', or 'Hidden'.  Will not apply when run as a service." defaultValue = ""/>
+  <description id = "ForecastExecutablePath"  text = "The location of the executable for forecaset" defaultValue = ""/>
+  <description id = "AllocateExecutablePath"  text = "The location of the executable for allocate" defaultValue = ""/>
+  <description id = "RollupExecutablePath"  text = "The location of the executable for rollup" defaultValue = ""/>
+  <description id = "PurgeExecutablePath"  text = "The location of the executable for purge" defaultValue = ""/>
+  <description id = "RelieveIntransitExecutablePath"  text = "The location of the executable for relieve intransit" defaultValue = ""/>
+  <description id = "ColorCodesLoadExecutablePath"  text = "The location of the executable for color codes load" defaultValue = ""/>
+  <description id = "HeaderReconcileExecutablePath"  text = "The location of the executable for header Reconcile" defaultValue = ""/>
+  <description id = "HeaderLoadExecutablePath"  text = "The location of the executable for header load" defaultValue = ""/>
+  <description id = "HierarchyLoadExecutablePath"  text = "The location of the executable for hierarchy load" defaultValue = ""/>
+  <description id = "HistoryPlanLoadExecutablePath"  text = "The location of the executable for history plan" defaultValue = ""/>
+  <description id = "SizeCodesLoadExecutablePath"  text = "The location of the executable for size codes load" defaultValue = ""/>
+  <description id = "SizeCurveLoadExecutablePath"  text = "The location of the executable for size curve load" defaultValue = ""/>
+  <description id = "StoreLoadExecutablePath"  text = "The location of the executable for store load" defaultValue = ""/>
+  <description id = "SizeConstraintsLoadExecutablePath"  text = "The location of the executable for size constraints load" defaultValue = ""/>
+  <description id = "ComputationDriverExecutablePath"  text = "The location of the executable for computation driver" defaultValue = ""/>
+  <!-- Begin TT#2194 - JSmith - Installer fails with index out of range when attempting to configure the application.   -->
+  <description id = "PushToBackStockLoadExecutablePath"  text = "The location of the executable for push to back stock load" defaultValue = ""/>
+  <!-- End TT#2194 -->
+  <!-- Begin TT#1631-MD - stodd - Batch Comp  -->
+  <description id = "BatchCompExecutablePath"  text = "The location of the executable for Batch Comp" defaultValue = ""/>
+  <!-- End TT#1631-MD - stodd - Batch Comp  -->
+  <description id = "MyPort"  text = "Indicates the port where the component is communicating." defaultValue = ""/>
+  <description id = "ReaderLockTimeOut"  text = "The amount of time in milliseconds to hold a read lock on data" defaultValue = "10000"/>
+  <description id = "WriterLockTimeOut"  text = "The amount of time in milliseconds to hold a write lock on data" defaultValue = "10000"/>
+  <description id = "GCCollectWaitSeconds"  text = "Number of seconds between forced garbage collections.  If this value is 0, no forced collection will occur." defaultValue = ""/>
+  <description id = "MonitorForecast"  text = "When true, writes out a log of forecasting details when a forecast is process." defaultValue = "False"/>
+  <description id = "MonitorForecastFilePath"  text = "When running local, this is the file path the Monitor Forecast Logs will be written to." defaultValue = ""/>
+  <!-- BEGIN TT#1966-MD - JSmith - DC Fulfillment -->
+  <description id = "MonitorDCFulfillment"  text = "When true, writes out a log of DC Fulfillment details when a DC Fulfillment is process." defaultValue = "False"/>
+  <description id = "MonitorDCFulfillmentFilePath"  text = "This is the file path the DC Fulfillment Logs will be written to." defaultValue = ""/>
+  <!-- END TT#1966-MD - JSmith - DC Fulfillment -->
+  <description id = "SupressMissingSchedulerServiceMessage"  text = "'True' indicates the message indicating the scheduler service was not found should not be shown.  'False' indicates the message should be displayed." defaultValue = ""/>
+  <description id = "ConnectionString"  text = "The database connection string." defaultValue = ""/>
+  <description id = "EndSuffix"  text = "The file suffix used to terminate the process." defaultValue = ""/>
+  <description id = "AutoAddCharacteristics"  text = "Indicates if characteristics that do not already exist should be added to the system." defaultValue = "False"/>
+  <!--begin TT#1401 - stodd - added transaction types -->
+  <description id = "UseCharacteristicTransaction"  text = "Only used by delimited input files. Indicates whether the transactions will use separate records for characteristic values. Default = False." defaultValue = "False"/>
+  <!--end TT#1401 - stodd - added transaction types -->
+  <description id = "CacheSize"  text = "The number of items to hold in memory.  This is used to control memory use." defaultValue = "500000"/>
+  <description id = "ColorSizeIDCacheSize"  text = "The number of color and style IDs to hold in memory.  This is used to tune performance." defaultValue = "2000000"/>
+  <description id = "CacheGroupSize"  text = "The number of nodes to replace in memory when the CacheSize is hit.  This is used to tune performance." defaultValue = "5000"/>
+  <description id = "RebuildIDs"  text = "Identifies if the color and size IDs are to be rebuilt when the service starts." defaultValue = "False"/>
+  <description id = "ComputationModel"  text = "The model to use to determine if computations must be executed after posting." defaultValue = ""/>
+  <description id = "RelieveAllStores"  text = "Identifies the intransit for all stores are to be relieved when a header is relieved." defaultValue = "False"/>
+  <description id = "DeleteUsers"  text = "Identifies if users marked for delete are to be deleted." defaultValue = "False"/>
+  <description id = "DaysToKeepDeletedUsers"  text = "The number of days to keep deleted users before they are removed." defaultValue = "30"/>
+  <description id = "DeleteGroups"  text = "Identifies if groups marked for delete are to be deleted." defaultValue = "False"/>
+  <!-- BEGIN TT#739-MD - STodd - delete stores -->
+  <description id = "DeleteEmptyStoreSets"  text = "The Purge Process will attempt to delete empty dynamic store sets." defaultValue = "True"/>
+  <!-- END TT#739-MD - STodd - delete stores -->
+  <description id = "DaysToKeepDeletedGroups"  text = "The number of days to keep deleted groups before they are removed." defaultValue = "30"/>
+  <description id = "PurgeRowsWithAllZeros"  text = "Identifies if the process is to clean up data rows with all zeros.  Note: This operation will affect the overall run time of the process." defaultValue = "False"/>
+  <description id = "PurgeRowsWithAllUnlocked"  text = "Identifies if the process is to clean up data rows with all variables unlocked.  Note: This operation will affect the overall run time of the process." defaultValue = "False"/>
+  <description id = "BatchSize"  text = "Identifies the number of items to process in each transaction.  This is used to tune performance." defaultValue = "2000"/>
+  <description id = "ConcurrentProcesses"  text = "Identifies the number of process to run at a time.  This is used to tune performance." defaultValue = "5"/>
+  <description id = "IncludeZeroInAverage"  text = "Identifies if a zero value is to be included in averages." defaultValue = "True"/>
+  <description id = "CustomBulkTableName"  text = "Indicates the database table name for header bulk information." defaultValue = ""/>
+  <description id = "CustomPackTableName"  text = "Indicates the database table name for header pack information." defaultValue = ""/>
+  <description id = "HeaderSQL"  text = "The location of the file that contains the SQL statement to use retrieve headers to be relieved." defaultValue = ""/>
+  <description id = "RelieveIntransitFilePath"  text = "Indicates the folder to write the Relieve Intransit files." defaultValue = ""/>
+  <description id = "RelieveIntransitFile"  text = "Indicates the name to use for the Relieve Intransit files." defaultValue = "RelieveIntransitFile"/>
+  <description id = "HeadersPerFile"  text = "Indicates the number of transactions in a Relieve Intransit file." defaultValue = "100"/>
+  <description id = "FlagFileSuffix"  text = "Identifies the characters to use in the suffix of the Relieve Intransit file.  The default is 'trg'." defaultValue = "trg"/>
+  <description id = "SizeDayToWeekSummaryLog"  text = "Identifies whether a log should be produced." defaultValue = "False"/>
+  <description id = "SizeDayToWeekSummaryLogFilePath"  text = "The location of the Size Day to Week Summary log." defaultValue = ""/>
+  <!--begin TT#1077 - Installer fixes... updates to Installer.xml file and protect files search - apicchetti - 1/17/2011 -->
+  <description id = "IncludeEnvironmentOnStatus"  text = "Identifies if the environment setting is to be included in the status area." defaultValue = "False"/>
+  <description id = "SizeCurveGenerateExecutablePath"  text = "The location of the executable for size curve generate" defaultValue = "False"/>
+  <description id = "BuildPackCriteriaLoadExecutablePath"  text = "The location of the executable for build packs criteria load" defaultValue = "False"/>
+  <description id = "SizeDayToWeekSummaryExecutablePath"  text = "The location of the executable for size day to week summary" defaultValue = "False"/>
+  <!--end TT#1077 - Installer fixes... updates to Installer.xml file and protect files search - apicchetti - 1/17/2011 -->
+  
+  <description id = "AuditLoggingLevel"  text = "Indicates the minimum level of messages that are to be written to the audit file." defaultValue = "Edit" list = "Debug|Information|Edit|Warning|Error|Severe"/>
+  <description id = "CommitLimit"  text = "Indicates the number of database writes to issue per transaction.  This can be used to tune database performance.  Use &quot;UNLIMITED&quot; for a single database transaction." defaultValue = "1000"/>
+  <description id = "DatabaseCommandTimeOut"  text = "The time (in seconds) to wait for the command to execute. The default is 30 seconds." defaultValue = "30"/>
+  <description id = "DatabaseRetryInterval"  text = "The time (in milliseconds) to wait between retry attempts. The default is 2000 (2 seconds)." defaultValue = "2000"/>
+  <description id = "DatabaseRetryCount"  text = "The number of times to retry a database call before failing the call. This can be set to 0 if you do not want the application to attempt to retry the call." defaultValue = "4"/>
+  <!--Begin TT#1067 - JSmith - Add option to allow return codes be consistent with other processes -->
+  <description id = "ReturnMIDMessageLevel"  text = "Indicates if the standard API return codes should be returned instead of the scheduler return codes." defaultValue = "False"/>
+  <!--End TT#1067 -->
+  <!--Begin TT#1243 - JSmith - Audit Performance -->
+  <description id = "AuditCommitLimit"  text = "Indicates the number of database writes to issue per audit transaction.  This can be used to tune database performance." defaultValue = "100"/>
+  <description id = "AuditConnectionTimeOut"  text = "The time (in seconds) of audit inactivity before closes database connection. The default is 30 seconds." defaultValue = "30"/>
+  <!--End TT#1243 -->
+
+  <!--Begin TT#1401 - AGallagher - VSW -->
+  <description id = "DateComparisonCharacteristic"  text = "Indicates the header characteristic that is defined as the Push to Back-stock comparison date." defaultValue = "First Store Acknowledge Date"/>
+  <description id = "ForceToBackStockCharacteristic"  text = "Indicates the header characteristic that when set to 'Y' forces the transfer to Back-stock." defaultValue = "Chain Markdown Flag"/>
+  <!--End TT#1401 -->
+  <!--Begin TT#1401 - STodd - VSW -->
+  <description id = "ForceToBackStockValue"  text = "Indicates the value in the ForceToBackStockCharacteristic that forces the transfer to Back-stock." defaultValue = "Y"/>
+  <!--End TT#1401 -->
+  <description id = "InputDirectory"  text = "Indicates the folder where input files are located." defaultValue = ""/>
+  <description id = "OutputDirectory"  text = "Indicates the folder where output files are to be written." defaultValue = ""/>
+  <description id = "TriggerSuffix"  text = "Identifies the characters to use in the suffix of the file" defaultValue = "trg"/>
+  <description id = "MaximumRecordsPerOutputFile"  text = "Indicates the number of transactions per output file." defaultValue = "3000"/>
+  <description id = "AllowDeletes"  text = "Indicates if delete transactions are to be generated.  The default is True" defaultValue = "True"/>
+  <description id = "ReclassMoveTriggerSuffix"  text = "Identifies the characters to use in the suffix of the reclass move file" defaultValue = "movtrg"/>
+  <description id = "ReclassDeleteTriggerSuffix"  text = "Identifies the characters to use in the suffix of the reclass delete file" defaultValue = "deltrg"/>
+  <description id = "SkipGroupLevelCleanUp"  text = "Disables the removal of unused attribute sets" defaultValue = ""/>
+  <description id = "FromOffset"  text = "Identifies the number of prior weeks to look for history" defaultValue = "2"/>
+  <description id = "ToOffset"  text = "Identifies the number of future weeks to look for history" defaultValue = "0"/>
+  <description id = "ForecastOffset"  text = "Identifies the number of future weeks to look for forecasts. If 0, forecasts will not be used." defaultValue = "0"/>
+  <description id = "IntransitOffset"  text = "Identifies the number of future weeks to look for intransit" defaultValue = "2"/>
+  <description id = "RemoteOptions_ServerName"  text = "The hostname of the control server, required for Remote System Options." defaultValue = "localhost"/>
+  <description id = "RemoteOptions_ServerPort"  text = "The Remote System Options port to use on the control server, must be different than the control server port." defaultValue = "8090"/>
+  <description id = "RemoteOptions_ClientInterval"  text = "The time (in milliseconds) to wait between receiving commands from the control server, required for Remote System Options." defaultValue = "3000"/>
+  <description id = "RemoteOptions_ServerInterval"  text = "The time (in milliseconds) to wait between receiving commands from the client apps, required for Remote System Options." defaultValue = "3000"/>
+  <!-- BEGIN TT#1581-MD - stodd - Header Reconcile -->
+  <description id = "RemoveTransactionsFileName"  text = "Identifies the file name for the remove transactions generated by the header reconcile process." defaultValue = "HeaderReconcileRemoveTransactions"/>
+  <description id = "HeaderTypes"  text = "Header types to be processed by Header Reconcile. Valid values are 'All' or Any combination of: Receipt, PO, ASN, Dummy, Dropship, Reserve, WorkupTotalBuy, VSW delimited by a comma." defaultValue = "All"/>
+  <description id = "HeaderProcessingKeysFile"  text = "File that contains the list of keys used by the Header Reconcile Process and the Header Load Process to determine matching headers and to create Header IDs." defaultValue = "[Install Location]\Batch\HeaderKeys.txt"/>
+  <description id = "HeaderIdDelimiter"  text = "Indicates the delimiter to use between fields when constructing the header ID." defaultValue = "_"/>
+  <description id = "HeaderIdSequenceLength"  text = "Indicates the length of the sequence number appended to generated header IDs." defaultValue = "5"/>
+  <description id = "GenerateHeaderID"  text = "A value of 'True' provides support for generating header IDs for transactions where Header ID is missing." defaultValue = "false"/>
+  <description id = "RemoveTransactionsTriggerSuffix"  text = "Identifies the characters to use in the suffix of the remove transactions file" defaultValue = "trg"/>
+  <!-- END TT#1581-MD - stodd - Header Reconcile -->
+
+  <!-- Begin TT#3822 - JSmith - Add Stop Time to Purge -->
+  <description id = "PurgeCutoffTime"  text = "Identifies the time to begin stopping Purge.  Format HH:MM AM/PM." defaultValue = ""/>
+  <!-- End TT#3822 - JSmith - Add Stop Time to Purge -->
+
+  <!--Begin TT#74 MD - JSmith - One-button Upgrade -->
+  <install_text id = "SelectUpgradeAll"  text = "Upgrade all Logility-RO components"/>
+  <!--End TT#74 MD -->
+  <install_text id = "SelectClient"  text = "Install or maintain a client(s)"/>
+  <install_text id = "SelectServer"  text = "Install or maintain a server component(s)"/>
+  <install_text id = "SelectConfigure"  text = "Configure the application"/>
+  <install_text id = "SelectUtilities"  text = "Perform database maintenance or other activities"/>
+  <install_text id = "SelectInstallTypical"  text = "Typical Server Install"/>
+  <install_text id = "SelectInstallServer"  text = "Install server components"/>
+  <install_text id = "SelectInstallConfig"  text = "Install global application settings"/>
+  <install_text id = "SelectInstalledServer"  text = "Perform maintenance on installed components"/>
+  <install_text id = "UtilitiesDatabase"  text = "Perform database maintenance"/>
+  <install_text id = "UtilitiesStartServices"  text = "Start the Logility-Ro services"/>
+  <install_text id = "UtilitiesStopServices"  text = "Stop the Logilit-RO services"/>
+  <install_text id = "UtilitiesRescan"  text = "Recan this machine for installed Logility-RO software"/>
+  <install_text id = "UtilitiesServerStartError"  text = "Errors were encountered while starting the services.  Check the log for details."/>
+  <install_text id = "UtilitiesServerStopError"  text = "Errors were encountered while stoping the services.  Check the log for details."/>
+  <install_text id = "SelectConfigureByMachine"  text = "User selected to configure by machine name."/>
+  <install_text id = "SelectConfigureByIP"  text = "User selected to configure by IP Address."/>
+  <install_text id = "UtilitiesEventSources"  text = "Adds the necessary Windows Event Sources"/>
+  <install_text id = "UtilitiesCrystalReports"  text = "Installs Crystal Reports Viewer"/>
+
+  <!--Begin TT#74 MD - JSmith - One-button Upgrade -->
+  <install_text id = "rdoUpgradeAll"  text = "One-Click Upgrade"/>
+  <!--End TT#74 MD -->
+  <install_text id = "rdoClient"  text = "Client"/>
+  <install_text id = "rdoServer"  text = "Server"/>
+  <install_text id = "rdoConfigure"  text = "Configure"/>
+  <install_text id = "rdoUtilities"  text = "Utilities"/>
+  <install_text id = "rdoInstallTypicalClient"  text = "Install Typical Client"/>
+  <install_text id = "rdoInstallClient"  text = "Install Custom Client"/>
+  <install_text id = "rdoInstallClientTasks"  text = "Maintain Client"/>
+  <install_text id = "rdoInstallTypicalServer"  text = "Install Typical Server"/>
+  <install_text id = "rdoInstallServer"  text = "Install Custom Server"/>
+  <install_text id = "rdoInstallConfiguration"  text = "Install Configuration"/>
+  <install_text id = "rdoInstalledServerTasks"  text = "Maintain Server"/>
+  
+  <install_text id = "rdoDatabaseMaintenance"  text = "Database Maintenance"/>
+  <install_text id = "rdoStartServices"  text = "Start Services"/>
+  <install_text id = "rdoStopServices"  text = "Stop Services"/>
+  <install_text id = "rdoRescan"  text = "Rescan for previously installed components"/>
+  <install_text id = "rdoEventSource"  text = "Add Event Viewer Sources"/>
+  <install_text id = "rdoCrystalReports"  text = "Install Crystal Reports"/>
+
+  <install_text id = "btnChangeDirectory"  text = "Change Directory"/>
+  <install_text id = "lblTasks"  text = "Task:"/>
+  <install_text id = "lblInstallDir"  text = "Choose install directory:"/>
+  
+  <install_text id = "lblShareName"  text = "Share Name:"/>
+  <install_text id = "lblShortcutName"  text = "Shortcut Name:"/>
+  <install_text id = "lblSelectGlobalConfig"  text = "Global Configuration:"/>
+  <install_text id = "btnBrowse"  text = "Browse"/>
+  <install_text id = "chxShareClient"  text = "Share Client"/>
+  <install_text id = "chkAutoUpgradeClient"  text = "Auto Upgrade"/>
+  <install_text id = "lblAccess"  text = "Access"/>
+  <install_text id = "rdoMe"  text = "Just Me"/>
+  <install_text id = "rdoEveryone"  text = "Everyone"/>
+  <install_text id = "chkQuickLaunch"  text = "Pin to Taskbar"/>
+  <install_text id = "chkDesktop"  text = "Desktop Shortcut"/>
+  <install_text id = "lblSelectGlobalConfigTypical"  text = "Global Configuration:"/>
+
+  <install_text id = "gbxConfigureUsing"  text = "Configure Using"/>
+  <install_text id = "rdoUseIPAddress"  text = "IP Address"/>
+  <install_text id = "rdoUseMachineName"  text = "Machine Name"/>
+  <install_text id = "gbxStartType"  text = "Start Type"/>
+  <install_text id = "rdoStartTypeManual"  text = "Manual"/>
+  <install_text id = "rdoStartTypeAuto"  text = "Automatic"/>
+
+  <install_text id="lblNotEnterprise" text="Server Is Not Enterprise Edition" />
+  <install_text id="lblWarning" text="WARNING" />
+  <install_text id="lblWarningMessage" text="Logility - RO does not certify or support this version of Windows in a Production Environment." />
+  <install_text id="cbConfirm" text="I have read and understand the above statement.\nI confirm that all users are out of the application\n and all processes have been stopped." />
+  <install_text id="btnContinue" text="Continue" />
+  <install_text id="btnTerminate" text="Terminate" />
+
+  <install_text id="lblWarningMessageN" text="Have you reviewed the following documentation before proceeding with the install?" />
+  <install_text id="lblWarningMessageN2" text="1. Logility - RO Installation and Maintenance Guide\n2. Technical Reference Manual - Chapter 1 Installation\n3. ReadMe.txt" />
+  <install_text id="cbConfirmN" text="I have read and understand the above statement.\nI confirm that all users are out of the application\n and all processes have been stopped." />
+  <install_text id="btnContinueN" text="Continue" />
+  <install_text id="btnTerminateN" text="Terminate" />
+
+  <!--Begin TT#74 MD - JSmith - One-button Upgrade -->
+  <install_text id="lblWarningMessageOC" text="A complete upgrade will take place for the following Logility - RO system:" />
+  <install_text id="lblWarningMessageOC-S" text="All components on server “{0}” will be upgraded.\n
+Database “{2}” on Database Server “{1}” will be upgraded.\n
+A complete backup of the above database is required for safety in case of any upgrade issues!" />
+  <install_text id="lblWarningMessageOC-C" text="All components on “{0}” will be upgraded" />
+  <install_text id="cbConfirmOC-S" text="I accept the above will be upgraded and \na complete backup was done prior to this action." />
+  <install_text id="cbConfirmOC-C" text="I accept the above will be upgraded by this action." />
+  <!--End TT#74 MD -->
+
+  <!--Begin TT#1688 - JSmith - Install Log -->
+  <install_text id="docConfirmed" text="Documentation notification has been confirmed." />
+  <install_text id="docTerminated" text="Documentation notification has been terminated." />
+  <install_text id="verConfirmed" text="Version notification has been confirmed." />
+  <install_text id="verTerminated" text="Version notification has been terminated." />
+  <install_text id="OCConfirmed" text="One-Click notification has been confirmed." />
+  <install_text id="OCTerminated" text="One-Click notification has been terminated." />
+  <install_text id="64BitYes" text="{0} is 64 bit." />
+  <install_text id="64BitNo" text="{0} is not 64 bit." />
+  <install_text id="FrameworkInstallerLocation" text="Framework installer utility location is {0}." />
+  <install_text id="InstallerLocation" text="The installer location is {0}." />
+  <install_text id="RescanRequired" text="The installer detected inconsistencies and must rescan the machine." />
+  <install_text id="SetupStoppedByUser" text="The Setup has stopped due to user response." />
+  <install_text id="FileSecurity" text="Adding security to file {0} for {1} with file rights {2} and access control type {3}." />
+  <install_text id="CreateDirectory" text="Creating folder {0}." />
+  <install_text id="ShareFolder" text="Adding share to folder {0} with name {1} and write access = {2}." />
+  <install_text id="DeleteFile" text="Deleting file {0}." />
+  <install_text id="DeleteFolder" text="Deleting folder {0}." />
+  <install_text id="RemoveFolderShare" text="Removing share(s) to folder {0}." />
+  <install_text id="ConvertRegistry" text="Converting registry entries.  Parameters:" />
+  <install_text id="ConvertRegistryFileName" text="    FileName = {0}" />
+  <install_text id="ConvertRegistryArguments" text="    Arguments = {0}" />
+  <install_text id="ConvertRegistryWorkingDirectory" text="    WorkingDirectory = {0}" />
+  <install_text id="RegistryRemove" text="Removing registered components." />
+  <install_text id="RegistryComponentRemove" text="Removing registry entries for {0}." />
+  <install_text id="RegistryAdd" text="Add component to registry." />
+  <install_text id="RegistryKey" text="    Key = {0}" />
+  <install_text id="RegistryItem" text="    Key = {0}; Value = {1}" />
+  <install_text id="ProductVersion" text="Product Version = {0}" />
+  <install_text id="FrameworkVersion" text="Framework Version = {0}" />
+  <install_text id="ConfigChange" text="Configuration changed. Key {0} in file {1} was changed from {2} to {3}." />
+  <install_text id="ConfigAdded" text="Configuration added. Key {0} in file {1} was added with value {2}." />
+  <install_text id="EncryptError" text="Encryption error. Key {0} in file {1} was not encrypted.  Please reinstall the application." />
+  <install_text id="envServer" text="Based on the registered components, this is an application server." />
+  <install_text id="envBatch" text="Based on the registered components, this is an batch server." />
+  <install_text id="envClient" text="Based on the registered components, this is a client machine." />
+  <install_text id="envNewInstall" text="Based on the registered components, this is a new installation." />
+  <install_text id="noDBUpgrade" text="Unable to establish a connection to the database.  It will not be upgraded." />
+  <install_text id="applyingSubstitutions" text="Updating configuration files based on installation options." />
+  <install_text id="serviceStartType" text="Start type: {0}." />
+  <install_text id="upgradeCompletedSuccessfully" text="Upgrade completed successfully." />
+  <install_text id="upgradeCompletedWithErrors" text="Upgrade completed with errors.  Review logs." />
+  <install_text id="upgradeAllComponents" text="User has chosen to upgrade all components." />
+  <install_text id="upgradeAllClients" text="Upgrading client components." />
+  <install_text id="upgradeAllServers" text="Upgrading server components." />
+  <install_text id="databaseMaintenance" text="Performing database maintenance." />
+  <install_text id="databaseMaintenanceComplete" text="Database maintenance complete." />
+  <install_text id="upgradeCancelled" text="Upgrade has been cancelled." />
+  <install_text id="installCancelled" text="Installation has been cancelled." />
+  <install_text id="unsupportedVersion" text="An unsupported version of operating system was found. Installation has been cancelled." />
+  <!--End TT#1688 -->
+  <!-- Begin TT#2261 - JSmith - Installer needs to override values not within range of data -->
+  <install_text id="minimumOverride" text="The value of {0} for {1} in {2} was below the minimum and has been overridden to {3}" />
+  <install_text id="maximumOverride" text="The value of {0} for {1} in {2} was above the maximum and has been overridden to {3}" />
+  <!--End TT#2261 -->
+  <!-- Begin TT#330-MD - JSmith - Add description to MIDRetail client and all services so displays in Task Manager and Services. -->
+  <install_text id="MIDRetailControlServiceName" text="MID Retail Control Service" />
+  <install_text id="MIDRetailHierarchyServiceName" text="MID Retail Hierarchy Service" />
+  <install_text id="MIDRetailSchedulerServiceName" text="MID Retail Scheduler Service" />
+  <install_text id="MIDRetailStoreServiceName" text="MID Retail Store Service" />
+  <install_text id="MIDRetailControlServiceDesc" text="Manages connections to Logility-RO services" />
+  <install_text id="MIDRetailHierarchyServiceDesc" text="Manages hierarchy information" />
+  <install_text id="MIDRetailSchedulerServiceDesc" text="Processes Logility-RO scheduled jobs" />
+  <install_text id="MIDRetailStoreServiceDesc" text="Manages store information" />
+  <!-- End TT#330-MD - JSmith - Add description to MIDRetail client and all services so displays in Task Manager and Services. -->
+  <!-- Begin TT#1164 - JSmith - Database compatibility issue when installing -->
+  <install_text id="SQLServerSpecifications" text="SQL Server Server Specifications" />
+  <install_text id="SQLServerServer" text="SQL Server Server: {0}" />
+  <install_text id="SQLServerProductVersion" text="SQL Server Product Version: {0}" />
+  <install_text id="SQLServerProductLevel" text="SQL Server Product Level: {0}" />
+  <install_text id="SQLServerEdition" text="SQL Server Edition: {0}" />
+  <install_text id="SQLServerCompatibilityLevel" text="SQL Server Compatibility Level: {0}" />
+  <install_text id="SQLServerDatabaseName" text="SQL Server Database Name: {0}" />
+  <install_text id="SQLServerUserName" text="SQL Server User Name: {0}" />
+  <install_text id="SQLConnectionString" text="SQL Server Connection String: {0}" />
+  <!-- End TT#1164 - JSmith - Database compatibility issue when installing -->
+
+  <help_text id = "none"  text = "Help not set for this item."/>
+  <help_text id = "main"  text = "Select the option you wish to perform. 
+      One-Click Upgrade - upgrade all application components
+      Client - add or maintain client application
+      Server - add or maintain server component
+      Configure - configure application
+      Utilities - perform utilities
+	  
+Show Details will display installation message details."/>
+  <help_text id = "client"  text = "Select the client option you wish to perform.
+      Install Client - add new client
+      Installed Client Tasks - perform maintenance on previously installed client"/>
+  <help_text id = "server"  text = "Select the server option you wish to perform.
+      Install Server Component - add new server component. 
+      Install Configuration - add new global configuration file (MIDSettings.config)
+      Installed Server Component Tasks - perform maintenance on previously installed server components."/>
+  <help_text id = "configure"  text = "Update application configuration files."/>
+  <help_text id = "utilities"  text = "Perform database maintenance, start/stop services 
+  or perform other application functions."/>
+  <help_text id = "scan"  text = "Use to scan this machine to identify Logility-RO applications to be
+  maintained by this utility."/>
+  <help_text id = "log"  text = "Displays all messages produced by this utility."/>
+  
+  <tooltip_text id = "frame_btnHelp"  text = "Display Help"/>
+  <tooltip_text id = "frame_btnDetail"  text = "Display installation details"/>
+  <tooltip_text id = "frame_btnBack"  text = "Navigate backward"/>
+  <tooltip_text id = "frame_btnCancel"  text = "Exit the application"/>
+  <tooltip_text id = "frame_btnNext"  text = "Navigate forward"/>
+  <tooltip_text id = "frame_btnProcess"  text = "Process the requested action"/>
+  <tooltip_text id = "frame_btnSave"  text = "Save application changes"/>
+  <!--Begin TT#74 MD - JSmith - One-button Upgrade -->
+  <tooltip_text id = "frame_SelectUpgradeAll"  text = "Upgrade all Logility-RO components"/>
+  <!--End TT#74 MD -->
+  <tooltip_text id = "frame_SelectClient"  text = "Install or maintain client(s)"/>
+  <tooltip_text id = "frame_SelectServer"  text = "Install or maintain server component(s)"/>
+  <tooltip_text id = "frame_SelectConfigure"  text = "Configure the application"/>
+  <tooltip_text id = "frame_SelectUtilities"  text = "Perform database maintenance or other activities"/>
+			
+  <tooltip_text id = "client_InstallClient"  text = "Select to install a new client."/>
+  <tooltip_text id = "client_desktop"  text = "Check this if you will like an icon added to the desktop."/>
+  <tooltip_text id = "client_quicklaunch"  text = "Check this if you will like an icon added to the Quick Launch toolbar."/>
+  <tooltip_text id = "client_installfolder"  text = "Specifies the folder where the application is to be installed."/>
+  <tooltip_text id = "client_installfolderButton"  text = "Use to browse the computer for an install location."/>
+  <tooltip_text id = "client_accesseveryone"  text = "Specifies the application can be accessed by everyone that uses this computer."/>
+  <tooltip_text id = "client_accessme"  text = "Specifies application can only be accessed by the account used to install the application."/>
+  <tooltip_text id = "client_autoupgrade"  text = "Specifies the client as an installation for auto upgrading."/>
+  <tooltip_text id = "client_InstallClientTasks"  text = "Select to perform maintenance tasks on previously installed client(s)."/>
+  <tooltip_text id = "client_ClientTasks"  text = "Select the maintenance task to perform in the selected client(s)"/>
+  <tooltip_text id = "client_InstallClientTasks"  text = "Select to perform maintenance tasks on previously installed client(s)."/>
+  <tooltip_text id = "client_Clients"  text = "Select the client(s) on which maintenance is to be performed"/>
+  <tooltip_text id = "client_ShareName"  text = "Specifies the name to be used to create the share"/>
+  <tooltip_text id = "client_ShortcutName"  text = "Specifies the name to be used for all shortcuts"/>
+  
+  <tooltip_text id = "server_InstallTypical"  text = "Select to install typical server components."/>
+  <tooltip_text id = "server_InstallServer"  text = "Select to install a new server components."/>
+  <tooltip_text id = "server_clstServices"  text = "Select the components you wish to install."/>
+  <tooltip_text id = "server_autostart"  text = "Check this if you want the services to start automatically when Windows starts."/>
+  <tooltip_text id = "server_manualstart"  text = "Check this if you want manually start the services after Windows starts."/>
+  <tooltip_text id = "server_installfolder"  text = "Specifies the folder where the application is to be installed."/>
+  <tooltip_text id = "server_installfolderButton"  text = "Use to browse the computer for an install location."/>
+  <tooltip_text id = "server_useIP"  text = "Select to configure the application using IP addresses."/>
+  <tooltip_text id = "server_usemachine"  text = "Select to configure the application using machine names."/>
+  <tooltip_text id = "server_installconfig"  text = "Select to install global configuration file"/>
+  <tooltip_text id = "server_InstallServerTasks"  text = "Select to perform maintenance tasks on previously installed server components."/>
+  <tooltip_text id = "server_ServerTasks"  text = "Select the maintenance task to perform in the selected server component(s)"/>
+  <tooltip_text id = "server_ServerComponents"  text = "Select the server components(s) on which maintenance is to be performed"/>
+  
+  <tooltip_text id = "viewlog_btnViewLog"  text = "Display log details"/>
+  <tooltip_text id = "viewlog_errors"  text = "The count of the number of errors during the installation"/>
+  <tooltip_text id = "viewlog_warnings"  text = "The count of the number of warnings during the installation"/>
+  <tooltip_text id = "viewlog_messages"  text = "The count of the number of messages during the installation"/>
+  
+  <tooltip_text id = "log_export"  text = "Export log"/>
+  <tooltip_text id = "log_close"  text = "Close log viewer"/>
+  
+  <tooltip_text id = "config_folder"  text = "Select the folder containing the files to configure"/>
+  <tooltip_text id = "config_FromDefaultSetting"  text = "Value from default"/>
+  <tooltip_text id = "config_FromProcessConfig"  text = "Value from process configuration file"/>
+  <tooltip_text id = "config_FromMIDSetting"  text = "Value from MIDSettings configuration file. Must be removed from MIDSettings to be changed"/>
+  <tooltip_text id = "config_configlist"  text = "Select the configuration file to be updated"/>
+  
+  <tooltip_text id = "util_databasemaint"  text = "Launch database maintenance utility"/>
+  <tooltip_text id = "util_startservices"  text = "Start all application services"/>
+  <tooltip_text id = "util_stopservices"  text = "Stop all application services"/>
+  <tooltip_text id = "util_rescan"  text = "Rescan the computer to detect Logilit-RO software"/>
+  <tooltip_text id = "util_eventSources"  text = "Add all necessary Windows Event sources"/>
+  <tooltip_text id = "util_crystalReports"  text = "Install Crystal Reports Viewer"/>
+  
+  <tooltip_text id = "scan_scan"  text = "Rescan the computer to detect MIDRetail software"/>
+  
+  <substitution old = "C:\MIDRetail\Client\logs"  new = "C:\MIDRetailData\logs"/>
+  <substitution old = "localhost"  new = "%machine%"/>
+  <substitution old = "C:\Program Files\MID, Inc\MID Advanced Allocation for SQL Server\MID Advanced Allocation"  new = "%installdir%\MIDRetail_Client\Client"/>
+  <substitution old = "C:\Program Files\MID, Inc\MID Advanced Allocation for SQL Server"  new = "%installdir%\MIDRetail_Client"/>
+  <substitution old = "C:\Program Files\MID, Inc"  new = "%installdir%"/>
+  <substitution old = "C:\Program Files\MID Inc\MID Advanced Allocation for SQL Server\MID Advanced Allocation"  new = "%installdir%\MIDRetail_Client\Client"/>
+  <substitution old = "C:\Program Files\MID Inc\MID Advanced Allocation for SQL Server"  new = "%installdir%\MIDRetail_Client"/>
+  <substitution old = "C:\Program Files\MID Inc"  new = "%installdir%"/>
+  <substitution old = "C:\Program Files\MIDRetail\Batch" new = "%installdir%\Batch"/>
+  <substitution old = "C:\MIDRetail\MIDSettings.config" new= "%installdir%\MIDSettings.config"/>
+  <substitution old = "C:\MIDRetail\Batch" new = "%installdir%\Batch"/>
+  <substitution old = "C:\MIDRetail\Release"  new = "\\%machine%\MIDRetailDataRelease"/>
+  <substitution old = "C:\MIDRetailRelease"  new = "\\%machine%\MIDRetailDataRelease"/>
+  <substitution old = "C:\MIDRetail\Client\ExportOutput"  new = "\\%machine%\MIDRetailDataExport"/>
+  <substitution old = "C:\MIDRetail\Reports"  new = "%unc_installdir%\Reports"/>
+  <substitution old = "C:\MIDRetail\Client\ExportOutput"  new = "%unc_installdir%\Client\ExportOutput"/>
+  <substitution old = "C:\MIDRetail\Client"  new = "%installdir%"/>
+  <substitution old = "C:\MIDRetail\upgrade.log"  new = "%installdir%\Client\upgrade.log"/>
+  <substitution old = "C:\"  new = "%drive%"/>
+  
+  <rebrand old = "MIDAllocation.exe.config"  new = "MIDRetail.exe.config"/>
+  <rebrand old = "MIDAdvancedAllocationControlService.exe.config"  new = "MIDRetailControlService.exe.config"/>
+  <rebrand old = "MIDAdvancedAllocationStoreService.exe.config"  new = "MIDRetailStoreService.exe.config"/>
+  <rebrand old = "MIDAdvancedAllocationHierarchyService.exe.config"  new = "MIDRetailHierarchyService.exe.config"/>
+  <rebrand old = "MIDAdvancedAllocationSchedulerService.exe.config"  new = "MIDRetailSchedulerService.exe.config"/>
+  <rebrand old = "MIDAdvancedAllocationApplicationService.exe.config"  new = "MIDRetailApplicationService.exe.config"/>
+
+  <!--Begin TT#581-MD - JSmith - Remove unwanted settings -->
+  <remove config_file = "MIDSettings.config" setting = "APIFileProcessingDirection"/>
+  <remove config_file = "ScheduleInterface.exe.config" setting = "ConnectionString"/>
+  <remove config_file = "ScheduleInterface.exe.config" setting = "User"/>
+  <remove config_file = "ScheduleInterface.exe.config" setting = "Password"/>
+  <!--End TT#581-MD - JSmith - Remove unwanted settings -->
+
+</installer>
+
+

@@ -1,0 +1,9 @@
+alter table "METHOD_MOD_SALES_MATRIX"
+	add constraint "METHOD_MOD_SALES_SELL_THRU_METHOD_MOD_SALES_MATRIX_FK1" foreign key (
+		"METHOD_RID",
+		"SELL_THRU")
+	 references "METHOD_MOD_SALES_SELL_THRU" (
+		"METHOD_RID",
+		"SELL_THRU")  
+
+go

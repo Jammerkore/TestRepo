@@ -1,0 +1,20 @@
+--dv =============================================
+--dv Create date:	10/17/2013
+--dv Description:	Inserts a header pack rounding row
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_HEADER_PACK_ROUNDING_INSERT]
+	@HDR_RID int,
+	@PACK_MULTIPLE_RID int,
+	@PACK_ROUNDING_1ST_PACK_PCT float,
+	@PACK_ROUNDING_NTH_PACK_PCT float
+AS
+BEGIN
+	SET NOCOUNT ON;
+	
+	INSERT INTO HEADER_PACK_ROUNDING (HDR_RID, PACK_MULTIPLE_RID, PACK_ROUNDING_1ST_PACK_PCT, PACK_ROUNDING_NTH_PACK_PCT)
+    VALUES (@HDR_RID, @PACK_MULTIPLE_RID, @PACK_ROUNDING_1ST_PACK_PCT, @PACK_ROUNDING_NTH_PACK_PCT)
+
+	SELECT @@ROWCOUNT;
+
+END
+GO

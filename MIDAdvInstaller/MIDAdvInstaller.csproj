@@ -1,0 +1,501 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{EE22CD13-CBAC-421A-8078-25517DD81763}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MIDRetail.MIDRetailInstaller</RootNamespace>
+    <AssemblyName>MIDRetailInstaller</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ApplicationIcon>MIDRetail.ico</ApplicationIcon>
+    <ApplicationManifest>MIDRetailInstaller.exe.manifest</ApplicationManifest>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\midretailinccert.pfx</AssemblyOriginatorKeyFile>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>\\Midretail14\MIDRetail\Development\Unregistered DLLs\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Data.ConnectionUI, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>\\midretail14\MIDRetail\Development\Unregistered DLLs\Microsoft.Data.ConnectionUI.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Data.ConnectionUI.Dialog, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>\\midretail14\MIDRetail\Development\Unregistered DLLs\Microsoft.Data.ConnectionUI.Dialog.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualBasic.PowerPacks, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.VisualBasic.PowerPacks.Design, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Configuration.Install" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Design" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Web.Extensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AddSetting.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AddSetting.Designer.cs">
+      <DependentUpon>AddSetting.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ConfigFiles.cs" />
+    <Compile Include="Config_Text.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Config_Text.Designer.cs">
+      <DependentUpon>Config_Text.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Config_OpenFile.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Config_OpenFile.Designer.cs">
+      <DependentUpon>Config_OpenFile.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Config_Sql.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Config_Sql.Designer.cs">
+      <DependentUpon>Config_Sql.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Config_Directory.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Config_Directory.Designer.cs">
+      <DependentUpon>Config_Directory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Config_Combo.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Config_Combo.Designer.cs">
+      <DependentUpon>Config_Combo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Config_Password.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Config_Password.Designer.cs">
+      <DependentUpon>Config_Password.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Config_Numeric.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Config_Numeric.Designer.cs">
+      <DependentUpon>Config_Numeric.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ModuleCleanup.cs" />
+    <Compile Include="OneClickUpdateConfirmation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OneClickUpdateConfirmation.Designer.cs">
+      <DependentUpon>OneClickUpdateConfirmation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Shortcut.cs" />
+    <Compile Include="InstallationDocumentationConfirm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="InstallationDocumentationConfirm.Designer.cs">
+      <DependentUpon>InstallationDocumentationConfirm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Installer.cs">
+      <DependentUpon>installer.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="installer.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>installer.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="InstallerConstants.cs" />
+    <Compile Include="InstallerControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="InstallerControl.Designer.cs">
+      <DependentUpon>InstallerControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="InstallerEnums.cs" />
+    <Compile Include="InstallerFrame.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="InstallerFrame.Designer.cs">
+      <DependentUpon>InstallerFrame.cs</DependentUpon>
+    </Compile>
+    <Compile Include="InstallHelpViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="InstallHelpViewer.Designer.cs">
+      <DependentUpon>InstallHelpViewer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="InstallLogViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="InstallLogViewer.designer.cs">
+      <DependentUpon>InstallLogViewer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="AddSetting.resx">
+      <DependentUpon>AddSetting.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Config_Text.resx">
+      <DependentUpon>Config_Text.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Config_OpenFile.resx">
+      <DependentUpon>Config_OpenFile.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Config_Sql.resx">
+      <DependentUpon>Config_Sql.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Config_Directory.resx">
+      <DependentUpon>Config_Directory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Config_Combo.resx">
+      <DependentUpon>Config_Combo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Config_Password.resx">
+      <DependentUpon>Config_Password.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Config_Numeric.resx">
+      <DependentUpon>Config_Numeric.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OneClickUpdateConfirmation.resx">
+      <DependentUpon>OneClickUpdateConfirmation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InstallationDocumentationConfirm.resx">
+      <DependentUpon>InstallationDocumentationConfirm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Installer.resx">
+      <DependentUpon>Installer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InstallerControl.resx">
+      <DependentUpon>InstallerControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InstallerFrame.resx">
+      <DependentUpon>InstallerFrame.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InstallHelpViewer.resx">
+      <DependentUpon>InstallHelpViewer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InstallLogViewer.resx">
+      <DependentUpon>InstallLogViewer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ShortCutAlert.resx">
+      <DependentUpon>ShortCutAlert.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ucClient.resx">
+      <DependentUpon>ucClient.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ucConfig.resx">
+      <DependentUpon>ucConfig.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ucScan.resx">
+      <DependentUpon>ucScan.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ucInstallChooser.resx">
+      <DependentUpon>ucInstallChooser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ucServer.resx">
+      <DependentUpon>ucServer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ucUtilities.resx">
+      <DependentUpon>ucUtilities.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ucViewLog.resx">
+      <DependentUpon>ucViewLog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="VersionConfirmation.resx">
+      <DependentUpon>VersionConfirmation.cs</DependentUpon>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="App.config" />
+    <None Include="InstallerDoNotReplace.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="MIDRetailInstaller.exe.manifest" />
+    <None Include="Installer.cmd" />
+    <None Include="installer.xsc">
+      <DependentUpon>installer.xsd</DependentUpon>
+    </None>
+    <None Include="installer.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>installer.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="installer.xss">
+      <DependentUpon>installer.xsd</DependentUpon>
+    </None>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="RegistryOperations.cs" />
+    <Compile Include="ShortCutAlert.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ShortCutAlert.Designer.cs">
+      <DependentUpon>ShortCutAlert.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ShortcutNative.cs" />
+    <Compile Include="ucClient.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ucClient.Designer.cs">
+      <DependentUpon>ucClient.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ucConfig.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ucConfig.Designer.cs">
+      <DependentUpon>ucConfig.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ucInstallChooser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ucInstallChooser.Designer.cs">
+      <DependentUpon>ucInstallChooser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ucScan.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ucScan.Designer.cs">
+      <DependentUpon>ucScan.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ucServer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ucServer.Designer.cs">
+      <DependentUpon>ucServer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ucUtilities.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ucUtilities.Designer.cs">
+      <DependentUpon>ucUtilities.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ucViewLog.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ucViewLog.designer.cs">
+      <DependentUpon>ucViewLog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="VersionConfirmation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="VersionConfirmation.Designer.cs">
+      <DependentUpon>VersionConfirmation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="workflow.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Graphics\19retail.jpg" />
+    <Content Include="Graphics\AdvancedAllocation.bmp" />
+    <Content Include="Graphics\builder.ico" />
+    <Content Include="Graphics\MIDAllocation.ico" />
+    <Content Include="Graphics\windows7_certified.jpg" />
+    <Content Include="Graphics\windows7_certified.png" />
+    <Content Include="install.xml" />
+    <Content Include="installer.xml" />
+    <Content Include="InstallerDoNotReplace.xml" />
+    <Content Include="MIDRetail.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CONTROL\Windows.Controls.csproj">
+      <Project>{C589F61C-B85C-4E2F-BBB6-9B250AD08124}</Project>
+      <Name>Windows.Controls</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Encryption\MIDEncryption.csproj">
+      <Project>{5E66518E-50F2-42EC-B525-1F6C42700379}</Project>
+      <Name>MIDEncryption</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="bin\Debug\" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="IWshRuntimeLibrary">
+      <Guid>{F935DC20-1CF0-11D0-ADB9-00C04FD58A0B}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="Shell32">
+      <Guid>{50A7E9B0-70EF-11D1-B75A-00A0C90564FE}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>if $(PlatformName) == x86 goto :x86
+copy ..\..\installer.xsd .
+copy ..\..\installer.xml .
+copy ..\..\installerdonotreplace.xsd .
+copy ..\..\installerdonotreplace.xml .
+copy ..\..\config.xsd .
+copy ..\..\streams.exe .
+copy ..\..\MIDRetailInstaller.exe.manifest .
+copy ..\..\Graphics\FromDefault.bmp .
+copy ..\..\Graphics\FromMIDSettings.bmp .
+goto :exit
+:x86
+copy ..\..\..\installer.xsd .
+copy ..\..\..\installer.xml .
+copy ..\..\..\installerdonotreplace.xsd .
+copy ..\..\..\installerdonotreplace.xml .
+copy ..\..\..\config.xsd .
+copy ..\..\..\streams.exe .
+copy ..\..\..\MIDRetailInstaller.exe.manifest .
+copy ..\..\..\Graphics\FromDefault.bmp .
+copy ..\..\..\Graphics\FromMIDSettings.bmp .
+:exit</PostBuildEvent>
+  </PropertyGroup>
+</Project>

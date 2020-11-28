@@ -1,0 +1,3 @@
+alter table "BATCH_COMP_SELECTION_FILTER"
+	add constraint "BATCH_COMP_SELECTION_FILTER_PK" primary key ("BATCH_COMP_RID", "SEQUENCE")   
+GO

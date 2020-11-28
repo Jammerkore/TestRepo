@@ -1,0 +1,5 @@
+alter table "NODE_SIZE_OUTOFSTOCK_QUANTITY"
+	add constraint "NODE_SZ_OOS_QUANTITY_PK" primary key clustered ("HN_RID", "SGL_RID", "COLOR_CODE_RID", "SIZES_RID", "DIMENSIONS_RID", "ROW_TYPE_ID", "SIZE_CODE_RID")   
+
+
+GO

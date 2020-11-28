@@ -1,0 +1,5 @@
+create index "AUDIT_HEADER_METHOD_RID_IDX" on "AUDIT_HEADER" (
+	"METHOD_RID")  
+
+
+go

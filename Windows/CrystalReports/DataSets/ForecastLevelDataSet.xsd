@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="ForecastLevelDataSet" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="ForecastLevelDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_UserDSName="ForecastLevelDataSet" msprop:Generator_DataSetName="ForecastLevelDataSet">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="ForecastLevelDataTable" msprop:Generator_UserTableName="ForecastLevelDataTable" msprop:Generator_RowDeletedName="ForecastLevelDataTableRowDeleted" msprop:Generator_RowChangedName="ForecastLevelDataTableRowChanged" msprop:Generator_RowClassName="ForecastLevelDataTableRow" msprop:Generator_RowChangingName="ForecastLevelDataTableRowChanging" msprop:Generator_RowEvArgName="ForecastLevelDataTableRowChangeEvent" msprop:Generator_RowEvHandlerName="ForecastLevelDataTableRowChangeEventHandler" msprop:Generator_TableClassName="ForecastLevelDataTableDataTable" msprop:Generator_TableVarName="tableForecastLevelDataTable" msprop:Generator_RowDeletingName="ForecastLevelDataTableRowDeleting" msprop:Generator_TablePropName="ForecastLevelDataTable">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="BN_ID" msprop:Generator_UserColumnName="BN_ID" msprop:Generator_ColumnVarNameInTable="columnBN_ID" msprop:Generator_ColumnPropNameInRow="BN_ID" msprop:Generator_ColumnPropNameInTable="BN_IDColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="BN_NAME" msprop:Generator_UserColumnName="BN_NAME" msprop:Generator_ColumnVarNameInTable="columnBN_NAME" msprop:Generator_ColumnPropNameInRow="BN_NAME" msprop:Generator_ColumnPropNameInTable="BN_NAMEColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="DISPLAY_TEXT" msprop:Generator_UserColumnName="DISPLAY_TEXT" msprop:Generator_ColumnVarNameInTable="columnDISPLAY_TEXT" msprop:Generator_ColumnPropNameInRow="DISPLAY_TEXT" msprop:Generator_ColumnPropNameInTable="DISPLAY_TEXTColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="HIERARCHY" msprop:Generator_UserColumnName="HIERARCHY" msprop:Generator_ColumnVarNameInTable="columnHIERARCHY" msprop:Generator_ColumnPropNameInRow="HIERARCHY" msprop:Generator_ColumnPropNameInTable="HIERARCHYColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="LEVEL" msprop:Generator_UserColumnName="LEVEL" msprop:Generator_ColumnVarNameInTable="columnLEVEL" msprop:Generator_ColumnPropNameInRow="LEVEL" msprop:Generator_ColumnPropNameInTable="LEVELColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="MASK" msprop:Generator_UserColumnName="MASK" msprop:Generator_ColumnVarNameInTable="columnMASK" msprop:Generator_ColumnPropNameInRow="MASK" msprop:Generator_ColumnPropNameInTable="MASKColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="MASK_VALUE" msprop:Generator_UserColumnName="MASK_VALUE" msprop:Generator_ColumnVarNameInTable="columnMASK_VALUE" msprop:Generator_ColumnPropNameInRow="MASK_VALUE" msprop:Generator_ColumnPropNameInTable="MASK_VALUEColumn" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

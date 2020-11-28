@@ -1,0 +1,25 @@
+--dv =============================================
+--dv Create date:	12/02/2013
+--dv Description:	Deletes szrun and combo pattern rows for build packs based on the method and pattern pack rid list
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_METHOD_BLD_PACKS_COMBO_PATTERN_DELETE]
+	@METHOD_RID int,
+	@PATTERN_PACK_RID_LIST PATTERN_PACK_RID_TYPE READONLY
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	DELETE 
+	FROM METHOD_BLD_PACKS_COMBO_PATTERN_SZRUN 
+	WHERE METHOD_RID=@METHOD_RID 
+		  AND PATTERN_PACK_RID IN (SELECT PATTERN_PACK_RID FROM @PATTERN_PACK_RID_LIST)
+
+	DELETE 
+	FROM METHOD_BLD_PACKS_COMBO_PATTERN 
+	WHERE METHOD_RID=@METHOD_RID 
+		  AND PATTERN_PACK_RID IN (SELECT PATTERN_PACK_RID FROM @PATTERN_PACK_RID_LIST)
+
+	SELECT @@ROWCOUNT;
+
+END
+GO

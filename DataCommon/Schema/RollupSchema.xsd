@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema id="RollupSchema" targetNamespace="http://tempuri.org/RollupSchema.xsd"
+	elementFormDefault="qualified" xmlns="http://tempuri.org/RollupSchema.xsd" xmlns:mstns="http://tempuri.org/RollupSchema.xsd"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="Requests">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Options" minOccurs="0" maxOccurs="1">
+					<xs:complexType>
+						<xs:attribute name="RollupDays" use="optional" default="All">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:enumeration value="Current"></xs:enumeration>
+									<xs:enumeration value="All"></xs:enumeration>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:attribute>
+						<xs:attribute name="HonorLocks" type="xs:boolean" use="optional" default="false"></xs:attribute>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Variables" minOccurs="0" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:attribute name="Name" type="xs:string" use="required" />
+						<xs:attribute name="ChainHistoryLevel" type="xs:string" use="optional" />
+						<xs:attribute name="ChainForecastLevel" type="xs:string" use="optional" />
+						<xs:attribute name="StoreDailyHistoryLevel" type="xs:string" use="optional" />
+						<xs:attribute name="StoreWeeklyHistoryLevel" type="xs:string" use="optional" />
+						<xs:attribute name="StoreForecastLevel" type="xs:string" use="optional" />
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Request" minOccurs="0" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:attribute name="Type" use="optional" default="Level">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:enumeration value="Level"></xs:enumeration>
+									<xs:enumeration value="StoreToChain"></xs:enumeration>
+									<xs:enumeration value="Posting"></xs:enumeration>
+									<xs:enumeration value="Reclass"></xs:enumeration>
+									<xs:enumeration value="Intransit"></xs:enumeration>
+									<xs:enumeration value="DayToWeek"></xs:enumeration>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:attribute>
+						<xs:attribute name="Product" type="xs:string" use="optional" />
+						<xs:attribute name="Version" type="xs:string" use="optional" default="Actual" />
+						<xs:attribute name="Data" use="optional" default="All" >
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:enumeration value="All"></xs:enumeration>
+									<xs:enumeration value="Store"></xs:enumeration>
+									<xs:enumeration value="Chain"></xs:enumeration>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:attribute>
+						<xs:attribute name="Period" use="optional" default="Week">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:enumeration value="Week"></xs:enumeration>
+									<xs:enumeration value="Day"></xs:enumeration>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:attribute>
+						<xs:attribute name="DateType" use="optional" default="Calendar">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:enumeration value="Calendar"></xs:enumeration>
+									<xs:enumeration value="Fiscal"></xs:enumeration>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:attribute>
+						<xs:attribute name="FromDate" type="xs:string" use="optional"/>
+						<xs:attribute name="ToDate" type="xs:string" use="optional"/>
+						<xs:attribute name="ToLevel" type="xs:string" use="optional"/>
+						<xs:attribute name="FromLevel" type="xs:string" use="optional"/>
+						<xs:attribute name="OverrideVariableLevels" type="xs:boolean" use="optional" default="false" />
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

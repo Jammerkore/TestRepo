@@ -1,0 +1,6 @@
+alter table "FORECAST_MODEL_VARIABLE"
+	add constraint "FORECAST_MODEL_VARIABLE_PK" primary key ("FORECAST_MOD_RID","VARIABLE_SEQUENCE")   
+
+
+
+GO

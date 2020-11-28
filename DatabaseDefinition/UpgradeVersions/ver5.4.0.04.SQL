@@ -1,0 +1,36 @@
+IF .dbo.UDF_ColumnAlreadyExists('HIERARCHY_NODE', 'NODE_DELETE_IND') = 0
+BEGIN
+	alter table HIERARCHY_NODE add NODE_DELETE_IND char(1) null
+END
+GO
+
+update HIERARCHY_NODE set NODE_DELETE_IND = '0'
+
+alter table HIERARCHY_NODE alter column NODE_DELETE_IND char(1) not null
+alter table HIERARCHY_NODE add default '0' for NODE_DELETE_IND
+
+IF .dbo.UDF_ColumnAlreadyExists('HIER_NODE_JOIN', 'NODE_DELETE_IND') = 0
+BEGIN
+	alter table HIER_NODE_JOIN add NODE_DELETE_IND char(1) null
+END
+GO
+
+update HIER_NODE_JOIN set NODE_DELETE_IND = '0'
+
+alter table HIER_NODE_JOIN alter column NODE_DELETE_IND char(1) not null
+alter table HIER_NODE_JOIN add default '0' for NODE_DELETE_IND
+
+IF .dbo.UDF_ColumnAlreadyExists('HIER_NODE_JOIN', 'VIRTUAL_IND') = 0
+BEGIN
+	alter table HIER_NODE_JOIN add VIRTUAL_IND char(1) null
+END
+GO
+
+UPDATE HIER_NODE_JOIN
+SET HIER_NODE_JOIN.VIRTUAL_IND = HIERARCHY_NODE.VIRTUAL_IND
+FROM HIERARCHY_NODE
+INNER JOIN HIER_NODE_JOIN ON HIERARCHY_NODE.HN_RID = HIER_NODE_JOIN.HN_RID
+
+UPDATE HIER_NODE_JOIN
+SET VIRTUAL_IND = '0'
+where VIRTUAL_IND is null

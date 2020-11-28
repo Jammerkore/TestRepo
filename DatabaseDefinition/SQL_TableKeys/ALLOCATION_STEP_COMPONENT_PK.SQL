@@ -1,0 +1,6 @@
+alter table "ALLOCATION_STEP_COMPONENT"
+	add constraint "ALLOCATION_STEP_COMPONENT_PK" primary key clustered ("WORKFLOW_RID", "STEP_NUMBER", "COMP_CRIT_RID", "COMP_TYPE_ID")   
+
+
+
+GO

@@ -1,0 +1,95 @@
+<?xml version="1.0" standalone="yes"?>
+ <xs:schema id="installer" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+   <xs:element name="installer" msdata:IsDataSet="true" msdata:UseCurrentLocale="true">
+     <xs:complexType>
+       <xs:choice minOccurs="0" maxOccurs="unbounded">
+         <xs:element name="install_file">
+           <xs:complexType>
+			        <xs:attribute name="application" type="xs:string" />
+              <xs:attribute name="folder" type="xs:string" />
+              <xs:attribute name="name" type="xs:string" />
+			        <xs:attribute name="platform" type="xs:string" />
+           </xs:complexType>
+         </xs:element>
+		     <xs:element name="upgrade_file">
+           <xs:complexType>
+			        <xs:attribute name="application" type="xs:string" />
+              <xs:attribute name="folder" type="xs:string" />
+              <xs:attribute name="name" type="xs:string" />
+			        <xs:attribute name="platform" type="xs:string" />
+           </xs:complexType>
+         </xs:element>
+		     <xs:element name="boolean">
+           <xs:complexType>
+			        <xs:attribute name="setting" type="xs:string" />
+           </xs:complexType>
+		     </xs:element>
+		     <xs:element name="window_style">
+           <xs:complexType>
+			        <xs:attribute name="setting" type="xs:string" />
+           </xs:complexType>
+         </xs:element>
+		     <xs:element name="configuration">
+           <xs:complexType>
+			        <xs:attribute name="config_file" type="xs:string" />
+			        <xs:attribute name="setting" type="xs:string" />
+			        <xs:attribute name="type" type="xs:string" />
+			        <xs:attribute name="id" type="xs:string" />
+			        <xs:attribute name="isRequired" type="xs:boolean" use="optional" default="false" />
+           </xs:complexType>
+         </xs:element>
+		     <xs:element name="description">
+           <xs:complexType>
+			        <xs:attribute name="id" type="xs:string" />
+			        <xs:attribute name="text" type="xs:string" />
+			        <xs:attribute name="defaultValue" type="xs:string" />
+			        <xs:attribute name="list" type="xs:string" use="optional"/>
+           </xs:complexType>
+         </xs:element>
+		     <xs:element name="config_file">
+           <xs:complexType>
+			        <xs:attribute name="filename" type="xs:string" />
+			        <xs:attribute name="index" type="xs:string" />
+			        <xs:attribute name="value" type="xs:string" />
+           </xs:complexType>
+         </xs:element>
+		     <xs:element name="install_text">
+           <xs:complexType>
+			        <xs:attribute name="id" type="xs:string" />
+			        <xs:attribute name="text" type="xs:string" />
+           </xs:complexType>
+         </xs:element>
+		     <xs:element name="help_text">
+           <xs:complexType>
+			        <xs:attribute name="id" type="xs:string" />
+			        <xs:attribute name="text" type="xs:string" />
+           </xs:complexType>
+         </xs:element>
+		     <xs:element name="tooltip_text">
+           <xs:complexType>
+			        <xs:attribute name="id" type="xs:string" />
+			        <xs:attribute name="text" type="xs:string" />
+           </xs:complexType>
+         </xs:element>
+		     <xs:element name="substitution">
+           <xs:complexType>
+			        <xs:attribute name="old" type="xs:string" />
+			        <xs:attribute name="new" type="xs:string" />
+           </xs:complexType>
+         </xs:element>
+		     <xs:element name="rebrand">
+           <xs:complexType>
+			        <xs:attribute name="old" type="xs:string" />
+			        <xs:attribute name="new" type="xs:string" />
+           </xs:complexType>
+         </xs:element>
+         <xs:element name="remove">
+           <xs:complexType>
+             <xs:attribute name="config_file" type="xs:string" />
+             <xs:attribute name="setting" type="xs:string" />
+           </xs:complexType>
+         </xs:element>
+       </xs:choice>
+     </xs:complexType>
+   </xs:element>
+ </xs:schema>

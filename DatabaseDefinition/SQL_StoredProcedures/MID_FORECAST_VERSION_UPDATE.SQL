@@ -1,0 +1,36 @@
+--dv =============================================
+--dv Create date:	11/26/2013
+--dv Description:	Updates a forecast version
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_FORECAST_VERSION_UPDATE] 
+	@FV_RID int,
+	@FV_ID char(1),
+	@DESCRIPTION varchar(50),
+	@PROTECT_HISTORY_IND char(1),
+	@ACTIVE_IND char(1),
+	@BLEND_TYPE int,
+	@ACTUAL_FV_RID int,
+	@FORECAST_FV_RID int,
+	@CURRENT_BLEND_IND char(1),
+	@SIMILAR_STORE_IND char(1)
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	UPDATE FORECAST_VERSION 
+	SET
+		FV_ID = @FV_ID,
+		DESCRIPTION = @DESCRIPTION,
+		PROTECT_HISTORY_IND = @PROTECT_HISTORY_IND,
+		ACTIVE_IND = @ACTIVE_IND,
+		BLEND_TYPE = @BLEND_TYPE,
+		ACTUAL_FV_RID = @ACTUAL_FV_RID,
+		FORECAST_FV_RID = @FORECAST_FV_RID,
+		CURRENT_BLEND_IND = @CURRENT_BLEND_IND,
+		SIMILAR_STORE_IND = @SIMILAR_STORE_IND
+	WHERE FV_RID = @FV_RID
+
+	SELECT @@ROWCOUNT;
+
+END
+GO

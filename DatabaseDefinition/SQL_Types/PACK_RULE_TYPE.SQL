@@ -1,0 +1,7 @@
+CREATE TYPE [dbo].[PACK_RULE_TYPE]  AS TABLE(
+	[ST_RID] [int],
+	[RULE_TYPE] [int],
+	[UNITS] [int]
+	PRIMARY KEY (ST_RID, RULE_TYPE) 
+	)
+go

@@ -1,0 +1,53 @@
+--dv =============================================
+--dv Modified date: 6/23/2014
+--dv Notes:	
+--dv History: 9/29/2014 TT#1313-MD -jsobek -Header Filters
+--dv ============================================= 
+CREATE TABLE [dbo].[FILTER_CONDITION](
+	[CONDITION_RID] [int] IDENTITY(1,1) NOT NULL,
+	[FILTER_RID] [int] NOT NULL,
+	[SEQ] [int] NOT NULL,
+	[PARENT_SEQ] [int] NOT NULL,
+	[SIBLING_SEQ] [int] NOT NULL,
+	[ELEMENT_GROUP_TYPE_INDEX] [int] NOT NULL,
+	[LOGIC_INDEX] [int] NULL,
+	[FIELD_INDEX] [int] NULL,
+	[OPERATOR_INDEX] [int] NULL,
+	[VALUE_TYPE_INDEX] [int] NULL,
+	[DATE_TYPE_INDEX] [int] NULL,
+	[NUMERIC_TYPE_INDEX] [int] NULL,
+	[VALUE_TO_COMPARE] [varchar](200) NULL,
+	[VALUE_TO_COMPARE_DOUBLE] [float] NULL,
+	[VALUE_TO_COMPARE_DOUBLE2] [float] NULL,
+	[VALUE_TO_COMPARE_INT] [int] NULL,
+	[VALUE_TO_COMPARE_INT2] [int] NULL,
+	[VALUE_TO_COMPARE_BOOL] [bit] NULL,
+	[VALUE_TO_COMPARE_DATE_FROM] [datetime] NULL,
+	[VALUE_TO_COMPARE_DATE_TO] [datetime] NULL,
+	[VALUE_TO_COMPARE_DATE_DAYS_FROM] [int] NULL,
+	[VALUE_TO_COMPARE_DATE_DAYS_TO] [int] NULL,
+	[VAR1_VARIABLE_INDEX] [int] NULL,
+	[VAR1_VERSION_INDEX] [int] NULL,
+	[VAR1_HN_RID] [int] NULL,
+	[VAR1_CDR_RID] [int] NULL,
+	[VAR1_VALUE_TYPE_INDEX] [int] NULL,
+	[VAR1_TIME_INDEX] [int] NULL,
+	[VAR1_IS_TIME_TOTAL] [bit] NULL,
+	[VAR_PERCENTAGE_OPERATOR_INDEX] [int] NULL,
+	[VAR2_VARIABLE_INDEX] [int] NULL,
+	[VAR2_VERSION_INDEX] [int] NULL,
+	[VAR2_HN_RID] [int] NULL,
+	[VAR2_CDR_RID] [int] NULL,
+	[VAR2_VALUE_TYPE_INDEX] [int] NULL,
+	[VAR2_TIME_INDEX] [int] NULL,
+	[VAR2_IS_TIME_TOTAL] [bit] NULL,
+	[HEADER_HN_RID] [int] NULL,
+	[SORT_BY_TYPE_INDEX] [int] NULL,
+	[SORT_BY_FIELD_INDEX] [int] NULL,
+	[LIST_VALUE_CONSTANT_INDEX] [int] NULL
+)
+
+GO
+
+
+

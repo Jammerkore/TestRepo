@@ -1,0 +1,295 @@
+CREATE PROCEDURE [dbo].[SP_MID_GET_ANCESTORS_WITH_APPLY_FROM] 
+	@HN_RID INT,
+	@PH_RID INT,
+	@HierarchySearchType INT, -- follows eHierarchySearchType
+	@debug BIT = 0
+AS
+SET NOCOUNT ON
+
+DECLARE @Loop INT,
+	@SaveCount INT,
+	@HOME_PH_RID INT,
+	@RID INT
+
+CREATE TABLE #TEMP (
+	LOOPCOUNT INT NOT NULL,
+	HN_RID INT NULL,
+	HOME_PH_RID INT NULL,
+	HOME_LEVEL INT NULL,
+	INHERITFROM INT NULL
+	)
+
+CREATE TABLE #dups (
+	HN_RID INT NULL,
+	TOTAL INT NULL
+	)
+
+CREATE TABLE #TEMPHOLD (
+	LOOPCOUNT INT NOT NULL,
+	HN_RID INT NULL,
+	HOME_PH_RID INT NULL,
+	HOME_LEVEL INT NULL,
+	INHERITFROM INT NULL
+	)
+
+SELECT @Loop = 0
+
+SELECT @HOME_PH_RID = HOME_PH_RID
+FROM [dbo].[HIERARCHY_NODE] WITH (NOLOCK)
+WHERE HN_RID = @HN_RID
+
+-- insert the node into the temp table
+INSERT #TEMP (
+	LOOPCOUNT,
+	HN_RID,
+	HOME_PH_RID,
+	HOME_LEVEL,
+	INHERITFROM
+	)
+SELECT @Loop,
+	@HN_RID,
+	hn.HOME_PH_RID,
+	hn.HOME_LEVEL,
+	hnp.APPLY_HN_RID_FROM
+FROM [dbo].[HIERARCHY_NODE] hn WITH (NOLOCK)
+LEFT JOIN [dbo].[HIER_NODE_PROPERTIES] hnp WITH (NOLOCK) ON hn.[HN_RID] = hnp.[HN_RID]
+WHERE hn.HN_RID = @HN_RID
+
+SET @SaveCount = @@ROWCOUNT
+
+-- pick up any APPLY_HN_RID_FROM paths
+INSERT #TEMP (
+	LOOPCOUNT,
+	HN_RID,
+	HOME_PH_RID,
+	HOME_LEVEL,
+	INHERITFROM
+	)
+SELECT @Loop + 1,
+	hn.HN_RID,
+	hn.HOME_PH_RID,
+	hn.HOME_LEVEL,
+	NULL
+FROM [dbo].[HIERARCHY_NODE] hn WITH (NOLOCK)
+WHERE hn.HN_RID = (
+		SELECT INHERITFROM
+		FROM #TEMP
+		WHERE LOOPCOUNT = @Loop
+		)
+
+IF @@ROWCOUNT <> 0
+BEGIN
+	SELECT @PH_RID = HOME_PH_RID
+	FROM [dbo].[HIERARCHY_NODE] WITH (NOLOCK)
+	WHERE HN_RID = (
+			SELECT INHERITFROM
+			FROM #TEMP
+			WHERE LOOPCOUNT = @Loop
+			)
+
+	SET @HOME_PH_RID = @PH_RID
+	SET @Loop = @Loop + 1
+END
+
+-- chase all paths
+WHILE @SaveCount > 0
+BEGIN
+	--print @Loop
+	IF @HierarchySearchType = 0 -- home hierarchy only
+	BEGIN
+		INSERT #TEMP (
+			LOOPCOUNT,
+			HN_RID,
+			HOME_PH_RID,
+			HOME_LEVEL,
+			INHERITFROM
+			)
+		SELECT @Loop + 1,
+			hnj.PARENT_HN_RID,
+			hn.HOME_PH_RID,
+			hn.HOME_LEVEL,
+			hnp.APPLY_HN_RID_FROM
+		FROM #TEMP t WITH (NOLOCK)
+		JOIN [dbo].[HIER_NODE_JOIN] hnj WITH (NOLOCK) ON hnj.HN_RID = t.HN_RID
+		JOIN [dbo].[HIERARCHY_NODE] hn WITH (NOLOCK) ON hn.HN_RID = hnj.PARENT_HN_RID
+		--JOIN [dbo].[PRODUCT_HIERARCHY] ph WITH (NOLOCK) ON ph.PH_RID = hn.HOME_PH_RID
+		LEFT JOIN [dbo].[HIER_NODE_PROPERTIES] hnp WITH (NOLOCK) ON hnj.PARENT_HN_RID = hnp.HN_RID
+		WHERE t.LOOPCOUNT = @Loop
+			AND hnj.PH_RID = @HOME_PH_RID
+			AND hnj.PARENT_HN_RID > 0
+			AND hnj.NODE_DELETE_IND = '0' -- TT#3630 - JSmith - Delete My Hierarchy
+
+		SET @SaveCount = @@ROWCOUNT
+	END
+	ELSE IF @HierarchySearchType = 1 -- alternates only
+	BEGIN
+		INSERT #TEMP (
+			LOOPCOUNT,
+			HN_RID,
+			HOME_PH_RID,
+			HOME_LEVEL,
+			INHERITFROM
+			)
+		SELECT @Loop + 1,
+			hnj.PARENT_HN_RID,
+			hn.HOME_PH_RID,
+			hn.HOME_LEVEL,
+			hnp.APPLY_HN_RID_FROM
+		FROM #TEMP t WITH (NOLOCK)
+		JOIN [dbo].[HIER_NODE_JOIN] hnj WITH (NOLOCK) ON hnj.HN_RID = t.HN_RID
+		JOIN [dbo].[HIERARCHY_NODE] hn WITH (NOLOCK) ON hn.HN_RID = hnj.PARENT_HN_RID
+		JOIN [dbo].[PRODUCT_HIERARCHY] ph WITH (NOLOCK) ON ph.PH_RID = hn.HOME_PH_RID
+		LEFT JOIN [dbo].[HIER_NODE_PROPERTIES] hnp WITH (NOLOCK) ON hnj.PARENT_HN_RID = hnp.HN_RID
+		WHERE t.LOOPCOUNT = @Loop
+			AND ph.PH_TYPE = 800001
+			AND hnj.PARENT_HN_RID > 0
+			AND hnj.NODE_DELETE_IND = '0' -- TT#3630 - JSmith - Delete My Hierarchy
+
+		SET @SaveCount = @@ROWCOUNT
+	END
+	ELSE IF @HierarchySearchType = 2 -- specific hierarchy
+	BEGIN
+		INSERT #TEMP (
+			LOOPCOUNT,
+			HN_RID,
+			HOME_PH_RID,
+			HOME_LEVEL,
+			INHERITFROM
+			)
+		SELECT @Loop + 1,
+			hnj.PARENT_HN_RID,
+			hn.HOME_PH_RID,
+			hn.HOME_LEVEL,
+			hnp.APPLY_HN_RID_FROM
+		FROM #TEMP t WITH (NOLOCK)
+		JOIN [dbo].[HIER_NODE_JOIN] hnj WITH (NOLOCK) ON hnj.HN_RID = t.HN_RID
+		JOIN [dbo].[HIERARCHY_NODE] hn WITH (NOLOCK) ON hn.HN_RID = hnj.PARENT_HN_RID
+		--JOIN [dbo].[PRODUCT_HIERARCHY] ph WITH (NOLOCK) ON ph.PH_RID = hn.HOME_PH_RID
+		LEFT JOIN [dbo].[HIER_NODE_PROPERTIES] hnp WITH (NOLOCK) ON hnj.PARENT_HN_RID = hnp.HN_RID
+		WHERE t.LOOPCOUNT = @Loop
+			AND hnj.PH_RID = @PH_RID
+			AND hnj.PARENT_HN_RID > 0
+			AND hnj.NODE_DELETE_IND = '0' -- TT#3630 - JSmith - Delete My Hierarchy
+
+		SET @SaveCount = @@ROWCOUNT
+	END
+	ELSE -- all hierarchies
+	BEGIN
+		INSERT #TEMP (
+			LOOPCOUNT,
+			HN_RID,
+			HOME_PH_RID,
+			HOME_LEVEL,
+			INHERITFROM
+			)
+		SELECT @Loop + 1,
+			hnj.PARENT_HN_RID,
+			hn.HOME_PH_RID,
+			hn.HOME_LEVEL,
+			hnp.APPLY_HN_RID_FROM
+		FROM #TEMP t WITH (NOLOCK)
+		JOIN [dbo].[HIER_NODE_JOIN] hnj WITH (NOLOCK) ON hnj.HN_RID = t.HN_RID
+		JOIN [dbo].[HIERARCHY_NODE] hn WITH (NOLOCK) ON hn.HN_RID = hnj.PARENT_HN_RID
+		--JOIN [dbo].[PRODUCT_HIERARCHY] ph WITH (NOLOCK) ON ph.PH_RID = hn.HOME_PH_RID
+		LEFT JOIN [dbo].[HIER_NODE_PROPERTIES] hnp WITH (NOLOCK) ON hnj.PARENT_HN_RID = hnp.HN_RID
+		WHERE t.LOOPCOUNT = @Loop
+			AND hnj.PARENT_HN_RID > 0
+			AND hnj.NODE_DELETE_IND = '0' -- TT#3630 - JSmith - Delete My Hierarchy
+			AND hnj.PARENT_HN_RID not in (select HN_RID from #TEMP)   -- TT#4531 - JSmith - Timeout Error in Hierarchy Load (SubCatLowLevel) in production 
+
+		SET @SaveCount = @@ROWCOUNT
+	END
+
+	SET @Loop = @Loop + 1
+
+	-- pick up any APPLY_HN_RID_FROM paths
+	INSERT #TEMP (
+		LOOPCOUNT,
+		HN_RID,
+		HOME_PH_RID,
+		HOME_LEVEL,
+		INHERITFROM
+		)
+	SELECT @Loop + 1,
+		hn.HN_RID,
+		hn.HOME_PH_RID,
+		hn.HOME_LEVEL,
+		NULL
+	FROM [dbo].[HIERARCHY_NODE] hn WITH (NOLOCK)
+	--WHERE hn.HN_RID = (            -- TT#4271 - JSmith - User Release Errors Logged 01202015
+	WHERE hn.HN_RID in (             -- TT#4271 - JSmith - User Release Errors Logged 01202015
+			SELECT DISTINCT INHERITFROM
+			FROM #TEMP
+			WHERE LOOPCOUNT = @Loop
+				AND INHERITFROM IS NOT NULL
+			)
+	  AND hn.HN_RID not in (select HN_RID from #TEMP)   -- TT#4531 - JSmith - Timeout Error in Hierarchy Load (SubCatLowLevel) in production
+
+	IF @@ROWCOUNT <> 0
+	BEGIN
+		SELECT @PH_RID = HOME_PH_RID
+		FROM [dbo].[HIERARCHY_NODE] WITH (NOLOCK)
+		WHERE HN_RID = (
+				SELECT TOP 1 INHERITFROM
+				FROM #TEMP
+				WHERE LOOPCOUNT = @Loop
+					AND INHERITFROM IS NOT NULL
+				)
+
+		SET @HOME_PH_RID = @PH_RID
+		SET @Loop = @Loop + 1
+	END
+END
+
+-- remove duplicate nodes keeping the lowest loopcount
+INSERT #dups (
+	HN_RID,
+	TOTAL
+	)
+SELECT HN_RID,
+	count(*)
+FROM #TEMP
+GROUP BY HN_RID
+HAVING count(*) > 1
+
+IF @@ROWCOUNT <> 0
+BEGIN
+	SELECT TOP 1 @RID = HN_RID
+	FROM #dups
+
+	WHILE @@rowcount <> 0
+	BEGIN
+		-- copy rows for duplicate node to hold table
+		INSERT #TEMPHOLD
+		SELECT *
+		FROM #TEMP
+		WHERE HN_RID = @RID
+
+		-- delete rows from #TEMP
+		DELETE
+		FROM #TEMP
+		WHERE HN_RID = @RID
+
+		-- copy lowest loop count back to #TEMP
+		INSERT #TEMP
+		SELECT TOP 1 *
+		FROM #TEMPHOLD
+		ORDER BY LOOPCOUNT
+
+		DELETE #dups
+		WHERE HN_RID = @RID
+
+		SELECT TOP 1 @RID = HN_RID
+		FROM #dups
+	END
+END
+
+SELECT HN_RID,
+	HOME_PH_RID,
+	HOME_LEVEL
+FROM #TEMP
+ORDER BY LOOPCOUNT,
+	HOME_LEVEL DESC
+GO
+
+

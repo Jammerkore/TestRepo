@@ -1,0 +1,28 @@
+﻿201101~20335~Region~reserve~NULL
+201101~20335~Region~Southwest~15
+201101~20335~Region~West~31
+201101~20335~Region~Mid West~15
+201101~20335~Region~Mid Atlantic~12
+201101~20335~Region~South~15
+201101~20335~Region~orth~12
+201101~20335~Region~Available Stores~NULL
+
+201102~20335~Location~Mall~45
+201102~20335~Location~Strip Center~20
+201102~20335~Location~Web~15
+201102~20335~Location~Free Standing~20
+201102~20335~Location~Available Stores~NULL
+
+201101~mid2~Location~Available Stores~NULL
+201101~mid2~Location~Free Standing~20
+201101~mid2~ocation~Web~15
+201101~mid2~Location~Mall~45
+201101~mid2~Location~Strip Center~20
+
+201102~mid2~Region~Available Stores~NULL
+201102~mid2~Region~Southwest~15
+201102~mid2~Region~South~15
+20102~mid2~Region~Mid West~16
+201102~mid2~Region~West~30
+201102~mid2~Region~North~12
+201102~mid2~Region~Mid Atlantic~12

@@ -1,0 +1,28 @@
+--dv =============================================
+--dv Create date:	2/11/2014
+--dv Description:	Returns a User Defined Assortment
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_USER_ASSORTMENT_READ]
+	@USER_RID INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT 
+		USER_RID,
+		COALESCE(SG_RID,-1) as SG_RID,
+		GROUP_BY_ID, 
+		VIEW_RID,
+		COALESCE(VARIABLE_TYPE,0) as VARIABLE_TYPE,
+		COALESCE(VARIABLE_NUMBER,-1) as VARIABLE_NUMBER,
+		INCL_ONHAND, 
+		INCL_INTRANSIT, 
+		INCL_SIMILAR_STORES, 
+		INCL_COMMITTED, 
+		AVERAGE_BY,
+		COALESCE(GRADE_BOUNDARY_IND,0) as GRADE_BOUNDARY_IND
+    FROM USER_ASSORTMENT 
+	WHERE USER_RID = @USER_RID
+	
+END
+GO

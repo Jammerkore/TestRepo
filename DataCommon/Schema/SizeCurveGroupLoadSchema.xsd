@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema id="SizeCurveGroupLoadSchema" targetNamespace="http://tempuri.org/SizeCurveGroupLoadSchema.xsd"
+	elementFormDefault="qualified" xmlns="http://tempuri.org/SizeCurveGroupLoadSchema.xsd"
+	xmlns:mstns="http://tempuri.org/SizeCurveGroupLoadSchema.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="SizeCurveGroups">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="SizeCurveGroup" minOccurs="1" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="SizeCurve" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Size" minOccurs="0" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:attribute name="CodeID" type="xs:string" use="optional" />
+												<xs:attribute name="Primary" type="xs:string" use="optional" />
+												<xs:attribute name="Secondary" type="xs:string" use="optional" />
+												<xs:attribute name="Value" type="xs:double" use="optional" />
+												<xs:attribute name="SizeAction">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:enumeration value="Create" />
+															<xs:enumeration value="Modify" />
+															<xs:enumeration value="Remove" />
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:attribute>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+									<xs:attribute name="SizeCurveName" type="xs:string" use="optional" />
+									<xs:attribute name="ProductCategory" type="xs:string" use="optional" />
+									<xs:attribute name="SizeCurveAction">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:enumeration value="Create" />
+												<xs:enumeration value="Modify" />
+												<xs:enumeration value="Remove" />
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:attribute>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+						<xs:attribute name="SizeCurveGroupName" type="xs:string" use="required" />
+						<xs:attribute name="SizeCurveGroupAction">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:enumeration value="Create" />
+									<xs:enumeration value="Modify" />
+									<xs:enumeration value="Remove" />
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:attribute>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

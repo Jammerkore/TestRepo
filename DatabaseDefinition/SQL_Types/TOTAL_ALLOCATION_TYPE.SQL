@@ -1,0 +1,30 @@
+CREATE TYPE [dbo].[TOTAL_ALLOCATION_TYPE]  AS TABLE(
+	[HDR_RID] [int],
+	[ST_RID] [int],
+	[STORE_GRADE_INDEX] [int],
+	[UNITS_ALLOCATED] [int],
+	[UNITS_SHIPPED] [int],
+	[UNITS_ALLOCATED_BY_AUTO] [int],
+	[UNITS_ALLOCATED_BY_RULE] [int],
+	[CHOSEN_RULE_TYPE_ID] [int],
+	[CHOSEN_RULE_LAYER_ID] [int],
+	[SHIP_DAY] [smalldatetime],
+	[NEED_DAY] [smalldatetime],
+	[UNIT_NEED_BEFORE] [int],
+	[PERCENT_NEED_BEFORE] [float],
+	[MINIMUM] [int],
+	[MAXIMUM] [int],
+	[PRIMARY_MAX] [int],
+	[STORE_CAPACITY] [int],
+	[ALLOC_STORE_DET_AUDIT_FLAGS] [int],
+	[ALLOC_STORE_GEN_AUDIT_FLAGS] [int],
+	[SHIPPING_STATUS_FLAGS] [int],
+	[CHOSEN_RULE_UNITS] [int],
+	[EXCEED_CAPACITY_PERCENT] [float],
+	[IMO_MAX_VALUE] [int],
+	[IMO_MIN_SHIP_QTY] [int],
+	[IMO_PCT_PK_THRSHLD] [float],
+	[ITEM_UNITS_ALLOCATED] [int]
+	PRIMARY KEY (HDR_RID, ST_RID) 
+	)
+go

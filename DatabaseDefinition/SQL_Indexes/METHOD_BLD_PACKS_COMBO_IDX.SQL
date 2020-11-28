@@ -1,0 +1,2 @@
+﻿create clustered index "METHOD_BLD_PACKS_COMBO_IDX" ON "METHOD_BLD_PACKS_COMBO" ("METHOD_RID", "COMBO_RID")
+go	

@@ -1,0 +1,36 @@
+--dv =============================================
+--dv Create date:	12/02/2013
+--dv Description:	Updates a method
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_METHOD_UPDATE] 
+	@METHOD_RID int,
+	@METHOD_NAME varchar(50),
+	@METHOD_TYPE_ID int,
+	@PROFILE_TYPE_ID int,
+	@USER_RID int,
+	@METHOD_DESCRIPTION varchar(250),
+	@SG_RID int,
+	@VIRTUAL_IND char(1),
+	@METHOD_STATUS int,
+	@CUSTOM_OLL_RID int
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	UPDATE METHOD 
+	SET  
+		METHOD_NAME = @METHOD_NAME,
+		METHOD_TYPE_ID = @METHOD_TYPE_ID,
+		PROFILE_TYPE_ID = @PROFILE_TYPE_ID,
+		USER_RID = @USER_RID,
+		METHOD_DESCRIPTION = @METHOD_DESCRIPTION,
+		SG_RID = @SG_RID,
+		VIRTUAL_IND = @VIRTUAL_IND,
+		METHOD_STATUS = @METHOD_STATUS,
+		CUSTOM_OLL_RID = @CUSTOM_OLL_RID
+	WHERE METHOD_RID = @METHOD_RID
+
+	SELECT @@ROWCOUNT;
+
+END
+GO

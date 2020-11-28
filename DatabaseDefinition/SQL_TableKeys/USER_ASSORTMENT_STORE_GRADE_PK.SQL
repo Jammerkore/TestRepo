@@ -1,0 +1,4 @@
+alter table "USER_ASSORTMENT_STORE_GRADE"
+	add constraint "USER_ASSORTMENT_STORE_GRADE_PK" primary key ("USER_RID", "STORE_GRADE_SEQ")   
+
+GO

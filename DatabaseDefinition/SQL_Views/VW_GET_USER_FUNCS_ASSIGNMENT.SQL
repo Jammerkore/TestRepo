@@ -1,0 +1,13 @@
+CREATE VIEW [dbo].[VW_GET_USER_FUNCS_ASSIGNMENT]
+AS
+select coalesce(U.FUNC_ID, G.FUNC_ID) as FUNC_ID, coalesce(U.SEC_LVL_ID, max(G.SEC_LVL_ID)) as SEC_LVL_ID, coalesce(U.USER_RID, G.USER_RID) as USER_RID
+    from  
+       (select FUNC_ID, SEC_LVL_ID, USER_RID from SECURITY_USER_FUNCTION) U    
+    full outer join 
+       (select FUNC_ID, SEC_LVL_ID, USER_RID 
+           from USER_GROUP_JOIN UGJ, SECURITY_GROUP_FUNCTION SGF, USER_GROUP UG  
+           where SGF.GROUP_RID = UGJ.GROUP_RID and UG.GROUP_RID = UGJ.GROUP_RID and UG.GROUP_ACTIVE_IND = '1') G 
+    on U.FUNC_ID = G.FUNC_ID and U.USER_RID = G.USER_RID
+    group by U.FUNC_ID, G.FUNC_ID, U.SEC_LVL_ID, U.USER_RID, G.USER_RID
+
+GO

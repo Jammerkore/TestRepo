@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema id="StoreLoadSchema" targetNamespace="http://tempuri.org/StoreLoadSchema.xsd" elementFormDefault="qualified"
+	xmlns="http://tempuri.org/StoreLoadSchema.xsd" xmlns:mstns="http://tempuri.org/StoreLoadSchema.xsd"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="Stores">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Options" minOccurs="0" maxOccurs="1">
+          <xs:complexType>
+            <xs:attribute name="AutoAddCharacteristics" type="xs:boolean" use="optional"></xs:attribute>
+            <xs:attribute name="CharacteristicDelimiter" type="xs:string" use="optional"></xs:attribute>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Store" minOccurs="1" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Characteristic" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:attribute name="Name" type="xs:string" use="required" />
+                  <xs:attribute name="Value" type="xs:string" use="required" />
+                  <xs:attribute name="CharType" use="optional" default="Text">
+                    <xs:simpleType>
+                      <xs:restriction base="xs:string">
+                        <xs:enumeration value="Text" />
+                        <xs:enumeration value="Date" />
+                        <xs:enumeration value="Number" />
+                        <xs:enumeration value="Dollar" />
+                      </xs:restriction>
+                    </xs:simpleType>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="ID" type="xs:string" use="required" />
+            <xs:attribute name="Name" type="xs:string" use="required" />
+            <xs:attribute name="Description" type="xs:string" use="required" />
+            <xs:attribute name="City" type="xs:string" use="optional" />
+            <xs:attribute name="State" type="xs:string" use="optional" />
+            <xs:attribute name="SellingSquareFeet" type="xs:int" use="optional" />
+            <xs:attribute name="SellingOpenDate" type="xs:date" use="optional" />
+            <xs:attribute name="SellingCloseDate" type="xs:date" use="optional" />
+            <xs:attribute name="StockOpenDate" type="xs:date" use="optional" />
+            <xs:attribute name="StockCloseDate" type="xs:date" use="optional" />
+            <xs:attribute name="ActiveIndicator" type="xs:boolean" use="optional" />
+            <xs:attribute name="LeadTime" type="xs:int" />
+            <xs:attribute name="ShipDate">
+              <xs:simpleType>
+                <xs:restriction base="xs:string">
+                  <xs:pattern value="((M|Tu|W|Th|F|Sa|Su)(,(M|Tu|W|Th|F|Sa|Su))*)?" />
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="VSWID" type="xs:string" use="optional" />
+            <xs:attribute name="Action" use="optional" default="Update">
+              <xs:simpleType>
+                <xs:restriction base="xs:string">
+                  <xs:enumeration value="Update"></xs:enumeration>
+                  <xs:enumeration value="Delete"></xs:enumeration>
+                  <xs:enumeration value="Recover"></xs:enumeration>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:attribute>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

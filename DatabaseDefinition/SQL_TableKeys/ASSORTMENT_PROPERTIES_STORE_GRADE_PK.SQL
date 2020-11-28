@@ -1,0 +1,6 @@
+alter table "ASSORTMENT_PROPERTIES_STORE_GRADE"
+	add constraint "ASSORTMENT_PROPERTIES_STORE_GRADE_PK" primary key ("HDR_RID", "STORE_GRADE_SEQ")   
+
+
+
+GO

@@ -1,0 +1,40 @@
+--dv =============================================
+--dv Create date: 2/7/2014
+--dv Description: Reads a user plan
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_USER_PLAN_READ]
+	@USER_RID int
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT 
+		USER_RID, 
+		SG_RID, 
+		FILTER_RID, 
+		GROUP_BY_ID,
+		VIEW_RID, 
+		STORE_HN_RID, 
+		STORE_FV_RID, 
+		TIME_PERIOD_CDR_RID,
+		DISPLAY_TIME_BY_ID, 
+		CHAIN_HN_RID, 
+		CHAIN_FV_RID, 
+		INCLUDE_INELIGIBLE_STORES_IND, 
+		INCLUDE_SIMILAR_STORES_IND, 
+		SESSION_TYPE, 
+		LOW_LEVEL_FV_RID, 
+		LOW_LEVEL_TYPE, 
+		LOW_LEVEL_OFFSET, 
+		LOW_LEVEL_SEQUENCE, 
+		CALC_MODE, 
+		OLL_RID, 
+		CUSTOM_OLL_RID, 
+		IS_LADDER, 
+		TOT_RIGHT, 
+		IS_MULTI 	
+	FROM USER_PLAN
+	WHERE USER_RID = @USER_RID
+            
+END
+GO

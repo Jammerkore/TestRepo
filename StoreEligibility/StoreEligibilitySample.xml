@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<StoreEligibility xmlns="http://tempuri.org/EligibilityLoadSchema.xsd">
+  <Product ID="20344">
+    <Store ID="1101" Ineligible="false">
+      <SimilarStore ID="1103\1105\1108" Index="" FromDate="201301" UntilDate="201312" />
+      <Types Type="Eligibility" Value="" Model="stk 10 -13" />
+      <Types Type="SalesModifier" Value="1.2" Model="" />
+      <Types Type="MinPlusSales" Value="1" Model="" />
+    </Store>
+    <Store ID="1102" Ineligible="false">
+      <SimilarStore ID="1181" Index="1.2" UntilDate="201335" />
+	  <Types Type="Eligibility" Value="2.2" Model="" />
+      <Types Type="SalesModifier" Value="" Model="DV-1.5 for wks 33-35/09" />
+      <Types Type="StockModifier" Value="1.4" Model="" />
+      <Types Type="MinPlusSales" Value="0" Model="" />
+    </Store>
+  </Product>
+  <Product ID="20345">
+    <Store ID="1192" Ineligible="false">
+      <SimilarStore ID="1101\1105\1108" Index="" FromDate="201301" UntilDate="201312" />
+      <Types Type="Eligibility" Value="" Model="New201301-1" />
+      <Types Type="SalesModifier" Value="1.2" Model="" />
+	  <Types Type="StockModifier" Value="" Model="BLIIssue" />
+      <Types Type="MinPlusSales" Value="1" Model="" />
+    </Store>
+    <Store ID="1131" Ineligible="false">
+      <Types Type="SalesModifier" Value="1.25" Model="" />
+      <Types Type="MinPlusSales" Value="0" Model="" />
+    </Store>
+  </Product>
+   <Product ID="20344">
+    <Store ID="1103" Ineligible="false">
+      <SimilarStore ID="1103\1105\1108" Index="" FromDate="201301" UntilDate="201312" />
+      <Types Type="Eligibility" Value="" Model="stk 10 -13" />
+      <Types Type="SalesModifier" Value="1.2" Model="" />
+      <Types Type="FWOSModifier" Value="1" Model="" />
+    </Store>
+    <Store ID="1104" Ineligible="false">
+      <SimilarStore ID="1181" Index="1.2" UntilDate="201335" />
+      <Types Type="SalesModifier" Value="2.2" Model="" />
+      <Types Type="StockModifier" Value="1.4" Model="" />
+      <Types Type="MinPlusSales" Value="0" Model="" />
+    </Store>
+	    <Store ID="1105" Ineligible="true">
+    </Store>
+  </Product>
+</StoreEligibility>

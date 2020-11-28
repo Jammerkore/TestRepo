@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="StockMinMaxDataSet" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="StockMinMaxDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_UserDSName="StockMinMaxDataSet" msprop:Generator_DataSetName="StockMinMaxDataSet">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="StockMinMaxDataTable" msprop:Generator_UserTableName="StockMinMaxDataTable" msprop:Generator_RowDeletedName="StockMinMaxDataTableRowDeleted" msprop:Generator_RowChangedName="StockMinMaxDataTableRowChanged" msprop:Generator_RowClassName="StockMinMaxDataTableRow" msprop:Generator_RowChangingName="StockMinMaxDataTableRowChanging" msprop:Generator_RowEvArgName="StockMinMaxDataTableRowChangeEvent" msprop:Generator_RowEvHandlerName="StockMinMaxDataTableRowChangeEventHandler" msprop:Generator_TableClassName="StockMinMaxDataTableDataTable" msprop:Generator_TableVarName="tableStockMinMaxDataTable" msprop:Generator_RowDeletingName="StockMinMaxDataTableRowDeleting" msprop:Generator_TablePropName="StockMinMaxDataTable">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Type" msprop:Generator_UserColumnName="Type" msprop:Generator_ColumnVarNameInTable="columnType" msprop:Generator_ColumnPropNameInRow="Type" msprop:Generator_ColumnPropNameInTable="TypeColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="BN_ID" msprop:Generator_UserColumnName="BN_ID" msprop:Generator_ColumnVarNameInTable="columnBN_ID" msprop:Generator_ColumnPropNameInRow="BN_ID" msprop:Generator_ColumnPropNameInTable="BN_IDColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="SGL_ID" msprop:Generator_UserColumnName="SGL_ID" msprop:Generator_ColumnVarNameInTable="columnSGL_ID" msprop:Generator_ColumnPropNameInRow="SGL_ID" msprop:Generator_ColumnPropNameInTable="SGL_IDColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="BOUNDARY" msprop:Generator_UserColumnName="BOUNDARY" msprop:Generator_ColumnVarNameInTable="columnBOUNDARY" msprop:Generator_ColumnPropNameInRow="BOUNDARY" msprop:Generator_ColumnPropNameInTable="BOUNDARYColumn" type="xs:int" minOccurs="0" />
+              <xs:element name="DateRange" msprop:Generator_UserColumnName="DateRange" msprop:Generator_ColumnVarNameInTable="columnDateRange" msprop:Generator_ColumnPropNameInRow="DateRange" msprop:Generator_ColumnPropNameInTable="DateRangeColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="MIN_STOCK" msprop:Generator_UserColumnName="MIN_STOCK" msprop:Generator_ColumnVarNameInTable="columnMIN_STOCK" msprop:Generator_ColumnPropNameInRow="MIN_STOCK" msprop:Generator_ColumnPropNameInTable="MIN_STOCKColumn" type="xs:int" minOccurs="0" />
+              <xs:element name="MAX_STOCK" msprop:Generator_UserColumnName="MAX_STOCK" msprop:Generator_ColumnVarNameInTable="columnMAX_STOCK" msprop:Generator_ColumnPropNameInRow="MAX_STOCK" msprop:Generator_ColumnPropNameInTable="MAX_STOCKColumn" type="xs:int" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

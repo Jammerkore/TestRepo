@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema id="HeaderLoadStatusSchema" targetNamespace="http://tempuri.org/HeaderLoadStatusSchema.xsd"
+	elementFormDefault="qualified" xmlns="http://tempuri.org/HeaderLoadStatusSchema.xsd" xmlns:mstns="http://tempuri.org/HeaderLoadStatusSchema.xsd"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="HeaderLoadStatus">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="HeaderStatus" minOccurs="1" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:attribute name="HeaderId" type="xs:string" />
+						<xs:attribute name="HeaderAction">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:enumeration value="Create" />
+									<xs:enumeration value="Modify" />
+									<xs:enumeration value="Remove" />
+									<xs:enumeration value="Reset" />
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:attribute>
+						<xs:attribute name="LoadStatus">
+							<xs:simpleType>
+								<xs:restriction base="xs:boolean">
+									<xs:pattern value="true|false" />
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:attribute>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

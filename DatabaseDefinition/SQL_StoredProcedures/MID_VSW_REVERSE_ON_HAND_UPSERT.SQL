@@ -1,0 +1,49 @@
+-- =============================================
+-- Description:	Inserts or updates values into VSW_REVERSE_ON_HAND table
+-- =============================================
+CREATE PROCEDURE [dbo].[MID_VSW_REVERSE_ON_HAND_UPSERT] 
+@HDR_RID int,
+@HN_RID int,
+@ST_RID int,
+@VSW_REVERSE_ON_HAND_UNITS int
+AS 
+BEGIN 
+
+
+DECLARE @ROW_COUNT int;
+DECLARE @USTAT tinyint;
+SET @USTAT = 0;
+
+SELECT @ROW_COUNT = COUNT(*) 
+FROM VSW_REVERSE_ON_HAND VSW 
+WHERE VSW.HDR_RID =@HDR_RID
+  AND VSW.HN_RID = @HN_RID
+  AND VSW.ST_RID = @ST_RID
+
+IF @ROW_COUNT = 0
+	BEGIN
+		--insert a new row
+		INSERT INTO VSW_REVERSE_ON_HAND (HDR_RID, HN_RID, ST_RID, USTAT, VSW_REVERSE_ON_HAND_UNITS) 
+		VALUES(
+			@HDR_RID,
+			@HN_RID,
+			@ST_RID,
+			@USTAT,
+			@VSW_REVERSE_ON_HAND_UNITS
+		)
+	END
+ELSE
+	BEGIN
+		--update the existing row
+		UPDATE VSW_REVERSE_ON_HAND
+		SET 
+		USTAT=@USTAT,
+		VSW_REVERSE_ON_HAND_UNITS=@VSW_REVERSE_ON_HAND_UNITS
+		WHERE HDR_RID =@HDR_RID
+			AND HN_RID = @HN_RID
+			AND ST_RID = @ST_RID
+	END
+
+	SELECT @@ROWCOUNT
+END
+GO

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<DatabaseObjects xmlns="http://tempuri.org/SequenceSchema.xsd">
+
+  <!-- Put object in order you want them processed before the remaining objects. -->
+  
+  <SQLObject Process="NonOrdered" Type="Table"></SQLObject>
+  <SQLObject Process="NonOrdered" Type="Index"></SQLObject>
+  <SQLObject Process="NonOrdered" Type="TableKey"></SQLObject>
+  <SQLObject Process="NonOrdered" Type="Constraint"></SQLObject>
+
+  <!-- Load text procedures and any other functions/views/procedures used when loading calcs and variables -->
+  <SQLObject Process="Single" Type="StoredProcedure" Name="MID_APPLICATION_TEXT_READ_ALL_LABELS"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure" Name="MID_APPLICATION_TEXT_READ_FROM_CODE"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure" Name="MID_APPLICATION_TEXT_READ_COUNT_FROM_CODE"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure" Name="MID_APPLICATION_TEXT_UPDATE"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure" Name="SP_MID_SET_TEXT"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure" Name="MID_PRELOAD_APPLICATION_TEXT"></SQLObject>
+
+  <!-- Load the calcs and variables -->
+  <SQLObject Process="LoadCalcsAndVariables"></SQLObject>
+
+  <!-- Generate table object files. (new database only) -->
+  <SQLObject Process="GenerateTableFiles"></SQLObject>
+  
+  <!-- Create the generated table objects from the files. (new database only) -->
+  <SQLObject Process="NonOrdered" Type="Table" IsGenerated="Y" ></SQLObject>
+
+  <SQLObject Process="Single" Type="FunctionScalar" Name="UDF_ColumnAlreadyExists"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure" Name="MID_APPLICATION_DB_CONVERSION_QUEUE_READ_IMMEDIATE" ></SQLObject>
+  <SQLObject Process="Single" Type="UpgradeVersion" Name="ver5.2.1.04"></SQLObject>  <!-- Index renaming -->
+  
+  <SQLObject Process="NonOrdered" Type="Index" IsGenerated="Y" ></SQLObject>
+  <SQLObject Process="NonOrdered" Type="TableKey" IsGenerated="Y" ></SQLObject>
+  <SQLObject Process="NonOrdered" Type="Constraint" IsGenerated="Y" ></SQLObject>
+
+  <!-- When upgrading the database, upgrade the variable tables right after you would have created them during a build new database -->
+  <!--<SQLObject Process="UpdateVariableTables"></SQLObject>-->
+
+  <!-- Always regenerate stored procedures, functions, views, etc.  After the tables have been created or updated. -->
+  <SQLObject Process="GenerateNonTableFiles"></SQLObject>
+  <SQLObject Process="NonOrdered" Type="Drop" IsGenerated="Y" ></SQLObject>
+
+  <SQLObject Process="NonOrdered" Type="Type" ></SQLObject>
+  <SQLObject Process="NonOrdered" Type="Type" IsGenerated="Y" ></SQLObject>
+  
+  <SQLObject Process="NonOrdered" Type="Trigger"></SQLObject>
+
+  <SQLObject Process="NonOrdered" Type="FunctionScalar"></SQLObject>
+  <SQLObject Process="NonOrdered" Type="FunctionScalar" IsGenerated="Y" ></SQLObject>
+
+  <SQLObject Process="Single" Type="View" Name="VW_GET_HEADERS" ></SQLObject>
+  <SQLObject Process="NonOrdered" Type="View"></SQLObject>
+  <SQLObject Process="NonOrdered" Type="View" IsGenerated="Y" ></SQLObject>
+
+  <SQLObject Process="Single" Type="FunctionTable" Name="UDF_HIERARCHY_GET_ACTIVE_DESCENDANT_HIDDEN_COLOR_AND_SIZE_NODE_RIDS_TO_EXCLUDE"></SQLObject>
+  <SQLObject Process="Single" Type="FunctionTable" Name="UDF_HIERARCHY_GET_ACTIVE_ANCESTOR_NODES" ></SQLObject>
+  <SQLObject Process="Single" Type="FunctionTable" Name="UDF_HIERARCHY_GET_INHERITED_SELLTHRU_LIMIT_FROM_NODE" ></SQLObject>
+  <SQLObject Process="Single" Type="FunctionTable" Name="UDF_HIERARCHY_GET_ACTIVE_SIZE_NODES_WITH_SELLTHRU_LIMITS_FROM_NODE" ></SQLObject>
+  <SQLObject Process="Single" Type="FunctionTable" Name="UDF_STORE_GET_ACTIVE_RIDS" ></SQLObject>
+  <SQLObject Process="Single" Type="FunctionTable" Name="UDF_HIERARCHY_GET_ACTIVE_SIZE_DESCENDANT_NODE_RIDS" ></SQLObject>
+  <SQLObject Process="NonOrdered" Type="FunctionTable"></SQLObject>
+  <SQLObject Process="NonOrdered" Type="FunctionTable" IsGenerated="Y"></SQLObject>
+
+  <SQLObject Process="Single" Type="StoredProcedure" Name="SP_MID_GET_HEADERS_TO_DELETE" ></SQLObject>
+  <SQLObject Process="NonOrdered" Type="StoredProcedure"></SQLObject>
+  <SQLObject Process="NonOrdered" Type="StoredProcedure" IsGenerated="Y"></SQLObject>
+
+  <!-- Load the soft text -->
+  <SQLObject Process="Single" Type="Script" Name="Installer_NewOrUpgrade_TEXT_LOAD"></SQLObject>
+
+  <!-- Begin TT#1581-MD - stodd - API Header Reconcile -->
+  <!-- truncate and load API process control rules -->
+  <SQLObject Process="Single" Type="Script" Name="API Process Control Rules"></SQLObject>
+  <!-- End TT#1581-MD - stodd - API Header Reconcile -->
+
+  <!-- Load the defaults  (new database only) -->
+  <SQLObject Process="Single" Type="Script" Name="Installer_New_INITIAL_LOAD"></SQLObject>
+
+  <!-- Load Batch Comp Selection Filters  (new database only) -->
+  <SQLObject Process="Single" Type="Script" Name="Batch Comp Selection Filters"></SQLObject>	<!-- TT#1595-MD - stodd - Batch comp -->
+
+  <!-- Clear Custom Conversion queue for new databases -->
+  <SQLObject Process="ClearCustomConversions"></SQLObject>
+  
+  <!-- Process all the non-applied upgrade version sql files (occurs on both an upgrade and on a new database) -->
+  <SQLObject Process="NonOrdered" Type="UpgradeVersion"></SQLObject>
+
+  <SQLObject Process="Single" Type="UpgradeVersion" Name="ver5.2.1.03"></SQLObject>
+
+  <!-- Execute deferred custom conversions for new databases -->
+  <SQLObject Process="ExecuteDeferredCustomConversions"></SQLObject>
+
+  <!-- Set the fill factor on the tables (new database only) -->
+  <SQLObject Process="Single" Type="Script" Name="Installer_New_SET_FILLFACTOR"></SQLObject>
+  
+
+
+</DatabaseObjects>
+
+

@@ -1,0 +1,3 @@
+﻿create clustered index "HEADER_BULK_CLR_SZ_NEED_IDX1" ON "HEADER_BULK_COLOR_SIZE_NEED" ("HDR_RID", "HDR_BC_RID")
+
+go

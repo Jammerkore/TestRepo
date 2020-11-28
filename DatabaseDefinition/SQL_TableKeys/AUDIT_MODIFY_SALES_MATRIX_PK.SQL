@@ -1,0 +1,6 @@
+alter table "AUDIT_MODIFY_SALES_MATRIX"
+	add constraint "AUDIT_MODIFY_SALES_MATRIX_PK" primary key ("AUDIT_FORECAST_RID", "SGL_RID", "BOUNDARY", "SELL_THRU")   
+
+
+
+GO

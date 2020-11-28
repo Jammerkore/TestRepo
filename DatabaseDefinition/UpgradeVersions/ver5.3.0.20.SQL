@@ -1,0 +1,4 @@
+/*RELEASE 5.3.0.20 02-27-2014 - TT#952-MD -stodd - Group Allocation Security*/
+delete from SECURITY_FUNCTION_ACTIONS where FUNC_ID = 880000 and ACTION_ID = 801163
+delete from SECURITY_FUNCTION_ACTIONS where FUNC_ID = 880000 and ACTION_ID = 801164
+go

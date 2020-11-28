@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema id="VSWLoadSchema" targetNamespace="http://tempuri.org/VSWLoadSchema.xsd"
+	elementFormDefault="qualified" xmlns="http://tempuri.org/VSWLoadSchema.xsd" xmlns:mstns="http://tempuri.org/VSWLoadSchema.xsd"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name ="VSW">
+	<xs:complexType>
+      <xs:sequence>
+		<xs:element name ="Merchandise" minOccurs="1" maxOccurs="unbounded">
+		 <xs:complexType>
+		  <xs:sequence>
+			<xs:element name ="Store" minOccurs="1" maxOccurs="unbounded">
+			  <xs:complexType>
+			   <xs:attribute name="ID" type="xs:string" use="required" />
+			   <xs:attribute name="MinShipQty" type="xs:string" use="optional"></xs:attribute>
+			   <xs:attribute name="PctThreshold" type="xs:string" use="optional"></xs:attribute>
+			   <xs:attribute name="ItemMax" type="xs:string" use="optional"></xs:attribute>
+			   <xs:attribute name="FWOSMaxValue" type="xs:string" use="optional"></xs:attribute>
+			   <xs:attribute name="FWOSMaxModel" type="xs:string" use="optional"></xs:attribute>
+			   <xs:attribute name="PushToBkStk" type="xs:string" use="optional"></xs:attribute>
+			 </xs:complexType>
+			</xs:element>
+		  </xs:sequence>
+		<xs:attribute name="ID" type="xs:string" use="required" />
+		 </xs:complexType>
+		</xs:element>
+	 </xs:sequence>
+	</xs:complexType>
+</xs:element>
+	</xs:schema>

@@ -1,0 +1,38 @@
+--dv =============================================
+--dv Create date:	11/25/2013
+--dv Description:	Reads child folders with shortcuts for the given folder and user
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_FOLDER_READ_CHILDREN_WITH_SHORTCUTS]
+	@PARENT_FOLDER_RID int,
+	@USER_RID int
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT DISTINCT 
+		fjt.PARENT_FOLDER_RID,
+		fjt.CHILD_ITEM_RID,
+		fjt.CHILD_ITEM_TYPE, 
+		ui.USER_RID, 
+		ui.OWNER_USER_RID,
+        '0' as SHORTCUT_IND
+	FROM FOLDER_JOIN fjt 
+	INNER JOIN USER_ITEM ui ON ui.ITEM_RID = fjt.CHILD_ITEM_RID and ui.ITEM_TYPE = fjt.CHILD_ITEM_TYPE
+	WHERE fjt.PARENT_FOLDER_RID = @PARENT_FOLDER_RID
+		  AND ui.USER_RID = @USER_RID
+	UNION 
+	SELECT DISTINCT 
+		fsc.PARENT_FOLDER_RID,
+		fsc.CHILD_SHORTCUT_RID AS CHILD_ITEM_RID,
+		fsc.CHILD_SHORTCUT_TYPE AS CHILD_ITEM_TYPE, 
+		@USER_RID AS USER_RID, 
+		@USER_RID AS OWNER_USER_RID,
+        '1' AS SHORTCUT_IND
+	FROM FOLDER_SHORTCUT fsc
+	WHERE fsc.PARENT_FOLDER_RID = @PARENT_FOLDER_RID
+
+
+END
+GO
+
+

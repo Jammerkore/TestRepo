@@ -1,0 +1,36 @@
+H~Mens' Denim Tops~open~blue
+H~Mens' Wear Resort~open~blue
+H~MID Retail~organizational~red
+H~Total Earrings~open~blue
+
+L~MID Retail~Division~undefined~unrestricted~lightgreen~~~~
+L~MID Retail~Department~undefined~unrestricted~lightblue~~~~
+L~MID Retail~Class~undefined~unrestricted~kaki~~~~~true
+L~MID Retail~Style~style~unrestricted~purple~~~~
+
+P~MID Retail~MID Retail~1~Bath & Body Division
+P~MID Retail~MID Retail~2~Childrens Division
+P~MID Retail~MID Retail~3~Housewares Division
+P~MID Retail~MID Retail~4~Jewelry Division
+P~MID Retail~MID Retail~5~Mens Division
+P~MID Retail~MID Retail~6~Outerwear Division
+P~MID Retail~MID Retail~7~Womens Division
+P~MID Retail~5~51~Mens' Casualwear
+P~MID Retail~5~52~Mens' Furnishings
+P~MID Retail~5~53~Mens' Suits
+P~MID Retail~5~54~Young Mens'
+P~MID Retail~5~55~Collection Sportwear
+P~MID Retail~54~541~Denim
+P~MID Retail~54~542~Separate Bottoms
+P~MID Retail~54~543~Separate Tops
+P~MID Retail~54~544~Slacks & Separates
+P~MID Retail~54~545~Sweaters
+P~MID Retail~541~54101~16Oz Dark Wash Jacket
+P~MID Retail~541~54102~16Oz stonewash Barn Jacket
+P~MID Retail~541~54103~Basic Denim 5Pkt 12Oz Jeans Colors
+P~MID Retail~541~54104~Basic Denim 5Pkt 12Oz Jeans Stonewash
+P~MID Retail~541~54105~L/S Button Down 10Oz Shirt
+P~MID Retail~541~54106~L/S Button Down Chambray Shirt
+P~MID Retail~541~54107~Stonewash 12Oz Overall
+P~MID Retail~541~54108~Stonewash 5Pkt 12Oz Short
+P~MID Retail~541~54109~Stonewash Double Pleat 12Oz

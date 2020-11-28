@@ -1,0 +1,7 @@
+CREATE TYPE [dbo].[MID_ST_FOR_WK_READ_LOCK_TYPE] AS TABLE(
+  [HN_RID] [int],
+  [FV_RID] [int],
+  [TIME_ID] [int]
+PRIMARY KEY (HN_RID, FV_RID, TIME_ID)
+)
+GO

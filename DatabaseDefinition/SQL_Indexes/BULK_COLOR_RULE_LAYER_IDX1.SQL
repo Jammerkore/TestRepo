@@ -1,0 +1,3 @@
+﻿create clustered index "BULK_COLOR_RULE_LAYER_IDX1" on "BULK_COLOR_RULE_LAYER" ("HDR_RID", "HDR_BC_RID", "LAYER_ID")
+
+go

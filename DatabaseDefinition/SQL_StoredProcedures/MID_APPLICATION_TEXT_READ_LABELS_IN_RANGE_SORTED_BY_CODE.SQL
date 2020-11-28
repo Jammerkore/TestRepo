@@ -1,0 +1,25 @@
+--dv =============================================
+--dv Create date: 2/7/2014
+--dv Description: Reads text within the range
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_APPLICATION_TEXT_READ_LABELS_IN_RANGE_SORTED_BY_CODE]
+	@TEXT_CODE_BEGIN_VALUE int,
+	@TEXT_CODE_END_VALUE int
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT 
+		TEXT_CODE, 
+		TEXT_VALUE, 
+		TEXT_MAX_LENGTH, 
+		TEXT_TYPE, 
+		TEXT_LEVEL,
+		TEXT_VALUE_TYPE, 
+		TEXT_ORDER
+	FROM APPLICATION_TEXT
+    WHERE TEXT_CODE BETWEEN @TEXT_CODE_BEGIN_VALUE AND @TEXT_CODE_END_VALUE
+	ORDER BY TEXT_CODE
+
+END
+GO

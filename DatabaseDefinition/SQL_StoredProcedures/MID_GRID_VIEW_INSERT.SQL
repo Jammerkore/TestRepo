@@ -1,0 +1,51 @@
+--dv =============================================
+--dv Create date:	10/16/2014
+--dv Description:	Inserts a grid view
+--dv History:		10/16/2014 TT#1313-MD -jsobek -Header Filters
+--dv				01/08/2015 TT#1477-MD -jsobek -Header Filter Sort on Workspace
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_GRID_VIEW_INSERT]
+	(
+	@USER_RID INT,
+	@LAYOUT_ID INT,
+	@VIEW_ID VARCHAR(50),
+	@SHOW_DETAILS CHAR,
+	@GROUP_BY INT,
+	@GROUP_BY_SECONDARY INT,
+	@IS_SEQUENTIAL CHAR,
+	@WORKSPACE_FILTER_RID INT,
+	@USE_FILTER_SORTING BIT,
+	@VIEW_RID INT OUTPUT
+	)
+AS
+BEGIN
+	SET NOCOUNT ON
+
+	INSERT INTO GRID_VIEW (
+		USER_RID,
+		LAYOUT_ID,
+		VIEW_ID,
+		SHOW_DETAILS,
+		GROUP_BY,
+		GROUP_BY_SECONDARY,
+		IS_SEQUENTIAL,
+		WORKSPACE_FILTER_RID,
+		USE_FILTER_SORTING
+		)
+	VALUES (
+		@USER_RID,
+		@LAYOUT_ID,
+		@VIEW_ID,
+		@SHOW_DETAILS,
+		@GROUP_BY,
+		@GROUP_BY_SECONDARY,
+		@IS_SEQUENTIAL,
+		@WORKSPACE_FILTER_RID,
+		@USE_FILTER_SORTING
+		)
+
+	SELECT @VIEW_RID = SCOPE_IDENTITY() 
+END
+GO
+
+

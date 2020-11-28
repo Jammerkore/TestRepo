@@ -1,0 +1,69 @@
+CREATE PROCEDURE [dbo].[SP_MID_HEADER_CHAR_DATA] 
+	(
+	@HDR_RID INT,
+	@GetUnjoinedChars CHAR(1)
+	)
+AS
+BEGIN
+	/*
+		EXEC SP_MID_HEADER_CHAR_DATA 372, '0' --GETS ONLY JOINED VALUES
+		EXEC SP_MID_HEADER_CHAR_DATA 372, '1' --GETS JOINED & UNJOINED VALUES
+	*/
+	SET NOCOUNT ON
+
+	CREATE TABLE #temp (
+		hcg_id VARCHAR(50) NULL,
+		hcg_type INT NULL,
+		text_value VARCHAR(1000) NULL,
+		date_value SMALLDATETIME NULL,
+		number_value FLOAT NULL,
+		dollar_value FLOAT NULL
+		)
+
+	--GET JOINED VALUES
+	INSERT INTO #temp
+	SELECT hcg.HCG_ID,
+		hcg.HCG_TYPE,
+		hc.TEXT_VALUE,
+		hc.DATE_VALUE,
+		hc.NUMBER_VALUE,
+		hc.DOLLAR_VALUE
+	FROM HEADER_CHAR_JOIN hcj,
+		HEADER_CHAR hc,
+		HEADER_CHAR_GROUP hcg
+	WHERE hcj.HDR_RID = @HDR_RID
+		AND hc.HC_RID = hcj.HC_RID
+		AND hcg.HCG_RID = hc.HCG_RID
+
+	--GET UNJOINED VALUES IF DESIRED
+	IF @GetUnjoinedChars = '1'
+	BEGIN
+		INSERT INTO #temp
+		SELECT hcg.HCG_ID,
+			hcg.HCG_TYPE,
+			NULL,
+			NULL,
+			NULL,
+			NULL
+		FROM HEADER_CHAR_GROUP hcg
+		WHERE hcg.HCG_RID NOT IN (
+				SELECT hcg_inner.HCG_RID
+				FROM HEADER_CHAR_GROUP hcg_inner,
+					HEADER_CHAR hc_inner,
+					HEADER_CHAR_JOIN hcj_inner
+				WHERE hcj_inner.HDR_RID = @HDR_RID
+					AND hc_inner.HC_RID = hcj_inner.HC_RID
+					AND hcg_inner.HCG_RID = hc_inner.HCG_RID
+				)
+	END
+
+	SELECT *
+	FROM #temp
+
+	DROP TABLE #temp
+
+	SET NOCOUNT OFF
+END
+GO
+
+

@@ -1,0 +1,68 @@
+--dv =============================================
+--dv Create date: 1/16/2014
+--dv Description: Inserts a group level function 
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_GROUP_LEVEL_FUNCTION_INSERT] 
+	@METHOD_RID int, 
+	@SGL_RID int, 
+	@DEFAULT_IND char(1), 
+	@PLAN_IND char(1),  
+	@USE_DEFAULT_IND char(1),  
+	@CLEAR_IND char(1), 
+	@SEASON_IND char(1),  
+	@SEASON_HN_RID int, 
+	@GLFT_ID int,  
+	@GLSB_ID int,  
+	@LY_ALT_IND char(1), 
+	@TREND_ALT_IND char(1), 
+	@TY_EQUALIZE_WEIGHT_IND char(1), 
+	@LY_EQUALIZE_WEIGHT_IND char(1), 
+	@APPLY_EQUALIZE_WEIGHT_IND char(1), 
+	@PROJECT_CURR_WEEK_SALES_IND char(1)
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	INSERT INTO GROUP_LEVEL_FUNCTION
+		(
+		METHOD_RID, 
+		SGL_RID, 
+		DEFAULT_IND, 
+		PLAN_IND, 
+		USE_DEFAULT_IND, 
+		CLEAR_IND, 
+		SEASON_IND, 
+		SEASON_HN_RID, 
+		GLFT_ID, 
+		GLSB_ID, 
+		LY_ALT_IND, 
+		TREND_ALT_IND, 
+		TY_EQUALIZE_WEIGHT_IND, 
+		LY_EQUALIZE_WEIGHT_IND, 
+		APPLY_EQUALIZE_WEIGHT_IND, 
+		PROJECT_CURR_WEEK_SALES_IND
+		) 
+	VALUES
+		(
+		@METHOD_RID, 
+		@SGL_RID, 
+		@DEFAULT_IND, 
+		@PLAN_IND, 
+		@USE_DEFAULT_IND, 
+		@CLEAR_IND, 
+		@SEASON_IND, 
+		@SEASON_HN_RID, 
+		@GLFT_ID, 
+		@GLSB_ID, 
+		@LY_ALT_IND, 
+		@TREND_ALT_IND, 
+		@TY_EQUALIZE_WEIGHT_IND, 
+		@LY_EQUALIZE_WEIGHT_IND, 
+		@APPLY_EQUALIZE_WEIGHT_IND, 
+		@PROJECT_CURR_WEEK_SALES_IND
+		)
+
+	SELECT @@ROWCOUNT;
+
+END
+GO

@@ -1,0 +1,274 @@
+--dv =============================================
+--dv Update date: 12/09/2015
+--dv Description:	TT#1780-MD - RMatelic - Data Layer Request - Correct Store Grades Report Stored Procedure
+--dv =============================================
+CREATE PROCEDURE [dbo].[SP_GET_STORE_GRADES_REPORT] 
+	@SELECTED_NODE_RID INT,
+	@LOWER_LEVEL INT,
+	@ShowStoreGrades INT,
+	@ShowAllocationMinMax INT
+AS
+BEGIN
+	DECLARE @SELECTED_NODE_LEVEL AS INT,
+		@HOME_PH_RID AS INT
+
+	SELECT @SELECTED_NODE_LEVEL = HOME_LEVEL,
+		@HOME_PH_RID = HOME_PH_RID
+	FROM HIERARCHY_NODE
+	WHERE HN_RID = @SELECTED_NODE_RID
+
+	DECLARE @MAX_PHL_SEQUENCE AS INT
+
+	SELECT @MAX_PHL_SEQUENCE = MAX(PHL_SEQUENCE)
+	FROM PRODUCT_HIERARCHY_LEVELS
+
+	IF @ShowAllocationMinMax = 1
+	BEGIN
+		SET @ShowStoreGrades = 1
+	END
+
+	IF (@LOWER_LEVEL = 0)
+	BEGIN
+		SELECT @LOWER_LEVEL = @MAX_PHL_SEQUENCE
+	END
+
+	DECLARE @LEVEL AS INT
+
+	--SELECT @LEVEL = (@LOWER_LEVEL -  @SELECTED_NODE_LEVEL)+1
+	SELECT @LEVEL = @LOWER_LEVEL - 1
+
+	CREATE TABLE #TEMPNODE (
+		PARENT_HN_RID INT,
+		HN_RID INT,
+		BN_ID VARCHAR(356) COLLATE Latin1_General_CS_AS,
+		BN_NAME VARCHAR(50) COLLATE Latin1_General_CS_AS,
+		BN_DESCRIPTION VARCHAR(250) COLLATE Latin1_General_CS_AS
+		)
+
+	INSERT #TEMPNODE (
+		PARENT_HN_RID,
+		HN_RID,
+		BN_ID,
+		BN_NAME,
+		BN_DESCRIPTION
+		)
+	EXEC SP_GET_ALL_DESCENDANTS_BY_LEVEL_REPORT @SELECTED_NODE_RID,
+		@LEVEL
+
+	CREATE TABLE #SG_TABLE (
+		HN_RID INT,
+		BN_ID VARCHAR(356),  -- TT#4854 - JSmith - Reports - Node Property Overrides Errors
+		GRADE_CODE VARCHAR(20),
+		BOUNDARY INT,
+		WOS_INDEX INT,
+		MINIMUM_STOCK INT,
+		MAXIMUM_STOCK INT,
+		MINIMUM_AD INT,
+		MINIMUM_COLOR INT,
+		MAXIMUM_COLOR INT
+		)
+
+	DECLARE @INHERITED TABLE (
+		HN_RID INT,
+		GRADE_CODE VARCHAR(20),
+		BOUNDARY INT,
+		WOS_INDEX INT,
+		PARENT_HN_RID INT
+		)
+	DECLARE @ANCESTOR TABLE (
+		HN_RID INT,
+		PARENT_HN_RID INT
+		)
+
+	INSERT INTO #SG_TABLE
+	
+	SELECT hn.HN_RID,
+	-- Begin TT#5382 - JSmith - Product descriptor not displayed when the Store Eligibility is set at the color level
+	dbo.UDF_MID_GET_NODE_DISPLAY (stg.HN_RID) AS [BN_ID],
+	--	CASE 
+	--		WHEN phl.PHL_DISPLAY_OPTION_ID = 800701
+	--			THEN RTRIM(hn.BN_ID)
+	--		WHEN phl.PHL_DISPLAY_OPTION_ID = 800702
+	--			THEN RTRIM(hn.BN_DESCRIPTION)
+	--		WHEN phl.PHL_DISPLAY_OPTION_ID = 800703
+	--			THEN RTRIM(hn.BN_ID) + ' [' + RTRIM(hn.BN_NAME) + ']'
+	--		WHEN phl.PHL_DISPLAY_OPTION_ID = 800704
+	--			THEN RTRIM(hn.BN_ID) + ' [' + RTRIM(hn.BN_DESCRIPTION) + ']'
+	--		WHEN phl.PHL_DISPLAY_OPTION_ID = 800705
+	--			THEN RTRIM(hn.BN_NAME) + ' [' + RTRIM(hn.BN_DESCRIPTION) + ']'
+	--		WHEN phl.PHL_DISPLAY_OPTION_ID = 800706
+	--			THEN RTRIM(hn.BN_ID) + ' [' + RTRIM(hn.BN_NAME) + ']' + ' [' + RTRIM(hn.BN_DESCRIPTION) + ']'
+	--		ELSE RTRIM(hn.BN_ID) + ' [' + RTRIM(hn.BN_NAME) + ']'
+	--		END AS [BN_ID],
+	-- End TT#5382 - JSmith - Product descriptor not displayed when the Store Eligibility is set at the color level
+		CASE 
+			WHEN @ShowStoreGrades = 1
+				THEN stg.GRADE_CODE
+			ELSE NULL
+			END AS GRADE_CODE,
+		CASE 
+			WHEN @ShowStoreGrades = 1
+				THEN stg.BOUNDARY
+			ELSE NULL
+			END AS BOUNDARY,
+		CASE 
+			WHEN @ShowStoreGrades = 1
+				THEN CONVERT(INT, stg.WOS_INDEX)
+			ELSE NULL
+			END AS WOS_INDEX,
+		CASE 
+			WHEN stg.MINIMUM_STOCK < 0
+				OR @ShowAllocationMinMax = 0
+				THEN NULL
+			ELSE stg.MINIMUM_STOCK
+			END AS [MINIMUM_STOCK],
+		CASE 
+			WHEN stg.MAXIMUM_STOCK < 0
+				OR @ShowAllocationMinMax = 0
+				THEN NULL
+			ELSE stg.MAXIMUM_STOCK
+			END AS [MAXIMUM_STOCK],
+		CASE 
+			WHEN stg.MINIMUM_AD < 0
+				OR @ShowAllocationMinMax = 0
+				THEN NULL
+			ELSE stg.MINIMUM_AD
+			END AS [MINIMUM_AD],
+		CASE 
+			WHEN stg.MINIMUM_COLOR < 0
+				OR @ShowAllocationMinMax = 0
+				THEN NULL
+			ELSE stg.MINIMUM_COLOR
+			END AS [MINIMUM_COLOR],
+		CASE 
+			WHEN stg.MAXIMUM_COLOR < 0
+				OR @ShowAllocationMinMax = 0
+				THEN NULL
+			ELSE stg.MAXIMUM_COLOR
+			END AS [MAXIMUM_COLOR]
+	FROM STORE_GRADES stg
+	INNER JOIN HIERARCHY_NODE hen ON hen.HN_RID = stg.HN_RID
+	LEFT OUTER JOIN PRODUCT_HIERARCHY_LEVELS phl ON phl.PHL_SEQUENCE = hen.HOME_LEVEL
+	INNER JOIN (
+		SELECT PARENT_HN_RID,
+			HN_RID,
+			BN_ID,
+			BN_NAME,
+			BN_DESCRIPTION
+		FROM #TEMPNODE
+		) hn ON hn.HN_RID = stg.HN_RID
+	--WHERE stg.GRADE_CODE != NULL AND stg.WOS_INDEX != NULL
+	WHERE (
+			stg.GRADE_CODE IS NOT NULL
+			AND stg.WOS_INDEX IS NOT NULL
+			AND @ShowStoreGrades = 1
+			)
+		OR (
+			(
+				stg.MINIMUM_STOCK IS NOT NULL
+				OR stg.MAXIMUM_STOCK IS NOT NULL
+				OR stg.MINIMUM_AD IS NOT NULL
+				OR stg.MINIMUM_COLOR IS NOT NULL
+				OR stg.MAXIMUM_COLOR IS NOT NULL
+				)
+			AND @ShowAllocationMinMax = 1
+			)
+	ORDER BY hn.PARENT_HN_RID,
+		BN_ID,
+		GRADE_CODE
+
+	IF @ShowAllocationMinMax = 1
+	BEGIN
+		INSERT INTO @INHERITED
+		SELECT HN_RID,
+			GRADE_CODE,
+			BOUNDARY,
+			WOS_INDEX,
+			NULL
+		FROM #SG_TABLE
+		WHERE GRADE_CODE IS NULL
+
+		IF @@rowcount > 0
+		BEGIN
+			DECLARE @HN_RID INT,
+				@PH_RID INT,
+				@Rcount INT
+
+			SELECT DISTINCT HN_RID
+			INTO #INH_RIDS
+			FROM @INHERITED
+
+			SET @Rcount = @@rowcount
+			SET @PH_RID = @HOME_PH_RID
+
+			DECLARE @ANCESTORS TABLE (
+				ANCESTOR_RID INT,
+				HOME_PH_RID INT,
+				HOME_LEVEL INT
+				)
+
+			WHILE @Rcount > 0
+			BEGIN
+				SELECT TOP 1 @HN_RID = HN_RID
+				FROM #INH_RIDS
+
+				INSERT INTO @ANCESTORS
+				EXEC SP_MID_GET_ANCESTORS @HN_RID,
+					@PH_RID,
+					0,
+					0
+
+				DECLARE @StopLevel INT,
+					@Loop INT
+
+				SET @StopLevel = 0
+
+				SELECT @Loop = max(HOME_LEVEL)
+				FROM @ANCESTORS
+
+				WHILE @Loop >= @StopLevel
+				BEGIN
+					BEGIN TRANSACTION
+
+					UPDATE #SG_TABLE
+					SET GRADE_CODE = stg.GRADE_CODE,
+						WOS_INDEX = CONVERT(INT, stg.WOS_INDEX)
+					FROM STORE_GRADES stg
+					INNER JOIN @ANCESTORS ON HN_RID = stg.HN_RID
+					WHERE HOME_LEVEL = @Loop
+						AND stg.BOUNDARY = #SG_TABLE.BOUNDARY
+
+					COMMIT
+
+					IF @@rowcount > 0
+						SET @Loop = - 1
+					ELSE
+						SET @Loop = @Loop - 1
+				END
+
+				DELETE
+				FROM #INH_RIDS
+				WHERE HN_RID = @HN_RID
+
+				DELETE
+				FROM @ANCESTORS
+
+				SET @Rcount = @Rcount - 1
+			END
+		END
+	END
+
+	SELECT *
+	FROM #SG_TABLE
+	ORDER BY BN_ID,
+		GRADE_CODE
+
+	IF (
+			SELECT object_id('tempdb.dbo.#TEMPNODE')
+			) > 0
+		DROP TABLE #TEMPNODE
+
+	DROP TABLE #SG_TABLE
+END
+GO
+

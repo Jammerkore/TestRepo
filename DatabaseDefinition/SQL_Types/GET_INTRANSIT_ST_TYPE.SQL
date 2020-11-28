@@ -1,0 +1,8 @@
+CREATE TYPE [dbo].[GET_INTRANSIT_ST_TYPE] AS TABLE(
+	[ST_RID] [int],
+	[START_DAY] [int],
+	[END_DAY] [int]
+	PRIMARY KEY (ST_RID)
+	)
+
+GO

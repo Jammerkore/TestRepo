@@ -1,0 +1,680 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{90D34E6E-6872-4531-8283-F9A7450C4BAF}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>MIDRetail.Data</AssemblyName>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>MIDRetail.Data</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\midretailinccert.pfx</AssemblyOriginatorKeyFile>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug Oracle|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>MID.MRS.Data.xml</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>3</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release Oracle|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>MID.MRS.Data.xml</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>3</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Full Debug SQL Server|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug SQL Server|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release SQL Server|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <FileAlignment>4096</FileAlignment>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <Optimize>true</Optimize>
+    <FileAlignment>4096</FileAlignment>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug Oracle|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug Oracle\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <DocumentationFile>MID.MRS.Data.xml</DocumentationFile>
+    <WarningLevel>3</WarningLevel>
+    <FileAlignment>4096</FileAlignment>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release Oracle|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Release Oracle\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <DocumentationFile>MID.MRS.Data.xml</DocumentationFile>
+    <WarningLevel>3</WarningLevel>
+    <FileAlignment>4096</FileAlignment>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Full Debug SQL Server|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Full Debug SQL Server\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <FileAlignment>4096</FileAlignment>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug SQL Server|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug SQL Server\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <FileAlignment>4096</FileAlignment>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release SQL Server|x86' ">
+    <OutputPath>bin\x86\Release SQL Server\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <Optimize>true</Optimize>
+    <FileAlignment>4096</FileAlignment>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Infragistics4.Win.v14.1, Version=14.1.20141.2082, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Win.UltraWinGrid.v14.1, Version=14.1.20141.2082, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Infragistics4.Shared.v14.1, Version=14.1.20141.2082, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="C1.Win.C1FlexGrid.2, Version=2.6.20073.357, Culture=neutral, PublicKeyToken=79882d576c6336da, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Microsoft.Office.Interop.Outlook, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+    <ProjectReference Include="..\DataCommon\DataCommon.csproj">
+      <Name>DataCommon</Name>
+      <Project>{F33FC337-30FC-409C-898D-DF39A2016B6B}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\SQLServer\SQLServer.csproj">
+      <Name>SQLServer</Name>
+      <Project>{314819AD-02AB-436A-9B4F-9EED60509ADA}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AllocationSelection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Assortment.cs" />
+    <Compile Include="AssortmentDetail.cs" />
+    <Compile Include="AssortmentSelection.cs" />
+    <Compile Include="AssortmentView.cs" />
+    <Compile Include="AuditData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AuditFilter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BasisGroupLevel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BatchComp.cs" />
+    <Compile Include="BatchCompSP.cs" />
+    <Compile Include="BuildPackCriteria.cs" />
+    <Compile Include="CalendarData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ChainSetPercentData.cs" />
+    <Compile Include="Color.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Computations.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ComputationsDLL.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AllocationSelectionSP.cs" />
+    <Compile Include="AuditDataSP.cs" />
+    <Compile Include="AuditFilterSP.cs" />
+    <Compile Include="BasisGroupLevelSP.cs" />
+    <Compile Include="BasisTrendCapsSP.cs" />
+    <Compile Include="BasisStockMinMaxSP.cs" />
+    <Compile Include="BasisTrendCaps.cs" />
+    <Compile Include="BasisStockMinMax.cs" />
+    <Compile Include="BuildPackCriteriaSP.cs" />
+    <Compile Include="CalendarDataSP.cs" />
+    <Compile Include="ChainSetPercentDataSP.cs" />
+    <Compile Include="ColorSP.cs" />
+    <Compile Include="ComputationsSP.cs" />
+    <Compile Include="ComputationsDLLSP.cs" />
+    <Compile Include="AssortmentDetailSP.cs" />
+    <Compile Include="AssortmentSelectionSP.cs" />
+    <Compile Include="AssortmentViewSP.cs" />
+    <Compile Include="FilterDataSP.cs" />
+    <Compile Include="FilterData.cs" />
+    <Compile Include="DatabaseSchemaSP.cs" />
+    <Compile Include="GroupLevelNodeFunction.cs" />
+    <Compile Include="GroupLevelNodeFunctionSP.cs" />
+    <Compile Include="MethodDCFulfillment.cs" />
+    <Compile Include="MethodCreateMasterHeaders.cs" />
+    <Compile Include="MethodDCCartonRounding.cs" />
+    <Compile Include="MethodGroupAllocation.cs" />
+    <Compile Include="ResourceLockSP.cs" />
+    <Compile Include="StoreGroupMaint.cs" />
+    <Compile Include="StoreMaint.cs" />
+    <Compile Include="StoreMaintSP .cs" />
+    <Compile Include="StoreCharRead.cs" />
+    <Compile Include="StoreCharMaintSP.cs" />
+    <Compile Include="StoreCharReadSP.cs" />
+    <Compile Include="StoreCharMaint.cs" />
+    <Compile Include="StoreGroupMaintSP.cs" />
+    <Compile Include="StoreVariableManagerSP.cs" />
+    <Compile Include="VswReverseOnhandVariableManagerSP.cs" />
+    <Compile Include="WorkflowMethodDataSP.cs" />
+    <Compile Include="WorkflowBaseSP.cs" />
+    <Compile Include="VariablesSP.cs" />
+    <Compile Include="UserGridViewSP.cs" />
+    <Compile Include="ThemeSP.cs" />
+    <Compile Include="SystemSP.cs" />
+    <Compile Include="StoresSP.cs" />
+    <Compile Include="SizeModelDataSP.cs" />
+    <Compile Include="SizeCurveSP.cs" />
+    <Compile Include="SizeGroupSP.cs" />
+    <Compile Include="SecurityAdminSP.cs" />
+    <Compile Include="ScheduleSP.cs" />
+    <Compile Include="RuleAllocationSP.cs" />
+    <Compile Include="RollupSP.cs" />
+    <Compile Include="ReportDataSP.cs" />
+    <Compile Include="PurgeSP.cs" />
+    <Compile Include="PlanViewSP.cs" />
+    <Compile Include="OTSPlanSelectionSP.cs" />
+    <Compile Include="ModelsSP.cs" />
+    <Compile Include="MIDTextSP.cs" />
+    <Compile Include="MIDEnqueueSP.cs" />
+    <Compile Include="MethodBaseSP.cs" />
+    <Compile Include="MessagingDataSP.cs" />
+    <Compile Include="MerchandiseHierarchySP.cs" />
+    <Compile Include="IntransitSP.cs" />
+    <Compile Include="InfragisticsLayoutSP.cs" />
+    <Compile Include="IMO_DataSP.cs" />
+    <Compile Include="HierarchyReclassSP.cs" />
+    <Compile Include="HeaderCharacteristicsDataSP.cs" />
+    <Compile Include="HeaderAllocationLoadSP.cs" />
+    <Compile Include="HeaderSP.cs" />
+    <Compile Include="GridViewSP.cs" />
+    <Compile Include="GlobalOptionsSP.cs" />
+    <Compile Include="ForecastVersionSP.cs" />
+    <Compile Include="FolderDataLayerSP.cs" />
+    <Compile Include="EnvironmentDataSP.cs" />
+    <Compile Include="DailyPercentagesDataSP.cs" />
+    <Compile Include="DailyPercentagesData.cs" />
+    <Compile Include="DatabaseBin.cs" />
+    <Compile Include="DatabaseBinKey.cs" />
+    <Compile Include="DatabaseSchema.cs" />
+    <Compile Include="DataLayer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="EnvironmentData.cs" />
+    <Compile Include="EnvironmentInfo.cs" />
+    <Compile Include="Favorites.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FieldBase.cs" />
+    <Compile Include="FolderDataLayer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ForecastVersion.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GlobalOptions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GlobalOptions_SMTP_BL.cs" />
+    <Compile Include="GridView.cs" />
+    <Compile Include="GroupLevelFunction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Header.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HeaderCharacteristicsData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HierarchyReclass.cs" />
+    <Compile Include="IMO_Data.cs" />
+    <Compile Include="InfragisticsLayout.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Intransit.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IntransitKeyType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MerchandiseHierarchy.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MessagingData.cs" />
+    <Compile Include="MethodAllocationOverride.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MethodBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MethodBasisSize.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MethodBuildPacks.cs" />
+    <Compile Include="MethodFillSizeHoles.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MethodForecastBalance.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MethodForecastCopy.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MethodForecastExport.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MethodForecastModifySales.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MethodForecastSpread.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MethodGeneralAllocation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MethodGlobalLock.cs" />
+    <Compile Include="MethodGlobalUnlock.cs" />
+    <Compile Include="MethodOTSPlan.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MethodRelationData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MethodRollup.cs" />
+    <Compile Include="MethodRule.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MethodSizeCurve.cs" />
+    <Compile Include="MethodSizeNeed.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MethodVelocity.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MIDEmail.cs" />
+    <Compile Include="MIDEnqueue.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MIDEnqueueConflict.cs" />
+    <Compile Include="MIDStorageTypeInfo.cs" />
+    <Compile Include="MIDText.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Models.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="OnHand.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="OTSPlanSelection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PlanView.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HeaderAllocationLoad.cs" />
+    <Compile Include="Purge.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ReportData.cs" />
+    <Compile Include="ResourceLock.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Rollup.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="RuleAllocation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Schedule.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SecurityAdmin.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SizeGroup.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SizeCurve.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SizeMethodBaseData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SizeModelData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SqlStructures.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoredProcedureBase.cs" />
+    <Compile Include="Stores.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StoreVariableManager.cs" />
+    <Compile Include="StoreVectors.cs" />
+    <Compile Include="System.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Theme.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TransactionData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UserGridView.cs" />
+    <Compile Include="VariableModel.cs" />
+    <Compile Include="Variables.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="VirtualLock.cs" />
+    <Compile Include="WorkflowAllocation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="WorkflowBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="WorkflowMethodData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="WorkflowOTSPlan.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

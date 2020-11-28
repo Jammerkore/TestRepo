@@ -1,0 +1,122 @@
+CREATE PROCEDURE [dbo].[SP_MID_BUILD_COLOR_SIZE_IDS] 
+	(@debug BIT = 0)
+AS
+BEGIN
+	DECLARE @main_PH_RID INT
+
+	SET NOCOUNT ON
+
+	SELECT @main_PH_RID = PH_RID
+	FROM PRODUCT_HIERARCHY
+	WHERE PH_TYPE = 800000
+
+	-- update color nodes with style ID
+	TRUNCATE TABLE BUILD_COLOR_IDS
+
+	-- get color nodes and RID of parent 
+	INSERT INTO BUILD_COLOR_IDS (
+		COLOR_HN_RID,
+		STYLE_HN_RID
+		)
+	SELECT cn.HN_RID,
+		hnj.PARENT_HN_RID
+	FROM COLOR_NODE cn,
+		HIER_NODE_JOIN hnj
+	WHERE cn.HN_RID = hnj.HN_RID
+		AND hnj.PH_RID = @main_PH_RID
+
+	-- add style ID
+	UPDATE BUILD_COLOR_IDS
+	SET STYLE_NODE_ID = (
+			SELECT bn.BN_ID
+			FROM BASE_NODE bn
+			WHERE BUILD_COLOR_IDS.STYLE_HN_RID = bn.HN_RID
+			)
+
+	IF @debug <> 0
+	BEGIN
+		SELECT *
+		FROM BUILD_COLOR_IDS
+	END
+
+	-- update COLOR_NODE table with style IDs
+	UPDATE COLOR_NODE
+	SET STYLE_NODE_ID = (
+			SELECT bci.STYLE_NODE_ID
+			FROM BUILD_COLOR_IDS bci
+			WHERE COLOR_NODE.HN_RID = bci.COLOR_HN_RID
+			)
+
+	-- update size nodes with style and color ID
+	-- clear all old style and color IDs
+	TRUNCATE TABLE BUILD_SIZE_IDS
+
+	-- get size nodes and RID of parent color
+	INSERT INTO BUILD_SIZE_IDS (
+		SIZE_HN_RID,
+		COLOR_HN_RID
+		)
+	SELECT sn.HN_RID,
+		hnj.PARENT_HN_RID
+	FROM SIZE_NODE sn,
+		HIER_NODE_JOIN hnj
+	WHERE sn.HN_RID = hnj.HN_RID
+		AND hnj.PH_RID = @main_PH_RID
+
+	-- get RID of parent style for each color
+	UPDATE BUILD_SIZE_IDS
+	SET STYLE_HN_RID = (
+			SELECT hnj.PARENT_HN_RID
+			FROM HIER_NODE_JOIN hnj
+			WHERE BUILD_SIZE_IDS.COLOR_HN_RID = hnj.HN_RID
+				AND hnj.PH_RID = @main_PH_RID
+			)
+
+	-- get style ID
+	UPDATE BUILD_SIZE_IDS
+	SET STYLE_NODE_ID = (
+			SELECT bn.BN_ID
+			FROM BASE_NODE bn
+			WHERE BUILD_SIZE_IDS.STYLE_HN_RID = bn.HN_RID
+			)
+
+	-- get RID of color code 
+	UPDATE BUILD_SIZE_IDS
+	SET COLOR_CODE_RID = (
+			SELECT cn.COLOR_CODE_RID
+			FROM COLOR_NODE cn
+			WHERE BUILD_SIZE_IDS.COLOR_HN_RID = cn.HN_RID
+			)
+
+	-- get color ID
+	UPDATE BUILD_SIZE_IDS
+	SET COLOR_NODE_ID = (
+			SELECT cc.COLOR_CODE_ID
+			FROM COLOR_CODE cc
+			WHERE BUILD_SIZE_IDS.COLOR_CODE_RID = cc.COLOR_CODE_RID
+			)
+
+	IF @debug <> 0
+	BEGIN
+		SELECT *
+		FROM BUILD_SIZE_IDS
+	END
+
+	-- update SIZE_NODE table with style and color IDs
+	UPDATE SIZE_NODE
+	SET STYLE_NODE_ID = (
+			SELECT bsi.STYLE_NODE_ID
+			FROM BUILD_SIZE_IDS bsi
+			WHERE SIZE_NODE.HN_RID = bsi.SIZE_HN_RID
+			),
+		COLOR_NODE_ID = (
+			SELECT bsi.COLOR_NODE_ID
+			FROM BUILD_SIZE_IDS bsi
+			WHERE SIZE_NODE.HN_RID = bsi.SIZE_HN_RID
+			)
+	SELECT @@ROWCOUNT;
+	SET NOCOUNT OFF
+END
+GO
+
+

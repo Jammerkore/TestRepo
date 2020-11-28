@@ -1,0 +1,68 @@
+--dv =============================================
+--dv Create date:	2/13/2014
+--dv Description:	Inserts an OTS plan
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_OTS_PLAN_INSERT] 
+	@METHOD_RID int, 
+	@PLAN_HN_RID int, 
+	@PLAN_FV_RID int,
+	@CDR_RID int, 
+	@CHAIN_FV_RID int, 
+	@BAL_SALES_IND char, 
+	@BAL_STOCK_IND char, 
+	@FORECAST_MOD_RID int,
+    @HIGH_LEVEL_IND char, 
+	@LOW_LEVELS_IND char, 
+	@LOW_LEVEL_TYPE int, 
+	@LOW_LEVEL_SEQ int, 
+	@LOW_LEVEL_OFFSET int, 
+	@OLL_RID int, 
+	@TREND_OPTIONS_IND char, 
+	@TREND_OPTIONS_PLUG_CHAIN_WOS float
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	INSERT INTO OTS_PLAN
+		(
+		METHOD_RID, 
+		PLAN_HN_RID, 
+		PLAN_FV_RID,
+		CDR_RID, 
+		CHAIN_FV_RID, 
+		BAL_SALES_IND, 
+		BAL_STOCK_IND, 
+		FORECAST_MOD_RID,
+        HIGH_LEVEL_IND, 
+		LOW_LEVELS_IND, 
+		LOW_LEVEL_TYPE, 
+		LOW_LEVEL_SEQ, 
+		LOW_LEVEL_OFFSET, 
+		OLL_RID, 
+		TREND_OPTIONS_IND, 
+		TREND_OPTIONS_PLUG_CHAIN_WOS
+		)
+	VALUES
+		(
+		@METHOD_RID, 
+		@PLAN_HN_RID, 
+		@PLAN_FV_RID,
+		@CDR_RID, 
+		@CHAIN_FV_RID, 
+		@BAL_SALES_IND, 
+		@BAL_STOCK_IND, 
+		@FORECAST_MOD_RID,
+        @HIGH_LEVEL_IND, 
+		@LOW_LEVELS_IND, 
+		@LOW_LEVEL_TYPE, 
+		@LOW_LEVEL_SEQ, 
+		@LOW_LEVEL_OFFSET, 
+		@OLL_RID, 
+		@TREND_OPTIONS_IND, 
+		@TREND_OPTIONS_PLUG_CHAIN_WOS
+		)
+	
+	SELECT @@ROWCOUNT;
+
+END
+GO

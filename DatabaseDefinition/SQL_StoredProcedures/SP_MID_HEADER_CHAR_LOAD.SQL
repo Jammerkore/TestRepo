@@ -1,0 +1,275 @@
+--dv =============================================
+--dv Modified date: 2/28/2014
+--dv Flags: BYPASS_SCOPEIDENTITY_VALIDATION
+--dv Description:	PROCESSES CHARACTERIC DATA FROM THE HEADER LOAD PROCESS
+--dv =============================================
+CREATE PROCEDURE [dbo].[SP_MID_HEADER_CHAR_LOAD] 
+	(
+	@CHARNAME VARCHAR(50),
+	@VALUE_TEXT VARCHAR(500),
+	@VALUE_MONEY FLOAT = NULL,
+	@VALUE_NUMBER FLOAT = NULL,
+	@VALUE_DTM SMALLDATETIME = NULL,
+	@PROCESSACTION VARCHAR(20),
+	@HDR_RID INT,
+	@RETCODE INT OUTPUT
+	)
+AS
+BEGIN
+	SET NOCOUNT ON
+	SET ANSI_PADDING ON
+
+	DECLARE @ACTION VARCHAR(20),
+		@HCG_RID INT,
+		@HCG_TYPE INT,
+		@HCG_LIST_IND CHAR,
+		@HC_RID INT,
+		@LIST_COUNT INT,
+		@MESSAGE VARCHAR(100)
+
+	/*****************************************************************************************/
+	/* CREATED: 7/22/2004 - JEFF SCHNIERLE                                                   */
+	/* PURPOSE: PROCESSES CHARACTERIC DATA FROM THE HEADER LOAD PROCESS                      */
+	/* USAGE  :                                                                              */
+	/* 	   DECLARE @MSG VARCHAR(100)                                                     */
+	/* 	   EXEC SP_MID_HEADER_CHAR_LOAD 'NAME', 'VALUE', 'CREATE', 1802, @MSG            */
+	/* PROCESS ACTIONS: CREATE = INSERT                                                      */
+	/*                  MODIFY, RESET = UPDATE                                               */
+	/*                  DELETE = DELETE                                                      */
+	/*****************************************************************************************/
+	SELECT @ACTION = UPPER(@PROCESSACTION),
+		@RETCODE = 0,
+		@MESSAGE = '',
+		@LIST_COUNT = 0,
+		@HC_RID = - 1,
+		@HCG_RID = - 1,
+		@HCG_TYPE = 0
+
+	--IF DELETE IS REQUESTED DELETE FROM HEADER_CHAR_JOIN AND LEAVE THE SP
+	IF @ACTION = 'DELETE'
+	BEGIN
+		DELETE
+		FROM HEADER_CHAR_JOIN
+		WHERE HDR_RID = @HDR_RID
+
+		RETURN 0
+	END
+
+	--RETRIEVE DATA FROM HEADER_CHAR_GROUP THAT WILL BE USED LATER ON
+	SELECT @HCG_RID = isnull(HCG_RID, - 1),
+		@HCG_TYPE = HCG_TYPE,
+		@HCG_LIST_IND = HCG_LIST_IND
+	FROM HEADER_CHAR_GROUP
+	WHERE HCG_ID = @CHARNAME
+
+	--MAKE SURE WE FOUND A CHARACTERIC GROUP
+	IF @HCG_RID IS NULL
+		OR @HCG_RID = - 1
+	BEGIN
+		SELECT @RETCODE = 10,
+			@MESSAGE = 'Characteric group could not be found.'
+
+		RETURN
+	END
+	ELSE
+	BEGIN
+		--MAKE SURE IF IT IS A LIST, THAT THE VALUE IS IN THAT LIST		
+		IF @HCG_LIST_IND = '1'
+		BEGIN
+			IF @HCG_TYPE = 0 --VARCHAR
+			BEGIN
+				SELECT @LIST_COUNT = COUNT(*)
+				FROM HEADER_CHAR
+				WHERE TEXT_VALUE = @VALUE_TEXT
+					AND HCG_RID = @HCG_RID
+			END
+
+			IF @HCG_TYPE = 1 --SMALLDATETIME
+			BEGIN
+				SELECT @LIST_COUNT = COUNT(*)
+				FROM HEADER_CHAR
+				WHERE DATE_VALUE = @VALUE_DTM
+					AND HCG_RID = @HCG_RID
+			END
+
+			IF @HCG_TYPE = 2 --NUMBER
+			BEGIN
+				SELECT @LIST_COUNT = COUNT(*)
+				FROM HEADER_CHAR
+				WHERE NUMBER_VALUE = @VALUE_NUMBER
+					AND HCG_RID = @HCG_RID
+			END
+
+			IF @HCG_TYPE = 3 --MONEY
+			BEGIN
+				SELECT @LIST_COUNT = COUNT(*)
+				FROM HEADER_CHAR
+				WHERE DOLLAR_VALUE = @VALUE_MONEY
+					AND HCG_RID = @HCG_RID
+			END
+
+			IF @LIST_COUNT = 0
+			BEGIN
+				SELECT @RETCODE = 20,
+					@MESSAGE = 'Value not found in list.'
+
+				RETURN
+			END
+		END
+	END
+
+	--DATA WAS FOUND GO FIND THE HC_RID
+	IF @HCG_TYPE = 0 --VARCHAR
+	BEGIN
+		SELECT @HC_RID = isnull(HC_RID, - 1)
+		FROM HEADER_CHAR
+		WHERE TEXT_VALUE = @VALUE_TEXT
+			AND HCG_RID = @HCG_RID
+	END
+
+	IF @HCG_TYPE = 1 --SMALLDATETIME
+	BEGIN
+		SELECT @HC_RID = isnull(HC_RID, - 1)
+		FROM HEADER_CHAR
+		WHERE DATE_VALUE = @VALUE_DTM
+			AND HCG_RID = @HCG_RID
+	END
+
+	IF @HCG_TYPE = 2 --NUMBER
+	BEGIN
+		SELECT @HC_RID = isnull(HC_RID, - 1)
+		FROM HEADER_CHAR
+		WHERE NUMBER_VALUE = @VALUE_NUMBER
+			AND HCG_RID = @HCG_RID
+	END
+
+	IF @HCG_TYPE = 3 --MONEY
+	BEGIN
+		SELECT @HC_RID = isnull(HC_RID, - 1)
+		FROM HEADER_CHAR
+		WHERE DOLLAR_VALUE = @VALUE_MONEY
+			AND HCG_RID = @HCG_RID
+	END
+
+	-- if CREATE and characteristic already assigned, change to modify
+	IF @ACTION = 'CREATE'
+	BEGIN
+		IF EXISTS (
+				SELECT *
+				FROM HEADER_CHAR_JOIN hcj,
+					HEADER_CHAR hc
+				WHERE hcj.HDR_RID = @HDR_RID
+					AND hcj.HC_RID = hc.HC_RID
+					AND hc.HCG_RID = @HCG_RID
+				)
+		BEGIN
+			SET @ACTION = 'MODIFY'
+		END
+	END
+
+	--SEEMS THAT THE DATA IS VALID, NOW PROCESS
+	IF @ACTION = 'CREATE'
+	BEGIN
+		IF @HC_RID = - 1
+			--HEADER CHAR NOT FOUND
+			--CREATE IT AND THEN USE THE IDENTITY TO SET UP THE 
+			--HDR_RID - HC_RID JOIN
+		BEGIN
+			INSERT INTO HEADER_CHAR (
+				HCG_RID,
+				TEXT_VALUE,
+				DATE_VALUE,
+				NUMBER_VALUE,
+				DOLLAR_VALUE
+				)
+			VALUES (
+				@HCG_RID,
+				@VALUE_TEXT,
+				@VALUE_DTM,
+				@VALUE_NUMBER,
+				@VALUE_MONEY
+				)
+
+			SET @HC_RID = SCOPE_IDENTITY() -- TT#3256 - JSmith - Replace @@IDENTITY with SCOPE_IDENTITY()
+		END
+
+		--CREATE THE HDR_RID - HC_RID JOIN IF NOT ALREADY THERE
+		IF NOT EXISTS (
+				SELECT *
+				FROM HEADER_CHAR_JOIN
+				WHERE HDR_RID = @HDR_RID
+					AND HC_RID = @HC_RID
+				)
+		BEGIN
+			INSERT INTO HEADER_CHAR_JOIN (
+				HDR_RID,
+				HC_RID
+				)
+			VALUES (
+				@HDR_RID,
+				@HC_RID
+				)
+		END
+	END
+
+	IF @ACTION = 'MODIFY'
+		OR @ACTION = 'RESET'
+	BEGIN
+		--DELETE EXISTING HDR_RID - HC_RID JOINS
+		DELETE
+		FROM HEADER_CHAR_JOIN
+		WHERE HDR_RID = @HDR_RID
+			AND HC_RID IN (
+				SELECT HC_RID
+				FROM HEADER_CHAR
+				WHERE HCG_RID = @HCG_RID
+				)
+
+		IF @HC_RID = - 1
+			--HEADER CHAR NOT FOUND
+			--CREATE IT AND THEN USE THE IDENTITY TO SET UP THE 
+			--HDR_RID - HC_RID JOIN
+		BEGIN
+			INSERT INTO HEADER_CHAR (
+				HCG_RID,
+				TEXT_VALUE,
+				DATE_VALUE,
+				NUMBER_VALUE,
+				DOLLAR_VALUE
+				)
+			VALUES (
+				@HCG_RID,
+				@VALUE_TEXT,
+				@VALUE_DTM,
+				@VALUE_NUMBER,
+				@VALUE_MONEY
+				)
+
+			SET @HC_RID = SCOPE_IDENTITY() -- TT#3256 - JSmith - Replace @@IDENTITY with SCOPE_IDENTITY()
+		END
+
+		--CREATE THE HDR_RID - HC_RID JOIN IF NOT ALREADY THERE
+		IF NOT EXISTS (
+				SELECT *
+				FROM HEADER_CHAR_JOIN
+				WHERE HDR_RID = @HDR_RID
+					AND HC_RID = @HC_RID
+				)
+		BEGIN
+			INSERT INTO HEADER_CHAR_JOIN (
+				HDR_RID,
+				HC_RID
+				)
+			VALUES (
+				@HDR_RID,
+				@HC_RID
+				)
+		END
+	END
+
+	SET NOCOUNT OFF
+	SET ANSI_PADDING OFF
+END
+GO
+
+

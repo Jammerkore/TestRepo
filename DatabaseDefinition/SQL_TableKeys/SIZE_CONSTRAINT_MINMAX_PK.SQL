@@ -1,0 +1,6 @@
+alter table "SIZE_CONSTRAINT_MINMAX"
+	add constraint "SIZE_CONSTRAINT_MINMAX_PK" primary key clustered ("SIZE_CONSTRAINT_RID", "SGL_RID", "COLOR_CODE_RID", "SIZES_RID", "DIMENSIONS_RID", "ROW_TYPE_ID", "SIZE_CODE_RID")   
+
+
+
+GO

@@ -1,0 +1,3 @@
+alter table "METHOD_VELOCITY_MATRIX" add constraint "METHOD_VELOCITY_MATRIX_PK" primary key clustered ("METHOD_RID", "SGL_RID", "VELOCITY_SELL_THRU_INDEX", "BOUNDARY")   
+
+GO

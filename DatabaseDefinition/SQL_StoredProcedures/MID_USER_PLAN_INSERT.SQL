@@ -1,0 +1,92 @@
+--dv =============================================
+--dv Create date:	2/14/2014
+--dv Description:	Inserts a user plan
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_USER_PLAN_INSERT]
+	@USER_RID int, 
+	@SG_RID int, 
+	@FILTER_RID int, 
+	@GROUP_BY_ID int, 
+	@VIEW_RID int, 
+	@STORE_HN_RID int, 
+	@STORE_FV_RID int,
+	@TIME_PERIOD_CDR_RID int, 
+	@DISPLAY_TIME_BY_ID int, 
+	@CHAIN_HN_RID int, 
+	@CHAIN_FV_RID int,
+	@INCLUDE_INELIGIBLE_STORES_IND char, 
+	@INCLUDE_SIMILAR_STORES_IND char, 
+	@SESSION_TYPE int,
+    @LOW_LEVEL_FV_RID int, 
+	@LOW_LEVEL_TYPE int, 
+	@LOW_LEVEL_OFFSET int, 
+	@LOW_LEVEL_SEQUENCE int, 
+	@CALC_MODE varchar(50), 
+	@OLL_RID int, 
+	@CUSTOM_OLL_RID int, 
+	@IS_LADDER int, 
+	@TOT_RIGHT int, 
+	@IS_MULTI int
+AS
+BEGIN
+	SET NOCOUNT ON;
+	
+	INSERT INTO USER_PLAN
+		(
+		USER_RID, 
+		SG_RID, 
+		FILTER_RID, 
+		GROUP_BY_ID, 
+		VIEW_RID, 
+		STORE_HN_RID, 
+		STORE_FV_RID,
+		TIME_PERIOD_CDR_RID, 
+		DISPLAY_TIME_BY_ID, 
+		CHAIN_HN_RID, 
+		CHAIN_FV_RID,
+		INCLUDE_INELIGIBLE_STORES_IND, 
+		INCLUDE_SIMILAR_STORES_IND, 
+		SESSION_TYPE,
+        LOW_LEVEL_FV_RID, 
+		LOW_LEVEL_TYPE, 
+		LOW_LEVEL_OFFSET, 
+		LOW_LEVEL_SEQUENCE, 
+		CALC_MODE, 
+		OLL_RID, 
+		CUSTOM_OLL_RID, 
+		IS_LADDER, 
+		TOT_RIGHT, 
+		IS_MULTI
+		)
+	VALUES 
+		(
+		@USER_RID, 
+		@SG_RID, 
+		@FILTER_RID, 
+		@GROUP_BY_ID, 
+		@VIEW_RID, 
+		@STORE_HN_RID, 
+		@STORE_FV_RID,
+		@TIME_PERIOD_CDR_RID, 
+		@DISPLAY_TIME_BY_ID, 
+		@CHAIN_HN_RID, 
+		@CHAIN_FV_RID,
+		@INCLUDE_INELIGIBLE_STORES_IND, 
+		@INCLUDE_SIMILAR_STORES_IND, 
+		@SESSION_TYPE,
+        @LOW_LEVEL_FV_RID, 
+		@LOW_LEVEL_TYPE, 
+		@LOW_LEVEL_OFFSET, 
+		@LOW_LEVEL_SEQUENCE, 
+		@CALC_MODE, 
+		@OLL_RID, 
+		@CUSTOM_OLL_RID, 
+		@IS_LADDER, 
+		@TOT_RIGHT, 
+		@IS_MULTI
+		)
+
+	SELECT @@ROWCOUNT;
+
+END
+GO

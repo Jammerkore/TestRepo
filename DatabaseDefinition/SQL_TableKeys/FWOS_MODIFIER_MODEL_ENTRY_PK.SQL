@@ -1,0 +1,6 @@
+alter table "FWOS_MODIFIER_MODEL_ENTRY"
+	add constraint "FWOS_MODIFIER_MODEL_ENTRY_PK" primary key ("FWOSMOD_RID", "FWOSMOD_SEQUENCE")   
+
+
+
+GO

@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<DatabaseObjects xmlns="http://tempuri.org/SequenceSchema.xsd">
+
+  <!-- Put object in order you want these object deleted.  These objects will get deleted for either a new database, or when upgrading a database. -->
+
+  <SQLObject Process="Single" Type="Trigger"  Name="trgEnableWorkflow" ></SQLObject>
+
+  <SQLObject Process="Single" Type="Trigger"  Name="TRG_FILTER_BASIS_ALLOCATIONinsert" ></SQLObject>
+  <SQLObject Process="Single" Type="Trigger"  Name="TRG_USER_ALLOCATION_HEADERSinsert" ></SQLObject>
+  <SQLObject Process="Single" Type="Trigger"  Name="TRG_HEADER_STORE_GRADEinsert" ></SQLObject>
+  <SQLObject Process="Single" Type="Trigger"  Name="TRG_METHOD_SIZE_BASIS_ALLOCATIONinsert" ></SQLObject>
+  <SQLObject Process="Single" Type="Trigger"  Name="TRG_METHOD_GENERAL_ALLOCATIONinsert" ></SQLObject>
+  <SQLObject Process="Single" Type="Trigger"  Name="TRG_WORKFLOW_HISTORYinsert" ></SQLObject>
+  <SQLObject Process="Single" Type="Trigger"  Name="TRG_FILTER_BASIS_ALLOCATIONupdate" ></SQLObject>
+  <SQLObject Process="Single" Type="Trigger"  Name="TRG_USER_ALLOCATION_HEADERSupdate" ></SQLObject>
+  <SQLObject Process="Single" Type="Trigger"  Name="TRG_HEADER_STORE_GRADEupdate" ></SQLObject>
+  <SQLObject Process="Single" Type="Trigger"  Name="TRG_HEADERupdate" ></SQLObject>
+  <SQLObject Process="Single" Type="Trigger"  Name="TRG_METHOD_SIZE_BASIS_ALLOCATIONupdate" ></SQLObject>
+  <SQLObject Process="Single" Type="Trigger"  Name="TRG_METHOD_GENERAL_ALLOCATIONupdate" ></SQLObject>
+  <SQLObject Process="Single" Type="Trigger"  Name="TRG_WORKFLOW_HISTORYupdate" ></SQLObject>
+  <SQLObject Process="Single" Type="Trigger"  Name="TRG_HEADER_FOR_ENABLE_WORKFLOWinsert" ></SQLObject>
+  <SQLObject Process="Single" Type="Trigger"  Name="TRG_STORES_OPEN_DATESinsert" ></SQLObject>
+  <SQLObject Process="Single" Type="Trigger"  Name="TRG_STORES_OPEN_DATESupdate" ></SQLObject>
+
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_GET_FORECAST_REPORT_NAMES" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_CALENDARDTRANGE_CLONE" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_CHN_FOR_WK_INS_UPD" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_CHN_HIS_WK_INS_UPD" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_DAILYPCT_MODEL_INSERT" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_ENQUEUE_HEADERS" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_GET_ALL_STYLES" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_GET_HIERARCHY_CHARACTERISTICS" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_GET_INTRANSIT" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_GET_MULTI_HDRS" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_GET_OUT_OF_STOCK_COLOR_NODES" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_GET_SEL_THR_LMT_COLR_ND" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_HDRBULKCLR_DELETE" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_IDENTIFY_HDRS_FOR_ENQ" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_MTH_CONST_GET_GRPLVL" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_MTH_CONST_GET_MINMAX" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_MTH_CONST_GL_UPDINS" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_MTH_CONST_MM_UPDINS" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_REMOVE_SIZE_CONSTRAINTS_FROM_MODEL" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_ROLL_INTRANSIT" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_ROLL_STOCK_FORWARD" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_SIZE_CURVE_GROUP_SELECT" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_ST_FOR_WK_INS_UPD" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_ST_HIS_DAY_INS_UPD" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_ST_HIS_WK_INS_UPD" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_STORE_DROP_ST_RID_INDEXES" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_STORE_ELIGIBILITY_UPDATE" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_TASK_DELETE" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_UPDATEALLOCBULK" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_UPDATEALLOCBULKCOLOR" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_UPDATEALLOCBULKCOLORSZ" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_UPDATEALLOCDETAIL" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_UPDATEALLOCPACK" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_UPDATEALLOCTOTAL" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_IDENTIFY_HDRS_FOR_ENQ" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_CHN_FOR_WK_LOCK_READ" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_CHN_FOR_WK_READ" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_XML_CHN_FOR_WK_READ" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_XML_CHN_FOR_WK_READ2" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_ST_FOR_WK_LOCK_READ2" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_CHN_HIS_WK_READ" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_CHN_MOD_WK_READ" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_ST_FOR_WK_LOCK_READ" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_ST_HIS_WK0_READ2" ></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_ST_MOD_WK0_READ2" ></SQLObject>
+
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_FILTER_DELETE"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_FILTER_OBJECT_DELETE"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_FILTER_OBJECT_INSERT"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_FILTER_OBJECT_READ"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_FILTER_READ"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_FILTER_READ_ALL"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_FILTER_READ_DEFAULT"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_FILTER_READ_FROM_USER_AND_NAME"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_FILTER_READ_FROM_USERS"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_FILTER_READ_PARENT_FROM_USERS"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_FILTER_UPDATE"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_STORE_FILTER_INSERT"></SQLObject>
+
+  
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_GET_HEADERS_FOR_TASKLIST"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_GET_HEADERS_FOR_USER"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_GET_ASSORTMENTS_FOR_USER"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_HEADER_READ_ALL_GROUPS"></SQLObject>
+
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_ASRT_WRKSP_FILTER_INSERT_VIEW_TO_WORKSPACE"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_ASRT_WRKSP_FILTER_STATUS_INSERT_VIEW_TO_WORKSPACE"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_ASRT_WRKSP_FILTER_READ_ALL"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_ASRT_WRKSP_FILTER_STATUS_READ_ALL"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_ASRT_WRKSP_FILTER_DELETE"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_ASRT_WRKSP_FILTER_READ_NODE"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_ASRT_WRKSP_FILTER_STATUS_DELETE"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_ASRT_WRKSP_FILTER_STATUS_INSERT"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_ASRT_WRKSP_FILTER_UPDATE"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_ASRT_WRKSP_FILTER_INSERT"></SQLObject>
+
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_AL_WRKSP_FILTER_DELETE"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_AL_WRKSP_FILTER_INSERT"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_AL_WRKSP_FILTER_INSERT_FROM_GRID_VIEW"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_AL_WRKSP_FILTER_READ"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_AL_WRKSP_FILTER_READ_FROM_NODE"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_AL_WRKSP_FILTER_STATUS_DELETE"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_AL_WRKSP_FILTER_STATUS_INSERT"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_AL_WRKSP_FILTER_STATUS_INSERT_FROM_GRID_VIEW"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_AL_WRKSP_FILTER_STATUS_READ"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_AL_WRKSP_FILTER_TYPES_DELETE"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_AL_WRKSP_FILTER_TYPES_INSERT"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_AL_WRKSP_FILTER_TYPES_INSERT_FROM_GRID_VIEW"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_AL_WRKSP_FILTER_TYPES_READ"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_AL_WRKSP_FILTER_UPDATE"></SQLObject>
+
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_GRID_VIEW_INSERT"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_GRID_VIEW_DELETE"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_GRID_VIEW_FILTER_DELETE"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_GRID_VIEW_FILTER_INSERT"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_GRID_VIEW_FILTER_TYPES_INSERT"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_GRID_VIEW_FILTER_STATUS_INSERT"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_GRID_VIEW_FILTER_READ_COUNT"></SQLObject>
+  
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_STORE_DELETE_IN_USE_FILTER_XREF"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_IN_USE_FILTER_XREF_INSERT"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_IN_USE_FILTER_XREF_DELETE_FOR_STORE"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_IN_USE_FILTER_XREF_DELETE_FOR_PRODUCT"></SQLObject>
+
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_CHAR_JOIN_READ_ALL_WITH_STORES"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_GROUP_LEVEL_STATEMENT_READ_NEXT_SEQUENCE"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_GROUP_LEVEL_STATEMENT_READ"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_DYNAMIC_GROUP_DESC_READ_FROM_CHAR"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_CHAR_JOIN_READ_FOR_STORE_VALUES"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_DYNAMIC_GROUP_READ_NEXT_SEQUENCE"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORES_READ_STATIC_IN_GROUPS"></SQLObject>
+  
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_GROUP_LEVEL_JOIN_DELETE_FROM_GROUP_LEVEL"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_GROUP_LEVEL_JOIN_INSERT"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_GROUP_LEVEL_JOIN_READ"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_GROUP_LEVEL_JOIN_READ_ALL"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_GROUP_LEVEL_STATEMENT_DELETE"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_GROUP_LEVEL_STATEMENT_READ_ALL"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_GROUP_LEVEL_STATEMENT_READ_FIRST"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_GROUP_LEVEL_STATEMENT_READ_FROM_GROUP"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_GROUP_LEVEL_JOIN_DELETE"></SQLObject>
+
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_GROUP_LEVEL_DELETE"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_GROUP_LEVEL_STATEMENT_INSERT"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_STORE_DELETE_STORE_GROUP_LEVEL_STATEMENT"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_STOREGROUP_INSERT"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_GROUP_LEVEL_READ"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_GROUP_LEVEL_READ_NEXT_SEQUENCE"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_STOREGROUP_DELETE"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_DYNAMIC_GROUP_DESC_INSERT"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_DYNAMIC_GROUP_DESC_READ"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_DYNAMIC_GROUP_DESC_DELETE"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_ATTRIBUTE_IN_USE"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_ATTRIBUTE_SET_IN_USE"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_STOREGROUPLEVEL_INSERT"></SQLObject>
+
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_PRODUCT_SEARCH_OBJECT_DELETE"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_PRODUCT_SEARCH_OBJECT_INSERT"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_PRODUCT_SEARCH_OBJECT_READ"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_PRODUCT_SEARCH_OBJECT_READ_DISTINCT_USERS"></SQLObject>
+
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_PRODUCT_SEARCH_VIEW_DELETE"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_PRODUCT_SEARCH_VIEW_INSERT"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_PRODUCT_SEARCH_VIEW_READ"></SQLObject>
+
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_GROUP_UPDATE"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_CHAR_JOIN_READ_ALL"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_STORECHARJOIN_INSERT"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_XMLSTORECHARJOIN_INSERT"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_CHAR_JOIN_DELETE"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_CHAR_JOIN_DELETE_FROM_CHAR"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_CHAR_JOIN_DELETE_FROM_STORE"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_GROUP_READ_SORTED_BY_RID"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_GROUP_READ_SORTED_BY_ID"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_GROUP_READ_FOR_USER_SORTED_BY_RID"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_GROUP_READ_FOR_USER_SORTED_BY_ID"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORES_READ_MARKED_FOR_DELETION"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_STORE_DELETE"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_STOREGROUP_COPY"></SQLObject>
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="MID_STORE_REMOVAL_DO_ANALYSIS_SGL"></SQLObject>
+
+  <SQLObject Process="Single" Type="FunctionScalar"  Name="UDF_MID_NUM_STORES_MARKED_FOR_DELETE"></SQLObject>
+  
+  <SQLObject Process="Single" Type="StoredProcedure"  Name="SP_MID_STOREGROUPLEVEL_IN_USE"></SQLObject> <!--TT#1414-MD -jsobek -Attribute Set Filter -->
+  
+
+
+  <SQLObject Process="Single" Type="Type"  Name="MID_CHN_FOR_WK_READ_LOCK_TYPE" Ignore="Y"></SQLObject>
+  <SQLObject Process="Single" Type="Type"  Name="MID_CHN_FOR_WK_READ_TYPE" Ignore="Y"></SQLObject>
+  <SQLObject Process="Single" Type="Type"  Name="MID_CHN_HIS_WK_READ_TYPE" Ignore="Y"></SQLObject>
+  <SQLObject Process="Single" Type="Type"  Name="MID_CHN_MOD_WK_READ_TYPE" Ignore="Y"></SQLObject>
+  <SQLObject Process="Single" Type="Type"  Name="MID_ST_FOR_WK_READ_LOCK_TYPE" Ignore="Y"></SQLObject>
+  <SQLObject Process="Single" Type="Type"  Name="MID_ST_FOR_WK_READ_TYPE" Ignore="Y"></SQLObject>
+  <SQLObject Process="Single" Type="Type"  Name="MID_ST_HIS_DAY_READ_TYPE" Ignore="Y"></SQLObject>
+  <SQLObject Process="Single" Type="Type"  Name="MID_ST_HIS_WK_READ_TYPE" Ignore="Y"></SQLObject>
+  <SQLObject Process="Single" Type="Type"  Name="MID_ST_MOD_WK_READ_TYPE" Ignore="Y"></SQLObject>
+  
+  <SQLObject Process="NonOrdered" Type="StoredProcedure"  Name="" ></SQLObject>
+  <SQLObject Process="NonOrdered" Type="View"  Name="" ></SQLObject>
+  <SQLObject Process="NonOrdered" Type="FunctionTable"  Name="" ></SQLObject>
+  <SQLObject Process="NonOrdered" Type="FunctionScalar"  Name="" ></SQLObject>
+  <SQLObject Process="NonOrdered" Type="Trigger"  Name="" ></SQLObject>
+  <SQLObject Process="NonOrdered" Type="Type"  Name="" ></SQLObject>
+  
+</DatabaseObjects>
+
+

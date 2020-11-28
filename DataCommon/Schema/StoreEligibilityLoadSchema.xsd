@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema id="EligibilityLoadSchema" targetNamespace="http://tempuri.org/EligibilityLoadSchema.xsd"
+	elementFormDefault="qualified" xmlns="http://tempuri.org/EligibilityLoadSchema.xsd" xmlns:mstns="http://tempuri.org/EligibilityLoadSchema.xsd"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name ="StoreEligibility">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name ="Product" minOccurs="1" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name ="Store" minOccurs="1" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="SimilarStore">
+                      <xs:complexType>
+                        <xs:attribute name="ID" type="xs:string"></xs:attribute>
+                        <xs:attribute name="Index" type="xs:string"></xs:attribute>
+				                <xs:attribute name="FromDate" type="xs:string"></xs:attribute>
+                        <xs:attribute name="UntilDate" type="xs:string"></xs:attribute>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="Types" minOccurs="0" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:attribute name="Type" type="xs:string"/>
+                        <xs:attribute name="Value" type="xs:string" />
+                        <xs:attribute name="Model" type="xs:string" use="optional" />
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="ID" type="xs:string" use="required" />
+                  <xs:attribute name="Ineligible" type="xs:string"  />
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="ID" type="xs:string" use="required" />
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+	</xs:schema>

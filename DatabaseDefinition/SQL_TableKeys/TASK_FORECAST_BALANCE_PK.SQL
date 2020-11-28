@@ -1,0 +1,6 @@
+alter table "TASK_FORECAST_BALANCE"
+	add constraint "TASK_FORECAST_BALANCE_PK" primary key ("TASK_SEQUENCE", "TASKLIST_RID", "FORECAST_BALANCE_SEQUENCE")   
+
+
+
+GO

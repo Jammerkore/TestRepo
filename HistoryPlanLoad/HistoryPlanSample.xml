@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<ProductAmounts xmlns="http://tempuri.org/HistoryPlanLoadSchema.xsd">
+	<Options SalesEndingDate="2009-02-28"></Options>
+	<ProductAmount Period="Week" Version="Actual" Product="54101" Date="2009-02-28" Store="1101">
+		<VariableAmount Variable="Sales Reg" Amount="726"></VariableAmount> 
+		<VariableAmount Variable="Sales Mkdn" Amount="817"></VariableAmount>
+	</ProductAmount>
+	<ProductAmount Product="54101" Date="2009-02-28" Store="1102">
+		<VariableAmount Variable="Sales Reg" Amount="768"></VariableAmount>
+		<VariableAmount Variable="Sales Mkdn" Amount="558"></VariableAmount>
+	</ProductAmount>
+	<ProductAmount Product="54101" Date="2009-02-28" Store="1103">
+		<VariableAmount Variable="Sales Reg" Amount="206"></VariableAmount>
+		<VariableAmount Variable="Sales Mkdn" Amount="558"></VariableAmount>
+	</ProductAmount>
+	<ProductAmount Product="54101" Date="2009-02-28" Store="1104">
+		<VariableAmount Variable="Sales Reg" Amount="906"></VariableAmount>
+		<VariableAmount Variable="Sales Mkdn" Amount="442"></VariableAmount>
+	</ProductAmount>
+	<ProductAmount Product="54101" Date="2009-02-28" Store="1105">
+		<VariableAmount Variable="Sales Reg" Amount="977"></VariableAmount>
+		<VariableAmount Variable="Sales Mkdn" Amount="273"></VariableAmount>
+	</ProductAmount>
+	<ProductAmount Product="54102" Date="2009-02-28" Store="1101">
+		<VariableAmount Variable="Sales Reg" Amount="291"></VariableAmount>
+		<VariableAmount Variable="Sales Mkdn" Amount="467"></VariableAmount>
+	</ProductAmount>
+	<ProductAmount Product="54102" Date="2009-02-28" Store="1102">
+		<VariableAmount Variable="Sales Reg" Amount="632"></VariableAmount>
+		<VariableAmount Variable="Sales Mkdn" Amount="469"></VariableAmount>
+	</ProductAmount>
+	<ProductAmount Product="54102" Date="2009-02-28" Store="1103">
+		<VariableAmount Variable="Sales Reg" Amount="982"></VariableAmount>
+		<VariableAmount Variable="Sales Mkdn" Amount="30"></VariableAmount>
+	</ProductAmount>
+	<ProductAmount Product="54102" Date="2009-02-28" Store="1104">
+		<VariableAmount Variable="Sales Reg" Amount="862"></VariableAmount>
+		<VariableAmount Variable="Sales Mkdn" Amount="995"></VariableAmount>
+	</ProductAmount>
+	<ProductAmount Product="54102" Date="2009-02-28" Store="1105">
+		<VariableAmount Variable="Sales Reg" Amount="677"></VariableAmount>
+		<VariableAmount Variable="Sales Mkdn" Amount="314"></VariableAmount>
+	</ProductAmount>
+	<ProductAmount Product="54103" Date="2009-02-28" Store="1101">
+		<VariableAmount Variable="Sales Reg" Amount="816"></VariableAmount>
+		<VariableAmount Variable="Sales Mkdn" Amount="848"></VariableAmount>
+	</ProductAmount>
+	<ProductAmount Product="54103" Date="2009-02-28" Store="1102">
+		<VariableAmount Variable="Sales Reg" Amount="991"></VariableAmount>
+		<VariableAmount Variable="Sales Mkdn" Amount="32"></VariableAmount>
+	</ProductAmount>
+	<ProductAmount Product="54103" Date="2009-02-28" Store="1103">
+		<VariableAmount Variable="Sales Reg" Amount="699"></VariableAmount>
+		<VariableAmount Variable="Sales Mkdn" Amount="526"></VariableAmount>
+	</ProductAmount>
+	<ProductAmount Product="54103" Date="2009-02-28" Store="1104">
+		<VariableAmount Variable="Sales Reg" Amount="934"></VariableAmount>
+		<VariableAmount Variable="Sales Mkdn" Amount="687"></VariableAmount>
+	</ProductAmount>
+	<ProductAmount Product="54103" Date="2009-02-28" Store="1105">
+		<VariableAmount Variable="Sales Reg" Amount="546"></VariableAmount>
+		<VariableAmount Variable="Sales Mkdn" Amount="81"></VariableAmount>
+	</ProductAmount>
+	<ProductAmount Product="54104" Date="2009-02-28" Store="1101">
+		<VariableAmount Variable="Sales Reg" Amount="187"></VariableAmount>
+		<VariableAmount Variable="Sales Mkdn" Amount="453">></VariableAmount>
+	</ProductAmount>
+	<ProductAmount Product="54104" Date="2009-02-28" Store="1102">
+		<VariableAmount Variable="Sales Reg" Amount="297"></VariableAmount>
+		<VariableAmount Variable="Sales Mkdn" Amount="988"></VariableAmount>
+	</ProductAmount>
+	<ProductAmount Product="54104" Date="2009-02-28" Store="1103">
+		<VariableAmount Variable="Sales Reg" Amount="642"></VariableAmount>
+		<VariableAmount Variable="Sales Mkdn" Amount="762"></VariableAmount>
+	</ProductAmount>
+	<ProductAmount Product="54104" Date="2009-02-28" Store="1104">
+		<VariableAmount Variable="Sales Reg" Amount="30"></VariableAmount>
+		<VariableAmount Variable="Sales Mkdn" Amount="381"></VariableAmount>
+	</ProductAmount>
+	<ProductAmount Product="54104" Date="2009-02-28" Store="1105">
+		<VariableAmount Variable="Sales Reg" Amount="343"></VariableAmount>
+		<VariableAmount Variable="Sales Mkdn" Amount="957"></VariableAmount>
+	</ProductAmount>
+	<ProductAmount Product="54105" Date="2009-02-28" Store="1101">
+		<VariableAmount Variable="Sales Reg" Amount="505"></VariableAmount>
+		<VariableAmount Variable="Sales Mkdn" Amount="715"></VariableAmount>
+	</ProductAmount>
+	<ProductAmount Product="54105" Date="2009-02-28" Store="1102">
+		<VariableAmount Variable="Sales Reg" Amount="273"></VariableAmount>
+		<VariableAmount Variable="Sales Mkdn" Amount="907"></VariableAmount>
+	</ProductAmount>
+	<ProductAmount Product="54105" Date="2009-02-28" Store="1103">
+		<VariableAmount Variable="Sales Reg" Amount="337"></VariableAmount>
+		<VariableAmount Variable="Sales Mkdn" Amount="457"></VariableAmount>
+	</ProductAmount>
+	<ProductAmount Product="54105" Date="2009-02-28" Store="1104">
+		<VariableAmount Variable="Sales Reg" Amount="146"></VariableAmount>
+		<VariableAmount Variable="Sales Mkdn" Amount="221"></VariableAmount>
+	</ProductAmount>
+	<ProductAmount Product="54105" Date="2009-02-28" Store="1105">
+		<VariableAmount Variable="Sales Reg" Amount="410"></VariableAmount>
+		<VariableAmount Variable="Sales Mkdn" Amount="410"></VariableAmount>
+	</ProductAmount>
+
+<!-- The following sample transactions do not specify a date so the current date is used -->
+	<ProductAmount Product="54106" Store="1101">
+		<VariableAmount Variable="Sales Reg" Amount="505"></VariableAmount>
+		<VariableAmount Variable="Sales Mkdn" Amount="715"></VariableAmount>
+	</ProductAmount>
+	<ProductAmount Product="54106" Store="1102">
+		<VariableAmount Variable="Sales Reg" Amount="273"></VariableAmount>
+		<VariableAmount Variable="Sales Mkdn" Amount="907"></VariableAmount>
+	</ProductAmount>
+	<ProductAmount Product="54106" Store="1103">
+		<VariableAmount Variable="Sales Reg" Amount="337"></VariableAmount>
+		<VariableAmount Variable="Sales Mkdn" Amount="457"></VariableAmount>
+	</ProductAmount>
+	<ProductAmount Product="54106" Store="1104">
+		<VariableAmount Variable="Sales Reg" Amount="146"></VariableAmount>
+		<VariableAmount Variable="Sales Mkdn" Amount="221"></VariableAmount>
+	</ProductAmount>
+	<ProductAmount Product="54106" Store="1105">
+		<VariableAmount Variable="Sales Reg" Amount="410"></VariableAmount>
+		<VariableAmount Variable="Sales Mkdn" Amount="410"></VariableAmount>
+	</ProductAmount>
+</ProductAmounts>
+
+

@@ -1,0 +1,23 @@
+--dv Create date:	9/30/2013
+--dv Description:	Retrieves bulk color and size info for a given header in separate data tables
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_GET_BULK_COLOR_AND_SIZE_DATA_FOR_HEADER]
+	@HDR_RID int
+AS
+BEGIN
+	SET NOCOUNT ON;
+	SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+
+	
+	select * from HEADER_BULK_COLOR where HDR_RID = @HDR_RID
+
+	select COLOR_CODE_RID,
+           HEADER_BULK_COLOR_SIZE.*
+    from HEADER_BULK_COLOR_SIZE, HEADER_BULK_COLOR 
+    where HEADER_BULK_COLOR_SIZE.HDR_RID = @HDR_RID
+          and HEADER_BULK_COLOR_SIZE.HDR_BC_RID = HEADER_BULK_COLOR.HDR_BC_RID
+    order by HEADER_BULK_COLOR.HDR_RID, HEADER_BULK_COLOR.SEQ, HEADER_BULK_COLOR_SIZE.SEQ		
+
+	SET TRANSACTION ISOLATION LEVEL READ COMMITTED
+END
+GO

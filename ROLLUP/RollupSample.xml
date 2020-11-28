@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<Requests xmlns="http://tempuri.org/RollupSchema.xsd">
+	<!-- <Options RollupDays="Current" HonorLocks="false"></Options> -->
+	<!-- The name must match the same name used to post the variable -->
+	<!-- The levels identify the level from which values are to be rolled.  -->
+	<!-- The levels can either be a level name or level number in the organizational hierarchy.  -->
+	<!-- The variables not included or where the levels are blank will roll all values.  -->
+	<!-- The variables where the levels are 0 will not be rolled.  -->
+	<!-- The levels are applied to every roll request unless overridden in the request.  -->
+	<!-- <Variables Name="Sales" ChainForecastLevel="" ChainHistoryLevel="" StoreForecastLevel="" StoreDailyHistoryLevel="" StoreWeeklyHistoryLevel=""></Variables> -->
+	<!-- <Variables Name="Sales Reg" ChainForecastLevel="" ChainHistoryLevel="" StoreForecastLevel="" StoreDailyHistoryLevel="" StoreWeeklyHistoryLevel=""></Variables> -->
+	<!-- <Variables Name="Sales Promo" ChainForecastLevel="" ChainHistoryLevel="" StoreForecastLevel="" StoreDailyHistoryLevel="" StoreWeeklyHistoryLevel=""></Variables> -->
+	<!-- <Variables Name="Sales Mkdn" ChainForecastLevel="" ChainHistoryLevel="" StoreForecastLevel="" StoreDailyHistoryLevel="" StoreWeeklyHistoryLevel=""></Variables> -->
+	<!-- <Variables Name="Stock" ChainForecastLevel="" ChainHistoryLevel="" StoreForecastLevel="" StoreDailyHistoryLevel="" StoreWeeklyHistoryLevel=""></Variables> -->
+	<!-- <Variables Name="Stock Reg" ChainForecastLevel="" ChainHistoryLevel="" StoreForecastLevel="" StoreDailyHistoryLevel="" StoreWeeklyHistoryLevel=""></Variables> -->
+	<!-- <Variables Name="Stock Mkdn" ChainForecastLevel="" ChainHistoryLevel="" StoreForecastLevel="" StoreDailyHistoryLevel="" StoreWeeklyHistoryLevel=""></Variables> -->
+	
+	<!-- roll weekly store data of the Approved Plan for fiscal weeks from the Class level to the top of the hierarchy -->
+	<!-- <Request Type="Level" Product="MID Retail" Version="Approved Plan" DateType="Fiscal" FromDate="200528" ToDate="200530" FromLevel="Class"> </Request> -->
+   
+  <!-- roll weekly store data of the Action for dynamic calendar dates from the Department level to the Division of the hierarchy -->
+  <!-- <Request Type="Level" Product="MID Retail" Version="Action" DateType="Calendar" FromDate="-1" ToDate="+1" FromLevel="Division" ToLevel="MID Retail"></Request> -->  
+  
+  <!-- roll weekly store data of the Approved Plan for calendar dates from the Sub-Class level to the Division of the hierarchy -->
+	<!-- <Request Type="Level" Product="MID Retail" Version="Approved Plan" DateType="Calendar" FromDate="2005-10-09" ToDate="2005-10-30" FromLevel="Sub-Class" ToLevel="Division"> </Request> -->
+
+	<!-- roll all variables weekly store data of the Approved Plan for calendar dates from the Sub-Class level to the Division of the hierarchy -->
+	<!-- <Request Type="Level" Product="MID Retail" Version="Approved Plan" DateType="Calendar" FromDate="2005-10-09" ToDate="2005-10-30" FromLevel="Sub-Class" ToLevel="Division" OverrideVariableLevels="true"> </Request> -->
+		
+	<!-- roll all values that were posted that were scheduled by either the RollupValues or the SumDaysToWeeks option  -->
+	<!-- <Request Type="Posting"> </Request> -->
+	
+	<!-- roll weekly all store data to chain for the Approved Plan for calendar dates from the Sub-Class level to the Division of the hierarchy -->
+	<!-- <Request Type="StoreToChain" Product="MID Retail" Version="Approved Plan" DateType="Calendar" FromDate="2005-10-09" ToDate="2005-10-30" FromLevel="Sub-Class" ToLevel="Division"> </Request> -->
+</Requests>

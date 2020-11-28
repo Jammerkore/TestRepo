@@ -1,0 +1,5 @@
+create index "AUDIT_FORECAST_METHOD_RID_IDX" on "AUDIT_FORECAST" (
+	"METHOD_RID")  
+
+
+go

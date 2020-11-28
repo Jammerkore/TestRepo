@@ -1,0 +1,32 @@
+CREATE PROCEDURE [dbo].[SP_MID_DAILY_PERCENTAGES_WK_DELETE] 
+	@COMMIT_LIMIT INT,
+	@RECORDS_DELETED INT OUTPUT
+AS
+BEGIN
+	DELETE TOP (@COMMIT_LIMIT) dp
+	FROM DAILY_PERCENTAGES dp
+	INNER JOIN CALENDAR_DATE_RANGE cdr ON cdr.CDR_RID = dp.CDR_RID
+	INNER JOIN PURGE_DATES pd ON pd.HN_RID = dp.HN_RID
+	WHERE cdr.CDR_RANGE_TYPE_ID = 800857
+		/* Begin TT#400-MD - JSmith - Add Header Purge criteria by Header Type */
+		--and cdr.CDR_END < pd.PURGE_HEADERS
+		AND cdr.CDR_END < (
+			SELECT min(v)
+			FROM (
+				VALUES (pd.PURGE_HEADERS_RECEIPT),
+					(pd.PURGE_HEADERS_ASN),
+					(pd.PURGE_HEADERS_DUMMY),
+					(pd.PURGE_HEADERS_DROPSHIP),
+					(pd.PURGE_HEADERS_RESERVE),
+					(pd.PURGE_HEADERS_WORKUPTOTALBUY),
+					(pd.PURGE_HEADERS_PO),
+					(pd.PURGE_HEADERS_VSW)
+				) AS value(v)
+			)
+
+	/* End TT#400-MD - JSmith - Add Header Purge criteria by Header Type */
+	SET @RECORDS_DELETED = @@rowcount
+END
+GO
+
+

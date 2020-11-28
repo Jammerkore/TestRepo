@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" standalone="yes"?>
+<installer>
+
+  <do_not_replace folder ="Batch" file = "HeaderKeys.txt" />
+  <do_not_replace folder ="Batch" file = "RelieveHeaders.sql" />
+
+</installer>
