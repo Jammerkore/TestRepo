@@ -807,7 +807,8 @@ namespace MIDRetail.Windows.Controls
                                                                 //aHEADER_PH_RID: c.headerMerchandise_PH_RID, 
                                                                 aSORT_BY_TYPE_INDEX: c.sortByTypeIndex, 
                                                                 aSORT_BY_FIELD_INDEX: c.sortByFieldIndex,
-                                                                aLIST_VALUE_CONSTANT_INDEX: c.listConstantType.dbIndex
+                                                                aLIST_VALUE_CONSTANT_INDEX: c.listConstantType.dbIndex,
+                                                                aDATE_CDR_RID: c.date_CDR_RID   // TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
                                                                 );
                 cn.condition.conditionRID = newConditionRID;
 

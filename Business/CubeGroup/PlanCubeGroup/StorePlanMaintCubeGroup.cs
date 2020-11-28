@@ -976,6 +976,89 @@ namespace MIDRetail.Business
 			}
 		}
 
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        override public void ExtractCubeGroup(ExtractOptions aExtractOptions)
+        {
+            StorePlanWeekDetail storeCube;
+            StorePlanPeriodDetail storePeriodDetailCube;
+            StorePlanDateTotal storeDataTotalCube;
+
+            StorePlanGroupTotalWeekDetail storeGroupTotalCube;
+            StorePlanGroupTotalPeriodDetail storeGroupTotalPeriodDetailCube;
+            StorePlanGroupTotalDateTotal storeGroupTotalDataTotalCube;
+
+            StorePlanStoreTotalWeekDetail storeTotalCube;
+            StorePlanStoreTotalPeriodDetail storeTotalPeriodDetailCube;
+            StorePlanStoreTotalDateTotal storeTotalDataTotalCube;
+
+            ChainPlanWeekDetail chainCube;
+            ChainPlanPeriodDetail chainPeriodDetailCube;
+            ChainPlanDateTotal chainDataTotalCube;
+
+            bool rowsExtracted = false;
+
+            try
+            {
+                // Extract store values
+                storeCube = (StorePlanWeekDetail)GetCube(eCubeType.StorePlanWeekDetail);
+                storeCube.ExtractCube(aExtractOptions, out rowsExtracted);
+
+                if (rowsExtracted)
+                {
+                    storePeriodDetailCube = (StorePlanPeriodDetail)GetCube(eCubeType.StorePlanPeriodDetail);
+                    storePeriodDetailCube.ExtractCube(aExtractOptions);
+
+                    storeDataTotalCube = (StorePlanDateTotal)GetCube(eCubeType.StorePlanDateTotal);
+                    storeDataTotalCube.ExtractCube(aExtractOptions);
+
+                    // Extract Attribute Set values
+                    if (aExtractOptions.AttributeSet)
+                    {
+                        storeGroupTotalCube = (StorePlanGroupTotalWeekDetail)GetCube(eCubeType.StorePlanGroupTotalWeekDetail);
+                        storeGroupTotalCube.ExtractCube(aExtractOptions);
+
+                        storeGroupTotalPeriodDetailCube = (StorePlanGroupTotalPeriodDetail)GetCube(eCubeType.StorePlanGroupTotalPeriodDetail);
+                        storeGroupTotalPeriodDetailCube.ExtractCube(aExtractOptions);
+
+                        storeGroupTotalDataTotalCube = (StorePlanGroupTotalDateTotal)GetCube(eCubeType.StorePlanGroupTotalDateTotal);
+                        storeGroupTotalDataTotalCube.ExtractCube(aExtractOptions);
+
+                        // Extract Attribute values
+                        storeTotalCube = (StorePlanStoreTotalWeekDetail)GetCube(eCubeType.StorePlanStoreTotalWeekDetail);
+                        storeTotalCube.ExtractCube(aExtractOptions);
+
+                        storeTotalPeriodDetailCube = (StorePlanStoreTotalPeriodDetail)GetCube(eCubeType.StorePlanStoreTotalPeriodDetail);
+                        storeTotalPeriodDetailCube.ExtractCube(aExtractOptions);
+
+                        storeTotalDataTotalCube = (StorePlanStoreTotalDateTotal)GetCube(eCubeType.StorePlanStoreTotalDateTotal);
+                        storeTotalDataTotalCube.ExtractCube(aExtractOptions);
+                    }
+                }
+
+                // if chain selected with store
+                if (aExtractOptions.Chain)
+                {
+                    chainCube = (ChainPlanWeekDetail)GetCube(eCubeType.ChainPlanWeekDetail);
+                    chainCube.ExtractCube(aExtractOptions, out rowsExtracted);
+
+                    if (rowsExtracted)
+                    {
+                        chainPeriodDetailCube = (ChainPlanPeriodDetail)GetCube(eCubeType.ChainPlanPeriodDetail);
+                        chainPeriodDetailCube.ExtractCube(aExtractOptions);
+
+                        chainDataTotalCube = (ChainPlanDateTotal)GetCube(eCubeType.ChainPlanDateTotal);
+                        chainDataTotalCube.ExtractCube(aExtractOptions);
+                    }
+                }
+            }
+            catch (Exception exc)
+            {
+                string message = exc.ToString();
+                throw;
+            }
+        }
+        // End TT#2131-MD - JSmith - Halo Integration
+
 		/// <summary>
 		/// Closes this PlanCubeGroup.
 		/// </summary>

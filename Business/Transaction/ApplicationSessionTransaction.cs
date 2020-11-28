@@ -5197,7 +5197,11 @@ namespace MIDRetail.Business
             if (aSelectedHeaderRIDs.Length > 0
                 || aAssortmentRIDList.Length > 0)
             {
-                apl.LoadHeaders(this, aAssortmentRIDList, aSelectedHeaderRIDs, SAB.ApplicationServerSession, false);  // TT#1042 - MD - Jellis - Qty Allocated Cannot Be Negative part 2 (do NOT allow any member of the assortment master list to update subtotals Until put in Allocation List!!!!)
+                // Begin TT#2136-MD - JSmith - Assortment Selection Error
+                //apl.LoadHeaders(this, aAssortmentRIDList, aSelectedHeaderRIDs, SAB.ApplicationServerSession, false);  // TT#1042 - MD - Jellis - Qty Allocated Cannot Be Negative part 2 (do NOT allow any member of the assortment master list to update subtotals Until put in Allocation List!!!!)
+                AllocationProfileList allocationList = (AllocationProfileList)GetMasterProfileList(eProfileType.Allocation);
+                apl.LoadHeaders(this, aAssortmentRIDList, aSelectedHeaderRIDs, SAB.ApplicationServerSession, false, allocationList);  // TT#1042 - MD - Jellis - Qty Allocated Cannot Be Negative part 2 (do NOT allow any member of the assortment master list to update subtotals Until put in Allocation List!!!!)
+                // End TT#2136-MD - JSmith - Assortment Selection Error
             }
             return apl;
         }
@@ -11752,9 +11756,15 @@ namespace MIDRetail.Business
 						applicationAction = new OTSForecastExportMethod(SAB, aMethodRID);
 						methodProfile = new OTSPlanProfile(SAB, Include.UndefinedMethodRID);
 						break;
-//End Enhancement - JScott - Export Method - Part 2
-//Begin Enhancement #5004 - KJohnson - Global Unlock
-					case eMethodType.Rollup:
+                    //End Enhancement - JScott - Export Method - Part 2
+                    // Begin TT#2131-MD - JSmith - Halo Integration
+                    case eMethodType.PlanningExtract:
+                        applicationAction = new OTSForecastPlanningExtractMethod(SAB, aMethodRID);
+                        methodProfile = new OTSPlanProfile(SAB, Include.UndefinedMethodRID);
+                        break;
+                    // End TT#2131-MD - JSmith - Halo Integration
+                    //Begin Enhancement #5004 - KJohnson - Global Unlock
+                    case eMethodType.Rollup:
                         applicationAction = new OTSRollupMethod(SAB, aMethodRID);
                         methodProfile = new OTSPlanProfile(SAB, Include.UndefinedMethodRID);
                         break;
@@ -14347,6 +14357,8 @@ namespace MIDRetail.Business
                 return true;
             }
             aHdrConflictMsg = _headerEnqueue.FormatHeaderConflictMsg();
+            MIDEnvironment.isChangedToReadOnly = true;
+            MIDEnvironment.Message = aHdrConflictMsg;
             return false;
         }
         public bool AreHeadersInConflict

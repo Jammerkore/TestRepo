@@ -297,7 +297,7 @@ namespace UnitTesting
                     Queue processedQueue = new Queue();
                     MIDRetail.DatabaseUpdate.UpdateRoutines.SetProgressBar(lblStatus, prgInstall);
                     bool isValidConfiguration;
-                    MIDRetail.DatabaseUpdate.UpdateRoutines.ProcessDatabase(messageQueue, processedQueue, true, false, false, false, false, connection, newDBName, new MIDRetail.DatabaseUpdate.UpdateRoutines.SetMessageDelegate(AddMessageToResults), new MIDRetail.DatabaseUpdate.UpdateRoutines.SetMessageToInstallerLog(SetLogMessage), out isSuccessful, out isValidConfiguration);
+                    MIDRetail.DatabaseUpdate.UpdateRoutines.ProcessDatabase(messageQueue, processedQueue, true, false, false, false, false, false, connection, newDBName, new MIDRetail.DatabaseUpdate.UpdateRoutines.SetMessageDelegate(AddMessageToResults), new MIDRetail.DatabaseUpdate.UpdateRoutines.SetMessageToInstallerLog(SetLogMessage), out isSuccessful, out isValidConfiguration);
                     while (messageQueue.Count > 0)
                     {
                         AddMessageToResults(messageQueue.Dequeue().ToString());
@@ -357,7 +357,7 @@ namespace UnitTesting
                     Queue processedQueue = new Queue();
                     MIDRetail.DatabaseUpdate.UpdateRoutines.SetProgressBar(lblStatus, prgInstall);
                     bool isValidConfiguration;
-                    MIDRetail.DatabaseUpdate.UpdateRoutines.ProcessDatabase(messageQueue, processedQueue, false, true, false, false, false, upgradedDatabaseConnectionString, newDBNameForUpgrade, new MIDRetail.DatabaseUpdate.UpdateRoutines.SetMessageDelegate(AddMessageToResults), new MIDRetail.DatabaseUpdate.UpdateRoutines.SetMessageToInstallerLog(SetLogMessage), out isSuccessful, out isValidConfiguration);
+                    MIDRetail.DatabaseUpdate.UpdateRoutines.ProcessDatabase(messageQueue, processedQueue, false, true, false, false, false, false, upgradedDatabaseConnectionString, newDBNameForUpgrade, new MIDRetail.DatabaseUpdate.UpdateRoutines.SetMessageDelegate(AddMessageToResults), new MIDRetail.DatabaseUpdate.UpdateRoutines.SetMessageToInstallerLog(SetLogMessage), out isSuccessful, out isValidConfiguration);
                     while (messageQueue.Count > 0)
                     {
                         AddMessageToResults(messageQueue.Dequeue().ToString());

@@ -9,6 +9,7 @@ using MIDRetail.Business;
 using MIDRetail.Common;
 using MIDRetail.Data;
 using MIDRetail.DataCommon;
+using Logility.ROWebSharedTypes;
 
 namespace MIDRetail.Business.Allocation
 {
@@ -462,6 +463,14 @@ namespace MIDRetail.Business.Allocation
         #endregion Properties
 
         #region Methods
+
+        // Begin TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+        override internal bool CheckForUserData()
+        {
+            return false;
+        }
+        // End TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+
         /// <summary>
         /// Sets the Vendor Name (aka BPC_Name)
         /// </summary>
@@ -2518,6 +2527,102 @@ namespace MIDRetail.Business.Allocation
             {
             }
         }
+        // BEGIN RO-642 - RDewey
+        override public FunctionSecurityProfile GetFunctionSecurity()
+        {
+            if (this.GlobalUserType == eGlobalUserType.Global)
+            {
+                return SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.AllocationMethodsGlobalBuildPacks);
+            }
+            else
+            {
+                return SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.AllocationMethodsUserBuildPacks);
+            }
+
+        }
+        override public ROMethodProperties MethodGetData(bool processingApply)
+        {
+            ROMethodBuildPacksProperties method = new ROMethodBuildPacksProperties(
+                method: GetName.GetMethod(method: this),
+                description: Method_Description,
+                userKey: User_RID,
+                vendor: new KeyValuePair<int, string>(_bpmData.BPC_RID, _bpmData.BPC_Name),
+                packMinOrder: _bpmData.Pack_MIN,
+                sizeMultiple: _bpmData.SizeMultiple,
+                sizeGroup: GetName.GetSizeGroup(_bpmData.SizeGroupRID),
+                sizeCurve: GetName.GetSizeCurveName(_bpmData.SizeCurveGroupRID),
+                packCombination: PackCombination,
+                reserveTotalQty: _bpmData.ReserveTotal,
+                reserveTotalIsPercent: _bpmData.ReserveTotalIsPercent,
+                reserveBulkQty: _bpmData.ReserveBulk,
+                reserveBulkIsPercent: _bpmData.ReserveBulkIsPercent,
+                reservePacksQty: _bpmData.ReservePacks,
+                reservePacksIsPercent: _bpmData.ReservePacksIsPercent,
+                removeBulkInd: _bpmData.RemoveBulkAfterFittingPacks,
+                avgPackErrorDevTolerance: _bpmData.AvgPackErrorDevTolerance,
+                maxPackErrorDevTolerance: _bpmData.MaxPackErrorDevTolerance,
+                depleteReserveSelected: _bpmData.DepleteReserveSelected,
+                increaseBuySelected: _bpmData.IncreaseBuySelected,
+                increaseBuyPct: _bpmData.IncreaseBuyPct
+                );
+            return method;
+
+        }
+
+        override public bool MethodSetData(ROMethodProperties methodProperties, bool processingApply)
+        {
+            MIDException aStatusReason;
+            ROMethodBuildPacksProperties rOMethodBuildPacksProperties = (ROMethodBuildPacksProperties)methodProperties;
+            try
+            {
+                Method_Description = rOMethodBuildPacksProperties.Description;
+                SetVendorName(rOMethodBuildPacksProperties.Vendor.Value, out aStatusReason);
+                SetPackMinOrder(rOMethodBuildPacksProperties.PackMinOrder, out aStatusReason);
+                SetSizeMultiple(rOMethodBuildPacksProperties.SizeMultiple, out aStatusReason);
+                SetSizeGroupRID(rOMethodBuildPacksProperties.SizeGroup.Key, out aStatusReason);
+                SetSizeCurveGroupRID(rOMethodBuildPacksProperties.SizeCurve.Key, out aStatusReason);
+                if (rOMethodBuildPacksProperties.PackCombination.Count > 0)
+                {
+                    //update combo selected from list
+                    foreach (PackPatternCombo packCombinationProperties in rOMethodBuildPacksProperties.PackCombination)
+                    {
+                        SetCombinationSelected(packCombinationProperties.PackPatternType, packCombinationProperties.ComboRID, packCombinationProperties.ComboSelected, out aStatusReason);
+                    }
+                }
+                ReplaceCombinations(rOMethodBuildPacksProperties.PackCombination, out aStatusReason);
+                SetReserveTotal(rOMethodBuildPacksProperties.ReserveTotalQty, out aStatusReason);
+                ReserveTotalIsPercent = rOMethodBuildPacksProperties.ReserveTotalIsPercent;
+                SetReserveBulk(rOMethodBuildPacksProperties.ReserveBulkQty, out aStatusReason);
+                ReserveBulkIsPercent = rOMethodBuildPacksProperties.ReserveBulkIsPercent;
+                SetReservePacks(rOMethodBuildPacksProperties.ReservePacksQty, out aStatusReason);
+                ReservePacksIsPercent = rOMethodBuildPacksProperties.ReservePacksIsPercent;
+                RemoveBulkAfterFittingPacks = rOMethodBuildPacksProperties.RemoveBulkInd;
+                AvgPackErrorDevTolerance = rOMethodBuildPacksProperties.AvgPackErrorDevTolerance;
+                MaxPackErrorDevTolerance = Convert.ToUInt16(rOMethodBuildPacksProperties.MaxPackErrorDevTolerance);
+                DepleteReserveSelected = rOMethodBuildPacksProperties.DepleteReserveSelected;
+                IncreaseBuySelected = rOMethodBuildPacksProperties.IncreaseBuySelected;
+                SetIncreaseBuyPct(rOMethodBuildPacksProperties.IncreaseBuyPct, out aStatusReason);
+                if (aStatusReason != null)
+                {
+                    throw new Exception("MethodSaveData Error " + aStatusReason);
+                    //return false;
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+
+            //throw new NotImplementedException("MethodSaveData is not implemented");
+        }
+
+
+        override public ROMethodProperties MethodCopyData()
+        {
+            throw new NotImplementedException("MethodCopyData is not implemented");
+        }
+        // END RO-642 - RDewey
         #endregion Methods
     }
 }

@@ -602,11 +602,11 @@ namespace MIDRetailInstaller
             {
                 // check for prerequisites
                 ucUtilities utilities = new ucUtilities(frame, log, false, false);
-                if (!utilities.IsCrystalReportsInstalled(log))
-                {
-                    log.AddLogEntry("Crystal Reports must be installed.", eErrorType.message);
-                    utilities.InstallCrystalReports(true);
-                }
+                //if (!utilities.IsCrystalReportsInstalled(log))
+                //{
+                //    log.AddLogEntry("Crystal Reports must be installed.", eErrorType.message);
+                //    utilities.InstallCrystalReports(true);
+                //}
 
                 // Begin TT#1668 - JSmith - Install Log
 				//config = new ConfigFiles(frame.installer_data, log);
@@ -1219,11 +1219,11 @@ namespace MIDRetailInstaller
 
                     // check for prerequisites
                     ucUtilities utilities = new ucUtilities(frame, log, false, false);
-                    if (!utilities.IsCrystalReportsInstalled(log))
-                    {
-                        log.AddLogEntry("Crystal Reports must be installed.", eErrorType.message);
-                        utilities.InstallCrystalReports(true);
-                    }
+                    //if (!utilities.IsCrystalReportsInstalled(log))
+                    //{
+                    //    log.AddLogEntry("Crystal Reports must be installed.", eErrorType.message);
+                    //    utilities.InstallCrystalReports(true);
+                    //}
 
                     //short cut alert object
                     alert = new ShortCutAlert();
@@ -1312,16 +1312,18 @@ namespace MIDRetailInstaller
             }
             finally
             {
-                /* Begin TT#1192 - Batch executable files blocked after initial install/upgrade - APicchetti - 3/17/2011 */
-                if (blreturn)
-                {
-                    ProcessStartInfo psi = new ProcessStartInfo();
-                    psi.WindowStyle = ProcessWindowStyle.Hidden;
-                    psi.Arguments = "-s -d " + installFolder;
-                    psi.FileName = Directory.GetParent(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"\streams.exe";
-                    Process.Start(psi);
-                }
-                /* End TT#1192 - Batch executable files blocked after initial install/upgrade - APicchetti - 3/17/2011 */
+                // Begin TT#1931-MD - JSmith - Microsoft Certification
+                ///* Begin TT#1192 - Batch executable files blocked after initial install/upgrade - APicchetti - 3/17/2011 */
+                //if (blreturn)
+                //{
+                //    ProcessStartInfo psi = new ProcessStartInfo();
+                //    psi.WindowStyle = ProcessWindowStyle.Hidden;
+                //    psi.Arguments = "-s -d " + installFolder;
+                //    psi.FileName = Directory.GetParent(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"\streams.exe";
+                //    Process.Start(psi);
+                //}
+                ///* End TT#1192 - Batch executable files blocked after initial install/upgrade - APicchetti - 3/17/2011 */
+                // End TT#1931-MD - JSmith - Microsoft Certification
             }
 
             //return the flag

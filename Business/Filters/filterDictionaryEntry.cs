@@ -145,6 +145,57 @@ namespace MIDRetail.Business
                 }
             }
         }
+
+        // Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+		public static void BuildFormattedTextForCalendar(ref string formattedText, filterOptionDefinition options, filterCondition fc, filterManager manager)
+        {
+            filterCalendarDateOperatorTypes opType = filterCalendarDateOperatorTypes.FromIndex(fc.operatorIndex);
+
+            if (opType == filterCalendarDateOperatorTypes.Unrestricted)
+            {
+                formattedText += filterUtility.FormatOperator(options, " " + filterCalendarDateOperatorTypes.Unrestricted.description);
+            }
+            else if (opType == filterCalendarDateOperatorTypes.Last1Week)
+            {
+                formattedText += filterUtility.FormatOperator(options, " " + filterCalendarDateOperatorTypes.Last1Week.description);
+            }
+            else if (opType == filterCalendarDateOperatorTypes.Next1Week)
+            {
+                formattedText += filterUtility.FormatOperator(options, " " + filterCalendarDateOperatorTypes.Next1Week.description);
+            }
+            else if (opType == filterCalendarDateOperatorTypes.Next4Weeks)
+            {
+                formattedText += filterUtility.FormatOperator(options, " " + filterCalendarDateOperatorTypes.Next4Weeks.description);
+            }
+            else if (opType == filterCalendarDateOperatorTypes.Between)
+            {
+                formattedText += filterUtility.FormatOperator(options, " " + filterCalendarDateOperatorTypes.Between.description + " ");
+                formattedText += filterUtility.FormatValue(options, fc.valueToCompareDateBetweenFromDays.ToString());
+                formattedText += filterUtility.FormatOperator(options, " and ");
+                formattedText += filterUtility.FormatValue(options, fc.valueToCompareDateBetweenToDays.ToString());
+                formattedText += filterUtility.FormatOperator(options, " weeks");
+                if (fc.valueToCompareBool != null && (bool)fc.valueToCompareBool)
+                {
+                    formattedText += filterUtility.FormatOperator(options, " (time sensitive)");
+                }
+            }
+            else if (opType == filterCalendarDateOperatorTypes.Specify)
+            {
+                DateRangeProfile drp = manager.SAB.ClientServerSession.Calendar.GetDateRange((int)fc.date_CDR_RID);
+
+                formattedText += filterUtility.FormatValue(options, " " + drp.DisplayDate);
+            }
+            else 
+            {
+                formattedText += filterUtility.FormatOperator(options, " " + opType.symbol);
+
+                DateRangeProfile drp = manager.SAB.ClientServerSession.Calendar.GetDateRange((int)fc.date_CDR_RID);
+
+                formattedText += filterUtility.FormatValue(options, " " + drp.DisplayDate);
+            }
+        }
+		// End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+
         public static void BuildFormattedTextForNumeric(ref string formattedText, filterOptionDefinition options, filterCondition fc, filterValueTypes vt)
         {
             filterNumericOperatorTypes opType = filterNumericOperatorTypes.FromIndex(fc.operatorIndex);
@@ -261,6 +312,20 @@ namespace MIDRetail.Business
             {
                 formattedText += filterUtility.FormatNormal(options, " " + filterDataHelper.VariablesGetNameFromIndex(fc.sortByFieldIndex) + " ");
             }
+            // Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+            else if (fc.sortByTypeIndex == filterSortByTypes.AssortmentFields)
+            {
+                formattedText += filterUtility.FormatNormal(options, " " + filterAssortmentFieldTypes.FromIndex(fc.sortByFieldIndex).Name + " ");
+            }
+            else if (fc.sortByTypeIndex == filterSortByTypes.AssortmentStatus)
+            {
+                formattedText += filterUtility.FormatNormal(options, " Status ");
+            }
+            else if (fc.sortByTypeIndex == filterSortByTypes.AssortmentDate)
+            {
+                formattedText += filterUtility.FormatNormal(options, " Date ");
+            }
+            // End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
             else
             {
                 formattedText += filterUtility.FormatNormal(options, " " + filterSortByTypes.FromIndex(fc.sortByTypeIndex).Name + " ");

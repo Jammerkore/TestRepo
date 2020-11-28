@@ -17,6 +17,18 @@
             {
                 components.Dispose();
             }
+
+            if (disposing)
+            {
+                this.ugProcessRunning.InitializeLayout -= new Infragistics.Win.UltraWinGrid.InitializeLayoutEventHandler(this.ugProcessRunning_InitializeLayout);
+                this.ugProcessRules.InitializeLayout -= new Infragistics.Win.UltraWinGrid.InitializeLayoutEventHandler(this.ugProcessRules_InitializeLayout);
+                this.ugProcessRules.CellChange -= new Infragistics.Win.UltraWinGrid.CellEventHandler(this.ugProcessRules_CellChange);
+                this.cboProcesses.SelectedIndexChanged -= new System.EventHandler(this.cboProcesses_SelectedIndexChanged);
+                this.btnCancel.Click -= new System.EventHandler(this.btnCancel_Click);
+                this.btnSave.Click -= new System.EventHandler(this.btnSave_Click);
+                this.Load -= new System.EventHandler(this.ProcessControl_Load);
+            }
+
             base.Dispose(disposing);
         }
 
@@ -57,9 +69,17 @@
             this.lbProcesses = new System.Windows.Forms.Label();
             this.cboProcesses = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.btnCancel = new System.Windows.Forms.Button();
+            this.btnSave = new System.Windows.Forms.Button();
+            ((System.ComponentModel.ISupportInitialize)(this.utmMain)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ugProcessRunning)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ugProcessRules)).BeginInit();
             this.SuspendLayout();
+            // 
+            // utmMain
+            // 
+            this.utmMain.MenuSettings.ForceSerialization = true;
+            this.utmMain.ToolbarSettings.ForceSerialization = true;
             // 
             // ugProcessRunning
             // 
@@ -121,7 +141,7 @@
             this.ugProcessRunning.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy;
             this.ugProcessRunning.Location = new System.Drawing.Point(12, 32);
             this.ugProcessRunning.Name = "ugProcessRunning";
-            this.ugProcessRunning.Size = new System.Drawing.Size(506, 173);
+            this.ugProcessRunning.Size = new System.Drawing.Size(645, 173);
             this.ugProcessRunning.TabIndex = 0;
             this.ugProcessRunning.Text = "ultraGrid1";
             this.ugProcessRunning.InitializeLayout += new Infragistics.Win.UltraWinGrid.InitializeLayoutEventHandler(this.ugProcessRunning_InitializeLayout);
@@ -187,10 +207,11 @@
             this.ugProcessRules.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy;
             this.ugProcessRules.Location = new System.Drawing.Point(12, 252);
             this.ugProcessRules.Name = "ugProcessRules";
-            this.ugProcessRules.Size = new System.Drawing.Size(506, 191);
+            this.ugProcessRules.Size = new System.Drawing.Size(645, 283);
             this.ugProcessRules.TabIndex = 1;
             this.ugProcessRules.Text = "ultraGrid2";
             this.ugProcessRules.InitializeLayout += new Infragistics.Win.UltraWinGrid.InitializeLayoutEventHandler(this.ugProcessRules_InitializeLayout);
+            this.ugProcessRules.CellChange += new Infragistics.Win.UltraWinGrid.CellEventHandler(this.ugProcessRules_CellChange);
             // 
             // lbProcesses
             // 
@@ -208,7 +229,7 @@
             this.cboProcesses.FormattingEnabled = true;
             this.cboProcesses.Location = new System.Drawing.Point(122, 227);
             this.cboProcesses.Name = "cboProcesses";
-            this.cboProcesses.Size = new System.Drawing.Size(238, 21);
+            this.cboProcesses.Size = new System.Drawing.Size(377, 21);
             this.cboProcesses.TabIndex = 3;
             this.cboProcesses.SelectedIndexChanged += new System.EventHandler(this.cboProcesses_SelectedIndexChanged);
             // 
@@ -221,11 +242,35 @@
             this.label1.TabIndex = 4;
             this.label1.Text = "Processing Rules For:";
             // 
+            // btnCancel
+            // 
+            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnCancel.Location = new System.Drawing.Point(582, 544);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(75, 23);
+            this.btnCancel.TabIndex = 17;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            // 
+            // btnSave
+            // 
+            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSave.Location = new System.Drawing.Point(494, 544);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(75, 23);
+            this.btnSave.TabIndex = 16;
+            this.btnSave.Text = "OK";
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
             // ProcessControlForm
             // 
+            this.AllowDragDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(530, 455);
+            this.ClientSize = new System.Drawing.Size(669, 576);
+            this.Controls.Add(this.btnCancel);
+            this.Controls.Add(this.btnSave);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.cboProcesses);
             this.Controls.Add(this.lbProcesses);
@@ -234,6 +279,14 @@
             this.Name = "ProcessControlForm";
             this.Text = "Process Control";
             this.Load += new System.EventHandler(this.ProcessControl_Load);
+            this.Controls.SetChildIndex(this.ugProcessRunning, 0);
+            this.Controls.SetChildIndex(this.ugProcessRules, 0);
+            this.Controls.SetChildIndex(this.lbProcesses, 0);
+            this.Controls.SetChildIndex(this.cboProcesses, 0);
+            this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.btnSave, 0);
+            this.Controls.SetChildIndex(this.btnCancel, 0);
+            ((System.ComponentModel.ISupportInitialize)(this.utmMain)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ugProcessRunning)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ugProcessRules)).EndInit();
             this.ResumeLayout(false);
@@ -248,5 +301,7 @@
         private System.Windows.Forms.Label lbProcesses;
         private System.Windows.Forms.ComboBox cboProcesses;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.Button btnSave;
     }
 }

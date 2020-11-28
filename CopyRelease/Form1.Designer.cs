@@ -80,17 +80,19 @@
             this.cbxAssortment = new System.Windows.Forms.CheckBox();
             this.cbxGroupAllocation = new System.Windows.Forms.CheckBox();
             this.gbKeys = new System.Windows.Forms.GroupBox();
+            this.cbxAnalytics = new System.Windows.Forms.CheckBox();
             this.radDevelopment = new System.Windows.Forms.RadioButton();
             this.pnlQABuild.SuspendLayout();
             this.pnlFTP.SuspendLayout();
             this.pnlRelease.SuspendLayout();
             this.ssStatus.SuspendLayout();
+            this.gbKeys.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.Location = new System.Drawing.Point(514, 388);
+            this.btnClose.Location = new System.Drawing.Point(514, 414);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(75, 23);
             this.btnClose.TabIndex = 0;
@@ -101,7 +103,7 @@
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.Location = new System.Drawing.Point(433, 388);
+            this.btnOK.Location = new System.Drawing.Point(433, 414);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 1;
@@ -267,7 +269,7 @@
             this.pnlQABuild.Controls.Add(this.txtQADocumentationBranch);
             this.pnlQABuild.Controls.Add(this.txtQAFolderName);
             this.pnlQABuild.Controls.Add(this.lblQAFolderName);
-            this.pnlQABuild.Location = new System.Drawing.Point(12, 122);
+            this.pnlQABuild.Location = new System.Drawing.Point(12, 151);
             this.pnlQABuild.Name = "pnlQABuild";
             this.pnlQABuild.Size = new System.Drawing.Size(564, 245);
             this.pnlQABuild.TabIndex = 16;
@@ -363,7 +365,7 @@
             this.pnlFTP.Controls.Add(this.btnFTPPath);
             this.pnlFTP.Controls.Add(this.txtFTPReleasePath);
             this.pnlFTP.Controls.Add(this.txtFTPPath);
-            this.pnlFTP.Location = new System.Drawing.Point(11, 121);
+            this.pnlFTP.Location = new System.Drawing.Point(11, 150);
             this.pnlFTP.Name = "pnlFTP";
             this.pnlFTP.Size = new System.Drawing.Size(564, 242);
             this.pnlFTP.TabIndex = 18;
@@ -438,7 +440,7 @@
             this.pnlRelease.Controls.Add(this.txtRLReleasePath);
             this.pnlRelease.Controls.Add(this.txtRLFolderName);
             this.pnlRelease.Controls.Add(this.lblRLFolderName);
-            this.pnlRelease.Location = new System.Drawing.Point(15, 121);
+            this.pnlRelease.Location = new System.Drawing.Point(15, 150);
             this.pnlRelease.Name = "pnlRelease";
             this.pnlRelease.Size = new System.Drawing.Size(564, 242);
             this.pnlRelease.TabIndex = 17;
@@ -527,7 +529,7 @@
             this.ssStatus.Dock = System.Windows.Forms.DockStyle.None;
             this.ssStatus.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel});
-            this.ssStatus.Location = new System.Drawing.Point(8, 388);
+            this.ssStatus.Location = new System.Drawing.Point(8, 414);
             this.ssStatus.Name = "ssStatus";
             this.ssStatus.Size = new System.Drawing.Size(409, 22);
             this.ssStatus.TabIndex = 20;
@@ -607,12 +609,24 @@
             // 
             // gbKeys
             // 
+            this.gbKeys.Controls.Add(this.cbxAnalytics);
             this.gbKeys.Location = new System.Drawing.Point(412, 7);
             this.gbKeys.Name = "gbKeys";
-            this.gbKeys.Size = new System.Drawing.Size(177, 100);
+            this.gbKeys.Size = new System.Drawing.Size(177, 125);
             this.gbKeys.TabIndex = 27;
             this.gbKeys.TabStop = false;
             this.gbKeys.Text = "License Keys";
+            // 
+            // cbxAnalytics
+            // 
+            this.cbxAnalytics.AutoSize = true;
+            this.cbxAnalytics.Location = new System.Drawing.Point(10, 95);
+            this.cbxAnalytics.Name = "cbxAnalytics";
+            this.cbxAnalytics.Size = new System.Drawing.Size(68, 17);
+            this.cbxAnalytics.TabIndex = 27;
+            this.cbxAnalytics.Text = "Analytics";
+            this.cbxAnalytics.UseVisualStyleBackColor = true;
+            this.cbxAnalytics.CheckedChanged += new System.EventHandler(this.cbxAnalytics_CheckedChanged);
             // 
             // radDevelopment
             // 
@@ -630,7 +644,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(599, 415);
+            this.ClientSize = new System.Drawing.Size(599, 441);
             this.Controls.Add(this.radDevelopment);
             this.Controls.Add(this.cbxGroupAllocation);
             this.Controls.Add(this.cbxAssortment);
@@ -664,6 +678,8 @@
             this.pnlRelease.PerformLayout();
             this.ssStatus.ResumeLayout(false);
             this.ssStatus.PerformLayout();
+            this.gbKeys.ResumeLayout(false);
+            this.gbKeys.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -723,6 +739,7 @@
         private System.Windows.Forms.CheckBox cbxGroupAllocation;
         private System.Windows.Forms.GroupBox gbKeys;
         private System.Windows.Forms.RadioButton radDevelopment;
+        private System.Windows.Forms.CheckBox cbxAnalytics;
     }
 }
 

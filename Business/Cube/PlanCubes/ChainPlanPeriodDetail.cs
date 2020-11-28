@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using MIDRetail.Common;
 using MIDRetail.DataCommon;
@@ -345,5 +346,151 @@ namespace MIDRetail.Business
 				throw;
 			}
 		}
-	}
+
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        public void ExtractCube(ExtractOptions aExtractOptions)
+        {
+            PlanCellReference planCellRef;
+            Dictionary<VariableProfile, double> valueCol;
+            Dictionary<VariableProfile, string> stringCol;
+            PlanWaferCell waferCell;
+            int writeCount;
+            List<int> years = new List<int>();
+            List<DateProfile> periods;
+
+            try
+            {
+                if (!PlanCubeGroup.ROExtractEnabled)
+                {
+                    return;
+                }
+
+                periods = PlanCubeGroup.BuildPeriods(
+                    includeYear:true, 
+                    includeSeason: true, 
+                    includeQuarter: true,
+                    includeMonth: true, 
+                    includeWeeks: false,
+                    includeAllWeeks: aExtractOptions.IncludeAllWeeks,
+                    isForExtract: true,
+                    HN_RID: PlanCubeGroup.OpenParms.ChainHLPlanProfile.NodeProfile.Key,
+                    FV_RID: PlanCubeGroup.OpenParms.ChainHLPlanProfile.VersionProfile.Key,
+                    planType: ePlanType.Chain
+                    );
+
+                PlanCubeGroup.ROExtractData.OpenUpdateConnection();
+
+                try
+                {
+                    PlanCubeGroup.ROExtractData.Variable_Init();
+                    writeCount = 0;
+
+                    valueCol = new Dictionary<VariableProfile, double>();
+                    stringCol = new Dictionary<VariableProfile, string>();
+
+                    planCellRef = (PlanCellReference)CreateCellReference();
+                    planCellRef[eProfileType.Version] = PlanCubeGroup.OpenParms.ChainHLPlanProfile.VersionProfile.Key;
+                    planCellRef[eProfileType.HierarchyNode] = PlanCubeGroup.OpenParms.ChainHLPlanProfile.NodeProfile.Key;
+                    planCellRef[eProfileType.QuantityVariable] = CubeGroup.Transaction.PlanComputations.PlanQuantityVariables.ValueQuantity.Key;
+
+                    foreach (PeriodProfile period in periods)
+                    {
+                        valueCol.Clear();
+                        stringCol.Clear();
+
+                        if (period is YearProfile)
+                        {
+                            planCellRef[eProfileType.Period] = period.FiscalYear;
+                        }
+                        else if (period is MonthProfile)
+                        {
+                            planCellRef[eProfileType.Period] = period.Key;
+                        }
+                        else
+                        {
+                            planCellRef[eProfileType.Period] = period.YearPeriod;
+                        }
+
+                        foreach (VariableProfile varProf in PlanCubeGroup.Variables.GetChainWeeklyVariableList())
+                        {
+                            // skip variables not selected
+                            if (!aExtractOptions.VarProfList.Contains(varProf.Key))
+                            {
+                                continue;
+                            }
+
+                            planCellRef[eProfileType.Variable] = varProf.Key;
+
+                            if (varProf.FormatType == eValueFormatType.GenericNumeric)
+                            {
+                                if (planCellRef.CurrentCellValue != 0
+                                    || !aExtractOptions.ExcludeZeroValues
+                                    || planCellRef.isCellChanged)
+                                {
+                                    valueCol.Add(varProf, planCellRef.CurrentCellValue);
+                                }
+                            }
+                            else
+                            {
+                                waferCell = new PlanWaferCell(planCellRef, planCellRef.CurrentCellValue, "1", "1", false);
+                                if (!string.IsNullOrEmpty(waferCell.ValueAsString)
+                                    || !aExtractOptions.ExcludeZeroValues
+                                    || planCellRef.isCellChanged)
+                                {
+                                    stringCol.Add(varProf, waferCell.ValueAsString);
+                                }
+                            }
+                        }
+
+                        if (valueCol.Count > 0
+                            || stringCol.Count > 0)
+                        {
+                            PlanCubeGroup.ROExtractData.Planning_Chain_Insert(
+                                PlanCubeGroup.OpenParms.ChainHLPlanProfile.NodeProfile.NodeID,
+                                period.ToString(),
+                                PlanCubeGroup.OpenParms.ChainHLPlanProfile.VersionProfile.Description,
+                                 valueCol,
+                                 stringCol
+                                 );
+
+                            writeCount += (valueCol.Count + stringCol.Count);
+
+                            if (writeCount > MIDConnectionString.CommitLimit)
+                            {
+                                PlanCubeGroup.ROExtractData.Planning_Chain_Update();
+                                PlanCubeGroup.ROExtractData.CommitData();
+                                PlanCubeGroup.ROExtractData.Variable_Init();
+                                writeCount = 0;
+                            }
+                        }
+                    }
+
+                    if (writeCount > 0)
+                    {
+                        PlanCubeGroup.ROExtractData.Planning_Chain_Update();
+                    }
+
+                    PlanCubeGroup.ROExtractData.CommitData();
+                }
+                catch (Exception exc)
+                {
+                    string message = exc.ToString();
+                    throw;
+                }
+                finally
+                {
+                    if (PlanCubeGroup.ROExtractData.ConnectionIsOpen)
+                    {
+                        PlanCubeGroup.ROExtractData.CloseUpdateConnection();
+                    }
+                }
+            }
+            catch (Exception exc)
+            {
+                string message = exc.ToString();
+                throw;
+            }
+        }
+        // End TT#2131-MD - JSmith - Halo Integration
+    }
 }

@@ -3719,7 +3719,7 @@ namespace MIDRetail.Windows
 
 				//DebugSetsCollection();
 
-//				CollectionDecoder cd = new CollectionDecoder(_setsCollection);
+//				CollectionDecoder cd = new CollectionDecoder(_setsCollection);data
 //
 //				MinMaxItemBase minMax = (MinMaxItemBase) cd.GetItem(148, 27, 973);
 			}

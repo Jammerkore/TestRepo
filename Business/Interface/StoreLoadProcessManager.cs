@@ -198,6 +198,7 @@ namespace MIDRetail.Business
                 bool hasActiveIndicatorChangedOnAnyStore = false;
                 List<storeCharInfo> charChangedList = new List<storeCharInfo>();
                 List<int> fieldChangedList = new List<int>();
+                bool clearExtractDates = false;   // TT#2131-MD - JSmith - Halo Integration
 
                 //process the records in the list
                 foreach (StoreLoadRecord storeRecord in recordList)
@@ -220,6 +221,7 @@ namespace MIDRetail.Business
                         if (storeRecord.hasError == false)
                         {
                             recordsDeleted++;
+                            clearExtractDates = true;   // TT#2131-MD - JSmith - Halo Integration
                         }
                     }
                     else if (storeRecord.recordAction == StoreLoadRecordActions.processRecoverStoreFromDeletion)
@@ -246,11 +248,18 @@ namespace MIDRetail.Business
                             if (storeRecord.isNewlyAdded)
                             {
                                 recordsAdded++;
+                                clearExtractDates = true;   // TT#2131-MD - JSmith - Halo Integration
                             }
                             else
                             {
                                 recordsUpdated++;
                             }
+                            // Begin TT#2131-MD - JSmith - Halo Integration
+                            if (hasActiveIndicatorChangedOnAnyStore)
+                            {
+                                clearExtractDates = true;  
+                            }
+                            // End TT#2131-MD - JSmith - Halo Integration
                         }
                     }
 
@@ -264,6 +273,37 @@ namespace MIDRetail.Business
                         AddMsgsToAudit(msgListForAudit); //Add messages to the audit  (there can be both information messages and error messages)
                     }
                 }
+
+                // Begin TT#2131-MD - JSmith - Halo Integration
+                if (clearExtractDates)
+                {
+                    int numberOfStoreDataTables = 10;
+                    if (_SAB.ApplicationServerSession != null
+                        && _SAB.ApplicationServerSession.GlobalOptions != null)
+                    {
+                        numberOfStoreDataTables = _SAB.ApplicationServerSession.GlobalOptions.NumberOfStoreDataTables;
+                    }
+                    else if (_SAB.StoreServerSession != null
+                        && _SAB.StoreServerSession.GlobalOptions != null)
+                    {
+                        numberOfStoreDataTables = _SAB.StoreServerSession.GlobalOptions.NumberOfStoreDataTables;
+                    }
+
+                    VariablesData vd = new VariablesData(numberOfStoreDataTables);
+                    try
+                    {
+                        vd.OpenUpdateConnection();
+                        vd.EXTRACT_PLANNING_CONTROL_CLEAR_EXTRACT_DATES();
+                    }
+                    finally
+                    {
+                        if (vd.ConnectionIsOpen)
+                        {
+                            vd.CloseUpdateConnection();
+                        }
+                    }
+                }
+                // End TT#2131-MD - JSmith - Halo Integration
 
                 int recordsWithErrors = recordList.FindAll(x => x.hasError).Count;
 

@@ -44,6 +44,9 @@ namespace MIDRetail.Windows
         private string _sForecastCopyChain;
         private string _sForecastCopyStore;
         private string _sForecastExport;
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        private string _sForecastPlanningExtract;
+        // End TT#2131-MD - JSmith - Halo Integration
         private string _sForecastModifySales;
         private string _sForecastGlobalUnlock;
         //Begin TT#43 - MD - DOConnell - Projected Sales Enhancement
@@ -94,6 +97,10 @@ namespace MIDRetail.Windows
 		private FunctionSecurityProfile _forecastMethodsUserCopyStore;
         private FunctionSecurityProfile _forecastMethodsGlobalExport;
         private FunctionSecurityProfile _forecastMethodsUserExport;
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        private FunctionSecurityProfile _forecastMethodsGlobalPlanningExtract;
+        private FunctionSecurityProfile _forecastMethodsUserPlanningExtract;
+        // End TT#2131-MD - JSmith - Halo Integration
         private FunctionSecurityProfile _forecastMethodsGlobalModifySales;
         private FunctionSecurityProfile _forecastMethodsUserModifySales;
         private FunctionSecurityProfile _forecastMethodsGlobalGlobalUnlock;
@@ -233,6 +240,9 @@ namespace MIDRetail.Windows
             _sForecastCopyChain = MIDText.GetTextOnly((int)eMethodType.CopyChainForecast);
             _sForecastCopyStore = MIDText.GetTextOnly((int)eMethodType.CopyStoreForecast);
             _sForecastExport = MIDText.GetTextOnly((int)eMethodType.Export);
+            // Begin TT#2131-MD - JSmith - Halo Integration
+            _sForecastPlanningExtract = MIDText.GetTextOnly((int)eMethodType.PlanningExtract);
+            // End TT#2131-MD - JSmith - Halo Integration
             _sForecastModifySales = MIDText.GetTextOnly((int)eMethodType.ForecastModifySales);
             _sForecastGlobalUnlock = MIDText.GetTextOnly((int)eMethodType.GlobalUnlock);
             //Begin TT#43 - MD - DOConnell - Projected Sales Enhancement
@@ -273,6 +283,16 @@ namespace MIDRetail.Windows
             // End TT#1167
         }
 
+        // Begin TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+        public GetMethods GetMethods
+        {
+            get
+            {
+                return _getMethods;
+            }
+        }
+        // End TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+
         public bool isGlobalForecastingAllowed
         {
             get
@@ -283,6 +303,7 @@ namespace MIDRetail.Windows
                     _forecastMethodsGlobalCopyChain.AllowView ||
                     _forecastMethodsGlobalCopyStore.AllowView ||
                     _forecastMethodsGlobalExport.AllowView ||
+                    _forecastMethodsGlobalPlanningExtract.AllowView ||   // TT#2131-MD - JSmith - Halo Integration
                     _forecastMethodsGlobalModifySales.AllowView ||
                     _forecastMethodsGlobalGlobalUnlock.AllowView ||
                     _forecastMethodsGlobalGlobalLock.AllowView ||   //TT#43 - MD - DOConnell - Projected Sales Enhancement
@@ -308,6 +329,7 @@ namespace MIDRetail.Windows
                     _forecastMethodsUserCopyChain.AllowView ||
                     _forecastMethodsUserCopyStore.AllowView ||
                     _forecastMethodsUserExport.AllowView ||
+                    _forecastMethodsUserPlanningExtract.AllowView || // TT#2131-MD - JSmith - Halo Integration
                     _forecastMethodsUserModifySales.AllowView ||
                     _forecastMethodsUserGlobalUnlock.AllowView ||
                     _forecastMethodsUserGlobalLock.AllowView || //TT#43 - MD - DOConnell - Projected Sales Enhancement
@@ -461,6 +483,7 @@ namespace MIDRetail.Windows
                 aMethodType == (int)eProfileType.MethodCopyChainForecast ||
                 aMethodType == (int)eProfileType.MethodCopyStoreForecast ||
                 aMethodType == (int)eProfileType.MethodExport ||
+                aMethodType == (int)eProfileType.MethodPlanningExtract ||  // TT#2131-MD - JSmith - Halo Integration
                 aMethodType == (int)eProfileType.MethodGlobalUnlock ||
                 aMethodType == (int)eProfileType.MethodGlobalLock ||  //TT#43 - MD - DOConnell - Projected Sales Enhancement
                 aMethodType == (int)eProfileType.MethodRollup ||
@@ -517,6 +540,10 @@ namespace MIDRetail.Windows
                 _forecastMethodsUserRollup = SAB.ClientServerSession.GetUserFunctionSecurityAssignment(SAB.ClientServerSession.UserRID, eSecurityFunctions.ForecastMethodsUserRollup);
                 _forecastMethodsGlobalExport = SAB.ClientServerSession.GetUserFunctionSecurityAssignment(SAB.ClientServerSession.UserRID, eSecurityFunctions.ForecastMethodsGlobalExport);
                 _forecastMethodsUserExport = SAB.ClientServerSession.GetUserFunctionSecurityAssignment(SAB.ClientServerSession.UserRID, eSecurityFunctions.ForecastMethodsUserExport);
+                // Begin TT#2131-MD - JSmith - Halo Integration
+                _forecastMethodsGlobalPlanningExtract = SAB.ClientServerSession.GetUserFunctionSecurityAssignment(SAB.ClientServerSession.UserRID, eSecurityFunctions.ForecastMethodsGlobalPlanningExtract);
+                _forecastMethodsUserPlanningExtract = SAB.ClientServerSession.GetUserFunctionSecurityAssignment(SAB.ClientServerSession.UserRID, eSecurityFunctions.ForecastMethodsUserPlanningExtract);
+                // End TT#2131-MD - JSmith - Halo Integration
                 _forecastMethodsGlobalModifySales = SAB.ClientServerSession.GetUserFunctionSecurityAssignment(SAB.ClientServerSession.UserRID, eSecurityFunctions.ForecastMethodsGlobalOTSModifySales);
                 _forecastMethodsUserModifySales = SAB.ClientServerSession.GetUserFunctionSecurityAssignment(SAB.ClientServerSession.UserRID, eSecurityFunctions.ForecastMethodsUserOTSModifySales);
 
@@ -596,6 +623,8 @@ namespace MIDRetail.Windows
                     _forecastMethodsUserRollup.SetAccessDenied();
                     _forecastMethodsGlobalExport.SetAccessDenied();
                     _forecastMethodsUserExport.SetAccessDenied();
+                    _forecastMethodsGlobalPlanningExtract.SetAccessDenied(); // TT#2131-MD - JSmith - Halo Integration
+                    _forecastMethodsUserPlanningExtract.SetAccessDenied(); // TT#2131-MD - JSmith - Halo Integration
                     _forecastMethodsGlobalModifySales.SetAccessDenied();
                     _forecastMethodsUserModifySales.SetAccessDenied();
 
@@ -607,6 +636,7 @@ namespace MIDRetail.Windows
                     _forecastMethodsUserCopyChain.AccessDenied &&
                     _forecastMethodsUserCopyStore.AccessDenied &&
                     _forecastMethodsUserExport.AccessDenied &&
+                    _forecastMethodsUserPlanningExtract.AccessDenied && // TT#2131-MD - JSmith - Halo Integration
                     _forecastMethodsUserModifySales.AccessDenied &&
                     _forecastMethodsUserGlobalUnlock.AccessDenied &&
                     _forecastMethodsUserGlobalLock.AccessDenied &&  //TT#43 - MD - DOConnell - Projected Sales Enhancement
@@ -620,6 +650,7 @@ namespace MIDRetail.Windows
                     _forecastMethodsGlobalCopyChain.AccessDenied &&
                     _forecastMethodsGlobalCopyStore.AccessDenied &&
                     _forecastMethodsGlobalExport.AccessDenied &&
+                    _forecastMethodsGlobalPlanningExtract.AccessDenied && // TT#2131-MD - JSmith - Halo Integration
                     _forecastMethodsGlobalModifySales.AccessDenied &&
                     _forecastMethodsGlobalGlobalUnlock.AccessDenied &&
                     _forecastMethodsGlobalGlobalLock.AccessDenied &&    //TT#43 - MD - DOConnell - Projected Sales Enhancement
@@ -644,6 +675,15 @@ namespace MIDRetail.Windows
                     _allocationMethodsUserSizeCurve.SetAccessDenied();
                     // End TT#155
 				}
+
+                // Begin TT#2131-MD - JSmith - Halo Integration
+                if (!SAB.ROExtractEnabled)
+                {
+                    _forecastMethodsGlobalPlanningExtract.SetAccessDenied();
+                    _forecastMethodsUserPlanningExtract.SetAccessDenied();
+                }
+                // End TT#2131-MD - JSmith - Halo Integration
+
 				// Begin TT#2 - stodd - assortment
 				//if (!SAB.ClientServerSession.GlobalOptions.AppConfig.AssortmentInstalled)
 				//{
@@ -659,6 +699,7 @@ namespace MIDRetail.Windows
                    _forecastMethodsGlobalCopyChain.AllowView ||
                    _forecastMethodsGlobalCopyStore.AllowView ||
                    _forecastMethodsGlobalExport.AllowView ||
+                   _forecastMethodsGlobalPlanningExtract.AllowView || // TT#2131-MD - JSmith - Halo Integration
                    _forecastMethodsGlobalModifySales.AllowView ||
                    _forecastMethodsGlobalGlobalUnlock.AllowView ||
                    _forecastMethodsGlobalGlobalLock.AllowView ||    //TT#43 - MD - DOConnell - Projected Sales Enhancement
@@ -673,6 +714,7 @@ namespace MIDRetail.Windows
                   _forecastMethodsGlobalCopyChain.AllowUpdate ||
                   _forecastMethodsGlobalCopyStore.AllowUpdate ||
                   _forecastMethodsGlobalExport.AllowUpdate ||
+                  _forecastMethodsGlobalPlanningExtract.AllowUpdate || // TT#2131-MD - JSmith - Halo Integration
                   _forecastMethodsGlobalModifySales.AllowUpdate ||
                   _forecastMethodsGlobalGlobalUnlock.AllowUpdate ||
                   _forecastMethodsGlobalGlobalLock.AllowUpdate ||   //TT#43 - MD - DOConnell - Projected Sales Enhancement
@@ -687,6 +729,7 @@ namespace MIDRetail.Windows
                  _forecastMethodsGlobalCopyChain.AllowDelete ||
                  _forecastMethodsGlobalCopyStore.AllowDelete ||
                  _forecastMethodsGlobalExport.AllowDelete ||
+                 _forecastMethodsGlobalPlanningExtract.AllowDelete || // TT#2131-MD - JSmith - Halo Integration
                  _forecastMethodsGlobalModifySales.AllowDelete ||
                  _forecastMethodsGlobalGlobalUnlock.AllowDelete ||
                  _forecastMethodsGlobalGlobalLock.AllowDelete ||    //TT#43 - MD - DOConnell - Projected Sales Enhancement
@@ -701,6 +744,7 @@ namespace MIDRetail.Windows
                  _forecastMethodsGlobalCopyChain.AllowExecute ||
                  _forecastMethodsGlobalCopyStore.AllowExecute ||
                  _forecastMethodsGlobalExport.AllowExecute ||
+                 _forecastMethodsGlobalPlanningExtract.AllowExecute || // TT#2131-MD - JSmith - Halo Integration
                  _forecastMethodsGlobalModifySales.AllowExecute ||
                  _forecastMethodsGlobalGlobalUnlock.AllowExecute ||
                  _forecastMethodsGlobalGlobalLock.AllowExecute ||   //TT#43 - MD - DOConnell - Projected Sales Enhancement
@@ -715,6 +759,7 @@ namespace MIDRetail.Windows
                  _forecastMethodsGlobalCopyChain.AllowMove ||
                  _forecastMethodsGlobalCopyStore.AllowMove ||
                  _forecastMethodsGlobalExport.AllowMove ||
+                 _forecastMethodsGlobalPlanningExtract.AllowMove || // TT#2131-MD - JSmith - Halo Integration
                  _forecastMethodsGlobalModifySales.AllowMove ||
                  _forecastMethodsGlobalGlobalUnlock.AllowMove ||
                  _forecastMethodsGlobalGlobalLock.AllowMove ||  //TT#43 - MD - DOConnell - Projected Sales Enhancement
@@ -731,6 +776,7 @@ namespace MIDRetail.Windows
                    _forecastMethodsUserCopyChain.AllowView ||
                    _forecastMethodsUserCopyStore.AllowView ||
                    _forecastMethodsUserExport.AllowView ||
+                   _forecastMethodsUserPlanningExtract.AllowView || // TT#2131-MD - JSmith - Halo Integration
                    _forecastMethodsUserModifySales.AllowView ||
                    _forecastMethodsUserGlobalUnlock.AllowView ||
                    _forecastMethodsUserGlobalLock.AllowView ||  //TT#43 - MD - DOConnell - Projected Sales Enhancement
@@ -745,6 +791,7 @@ namespace MIDRetail.Windows
                    _forecastMethodsUserCopyChain.AllowUpdate ||
                    _forecastMethodsUserCopyStore.AllowUpdate ||
                    _forecastMethodsUserExport.AllowUpdate ||
+                   _forecastMethodsUserPlanningExtract.AllowUpdate || // TT#2131-MD - JSmith - Halo Integration
                    _forecastMethodsUserModifySales.AllowUpdate ||
                    _forecastMethodsUserGlobalUnlock.AllowUpdate ||
                    _forecastMethodsUserGlobalLock.AllowUpdate ||    //TT#43 - MD - DOConnell - Projected Sales Enhancement
@@ -759,6 +806,7 @@ namespace MIDRetail.Windows
                   _forecastMethodsUserCopyChain.AllowDelete ||
                   _forecastMethodsUserCopyStore.AllowDelete ||
                   _forecastMethodsUserExport.AllowDelete ||
+                  _forecastMethodsUserPlanningExtract.AllowDelete || // TT#2131-MD - JSmith - Halo Integration
                   _forecastMethodsUserModifySales.AllowDelete ||
                   _forecastMethodsUserGlobalUnlock.AllowDelete ||
                   _forecastMethodsUserGlobalLock.AllowDelete || //TT#43 - MD - DOConnell - Projected Sales Enhancement
@@ -773,6 +821,7 @@ namespace MIDRetail.Windows
                   _forecastMethodsUserCopyChain.AllowExecute ||
                   _forecastMethodsUserCopyStore.AllowExecute ||
                   _forecastMethodsUserExport.AllowExecute ||
+                  _forecastMethodsUserPlanningExtract.AllowExecute || // TT#2131-MD - JSmith - Halo Integration
                   _forecastMethodsUserModifySales.AllowExecute ||
                   _forecastMethodsUserGlobalUnlock.AllowExecute ||
                   _forecastMethodsUserGlobalLock.AllowExecute ||    //TT#43 - MD - DOConnell - Projected Sales Enhancement
@@ -787,6 +836,7 @@ namespace MIDRetail.Windows
                   _forecastMethodsUserCopyChain.AllowMove ||
                   _forecastMethodsUserCopyStore.AllowMove ||
                   _forecastMethodsUserExport.AllowMove ||
+                  _forecastMethodsUserPlanningExtract.AllowMove || // TT#2131-MD - JSmith - Halo Integration
                   _forecastMethodsUserModifySales.AllowMove ||
                   _forecastMethodsUserGlobalUnlock.AllowMove ||
                   _forecastMethodsUserGlobalLock.AllowMove ||   //TT#43 - MD - DOConnell - Projected Sales Enhancement
@@ -1437,6 +1487,28 @@ namespace MIDRetail.Windows
             }
         }
 
+        override public void ReloadCache(int userRID, int groupKey)
+        {
+            DataTable children;
+
+            try
+            {
+                _htChildren.Remove(groupKey);
+                children = DlFolder.Folder_Children_Read(userRID, groupKey);
+
+                _htChildren.Add(groupKey, children);
+
+                MethodBaseData methodsData = new MethodBaseData();
+                _dtMethods = methodsData.GetMethods(SAB.ClientServerSession.UserRID);
+                WorkflowBaseData workflowsData = new WorkflowBaseData();
+                _dtWorkflows = workflowsData.GetWorkflows(SAB.ClientServerSession.UserRID);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
         // Begin TT#176 - JSmith - New database has errors
         private void CreateNewOTSForecastGroup(int aUserRID, int aFolderRID)
         {
@@ -1532,6 +1604,7 @@ namespace MIDRetail.Windows
                     aSelectedNodes.ClipboardDataType == eProfileType.MethodCopyChainForecast ||
                     aSelectedNodes.ClipboardDataType == eProfileType.MethodCopyStoreForecast ||
                     aSelectedNodes.ClipboardDataType == eProfileType.MethodExport ||
+                    aSelectedNodes.ClipboardDataType == eProfileType.MethodPlanningExtract ||  // Begin TT#2131-MD - JSmith - Halo Integration
                     aSelectedNodes.ClipboardDataType == eProfileType.MethodGlobalUnlock ||
                     aSelectedNodes.ClipboardDataType == eProfileType.MethodGlobalLock ||  //TT#43 - MD - DOConnell - Projected Sales Enhancement
                     aSelectedNodes.ClipboardDataType == eProfileType.MethodRollup ||
@@ -1562,6 +1635,7 @@ namespace MIDRetail.Windows
                     aSelectedNodes.ClipboardDataType == eProfileType.MethodCopyChainForecastSubFolder ||
                     aSelectedNodes.ClipboardDataType == eProfileType.MethodCopyStoreForecastSubFolder ||
                     aSelectedNodes.ClipboardDataType == eProfileType.MethodExportSubFolder ||
+                    aSelectedNodes.ClipboardDataType == eProfileType.MethodPlanningExtractSubFolder ||  // TT#2131-MD - JSmith - Halo Integration
                     aSelectedNodes.ClipboardDataType == eProfileType.MethodGlobalUnlockSubFolder ||
                     aSelectedNodes.ClipboardDataType == eProfileType.MethodGlobalLockSubFolder || //TT#43 - MD - DOConnell - Projected Sales Enhancement
                     aSelectedNodes.ClipboardDataType == eProfileType.MethodRollupSubFolder ||
@@ -1611,6 +1685,7 @@ namespace MIDRetail.Windows
                     aClipboardDataType == eProfileType.MethodCopyChainForecast ||
                     aClipboardDataType == eProfileType.MethodCopyStoreForecast ||
                     aClipboardDataType == eProfileType.MethodExport ||
+                    aClipboardDataType == eProfileType.MethodPlanningExtract ||  // TT#2131-MD - JSmith - Halo Integration
                     aClipboardDataType == eProfileType.MethodGlobalUnlock ||
                     aClipboardDataType == eProfileType.MethodGlobalLock ||    //TT#43 - MD - DOConnell - Projected Sales Enhancement
                     aClipboardDataType == eProfileType.MethodRollup ||
@@ -1926,17 +2001,23 @@ namespace MIDRetail.Windows
         private MIDWorkflowMethodTreeNode BuildOTSForecastGroup(MIDWorkflowMethodTreeNode aNode, int aGroupKey, int aUserRID, int aOwnerUserRID, DataTable aChildren, bool aIsShortcut)
         {
             MIDWorkflowMethodTreeNode groupNode;
+
+            groupNode = null;
+
+            groupNode = BuildFolderNode(aGroupKey, aNode, aUserRID, eProfileType.WorkflowMethodOTSForcastFolder, DlFolder.Folder_GetName(aGroupKey), GetSecurity(aUserRID, eProfileType.WorkflowMethodOTSForcastFolder, eWorkflowType.None), aOwnerUserRID, eTreeNodeType.MainSourceFolderNode, aIsShortcut);
+            groupNode.Sequence = 0;
+
+            return BuildOTSForecastGroupChildren(groupNode, aGroupKey, aUserRID, aOwnerUserRID, aChildren, aIsShortcut);
+        }
+
+        public MIDWorkflowMethodTreeNode BuildOTSForecastGroupChildren(MIDWorkflowMethodTreeNode groupNode, int aGroupKey, int aUserRID, int aOwnerUserRID, DataTable aChildren, bool aIsShortcut)
+        {
             MIDWorkflowMethodTreeNode methodsNode;
             MIDWorkflowMethodTreeNode node;
             int sequence = -1;
 
             try
             {
-                groupNode = null;
-
-                groupNode = BuildFolderNode(aGroupKey, aNode, aUserRID, eProfileType.WorkflowMethodOTSForcastFolder, DlFolder.Folder_GetName(aGroupKey), GetSecurity(aUserRID, eProfileType.WorkflowMethodOTSForcastFolder, eWorkflowType.None), aOwnerUserRID, eTreeNodeType.MainSourceFolderNode, aIsShortcut);
-                groupNode.Sequence = 0;
-
                 if (GetSecurity(aUserRID, eProfileType.Workflow, eWorkflowType.Forecast).AllowView)
                 {
                     node = BuildFolderNode((int)eProfileType.WorkflowMethodOTSForcastWorkflowsFolder, groupNode, aUserRID, eProfileType.WorkflowMethodOTSForcastWorkflowsFolder, _sForecastWorkflowsFolder, GetSecurity(aUserRID, eProfileType.WorkflowMethodOTSForcastWorkflowsFolder, eWorkflowType.Forecast), aOwnerUserRID, eTreeNodeType.MainSourceFolderNode, aIsShortcut);
@@ -2145,6 +2226,22 @@ namespace MIDRetail.Windows
                         }
 						// End TT#1167
                     }
+                    // Begin TT#2131-MD - JSmith - Halo Integration
+                    if (GetSecurity(aUserRID, eProfileType.MethodPlanningExtract, eWorkflowType.None).AllowView)
+                    {
+                        node = BuildFolderNode((int)eProfileType.MethodPlanningExtractFolder, methodsNode, aUserRID, eProfileType.MethodPlanningExtractFolder, _sForecastPlanningExtract, GetSecurity(aUserRID, eProfileType.MethodPlanningExtractFolder, eWorkflowType.None), aOwnerUserRID, eTreeNodeType.MainSourceFolderNode, aIsShortcut);
+                        node.Sequence = ++sequence;
+                        methodsNode.Nodes.Add(node);
+                        if (AddFoldersToFolder(node, eProfileType.MethodPlanningExtractSubFolder, aChildren, GetSecurity(aUserRID, eProfileType.MethodPlanningExtractSubFolder, eWorkflowType.None), eWorkflowType.None, false) ||
+                            AddMethodsToFolder(node, eMethodType.PlanningExtract, eProfileType.MethodPlanningExtract, aChildren, GetSecurity(aUserRID, eProfileType.MethodPlanningExtract, eWorkflowType.None), false))
+                        {
+                            node.Nodes.Add(BuildPlaceHolderNode());
+                            node.ChildrenLoaded = false;
+                            node.HasChildren = true;
+                            node.DisplayChildren = true;
+                        }
+                    }
+                    // End TT#2131-MD - JSmith - Halo Integration
                     groupNode.Nodes.Add(methodsNode);
                 }
 
@@ -2186,6 +2283,15 @@ namespace MIDRetail.Windows
         private MIDWorkflowMethodTreeNode BuildAllocationGroup(MIDWorkflowMethodTreeNode aNode, int aGroupKey, int aUserRID, int aOwnerUserRID, DataTable aChildren, bool aIsShortcut)
         {
             MIDWorkflowMethodTreeNode groupNode;
+            groupNode = null;
+
+            groupNode = BuildFolderNode(aGroupKey, aNode, aUserRID, eProfileType.WorkflowMethodAllocationFolder, DlFolder.Folder_GetName(aGroupKey), GetSecurity(aUserRID, eProfileType.WorkflowMethodAllocationFolder, eWorkflowType.None), aOwnerUserRID, eTreeNodeType.MainSourceFolderNode, aIsShortcut);
+            groupNode.Sequence = 1;
+            return BuildAllocationGroupChildren(groupNode, aGroupKey, aUserRID, aOwnerUserRID, aChildren, aIsShortcut);
+        }
+
+        public MIDWorkflowMethodTreeNode BuildAllocationGroupChildren(MIDWorkflowMethodTreeNode groupNode, int aGroupKey, int aUserRID, int aOwnerUserRID, DataTable aChildren, bool aIsShortcut)
+        {
             MIDWorkflowMethodTreeNode sizeNode;
             MIDWorkflowMethodTreeNode methodsNode;
             MIDWorkflowMethodTreeNode node;
@@ -2193,11 +2299,6 @@ namespace MIDRetail.Windows
 
             try
             {
-                groupNode = null;
-
-                groupNode = BuildFolderNode(aGroupKey, aNode, aUserRID, eProfileType.WorkflowMethodAllocationFolder, DlFolder.Folder_GetName(aGroupKey), GetSecurity(aUserRID, eProfileType.WorkflowMethodAllocationFolder, eWorkflowType.None), aOwnerUserRID, eTreeNodeType.MainSourceFolderNode, aIsShortcut);
-                groupNode.Sequence = 1;
-
                 if (GetSecurity(aUserRID, eProfileType.Workflow, eWorkflowType.Allocation).AllowView)
                 {
                     node = BuildFolderNode((int)eProfileType.WorkflowMethodAllocationWorkflowsFolder, groupNode, aUserRID, eProfileType.WorkflowMethodAllocationWorkflowsFolder, _sAllocationWorkflowsFolder, GetSecurity(aUserRID, eProfileType.WorkflowMethodAllocationWorkflowsFolder, eWorkflowType.None), aOwnerUserRID, eTreeNodeType.MainSourceFolderNode, aIsShortcut);
@@ -2383,7 +2484,7 @@ namespace MIDRetail.Windows
                         node.Sequence = ++sequence;
                         methodsNode.Nodes.Add(node);
                         if (AddFoldersToFolder(node, eProfileType.MethodDCFulfillmentSubFolder, aChildren, GetSecurity(aUserRID, eProfileType.MethodDCFulfillmentSubFolder, eWorkflowType.None), eWorkflowType.None, false) ||
-                            AddMethodsToFolder(node, eMethodType.DCFulfillment, eProfileType.MethodDCFulfillment, aChildren, GetSecurity(aUserRID, eProfileType.MethodDCCartonRounding, eWorkflowType.None), false))
+                            AddMethodsToFolder(node, eMethodType.DCFulfillment, eProfileType.MethodDCFulfillment, aChildren, GetSecurity(aUserRID, eProfileType.MethodDCFulfillment, eWorkflowType.None), false))
                         {
                             node.Nodes.Add(BuildPlaceHolderNode());
                             node.ChildrenLoaded = false;
@@ -2569,7 +2670,15 @@ namespace MIDRetail.Windows
 
                             errMsg += "The selected method can not be updated at this time.";
 
-                            MessageBox.Show(errMsg, this.Text + " Conflict", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            if (MIDEnvironment.isWindows)
+                            {
+                                MessageBox.Show(errMsg, this.Text + " Conflict", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            }
+                            else
+                            {
+                                MIDEnvironment.Message = errMsg;
+                                MIDEnvironment.requestFailed = true;
+                            }
                             return false;
                         }
                     }
@@ -2594,7 +2703,15 @@ namespace MIDRetail.Windows
                             errMsg += System.Environment.NewLine + System.Environment.NewLine;
                             errMsg += "The selected workflow can not be updated at this time.";
 
-                            MessageBox.Show(errMsg, this.Text + " Conflict", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            if (MIDEnvironment.isWindows)
+                            {
+                                MessageBox.Show(errMsg, this.Text + " Conflict", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            }
+                            else
+                            {
+                                MIDEnvironment.Message = errMsg;
+                                MIDEnvironment.requestFailed = true;
+                            }
                             return false;
                         }
                     }
@@ -2608,7 +2725,15 @@ namespace MIDRetail.Windows
 
                     if (key != -1)
                     {
-                        MessageBox.Show(SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_FolderNameExists), Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        if (MIDEnvironment.isWindows)
+                        {
+                            MessageBox.Show(SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_FolderNameExists), Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                        else
+                        {
+                            MIDEnvironment.Message = SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_FolderNameExists);
+                            MIDEnvironment.requestFailed = true;
+                        }
                         return false;
                     }
 
@@ -2683,7 +2808,15 @@ namespace MIDRetail.Windows
 
                 if (DlFolder.Folder_Shortcut_Exists(folderRID, aFromNode.Profile.Key, aFromNode.Profile.ProfileType))
                 {
-                    MessageBox.Show(SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_ShortcutExists), Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    if (MIDEnvironment.isWindows)
+                    {
+                        MessageBox.Show(SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_ShortcutExists), Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    else
+                    {
+                        MIDEnvironment.Message = SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_ShortcutExists);
+                        MIDEnvironment.requestFailed = true;
+                    }
                     return;
                 }
 
@@ -3719,7 +3852,15 @@ namespace MIDRetail.Windows
                                 }
                                 catch (DatabaseForeignKeyViolation)
                                 {
-                                    MessageBox.Show(SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_DeleteFailedDataInUse), Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    if (MIDEnvironment.isWindows)
+                                    {
+                                        MessageBox.Show(SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_DeleteFailedDataInUse), Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    }
+                                    else
+                                    {
+                                        MIDEnvironment.Message = SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_DeleteFailedDataInUse);
+                                        MIDEnvironment.requestFailed = true;
+                                    }
                                     return false;
                                 }
                                 catch (Exception exc)
@@ -3747,7 +3888,15 @@ namespace MIDRetail.Windows
                             }
                             catch (DatabaseForeignKeyViolation)
                             {
-                                MessageBox.Show(SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_DeleteFailedDataInUse), Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                if (MIDEnvironment.isWindows)
+                                {
+                                    MessageBox.Show(SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_DeleteFailedDataInUse), Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                }
+                                else
+                                {
+                                    MIDEnvironment.Message = SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_DeleteFailedDataInUse);
+                                    MIDEnvironment.requestFailed = true;
+                                }
                                 return false;
                             }
                             catch (Exception exc)
@@ -3773,7 +3922,15 @@ namespace MIDRetail.Windows
                             }
                             catch (DatabaseForeignKeyViolation)
                             {
-                                MessageBox.Show(SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_DeleteFailedDataInUse), Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                if (MIDEnvironment.isWindows)
+                                {
+                                    MessageBox.Show(SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_DeleteFailedDataInUse), Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                }
+                                else
+                                {
+                                    MIDEnvironment.Message = SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_DeleteFailedDataInUse);
+                                    MIDEnvironment.requestFailed = true;
+                                }
                                 return false;
                             }
                             catch (Exception exc)
@@ -4402,7 +4559,15 @@ namespace MIDRetail.Windows
                     if (rm.MethodStatus == eMethodStatus.InvalidMethod)
                     {
                         string msgText = SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_MethodInvalidMethodChanged);
-                        MessageBox.Show(msgText, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        if (MIDEnvironment.isWindows)
+                        {
+                            MessageBox.Show(msgText, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        else
+                        {
+                            MIDEnvironment.Message = msgText;
+                            MIDEnvironment.requestFailed = true;
+                        }
                         isValid = false;
                     }
                     break;
@@ -5068,6 +5233,11 @@ namespace MIDRetail.Windows
                 case eProfileType.MethodExportFolder:
                 case eProfileType.MethodExport:
                     return _forecastMethodsGlobalExport;
+                // Begin TT#2131-MD - JSmith - Halo Integration
+                case eProfileType.MethodPlanningExtractFolder:
+                case eProfileType.MethodPlanningExtract:
+                    return _forecastMethodsGlobalPlanningExtract;
+                // End TT#2131-MD - JSmith - Halo Integration
                 case eProfileType.MethodGlobalUnlockFolder:
                 case eProfileType.MethodGlobalUnlock:
                     return _forecastMethodsGlobalGlobalUnlock;
@@ -5153,6 +5323,7 @@ namespace MIDRetail.Windows
                 case eProfileType.MethodCopyChainForecastSubFolder:
                 case eProfileType.MethodCopyStoreForecastSubFolder:
                 case eProfileType.MethodExportSubFolder:
+                case eProfileType.MethodPlanningExtractSubFolder:  // TT#2131-MD - JSmith - Halo Integration
                 case eProfileType.MethodGlobalUnlockSubFolder:
                 case eProfileType.MethodGlobalLockSubFolder:    //TT#43 - MD - DOConnell - Projected Sales Enhancement
                 case eProfileType.MethodRollupSubFolder:
@@ -5216,6 +5387,11 @@ namespace MIDRetail.Windows
                 case eProfileType.MethodExportFolder:
                 case eProfileType.MethodExport:
                     return _forecastMethodsUserExport;
+                // Begin TT#2131-MD - JSmith - Halo Integration
+                case eProfileType.MethodPlanningExtractFolder:
+                case eProfileType.MethodPlanningExtract:
+                    return _forecastMethodsUserPlanningExtract;
+                // End TT#2131-MD - JSmith - Halo Integration
                 case eProfileType.MethodGlobalUnlockFolder:
                 case eProfileType.MethodGlobalUnlock:
                     return _forecastMethodsUserGlobalUnlock;
@@ -5304,6 +5480,7 @@ namespace MIDRetail.Windows
                 case eProfileType.MethodCopyChainForecastSubFolder:
                 case eProfileType.MethodCopyStoreForecastSubFolder:
                 case eProfileType.MethodExportSubFolder:
+                case eProfileType.MethodPlanningExtractSubFolder:  // TT#2131-MD - JSmith - Halo Integration
                 case eProfileType.MethodGlobalUnlockSubFolder:
                 case eProfileType.MethodRollupSubFolder:
                 case eProfileType.WorkflowMethodAllocationWorkflowsSubFolder:
@@ -5351,14 +5528,15 @@ namespace MIDRetail.Windows
                 {
                     index++;
 
-                    if (index > 1)
-                    {
-                        newName = "Copy (" + index + ") of " + aMethodName;
-                    }
-                    else
-                    {
-                        newName = "Copy of " + aMethodName;
-                    }
+                    //if (index > 1)
+                    //{
+                    //    newName = "Copy (" + index + ") of " + aMethodName;
+                    //}
+                    //else
+                    //{
+                    //    newName = "Copy of " + aMethodName;
+                    //}
+                    newName = Include.GetNewName(name: aMethodName, index: index);
 
                     key = DlMethodData.Method_GetKey(aUserRID, newName);
                 }
@@ -5388,14 +5566,15 @@ namespace MIDRetail.Windows
                 {
                     index++;
 
-                    if (index > 1)
-                    {
-                        newName = "Copy (" + index + ") of " + aWorkflowName;
-                    }
-                    else
-                    {
-                        newName = "Copy of " + aWorkflowName;
-                    }
+                    //if (index > 1)
+                    //{
+                    //    newName = "Copy (" + index + ") of " + aWorkflowName;
+                    //}
+                    //else
+                    //{
+                    //    newName = "Copy of " + aWorkflowName;
+                    //}
+                    newName = Include.GetNewName(name: aWorkflowName, index: index);
 
                     key = DlWorkflowData.Workflow_GetKey(aUserRID, newName);
                 }
@@ -5551,6 +5730,12 @@ namespace MIDRetail.Windows
                             //Arguments to pass to the constructor of the Maint. form.						
                             args = new object[] { SAB, _EAB };
                             return GetForm(aNode, typeof(frmExportMethod), args, ref aNewForm);
+                        // Begin TT#2131-MD - JSmith - Halo Integration
+                        case eMethodTypeUI.PlanningExtract:
+                            //Arguments to pass to the constructor of the Maint. form.						
+                            args = new object[] { SAB, _EAB };
+                            return GetForm(aNode, typeof(frmPlanningExtractMethod), args, ref aNewForm);
+                        // End TT#2131-MD - JSmith - Halo Integration
                         case eMethodTypeUI.GeneralAllocation:
                             //args  =  new object[]{SAB, this};
                             args = new object[] { SAB, _EAB };
@@ -5664,15 +5849,19 @@ namespace MIDRetail.Windows
                     {
                         nodeFound = false;
 
-                        foreach (Form frm in this.MDIParentForm.MdiChildren)
+                        if (this.MDIParentForm != null
+                            && this.MDIParentForm.MdiChildren != null)
                         {
-                            if (frm.GetType().Equals(childFormType))
+                            foreach (Form frm in this.MDIParentForm.MdiChildren)
                             {
-                                childForm = (WorkflowMethodFormBase)frm;
-                                if (Convert.ToInt32(childForm.Tag, CultureInfo.CurrentUICulture) == aNode.Profile.Key)
+                                if (frm.GetType().Equals(childFormType))
                                 {
-                                    nodeFound = true;
-                                    break;
+                                    childForm = (WorkflowMethodFormBase)frm;
+                                    if (Convert.ToInt32(childForm.Tag, CultureInfo.CurrentUICulture) == aNode.Profile.Key)
+                                    {
+                                        nodeFound = true;
+                                        break;
+                                    }
                                 }
                             }
                         }
@@ -6147,6 +6336,7 @@ namespace MIDRetail.Windows
         //private eWorkflowType				_workflowType;
         private string						_nodeDescription;
         private int                         _sequence;
+        private bool _isMethodOrWorkflowResolved = false;  // TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
         
         public MIDWorkflowMethodTreeNode()
             : base()
@@ -6233,6 +6423,17 @@ namespace MIDRetail.Windows
 
             }
         }
+
+        // Begin TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+        /// <summary>
+        /// Gets or sets the flag to identify if the method or workflow associated with the node has been resolved.
+        /// </summary>
+        public bool IsMethodOrWorkflowResolved
+        {
+            get { return _isMethodOrWorkflowResolved; }
+            set { _isMethodOrWorkflowResolved = value; }
+        }
+        // End TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
 
         /// <summary>
 		/// Gets or sets the flag to identify if the node is the child of a Workflow.
@@ -6423,6 +6624,12 @@ namespace MIDRetail.Windows
                     case eProfileType.MethodExportFolder:
                     case eProfileType.MethodExportSubFolder:
                         return eMethodTypeUI.Export;
+                    // Begin TT#2131-MD - JSmith - Halo Integration
+                    case eProfileType.MethodPlanningExtract:
+                    case eProfileType.MethodPlanningExtractFolder:
+                    case eProfileType.MethodPlanningExtractSubFolder:
+                        return eMethodTypeUI.PlanningExtract;
+                    // End TT#2131-MD - JSmith - Halo Integration
                     case eProfileType.MethodGeneralAllocation:
                     case eProfileType.MethodGeneralAllocationFolder:
                     case eProfileType.MethodGeneralAllocationSubFolder:
@@ -6528,6 +6735,7 @@ namespace MIDRetail.Windows
                     Profile.ProfileType == eProfileType.MethodCopyChainForecast ||
                     Profile.ProfileType == eProfileType.MethodCopyStoreForecast ||
                     Profile.ProfileType == eProfileType.MethodExport ||
+                    Profile.ProfileType == eProfileType.MethodPlanningExtract ||  // TT#2131-MD - JSmith - Halo Integration
                     Profile.ProfileType == eProfileType.MethodGlobalUnlock ||
                     Profile.ProfileType == eProfileType.MethodGlobalLock ||   //TT#43 - MD - DOConnell - Projected Sales Enhancement
                     Profile.ProfileType == eProfileType.MethodRollup ||
@@ -6570,6 +6778,7 @@ namespace MIDRetail.Windows
                     Profile.ProfileType == eProfileType.MethodCopyChainForecast ||
                     Profile.ProfileType == eProfileType.MethodCopyStoreForecast ||
                     Profile.ProfileType == eProfileType.MethodExport ||
+                    Profile.ProfileType == eProfileType.MethodPlanningExtract ||  // TT#2131-MD - JSmith - Halo Integration
                     Profile.ProfileType == eProfileType.MethodGlobalUnlock ||
                     Profile.ProfileType == eProfileType.MethodGlobalLock ||   //TT#43 - MD - DOConnell - Projected Sales Enhancement
                     Profile.ProfileType == eProfileType.MethodRollup)
@@ -6705,6 +6914,7 @@ namespace MIDRetail.Windows
                     Profile.ProfileType == eProfileType.MethodCopyChainForecastSubFolder ||
                     Profile.ProfileType == eProfileType.MethodCopyStoreForecastSubFolder ||
                     Profile.ProfileType == eProfileType.MethodExportSubFolder ||
+                    Profile.ProfileType == eProfileType.MethodPlanningExtractSubFolder ||  // TT#2131-MD - JSmith - Halo Integration
                     Profile.ProfileType == eProfileType.MethodGlobalUnlockSubFolder ||
                     Profile.ProfileType == eProfileType.MethodGlobalLockSubFolder ||  //TT#43 - MD - DOConnell - Projected Sales Enhancement
                     Profile.ProfileType == eProfileType.MethodRollupSubFolder ||
@@ -6758,6 +6968,7 @@ namespace MIDRetail.Windows
                     Profile.ProfileType == eProfileType.MethodCopyChainForecastFolder ||
                     Profile.ProfileType == eProfileType.MethodCopyStoreForecastFolder ||
                     Profile.ProfileType == eProfileType.MethodExportFolder ||
+                    Profile.ProfileType == eProfileType.MethodPlanningExtractFolder ||  // TT#2131-MD - JSmith - Halo Integration
                     Profile.ProfileType == eProfileType.MethodGlobalUnlockFolder ||
                     Profile.ProfileType == eProfileType.MethodGlobalLockFolder || //TT#43 - MD - DOConnell - Projected Sales Enhancement
                     Profile.ProfileType == eProfileType.MethodRollupFolder ||
@@ -6812,6 +7023,7 @@ namespace MIDRetail.Windows
                     Profile.ProfileType == eProfileType.MethodCopyChainForecastSubFolder ||
                     Profile.ProfileType == eProfileType.MethodCopyStoreForecastSubFolder ||
                     Profile.ProfileType == eProfileType.MethodExportSubFolder ||
+                    Profile.ProfileType == eProfileType.MethodPlanningExtractSubFolder ||  // TT#2131-MD - JSmith - Halo Integration
                     Profile.ProfileType == eProfileType.MethodGlobalUnlockSubFolder ||
                     Profile.ProfileType == eProfileType.MethodGlobalLockSubFolder ||  //TT#43 - MD - DOConnell - Projected Sales Enhancement
                     Profile.ProfileType == eProfileType.MethodRollupSubFolder ||
@@ -6852,6 +7064,7 @@ namespace MIDRetail.Windows
                     Profile.ProfileType == eProfileType.MethodCopyChainForecastFolder ||
                     Profile.ProfileType == eProfileType.MethodCopyStoreForecastFolder ||
                     Profile.ProfileType == eProfileType.MethodExportFolder ||
+                    Profile.ProfileType == eProfileType.MethodPlanningExtractFolder ||  // TT#2131-MD - JSmith - Halo Integration
                     Profile.ProfileType == eProfileType.MethodGlobalUnlockFolder ||
                     Profile.ProfileType == eProfileType.MethodGlobalLockFolder || //TT#43 - MD - DOConnell - Projected Sales Enhancement
                     Profile.ProfileType == eProfileType.MethodRollupFolder)
@@ -6873,6 +7086,7 @@ namespace MIDRetail.Windows
                     Profile.ProfileType == eProfileType.MethodCopyChainForecastSubFolder ||
                     Profile.ProfileType == eProfileType.MethodCopyStoreForecastSubFolder ||
                     Profile.ProfileType == eProfileType.MethodExportSubFolder ||
+                    Profile.ProfileType == eProfileType.MethodPlanningExtractSubFolder ||  // TT#2131-MD - JSmith - Halo Integration
                     Profile.ProfileType == eProfileType.MethodGlobalUnlockSubFolder ||
                     Profile.ProfileType == eProfileType.MethodGlobalLockSubFolder ||  //TT#43 - MD - DOConnell - Projected Sales Enhancement
                     Profile.ProfileType == eProfileType.MethodRollupSubFolder)
@@ -7041,6 +7255,7 @@ namespace MIDRetail.Windows
                 aProfileType == eProfileType.MethodCopyChainForecastSubFolder ||
                 aProfileType == eProfileType.MethodCopyStoreForecastSubFolder ||
                 aProfileType == eProfileType.MethodExportSubFolder ||
+                aProfileType == eProfileType.MethodPlanningExtractSubFolder ||  // End TT#2131-MD - JSmith - Halo Integration
                 aProfileType == eProfileType.MethodGlobalUnlockSubFolder ||
                 aProfileType == eProfileType.MethodGlobalLockSubFolder || //TT#43 - MD - DOConnell - Projected Sales Enhancement
                 aProfileType == eProfileType.MethodRollupSubFolder ||
@@ -7090,6 +7305,7 @@ namespace MIDRetail.Windows
                 aMethodType == (int)eProfileType.MethodCopyChainForecast ||
                 aMethodType == (int)eProfileType.MethodCopyStoreForecast ||
                 aMethodType == (int)eProfileType.MethodExport ||
+                aMethodType == (int)eProfileType.MethodPlanningExtract ||  // TT#2131-MD - JSmith - Halo Integration
                 aMethodType == (int)eProfileType.MethodGlobalUnlock ||
                 aMethodType == (int)eProfileType.MethodGlobalLock ||  //TT#43 - MD - DOConnell - Projected Sales Enhancement
                 aMethodType == (int)eProfileType.MethodRollup ||
@@ -7281,6 +7497,11 @@ namespace MIDRetail.Windows
 					case eProfileType.MethodExportFolder:
 					case eProfileType.MethodExportSubFolder:
 						return eProfileType.MethodExportSubFolder;
+                    // Begin TT#2131-MD - JSmith - Halo Integration
+                    case eProfileType.MethodPlanningExtractFolder:
+                    case eProfileType.MethodPlanningExtractSubFolder:
+                        return eProfileType.MethodPlanningExtractSubFolder;
+                    // End TT#2131-MD - JSmith - Halo Integration
 					case eProfileType.MethodGlobalUnlockFolder:
 					case eProfileType.MethodGlobalUnlockSubFolder:
 						return eProfileType.MethodGlobalUnlockSubFolder;
@@ -7375,6 +7596,10 @@ namespace MIDRetail.Windows
                     return GetGroupKey();
                 case eProfileType.MethodExportFolder:
                     return GetGroupKey();
+                // Begin TT#2131-MD - JSmith - Halo Integration
+                case eProfileType.MethodPlanningExtractFolder:
+                    return GetGroupKey();
+                // End TT#2131-MD - JSmith - Halo Integration
                 case eProfileType.MethodGlobalUnlockFolder:
                     return GetGroupKey();
                 //Begin TT#43 - MD - DOConnell - Projected Sales Enhancement
@@ -7588,6 +7813,42 @@ namespace MIDRetail.Windows
 				{
 					return false;
 				}
+
+                // Begin TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+				if (destNode.GlobalUserType == eGlobalUserType.Global)
+                {
+                    if (!_isMethodOrWorkflowResolved)
+                    {
+                        if (this.isWorkflow)
+                        {
+                            if (WorkflowType == eWorkflowType.Forecast)
+                            {
+                                this.Profile = new OTSPlanWorkFlow(SAB, Key, UserId, UserId == Include.GlobalUserRID);
+                            }
+                            else if (WorkflowType == eWorkflowType.Allocation)
+                            {
+                                this.Profile = new AllocationWorkFlow(SAB, Key, UserId, UserId == Include.GlobalUserRID);
+                            }
+                        }
+                        else
+                        {
+                            this.Profile = (ApplicationBaseMethod)((WorkflowMethodTreeView)aDestinationNode.TreeView).GetMethods.GetMethod(Key, (eMethodType)MethodType);
+                        }
+                        _isMethodOrWorkflowResolved = true;
+                    }
+
+                    if (this.isWorkflow
+                        && ((ApplicationBaseWorkFlow)this.Profile).ContainsUserData == true)
+                    {
+                        return false;
+                    }
+                    else if (!this.isWorkflow
+                        && ((ApplicationBaseMethod)this.Profile).ContainsUserData == true)
+                    {
+                        return false;
+                    }
+                }
+				// End TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
 
 				// do not allow drop in same parent
 				if (destNode == Parent &&
@@ -8093,6 +8354,14 @@ namespace MIDRetail.Windows
                         ((WorkflowMethodTreeView)TreeView).AddMethodsToFolder(this, eMethodType.Export, eProfileType.MethodExport, dtChildren, ((WorkflowMethodTreeView)TreeView).GetSecurity(UserId, eProfileType.MethodExport, eWorkflowType.None), true);
                         break;
 
+                    // Begin TT#2131-MD - JSmith - Halo Integration
+                    case eProfileType.MethodPlanningExtractFolder:
+                        dtChildren = (DataTable)((WorkflowMethodTreeView)TreeView)._htChildren[GetGroupNode().Profile.Key];
+                        ((WorkflowMethodTreeView)TreeView).AddFoldersToFolder(this, eProfileType.MethodPlanningExtractSubFolder, dtChildren, ((WorkflowMethodTreeView)TreeView).GetSecurity(UserId, eProfileType.MethodPlanningExtractSubFolder, eWorkflowType.None), eWorkflowType.None, true);
+                        ((WorkflowMethodTreeView)TreeView).AddMethodsToFolder(this, eMethodType.PlanningExtract, eProfileType.MethodPlanningExtract, dtChildren, ((WorkflowMethodTreeView)TreeView).GetSecurity(UserId, eProfileType.MethodPlanningExtract, eWorkflowType.None), true);
+                        break;
+                    // End TT#2131-MD - JSmith - Halo Integration
+
                     case eProfileType.MethodGlobalUnlockFolder:
                         dtChildren = (DataTable)((WorkflowMethodTreeView)TreeView)._htChildren[GetGroupNode().Profile.Key];
                         ((WorkflowMethodTreeView)TreeView).AddFoldersToFolder(this, eProfileType.MethodGlobalUnlockSubFolder, dtChildren, ((WorkflowMethodTreeView)TreeView).GetSecurity(UserId, eProfileType.MethodGlobalUnlockSubFolder, eWorkflowType.None), eWorkflowType.None, true);
@@ -8215,7 +8484,7 @@ namespace MIDRetail.Windows
         }
 
         // Begin TT#1167 - Login Performance - Opening the application after Login
-        internal MIDWorkflowMethodTreeNode GetGroupNode()
+        public MIDWorkflowMethodTreeNode GetGroupNode()
         {
             MIDWorkflowMethodTreeNode node;
 

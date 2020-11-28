@@ -3,7 +3,7 @@
 --dv Description: Updates a password from a user name
 --dv =============================================
 CREATE PROCEDURE [dbo].[MID_APPLICATION_USER_UPDATE_PWD_FROM_NAME]
-	@USER_NAME varchar(30),
+	@USER_NAME varchar(256),
 	@USER_PASSWORD varchar(250)
 AS
 BEGIN

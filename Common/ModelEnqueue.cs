@@ -229,7 +229,10 @@ namespace MIDRetail.Common
                         lockType = eLockType.FWOSMaxModel;
                         break;
                     // END TT#108 - MD - doconnell - FWOS Max Model
-					default:
+                    case eModelType.OverrideLowLevel:
+                        lockType = eLockType.OverrideLowLevelModel;
+                        break;
+                    default:
 						throw new MIDException (eErrorLevel.severe,	0, "Invalid lock type in model enqueue");
 //						break;
 				}
@@ -329,7 +332,10 @@ namespace MIDRetail.Common
                             lockType = eLockType.FWOSMaxModel;
                             break;
                         // END TT#108 - MD - doconnell - FWOS Max Model
-						default:	
+                        case eModelType.OverrideLowLevel:
+                            lockType = eLockType.OverrideLowLevelModel;
+                            break;
+                        default:	
 							throw new MIDException (eErrorLevel.severe,	0, "Invalid lock type in model enqueue");
 //							break;
 					}

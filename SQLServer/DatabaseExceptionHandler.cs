@@ -148,6 +148,20 @@ namespace MIDRetail.Data
 
                 Exception err = null;
 
+                // Begin RO-2722 - AGallagher - Database Password Logged in Plain Text
+                if (aMIDCommand.Contains("Password="))
+                {
+                    string parse1 = aMIDCommand;
+                    int parsefirstStringPosition = parse1.IndexOf("Password=");
+                    parsefirstStringPosition = parsefirstStringPosition + 8;
+                    int parsesecondStringPosition = parse1.IndexOf("Error=");
+                    string result1 = parse1.Substring(1, parsefirstStringPosition);
+                    string result2 = parse1.Substring(parsesecondStringPosition, parsefirstStringPosition);
+                    string result3 = (result1 + "******** " + result2);
+                    aMIDCommand = result3;
+                }
+                // End RO-2722 - AGallagher - Database Password Logged in Plain Text
+
                 switch (aSqlException.Number)
                 {
                     case (int)eDatabaseError.Timeout:

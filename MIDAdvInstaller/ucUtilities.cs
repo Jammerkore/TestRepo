@@ -38,6 +38,8 @@ namespace MIDRetailInstaller
 
         string ConfigurationFileName;
 
+        //const string CRRuntimeVersion = "13.0.21";
+
         public ucUtilities()
         {
             InitializeComponent();
@@ -59,7 +61,7 @@ namespace MIDRetailInstaller
             tt.SetToolTip(rdoStopServices, frame.GetToolTipText("util_stopservices"));
             tt.SetToolTip(rdoRescan, frame.GetToolTipText("util_rescan"));
             tt.SetToolTip(rdoEventSource, frame.GetToolTipText("util_eventSources"));
-            tt.SetToolTip(rdoCrystalReports, frame.GetToolTipText("util_crystalReports"));
+            //tt.SetToolTip(rdoCrystalReports, frame.GetToolTipText("util_crystalReports"));
 
 
             rdoDatabaseMaintenance.Text = frame.GetText("rdoDatabaseMaintenance");
@@ -67,7 +69,7 @@ namespace MIDRetailInstaller
             rdoStopServices.Text = frame.GetText("rdoStopServices");
             rdoRescan.Text = frame.GetText("rdoRescan");
             rdoEventSource.Text = frame.GetText("rdoEventSource");
-            rdoCrystalReports.Text = frame.GetText("rdoCrystalReports");
+            //rdoCrystalReports.Text = frame.GetText("rdoCrystalReports");
 
             ConfigurationFileName = ConfigurationManager.AppSettings["MIDSettings_config"].ToString();
             GetInstalledServices();
@@ -91,10 +93,10 @@ namespace MIDRetailInstaller
                     }
                 }
 
-                if (IsCrystalReportsInstalled(log))
-                {
-                    rdoCrystalReports.Enabled = false;
-                }
+                //if (IsCrystalReportsInstalled(log))
+                //{
+                //    rdoCrystalReports.Enabled = false;
+                //}
             }
         }
 
@@ -176,7 +178,8 @@ namespace MIDRetailInstaller
                         //get the location
                         string location = sub_key.GetValue("Location").ToString().Trim();
                         string[] ArrValues = sub_key.Name.Split('\\');
-                        if (ArrValues[ArrValues.Length - 1] != InstallerConstants.cBatchKey)
+                        if (ArrValues[ArrValues.Length - 1] != InstallerConstants.cBatchKey
+                            && ArrValues[ArrValues.Length - 1] != InstallerConstants.cROWebServiceKey)
                         {
                             string[] LocationValues = location.Split('\\');
                             string[] ExecValues = LocationValues[LocationValues.Length - 1].Split('.');
@@ -507,36 +510,37 @@ namespace MIDRetailInstaller
         //    }
         //    return crystalReportsInstalled;
         //}
-        public bool IsCrystalReportsInstalled(ucInstallationLog log)
-        {
-            try
-            {
-                Dictionary<string, object> keyValuePairs;
-                using (var settingsRegKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\SAP BusinessObjects\\Crystal Reports for .NET Framework 4.0\\Crystal Reports"))
-                {
-                    if (settingsRegKey != null)
-                    {
-                        var valueNames = settingsRegKey.GetValueNames();
-                        keyValuePairs = valueNames.ToDictionary(name => name, settingsRegKey.GetValue);
-                        foreach (KeyValuePair<string, object> entry in keyValuePairs)
-                        {
-                            if (entry.Key.Contains("CRRuntime"))
-                            {
-                                if (Convert.ToString(entry.Value).Contains("13.0.12"))
-                                {
-                                    return true;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                log.AddLogEntry("Determining if Crystal Reports is installed failed. " + ex.Message, eErrorType.error);
-            }
-            return false;
-        }
+        //public bool IsCrystalReportsInstalled(ucInstallationLog log)
+        //{
+        //    try
+        //    {
+        //        Dictionary<string, object> keyValuePairs;
+        //        using (var settingsRegKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\SAP BusinessObjects\\Crystal Reports for .NET Framework 4.0\\Crystal Reports"))
+        //        {
+        //            if (settingsRegKey != null)
+        //            {
+        //                var valueNames = settingsRegKey.GetValueNames();
+        //                keyValuePairs = valueNames.ToDictionary(name => name, settingsRegKey.GetValue);
+        //                foreach (KeyValuePair<string, object> entry in keyValuePairs)
+        //                {
+        //                    if (entry.Key.Contains("CRRuntime"))
+        //                    {
+        //                        //if (Convert.ToString(entry.Value).Contains("13.0.12"))
+        //                        if (Convert.ToString(entry.Value).Contains(CRRuntimeVersion))
+        //                        {
+        //                            return true;
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        log.AddLogEntry("Determining if Crystal Reports is installed failed. " + ex.Message, eErrorType.error);
+        //    }
+        //    return false;
+        //}
 		// End TT#1305-MD - JSmith - Change Auto Upgrade
 
         private bool SearchRegistryForProduct(string sKey, string sProduct, ucInstallationLog log, bool blStartWith)
@@ -577,28 +581,28 @@ namespace MIDRetailInstaller
             return false;
         }
 
-        public bool InstallCrystalReports(bool bHideWindow)
-        {
-            bool bSuccessful = true;
-            try
-            {
-                log.AddLogEntry("User has requested to install Crystal Reports", eErrorType.message);
+    //    public bool InstallCrystalReports(bool bHideWindow)
+    //    {
+    //        bool bSuccessful = true;
+    //        try
+    //        {
+    //            log.AddLogEntry("User has requested to install Crystal Reports", eErrorType.message);
 
-                //bSuccessful = InstallCrystalReportsViewer(bHideWindow);
-                if (bSuccessful)
-                {
-                    bSuccessful = InstallCrystalReportsApp(bHideWindow);
-                }
-            }
-            catch (Exception ex)
-            {
-			    // Begin TT#1668 - JSmith - Install Log
-				//log.AddLogEntry("Installing Crystal Reports failed. " + ex.Message, eErrorType.message);
-                log.AddLogEntry("Installing Crystal Reports failed. " + ex.Message, eErrorType.error);
-				// End TT#1668
-            }
-            return bSuccessful;
-        }
+    //            //bSuccessful = InstallCrystalReportsViewer(bHideWindow);
+    //            if (bSuccessful)
+    //            {
+    //                bSuccessful = InstallCrystalReportsApp(bHideWindow);
+    //            }
+    //        }
+    //        catch (Exception ex)
+    //        {
+			 //   // Begin TT#1668 - JSmith - Install Log
+				////log.AddLogEntry("Installing Crystal Reports failed. " + ex.Message, eErrorType.message);
+    //            log.AddLogEntry("Installing Crystal Reports failed. " + ex.Message, eErrorType.error);
+				//// End TT#1668
+    //        }
+    //        return bSuccessful;
+    //    }
 
 //        private bool InstallCrystalReportsViewer(bool bHideWindow)
 //        {
@@ -642,60 +646,60 @@ namespace MIDRetailInstaller
 //            return bSuccessful;
 //        }
 
-        private bool InstallCrystalReportsApp(bool bHideWindow)
-        {
-            bool bSuccessful = true;
-            try
-            {
-                log.AddLogEntry("User has requested to install Crystal Reports", eErrorType.message);
-                Process servStart = new Process();
-#if (DEBUG)
-                if (frame._64bitOS)
-                {
-                    servStart.StartInfo.FileName = Application.StartupPath + @"\" + InstallerConstants.cCrystalReports64;
-                }
-                else
-                {
-                    servStart.StartInfo.FileName = Application.StartupPath + @"\" + InstallerConstants.cCrystalReports32;
-                }
-#else
-                if (frame._64bitOS)
-                {
-                servStart.StartInfo.FileName = Directory.GetParent(Application.StartupPath) + @"\Utilities\" + InstallerConstants.cCrystalReports64;
-                }
-                else
-                {
-                servStart.StartInfo.FileName = Directory.GetParent(Application.StartupPath) + @"\Utilities\" + InstallerConstants.cCrystalReports32;
-                }
-#endif
-                servStart.StartInfo.Arguments = "";
-                if (bHideWindow)
-                {
-                    servStart.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                }
-                else
-                {
-                    servStart.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
-                }
-                servStart.Start();
-                servStart.WaitForExit();
-                if (servStart.ExitCode > 0)
-                {
-                    log.AddLogEntry("Error occurred while installing Crystal Reports.", eErrorType.error);
-                    bSuccessful = false;
-                }
-                else
-                {
-                    log.AddLogEntry("User has completed installing Crystal Reports.", eErrorType.message);
-                }
-                servStart.Close();
-            }
-            catch (Exception ex)
-            {
-                log.AddLogEntry("Installing Crystal Reports failed. " + ex.Message, eErrorType.message);
-            }
-            return bSuccessful;
-        }
+//        private bool InstallCrystalReportsApp(bool bHideWindow)
+//        {
+//            bool bSuccessful = true;
+//            try
+//            {
+//                log.AddLogEntry("User has requested to install Crystal Reports", eErrorType.message);
+//                Process servStart = new Process();
+//#if (DEBUG)
+//                if (frame._64bitOS)
+//                {
+//                    servStart.StartInfo.FileName = Application.StartupPath + @"\" + InstallerConstants.cCrystalReports64;
+//                }
+//                else
+//                {
+//                    servStart.StartInfo.FileName = Application.StartupPath + @"\" + InstallerConstants.cCrystalReports32;
+//                }
+//#else
+//                if (frame._64bitOS)
+//                {
+//                servStart.StartInfo.FileName = Directory.GetParent(Application.StartupPath) + @"\Utilities\" + InstallerConstants.cCrystalReports64;
+//                }
+//                else
+//                {
+//                servStart.StartInfo.FileName = Directory.GetParent(Application.StartupPath) + @"\Utilities\" + InstallerConstants.cCrystalReports32;
+//                }
+//#endif
+//                servStart.StartInfo.Arguments = "";
+//                if (bHideWindow)
+//                {
+//                    servStart.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+//                }
+//                else
+//                {
+//                    servStart.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
+//                }
+//                servStart.Start();
+//                servStart.WaitForExit();
+//                if (servStart.ExitCode > 0)
+//                {
+//                    log.AddLogEntry("Error occurred while installing Crystal Reports.", eErrorType.error);
+//                    bSuccessful = false;
+//                }
+//                else
+//                {
+//                    log.AddLogEntry("User has completed installing Crystal Reports.", eErrorType.message);
+//                }
+//                servStart.Close();
+//            }
+//            catch (Exception ex)
+//            {
+//                log.AddLogEntry("Installing Crystal Reports failed. " + ex.Message, eErrorType.message);
+//            }
+//            return bSuccessful;
+//        }
 
         private void rdoDatabaseMaintenance_CheckedChanged(object sender, EventArgs e)
         {
@@ -773,18 +777,18 @@ namespace MIDRetailInstaller
             }
         }
 
-        private void rdoCrystalReports_CheckedChanged(object sender, EventArgs e)
-        {
-            if (rdoCrystalReports.Checked == true)
-            {
-                //set the install task value on the frame
-                frame.InstallTask = eInstallTasks.crystalReports;
-                NotConfigureNext(this, new EventArgs());
-				// Begin TT#1668 - JSmith - Install Log
-				//frame.lblStatus.Text = frame.GetText("UtilitiesCrystalReports");
-                frame.SetStatusMessage(frame.GetText("UtilitiesCrystalReports"));
-				// End TT#1668
-            }
-        }
+    //    private void rdoCrystalReports_CheckedChanged(object sender, EventArgs e)
+    //    {
+    //        if (rdoCrystalReports.Checked == true)
+    //        {
+    //            //set the install task value on the frame
+    //            frame.InstallTask = eInstallTasks.crystalReports;
+    //            NotConfigureNext(this, new EventArgs());
+				//// Begin TT#1668 - JSmith - Install Log
+				////frame.lblStatus.Text = frame.GetText("UtilitiesCrystalReports");
+    //            frame.SetStatusMessage(frame.GetText("UtilitiesCrystalReports"));
+				//// End TT#1668
+    //        }
+    //    }
     }
 }

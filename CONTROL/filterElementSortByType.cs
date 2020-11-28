@@ -194,6 +194,19 @@ namespace MIDRetail.Windows.Controls
             {
                 //no need to add a list
             }
+            // Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+            else if (opType == filterSortByTypes.AssortmentFields) 
+            {
+                elementBase b = new elementBase(eb.manager, filterElementMap.SortBy, "Sort By");
+                groupSettings.loadFieldList = new FilterLoadListDelegate(filterAssortmentFieldTypes.ToDataTable);
+                groupSettings.GetDataTypeFromFieldIndex = new FilterGetDataTypeFromFieldIndexDelegate(filterAssortmentFieldTypes.GetValueTypeForField);
+                groupSettings.fieldForData = "FIELD_INDEX";
+                groupSettings.fieldForDisplay = "FIELD_NAME";
+
+                groupSettings.listValueType = filterListValueTypes.None;
+                fieldElementList.Add(b);
+            }
+            // End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
 
             elementBase bDirection = new elementBase(eb.manager, filterElementMap.SortByDirection, "Direction");
             fieldElementList.Add(bDirection);

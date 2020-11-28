@@ -64,6 +64,8 @@ namespace MIDRetail.Common
             {
                 _itemRid = itemRid;
                 _itemProfileType = itemType;
+                ItemRIDs = new ArrayList();
+                ItemRIDs.Add(_itemRid);
             }
             catch
             {

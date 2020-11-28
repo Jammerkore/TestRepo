@@ -1041,7 +1041,8 @@ namespace MIDRetail.Windows
                         collapsedImageIndex,
                         expandedImageIndex,
                         expandedImageIndex,
-                        hnp.HomeHierarchyOwner);
+                        hnp.HomeHierarchyOwner,
+                        hnp.LevelType);
 
                         // Begin TT#5644 - JSmith - Security Set Up - Users Need to Remove Article Lists from My Favorites
                         newNode.FunctionSecurityProfile.SetAllowDelete();
@@ -2993,7 +2994,8 @@ namespace MIDRetail.Windows
                             collapsedImageIndex,
                             expandedImageIndex,
                             expandedImageIndex,
-                            aHierarchyNodeProfile.HomeHierarchyOwner);
+                            aHierarchyNodeProfile.HomeHierarchyOwner,
+                            aHierarchyNodeProfile.LevelType);
 
 				//Begin Track #6201 - JScott - Store Count removed from attr sets
 				//newNode.Text = aHierarchyNodeProfile.Text;
@@ -4275,6 +4277,7 @@ namespace MIDRetail.Windows
         private bool _isHierarchyRoot;
         private int _hierarchyRID;
         private eHierarchyType _hierarchyType;
+        private eHierarchyLevelType _hierarchyLevelType;
 
         /// <summary>
         /// Used to construct an instance of the class.
@@ -4297,13 +4300,15 @@ namespace MIDRetail.Windows
             int aSelectedCollapsedImageIndex,
             int aExpandedImageIndex,
             int aSelectedExpandedImageIndex,
-            int aOwnerUserRID)
+            int aOwnerUserRID,
+            eHierarchyLevelType hierarchyLevelType = eHierarchyLevelType.Undefined)
 			//Begin Track #6321 - JScott - User has ability to to create folders when security is view
 			//: base(aSAB, aTreeNodeType, aProfile, aFunctionSecurityProfile, true, aText, aParentId, aUserId, aCollapsedImageIndex, aSelectedCollapsedImageIndex, aExpandedImageIndex, aSelectedExpandedImageIndex, aOwnerUserRID)
 			: base(aSAB, aTreeNodeType, aProfile, new MIDTreeNodeSecurityGroup(aFunctionSecurityProfile, null), true, aText, aParentId, aUserId, aCollapsedImageIndex, aSelectedCollapsedImageIndex, aExpandedImageIndex, aSelectedExpandedImageIndex, aOwnerUserRID)
 			//End Track #6321 - JScott - User has ability to to create folders when security is view
         {
             CommonLoad();
+            _hierarchyLevelType = hierarchyLevelType;
         }
 
         public MIDHierarchyNode(
@@ -4316,13 +4321,15 @@ namespace MIDRetail.Windows
 			FunctionSecurityProfile aFunctionSecurityProfile,
 			int aImageIndex,
 			int aSelectedImageIndex,
-			int aOwnerUserRID)
+			int aOwnerUserRID,
+            eHierarchyLevelType hierarchyLevelType = eHierarchyLevelType.Undefined)
 			//Begin Track #6321 - JScott - User has ability to to create folders when security is view
 			//: base(aSAB, aTreeNodeType, aProfile, aFunctionSecurityProfile, true, aText, aParentId, aUserId, aImageIndex, aSelectedImageIndex, aOwnerUserRID)
 			: base(aSAB, aTreeNodeType, aProfile, new MIDTreeNodeSecurityGroup(aFunctionSecurityProfile, null), true, aText, aParentId, aUserId, aImageIndex, aSelectedImageIndex, aOwnerUserRID)
 			//End Track #6321 - JScott - User has ability to to create folders when security is view
 		{
             CommonLoad();
+            _hierarchyLevelType = hierarchyLevelType;
 		}
 
         private void CommonLoad()
@@ -4733,6 +4740,14 @@ namespace MIDRetail.Windows
         {
             get { return _hierarchyType; }
             set { _hierarchyType = value; }
+        }
+        /// <summary>
+        /// Gets or sets the type of hierarchy level type.
+        /// </summary>
+        public eHierarchyLevelType HierarchyLevelType
+        {
+            get { return _hierarchyLevelType; }
+            set { _hierarchyLevelType = value; }
         }
         /// <summary>
         /// Gets the record id of the home hierarchy for the node.
@@ -6256,7 +6271,8 @@ namespace MIDRetail.Windows
                     collapsedImageIndex,
                     expandedImageIndex,
                     expandedImageIndex,
-                    hnp.HomeHierarchyOwner
+                    hnp.HomeHierarchyOwner,
+                    hnp.LevelType
                     );
 
                 mtn.NodeID = hnp.NodeID;

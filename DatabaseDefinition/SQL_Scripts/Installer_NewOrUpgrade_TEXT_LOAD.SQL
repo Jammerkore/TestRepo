@@ -127,6 +127,7 @@ exec SP_MID_SET_TEXT 030035,'{0} pds dyn to Plan Date.',250,0,2,null,0
 exec SP_MID_SET_TEXT 030036,'{0} pds dyn to Str Open.',250,0,2,null,0
 exec SP_MID_SET_TEXT 030037,'Period profile key of {0} is invalid.',250,0,6,null,0	/* Track #6018 stodd */
 exec SP_MID_SET_TEXT 030038,'Date {0} is not within the range of the merchandise calendar.  The value will be replaced with an undefined date.',250,0,4,null,0	/* TT#615-MD - JSmith - Store Load is allowing the adding of older dates, outside of the calendar boundaries */
+exec SP_MID_SET_TEXT 030039,'Only 1 week is required for this operator.',250,0,4,null,0   /* TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only */
 
 /* Size Group Messages 039000-039999 */
 exec SP_MID_SET_TEXT 039000,'Error: size/dimension labels are not unique.',250,0,5,null,0
@@ -473,6 +474,17 @@ exec SP_MID_SET_TEXT 040254,'Begin processing {0} method {1}',250,0,2,null,0  /*
 exec SP_MID_SET_TEXT 040255,'End processing {0} method {1} successfully',250,0,2,null,0  /* TT#1966-MD - JSmith - DC Fulfillment */
 exec SP_MID_SET_TEXT 040256,'End processing {0} method {1} with errors',250,0,2,null,0  /* TT#1966-MD - JSmith - DC Fulfillment */
 exec SP_MID_SET_TEXT 040257,'DC Fulfillment Method {0} has written the MONITOR to location {1} by user <{2},{3}>',250,0,2,null,0   /* TT#1966-MD - AGallagher - DC Fulfillment */
+exec SP_MID_SET_TEXT 040258,'Will open in Read Only mode.',250,0,2,null,0   /* RO-3444 - JSmith - RO Web Messaging */
+exec SP_MID_SET_TEXT 040259,'The selected workflow cannot be deleted at this time.',250,0,2,null,0   /* RO-3444 - JSmith - RO Web Messaging */
+exec SP_MID_SET_TEXT 040260,'The selected workflow cannot be updated at this time.',250,0,2,null,0   /* RO-3444 - JSmith - RO Web Messaging */
+exec SP_MID_SET_TEXT 040261,'The selected method cannot be deleted at this time.',250,0,2,null,0   /* RO-3444 - JSmith - RO Web Messaging */
+exec SP_MID_SET_TEXT 040262,'The selected method cannot be updated at this time.',250,0,2,null,0   /* RO-3444 - JSmith - RO Web Messaging */
+exec SP_MID_SET_TEXT 040263,'The following workflow requested',250,0,2,null,0   /* RO-3444 - JSmith - RO Web Messaging */
+exec SP_MID_SET_TEXT 040264,'The following method requested',250,0,2,null,0   /* RO-3444 - JSmith - RO Web Messaging */
+exec SP_MID_SET_TEXT 040265,'Delete(s) cannot be accomplished due to conflicts.',250,0,5,null,0   /* RO-3444 - JSmith - RO Web Messaging */
+exec SP_MID_SET_TEXT 040266,'Call parameters do not match instance values.',250,0,7,null,0   /* RO-3444 - JSmith - RO Web Messaging */
+exec SP_MID_SET_TEXT 040267,'Data is not lock and cannot be updated at this time.',250,0,5,null,0   /* RO-3444 - JSmith - RO Web Messaging */
+exec SP_MID_SET_TEXT 040268,'Color not found on header.',250,0,5,null,0   /* RO-3444 - JSmith - RO Web Messaging */
         
 /* Hierarchy Messages 050000-059999 */
 exec SP_MID_SET_TEXT 050000,'Cannot add levels to Alternate hierarchy',250,0,4,null,0
@@ -1818,6 +1830,14 @@ exec SP_MID_SET_TEXT 080834,'One or more headers already belong to a Master Head
 exec SP_MID_SET_TEXT 080835,'{0} already belongs to a Master Header and cannot be added to the Group Allocation.',250,0,5,null,0
 exec SP_MID_SET_TEXT 080836,'Must have a DC {0} assigned to process DC Fulfillment.',250,0,6,null,0
 /* End TT#1966-MD - JSmith- DC Fulfillment */
+exec SP_MID_SET_TEXT 080837,'The following Worklist Items are in use:',250,0,5,null,0   /* RO-3444 - JSmith - RO Web Messaging */
+exec SP_MID_SET_TEXT 080838,'Selected GroupBy is not implemented for Style View',250,0,7,null,0   /* RO-3444 - JSmith - RO Web Messaging */
+exec SP_MID_SET_TEXT 080839,'Selected GroupBy is not implemented for Size View',250,0,7,null,0   /* RO-3444 - JSmith - RO Web Messaging */
+exec SP_MID_SET_TEXT 080840,'Selected GroupBy is not implemented for Summary View',250,0,7,null,0   /* RO-3444 - JSmith - RO Web Messaging */
+exec SP_MID_SET_TEXT 080841,'Selected View is not Implemented',250,0,7,null,0   /* RO-3444 - JSmith - RO Web Messaging */
+exec SP_MID_SET_TEXT 080842,'Color already contains sizes',250,0,6,null,0   /* RO-3444 - JSmith - RO Web Messaging */
+exec SP_MID_SET_TEXT 080843,'Count must be greater than zero to add placeholders',250,0,6,null,0   /* RO-3444 - JSmith - RO Web Messaging */
+exec SP_MID_SET_TEXT 080844,'Count must be greater than zero to add placeholder colors',250,0,6,null,0   /* RO-3444 - JSmith - RO Web Messaging */
 
 /* Assortment Messages 085000-089999 */
 exec SP_MID_SET_TEXT 085000,'Variable, {0}, not supported by General Assortment Method', 250,0,7,null,0 
@@ -2010,6 +2030,7 @@ exec SP_MID_SET_TEXT 085155,'Entered value of: {0} must be evenly divide into: {
 /* End TT#1652-MD */
 exec SP_MID_SET_TEXT 085156,'Cannot process a General Allocation Method against an Assortment member header.', 250,0,6,null,0 
 exec SP_MID_SET_TEXT 085157,'Action not valid on placeholder', 250,0,5,null,0	/* TT#2117-MD - JSmith - Placeholder on an Assortment should not allow Need to be processed */
+exec SP_MID_SET_TEXT 085158,'Cannot remove color from Post Receipt Assortment',250,0,6,null,0   /* RO-4253 - JSmith - Data transport to remove Colors from an Initial Buy Assortment Style - Content */
 
 /* Planning Messages 090000-099999 */
 exec SP_MID_SET_TEXT 090000,'Forecast in use',250,0,6,null,0
@@ -2734,6 +2755,7 @@ exec SP_MID_SET_TEXT 200090,'Group Allocation',50,0, null,null,0			/* TT#488-MD 
 exec SP_MID_SET_TEXT 200091,'DC Carton Rounding Method',50,0, null,null,0   /* TT#1652-MD - RMatelic - DC Carton rounding */
 exec SP_MID_SET_TEXT 200092,'Create Master Headers Method',50,0, null,null,0   /* TT#1966-MD - JSmith - DC Fulfillment */
 exec SP_MID_SET_TEXT 200093,'DC Fulfillment Method',50,0, null,null,0   /* TT#1966-MD - JSmith - DC Fulfillment */
+exec SP_MID_SET_TEXT 200094,'Planning Extract',50,0,null,null,0   /* TT#2131-MD - JSmith - Halo Integration */
 
 /* Menu Items */
 exec SP_MID_SET_TEXT 300000,'&File',50,1,12,3,0
@@ -2976,6 +2998,7 @@ exec SP_MID_SET_TEXT 800452,'Header Reconcile',30,6,null,null,0		--  TT#1581-MD 
 /* End TT#1670-MD */
 exec SP_MID_SET_TEXT 800454,'Batch Comp',30,6,null,null,0	--TT#1595-MD - stodd - Batch Comp
 exec SP_MID_SET_TEXT 800455,'Scheduler Job Manager',30,6,null,null,0
+exec SP_MID_SET_TEXT 800456,'Planning Extract Thread',30,6,null,null,0   /* TT#2131-MD - JSmith - Halo Integration */
 
 /* eProcessStatus */
 /*
@@ -3597,6 +3620,7 @@ exec SP_MID_SET_TEXT 802164,'Cancel Intransit',30,62,null,null,0
 exec SP_MID_SET_TEXT 802166,'DC Carton Rounding',50,19,null,null,0 /* TT#1652-MD - RMatelic - DC Carton Roundning */	 
 exec SP_MID_SET_TEXT 802167,'Create Master Headers',50,19,null,null,0 /* TT#1966-MD - JSmith - DC Fulfillment */	 
 exec SP_MID_SET_TEXT 802168,'DC Fulfillment',50,19,null,null,0 /* TT#1966-MD - JSmith - DC Fulfillment */	 
+exec SP_MID_SET_TEXT 802169,'Planning Extract',50,19,null,null,0 /* TT#2131-MD - JSmith - Halo Integration */
 
 /* eAllocationActionStatus */
 exec SP_MID_SET_TEXT 802250,'No Action Performed',30,48,null,null,0
@@ -3771,6 +3795,12 @@ exec SP_MID_SET_TEXT 802871,'FIFO',30,100,null,null,0
 exec SP_MID_SET_TEXT 802872,'FILO',30,100,null,null,0
 exec SP_MID_SET_TEXT 802873,'Use Config Setting',30,100,null,null,0
 /*END TT#645-MD - JSmith - Add File Processing Direction Parameter to Tasks on Task Lists that Process Input Files */ 
+
+/* Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only */
+/* eAssortmentDisplayType */
+exec SP_MID_SET_TEXT 802880,'Buy',30,103,null,null,0
+exec SP_MID_SET_TEXT 802881,'Post Receipt',30,103,null,null,0
+/* End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only */
 
 /* 803000 - 803999 Used by Allocation View Selection */
 exec SP_MID_SET_TEXT 803001,'Header',30,33,12,0,0
@@ -4306,6 +4336,7 @@ exec SP_MID_SET_TEXT 831118,'Multi Level Spread',50,19,null,null,0
 exec SP_MID_SET_TEXT 831119,'Rollup',50,19,null,null,0
 /* End Enhancement - KJohnson - Rollup */
 exec SP_MID_SET_TEXT 831120,'Global Lock',50,19,null,null,0	/* TT#43 – MD – DOConnell – Projected Sales Enhancement */
+exec SP_MID_SET_TEXT 831122,'Planning Extract',50,19,null,null,0	/* TT#2131-MD - JSmith - Halo Integration */
 exec SP_MID_SET_TEXT 831200,'User',50,19,null,null,0
 exec SP_MID_SET_TEXT 831210,'OTS Plan',50,19,null,null,0
 exec SP_MID_SET_TEXT 831211,'Matrix Balance',50,19,null,null,0
@@ -4326,6 +4357,7 @@ exec SP_MID_SET_TEXT 831218,'Multi Level Spread',50,19,null,null,0
 exec SP_MID_SET_TEXT 831219,'Rollup',50,19,null,null,0
 /* End Enhancement - KJohnson - Rollup */
 exec SP_MID_SET_TEXT 831220,'Global Lock',50,19,null,null,0	/* TT#43 – MD – DOConnell – Projected Sales Enhancement */
+exec SP_MID_SET_TEXT 831222,'Planning Extract',50,19,null,null,0	/* TT#2131-MD - JSmith - Halo Integration */
 exec SP_MID_SET_TEXT 832000,'Views',50,19,null,null,0
 exec SP_MID_SET_TEXT 832100,'Global',50,19,null,null,0
 exec SP_MID_SET_TEXT 832200,'User',50,19,null,null,0
@@ -5695,6 +5727,36 @@ exec SP_MID_SET_TEXT 900994,'Fill',70,1,0,0,0
 exec SP_MID_SET_TEXT 900995,'Proportional',70,1,0,0,0 
 exec SP_MID_SET_TEXT 900996,'DC Fulfillment Monitor',70,1,0,0,0 
 /* End TT#1966-MD - JSmith- DC Fulfillment  */
+/* Begin TT#1644-MD - JSmith - Process Control  */
+exec SP_MID_SET_TEXT 900997,'Process Control',50,1,0,0,0
+exec SP_MID_SET_TEXT 900998,'Process ID',50,1,0,0,0
+exec SP_MID_SET_TEXT 900999,'Is Running',50,1,0,0,0
+exec SP_MID_SET_TEXT 901000,'Last Modified On',50,1,0,0,0
+exec SP_MID_SET_TEXT 901001,'Save Changes',50,1,0,0,0
+exec SP_MID_SET_TEXT 901002,'Must Be Running',50,1,0,0,0
+exec SP_MID_SET_TEXT 901003,'Cannot Be Running',50,1,0,0,0
+exec SP_MID_SET_TEXT 901004,'Services Restart Required',50,1,0,0,0
+exec SP_MID_SET_TEXT 901005,'Last Modified By',50,1,0,0,0
+/* End TT#1644-MD - JSmith - Process Control  */
+
+/* Begin TT#2131-MD - JSmith - Halo Integration */
+exec SP_MID_SET_TEXT 901006,'Low Level',30,10,null,null,50
+exec SP_MID_SET_TEXT 901007,'Low Levels Only',30,10,null,null,50
+exec SP_MID_SET_TEXT 901008,'Chain Data',30,10,null,null,50
+exec SP_MID_SET_TEXT 901009,'Store Data',30,10,null,null,50
+exec SP_MID_SET_TEXT 901010,'Attribute Set Data',30,10,null,null,50
+exec SP_MID_SET_TEXT 901011,'Attribute',30,10,null,null,50
+exec SP_MID_SET_TEXT 901012,'Variables',30,10,null,null,50
+exec SP_MID_SET_TEXT 901013,'Total Variables',30,10,null,null,50
+exec SP_MID_SET_TEXT 901014,'Concurrent Processes',30,10,null,null,50
+exec SP_MID_SET_TEXT 901015,'Exclude Zero Values',30,10,null,null,50
+exec SP_MID_SET_TEXT 901016,'Extract Ineligible Stores',30,10,null,null,50
+exec SP_MID_SET_TEXT 901017,'Analytics',30,1,2,0,0
+/* End TT#2131-MD - JSmith - Halo Integration */
+exec SP_MID_SET_TEXT 901018,'Item',50,1,0,0,0  /* RO-3444 - JSmith - RO Web Messaging */
+exec SP_MID_SET_TEXT 901019,'Client Type',50,1,0,0,0  /* RO-3444 - JSmith - RO Web Messaging */
+exec SP_MID_SET_TEXT 901020,'Windows',50,1,0,0,0  /* RO-3444 - JSmith - RO Web Messaging */
+exec SP_MID_SET_TEXT 901021,'Web',50,1,0,0,0  /* RO-3444 - JSmith - RO Web Messaging */
 
 /* Tool Tips */
 

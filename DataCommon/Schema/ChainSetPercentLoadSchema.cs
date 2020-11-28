@@ -9,6 +9,11 @@
 //------------------------------------------------------------------------------
 
 using System.Xml.Serialization;
+
+namespace MIDRetail.DataCommon.Schema
+{
+}
+
 namespace MIDRetail.DataCommon.Schema
 {
 }

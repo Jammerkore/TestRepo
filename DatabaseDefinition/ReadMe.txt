@@ -26,8 +26,8 @@ Install 5.4 release.
 
 A new version of Crystal Reports is required.  This can either be manually installed on each client machine using the installer
 or can be pushed out using the Crystal Reports runtime installs found at Application\Utilities.
-   CRRuntime_32bit_13_0_12.msi
-   CRRuntime_64bit_13_0_12.msi
+   CRRuntime_32bit_13_0_21.msi
+   CRRuntime_64bit_13_0_21.msi
 
 
 		

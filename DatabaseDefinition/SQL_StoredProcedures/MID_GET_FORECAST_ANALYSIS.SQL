@@ -88,10 +88,10 @@ BEGIN
 	DECLARE @ResultTable TABLE 
 	(  
 		[Process Date/Time] datetime,
-		[Process User] varchar(30),
+		[Process User] varchar(256),
 		[Forecast Node] varchar(150),
 		[Method Name] varchar(50),
-		[Method User] varchar(30),
+		[Method User] varchar(256),
 		[Method Node] varchar(50),
 		[Method Level] varchar(50),
 		[Forecast Time Range] varchar(50),

@@ -128,9 +128,18 @@ namespace MIDRetail.Windows
 		private bool _changedByProgram = false;
 
         private bool _clearDateRange = false;	// TT#207 MID Track #6451 
+        private bool _bPopulateForm = true;  // TT#1953-MD - RO Web
 
 
 		#region Properties
+        /// <summary>
+        /// Flag to identify if the form should be populated.
+        /// </summary>
+        public bool PopulateForm
+        {
+            get { return _bPopulateForm; }
+            set { _bPopulateForm = value; }
+        }
 		/// <summary>
 		/// if this is set when form opens, it will preset the values found in the DB.
 		/// </summary>
@@ -311,13 +320,25 @@ namespace MIDRetail.Windows
 
 		private void CalendarDateSelector_Load(object sender, System.EventArgs e)
 		{
-			SetReadOnly(true);  // Issue 5119
+            // Begin TT#1953-MD - RO Web
+            //SetReadOnly(true);  // Issue 5119
+            if (PopulateForm)
+            {
+                SetReadOnly(true);
+            }
+            // End TT#1953-MD - RO Web
 			_formLoaded = false;
 			_reset = false;
 			LoadSoftText();
 
 			// load list box
-			listBox1.BeginUpdate();
+            // Begin TT#1953-MD - RO Web
+            //listBox1.BeginUpdate();
+            if (PopulateForm)
+            {
+                listBox1.BeginUpdate();
+            }
+            // End TT#1953-MD - RO Web
 
 			if (this._anchorDateRangeRID != Include.UndefinedCalendarDateRange)
 			{	
@@ -353,16 +374,28 @@ namespace MIDRetail.Windows
 				_dvDateRangesWithNames = _calendar.GetDateRangesWithNames(this._allowDynamicToCurrent, this._allowDynamicToPlan, this._allowDynamicToStoreOpen,
 					this._allowReoccurring, this._restrictToOnlyWeeks, this._restrictToOnlyPeriods, this._allowDynamicSwitch);
 
-			listBox1.DataSource = _dvDateRangesWithNames;
-			listBox1.DisplayMember = "CDR_NAME";
-			listBox1.ValueMember = "CDR_RID";
-			listBox1.EndUpdate();
+            // Begin TT#1953-MD - RO Web
+            if (PopulateForm)
+            {
+                listBox1.DataSource = _dvDateRangesWithNames;
+                listBox1.DisplayMember = "CDR_NAME";
+                listBox1.ValueMember = "CDR_RID";
+                listBox1.EndUpdate();
+            }
+            // End TT#1953-MD - RO Web
 
             // Create the custom selection strategy
             this.mySelectionStrategy = new MyCustomSelectionStrategy(this.ultraGrid1);
             this.ultraGrid1.SelectionStrategyFilter = this;
 
 			InitializeSelectionCriteria();
+
+            // Begin TT#1953-MD - RO Web
+            if (!PopulateForm)
+            {
+                return;
+            }
+            // End TT#1953-MD - RO Web
 
 			ApplyFormSettings();
 
@@ -483,6 +516,13 @@ namespace MIDRetail.Windows
                 // End TT#11 - JSmith - The view of the calendar needs to pay attention to the culture info when displaying the dates.
 				lblDay.Text = _calendar.PostDate.Date.ToString("ddd",CultureInfo.CurrentUICulture);
 
+                // Begin TT#1953-MD - RO Web
+                if (!PopulateForm)
+                {
+                    return;
+                }
+                // End TT#1953-MD - RO Web
+
 				this.btnOk.Select();
 
 			}
@@ -494,13 +534,33 @@ namespace MIDRetail.Windows
 		}
 
         //Begin TT#1170-MD -jsobek -Remove Binary database objects and normalize the Filter definitions
-        public void SetDateForPlan(int DateRangeRID)
+        // Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+        //public void SetDateForPlan(int DateRangeRID)
+        //{
+        //    this.DateRangeRID = DateRangeRID;
+        //    this.AnchorDate = base.SAB.ClientServerSession.Calendar.CurrentDate;
+        //    this.AnchorDateRelativeTo = eDateRangeRelativeTo.Plan;
+        //    this.AllowDynamicToStoreOpen = true;
+        //}
+		public void SetDateForPlan(int DateRangeRID, bool RestrictToOnlyWeeks, bool RestrictToSingleDate, bool AllowDynamic, bool AllowDynamicToPlan, bool AllowDynamicToStoreOpen)
         {
             this.DateRangeRID = DateRangeRID;
             this.AnchorDate = base.SAB.ClientServerSession.Calendar.CurrentDate;
-            this.AnchorDateRelativeTo = eDateRangeRelativeTo.Plan;
-            this.AllowDynamicToStoreOpen = true;
+            this.RestrictToSingleDate = RestrictToSingleDate;
+            this.RestrictToOnlyWeeks = RestrictToOnlyWeeks;
+            this.AllowDynamic = AllowDynamic;
+            this.AllowDynamicToPlan = AllowDynamicToPlan;
+            if (AllowDynamicToPlan)
+            {
+                this.AnchorDateRelativeTo = eDateRangeRelativeTo.Plan;
+            }
+            else
+            {
+                this.AnchorDateRelativeTo = eDateRangeRelativeTo.Current;
+            }
+            this.AllowDynamicToStoreOpen = AllowDynamicToStoreOpen;
         }
+		// End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
         public string GetDateRangeTextForPlan(int DateRangeRID)
         {
              if (DateRangeRID != Include.UndefinedCalendarDateRange)
@@ -760,6 +820,14 @@ namespace MIDRetail.Windows
 			{
 				this.rbStatic.Checked = true;
 			}
+
+            // Begin TT#1953-MD - RO Web
+            if (!PopulateForm)
+            {
+                return;
+            }
+            // End TT#1953-MD - RO Web
+
 			this.gbRelativeTo.Enabled = true;
 
 			this.lblCurrentWeek.ForeColor = System.Drawing.Color.DarkGreen;
@@ -839,6 +907,13 @@ namespace MIDRetail.Windows
 			if (_selectedDateRange.IsDynamicSwitch)
 				_changedByProgram = false;
 			// END Issue 5119
+
+            // Begin TT#1953-MD - RO Web
+            if (!PopulateForm)
+            {
+                return;
+            }
+            // End TT#1953-MD - RO Web
 
 			if (_selectedDateRange.SelectedDateType == eCalendarDateType.Day)
 				this.rbDay.Checked = true;
@@ -3535,5 +3610,36 @@ namespace MIDRetail.Windows
                 ultraGrid1.DisplayLayout.Override.SelectTypeRow = SelectType.None;
             }
         }	
+
+        // Begin TT#1953-MD - RO Web
+        // Methods to support RO Web
+        public void SetUp(int iDateRangeRID)
+        {
+            _dateRangeRID = iDateRangeRID;
+            CalendarDateSelector_Load(this, new System.EventArgs());
+        }
+
+        public DataView GetPredefinedDateRanges()
+        {
+            return _dvDateRangesWithNames;
+        }
+
+        public void GetSelectedDates(out WeekProfile selectedStartWeek, out WeekProfile selectedEndWeek)
+        {
+            selectedStartWeek = _selectedStartWeek;
+            selectedEndWeek = _selectedEndWeek;
+        }
+
+        public void GetCurrentDateInformation(out string sCurrentSalesDate, out string sCurrentSalesDay, out string sCurrentSalesWeek,
+            out string sCurrentDate, out string sPlanDate, out string sStoreOpenDate)
+        {
+            sCurrentSalesDate = lblCurrentDay.Text;
+            sCurrentSalesDay = lblDay.Text;
+            sCurrentSalesWeek = lblCurrentWeek.Text;
+            sCurrentDate = lblCurrent.Text;
+            sPlanDate = lblPlan.Text;
+            sStoreOpenDate = lblStoreOpen.Text;
+        }
+        // End TT#1953-MD - RO Web
 	}
 }

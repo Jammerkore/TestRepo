@@ -46,6 +46,11 @@ namespace MIDRetail.Common
 		private bool		_masterAllocationInstalled = false;
 		private bool		_masterAllocationTempLicense = false;
 		private int			_masterAllocationExpirationDays = int.MaxValue;
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        private bool _analyticsInstalled = false;
+        private bool _analyticsTempLicense = false;
+        private int _analyticsExpirationDays = int.MaxValue;
+        // End TT#2131-MD - JSmith - Halo Integration
 
 		private int			_pos = 0;
 // Begin Track #3455 - Serialization error
@@ -156,6 +161,21 @@ namespace MIDRetail.Common
 			get{return _masterAllocationExpirationDays;}
 		}
 
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        public bool AnalyticsInstalled
+        {
+            get { return _analyticsInstalled; }
+        }
+        public bool AnalyticsTempLicense
+        {
+            get { return _analyticsTempLicense; }
+        }
+        public int AnalyticsExpirationDays
+        {
+            get { return _analyticsExpirationDays; }
+        }
+        // End TT#2131-MD - JSmith - Halo Integration
+
 		//========
 		// METHODS
 		//========
@@ -191,6 +211,11 @@ namespace MIDRetail.Common
 					_masterAllocationInstalled = false;
 					_masterAllocationTempLicense = false;
 					_masterAllocationExpirationDays = int.MaxValue;
+                    // Begin TT#2131-MD - JSmith - Halo Integration
+                    _analyticsInstalled = false;
+                    _analyticsTempLicense = false;
+                    _analyticsExpirationDays = int.MaxValue;
+                    // End TT#2131-MD - JSmith - Halo Integration
 					return;
 				}
 
@@ -222,6 +247,7 @@ namespace MIDRetail.Common
                 // Begin TT#236 MD
 				SetApplication(ref _masterAllocationInstalled, ref _masterAllocationTempLicense, ref _masterAllocationExpirationDays);
                 SetApplication(ref _groupAllocationInstalled, ref _groupAllocationTempLicense, ref _groupAllocationExpirationDays);		// TT#1247-MD - stodd - Add Group Allocation as a License Key option -
+                SetApplication(ref _analyticsInstalled, ref _analyticsTempLicense, ref _analyticsExpirationDays);  // TT#2131-MD - JSmith - Halo Integration
 			
 			}
 			catch
@@ -295,7 +321,8 @@ namespace MIDRetail.Common
 			bool aPlanningInstalled, int aPlanningExpiration, 
 			bool aAssortmentInstalled, int aAssortmentExpiration,
             bool aGroupAllocationInstalled, int aGroupAllocationExpiration,		// TT#1247-MD - stodd - Add Group Allocation as a License Key option -
-			bool aMasterInstalled, int aMasterExpiration)
+			bool aMasterInstalled, int aMasterExpiration,
+            bool aAnalyticsInstalled, int aAnalyticsExpiration)  // TT#2131-MD - JSmith - Halo Integration
 		{
 // Begin Track #3455 - Serialization error
 			Encryption encryption = new Encryption('0');
@@ -318,6 +345,7 @@ namespace MIDRetail.Common
                 //AddApplication(key, aGroupAllocationInstalled, aGroupAllocationExpiration);		// TT#1247-MD - stodd - Add Group Allocation as a License Key option -
 				AddApplication(key, aMasterInstalled, aMasterExpiration);
                 AddApplication(key, aGroupAllocationInstalled, aGroupAllocationExpiration);		// TT#1247-MD - stodd - Add Group Allocation as a License Key option -
+                AddApplication(key, aAnalyticsInstalled, aAnalyticsExpiration);  // TT#2131-MD - JSmith - Halo Integration
 
 				// add encode here
 //				string encodedKey = key.ToString();

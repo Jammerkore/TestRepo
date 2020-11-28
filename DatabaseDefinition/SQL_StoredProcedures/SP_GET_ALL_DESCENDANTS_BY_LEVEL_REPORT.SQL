@@ -61,6 +61,7 @@ BEGIN
 	LEFT OUTER JOIN [dbo].[BASE_NODE] bn WITH (NOLOCK) ON hn.HN_RID = bn.HN_RID
 	WHERE @SELECTED_NODE_RID = hnj.HN_RID
 	  AND hnj.NODE_DELETE_IND = '0' -- TT#3630 - JSmith - Delete My Hierarchy
+	  AND hn.PURPOSE = 0
 
 	SET @Loop = @@ROWCOUNT
 
@@ -108,6 +109,7 @@ BEGIN
 				AND t.HOME_LEVEL < (@LEVEL + 1)
 				)
 			AND hnj.NODE_DELETE_IND = '0' -- TT#3630 - JSmith - Delete My Hierarchy
+			AND hn.PURPOSE = 0
 
 		SET @Loop = @@ROWCOUNT
 		-- update counters
@@ -119,7 +121,8 @@ BEGIN
 		HN_RID,
 		BN_ID,
 		BN_NAME,
-		BN_DESCRIPTION
+		BN_DESCRIPTION,
+		HOME_LEVEL
 	FROM #TREE
 
 	IF (SELECT object_id('tempdb.dbo.#TREE')) > 0 DROP TABLE #TREE

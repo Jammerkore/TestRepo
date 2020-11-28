@@ -2,6 +2,8 @@ using System;
 using MIDRetail.Data;
 using MIDRetail.DataCommon;
 using MIDRetail.Common;
+using Logility.ROWebSharedTypes;
+
 namespace MIDRetail.Business
 {
 	/// <summary>
@@ -50,6 +52,13 @@ namespace MIDRetail.Business
 		//========
 		// METHODS
 		//========
+
+        // Begin TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+        override internal bool CheckForUserData()
+        {
+            return false;
+        }
+        // End TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
 
 		internal override void VerifyAction(eMethodType aMethodType)
 		{
@@ -129,7 +138,29 @@ namespace MIDRetail.Business
 		{
 			return false;
 		}
-		// End MID Track 4858
-	}
+        // End MID Track 4858
+
+        // BEGIN RO-642 - RDewey
+        override public FunctionSecurityProfile GetFunctionSecurity()
+        {
+            return null;
+        }
+
+        override public ROMethodProperties MethodGetData(bool processingApply)
+        {
+            throw new NotImplementedException("MethodGetData is not implemented");
+        }
+
+        override public bool MethodSetData(ROMethodProperties methodProperties, bool processingApply)
+        {
+            throw new NotImplementedException("MethodSaveData is not implemented");
+        }
+
+        override public ROMethodProperties MethodCopyData()
+        {
+            throw new NotImplementedException("MethodCopyData is not implemented");
+        }
+        // END RO-642 - RDewey
+    }
 
 }

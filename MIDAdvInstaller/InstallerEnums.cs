@@ -37,7 +37,9 @@ namespace MIDRetailInstaller
         MIDSchedulerService = 5,
         MIDApplicationService = 6,
         MIDAPI = 7,
-        MIDConfig = 8
+        MIDConfig = 8,
+        MIDJobService = 9,
+        MIDROWebService = 10
     }
 
     //install tasks
@@ -51,7 +53,7 @@ namespace MIDRetailInstaller
         configure,
         databaseMaintenance,
         eventSources,
-        crystalReports,
+        //crystalReports,
         startServices,
         stopServices,
         installConfiguration,

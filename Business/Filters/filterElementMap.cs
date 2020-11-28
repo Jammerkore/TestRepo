@@ -40,6 +40,7 @@ namespace MIDRetail.Business
         public static readonly filterElementMap NameAndLimit = new filterElementMap(26);
         public static readonly filterElementMap DynamicSet = new filterElementMap(27);
         public static readonly filterElementMap DynamicSetOverride = new filterElementMap(28);
+        public static readonly filterElementMap OperatorCalendarDate = new filterElementMap(29);   // TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
 
         private filterElementMap(int Index)
         {

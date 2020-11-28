@@ -83,14 +83,21 @@ namespace MIDRetail.DataCommon
 
 		override public bool Equals(object obj)
 		{
-			if (((Profile)obj).Key == _key)
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
+            try
+            {
+                if (((Profile)obj).Key == _key)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (InvalidCastException)
+            {
+                return false;
+            }
 		}
 
 		override public int GetHashCode()

@@ -1,5 +1,7 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
 using System.Diagnostics;
 
@@ -343,12 +345,28 @@ namespace MIDRetail.Business
 
 					if (aAllowReadOnlyOnConflict)
 					{
-						errMsg += MIDText.GetTextOnly(eMIDTextCode.msg_pl_PlanInUseContinue);
+                        if (MIDEnvironment.isWindows)
+                        {
+                            errMsg += MIDText.GetTextOnly(eMIDTextCode.msg_pl_PlanInUseContinue);
 
-						diagResult = aSAB.MessageCallback.HandleMessage(
-							errMsg,
-							"Plan Conflict",
-							System.Windows.Forms.MessageBoxButtons.OKCancel, System.Windows.Forms.MessageBoxIcon.Asterisk);
+                            diagResult = aSAB.MessageCallback.HandleMessage(
+                                errMsg,
+                                "Plan Conflict",
+                                System.Windows.Forms.MessageBoxButtons.OKCancel, System.Windows.Forms.MessageBoxIcon.Asterisk);
+                        }
+                        else
+                        {
+                            MIDEnvironment.isChangedToReadOnly = true;
+
+                            errMsg += MIDText.GetTextOnly(eMIDTextCode.msg_ReadOnlyMode);
+
+                            diagResult = aSAB.MessageCallback.HandleMessage(
+                                errMsg,
+                                "Plan Conflict",
+                                System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Asterisk);
+
+                            MIDEnvironment.Message = errMsg;
+                        }
 
 						if (diagResult == System.Windows.Forms.DialogResult.OK)
 						{
@@ -577,26 +595,32 @@ namespace MIDRetail.Business
 		private object _planComputationWorkArea;
 		//Begin Enhancement - JScott - Add Balance Low Levels functionality
 		protected bool _forceCurrentInit;
-		//End Enhancement - JScott - Add Balance Low Levels functionality
-		//Begin Init Performance Benchmarking -- DO NOT REMOVE
-		//public PerfInitHash PerfInitHash = new PerfInitHash();
-		//Begin Init Performance Benchmarking -- DO NOT REMOVE
+        //End Enhancement - JScott - Add Balance Low Levels functionality
+        //Begin Init Performance Benchmarking -- DO NOT REMOVE
+        //public PerfInitHash PerfInitHash = new PerfInitHash();
+        //Begin Init Performance Benchmarking -- DO NOT REMOVE
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        protected ROExtractData _ROExtractData = null;
+        protected IPlanComputationVariables _variables = null;
+        protected IPlanComputationTimeTotalVariables _totalVariables = null;
+        protected DataTable dtExtractControl = null;
+        // End TT#2131-MD - JSmith - Halo Integration
 
-		//=============
-		// CONSTRUCTORS
-		//=============
+        //=============
+        // CONSTRUCTORS
+        //=============
 
-		/// <summary>
-		/// Creates a new instance of PlanCubeGroup that are owned by the given SessionAddressBlock and Transaction.
-		/// </summary>
-		/// <param name="aSAB">
-		/// A reference to the current SessionAddressBlock.
-		/// </param>
-		/// <param name="aTransaction">
-		/// A reference to the current Transaction.
-		/// </param>
+        /// <summary>
+        /// Creates a new instance of PlanCubeGroup that are owned by the given SessionAddressBlock and Transaction.
+        /// </summary>
+        /// <param name="aSAB">
+        /// A reference to the current SessionAddressBlock.
+        /// </param>
+        /// <param name="aTransaction">
+        /// A reference to the current Transaction.
+        /// </param>
 
-		public PlanCubeGroup(SessionAddressBlock aSAB, Transaction aTransaction)
+        public PlanCubeGroup(SessionAddressBlock aSAB, Transaction aTransaction)
 			: base(aSAB, aTransaction)
 		{
 			try
@@ -642,11 +666,61 @@ namespace MIDRetail.Business
 			}
 		}
 
-		/// <summary>
-		/// Gets the boolean indicating if the user has made a changed to a cell.
-		/// </summary>
+        // Begin TT#2131-MD - JSmith - Halo Integration
+         public bool ROExtractEnabled
+        {
+            get
+            {
+                return SAB.ROExtractEnabled;
+            }
+        }
 
-		public Hashtable SimilarStoreModelHash
+        
+        public ROExtractData ROExtractData
+        {
+            get
+            {
+                if (_ROExtractData == null)
+                {
+                    _ROExtractData = new ROExtractData(SAB.ROExtractConnectionString);
+                }
+
+                return _ROExtractData;
+            }
+        }
+
+        public IPlanComputationVariables Variables
+        {
+            get
+            {
+                if (_variables == null)
+                {
+                    _variables = SAB.ApplicationServerSession.DefaultPlanComputations.PlanVariables;
+                }
+
+                return _variables;
+            }
+        }
+
+        public IPlanComputationTimeTotalVariables TotalVariables
+        {
+            get
+            {
+                if (_totalVariables == null)
+                {
+                    _totalVariables = SAB.ApplicationServerSession.DefaultPlanComputations.PlanTimeTotalVariables;
+                }
+
+                return _totalVariables;
+            }
+        }
+        // End TT#2131-MD - JSmith - Halo Integration
+
+        /// <summary>
+        /// Gets the boolean indicating if the user has made a changed to a cell.
+        /// </summary>
+
+        public Hashtable SimilarStoreModelHash
 		{
 			get
 			{
@@ -736,18 +810,17 @@ namespace MIDRetail.Business
 		public double GetComparativeInitCalcTime()
 		{
 			return TotalComparativeInitCalcTime.TotalMilliseconds;
-		}
+		} 
 #endif
+        /// <summary>
+        /// Creates a ComputationCubeGroupWaferInfo object from a CubeWaferCoordinateList object.
+        /// </summary>
+        /// <param name="aCoorList">
+        /// The list of wafer coordinates to create a ComputationCubeGroupWaferInfo with.
+        /// </param>
+        /// <returns></returns>
 
-		/// <summary>
-		/// Creates a ComputationCubeGroupWaferInfo object from a CubeWaferCoordinateList object.
-		/// </summary>
-		/// <param name="aCoorList">
-		/// The list of wafer coordinates to create a ComputationCubeGroupWaferInfo with.
-		/// </param>
-		/// <returns></returns>
-
-		override protected ComputationCubeGroupWaferInfo CreateWaferInfo(CubeWaferCoordinateList aCoorList)
+        override protected ComputationCubeGroupWaferInfo CreateWaferInfo(CubeWaferCoordinateList aCoorList)
 		{
 			PlanCubeGroupWaferInfo waferInfo;
 
@@ -1358,17 +1431,28 @@ namespace MIDRetail.Business
 		/// </param>
 
 		abstract public void SaveCubeGroup(PlanSaveParms aSaveParms);
-		
-		/// <summary>
-		/// Closes this PlanCubeGroup.
-		/// </summary>
 
-		//Begin Enhancement - JScott - Add Balance Low Levels functionality
-		//virtual public void CloseCubeGroup()
-		//{
-		//}
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        /// <summary>
+        /// Executed to extract a PlanCubeGroup.
+        /// </summary>
+        /// <param name="aSaveParms">
+        /// The PlanSaveParms object that contains information about the plan save.
+        /// </param>
 
-		override public void CloseCubeGroup()
+        abstract public void ExtractCubeGroup(ExtractOptions aExtractOptions);
+        // End TT#2131-MD - JSmith - Halo Integration
+
+        /// <summary>
+        /// Closes this PlanCubeGroup.
+        /// </summary>
+
+        //Begin Enhancement - JScott - Add Balance Low Levels functionality
+        //virtual public void CloseCubeGroup()
+        //{
+        //}
+
+        override public void CloseCubeGroup()
 		{
 			try
 			{
@@ -1920,5 +2004,175 @@ namespace MIDRetail.Business
         // Begin TT#5276 - JSmith - Read Only Saves
         abstract public bool IsNodeEnqueued(int aNodeKey, bool aIsChain);
         // End TT#5276 - JSmith - Read Only Saves
-	}
+
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        public List<DateProfile> BuildPeriods(
+            bool includeYear = false,
+            bool includeSeason = false,
+            bool includeQuarter = false,
+            bool includeMonth = false,
+            bool includeWeeks = false,
+            bool includeAllWeeks = true,
+            bool isForExtract = true,
+            int HN_RID = Include.NoRID,
+            int FV_RID = Include.NoRID,
+            ePlanType planType = ePlanType.None
+            )
+        {
+            int i = 0;
+            ProfileList periodProfileList = SAB.ApplicationServerSession.Calendar.GetPeriodProfileList(_openParms.DateRangeProfile.Key);
+            ProfileList weeksProfileList = _openParms.GetWeekProfileList(SAB.ApplicationServerSession);
+            List<DateProfile> periods = new List<DateProfile>();
+            List<int> periodHeader = new List<int>();
+            if (includeYear)
+            {
+                periodHeader.Add((int)eProfileType.Year);
+            }
+            if (includeSeason)
+            {
+                periodHeader.Add((int)eProfileType.Season);
+            }
+            if (includeQuarter)
+            {
+                periodHeader.Add((int)eProfileType.Quarter);
+            }
+            if (includeMonth)
+            {
+                periodHeader.Add((int)eProfileType.Month);
+            }
+            if (includeWeeks)
+            {
+                periodHeader.Add((int)eProfileType.Week);
+            }
+
+            if (ROExtractEnabled
+                && isForExtract
+                && !includeAllWeeks)
+            {
+                ProfileList changedWweeksProfileList = GetChangedWeeks(weeksProfileList, HN_RID, FV_RID, planType);
+                // if any week changed, include all weeks otherwise set the week list to the empty changed week list
+                if (changedWweeksProfileList.Count == 0)
+                {
+                    weeksProfileList = changedWweeksProfileList;
+                    SAB.ApplicationServerSession.Audit.Add_Msg(eMIDMessageLevel.Information, "At least one week has changed, all weeks will be used.", this.GetType().Name);
+                }
+            }
+
+            BuildPeriods(periodProfileList, weeksProfileList, ref i, periods, periodHeader, includeAllWeeks);
+
+            return periods;
+        }
+
+        private ProfileList GetChangedWeeks (
+            ProfileList weeksProfileList,
+            int HN_RID,
+            int FV_RID,
+            ePlanType planType
+            )
+        {
+
+            ProfileList changedWeeks = new ProfileList(eProfileType.Week);
+
+            if (dtExtractControl == null)
+            {
+                dtExtractControl = VarData.EXTRACT_PLANNING_CONTROL_Read(HN_RID: HN_RID, FV_RID: FV_RID, PLAN_TYPE: planType);
+            }
+
+            bool includeWeek = true;
+            DateTime extractDate, updateDate;
+            foreach (WeekProfile weekProf in weeksProfileList)
+            {
+                includeWeek = true;
+                DataRow[] rows = dtExtractControl.Select("TIME_ID = " + weekProf.Key.ToString(CultureInfo.CurrentUICulture));
+                if (rows.Length > 0)
+                {
+                    if (rows[0]["EXTRACT_DATE"] != System.DBNull.Value)
+                    {
+                        extractDate = Convert.ToDateTime(rows[0]["EXTRACT_DATE"]);
+                        if (rows[0]["UPDATE_DATE"] != System.DBNull.Value)
+                        {
+                            updateDate = Convert.ToDateTime(rows[0]["UPDATE_DATE"]);
+                            if (extractDate > updateDate)
+                            {
+                                includeWeek = false;
+                            }
+                        }
+                        else
+                        {
+                            includeWeek = false;
+                        }
+                    }
+                }
+
+                if (includeWeek)
+                {
+                    changedWeeks.Add(weekProf);
+                }
+            }
+
+            return changedWeeks;
+        }
+
+        private void BuildPeriods(ProfileList aPeriodList, ProfileList aWeekList, ref int aSeq, List<DateProfile> periods, List<int> periodHeader, bool includeAllWeeks)
+        {
+            try
+            {
+                if (aPeriodList.ProfileType == eProfileType.Period)
+                {
+                    foreach (PeriodProfile perProf in aPeriodList)
+                    {
+                        if (periodHeader.Contains((int)perProf.PeriodProfileType))
+                        {
+                            // restrict periods based on weeks
+                            bool includePeriod = true;
+                            if (!includeAllWeeks)
+                            {
+                                includePeriod = false;
+                                foreach (WeekProfile weekProf in aWeekList.ArrayList)
+                                {
+                                    if (perProf.Weeks.Contains(weekProf.Key))
+                                    {
+                                        includePeriod = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (includePeriod)
+                            {
+                                periods.Add(perProf);
+                            }
+                        }
+
+                        if (perProf.ChildPeriodList.Count > 0)
+                        {
+                            BuildPeriods(perProf.ChildPeriodList, aWeekList, ref aSeq, periods, periodHeader, includeAllWeeks);
+                        }
+                        else
+                        {
+                            BuildPeriods(perProf.Weeks, aWeekList, ref aSeq, periods, periodHeader, includeAllWeeks);
+                        }
+                    }
+                }
+                else
+                {
+                    if (periodHeader.Contains((int)aPeriodList.ProfileType))
+                    {
+                        foreach (WeekProfile weekProf in aPeriodList)
+                        {
+                            if (aWeekList.Contains(weekProf.Key))
+                            {
+                                periods.Add(weekProf);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception exc)
+            {
+                string message = exc.ToString();
+                throw;
+            }
+        }
+        // End TT#2131-MD - JSmith - Halo Integration
+    }
 }

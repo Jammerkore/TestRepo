@@ -16,6 +16,7 @@ using MIDRetail.Common;
 using MIDRetail.DataCommon;
 using MIDRetail.Data;
 using MIDRetail.Windows.Controls;
+using Logility.ROUI;
 
 namespace MIDRetail.Windows
 {
@@ -7232,6 +7233,7 @@ namespace MIDRetail.Windows
                 foreach (DataRow dr in drSelectedUsers)
                 {
                     taginfo += SocketSharedRoutines.Tags.rowStart;
+                    taginfo += SocketSharedRoutines.MakeUserNameForTagInfo((string)dr["USER_NAME"]);
                     taginfo += SocketSharedRoutines.MakeClientIPForTagInfo((string)dr["CLIENT_IP"]);
                     string sPort = (string)dr["CLIENT_PORT"];
                     int iPort;
@@ -7254,6 +7256,7 @@ namespace MIDRetail.Windows
             e.Layout.Bands[0].Columns["APP_STATUS"].Hidden = true;
 
             e.Layout.Bands[0].Columns["USER_NAME"].Header.Caption = MIDText.GetTextOnly(eMIDTextCode.lbl_RemoteSystemOptions_ShowCurrentUserGrid_UserColumn); // "User";
+            e.Layout.Bands[0].Columns["CLIENT_TYPE"].Header.Caption = MIDText.GetTextOnly(eMIDTextCode.lbl_RemoteSystemOptions_ShowCurrentUserGrid_ClientType); // "Client Type";
             e.Layout.Bands[0].Columns["MACHINE_NAME"].Header.Caption = MIDText.GetTextOnly(eMIDTextCode.lbl_RemoteSystemOptions_ShowCurrentUserGrid_MachineColumn); //"Machine";
             e.Layout.Bands[0].Columns["CLIENT_IP"].Header.Caption = MIDText.GetTextOnly(eMIDTextCode.lbl_RemoteSystemOptions_ShowCurrentUserGrid_IPAddressColumn); //"IP Address";
 
@@ -7447,288 +7450,288 @@ namespace MIDRetail.Windows
 		#endregion MIDFormBase Overrides
 	}
 
-    public class BasisLabelVariableEntry
-    {
-        //=======
-        // FIELDS
-        //=======
+    //public class BasisLabelVariableEntry
+    //{
+    //    //=======
+    //    // FIELDS
+    //    //=======
 
-        private int _systemOptionRID;
-        private int _labelType;
-        private string _labelText;
-        private int _labelSequence;
+    //    private int _systemOptionRID;
+    //    private int _labelType;
+    //    private string _labelText;
+    //    private int _labelSequence;
 
-        //=============
-        // CONSTRUCTORS
-        //=============
+    //    //=============
+    //    // CONSTRUCTORS
+    //    //=============
 
-        public BasisLabelVariableEntry(DataRow aDataRow)
-        {
-            try
-            {
-                LoadFromDataRow(aDataRow);
-            }
-            catch (Exception exc)
-            {
-                string message = exc.ToString();
-                throw;
-            }
-        }
+    //    public BasisLabelVariableEntry(DataRow aDataRow)
+    //    {
+    //        try
+    //        {
+    //            LoadFromDataRow(aDataRow);
+    //        }
+    //        catch (Exception exc)
+    //        {
+    //            string message = exc.ToString();
+    //            throw;
+    //        }
+    //    }
 
-        public BasisLabelVariableEntry(int aSystemOptionRID, int aLabelType, string aLabelText, int aLabelSequence)
-        {
-            try
-            {
-                _systemOptionRID = aSystemOptionRID;
-                _labelType = aLabelType;
-                _labelText = aLabelText;
-                _labelSequence = aLabelSequence;
-            }
-            catch (Exception exc)
-            {
-                string message = exc.ToString();
-                throw;
-            }
-        }
+    //    public BasisLabelVariableEntry(int aSystemOptionRID, int aLabelType, string aLabelText, int aLabelSequence)
+    //    {
+    //        try
+    //        {
+    //            _systemOptionRID = aSystemOptionRID;
+    //            _labelType = aLabelType;
+    //            _labelText = aLabelText;
+    //            _labelSequence = aLabelSequence;
+    //        }
+    //        catch (Exception exc)
+    //        {
+    //            string message = exc.ToString();
+    //            throw;
+    //        }
+    //    }
 
-        //===========
-        // PROPERTIES
-        //===========
+    //    //===========
+    //    // PROPERTIES
+    //    //===========
 
-        public int SystemOptionRID
-        {
-            get
-            {
-                return _systemOptionRID;
-            }
-            set
-            {
-                _systemOptionRID = value;
-            }
-        }
+    //    public int SystemOptionRID
+    //    {
+    //        get
+    //        {
+    //            return _systemOptionRID;
+    //        }
+    //        set
+    //        {
+    //            _systemOptionRID = value;
+    //        }
+    //    }
 
-        public int LabelType
-        {
-            get
-            {
-                return _labelType;
-            }
-            set
-            {
-                _labelType = value;
-            }
-        }
+    //    public int LabelType
+    //    {
+    //        get
+    //        {
+    //            return _labelType;
+    //        }
+    //        set
+    //        {
+    //            _labelType = value;
+    //        }
+    //    }
 
-        public string LabelText
-        {
-            get
-            {
-                return _labelText;
-            }
-            set
-            {
-                _labelText = value;
-            }
-        }
+    //    public string LabelText
+    //    {
+    //        get
+    //        {
+    //            return _labelText;
+    //        }
+    //        set
+    //        {
+    //            _labelText = value;
+    //        }
+    //    }
 
-        public int LabelSequence
-        {
-            get
-            {
-                return _labelSequence;
-            }
-            set
-            {
-                _labelSequence = value;
-            }
-        }
+    //    public int LabelSequence
+    //    {
+    //        get
+    //        {
+    //            return _labelSequence;
+    //        }
+    //        set
+    //        {
+    //            _labelSequence = value;
+    //        }
+    //    }
 
-        //========
-        // METHODS
-        //========
+    //    //========
+    //    // METHODS
+    //    //========
 
-        private void LoadFromDataRow(DataRow aRow)
-        {
-            try
-            {
-                _systemOptionRID = Convert.ToInt32(aRow["SYSTEM_OPTION_RID"], CultureInfo.CurrentUICulture);
-                _labelType = Convert.ToInt32(aRow["LABEL_TYPE"], CultureInfo.CurrentCulture);
-                _labelText = "";
-                _labelSequence = Convert.ToInt32(aRow["LABEL_SEQ"], CultureInfo.CurrentUICulture);
-            }
-            catch (Exception exc)
-            {
-                string message = exc.ToString();
-                throw;
-            }
-        }
+    //    private void LoadFromDataRow(DataRow aRow)
+    //    {
+    //        try
+    //        {
+    //            _systemOptionRID = Convert.ToInt32(aRow["SYSTEM_OPTION_RID"], CultureInfo.CurrentUICulture);
+    //            _labelType = Convert.ToInt32(aRow["LABEL_TYPE"], CultureInfo.CurrentCulture);
+    //            _labelText = "";
+    //            _labelSequence = Convert.ToInt32(aRow["LABEL_SEQ"], CultureInfo.CurrentUICulture);
+    //        }
+    //        catch (Exception exc)
+    //        {
+    //            string message = exc.ToString();
+    //            throw;
+    //        }
+    //    }
 
-        public DataRow UnloadToDataRow(DataRow aRow)
-        {
-            try
-            {
-                aRow["SYSTEM_OPTION_RID"] = _systemOptionRID;
-                aRow["LABEL_TYPE"] = _labelType;
-                aRow["LABEL_TEXT"] = _labelType;
-                aRow["LABEL_SEQ"] = _labelSequence;
+    //    public DataRow UnloadToDataRow(DataRow aRow)
+    //    {
+    //        try
+    //        {
+    //            aRow["SYSTEM_OPTION_RID"] = _systemOptionRID;
+    //            aRow["LABEL_TYPE"] = _labelType;
+    //            aRow["LABEL_TEXT"] = _labelType;
+    //            aRow["LABEL_SEQ"] = _labelSequence;
 
-                return aRow;
-            }
-            catch (Exception exc)
-            {
-                string message = exc.ToString();
-                throw;
-            }
-        }
-    }
+    //            return aRow;
+    //        }
+    //        catch (Exception exc)
+    //        {
+    //            string message = exc.ToString();
+    //            throw;
+    //        }
+    //    }
+    //}
 
-    public class BasisLabelTypeProfile : Profile
-    {
-        //=======
-        // FIELDS
-        //=======
+    //public class BasisLabelTypeProfile : Profile
+    //{
+    //    //=======
+    //    // FIELDS
+    //    //=======
 
-        private int _key;
-        private int _systemOptionRID;
-        private string _name;
-        private int _type;
-        private int _sequence;
+    //    private int _key;
+    //    private int _systemOptionRID;
+    //    private string _name;
+    //    private int _type;
+    //    private int _sequence;
 
-        //=============
-        // CONSTRUCTORS
-        //=============
+    //    //=============
+    //    // CONSTRUCTORS
+    //    //=============
 
-        /// <summary>
-        /// Creates a new instance of BasisLabelTypeProfile.
-        /// </summary>
-        /// <param name="aKey">
-        /// The integer that identifies the logical RID of this coordinate.
-        /// </param>
+    //    /// <summary>
+    //    /// Creates a new instance of BasisLabelTypeProfile.
+    //    /// </summary>
+    //    /// <param name="aKey">
+    //    /// The integer that identifies the logical RID of this coordinate.
+    //    /// </param>
 
-        /// <summary>
-        /// Returns the eProfileType of this profile.
-        /// </summary>
+    //    /// <summary>
+    //    /// Returns the eProfileType of this profile.
+    //    /// </summary>
 
-        public BasisLabelTypeProfile(int aKey)
-            : base(aKey)
-        {
-            _key = aKey;
-        }
+    //    public BasisLabelTypeProfile(int aKey)
+    //        : base(aKey)
+    //    {
+    //        _key = aKey;
+    //    }
 
-        override public eProfileType ProfileType
-        {
-            get
-            {
-                return eProfileType.BasisLabelType;
+    //    override public eProfileType ProfileType
+    //    {
+    //        get
+    //        {
+    //            return eProfileType.BasisLabelType;
 
-            }
-        }
+    //        }
+    //    }
 
-        public int BasisLabelSystemOptionRID
-        {
-            get
-            {
-                return _systemOptionRID;
-            }
-            set
-            {
-                _systemOptionRID = value;
-            }
-        }
+    //    public int BasisLabelSystemOptionRID
+    //    {
+    //        get
+    //        {
+    //            return _systemOptionRID;
+    //        }
+    //        set
+    //        {
+    //            _systemOptionRID = value;
+    //        }
+    //    }
 
-        public int BasisLabelType
-        {
-            get
-            {
-                return _type;
-            }
-            set
-            {
-                _type = value;
-            }
-        }
+    //    public int BasisLabelType
+    //    {
+    //        get
+    //        {
+    //            return _type;
+    //        }
+    //        set
+    //        {
+    //            _type = value;
+    //        }
+    //    }
 
-        public string BasisLabelName
-        {
-            get
-            {
-                return _name;
-            }
-            set
-            {
-                _name = value;
-            }
-        }
+    //    public string BasisLabelName
+    //    {
+    //        get
+    //        {
+    //            return _name;
+    //        }
+    //        set
+    //        {
+    //            _name = value;
+    //        }
+    //    }
 
-        public int BasisLabelSequence
-        {
-            get
-            {
-                return _sequence;
-            }
-            set
-            {
-                _sequence = value;
-            }
-        }
-        // BEGIN TT#1966-MD - AGallagher - DC Fulfillment
-        public int DCFulfillmentSystemOptionRID
-        {
-            get
-            {
-                return _systemOptionRID;
-            }
-            set
-            {
-                _systemOptionRID = value;
-            }
-        }
-        // END TT#1966-MD - AGallagher - DC Fulfillment
+    //    public int BasisLabelSequence
+    //    {
+    //        get
+    //        {
+    //            return _sequence;
+    //        }
+    //        set
+    //        {
+    //            _sequence = value;
+    //        }
+    //    }
+    //    // BEGIN TT#1966-MD - AGallagher - DC Fulfillment
+    //    public int DCFulfillmentSystemOptionRID
+    //    {
+    //        get
+    //        {
+    //            return _systemOptionRID;
+    //        }
+    //        set
+    //        {
+    //            _systemOptionRID = value;
+    //        }
+    //    }
+    //    // END TT#1966-MD - AGallagher - DC Fulfillment
 
-        //===========
-        // PROPERTIES
-        //===========
+    //    //===========
+    //    // PROPERTIES
+    //    //===========
 
-        /// <summary>
-        /// Gets the integer key of this coordinate.
-        /// </summary>
+    //    /// <summary>
+    //    /// Gets the integer key of this coordinate.
+    //    /// </summary>
 
-        public int Key
-        {
-            get
-            {
-                return _key;
-            }
-            set
-            {
-                _key = value;
-            }
-        }
+    //    public int Key
+    //    {
+    //        get
+    //        {
+    //            return _key;
+    //        }
+    //        set
+    //        {
+    //            _key = value;
+    //        }
+    //    }
 
-        //========
-        // METHODS
-        //========
+    //    //========
+    //    // METHODS
+    //    //========
 
-        /// <summary>
-        /// Creates a copy of this BasisLabelTypeProfile.
-        /// </summary>
-        /// <returns>
-        /// A new instance of BasisLabelTypeProfile with a copy of this objects information.
-        /// </returns>
+    //    /// <summary>
+    //    /// Creates a copy of this BasisLabelTypeProfile.
+    //    /// </summary>
+    //    /// <returns>
+    //    /// A new instance of BasisLabelTypeProfile with a copy of this objects information.
+    //    /// </returns>
 
-        public BasisLabelTypeProfile Copy()
-        {
-            try
-            {
-                return new BasisLabelTypeProfile(_key);
-            }
-            catch (Exception exc)
-            {
-                string message = exc.ToString();
-                throw;
-            }
-        }
-    }
+    //    public BasisLabelTypeProfile Copy()
+    //    {
+    //        try
+    //        {
+    //            return new BasisLabelTypeProfile(_key);
+    //        }
+    //        catch (Exception exc)
+    //        {
+    //            string message = exc.ToString();
+    //            throw;
+    //        }
+    //    }
+    //}
 
 }
 

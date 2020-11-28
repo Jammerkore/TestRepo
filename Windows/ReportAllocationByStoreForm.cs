@@ -29,7 +29,7 @@ namespace MIDRetail.Windows
         }
         private void ViewReport(object sender, ReportData.AllocationByStoreEventArgs e)
         {
-            Windows.CrystalReports.AllocationByStore allocationByStoreReport = new Windows.CrystalReports.AllocationByStore();
+            //Windows.CrystalReports.AllocationByStore allocationByStoreReport = new Windows.CrystalReports.AllocationByStore();
             System.Data.DataSet allocationByStoreDataSet = MIDEnvironment.CreateDataSet("AllocationByStoreDataSet");
             ReportData reportData = new ReportData();
 
@@ -70,13 +70,24 @@ namespace MIDRetail.Windows
                 }
             }
 
-            allocationByStoreReport.SetDataSource(allocationByStoreDataSet);
-            allocationByStoreReport.SetParameterValue("@STORE_SELECTED", e.storeIDandName);  //Must set the parameter AFTER setting the data source
-            allocationByStoreReport.SetParameterValue("@STYLE_COL_HEADER", styleLevelName);  //Must set the parameter AFTER setting the data source
-            allocationByStoreReport.SetParameterValue("@PARENT_COL_HEADER", parentOfStyleLevelName);  //Must set the parameter AFTER setting the data source
+            //allocationByStoreReport.SetDataSource(allocationByStoreDataSet);
+            //allocationByStoreReport.SetParameterValue("@STORE_SELECTED", e.storeIDandName);  //Must set the parameter AFTER setting the data source
+            //allocationByStoreReport.SetParameterValue("@STYLE_COL_HEADER", styleLevelName);  //Must set the parameter AFTER setting the data source
+            //allocationByStoreReport.SetParameterValue("@PARENT_COL_HEADER", parentOfStyleLevelName);  //Must set the parameter AFTER setting the data source
             
-            frmReportViewer viewer = new frmReportViewer(_SAB);
-            viewer.ReportSource = allocationByStoreReport;
+            //frmReportViewer viewer = new frmReportViewer(_SAB, eReportType.AllocationByStore);
+            //frmReportViewer viewer = new frmReportViewer(aSAB: _SAB, reportType: eReportType.AllocationByStore, reportName: "AllocationByStore", reportTitle: "Allocation By Store");
+            List<ReportInfo> reports = new List<ReportInfo>();
+            reports.Add(new ReportInfo(aReportSource: allocationByStoreDataSet,
+                reportType: eReportType.AllocationByStore,
+                reportName: "AllocationByStore",
+                reportTitle: "Logilitity - RO - Allocation By Store",
+                reportComment: "",
+                reportInformation: "Store: " + e.storeIDandName,
+                displayValue: "Allocation By Store"
+                ));
+            frmReportViewer viewer = new frmReportViewer(aSAB: _SAB, reports: reports);
+            //viewer.ReportSource = allocationByStoreDataSet;
             viewer.Text = "Allocation By Store Report"; 
             viewer.MdiParent = this.ParentForm;
             viewer.Anchor = AnchorStyles.Left | AnchorStyles.Top;

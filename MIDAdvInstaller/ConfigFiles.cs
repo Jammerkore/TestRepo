@@ -41,8 +41,8 @@ namespace MIDRetailInstaller
             log = p_log;
             ConfigurationFileName = ConfigurationManager.AppSettings["MIDSettings_config"].ToString();
             MaxEncryptedFieldSize = Convert.ToInt32(ConfigurationManager.AppSettings["EncryptedMaxFieldSize"].ToString());
-            dtSubstitutions = install_data.Tables["substitution"];
-            dtRemovals = install_data.Tables["remove"];  // TT#581-MD - JSmith - Configuration Cleanup
+            dtSubstitutions = install_data.Tables[InstallerConstants.cTable_Substitution];
+            dtRemovals = install_data.Tables[InstallerConstants.cTable_Remove];  // TT#581-MD - JSmith - Configuration Cleanup
             GetEncryptedFields();
         }
 
@@ -235,27 +235,29 @@ namespace MIDRetailInstaller
         {
             string originalFile;
             XmlDocument newDoc, originalDoc;
+            string strParent = InstallerConstants.cParent_AppSettings;
+            string strLookupType = InstallerConstants.cLookupType_Child;
             try
             {
                 originalFile = newFile + InstallerConstants.cBackupExtension;
                 newDoc = GetXmlDocument(newFile);
                 originalDoc = GetXmlDocument(originalFile);
 
-                XmlNode appSettingsNode = originalDoc.SelectSingleNode("configuration/appSettings");
+                XmlNode appSettingsNode = originalDoc.SelectSingleNode(InstallerConstants.cParent_ConfigurationAppSettings);
 
                 if (appSettingsNode == null)
                 {
-                    appSettingsNode = originalDoc.SelectSingleNode("appSettings");
+                    appSettingsNode = originalDoc.SelectSingleNode(InstallerConstants.cParent_AppSettings);
                 }
 
                 //Begin TT#1053 - The MIDSetting.config location is being overwritten in the MIDRetail.exe.config - apicchetti - 12/30/2010
                 // Begin TT#1090 - JSmith - Null reference error when upgrading with prior version config files
                 //UpdateKey(newDoc, "file", appSettingsNode.Attributes["file"].Value.ToString());
-                if (!bIgnoreParmsWithLocalPaths && KeyExists(newDoc, "file"))
+                if (!bIgnoreParmsWithLocalPaths && KeyExists(newDoc, strParent, strLookupType, "file"))
                 {
 				    // Begin TT#1668 - JSmith - Install Log
 					//UpdateKey(newDoc, "file", appSettingsNode.Attributes["file"].Value.ToString());
-                    UpdateKey(newFile, newDoc, "file", appSettingsNode.Attributes["file"].Value.ToString());
+                    UpdateKey(newFile, newDoc, strParent, strLookupType, "file", appSettingsNode.Attributes["file"].Value.ToString());
 					// End TT#1668
                 }
                 // End TT#1090
@@ -266,19 +268,63 @@ namespace MIDRetailInstaller
                 {
                     if (childNode.GetType() != typeof(System.Xml.XmlComment))
                     {
-                        if (!KeyExists(newDoc, childNode.Attributes["key"].Value))
+                        if (!KeyExists(newDoc, strParent, strLookupType, childNode.Attributes["key"].Value))
                         {
 						    // Begin TT#1668 - JSmith - Install Log
 							//AddKey(newDoc, childNode.Attributes["key"].Value.ToString(), childNode.Attributes["value"].Value.ToString());
-                            AddKey(newFile, newDoc, childNode.Attributes["key"].Value.ToString(), childNode.Attributes["value"].Value.ToString());
+                            AddKey(newFile, newDoc, strParent, strLookupType, childNode.Attributes["key"].Value.ToString(), childNode.Attributes["value"].Value.ToString());
 							// End TT#1668
                         }
                         else if (!bIgnoreParmsWithLocalPaths || !childNode.Attributes["value"].Value.ToString().Contains(@":\"))
                         {
 						    // Begin TT#1668 - JSmith - Install Log
 							//UpdateKey(newDoc, childNode.Attributes["key"].Value.ToString(), childNode.Attributes["value"].Value.ToString());
-                            UpdateKey(newFile, newDoc, childNode.Attributes["key"].Value.ToString(), childNode.Attributes["value"].Value.ToString());
+                            UpdateKey(newFile, newDoc, strParent, strLookupType, childNode.Attributes["key"].Value.ToString(), childNode.Attributes["value"].Value.ToString());
 							// End TT#1668
+                        }
+                    }
+                }
+
+                string value, key;
+                DataTable dtConfiguration = install_data.Tables[InstallerConstants.cTable_Configuration];
+                string strConfigFile = Path.GetFileName(newFile);
+                DataRow[] drConfigRows = dtConfiguration.Select("config_file='" + strConfigFile + "' or config_file='ALL'", "setting ASC");
+
+                if (drConfigRows != null
+                    && drConfigRows.Length > 0)
+                {
+                    foreach (DataRow dr in drConfigRows)
+                    {
+                        if (dr.Table.Columns.Contains(InstallerConstants.cConfigurationField_Parent)
+                            && !dr.IsNull(InstallerConstants.cConfigurationField_Parent))
+                        {
+                            strParent = dr.Field<string>(InstallerConstants.cConfigurationField_Parent).Trim();
+                        }
+                        else
+                        {
+                            strParent = InstallerConstants.cParent_AppSettings;
+                        }
+                        if (dr.Table.Columns.Contains(InstallerConstants.cConfigurationField_LookupType)
+                            && !dr.IsNull(InstallerConstants.cConfigurationField_LookupType))
+                        {
+                            strLookupType = dr.Field<string>(InstallerConstants.cConfigurationField_LookupType).Trim();
+                        }
+                        else
+                        {
+                            strLookupType = InstallerConstants.cLookupType_Child;
+                        }
+                        if (strParent != InstallerConstants.cParent_AppSettings)
+                        {
+                            key = dr.Field<string>(InstallerConstants.cConfigurationField_Setting);
+                            value = GetValue(originalDoc, strParent, strLookupType, key);
+                            if (!KeyExists(newDoc, strParent, strLookupType, key))
+                            {
+                                AddKey(newFile, newDoc, strParent, strLookupType, key, value);
+                            }
+                            else if (!bIgnoreParmsWithLocalPaths || !value.Contains(@":\"))
+                            {
+                                UpdateKey(newFile, newDoc, strParent, strLookupType, key, value);
+                            }
                         }
                     }
                 }
@@ -301,6 +347,8 @@ namespace MIDRetailInstaller
         {
             Dictionary<string, string> RemovedConfigValues = new Dictionary<string, string>();
             XmlDocument doc;
+            string strParent;
+            string strLookupType;
             string strKey;
             string strValue;
             bool blFileUpdated = false;
@@ -311,14 +359,16 @@ namespace MIDRetailInstaller
 
                 foreach (DataRow dr in dtRemovals.Rows)
                 {
-                    if (aDocLocation.Contains(dr.Field<string>("config_file")))
+                    if (aDocLocation.Contains(dr.Field<string>(InstallerConstants.cConfigurationField_Config_File)))
                     {
-                        strKey = dr.Field<string>("setting");
-                        if (KeyExists(doc, strKey))
+                        strKey = dr.Field<string>(InstallerConstants.cConfigurationField_Setting);
+                        strParent = dr.Field<string>(InstallerConstants.cConfigurationField_Parent);
+                        strLookupType = dr.Field<string>(InstallerConstants.cConfigurationField_LookupType);
+                        if (KeyExists(doc, strParent, strLookupType, strKey))
                         {
-                            strValue = GetValue(doc, strKey);
+                            strValue = GetValue(doc, strParent, strLookupType, strKey);
                             RemovedConfigValues.Add(strKey, strValue);
-                            DeleteKey(doc, strKey);
+                            DeleteKey(doc, strParent, strLookupType, strKey);
                             blFileUpdated = true;
                         }
                     }
@@ -342,6 +392,8 @@ namespace MIDRetailInstaller
         {
             string configFile = null;
             string strDirectory;
+            string strParent = InstallerConstants.cParent_AppSettings;
+            string strLookupType = InstallerConstants.cLookupType_Child;
 
             XmlDocument doc;
             ArrayList alFileLocation;
@@ -352,14 +404,16 @@ namespace MIDRetailInstaller
                 return;
             }
 
-            DataTable dtConfiguration = install_data.Tables["configuration"];
+            DataTable dtConfiguration = install_data.Tables[InstallerConstants.cTable_Configuration];
 
             foreach (KeyValuePair<string, string> keyPair in diConfigChanges)
             {
                 DataRow[] drConfigRows = dtConfiguration.Select("setting = '" + keyPair.Key.Trim() + "'");
                 foreach (DataRow dr in drConfigRows)
                 {
-                    configFile = Convert.ToString(dr["config_file"]);
+                    configFile = Convert.ToString(dr[InstallerConstants.cConfigurationField_Config_File]);
+                    strParent = Convert.ToString(dr[InstallerConstants.cConfigurationField_Parent]);
+                    strLookupType = Convert.ToString(dr[InstallerConstants.cConfigurationField_LookupType]);
                     alFileLocation = new ArrayList();
                     foreach (KeyValuePair<string, string> serviceKeyPair in diServiceLocation)
                     {
@@ -378,13 +432,13 @@ namespace MIDRetailInstaller
                         if (!string.IsNullOrEmpty(docLocation))
                         {
                             doc = GetXmlDocument(docLocation);
-                            if (!KeyExists(doc, keyPair.Key.Trim()))
+                            if (!KeyExists(doc, strParent, strLookupType, keyPair.Key.Trim()))
                             {
-                                AddKey(docLocation, doc, keyPair.Key.Trim(), keyPair.Value.Trim());
+                                AddKey(docLocation, doc, strParent, strLookupType, keyPair.Key.Trim(), keyPair.Value.Trim());
                             }
                             else
                             {
-                                UpdateKey(docLocation, doc, keyPair.Key.Trim(), keyPair.Value.Trim());
+                                UpdateKey(docLocation, doc, strParent, strLookupType, keyPair.Key.Trim(), keyPair.Value.Trim());
                             }
 
                             doc.Save(docLocation);
@@ -409,9 +463,12 @@ namespace MIDRetailInstaller
         {
             try
             {
+                // Get configuration settings for file
+                DataTable dtConfiguration = install_data.Tables[InstallerConstants.cTable_Configuration];
+
                 foreach (string f in Directory.GetFiles(sDir, "*.config"))
                 {
-                    ReplaceDefaultsInConfigFile(f, sRootInstallFolder, sGlobalConfigurationLocation, configMachineBy, sDrive);
+                    ReplaceDefaultsInConfigFile(f, sRootInstallFolder, sGlobalConfigurationLocation, configMachineBy, sDrive, dtConfiguration);
                 }
 
                 // Begin TT#581-MD - JSmith - Configuration Cleanup
@@ -441,20 +498,22 @@ namespace MIDRetailInstaller
             string strKey;
             string strValue;
             bool blFileUpdated = false;
+            string strParent = InstallerConstants.cParent_AppSettings;
+            string strLookupType = InstallerConstants.cLookupType_Child;
             try
             {
 
                 doc = GetXmlDocument(aDocLocation);
 
                 strKey = "HeaderSQL";
-                if (KeyExists(doc, strKey))
+                if (KeyExists(doc, strParent, strLookupType, strKey))
                 {
-                    strValue = GetValue(doc, strKey);
+                    strValue = GetValue(doc, strParent, strLookupType, strKey);
                     if (strValue.ToUpper().Contains("HDR_ID") &&
                         strValue.ToUpper().Contains("BN_ID"))
                     {
                         string fileLocation = aDocLocation.Replace("RelieveHeaders.exe.config", "RelieveHeaders.sql");
-                        UpdateKey(aDocLocation, doc, strKey, fileLocation);
+                        UpdateKey(aDocLocation, doc, strParent, strLookupType, strKey, fileLocation);
 
                         blFileUpdated = true;
                         StreamWriter sqlFile = new StreamWriter(fileLocation);
@@ -476,7 +535,7 @@ namespace MIDRetailInstaller
         }
         // End TT#644-MD - JSmith - Modify install values for several configuration settings
 
-        private void ReplaceDefaultsInConfigFile(string newFile, string sRootInstallFolder, string sGlobalConfigurationLocation, eConfigMachineBy configMachineBy, string sDrive)
+        private void ReplaceDefaultsInConfigFile(string newFile, string sRootInstallFolder, string sGlobalConfigurationLocation, eConfigMachineBy configMachineBy, string sDrive, DataTable dtConfiguration)
         {
             XmlDocument doc;
             bool blFileUpdated = false;
@@ -498,22 +557,25 @@ namespace MIDRetailInstaller
                 }
                 doc = GetXmlDocument(newFile);
 
-                appSettingsNode = doc.SelectSingleNode("configuration/appSettings");
+                string strConfigFile = Path.GetFileName(newFile);
+                DataRow[] drConfigRows = dtConfiguration.Select("config_file='" + strConfigFile + "' or config_file='ALL'", "setting ASC");
+
+                appSettingsNode = doc.SelectSingleNode(InstallerConstants.cParent_ConfigurationAppSettings);
                 if (appSettingsNode != null)
                 {
 				    // Begin TT#1668 - JSmith - Install Log
 					//blFileUpdated = ReplaceDefaultsInConfigFile(doc, appSettingsNode, sRootInstallFolder, sGlobalConfigurationLocation, machine, sDrive);
-                    blFileUpdated = ReplaceDefaultsInConfigFile(newFile, doc, appSettingsNode, sRootInstallFolder, sGlobalConfigurationLocation, machine, sDrive);
+                    blFileUpdated = ReplaceDefaultsInConfigFile(newFile, doc, appSettingsNode, sRootInstallFolder, sGlobalConfigurationLocation, machine, sDrive, drConfigRows);
 					// End TT#1668
                 }
                 else
                 {
-                    appSettingsNode = doc.SelectSingleNode("appSettings");
+                    appSettingsNode = doc.SelectSingleNode(InstallerConstants.cParent_AppSettings);
                     if (appSettingsNode != null)
                     {
 					    // Begin TT#1668 - JSmith - Install Log
 						//blFileUpdated = ReplaceDefaultsInConfigFile(doc, appSettingsNode, sRootInstallFolder, sGlobalConfigurationLocation, machine, sDrive);
-                        blFileUpdated = ReplaceDefaultsInConfigFile(newFile, doc, appSettingsNode, sRootInstallFolder, sGlobalConfigurationLocation, machine, sDrive);
+                        blFileUpdated = ReplaceDefaultsInConfigFile(newFile, doc, appSettingsNode, sRootInstallFolder, sGlobalConfigurationLocation, machine, sDrive, drConfigRows);
 						// End TT#1668
                     }
                 }
@@ -531,11 +593,13 @@ namespace MIDRetailInstaller
 
         // Begin TT#1668 - JSmith - Install Log
 	    //private bool ReplaceDefaultsInConfigFile(XmlDocument doc, XmlNode appSettingsNode, string sRootInstallFolder, string sGlobalConfigurationLocation, string machine, string sDrive)
-        private bool ReplaceDefaultsInConfigFile(string fileName, XmlDocument doc, XmlNode appSettingsNode, string sRootInstallFolder, string sGlobalConfigurationLocation, string machine, string sDrive)
+        private bool ReplaceDefaultsInConfigFile(string fileName, XmlDocument doc, XmlNode appSettingsNode, string sRootInstallFolder, string sGlobalConfigurationLocation, string machine, string sDrive, DataRow[] drConfigRows)
 		// End TT#1668
         {
             string value, key;
             bool blFileUpdated = false;
+            string strParent = InstallerConstants.cParent_AppSettings;
+            string strLookupType = InstallerConstants.cLookupType_Child;
 
             try
             {
@@ -579,10 +643,49 @@ namespace MIDRetailInstaller
                         //}
                         if (ReplaceValueInConfigLine(fileName, key, ref value, sRootInstallFolder, machine, sDrive))
                         {
-                            UpdateKey(fileName, doc, key, value);
+                            UpdateKey(fileName, doc, strParent, strLookupType, key, value);
                             blFileUpdated = true;
                         }
 						// End TT#1668
+                    }
+                }
+
+                if (drConfigRows != null
+                    && drConfigRows.Length > 0)
+                {
+                    foreach (DataRow dr in drConfigRows)
+                    {
+                        if (dr.Table.Columns.Contains(InstallerConstants.cConfigurationField_Parent)
+                            && !dr.IsNull(InstallerConstants.cConfigurationField_Parent))
+                        {
+                            strParent = dr.Field<string>(InstallerConstants.cConfigurationField_Parent).Trim();
+                        }
+                        else
+                        {
+                            strParent = InstallerConstants.cParent_AppSettings;
+                        }
+                        if (dr.Table.Columns.Contains(InstallerConstants.cConfigurationField_LookupType)
+                            && !dr.IsNull(InstallerConstants.cConfigurationField_LookupType))
+                        {
+                            strLookupType = dr.Field<string>(InstallerConstants.cConfigurationField_LookupType).Trim();
+                        }
+                        else
+                        {
+                            strLookupType = InstallerConstants.cLookupType_Child;
+                        }
+                        if (strParent != InstallerConstants.cParent_AppSettings)
+                        {
+                            key = dr.Field<string>(InstallerConstants.cConfigurationField_Setting);
+                            if (KeyExists(doc, strParent, strLookupType, key))
+                            {
+                                value = GetValue(doc, strParent, strLookupType, key);
+                                if (ReplaceValueInConfigLine(fileName, key, ref value, sRootInstallFolder, machine, sDrive))
+                                {
+                                    UpdateKey(fileName, doc, strParent, strLookupType, key, value);
+                                    blFileUpdated = true;
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -648,7 +751,7 @@ namespace MIDRetailInstaller
             System.IO.File.Copy(application_dir + @"\Install Files\ConfigFile\" + ConfigurationFileName, installation_dir + @"\" + ConfigurationFileName);
         }
 
-        public string GetConfigValue(string setting, string ID, XmlDocument config, XmlDocument MIDSettings, DataRow dr, out eConfigValueFrom from)
+        public string GetConfigValue(string strParent, string strLookupType, string setting, string ID, XmlDocument config, XmlDocument MIDSettings, DataRow dr, out eConfigValueFrom from)
         {
             string value;
             if (setting == "file")
@@ -657,16 +760,16 @@ namespace MIDRetailInstaller
                 value = GetMIDSettingsLocation(config);
             }
             else if (MIDSettings != null &&
-                KeyExists(MIDSettings, setting))
+                KeyExists(MIDSettings, strParent, strLookupType, setting))
             {
                 from = eConfigValueFrom.MIDSettings;
-                value = GetValue(MIDSettings, setting);
+                value = GetValue(MIDSettings, strParent, strLookupType, setting);
             }
             else if (config != null &&
-                KeyExists(config, setting))
+                KeyExists(config, strParent, strLookupType, setting))
             {
                 from = eConfigValueFrom.Config;
-                value = GetValue(config, setting);
+                value = GetValue(config, strParent, strLookupType, setting);
             }
             else
             {
@@ -697,7 +800,7 @@ namespace MIDRetailInstaller
         public XmlDocument GetMIDSettings(XmlDocument config)
         {
             string file = null;
-            XmlNode appSettingsNode = GetSettingNode(config);
+            XmlNode appSettingsNode = GetSettingNode(config, InstallerConstants.cParent_AppSettings);
             if (AttributeExists(appSettingsNode, "file"))
             {
                 file = GetMIDSettingsLocation(config);
@@ -711,7 +814,7 @@ namespace MIDRetailInstaller
 
         public string GetMIDSettingsLocation(XmlDocument config)
         {
-            XmlNode appSettingsNode = GetSettingNode(config);
+            XmlNode appSettingsNode = GetSettingNode(config, InstallerConstants.cParent_AppSettings);
             if (AttributeExists(appSettingsNode, "file"))
             {
                 return GetAttributeValue(appSettingsNode, "file");
@@ -722,7 +825,7 @@ namespace MIDRetailInstaller
             }
         }
 
-        public void SetConfigValue(string sFile, string strKey, string strValue)
+        public void SetConfigValue(string sFile, string strParent, string strLookupType, string strKey, string strValue)
         {
             XmlDocument doc;
             try
@@ -732,7 +835,7 @@ namespace MIDRetailInstaller
                 {
 				    // Begin TT#1668 - JSmith - Install Log
 					//SetConfigValue(doc, strKey, strValue);
-                    SetConfigValue(sFile, doc, strKey, strValue);
+                    SetConfigValue(sFile, doc, strParent, strLookupType, strKey, strValue);
 					// End TT#1668
                     doc.Save(sFile);
                 }
@@ -746,25 +849,25 @@ namespace MIDRetailInstaller
         // Adds a key and value to the App.config
 		// Begin TT#1668 - JSmith - Install Log
 		//public void SetConfigValue(XmlDocument xmlDoc, string strKey, string strValue)
-        public void SetConfigValue(string fileName, XmlDocument xmlDoc, string strKey, string strValue)
+        public void SetConfigValue(string fileName, XmlDocument xmlDoc, string strParent, string strLookupType, string strKey, string strValue)
 		// End TT#1668
         {
-            XmlNode appSettingsNode = GetSettingNode(xmlDoc);
+            XmlNode appSettingsNode = GetSettingNode(xmlDoc, strParent);
             strValue = strValue.Trim();
             try
             {
-                if (KeyExists(xmlDoc, strKey))
+                if (KeyExists(xmlDoc, strParent, strLookupType, strKey))
                 {
 				    // Begin TT#1668 - JSmith - Install Log
 				    //UpdateKey(xmlDoc, strKey, strValue);
-                    UpdateKey(fileName, xmlDoc, strKey, strValue);
+                    UpdateKey(fileName, xmlDoc, strParent, strLookupType , strKey, strValue);
 					// End TT#1668
                 }
                 else
                 {
 				    // Begin TT#1668 - JSmith - Install Log
 					//AddKey(xmlDoc, strKey, strValue);
-                    AddKey(fileName, xmlDoc, strKey, strValue);
+                    AddKey(fileName, xmlDoc, strParent, strLookupType , strKey, strValue);
 					// End TT#1668
                 }
             }
@@ -777,7 +880,7 @@ namespace MIDRetailInstaller
         // Adds a key and value to the App.config
 		// Begin TT#1668 - JSmith - Install Log
 		//public void AddKey(XmlDocument xmlDoc, string strKey, string strValue)
-        public void AddKey(string fileName, XmlDocument xmlDoc, string strKey, string strValue)
+        public void AddKey(string fileName, XmlDocument xmlDoc, string strParent, string strLookupType, string strKey, string strValue)
 		// End TT#1668
         {
             // Begin TT#1088 - JSmith - Null reference error merging configuration files
@@ -786,7 +889,7 @@ namespace MIDRetailInstaller
             string msg;
 			// End TT#1668
             // End TT#1088
-            XmlNode appSettingsNode = GetSettingNode(xmlDoc);
+            XmlNode appSettingsNode = GetSettingNode(xmlDoc, strParent);
             try
             {
 			    // Begin TT#1668 - JSmith - Install Log
@@ -800,7 +903,7 @@ namespace MIDRetailInstaller
                 }
 				// End TT#1668
 
-                if (KeyExists(xmlDoc, strKey))
+                if (KeyExists(xmlDoc, strParent, strLookupType, strKey))
                 {
                     log.AddLogEntry("Key name: <" + strKey +
                               "> already exists in the configuration.", eErrorType.error);
@@ -815,6 +918,9 @@ namespace MIDRetailInstaller
                         break;
                     }
                 }
+
+                strValue = CheckIfEncrypted(strKey, strValue, fileName);
+
                 // Begin TT#1088 - JSmith - Null reference error merging configuration files
                 if (newChild == null)
                 {
@@ -843,7 +949,7 @@ namespace MIDRetailInstaller
         // Updates a key within the App.config
 		// Begin TT#1668 - JSmith - Install Log
 		//public void UpdateKey(XmlDocument xmlDoc, string strKey, string newValue)
-        public void UpdateKey(string fileName, XmlDocument xmlDoc, string strKey, string newValue)
+        public void UpdateKey(string fileName, XmlDocument xmlDoc, string strParent, string strLookupType, string strKey, string newValue)
 		// End TT#1668
         {
             // Begin TT#2178 - JSmith - Install received an error message
@@ -855,15 +961,15 @@ namespace MIDRetailInstaller
             // End TT#2178
                 
 
-                if (!KeyExists(xmlDoc, strKey))
+                if (!KeyExists(xmlDoc, strParent, strLookupType, strKey))
                 {
                     log.AddLogEntry("Key name: <" + strKey +
                           "> does not exist in the configuration. Update failed.", eErrorType.error);
                 }
-                XmlNode appSettingsNode = GetSettingNode(xmlDoc);
+                XmlNode appSettingsNode = GetSettingNode(xmlDoc, strParent);
                 if (strKey.ToLower() == "file")
                 {
-				    // Begin TT#1668 - JSmith - Install Log
+                    // Begin TT#1668 - JSmith - Install Log
                     if (fileName != null &&
                         appSettingsNode.Attributes["file"].Value != newValue)
                     {
@@ -874,9 +980,23 @@ namespace MIDRetailInstaller
                         msg = msg.Replace("{3}", newValue);
                         frame.SetLogMessage(msg, eErrorType.message);
                     }
-					// End TT#1668
+                    // End TT#1668
 
                     appSettingsNode.Attributes["file"].Value = newValue;
+                }
+                else if (strLookupType == InstallerConstants.cLookupType_Parent)
+                {
+                    if (appSettingsNode.Attributes[GetAttributeFromKey(strKey)].Value != newValue)
+                    {
+                        msg = frame.GetText("ConfigChange");
+                        msg = msg.Replace("{0}", strKey);
+                        msg = msg.Replace("{1}", fileName);
+                        msg = msg.Replace("{2}", appSettingsNode.Attributes[GetAttributeFromKey(strKey)].Value);
+                        msg = msg.Replace("{3}", newValue);
+                        frame.SetLogMessage(msg, eErrorType.message);
+                    }
+
+                    appSettingsNode.Attributes[GetAttributeFromKey(strKey)].Value = newValue;
                 }
                 else
                 {
@@ -885,62 +1005,73 @@ namespace MIDRetailInstaller
                     //{
                     //    newValue = encryption.Encrypt(newValue);
                     //}
-                    if (htEncryptedFields.ContainsKey(strKey))
-                    {
-                        int len = MaxEncryptedFieldSize + 1;
-                        int count = 0;
-                        string origValue = newValue;
-                        bool stop = false;
-                        while (!stop)
-                        {
-                            newValue = encryption.Encrypt(newValue);
-                             len = newValue.Length;
-                             if (len > MaxEncryptedFieldSize)
-                             {
-                                 // wait on second and get new encryption object and try again.
-                                 System.Threading.Thread.Sleep(1000);
-                                 encryption = new MIDEncryption();
-                                 newValue = origValue;
-                                 ++count;
-                                 if (count > 3)
-                                 {
-                                     stop = true;
-                                     msg = frame.GetText("EncryptError");
-                                     msg = msg.Replace("{0}", strKey);
-                                     msg = msg.Replace("{1}", fileName);
-                                     frame.SetLogMessage(msg, eErrorType.error);
-                                     log.AddLogEntry(msg, eErrorType.error);
-                                     frame.PopUpWarning(msg);
-                                 }
-                             }
-                             else
-                             {
-                                 stop = true;
-                             }
-                        }
-                        // End TT#2792 - JSmith - Installer Crash
-                    }
+                    //if (htEncryptedFields.ContainsKey(strKey))
+                    //{
+                    //    int len = MaxEncryptedFieldSize + 1;
+                    //    int count = 0;
+                    //    string origValue = newValue;
+                    //    bool stop = false;
+                    //    while (!stop)
+                    //    {
+                    //        newValue = encryption.Encrypt(newValue);
+                    //         len = newValue.Length;
+                    //         if (len > MaxEncryptedFieldSize)
+                    //         {
+                    //             // wait on second and get new encryption object and try again.
+                    //             System.Threading.Thread.Sleep(1000);
+                    //             encryption = new MIDEncryption();
+                    //             newValue = origValue;
+                    //             ++count;
+                    //             if (count > 3)
+                    //             {
+                    //                 stop = true;
+                    //                 msg = frame.GetText("EncryptError");
+                    //                 msg = msg.Replace("{0}", strKey);
+                    //                 msg = msg.Replace("{1}", fileName);
+                    //                 frame.SetLogMessage(msg, eErrorType.error);
+                    //                 log.AddLogEntry(msg, eErrorType.error);
+                    //                 frame.PopUpWarning(msg);
+                    //             }
+                    //         }
+                    //         else
+                    //         {
+                    //             stop = true;
+                    //         }
+                    //    }
+                    //    // End TT#2792 - JSmith - Installer Crash
+                    //}
+
+                    newValue = CheckIfEncrypted(strKey, newValue, fileName);
+
                     // Attempt to locate the requested setting.
                     foreach (XmlNode childNode in appSettingsNode)
                     {
                         if (childNode.GetType() != typeof(System.Xml.XmlComment))
                         {
-                            if (childNode.Attributes["key"].Value == strKey)
+                            if (strParent == InstallerConstants.cParent_AppSettings)
                             {
-							    // Begin TT#1668 - JSmith - Install Log
-                                if (fileName != null &&
-                                    childNode.Attributes["value"].Value != newValue)
+                                if (childNode.Attributes["key"].Value == strKey)
                                 {
-                                    msg = frame.GetText("ConfigChange");
-                                    msg = msg.Replace("{0}", strKey);
-                                    msg = msg.Replace("{1}", fileName);
-                                    msg = msg.Replace("{2}", childNode.Attributes["value"].Value);
-                                    msg = msg.Replace("{3}", newValue);
-                                    frame.SetLogMessage(msg, eErrorType.message);
-                                }
-								// End TT#1668
+                                    // Begin TT#1668 - JSmith - Install Log
+                                    if (fileName != null &&
+                                        childNode.Attributes["value"].Value != newValue)
+                                    {
+                                        msg = frame.GetText("ConfigChange");
+                                        msg = msg.Replace("{0}", strKey);
+                                        msg = msg.Replace("{1}", fileName);
+                                        msg = msg.Replace("{2}", childNode.Attributes["value"].Value);
+                                        msg = msg.Replace("{3}", newValue);
+                                        frame.SetLogMessage(msg, eErrorType.message);
+                                    }
+                                    // End TT#1668
 
-                                childNode.Attributes["value"].Value = newValue;
+                                    childNode.Attributes["value"].Value = newValue;
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                childNode.Attributes[strKey].Value = newValue;
                                 break;
                             }
                         }
@@ -956,14 +1087,55 @@ namespace MIDRetailInstaller
             // End TT#2178
         }
 
-        // Deletes a key from the App.config
-        public void DeleteKey(XmlDocument xmlDoc, string strKey)
+        private string CheckIfEncrypted(string strKey, string strValue, string fileName)
         {
-            if (!KeyExists(xmlDoc, strKey))
+            string msg;
+            if (htEncryptedFields.ContainsKey(strKey))
+            {
+                int len = MaxEncryptedFieldSize + 1;
+                int count = 0;
+                string origValue = strValue;
+                bool stop = false;
+                while (!stop)
+                {
+                    strValue = encryption.Encrypt(strValue);
+                    len = strValue.Length;
+                    if (len > MaxEncryptedFieldSize)
+                    {
+                        // wait on second and get new encryption object and try again.
+                        System.Threading.Thread.Sleep(1000);
+                        encryption = new MIDEncryption();
+                        strValue = origValue;
+                        ++count;
+                        if (count > 3)
+                        {
+                            stop = true;
+                            msg = frame.GetText("EncryptError");
+                            msg = msg.Replace("{0}", strKey);
+                            msg = msg.Replace("{1}", fileName);
+                            frame.SetLogMessage(msg, eErrorType.error);
+                            log.AddLogEntry(msg, eErrorType.error);
+                            frame.PopUpWarning(msg);
+                        }
+                    }
+                    else
+                    {
+                        stop = true;
+                    }
+                }
+            }
+
+            return strValue;
+        }
+
+        // Deletes a key from the App.config
+        public void DeleteKey(XmlDocument xmlDoc, string strParent, string strLookupType, string strKey)
+        {
+            if (!KeyExists(xmlDoc, strParent, strLookupType, strKey))
             {
                 return;
             }
-            XmlNode appSettingsNode = GetSettingNode(xmlDoc);
+            XmlNode appSettingsNode = GetSettingNode(xmlDoc, strParent);
             // Attempt to locate the requested setting.
             foreach (XmlNode childNode in appSettingsNode)
             {
@@ -978,19 +1150,23 @@ namespace MIDRetailInstaller
             }
         }
 
-        public bool KeyExists(XmlDocument xmlDoc, string strKey)
+        public bool KeyExists(XmlDocument xmlDoc, string strParent, string strLookupType, string strKey)
         {
             if (xmlDoc == null)
             {
                 return false;
             }
 
-            XmlNode appSettingsNode = GetSettingNode(xmlDoc);
+            XmlNode appSettingsNode = GetSettingNode(xmlDoc, strParent);
             if (appSettingsNode != null)
             {
                 if (strKey == "file")
                 {
                     return AttributeExists(appSettingsNode, strKey);
+                }
+                else if (strLookupType == InstallerConstants.cLookupType_Parent)
+                {
+                    return AttributeExists(appSettingsNode, GetAttributeFromKey(strKey));
                 }
                 else
                 {
@@ -999,8 +1175,19 @@ namespace MIDRetailInstaller
                     {
                         if (childNode.GetType() != typeof(System.Xml.XmlComment))
                         {
-                            if (childNode.Attributes["key"].Value == strKey)
-                                return true;
+                            if (strParent == InstallerConstants.cParent_AppSettings)
+                            {
+                                if (childNode.Attributes["key"].Value == strKey)
+                                    return true;
+                            }
+                            else
+                            {
+                                if (childNode.Attributes != null
+                                    && childNode.Attributes[strKey] != null)
+                                {
+                                    return true;
+                                }
+                            }
                         }
                     }
                 }
@@ -1024,6 +1211,23 @@ namespace MIDRetailInstaller
                 }
             }
             return false;
+        }
+
+        private string GetAttributeFromKey(string strKey)
+        {
+            string[] values = strKey.Split(':');
+            if (values.Length > 1)
+            {
+                return values[values.Length - 1].Trim();
+            }
+            else if (strKey.StartsWith("Log File"))
+            {
+                return InstallerConstants.cAttribute_Value;
+            }
+            else
+            {
+                return string.Empty;
+            }
         }
 
         public string GetAttributeValue(XmlNode xmlNode, string strKey)
@@ -1067,18 +1271,22 @@ namespace MIDRetailInstaller
             }
         }
 
-        public string GetValue(XmlDocument xmlDoc, string strKey)
+        public string GetValue(XmlDocument xmlDoc, string strParent, string strLookupType, string strKey)
         {
             if (xmlDoc == null)
             {
                 return string.Empty;
             }
 
-            XmlNode appSettingsNode = GetSettingNode(xmlDoc);
+            XmlNode appSettingsNode = GetSettingNode(xmlDoc, strParent);
             // Begin TT#74 MD - JSmith - One-button Upgrade
             if (strKey == "File")
             {
                 return appSettingsNode.Attributes["file"].Value;
+            }
+            else if (strLookupType == InstallerConstants.cLookupType_Parent)
+            {
+                return appSettingsNode.Attributes[GetAttributeFromKey(strKey)].Value;
             }
             // End TT#74 MD
             // Attempt to locate the requested setting.
@@ -1086,22 +1294,36 @@ namespace MIDRetailInstaller
             {
                 if (childNode.GetType() != typeof(System.Xml.XmlComment))
                 {
-                    if (childNode.Attributes["key"].Value == strKey)
+                    if (strParent == InstallerConstants.cParent_AppSettings)
                     {
-                        return childNode.Attributes["value"].Value;
+                        if (childNode.Attributes["key"].Value == strKey)
+                        {
+                            return childNode.Attributes["value"].Value;
+                        }
+                    }
+                    else
+                    {
+                        return childNode.Attributes[strKey].Value;
                     }
                 }
             }
             return string.Empty;
         }
 
-        private XmlNode GetSettingNode(XmlDocument xmlDoc)
+        private XmlNode GetSettingNode(XmlDocument xmlDoc, string strParent)
         {
             XmlNode appSettingsNode;
-            appSettingsNode = xmlDoc.SelectSingleNode("configuration/appSettings");
-            if (appSettingsNode == null)
+            if (strParent == InstallerConstants.cParent_AppSettings)
             {
-                appSettingsNode = xmlDoc.SelectSingleNode("appSettings");
+                appSettingsNode = xmlDoc.SelectSingleNode(InstallerConstants.cParent_ConfigurationAppSettings);
+                if (appSettingsNode == null)
+                {
+                    appSettingsNode = xmlDoc.SelectSingleNode(InstallerConstants.cParent_AppSettings);
+                }
+            }
+            else
+            {
+                appSettingsNode = xmlDoc.SelectSingleNode(strParent);
             }
             return appSettingsNode;
         }
@@ -1112,13 +1334,13 @@ namespace MIDRetailInstaller
             string strDefault = "";
 
             //get the description datatable
-            DataTable dtDesc = install_data.Tables["description"];
+            DataTable dtDesc = install_data.Tables[InstallerConstants.cTable_Description];
 
             //select the correct description
             DataRow[] rows = dtDesc.Select("id = '" + ID + "'");
 
             //set the description
-            strDefault = rows[0].Field<string>("defaultValue");
+            strDefault = rows[0].Field<string>(InstallerConstants.cSettingValue_DefaultValue);
             if (strDefault != null)
             {
                 strDefault = strDefault.Trim();

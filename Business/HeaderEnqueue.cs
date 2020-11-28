@@ -285,6 +285,10 @@ namespace MIDRetail.Business
         /// <returns>Header Enqueue Conflict Message</returns>
         public string FormatHeaderConflictMsg()
         {
+            if (!MIDEnvironment.isWindows)
+            {
+                return FormatHeaderConflictWebMsg();
+            }
             HeaderConflict[] hc = HeaderConflictList;
             //Begin TT#827-MD -jsobek -Allocation Reviews Performance
             //if (secAdmin == null)
@@ -321,6 +325,42 @@ namespace MIDRetail.Business
                 // End TT#4515 - stodd - enqueue message
             }
             enqMsg.Append(newLine + newLine);
+            return enqMsg.ToString();
+        }
+
+        /// <summary>
+        /// Formats a standard Header Enqueue Conflict message.
+        /// </summary>
+        /// <returns>Header Enqueue Conflict Message</returns>
+        public string FormatHeaderConflictWebMsg()
+        {
+            HeaderConflict[] hc = HeaderConflictList;
+            if (headerInUse == string.Empty)
+            {
+                newLine = System.Environment.NewLine;
+                headerInUse = MIDText.GetText(eMIDTextCode.msg_al_WorklistItemsInUse) + ":" + newLine;
+            }
+
+            StringBuilder enqMsg = new StringBuilder();
+            enqMsg.Append(headerInUse);
+
+            string userName = string.Empty;
+            string userLabel = MIDText.GetTextOnly(eMIDTextCode.lbl_User);
+            string itemLabel = MIDText.GetTextOnly(eMIDTextCode.lbl_WorklistItem);
+            foreach (HeaderConflict hdrCon in hc)
+            {
+#if (DEBUG)
+                enqMsg.Append(newLine + itemLabel + ": " + hdrCon.HeaderID);
+                //enqMsg.Append(", Enqueued Time: " + hdrCon.DateTimeEnqueued);
+                enqMsg.Append(", " + userLabel + ": " + UserNameStorage.GetUserName(hdrCon.UserRID));
+                //enqMsg.Append(", Thread: " + hdrCon.ThreadID.ToString(CultureInfo.CurrentUICulture));
+                //enqMsg.Append(", Trans ID: " + hdrCon.TransactionID.ToString());
+#else
+                enqMsg.Append(newLine + itemLabel + ": " + hdrCon.HeaderID);
+                enqMsg.Append(", " + userLabel + ": " + UserNameStorage.GetUserName(hdrCon.UserRID)); 
+#endif
+            }
+            enqMsg.Append(newLine);
             return enqMsg.ToString();
         }
     }

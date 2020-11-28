@@ -119,10 +119,16 @@ namespace MIDRetail.StoreDelete
 			private int _maxStoreIdLength = 20;
 			private StringBuilder _storedProcedure;
 			private List<string> _workTableList;
+            private string _ROExtractConnectionString;  // TT#2131-MD - JSmith - Halo Integration
+            private bool _ROExtractEnabled = false;  // TT#2131-MD - JSmith - Halo Integration
 
 			public DeleteStoreWorker(log4net.ILog log)
 			{
 				_log = log;
+                // Begin TT#2131-MD - JSmith - Halo Integration
+                _ROExtractConnectionString = MIDConfigurationManager.AppSettings["ROExtractConnectionString"];
+                _ROExtractEnabled = !string.IsNullOrWhiteSpace(_ROExtractConnectionString);
+                // End TT#2131-MD - JSmith - Halo Integration
 			}
 
 			public int Process(bool AnalysisOnly, bool skipAnalysis, StoreDeleteCommon.SendMessageDelegate msgDelegate)
@@ -1060,6 +1066,14 @@ namespace MIDRetail.StoreDelete
 						//=================================
 						// Special Tables to delete LAST
 						//=================================
+                        // Begin TT#2131-MD - JSmith - Halo Integration
+                        // Get list of stores to be deleted
+                        DataTable storesToDelete = null;
+                        if (_ROExtractEnabled)
+                        {
+                            storesToDelete = _storeData.StoreProfile_ReadForStoreDelete();
+                        }
+                        // End TT#2131-MD - JSmith - Halo Integration
 						//DeleteStoreFromTable("STORE_GROUP_LEVEL_STATEMENT", _batchSize);
 						DeleteStoreFromTable("STORES", _batchSize);
 
@@ -1070,6 +1084,13 @@ namespace MIDRetail.StoreDelete
 						_storeData.StoreProfile_CleanupSimilarStoreEligibility();
 
 						_storeData.CommitData();
+                        // Begin TT#2131-MD - JSmith - Halo Integration
+                        // Remove deleted stores data from extract database
+                        if (storesToDelete != null)
+                        {
+                            ExtractDeleteStores(storesToDelete);
+                        }
+                        // End TT#2131-MD - JSmith - Halo Integration
 					}
 					else
 					{
@@ -1096,6 +1117,56 @@ namespace MIDRetail.StoreDelete
 					
 				}
 			}
+
+            // Begin TT#2131-MD - JSmith - Halo Integration
+            private bool ExtractDeleteStores(DataTable storesToDelete)
+            {
+                ROExtractData ROExtractData = null;
+                if (storesToDelete.Rows.Count == 0)
+                {
+                    return true;  // nothing to delete
+                }
+                StoreProfile sp = null;
+                int ST_RID;
+                string ST_ID;
+
+                ROExtractData = new ROExtractData(_ROExtractConnectionString);
+
+                foreach (DataRow dr in storesToDelete.Rows)
+                {
+                    ST_RID = Convert.ToInt32(dr["ST_RID"]);
+                    ST_ID = Convert.ToString(dr["ST_ID"]);
+                    sp = new StoreProfile(ST_RID);
+                    sp.LoadFieldsFromDataRow(dr);
+                    ROExtractData.Stores_Data_Insert(sp);
+                }
+
+                try
+                {
+                    ROExtractData.OpenUpdateConnection();
+                    ROExtractData.Store_Data_Delete();
+                    ROExtractData.CommitData();
+                }
+                catch (DatabaseNotInCatalog)
+                {
+                    // this error is ok so swallow the exception
+                }
+                catch
+                {
+                    throw;
+                }
+                finally
+                {
+                    if (ROExtractData != null &&
+                        ROExtractData.ConnectionIsOpen)
+                    {
+                        ROExtractData.CloseUpdateConnection();
+                    }
+                }
+
+                return true;
+            }
+            // End TT#2131-MD - JSmith - Halo Integration
 
 			private int ProcessConcurrently(Stack storeStack, int concurrentProcesses, ArrayList storeArray)
 			{

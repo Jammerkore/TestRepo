@@ -457,6 +457,40 @@ namespace MIDRetail.Business.Allocation
 		//========
 		// METHODS
 		//========
+
+        // Begin TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+        override internal bool CheckForUserData()
+        {
+            if (IsFilterUser(StoreFilterRID))
+            {
+                return true;
+            }
+
+            foreach (AllocationWorkFlowStep workFlowStep in Workflow_Steps.ArrayList)
+            {
+                if (Enum.IsDefined(typeof(eMethodTypeUI), (eMethodTypeUI)workFlowStep.Method.MethodType))
+                {
+                    if (((ApplicationBaseMethod)workFlowStep.Method).GlobalUserType == eGlobalUserType.User)
+                    {
+                        return true;
+                    }
+
+                    if (IsFilterUser(workFlowStep.StoreFilterRID))
+                    {
+                        return true;
+                    }
+
+                    if (((ApplicationBaseMethod)workFlowStep.Method).CheckForUserData())
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+        // End TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+
 		/// <summary>
 		/// Adds a method and its parameters to the workflow.
 		/// </summary>
@@ -1061,5 +1095,18 @@ namespace MIDRetail.Business.Allocation
 				throw;
 			}
 		}
-	}
+
+        override public FunctionSecurityProfile GetFunctionSecurity()
+        {
+            if (this.GlobalUserType == eGlobalUserType.Global)
+            {
+                return SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.AllocationMethodsGlobalGeneralAllocation);
+            }
+            else
+            {
+                return SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.AllocationMethodsUserGeneralAllocation);
+            }
+
+        }
+    }
 }

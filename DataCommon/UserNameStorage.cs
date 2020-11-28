@@ -86,7 +86,32 @@ namespace MIDRetail.DataCommon
             }
 
         }
-        
 
+        /// <summary>
+        /// Returns cached userRID based on userName
+        /// If not found, returns Include.NoRID
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
+        public static int GetUserRID(string userName)
+        {
+            if (listUserNames != null)
+            {
+                UserNameEntry result = listUserNames.Find(delegate (UserNameEntry o) { return o.userName.ToLower() == userName.ToLower(); });
+                if (result != null)
+                {
+                    return result.userRID;
+                }
+                else
+                {
+                    return Include.NoRID;
+                }
+            }
+            else
+            {
+                throw new Exception("User Name Cache was not populated prior to referencing.");
+            }
+
+        }
     }
 }

@@ -38,6 +38,7 @@ namespace MIDRetail.Windows
         //BEGIN TT#110-MD-VStuart - In Use Tool
         private DataTable _inUseDataTable;
         private DataTable _inUseHeadings;
+        private bool _allowDelete;
         private Label lblCFNo;
         private Label lblCF;
         public int _numHeaders;
@@ -45,6 +46,10 @@ namespace MIDRetail.Windows
         //END TT#110-MD-VStuart - In Use Tool
 
         public bool[] PersonalHierarchy = null;  // TT#3630 - JSmith - Delete My Hierarchy
+
+        public DataTable InUseHeadings { get { return _inUseHeadings; } }
+        public DataTable InUseDatatable { get { return _inUseDataTable; } }
+        public bool AllowDelete { get { return _allowDelete; } }
 
         public InUseDialog(string title, string message, InUseInfo inUseInfo)
         {
@@ -368,6 +373,7 @@ namespace MIDRetail.Windows
                 bool allowDelete;
                 //bool allowDeleteAll = true;
                 showDialog = false;
+                _allowDelete = true;
                 SystemData sd = new SystemData();
 
                 _inUseHeadings = sd.GetInUseHeaders((int)_inUseInfo.ItemProfileType);
@@ -403,6 +409,7 @@ namespace MIDRetail.Windows
 
                     if (!allowDelete)
                     {
+                        _allowDelete = false;
                         // If we get here we don't want to allow a delete.
                         //allowDeleteAll = false;
                         showDialog = true;

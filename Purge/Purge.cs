@@ -2519,8 +2519,21 @@ namespace MIDRetail.Purge
 										RecordsDeleted += recordsDeleted;
 										VarData.CommitData();
 									}
-								}
-								break;
+                                    // Begin TT#2131-MD - JSmith - Halo Integration
+                                    if (SAB.ROExtractEnabled)
+                                    {
+                                        recordsDeleted = CommitLimit + 1;  // initialize to non-zero start loop
+                                        while (recordsDeleted >= CommitLimit)
+                                        {
+                                            if (StopTimeExceeded()) break;
+
+                                            recordsDeleted = VarData.EXTRACT_PLANNING_CONTROL_StoreHistoryDeleteLessThanDate(purgeDate, CommitLimit);
+                                            VarData.CommitData();
+                                        }
+                                    }
+                                    // End TT#2131-MD - JSmith - Halo Integration
+                                }
+                                break;
 							default:
 								while (recordsDeleted >= CommitLimit)
 								{
@@ -2530,7 +2543,20 @@ namespace MIDRetail.Purge
 									RecordsDeleted += recordsDeleted;
 									VarData.CommitData();
 								}
-								break;
+                                // Begin TT#2131-MD - JSmith - Halo Integration
+                                if (SAB.ROExtractEnabled)
+                                {
+                                    recordsDeleted = CommitLimit + 1;  // initialize to non-zero start loop
+                                    while (recordsDeleted >= CommitLimit)
+                                    {
+                                        if (StopTimeExceeded()) break;
+
+                                        recordsDeleted = VarData.EXTRACT_PLANNING_CONTROL_StoreHistoryDeleteLessThanDate(CommitLimit);
+                                        VarData.CommitData();
+                                    }
+                                }
+                                // End TT#2131-MD - JSmith - Halo Integration
+                                break;
 						}
 						VarData.CommitData();
 					}
@@ -2665,8 +2691,21 @@ namespace MIDRetail.Purge
 										RecordsDeleted += recordsDeleted;
 										VarData.CommitData();
 									}
-								}
-								break;
+                                    // Begin TT#2131-MD - JSmith - Halo Integration
+                                    if (SAB.ROExtractEnabled)
+                                    {
+                                        recordsDeleted = CommitLimit + 1;  // initialize to non-zero start loop
+                                        while (recordsDeleted >= CommitLimit)
+                                        {
+                                            if (StopTimeExceeded()) break;
+
+                                            recordsDeleted = VarData.EXTRACT_PLANNING_CONTROL_StoreForecastDeleteLessThanDate(purgeDate, CommitLimit);
+                                            VarData.CommitData();
+                                        }
+                                    }
+                                    // End TT#2131-MD - JSmith - Halo Integration
+                                }
+                                break;
 							default:
 								while (recordsDeleted >= CommitLimit)
 								{
@@ -2676,7 +2715,20 @@ namespace MIDRetail.Purge
 									RecordsDeleted += recordsDeleted;
 									VarData.CommitData();
 								}
-								break;
+                                // Begin TT#2131-MD - JSmith - Halo Integration
+                                if (SAB.ROExtractEnabled)
+                                {
+                                    recordsDeleted = CommitLimit + 1;  // initialize to non-zero start loop
+                                    while (recordsDeleted >= CommitLimit)
+                                    {
+                                        if (StopTimeExceeded()) break;
+
+                                        recordsDeleted = VarData.EXTRACT_PLANNING_CONTROL_StoreForecastDeleteLessThanDate(CommitLimit);
+                                        VarData.CommitData();
+                                    }
+                                }
+                                // End TT#2131-MD - JSmith - Halo Integration
+                                break;
 						}
 						VarData.CommitData();
 
@@ -2977,8 +3029,21 @@ namespace MIDRetail.Purge
 										RecordsDeleted += recordsDeleted;
 										VarData.CommitData();
 									}
-								}
-								break;
+                                    // Begin TT#2131-MD - JSmith - Halo Integration
+                                    if (SAB.ROExtractEnabled)
+                                    {
+                                        recordsDeleted = CommitLimit + 1;  // initialize to non-zero start loop
+                                        while (recordsDeleted >= CommitLimit)
+                                        {
+                                            if (StopTimeExceeded()) break;
+
+                                            recordsDeleted = VarData.EXTRACT_PLANNING_CONTROL_ChainHistoryDeleteLessThanDate(purgeDate, CommitLimit);
+                                            VarData.CommitData();
+                                        }
+                                    }
+                                    // End TT#2131-MD - JSmith - Halo Integration
+                                }
+                                break;
 							default:
 								while (recordsDeleted >= CommitLimit)
 								{
@@ -2988,7 +3053,20 @@ namespace MIDRetail.Purge
 									RecordsDeleted += recordsDeleted;
 									VarData.CommitData();
 								}
-								break;
+                                // Begin TT#2131-MD - JSmith - Halo Integration
+                                if (SAB.ROExtractEnabled)
+                                {
+                                    recordsDeleted = CommitLimit + 1;  // initialize to non-zero start loop
+                                    while (recordsDeleted >= CommitLimit)
+                                    {
+                                        if (StopTimeExceeded()) break;
+
+                                        recordsDeleted = VarData.EXTRACT_PLANNING_CONTROL_ChainHistoryDeleteLessThanDate(CommitLimit);
+                                        VarData.CommitData();
+                                    }
+                                }
+                                // End TT#2131-MD - JSmith - Halo Integration
+                                break;
 						}
 						VarData.CommitData();
 					}
@@ -3118,8 +3196,21 @@ namespace MIDRetail.Purge
 										RecordsDeleted += recordsDeleted;
 										VarData.CommitData();
 									}
-								}
-								break;
+                                    // Begin TT#2131-MD - JSmith - Halo Integration
+                                    if (SAB.ROExtractEnabled)
+                                    {
+                                        recordsDeleted = CommitLimit + 1;  // initialize to non-zero start loop
+                                        while (recordsDeleted >= CommitLimit)
+                                        {
+                                            if (StopTimeExceeded()) break;
+
+                                            recordsDeleted = VarData.EXTRACT_PLANNING_CONTROL_ChainForecastDeleteLessThanDate(purgeDate, CommitLimit);
+                                            VarData.CommitData();
+                                        }
+                                    }
+                                    // End TT#2131-MD - JSmith - Halo Integration
+                                }
+                                break;
 							default:
 								while (recordsDeleted >= CommitLimit)
 								{
@@ -3129,7 +3220,20 @@ namespace MIDRetail.Purge
 									RecordsDeleted += recordsDeleted;
 									VarData.CommitData();
 								}
-								break;
+                                // Begin TT#2131-MD - JSmith - Halo Integration
+                                if (SAB.ROExtractEnabled)
+                                {
+                                    recordsDeleted = CommitLimit + 1;  // initialize to non-zero start loop
+                                    while (recordsDeleted >= CommitLimit)
+                                    {
+                                        if (StopTimeExceeded()) break;
+
+                                        recordsDeleted = VarData.EXTRACT_PLANNING_CONTROL_ChainForecastDeleteLessThanDate(CommitLimit);
+                                        VarData.CommitData();
+                                    }
+                                }
+                                // End TT#2131-MD - JSmith - Halo Integration
+                                break;
 						}
 						VarData.CommitData();
 					}

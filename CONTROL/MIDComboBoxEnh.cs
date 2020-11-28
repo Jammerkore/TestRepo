@@ -229,7 +229,10 @@ namespace MIDRetail.Windows.Controls
             }
             set
             {
-                comboBox1.AutoCompleteMode = value;
+                if (MIDEnvironment.isWindows)
+                {
+                    comboBox1.AutoCompleteMode = value;
+                }
             }
         }
 
@@ -241,7 +244,10 @@ namespace MIDRetail.Windows.Controls
             }
             set
             {
-                comboBox1.AutoCompleteSource = value;
+                if (MIDEnvironment.isWindows)
+                {
+                    comboBox1.AutoCompleteSource = value;
+                }
             }
         }
 
@@ -611,7 +617,10 @@ namespace MIDRetail.Windows.Controls
             }
             set
             {
-                comboBox1.AllowDrop = value;
+                if (MIDEnvironment.isWindows)
+                {
+                    comboBox1.AllowDrop = value;
+                }
             }
         }
 

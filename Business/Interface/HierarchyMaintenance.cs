@@ -7901,6 +7901,8 @@ namespace MIDRetail.Business
                                 sep.StoreEligChangeType = eChangeType.add;
                             }
 
+                            sep.UpdateDate = DateTime.Now;
+
                             // update eligibility fields based on inheritance
                             if (Convert.ToInt32(storeRow["Inherited RID"], CultureInfo.CurrentCulture) != Include.NoRID)
                             {

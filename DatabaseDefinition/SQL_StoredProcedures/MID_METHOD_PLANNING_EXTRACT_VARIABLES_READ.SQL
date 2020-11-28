@@ -1,0 +1,22 @@
+--dv =============================================
+--dv Create date:	2/23/2018
+--dv Description:	Reads method planning extract variables
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_METHOD_PLANNING_EXTRACT_VARIABLES_READ]
+	@METHOD_RID int
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	DECLARE @NoRID int = -1;
+
+	SELECT
+		COALESCE(METHOD_RID, @NoRID) METHOD_RID,
+		COALESCE(VARIABLE_RID, @NoRID) VARIABLE_RID,
+		COALESCE(VARIABLE_TYPE, 0) VARIABLE_TYPE,
+		COALESCE(VARIABLE_SEQ, @NoRID) VARIABLE_SEQ
+	FROM METHOD_PLANNING_EXTRACT_VARIABLES 
+	WHERE METHOD_RID = @METHOD_RID
+
+END
+GO

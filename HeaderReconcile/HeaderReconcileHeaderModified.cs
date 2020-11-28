@@ -134,6 +134,14 @@ namespace HeaderReconcile
                     return true;
                 }
 
+                // Begin TT#5495 - JSmith - Units Per Carton changes are not passed through Header Reconcile
+                if (_transactionHeader.UnitsPerCarton != null
+                    && _transactionHeader.UnitsPerCarton != Convert.ToString(_allocationHeaderProfile.UnitsPerCarton))
+                {
+                    return true;
+                }
+                // End TT#5495 - JSmith - Units Per Carton changes are not passed through Header Reconcile
+
                 HierarchyNodeProfile np = _SAB.HierarchyServerSession.GetNodeData(_allocationHeaderProfile.StyleHnRID, false);
                 if (np == null || np.Key == Include.NoRID)
                 {

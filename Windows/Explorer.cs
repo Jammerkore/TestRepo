@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Collections;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
 using System.ComponentModel;
@@ -121,7 +122,7 @@ namespace MIDRetail.Windows
         private MIDRetail.Windows.UserActivityExplorer UserDashboardExplorer;  // TT#46 MD - JSmith - User Dashboard
         private StatusStrip statusStrip1;
         private ToolStripStatusLabel toolStripStatusLabel1;
-		private OpenFileDialog ofdOpenCustom;
+		//private OpenFileDialog ofdOpenCustom;
 		private eLastHeaderSelection _lastHeaderSelection;
 		StatusBarWindow _explorer_splash = new StatusBarWindow();	// TT#739 - MD - stodd - store delete
         bool _showSplashScreen = true;
@@ -560,7 +561,7 @@ namespace MIDRetail.Windows
 			}
 			// End TT#2 - stodd Assortment
             this.dwUserDashboard.SuspendLayout();  // TT#46 MD - JSmith - User Dashboard
-			this.ofdOpenCustom = new OpenFileDialog();
+			//this.ofdOpenCustom = new OpenFileDialog();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
 			((System.ComponentModel.ISupportInitialize)(this.utmMain)).BeginInit();
@@ -1397,10 +1398,10 @@ namespace MIDRetail.Windows
 			this.ResumeLayout(false);
 
 			// ofdOpenCustom
-			this.ofdOpenCustom.Filter = "Crystal Reports|*.rpt|All Files|*.*";
-			this.ofdOpenCustom.DefaultExt = "rpt";
-			this.ofdOpenCustom.Title = "Open Custom Report";
-			this.ofdOpenCustom.RestoreDirectory = true;
+			//this.ofdOpenCustom.Filter = "Crystal Reports|*.rpt|All Files|*.*";
+			//this.ofdOpenCustom.DefaultExt = "rpt";
+			//this.ofdOpenCustom.Title = "Open Custom Report";
+			//this.ofdOpenCustom.RestoreDirectory = true;
             // 
             // statusStrip1
             // 
@@ -2214,10 +2215,10 @@ namespace MIDRetail.Windows
 				// Add the tool to the main menu bar.
 				utbMainMenu.Tools.Add(reportsMenuTool);
 
-				ButtonTool btCustomReports		= new ButtonTool(Include.btCustomReports);
-				btCustomReports.SharedProps.Caption		= "&Custom";
-				btCustomReports.SharedProps.MergeOrder	= 20;
-				this.utmMain.Tools.Add(btCustomReports);
+				//ButtonTool btCustomReports		= new ButtonTool(Include.btCustomReports);
+				//btCustomReports.SharedProps.Caption		= "&Custom";
+				//btCustomReports.SharedProps.MergeOrder	= 20;
+				//this.utmMain.Tools.Add(btCustomReports);
 
                 //Begin TT#554-MD -jsobek -User Log Level Report
                 ButtonTool btReportUserOptionsReview = new ButtonTool(Include.btReportUserOptionsReview);
@@ -2236,15 +2237,15 @@ namespace MIDRetail.Windows
 				reportsMenuTool.Tools.Add(btAuditReclass);
                 //Begin Track #6232 - KJohnson - Incorporate Audit Reports in Version 3.0 Base
                 reportsMenuTool.Tools.Add(btNodePropertiesOverrides);
-                reportsMenuTool.Tools.Add(btForecastAuditMerchandise);
+                //reportsMenuTool.Tools.Add(btForecastAuditMerchandise);
                 //reportsMenuTool.Tools.Add(btForecastAuditMethod);     // TT#209 - RMatelic - exclude for now 
-                reportsMenuTool.Tools.Add(btAllocationAudit);
+                //reportsMenuTool.Tools.Add(btAllocationAudit);
                 //End Track #6232 - KJohnson
 
                 reportsMenuTool.Tools.Add(btReportUserOptionsReview); //TT#554-MD -jsobek -User Log Level Report
                 reportsMenuTool.Tools.Add(btReportAllocationByStore); //TT#739-MD -jsobek -Delete Stores -Allocation by Store Report
 
-				reportsMenuTool.Tools.Add(btCustomReports);
+				//reportsMenuTool.Tools.Add(btCustomReports);
 				#endregion
 
 				#region WindowMenu
@@ -3000,11 +3001,11 @@ namespace MIDRetail.Windows
 				// End
                 //Begin Track #6232 - KJohnson - Incorporate Audit Reports in Version 3.0 Base
                 utmMain.Tools[Include.btNodePropertiesOverrides].SharedProps.Caption = MIDText.GetTextOnly(eMIDTextCode.menu_Tools_NodePropertiesOverrides);
-                utmMain.Tools[Include.btForecastAuditMerchandise].SharedProps.Caption = MIDText.GetTextOnly(eMIDTextCode.menu_Tools_ForecastAuditMerchandise);
+                //utmMain.Tools[Include.btForecastAuditMerchandise].SharedProps.Caption = MIDText.GetTextOnly(eMIDTextCode.menu_Tools_ForecastAuditMerchandise);
                 utmMain.Tools[Include.btForecastAuditMethod].SharedProps.Caption = MIDText.GetTextOnly(eMIDTextCode.menu_Tools_ForecastAuditMethod);
-                utmMain.Tools[Include.btAllocationAudit].SharedProps.Caption = MIDText.GetTextOnly(eMIDTextCode.menu_Tools_AllocationAudit);
+                //utmMain.Tools[Include.btAllocationAudit].SharedProps.Caption = MIDText.GetTextOnly(eMIDTextCode.menu_Tools_AllocationAudit);
                 //End Track #6232 - KJohnson
-				utmMain.Tools[Include.btCustomReports].SharedProps.Caption = MIDText.GetTextOnly(eMIDTextCode.menu_Reports_Custom);
+				//utmMain.Tools[Include.btCustomReports].SharedProps.Caption = MIDText.GetTextOnly(eMIDTextCode.menu_Reports_Custom);
 				
 				utmMain.Tools[Include.menuWindow].SharedProps.Caption = MIDText.GetTextOnly(eMIDTextCode.menu_Window);
 
@@ -3764,7 +3765,13 @@ namespace MIDRetail.Windows
             //functionSecurity = _SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.ToolsProcessControl);
             //if (functionSecurity.AccessDenied)
 
-            if (_SAB.ClientServerSession.UserRID == Include.AdministratorUserRID)
+            // Begin TT#1644-MD - JSmith - Process Control
+            SecurityAdmin secAdmin = new SecurityAdmin();
+            bool isUserInAdminGroup = secAdmin.IsUserInAdminGroup(_SAB.ClientServerSession.UserRID);
+
+            //if (_SAB.ClientServerSession.UserRID == Include.AdministratorUserRID)
+            if (isUserInAdminGroup)
+            // End TT#1644-MD - JSmith - Process Control
             {
                 this.utmMain.Tools[Include.btProcessControl].SharedProps.Enabled = true;
             }
@@ -3841,14 +3848,22 @@ namespace MIDRetail.Windows
                 this.utmMain.Tools[Include.btAuditReclass].SharedProps.Enabled = true;
             }
 
-            functionSecurity = _SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.ReportsAllocationAudit);
-            if (functionSecurity.AccessDenied)
+            //functionSecurity = _SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.ReportsAllocationAudit);
+            //if (functionSecurity.AccessDenied)
+            //{
+            //    this.utmMain.Tools[Include.btAllocationAudit].SharedProps.Enabled = false;
+            //}
+            //else
+            //{
+            //    this.utmMain.Tools[Include.btAllocationAudit].SharedProps.Enabled = true;
+            //}
+			try
             {
-                this.utmMain.Tools[Include.btAllocationAudit].SharedProps.Enabled = false;
+                this.utmMain.Tools[Include.btAllocationAudit].SharedProps.Visible = false;
             }
-            else
+            catch
             {
-                this.utmMain.Tools[Include.btAllocationAudit].SharedProps.Enabled = true;
+                // swallow any errors
             }
 
             //Begin TT#554-MD -jsobek -User Log Level Report
@@ -3877,14 +3892,22 @@ namespace MIDRetail.Windows
             }
             //End TT#739-MD -jsobek -Delete Stores -Allocation by Store Report
 
-            functionSecurity = _SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.ReportsCustom);
-            if (functionSecurity.AccessDenied)
+            //functionSecurity = _SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.ReportsCustom);
+            //if (functionSecurity.AccessDenied)
+            //{
+            //    this.utmMain.Tools[Include.btCustomReports].SharedProps.Enabled = false;
+            //}
+            //else
+            //{
+            //    this.utmMain.Tools[Include.btCustomReports].SharedProps.Enabled = true;
+            //}
+            try
             {
-                this.utmMain.Tools[Include.btCustomReports].SharedProps.Enabled = false;
+                this.utmMain.Tools[Include.btCustomReports].SharedProps.Visible = false;
             }
-            else
+            catch
             {
-                this.utmMain.Tools[Include.btCustomReports].SharedProps.Enabled = true;
+                // swallow any errors
             }
 
             functionSecurity = _SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.ReportsNodePropertiesOverrides);
@@ -3897,16 +3920,24 @@ namespace MIDRetail.Windows
                 this.utmMain.Tools[Include.btNodePropertiesOverrides].SharedProps.Enabled = true;
             }
 
-            functionSecurity = _SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.ReportsForecastAuditMerchandise);
-            if (functionSecurity.AccessDenied)
-            {
-                this.utmMain.Tools[Include.btForecastAuditMerchandise].SharedProps.Enabled = false;
-            }
-            else
-            {
-                this.utmMain.Tools[Include.btForecastAuditMerchandise].SharedProps.Enabled = true;
-            }
+            //functionSecurity = _SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.ReportsForecastAuditMerchandise);
+            //if (functionSecurity.AccessDenied)
+            //{
+            //    this.utmMain.Tools[Include.btForecastAuditMerchandise].SharedProps.Enabled = false;
+            //}
+            //else
+            //{
+            //    this.utmMain.Tools[Include.btForecastAuditMerchandise].SharedProps.Enabled = true;
+            //}
             // End TT#209
+            try
+            {
+                this.utmMain.Tools[Include.btForecastAuditMerchandise].SharedProps.Visible = false;
+            }
+            catch
+            {
+                // swallow any errors
+            }
 
             // Begin TT#2 - JSmith - Assortment Security
             functionSecurity = _SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.ExplorersMerchandise);
@@ -4157,8 +4188,10 @@ namespace MIDRetail.Windows
             }
 			// End TT#1247-MD - stodd - Add Group Allocation as a License Key option -
 
-            SecurityAdmin secAdmin = new SecurityAdmin();
-            bool isUserInAdminGroup = secAdmin.IsUserInAdminGroup(_SAB.ClientServerSession.UserRID);
+            // Begin TT#1644-MD - JSmith - Process Control
+            //SecurityAdmin secAdmin = new SecurityAdmin();
+            //bool isUserInAdminGroup = secAdmin.IsUserInAdminGroup(_SAB.ClientServerSession.UserRID);
+            // End TT#1644-MD - JSmith - Process Control
             if (isUserInAdminGroup)
             {
                 this.utmMain.Tools[Include.btLoginAsAdmin].SharedProps.Visible = true;
@@ -5689,16 +5722,26 @@ namespace MIDRetail.Windows
                             System.Data.DataSet ds = MIDEnvironment.CreateDataSet("AuditReclassDataSet");
 							reclassAuditData.ReclassAudit_Report(ds);
 
-                            Windows.CrystalReports.AuditReclassReport2 auditReclassReport = new Windows.CrystalReports.AuditReclassReport2();
-							auditReclassReport.SetDataSource(ds);
+                            //Windows.CrystalReports.AuditReclassReport2 auditReclassReport = new Windows.CrystalReports.AuditReclassReport2();
+                            //auditReclassReport.SetDataSource(ds);
 
-							frmReportViewer viewer = new frmReportViewer(_SAB);
-							viewer.Text = "Audit Reclass";
+                            //frmReportViewer viewer = new frmReportViewer(_SAB, eReportType.AuditReclassViewer);
+                            List<ReportInfo> reports = new List<ReportInfo>();
+                            reports.Add(new ReportInfo(aReportSource: ds,
+                                reportType: eReportType.AuditReclassViewer,
+                                reportName: "AuditReclass",
+                                reportTitle: "Logilitity - RO - Reclassification",
+                                reportComment: "",
+                                reportInformation: "",
+                                displayValue: "Reclassification"
+                                ));
+                            frmReportViewer viewer = new frmReportViewer(aSAB: _SAB, reports: reports);
+                            viewer.Text = "Audit Reclass";
 							viewer.MdiParent = this;
 							viewer.Anchor = AnchorStyles.Left | AnchorStyles.Top;
-							viewer.ReportSource = auditReclassReport;
-							viewer.Show();
-							viewer.BringToFront();
+							//viewer.ReportSource = ds;
+                            viewer.Show();
+                            viewer.BringToFront();
 						}
 						catch (Exception)
 						{
@@ -5800,68 +5843,68 @@ namespace MIDRetail.Windows
                         break;
                     // End 
                     //End Track #6232 - KJohnson
-                    case Include.btCustomReports:
-						Cursor.Current = Cursors.WaitCursor;
-						try
-						{
-							string reportPath = MIDConfigurationManager.AppSettings["ReportPath"];
-							if (reportPath != null &&
-								(ofdOpenCustom.InitialDirectory == null ||
-								ofdOpenCustom.InitialDirectory.Trim().Length == 0))
-							{
-								ofdOpenCustom.InitialDirectory = Convert.ToString(reportPath, CultureInfo.CurrentCulture);
-							}
-							if(ofdOpenCustom.ShowDialog() != DialogResult.Cancel)
-							{
-								Reports openReport = new Reports(ofdOpenCustom.FileName);
-								string[] fileParts = openReport.file.Split('\\');
-								string fileName = fileParts[fileParts.Length - 1];
+      //              case Include.btCustomReports:
+						//Cursor.Current = Cursors.WaitCursor;
+						//try
+						//{
+							//string reportPath = MIDConfigurationManager.AppSettings["ReportPath"];
+							//if (reportPath != null &&
+							//	(ofdOpenCustom.InitialDirectory == null ||
+							//	ofdOpenCustom.InitialDirectory.Trim().Length == 0))
+							//{
+							//	ofdOpenCustom.InitialDirectory = Convert.ToString(reportPath, CultureInfo.CurrentCulture);
+							//}
+							//if(ofdOpenCustom.ShowDialog() != DialogResult.Cancel)
+							//{
+							//	Reports openReport = new Reports(ofdOpenCustom.FileName);
+							//	string[] fileParts = openReport.file.Split('\\');
+							//	string fileName = fileParts[fileParts.Length - 1];
 								
-								switch(fileName)
-								{
-									default:
-										frmReportViewer viewer = new frmReportViewer(_SAB);
-										viewer.Text = "Custom Report";
-										viewer.MdiParent = this;
-										viewer.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+							//	switch(fileName)
+							//	{
+							//		default:
+							//			frmReportViewer viewer = new frmReportViewer(_SAB);
+							//			viewer.Text = "Custom Report";
+							//			viewer.MdiParent = this;
+							//			viewer.Anchor = AnchorStyles.Left | AnchorStyles.Top;
 										
-										int res = openReport.GetParameterCount();
-										if (res < 1)
-											viewer.ReportSource = openReport.LoadParameters();
-										else
-										{
-											bool bUpdate = false;
-											ReportParam paraDialog = new ReportParam(); 
-											paraDialog.m_rptFile = openReport.file;
-											paraDialog.m_rptFileName = openReport.file;
-											paraDialog.Anchor = AnchorStyles.Left | AnchorStyles.Top;
-											paraDialog.ShowDialog();
-											paraDialog.BringToFront();
-											if(paraDialog.DialogResult == DialogResult.Cancel) 
-												return;
-											openReport.xmlFile = paraDialog.m_xmlFile;
-											if(paraDialog.DialogResult == DialogResult.OK) 
-												bUpdate = true;
-											paraDialog.Close(); 
-											if (bUpdate) 
-												viewer.ReportSource = openReport.LoadParameters();
-										}
+							//			int res = openReport.GetParameterCount();
+							//			if (res < 1)
+							//				viewer.ReportSource = openReport.LoadParameters();
+							//			else
+							//			{
+							//				bool bUpdate = false;
+							//				ReportParam paraDialog = new ReportParam(); 
+							//				paraDialog.m_rptFile = openReport.file;
+							//				paraDialog.m_rptFileName = openReport.file;
+							//				paraDialog.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+							//				paraDialog.ShowDialog();
+							//				paraDialog.BringToFront();
+							//				if(paraDialog.DialogResult == DialogResult.Cancel) 
+							//					return;
+							//				openReport.xmlFile = paraDialog.m_xmlFile;
+							//				if(paraDialog.DialogResult == DialogResult.OK) 
+							//					bUpdate = true;
+							//				paraDialog.Close(); 
+							//				if (bUpdate) 
+							//					viewer.ReportSource = openReport.LoadParameters();
+							//			}
 
-										viewer.Show();
-										viewer.BringToFront();
-										break;
-								}
-							}
-						}
-						catch (Exception)
-						{
-							throw;
-						}
-						finally
-						{
-							Cursor.Current = Cursors.Default;
-						}
-						break;
+							//			viewer.Show();
+							//			viewer.BringToFront();
+							//			break;
+							//	}
+							//}
+						//}
+						//catch (Exception)
+						//{
+						//	throw;
+						//}
+						//finally
+						//{
+						//	Cursor.Current = Cursors.Default;
+						//}
+						//break;
 					case Include.btTextEditor:
 						Cursor.Current = Cursors.WaitCursor;
 //						if (_TextEditorFrm == null || _TextEditorFrm.IsDisposed)

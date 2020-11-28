@@ -46,6 +46,8 @@ namespace MIDRetail.LicenseKeyGen
             int groupAllocationExpiration = 0;		// TT#1247-MD - stodd - Add Group Allocation as a License Key option -
 			bool masterInstalled = false;
 			int masterExpiration = 0;
+            bool analyticsInstalled = false;  // TT#2131-MD - JSmith - Halo Integration
+            int analyticsExpiration = 0;  // TT#2131-MD - JSmith - Halo Integration
 
 			bool installSuccessful = false;
 
@@ -201,13 +203,40 @@ namespace MIDRetail.LicenseKeyGen
 						}
 					}
 
+                    // Begin TT#2131-MD - JSmith - Halo Integration
+                    keyValue = MIDConfigurationManager.AppSettings["Analytics"];
+                    if (keyValue != null)
+                    {
+                        try
+                        {
+                            analyticsInstalled = Convert.ToBoolean(keyValue);
+                        }
+                        catch
+                        {
+                        }
+                    }
+                    keyValue = MIDConfigurationManager.AppSettings["AnalyticsExp"];
+                    if (keyValue != null)
+                    {
+                        try
+                        {
+                            analyticsExpiration = Convert.ToInt32(keyValue);
+                        }
+                        catch
+                        {
+                        }
+                    }
+                    // End TT#2131-MD - JSmith - Halo Integration
+
 					AppConfig appConfig = new AppConfig();
 					string key = appConfig.BuildLicenseKey(allocationInstalled, allocationExpiration,
 						sizeInstalled, sizeExpiration,
 						planningInstalled, planningExpiration,
 						assortmentInstalled, assortmentExpiration,
                         groupAllocationInstalled, groupAllocationExpiration,	// TT#1247-MD - stodd - Add Group Allocation as a License Key option -
-						masterInstalled, masterExpiration);
+						masterInstalled, masterExpiration,
+                        analyticsInstalled, analyticsExpiration);  // TT#2131-MD - JSmith - Halo Integration
+
 
 					writer.WriteLine(key);
 					installSuccessful = true;

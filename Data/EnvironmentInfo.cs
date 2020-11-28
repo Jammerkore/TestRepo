@@ -34,10 +34,11 @@ namespace MIDRetail.Data
                 public string assemblyName = "MIDRetail.exe";
                 public string productName = "MID Retail";
                 public string productVersion = MIDText.GetTextOnly(eMIDTextCode.lbl_EnvUnavailable);
-                public string legalCopyright = "Copyright © Logility 2017";
+                public string legalCopyright = "Copyright © Logility, Inc. 2018";
                 public string companyName = "MIDRetail, Inc.";
                 public string lastUpdate = MIDText.GetTextOnly(eMIDTextCode.lbl_EnvUnavailable);
                 public string systemVersion = MIDText.GetTextOnly(eMIDTextCode.lbl_EnvUnavailable);
+                public DateTime lastUpdateDateTime;
 
                 public string webPageLabelText = MIDText.GetTextOnly(eMIDTextCode.lbl_WebPage) + ":";
                 public string supportWebPageLabelText = MIDText.GetTextOnly(eMIDTextCode.lbl_SupportWebPage) + ":";
@@ -104,7 +105,7 @@ namespace MIDRetail.Data
                         productName = fvi.ProductName;
                         productVersion = fvi.ProductVersion;
                         //legalCopyright = fvi.LegalCopyright;
-                        legalCopyright = "Copyright © Logility 2017";
+                        legalCopyright = "Copyright © Logility, Inc. 2018";
 
                         companyName = fvi.CompanyName;
                     }
@@ -126,6 +127,7 @@ namespace MIDRetail.Data
                         lastUpdate = lastUpdate.Replace("{0}", dt.ToShortDateString());
                         lastUpdate = lastUpdate.Replace("{1}", dt.ToShortTimeString());
                         // End TT#698
+                        lastUpdateDateTime = dt;
                     }
                     catch //Suppress error messages
                     {
@@ -816,12 +818,17 @@ namespace MIDRetail.Data
                                                             case 3:
                                                                 name = "Windows Server 2012";
                                                                 break;
-                                                        }
-                                                        break;
+                                                            // Begin TT#1952-MD - AGallagher - OS 2016 - Installer issues
+                                                            case 5:
+                                                                name = "Windows Server 2016";
+                                                                break;
+                                                            // End TT#1952-MD - AGallagher - OS 2016 - Installer issues
+                                                    }
+                                                    break;
                                                     // End TT#668-MD - JSmith - Windows 8 - Installer issues
-                                                }
+                                            }
 
-                                                break;
+                                            break;
                                         }
                                         break;
                                     }

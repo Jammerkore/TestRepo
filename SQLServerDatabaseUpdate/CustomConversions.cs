@@ -8400,6 +8400,15 @@ namespace MIDRetail.DatabaseUpdate
                 _dba.ExecuteNonQuery("INSERT INTO APPLICATION_LABELS	(APPLICATION_LABEL_TYPE, SEQUENCE, [APPLICATION_LABEL_HEADING]) VALUES (334, 5, '2000004')"); // User
                 _dba.ExecuteNonQuery("INSERT INTO APPLICATION_LABELS	(APPLICATION_LABEL_TYPE, SEQUENCE, [APPLICATION_LABEL_HEADING]) VALUES (334, 6, '2000005')"); // Reference
                 // End TT#1966-MD - JSmith - DC Fulfillment
+				// Begin TT#2131-MD - JSmith - Halo Integration
+                //--============================= Method Planning Extract
+                _dba.ExecuteNonQuery("INSERT INTO APPLICATION_LABELS	(APPLICATION_LABEL_TYPE, SEQUENCE, [APPLICATION_LABEL_HEADING]) VALUES (339, 1, '2000006')"); // Method
+                _dba.ExecuteNonQuery("INSERT INTO APPLICATION_LABELS	(APPLICATION_LABEL_TYPE, SEQUENCE, [APPLICATION_LABEL_HEADING]) VALUES (339, 2, '2000001')"); // Type
+                _dba.ExecuteNonQuery("INSERT INTO APPLICATION_LABELS	(APPLICATION_LABEL_TYPE, SEQUENCE, [APPLICATION_LABEL_HEADING]) VALUES (339, 3, '2000013')"); // Workflow/Tasklist
+                _dba.ExecuteNonQuery("INSERT INTO APPLICATION_LABELS	(APPLICATION_LABEL_TYPE, SEQUENCE, [APPLICATION_LABEL_HEADING]) VALUES (339, 4, '2000008')"); // Description
+                _dba.ExecuteNonQuery("INSERT INTO APPLICATION_LABELS	(APPLICATION_LABEL_TYPE, SEQUENCE, [APPLICATION_LABEL_HEADING]) VALUES (339, 5, '2000004')"); // User
+                _dba.ExecuteNonQuery("INSERT INTO APPLICATION_LABELS	(APPLICATION_LABEL_TYPE, SEQUENCE, [APPLICATION_LABEL_HEADING]) VALUES (339, 6, '2000005')"); // Reference
+                // End TT#2131-MD - JSmith - Halo Integration
 
                 _dba.CommitData();
             }
@@ -9011,7 +9020,33 @@ namespace MIDRetail.DatabaseUpdate
                 //End TT#1170-MD -jsobek -Remove Binary database objects and normalize the Filter definitions
                 _dba.ExecuteNonQuery(sql);
 
-				// Begin TT#1362-MD - stodd - Header filter InUse is not returning any filters being InUse even though they are
+                // Begin TT#2131-MD - JSmith - Halo Integration
+                sql = @" --============================================== ";
+                sql += @" -- 'Store Filter Query - METHOD_PLANNING_EXTRACT' ";
+                sql += @" -- Enum 20.14 ";
+                sql += @" --============================================== ";
+                sql = @" INSERT INTO DETAIL_INFO (APPLICATION_LABEL_TYPE, SEQUENCE, SEVERITY, REFERENCE_TEXT) ";
+                sql += @" VALUES	(20, 14, 'In Use', ";
+                sql += @" [dbo].[UDF_MID_ENC_DEC](" + cEncryptKey + @",'INSERT INTO #TEMP (Severity, Header1, Header2, Header3, Header4, Header5, Header6, Header7, Header8, Header9) ";
+                sql += @" SELECT @severity as Severity, ";
+                sql += @"     f.FILTER_NAME  as Header1, ";
+                sql += @" 	''Method Planning Extract'' as Header2, ";
+                sql += @" 	m.METHOD_NAME as Heading3, ";
+                sql += @" 	m.METHOD_DESCRIPTION as Heading4, ";
+                sql += @" 	au.USER_NAME as Header5, ";
+                sql += @" 	@severity AS Header6, ";
+                sql += @" 	'' '' AS Heading7, ";
+                sql += @" 	'' '' AS Heading8, ";
+                sql += @" 	'' '' AS Heading9 ";
+                sql += @" from METHOD_PLANNING_EXTRACT mpe with (nolock) ";
+                sql += @" 	join FILTER f with (nolock) on f.FILTER_RID = mpe.STORE_FILTER_RID ";	
+                sql += @" 	join METHOD m with (nolock) on m.METHOD_RID = mpe.METHOD_RID ";
+                sql += @" 	join APPLICATION_USER au with (nolock) on au.USER_RID = m.USER_RID ";
+                sql += @" where f.FILTER_RID = @inUseRID')) ";
+                _dba.ExecuteNonQuery(sql);
+                // End TT#2131-MD - JSmith - Halo Integration
+
+                // Begin TT#1362-MD - stodd - Header filter InUse is not returning any filters being InUse even though they are
                 sql = @" --============================================== ";
                 sql += @" -- 'Header Filter Query - Allocation Tasklist' ";
                 sql += @" -- Enum 314.01 ";
@@ -11090,6 +11125,37 @@ namespace MIDRetail.DatabaseUpdate
                 _dba.ExecuteNonQuery(sql);
                 // End TT#1966-MD - JSmith - DC Fulfillment
 
+                // Begin TT#2131-MD - JSmith - Halo Integration
+                sql = @" /********************************************** ";
+                sql += @" METHOD_PLANNING_EXTRACT - HN_RID ";
+                sql += @" Enum: 27.51 ";
+                sql += @" ***********************************************/ ";
+                sql = @" INSERT INTO DETAIL_INFO (APPLICATION_LABEL_TYPE, SEQUENCE, SEVERITY, REFERENCE_TEXT) ";
+                sql += @" VALUES	(27, 51, 'In Use', ";
+                sql += @" [dbo].[UDF_MID_ENC_DEC](" + cEncryptKey + @",'declare @nodeID varchar(200), @type varchar(100); ";
+
+                sql += @" set @nodeID = dbo.UDF_MID_GET_NODE_DISPLAY (@inUseRID); ";
+
+                sql += @" SELECT @type = TEXT_VALUE from APPLICATION_TEXT with (nolock) where TEXT_CODE = 200094; ";
+
+                sql += @"INSERT INTO #TEMP (Severity, Header1, Header2, Header3, Header4, Header5, Header6, Header7, Header8, Header9) ";
+                sql += @" SELECT distinct @severity as Severity, ";
+                sql += @" @nodeID as Header1, ";
+                sql += @" @type as Header2, ";
+                sql += @" m.METHOD_NAME as Heading3, ";
+                sql += @" m.METHOD_DESCRIPTION as Heading4, ";
+                sql += @" au.USER_NAME as Header5, ";
+                sql += @" @severity AS Header6, ";
+                sql += @" '' '' AS Heading7, ";
+                sql += @" '' '' AS Heading8, ";
+                sql += @" '' '' AS Heading9 ";
+                sql += @" from METHOD_PLANNING_EXTRACT t with (nolock) ";
+                sql += @" join METHOD m with (nolock) on m.METHOD_RID = t.METHOD_RID ";
+                sql += @" join APPLICATION_USER au with (nolock) on au.USER_RID = m.USER_RID ";
+                sql += @" where t.HN_RID = @inUseRID')) ";
+                _dba.ExecuteNonQuery(sql);
+                // End TT#2131-MD - JSmith - Halo Integration
+
                 sql = @" --============================================== ";
                 sql += @" -- 'Header Query' ";
                 sql += @" -- Enum 38.1 ";
@@ -11669,6 +11735,33 @@ namespace MIDRetail.DatabaseUpdate
                 sql += @" ORDER BY [Heading3]')) ";
                 _dba.ExecuteNonQuery(sql);
                 // End TT#1705-MD - stodd - "In Use" is not functioning for DC Carton Rounding
+
+                // Begin TT#2131-MD - JSmith - Halo Integration
+                sql = @" --============================================== ";
+                sql += @" -- 'Attribute Query' - METHOD_PLANNING_EXTRACT ";
+                sql += @" -- Enum 38.20 ";
+                sql += @" --============================================== ";
+                sql = @" INSERT INTO DETAIL_INFO (APPLICATION_LABEL_TYPE, SEQUENCE, SEVERITY, REFERENCE_TEXT) ";
+                sql += @" VALUES	(38, 20, 'In Use', ";
+                sql += @" [dbo].[UDF_MID_ENC_DEC](" + cEncryptKey + @",'INSERT INTO #TEMP (Severity, Header1, Header2, Header3, Header4, Header5, Header6, Header7, Header8, Header9) ";
+                sql += @" SELECT @severity as Severity, ";
+                sql += @" 	STORE_GROUP.SG_ID AS [Heading1] ";
+                sql += @" 	,(SELECT TEXT_VALUE + '' Method'' from APPLICATION_TEXT at where at.TEXT_CODE = METHOD.METHOD_TYPE_ID) AS [Heading2] ";
+                sql += @" 	,METHOD.METHOD_NAME AS [Heading3] ";
+                sql += @" 	,APPLICATION_USER.USER_NAME AS [Heading4] ";
+                sql += @" 	,@severity AS [Heading5] ";
+                sql += @" 	, '' '' AS [Heading6] ";
+                sql += @" 	, '' '' AS [Heading7] ";
+                sql += @" 	, '' '' AS [Heading8] ";
+                sql += @" 	, '' '' AS [Heading9] ";
+                sql += @"  FROM	STORE_GROUP with (nolock) INNER JOIN ";
+                sql += @" 	 METHOD_PLANNING_EXTRACT with (nolock) ON METHOD_PLANNING_EXTRACT.ATTRIBUTE_RID = STORE_GROUP.SG_RID INNER JOIN ";
+                sql += @" 	 METHOD ON METHOD.METHOD_RID = METHOD_PLANNING_EXTRACT.METHOD_RID INNER JOIN ";
+                sql += @" 	 APPLICATION_USER with (nolock) ON METHOD.USER_RID = APPLICATION_USER.USER_RID ";
+                sql += @"  WHERE STORE_GROUP.IS_ACTIVE=1 AND METHOD_PLANNING_EXTRACT.ATTRIBUTE_RID = @inUseRID ";
+                sql += @"  ORDER BY [Heading3]')) ";
+                _dba.ExecuteNonQuery(sql);
+                // End TT#2131-MD - JSmith - Halo Integration
 
                 sql = @" /*================================*/ ";
                 sql += @" /*  ASSORTMENT_MATRIX_DETAIL      */ ";
@@ -12915,6 +13008,33 @@ namespace MIDRetail.DatabaseUpdate
                 sql += @" join APPLICATION_USER au with (nolock) on au.USER_RID = up.USER_RID ";
                 sql += @" where oll.OLL_RID = @inUseRID')) ";
                 _dba.ExecuteNonQuery(sql);
+
+                // Begin TT#2131-MD - JSmith - Halo Integration
+                sql = @" /***************** ";
+                sql += @" METHOD_PLANNING_EXTRACT ";
+                sql += @" In Use ";
+                sql += @" -- Enum 57.11 ";
+                sql += @" *****************/ ";
+                sql = @" INSERT INTO DETAIL_INFO (APPLICATION_LABEL_TYPE, SEQUENCE, SEVERITY, REFERENCE_TEXT) ";
+                sql += @" VALUES       ( 57, 11, 'In Use', ";
+                sql += @" [dbo].[UDF_MID_ENC_DEC](" + cEncryptKey + @",'INSERT INTO #TEMP (Severity, Header1, Header2, Header3, Header4, Header5, Header6, Header7, Header8, Header9) ";
+                sql += @" SELECT	@severity as Severity, ";
+                sql += @" oll.NAME as Header1, ";
+                sql += @" ''Method Export'' as Header2, ";
+                sql += @" m.METHOD_NAME as Heading3, ";
+                sql += @" m.METHOD_DESCRIPTION as Heading4, ";
+                sql += @" au.USER_NAME as Header5, ";
+                sql += @" @severity AS Header6, ";
+                sql += @" '' '' AS Heading7, ";
+                sql += @" '' '' AS Heading8, ";
+                sql += @" '' '' AS Heading9 ";
+                sql += @"  from METHOD_PLANNING_EXTRACT mpe with (nolock) ";
+                sql += @" join OVERRIDE_LL_MODEL_HEADER oll with (nolock) on mpe.OLL_RID = oll.OLL_RID ";
+                sql += @" join METHOD m with (nolock) on m.METHOD_RID = mpe.METHOD_RID ";
+                sql += @" join APPLICATION_USER au with (nolock) on au.USER_RID = m.USER_RID ";
+                sql += @" where oll.OLL_RID = @inUseRID')) ";
+                _dba.ExecuteNonQuery(sql);
+                // End TT#2131-MD - JSmith - Halo Integration
 
                 sql = @" --================================= ";
                 sql += @" -- 'OTS Forecast Method-Workflow' ";
@@ -15803,6 +15923,37 @@ namespace MIDRetail.DatabaseUpdate
                 _dba.ExecuteNonQuery(sql);
                 // End TT#2034-MD - JSmith - Missing In Use for Forecast Version in Assortment
 
+                // Begin TT#2131-MD - JSmith - Halo Integration
+                sql = @" /********************************************** ";
+                sql += @" METHOD_PLANNING_EXTRACT - FV_RID ";
+                sql += @" Enum: 143.46 ";
+                sql += @" ***********************************************/ ";
+                sql = @" INSERT INTO DETAIL_INFO (APPLICATION_LABEL_TYPE, SEQUENCE, SEVERITY, REFERENCE_TEXT) ";
+                sql += @" VALUES	(143, 46, 'In Use', ";
+                sql += @" [dbo].[UDF_MID_ENC_DEC](" + cEncryptKey + @",'declare @nodeID varchar(200), @type varchar(100); ";
+
+                sql += @" select @nodeID = DESCRIPTION from FORECAST_VERSION where FV_RID = @inUseRID; ";
+
+                sql += @" SELECT @type = TEXT_VALUE from APPLICATION_TEXT with (nolock) where TEXT_CODE = 200094; ";
+
+                sql += @"INSERT INTO #TEMP (Severity, Header1, Header2, Header3, Header4, Header5, Header6, Header7, Header8, Header9) ";
+                sql += @" SELECT distinct @severity as Severity, ";
+                sql += @" @nodeID as Header1, ";
+                sql += @" @type as Header2, ";
+                sql += @" m.METHOD_NAME as Heading3, ";
+                sql += @" m.METHOD_DESCRIPTION as Heading4, ";
+                sql += @" au.USER_NAME as Header5, ";
+                sql += @" @severity AS Header6, ";
+                sql += @" '' '' AS Heading7, ";
+                sql += @" '' '' AS Heading8, ";
+                sql += @" '' '' AS Heading9 ";
+                sql += @" from METHOD_PLANNING_EXTRACT t with (nolock) ";
+                sql += @" join METHOD m with (nolock) on m.METHOD_RID = t.METHOD_RID ";
+                sql += @" join APPLICATION_USER au with (nolock) on au.USER_RID = m.USER_RID ";
+                sql += @" where t.FV_RID = @inUseRID')) ";
+                _dba.ExecuteNonQuery(sql);
+                // End TT#2131-MD - JSmith - Halo Integration
+
                 //Begin TT#1532-MD -jsobek -Add In Use for Header Characteristics
                 //sql = @" --=========================================";
                 //sql += @"-- 'Header Characteristic Groups'";
@@ -15826,9 +15977,9 @@ namespace MIDRetail.DatabaseUpdate
                 //sql += @"       AND lv.LIST_VALUE_INDEX = @inUseRID ";
                 //sql += @" ) ";
                 //        sql += @")) ";
-                
+
                 //BEGIN TT#4672-VStuart-In Use not checking for views-MID
-                sql  = @" /*====================================================*/ ";
+                sql = @" /*====================================================*/ ";
                 sql += @" /* FILTER in use for Header Characteristic Group (HCG_RIDS) */ ";
                 sql += @" /*  Enum 233.1                     	                */ ";
                 sql += @" /*====================================================*/ ";
@@ -16367,6 +16518,66 @@ namespace MIDRetail.DatabaseUpdate
                 sql += @"   AND m.METHOD_RID = @inUseRID')) ";
                 _dba.ExecuteNonQuery(sql);
                 // End TT#1966-MD - JSmith - DC Fulfillment
+
+                // Begin TT#2135-MD - JSmith - Planning Extract Method - Workflow
+                sql = @" --================================= ";
+                sql += @" -- 'Planning Extract Method Workflow' ";
+                sql += @" -- Enum 339.1 ";
+                sql += @" -- Extract	= 802169 ";
+                sql += @" --================================= ";
+                sql = @" INSERT INTO DETAIL_INFO (APPLICATION_LABEL_TYPE, SEQUENCE, SEVERITY, REFERENCE_TEXT) ";
+                sql += @" VALUES        (339, 1, 'In Use', ";
+                sql += @" [dbo].[UDF_MID_ENC_DEC](" + cEncryptKey + @",'INSERT INTO #TEMP (Severity, Header1, Header2, Header3, Header4, Header5, Header6, Header7, Header8, Header9) ";
+                sql += @" SELECT @severity as Severity, ";
+                sql += @"        m.METHOD_NAME as Method, ";
+                sql += @" 		Case w.WORKFLOW_TYPE_ID ";
+                sql += @" 			WHEN ''800825'' THEN ''Forecast Workflow'' ";
+                sql += @" 			WHEN ''800826'' THEN ''Allocation Workflow'' ";
+                sql += @" 			WHEN ''800827'' THEN ''Assortment Workflow'' ";
+                sql += @" 			ELSE ''Workflow'' ";
+                sql += @" 		END AS Type, ";
+                sql += @" 	w.WORKFLOW_NAME as Workflow, ";
+                sql += @" 	w.WORKFLOW_DESCRIPTION as Description, ";
+                sql += @" 	au.USER_NAME as UserID, ";
+                sql += @" 	@severity as Fred ";
+                sql += @" 	, '' '' AS [Heading7] ";
+                sql += @" 	, '' '' AS [Heading8] ";
+                sql += @" 	, '' '' AS [Heading9] ";
+                sql += @" FROM WORKFLOW_STEP_OTSPLAN AS wsa WITH (nolock) INNER JOIN ";
+                sql += @"   WORKFLOW AS w WITH (nolock) ON w.WORKFLOW_RID = wsa.WORKFLOW_RID INNER JOIN ";
+                sql += @"   METHOD AS m WITH (nolock) ON m.METHOD_RID = wsa.METHOD_RID INNER JOIN ";
+                sql += @"   APPLICATION_USER AS au WITH (nolock) ON au.USER_RID = w.WORKFLOW_USER_RID ";
+                sql += @" WHERE (wsa.ACTION_METHOD_TYPE = 802169) ";
+                sql += @"   AND m.METHOD_RID = @inUseRID')) ";
+                _dba.ExecuteNonQuery(sql);
+
+                sql = @" --================================= ";
+                sql += @" -- 'Planning Extract Method-Task List' ";
+                sql += @" -- Enum 339.2 ";
+                sql += @" --================================= ";
+                sql = @" INSERT INTO DETAIL_INFO (APPLICATION_LABEL_TYPE, SEQUENCE, SEVERITY, REFERENCE_TEXT) ";
+                sql += @" VALUES        (339, 2, 'In Use', ";
+                sql += @" [dbo].[UDF_MID_ENC_DEC](" + cEncryptKey + @",'INSERT INTO #TEMP (Severity, Header1, Header2, Header3, Header4, Header5, Header6, Header7, Header8, Header9) ";
+                sql += @" SELECT	@severity as Severity, ";
+                sql += @" m.METHOD_NAME AS Header1, ";
+                sql += @" 		''Task List'' AS Header2, ";
+                sql += @" 		tl.TASKLIST_NAME AS Header3, ";
+                sql += @" 		'''' AS Header4, ";
+                sql += @" 		au.USER_NAME AS Header5, ";
+                sql += @" 		@severity AS Header6, ";
+                sql += @" 		'' '' AS Heading7, ";
+                sql += @" 		'' '' AS Heading8, ";
+                sql += @" 		'' '' AS Heading9 ";
+                sql += @" FROM	TASK_FORECAST_DETAIL with (nolock) INNER JOIN ";
+                sql += @"         METHOD AS m WITH (nolock) ON TASK_FORECAST_DETAIL.METHOD_RID = m.METHOD_RID INNER JOIN ";
+                sql += @"         TASKLIST AS tl with (nolock) INNER JOIN ";
+                sql += @"         APPLICATION_USER AS au WITH (nolock) ";
+                sql += @" 		ON tl.USER_RID = au.USER_RID ";
+                sql += @" 		ON TASK_FORECAST_DETAIL.TASKLIST_RID = tl.TASKLIST_RID ";
+                sql += @" WHERE	(tl.SYSTEM_GENERATED_IND = ''0'') ";
+                sql += @" 		AND	(m.METHOD_RID = @inUseRID)')) ";
+                _dba.ExecuteNonQuery(sql);
+                // End TT#2135-MD - JSmith - Planning Extract Method - Workflow
 
                 _dba.CommitData();
             }

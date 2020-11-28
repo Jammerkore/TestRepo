@@ -161,9 +161,13 @@ namespace MIDRetail.Business.Allocation
 			// begin TT#1137 (MID Track 4351) Rebuild Intransit Utility
 			LoadHeaders (aTransaction, aAssortmentRIDList, aHeaderRIDList, aSession, true); // TT#488 - MD - Jellis - Group Allocation
 		}
-		public void LoadHeaders(Transaction aTransaction, int[] aAssortmentRIDList, int[] aHeaderRIDList, Session aSession, bool aIncludeInSubtotals) // TT#488 - MD - Jellis - Group Allocation
-		{
-			// end TT#1137 (MID Track 4351) Rebuild Intransit Utility
+
+        // Begin TT#2136-MD - JSmith - Assortment Selection Error
+        //public void LoadHeaders(Transaction aTransaction, int[] aAssortmentRIDList, int[] aHeaderRIDList, Session aSession, bool aIncludeInSubtotals) // TT#488 - MD - Jellis - Group Allocation
+        public void LoadHeaders(Transaction aTransaction, int[] aAssortmentRIDList, int[] aHeaderRIDList, Session aSession, bool aIncludeInSubtotals, AllocationProfileList previousList = null) // TT#488 - MD - Jellis - Group Allocation
+        // End TT#2136-MD - JSmith - Assortment Selection Error
+        {
+            // end TT#1137 (MID Track 4351) Rebuild Intransit Utility
             bool duplicateIgnored = false;
             if (_transaction == null)
             {
@@ -179,8 +183,10 @@ namespace MIDRetail.Business.Allocation
                 }
             }
 
-
-            AllocationProfile ap;
+            // Begin TT#2136-MD - JSmith - Assortment Selection Error
+            //AllocationProfile ap;
+            AllocationProfile ap = null;
+            // End TT#2136-MD - JSmith - Assortment Selection Error
             foreach (int headerRID in aHeaderRIDList)
             {
                 if (this.Contains(headerRID))
@@ -189,12 +195,26 @@ namespace MIDRetail.Business.Allocation
                 }
                 else
                 {
-					ap = new AllocationProfile(_transaction, null, headerRID, aSession, aIncludeInSubtotals); // TT#1137 (MID Track 4351) RebuildIntransit Utility
+                    ap = null;  // TT#5811 - JSmith - Multiple Selected Headers Are Not Processed
+                    // Begin TT#2136-MD - JSmith - Assortment Selection Error
+                    //ap = new AllocationProfile(_transaction, null, headerRID, aSession, aIncludeInSubtotals); // TT#1137 (MID Track 4351) RebuildIntransit Utility
+                    if (previousList != null)
+                    {
+                        ap = (AllocationProfile)previousList.FindKey(headerRID);
+                    }
+                    if (ap == null)
+                    {
+                        ap = new AllocationProfile(_transaction, null, headerRID, aSession, aIncludeInSubtotals); // TT#1137 (MID Track 4351) RebuildIntransit Utility
+                    }
+                    // End TT#2136-MD - JSmith - Assortment Selection Error
                     this.Add(ap);
                 }
             }
             // begin TT#488 - MD - JEllis - Group Allocation
-            AssortmentProfile asp;
+            // Begin TT#2136-MD - JSmith - Assortment Selection Error
+            //AssortmentProfile asp;
+            AssortmentProfile asp = null;
+            // End TT#2136-MD - JSmith - Assortment Selection Error
             // Begin TT#973 - MD - stodd - null reference
             if (aAssortmentRIDList != null)
             {
@@ -206,7 +226,17 @@ namespace MIDRetail.Business.Allocation
                     }
                     else
                     {
-                        asp = new AssortmentProfile(_transaction, null, assortmentRID, aSession, aIncludeInSubtotals);
+                        // Begin TT#2136-MD - JSmith - Assortment Selection Error
+                        //asp = new AssortmentProfile(_transaction, null, assortmentRID, aSession, aIncludeInSubtotals);
+                        if (previousList != null)
+                        {
+                            asp = (AssortmentProfile)previousList.FindKey(assortmentRID);
+                        }
+                        if (asp == null)
+                        {
+                            asp = new AssortmentProfile(_transaction, null, assortmentRID, aSession, aIncludeInSubtotals);
+                        }
+                        // End TT#2136-MD - JSmith - Assortment Selection Error
                         this.Add(asp);
                     }
                 }

@@ -7,6 +7,7 @@ using System.Globalization;
 using MIDRetail.Data;
 using MIDRetail.Common;
 using MIDRetail.DataCommon;
+using Logility.ROWebSharedTypes;
 
 namespace MIDRetail.Business.Allocation
 {
@@ -588,6 +589,28 @@ namespace MIDRetail.Business.Allocation
 		#endregion
 
 		#region "Override Methods"
+
+        // Begin TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+        override internal bool CheckForUserData()
+        {
+            if (CheckSizeMethodForUserData())
+            {
+                return true;
+            }
+
+            if (IsHierarchyNodeUser(this._MerchHnRid))
+            {
+                return true;
+            }
+
+            if (IsHierarchyNodeUser(IB_MERCH_HN_RID))
+            {
+                return true;
+            }
+
+            return false;
+        }
+        // End TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
 
 		public override void ProcessMethod(
 			ApplicationSessionTransaction aApplicationTransaction, 
@@ -4799,5 +4822,164 @@ namespace MIDRetail.Business.Allocation
             return true;
         }
         // End TT#3572 - JSmith - Security- Version set to Deny - Ran a velocity method with this version and receive a Null reference error.
-	}
+
+        // BEGIN RO-642 - RDewey
+        override public FunctionSecurityProfile GetFunctionSecurity()
+        {
+            if (this.GlobalUserType == eGlobalUserType.Global)
+            {
+                return SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.AllocationMethodsGlobalSizeNeed);
+            }
+            else
+            {
+                return SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.AllocationMethodsUserSizeNeed);
+            }
+
+        }
+        override public ROMethodProperties MethodGetData(bool processingApply)
+        {
+            //RO-3885 Data Transport for Size Need Method
+            //throw new NotImplementedException("MethodGetData is not implemented");
+            KeyValuePair<int, string> keyValuePair = new KeyValuePair<int, string>();
+            ROMethodSizeNeedProperties method = new ROMethodSizeNeedProperties(  
+                method: GetName.GetMethod(method: this),
+                description: _methodData.Method_Description,
+                userKey: User_RID,
+                merch_HN: GetName.GetLevelKeyValuePair(_methodData.MerchType, nodeRID: _methodData.MerchHnRid , merchPhRID: _methodData.MerchPhRid, merchPhlSequence: _methodData.MerchPhlSequence, SAB: SAB),
+                merch_PH_RID: _methodData.MerchPhRid,
+                merch_PHL_SEQ: _methodData.MerchPhlSequence,
+                merchandiseType: _methodData.MerchType,
+                normalizeSizeCurvesDefaultIsOverridden: _methodData.NormalizeSizeCurvesDefaultIsOverridden,
+                normalizeSizeCurves: _methodData.NormalizeSizeCurves,
+                sizeGroup: GetName.GetSizeGroup(_methodData.SizeGroupRid),
+                sizeAlternateModel: GetName.GetSizeAlternateModel(_methodData.SizeAlternateRid),
+                rOSizeCurveProperties: SizeCurveProperties.BuildSizeCurveProperties(_methodData.SizeCurveGroupRid, _methodData.GenCurveNsccdRID, _methodData.GenCurveHcgRID,
+                    _methodData.GenCurveHnRID, _methodData.GenCurvePhRID, _methodData.GenCurvePhlSequence, _methodData.GenCurveMerchType,
+                    _methodData.UseDefaultCurve, _methodData.ApplyRulesOnly, keyValuePair, keyValuePair, keyValuePair, SAB),
+                rOSizeConstraintProperties: SizeConstraintProperties.BuildSizeConstraintProperties(_methodData.IB_MERCH_HN_RID, _methodData.IB_MERCH_PH_RID, _methodData.IB_MERCH_PHL_SEQ, _methodData.IB_MerchandiseType,
+                    _methodData.SizeConstraintRid, _methodData.GenConstraintHcgRID, _methodData.GenConstraintHnRID, _methodData.GenConstraintPhRID, _methodData.GenConstraintPhlSequence, _methodData.GenConstraintMerchType,
+                    _methodData.GenConstraintColorInd, keyValuePair, keyValuePair, keyValuePair, keyValuePair, SAB),
+                overrideVSWSizeConstraints: _methodData.OverrideVSWSizeConstraints,
+                vSWSizeConstraints: _methodData.VSWSizeConstraints,
+                overrideAvgPackDevTolerance: _methodData.OverrideAvgPackDevTolerance,
+                avgPackDeviationTolerance: _methodData.AvgPackDeviationTolerance,
+                overrideMaxPackNeedTolerance: _methodData.OverrideMaxPackNeedTolerance,
+                packToleranceStepped: _methodData.PackToleranceStepped,
+                packToleranceNoMaxStep: _methodData.PackToleranceNoMaxStep,
+                maxPackNeedTolerance: _methodData.MaxPackNeedTolerance,
+                attribute: GetName.GetAttributeName(_methodData.SG_RID),
+                sizeRuleAttributeSet: SizeRuleAttributeSet.BuildSizeRuleAttributeSet(_methodData.Method_RID, eMethodType.SizeNeedAllocation, _methodData.SG_RID , _methodData.SizeGroupRid, _methodData.SizeCurveGroupRid, GetSizesUsing, GetDimensionsUsing, MethodConstraints, SAB)
+            );
+
+            return method;
+        }
+
+        override public bool MethodSetData(ROMethodProperties methodProperties, bool processingApply)
+        {
+            //RO-3885 Data Transport for Size Need Method
+            ROMethodSizeNeedProperties roMethodSizeNeedAllocationProperties = (ROMethodSizeNeedProperties)methodProperties;
+
+            try
+            {
+                Method_Description = roMethodSizeNeedAllocationProperties.Description;
+                User_RID = roMethodSizeNeedAllocationProperties.UserKey;
+                _MerchPhRid = roMethodSizeNeedAllocationProperties.Merch_PH.Key;
+                _MerchPhlSequence = roMethodSizeNeedAllocationProperties.Merch_PH.Value;
+                MerchType = roMethodSizeNeedAllocationProperties.MerchandiseType;
+                switch (MerchType)
+                {
+                    case eMerchandiseType.HierarchyLevel:
+                    case eMerchandiseType.LevelOffset:
+                    case eMerchandiseType.OTSPlanLevel:
+                        _MerchHnRid = Include.Undefined;
+                        break;
+                    default: //eMerchandiseType.Node
+                        _MerchHnRid = roMethodSizeNeedAllocationProperties.Merch_HN.Key;
+                        break;
+                }
+                NormalizeSizeCurvesDefaultIsOverridden = roMethodSizeNeedAllocationProperties.NormalizeSizeCurvesDefaultIsOverridden;
+                NormalizeSizeCurves = roMethodSizeNeedAllocationProperties.NormalizeSizeCurves;
+                SizeGroupRid  = roMethodSizeNeedAllocationProperties.SizeGroup.Key;
+                _sizeAlternateRid = roMethodSizeNeedAllocationProperties.SizeAlternateModel.Key;
+                //Size Curve Group Box 
+                SizeCurveGroupRid = roMethodSizeNeedAllocationProperties.ROSizeCurveProperties.SizeCurve.Key;
+                GenCurveNsccdRID = roMethodSizeNeedAllocationProperties.ROSizeCurveProperties.SizeCurveGenericNameExtension.Key;
+                GenCurveMerchType = roMethodSizeNeedAllocationProperties.ROSizeCurveProperties.GenCurveMerchType;
+                switch (GenCurveMerchType)
+                {
+                    case eMerchandiseType.HierarchyLevel:
+                    case eMerchandiseType.LevelOffset:
+                    case eMerchandiseType.OTSPlanLevel:
+                        GenCurveHnRID = Include.NoRID;
+                        break;
+                    default: //eMerchandiseType.Node
+                        GenCurveHnRID = roMethodSizeNeedAllocationProperties.ROSizeCurveProperties.SizeCurveGenericHierarchy.Key;
+                        break;
+                }
+
+                UseDefaultCurve = roMethodSizeNeedAllocationProperties.ROSizeCurveProperties.IsUseDefault;
+                ApplyRulesOnly = roMethodSizeNeedAllocationProperties.ROSizeCurveProperties.IsApplyRulesOnly;
+                // Constraints Group Box
+                IB_MerchandiseType = roMethodSizeNeedAllocationProperties.ROSizeConstraintProperties.InventoryBasisMerchType;
+                switch (IB_MerchandiseType)
+                {
+                    case eMerchandiseType.HierarchyLevel:
+                    case eMerchandiseType.LevelOffset:
+                    case eMerchandiseType.OTSPlanLevel:
+                        _IB_MERCH_HN_RID = Include.NoRID;
+                        break;
+                    default: //eMerchandiseType.Node
+                        _IB_MERCH_HN_RID = roMethodSizeNeedAllocationProperties.ROSizeConstraintProperties.InventoryBasis.Key;
+                        break;
+                }
+                _sizeConstraintRid = roMethodSizeNeedAllocationProperties.ROSizeConstraintProperties.SizeConstraint.Key;
+                GenConstraintMerchType = roMethodSizeNeedAllocationProperties.ROSizeConstraintProperties.GenConstraintMerchType;
+                switch (GenConstraintMerchType)
+                {
+                    case eMerchandiseType.HierarchyLevel:
+                    case eMerchandiseType.LevelOffset:
+                    case eMerchandiseType.OTSPlanLevel:
+                        GenConstraintHnRID = Include.NoRID; 
+                        break;
+                    default: //eMerchandiseType.Node
+                        GenConstraintHnRID = roMethodSizeNeedAllocationProperties.ROSizeConstraintProperties.SizeConstraintGenericHierarchy.Key;
+                        break;
+                }
+                GenConstraintCharGroupRID = roMethodSizeNeedAllocationProperties.ROSizeConstraintProperties.SizeConstraintGenericHeaderChar.Key;
+                GenConstraintColorInd = roMethodSizeNeedAllocationProperties.ROSizeConstraintProperties.GenConstraintColorInd;
+                //VSW 
+                _overrideVSWSizeConstraints = roMethodSizeNeedAllocationProperties.OverrideVSWSizeConstraints;
+                _vSWSizeConstraints = roMethodSizeNeedAllocationProperties.VSWSizeConstraints;
+                _overrideAvgPackDevTolerance = roMethodSizeNeedAllocationProperties.OverrideAvgPackDevTolerance;
+                if (roMethodSizeNeedAllocationProperties.OverrideAvgPackDevTolerance)
+                {
+                    AvgPackDeviationTolerance = roMethodSizeNeedAllocationProperties.AvgPackDeviationTolerance;
+                }
+                _overrideMaxPackNeedTolerance = roMethodSizeNeedAllocationProperties.OverrideMaxPackNeedTolerance;
+                _packToleranceStepped = roMethodSizeNeedAllocationProperties.PackToleranceStepped;
+                _packToleranceNoMaxStep = roMethodSizeNeedAllocationProperties.PackToleranceNoMaxStep;
+                if (roMethodSizeNeedAllocationProperties.OverrideMaxPackNeedTolerance)
+                {
+                    MaxPackNeedTolerance = roMethodSizeNeedAllocationProperties.MaxPackNeedTolerance;
+                }
+                //Rules Tab
+                SG_RID = roMethodSizeNeedAllocationProperties.Attribute.Key;
+                MethodConstraints = SizeRuleAttributeSet.BuildMethodConstrainst( roMethodSizeNeedAllocationProperties.Method.Key, roMethodSizeNeedAllocationProperties.Attribute.Key, 
+                    roMethodSizeNeedAllocationProperties.SizeRuleAttributeSet, MethodConstraints, SAB); // MethodConstraints will be regenerated based on above changes
+                
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+            //throw new NotImplementedException("MethodSaveData is not implemented");
+        }
+
+        override public ROMethodProperties MethodCopyData()
+        {
+            throw new NotImplementedException("MethodCopyData is not implemented");
+        }
+        // END RO-642 - RDewey
+    }
 }

@@ -20,6 +20,19 @@ namespace MIDRetail.Windows.Controls
             InitializeComponent();
             mdsDateRange.DateRangeRID = Include.UndefinedCalendarDateRange;
         }
+
+        // Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+		//delegates to access the container
+        public FilterMakeElementInGroupDelegate makeElementInGroupDelegate;
+        public FilterRemoveDynamicElementsForFieldDelegate removeDynamicElementsForFieldDelegate;
+
+        public bool RestrictToOnlyWeeks = false;
+        public bool RestrictToSingleDate = true;
+        public bool AllowDynamic = true;
+        public bool AllowDynamicToStoreOpen = true;
+        public bool AllowDynamicToPlan = true;
+		// End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+
         private void filterElementCalendar_Load(object sender, EventArgs e)
         {
            
@@ -48,6 +61,14 @@ namespace MIDRetail.Windows.Controls
 
             this.useVariable1 = eb.loadFromVariable1;
             this.useVariable2 = eb.loadFromVariable2;
+			// Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+            this.useCalendarDate = eb.loadFromCalendarDate;
+            this.RestrictToOnlyWeeks = eb.RestrictToOnlyWeeks;
+            this.RestrictToSingleDate = eb.RestrictToSingleDate;
+            this.AllowDynamic = eb.AllowDynamic;
+            this.AllowDynamicToPlan = eb.AllowDynamicToPlan;
+            this.AllowDynamicToStoreOpen = eb.AllowDynamicToStoreOpen;
+			// End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
             if (this.useVariable1)
             {
                 if (eb.manager.currentCondition.lastVariable1_CDR_RID != null)
@@ -74,6 +95,21 @@ namespace MIDRetail.Windows.Controls
                     }
                 }
             }
+			// Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+            else if (useCalendarDate)
+            {
+                if (eb.manager.currentCondition.lastdate_CDR_RID != null)
+                {
+                    mdsDateRange.DateRangeRID = (int)eb.manager.currentCondition.lastdate_CDR_RID;
+                    if (mdsDateRange.DateRangeRID != Include.UndefinedCalendarDateRange)
+                    {
+                        DateRangeProfile drp = eb.manager.SAB.ApplicationServerSession.Calendar.GetDateRange(mdsDateRange.DateRangeRID, eb.manager.SAB.ClientServerSession.Calendar.CurrentDate);
+                        mdsDateRange.Text = drp.DisplayDate;
+                        SetImagesForDateRange(drp);
+                    }
+                }
+            }
+			// End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
 
             eb.isLoading = false;
             //End TT#1345-MD -jsobek -Store Filters - Hold operator and value when switching variables
@@ -83,12 +119,13 @@ namespace MIDRetail.Windows.Controls
         }
         private bool useVariable1 = false;
         private bool useVariable2 = false;
+        private bool useCalendarDate = false;   // TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
    
         public void LoadFromCondition(filter f, filterCondition condition)
         {
             this.useVariable1 = eb.loadFromVariable1;
             this.useVariable2 = eb.loadFromVariable2;
-            
+            this.useCalendarDate = eb.loadFromCalendarDate;   // TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
          
             if (useVariable1)
             {
@@ -114,6 +151,18 @@ namespace MIDRetail.Windows.Controls
                 eb.manager.currentCondition.lastVariable2_CDR_RID = cdrRID;  //TT#1345-MD -jsobek -Store Filters - Hold operator and value when switching variables
                 //End TT#1448-MD -jsobek -Store Filter - Cleared a Date range and saved. Received a Null Reference Exception. selecected OK and the calendar dates were gone.
             }
+			// Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+            else if (useCalendarDate)
+            {
+                int cdrRID = condition.date_CDR_RID;
+                if (cdrRID == -1)
+                {
+                    cdrRID = Include.UndefinedCalendarDateRange;
+                }
+                mdsDateRange.DateRangeRID = cdrRID;
+                eb.manager.currentCondition.lastdate_CDR_RID = cdrRID;
+            }
+			// End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
             if (mdsDateRange.DateRangeRID != Include.UndefinedCalendarDateRange)
             {
                 DateRangeProfile drp = eb.manager.SAB.ApplicationServerSession.Calendar.GetDateRange(mdsDateRange.DateRangeRID, eb.manager.SAB.ClientServerSession.Calendar.CurrentDate);
@@ -135,6 +184,12 @@ namespace MIDRetail.Windows.Controls
             {
                 condition.variable2_CDR_RID = mdsDateRange.DateRangeRID;
             }
+			// Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+            else if (useCalendarDate)
+            {
+                condition.date_CDR_RID = mdsDateRange.DateRangeRID;
+            }
+			// End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
             //if (var2Control.DateRangeSelector.DateRangeRID != Include.UndefinedCalendarDateRange)
             //{
             //    // BEGIN MID Track #2495 - FilterWizard not saving secondary variable dates
@@ -161,7 +216,10 @@ namespace MIDRetail.Windows.Controls
                 //_dateSel.AnchorDateRelativeTo = eDateRangeRelativeTo.Plan;
                 //_dateSel.AllowDynamicToStoreOpen = true;
                 mdsDateRange.DateRangeForm = eb.manager.calendarDateSelectorForm; 
-                eb.manager.setCalendarDateRangeDelegate(mdsDateRange.DateRangeRID);
+                // Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+				//eb.manager.setCalendarDateRangeDelegate(mdsDateRange.DateRangeRID);
+                eb.manager.setCalendarDateRangeDelegate(mdsDateRange.DateRangeRID, RestrictToOnlyWeeks, RestrictToSingleDate, AllowDynamic, AllowDynamicToPlan, AllowDynamicToStoreOpen);
+				// End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
              
                 
                 mdsDateRange.ShowSelector();
@@ -177,6 +235,12 @@ namespace MIDRetail.Windows.Controls
                     {
                         eb.manager.currentCondition.lastVariable2_CDR_RID = mdsDateRange.DateRangeRID;
                     }
+					// Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+                    else if (useCalendarDate)
+                    {
+                        eb.manager.currentCondition.lastdate_CDR_RID = mdsDateRange.DateRangeRID;
+                    }
+					// End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
                 }
                 //End TT#1345-MD -jsobek -Store Filters - Hold operator and value when switching variables
             }

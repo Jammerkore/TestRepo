@@ -142,5 +142,33 @@ namespace MIDRetail.Data
             }
         }
 		// End TT#1581-MD - stodd - API Header Reconcile
+
+        /// <summary>
+        /// Executes a stored procedure, with input parameters, to get the data of an object In Use.
+        /// </summary>
+        /// <param name="aUserRid"></param>
+        /// <param name="inUseType"></param>
+        /// <returns>DataTable</returns>
+        public void UpdateAPIProcessControlRules(int API_ID, bool PROCESS_CANNOT_BE_RUNNING_IND, bool PROCESS_MUST_BE_RUNNING_IND, int PROCESS_ID, DateTime LAST_MODIFIED_DATETIME, string LAST_MODIFIED_BY)
+        {
+            try
+            {
+
+                StoredProcedures.MID_API_PROCESS_CONTROL_RULES_UPDATE.Update(_dba,
+                                                                    API_ID: API_ID,
+                                                                    PROCESS_CANNOT_BE_RUNNING_IND: Include.ConvertBoolToChar(PROCESS_CANNOT_BE_RUNNING_IND),
+                                                                    PROCESS_MUST_BE_RUNNING_IND: Include.ConvertBoolToChar(PROCESS_MUST_BE_RUNNING_IND),
+                                                                    PROCESS_ID: PROCESS_ID,
+                                                                    LAST_MODIFIED_DATETIME : LAST_MODIFIED_DATETIME,
+                                                                    LAST_MODIFIED_BY : LAST_MODIFIED_BY
+                                                               );
+            }
+            catch (Exception err)
+            {
+                string message = err.ToString();
+                throw;
+            }
+        }
+        
     }
 }

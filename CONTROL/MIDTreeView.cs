@@ -296,6 +296,11 @@ namespace MIDRetail.Windows.Controls
             }
         }
 
+        public void ExpandNode(TreeNode node)
+        {
+            MIDTreeView_BeforeExpand(null, new TreeViewCancelEventArgs(node, false, TreeViewAction.Expand));
+        }
+
         /// <summary>
         /// A flag identifying if a copy action has been requested
         /// </summary>
@@ -815,6 +820,15 @@ namespace MIDRetail.Windows.Controls
 			throw new Exception("Method LoadNodes() must be overridden by inheriting class");
 		}
 
+        /// <summary>
+        /// Virtual method that loads the nodes for the MIDTreeView
+        /// </summary>
+
+        virtual public void ReloadCache(int userRID, int nodeRID)
+        {
+            throw new Exception("Method ReloadCache() must be overridden by inheriting class");
+        }
+
 		/// <summary>
 		/// Virtual method executed after the New Item menu item has been clicked.
 		/// </summary>
@@ -1311,6 +1325,22 @@ namespace MIDRetail.Windows.Controls
             }
         }
 
+        public void AddSelectedNode(MIDTreeNode aTreeNode)
+        {
+            try
+            {
+                if (!_alSelectedNodes.Contains(aTreeNode))
+                {
+                    _alSelectedNodes.Add(aTreeNode);
+                }
+            }
+            catch (Exception exc)
+            {
+                string message = exc.ToString();
+                throw;
+            }
+        }
+
 		//Begin Track #6257 - JScott - Create New Attribute requires user to right-click rename
 		//public void CreateNewTreeItem(MIDTreeNode aParentNode)
 		//{
@@ -1573,7 +1603,14 @@ namespace MIDRetail.Windows.Controls
                             // End TT#3435 - JSmith - Errors messages not complete with encounter database errors.
 
 							msg = msg.Replace("{0}", SelectedNode.Text);
-							retCode = MessageBox.Show(msg, "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                            if (MIDEnvironment.isWindows)
+                            {
+                                retCode = MessageBox.Show(msg, "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                            }
+                            else // Continue with delete if not Windows
+                            {
+                                retCode = DialogResult.Yes;
+                            }
 
                             if (retCode == DialogResult.Yes)
                             {
@@ -1785,7 +1822,7 @@ namespace MIDRetail.Windows.Controls
                                 message = message.Replace("{0}", SelectedNode.Text);
                             }
 
-                            if (MessageBox.Show(message, "Copy", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+                            if (MIDEnvironment.isWindows && MessageBox.Show(message, "Copy", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
                             {
                                 return false;
                             }
@@ -1804,7 +1841,7 @@ namespace MIDRetail.Windows.Controls
                                 message = message.Replace("{0}", SelectedNode.Text);
                             }
 
-                            if (MessageBox.Show(message, "Reference", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+                            if (MIDEnvironment.isWindows && MessageBox.Show(message, "Reference", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
                             {
                                 return false;
                             }
@@ -1928,7 +1965,7 @@ namespace MIDRetail.Windows.Controls
 						msg = msg.Replace("{0}", currNode.Text);
 					}
 
-					if (MessageBox.Show(msg, title, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+					if (MIDEnvironment.isWindows && MessageBox.Show(msg, title, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
 					{
 						return false;
 					}
@@ -2029,7 +2066,7 @@ namespace MIDRetail.Windows.Controls
 							}
 						}
 
-						if (MessageBox.Show(msg, title, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+						if (MIDEnvironment.isWindows && MessageBox.Show(msg, title, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
 						{
 							return false;
 						}
@@ -2142,7 +2179,7 @@ namespace MIDRetail.Windows.Controls
 			}
 		}
 
-		public MIDTreeNode FindTreeNode(TreeNodeCollection aNodes, eProfileType aNodeType, int aNodeRID)
+		public MIDTreeNode FindTreeNode(TreeNodeCollection aNodes, eProfileType aNodeType, int aNodeRID, bool autoExpandWhileFinding = true)
 		{
 			MIDTreeNode findNode;
 
@@ -2158,7 +2195,12 @@ namespace MIDRetail.Windows.Controls
 
 				foreach (MIDTreeNode tn in aNodes)
 				{
-					findNode = FindTreeNode(tn.Nodes, aNodeType, aNodeRID);
+                    if (autoExpandWhileFinding && tn.HasChildren && tn.DisplayChildren && !tn.ChildrenLoaded)
+                    {
+                        MIDTreeView_BeforeExpand(this, new TreeViewCancelEventArgs(tn, false, TreeViewAction.Expand));
+                    }
+					
+                    findNode = FindTreeNode(tn.Nodes, aNodeType, aNodeRID, autoExpandWhileFinding);
 
 					if (findNode != null)
 					{
@@ -2175,7 +2217,83 @@ namespace MIDRetail.Windows.Controls
 			}
 		}
 
-		public MIDTreeNode GetTreeNode(TreeNodeClipboardProfile aClipboardProfile)
+        public MIDTreeNode FindTreeNode(TreeNodeCollection aNodes, eProfileType aNodeType, int aNodeRID, int ownerUserRID, bool autoExpandWhileFinding = true)
+        {
+            MIDTreeNode findNode;
+
+            try
+            {
+                foreach (MIDTreeNode tn in aNodes)
+                {
+                    if (tn.NodeProfileType == aNodeType && tn.NodeRID == aNodeRID && tn.OwnerUserRID == ownerUserRID)
+                    {
+                        return tn;
+                    }
+                }
+
+                foreach (MIDTreeNode tn in aNodes)
+                {
+                    if (autoExpandWhileFinding && tn.HasChildren && tn.DisplayChildren && !tn.ChildrenLoaded)
+                    {
+                        MIDTreeView_BeforeExpand(this, new TreeViewCancelEventArgs(tn, false, TreeViewAction.Expand));
+                    }
+
+                    findNode = FindTreeNode(tn.Nodes, aNodeType, aNodeRID, ownerUserRID, autoExpandWhileFinding);
+
+                    if (findNode != null)
+                    {
+                        return findNode;
+                    }
+                }
+
+                return null;
+            }
+            catch (Exception exc)
+            {
+                string message = exc.ToString();
+                throw;
+            }
+        }
+
+        public MIDTreeNode FindTreeNode(TreeNodeCollection aNodes, string uniqueID, bool autoExpandWhileFinding = true)
+        {
+            MIDTreeNode findNode;
+
+            try
+            {
+                foreach (MIDTreeNode tn in aNodes)
+                {
+                    if (tn.UniqueID == uniqueID)
+                    {
+                        return tn;
+                    }
+                }
+
+                foreach (MIDTreeNode tn in aNodes)
+                {
+                    if (autoExpandWhileFinding && tn.HasChildren && tn.DisplayChildren && !tn.ChildrenLoaded)
+                    {
+                        MIDTreeView_BeforeExpand(this, new TreeViewCancelEventArgs(tn, false, TreeViewAction.Expand));
+                    }
+
+                    findNode = FindTreeNode(tn.Nodes, uniqueID, autoExpandWhileFinding);
+
+                    if (findNode != null)
+                    {
+                        return findNode;
+                    }
+                }
+
+                return null;
+            }
+            catch (Exception exc)
+            {
+                string message = exc.ToString();
+                throw;
+            }
+        }
+
+        public MIDTreeNode GetTreeNode(TreeNodeClipboardProfile aClipboardProfile)
 		{
 			try
 			{
@@ -3376,6 +3494,11 @@ namespace MIDRetail.Windows.Controls
             }
         }
 
+        public void RenameNode(TreeNode node, string label)
+        {
+            MIDTreeView_AfterLabelEdit(sender: null, e: new NodeLabelEditEventArgs(node, label));
+        }
+
         private void MIDTreeView_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
 			//Begin Track #6201 - JScott - Store Count removed from attr sets
@@ -3959,7 +4082,7 @@ namespace MIDRetail.Windows.Controls
 								message = message.Replace("{0}", _lastValidDragOverNode.Text);
                             }
 
-							if (MessageBox.Show(message, "Copy", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+							if (MIDEnvironment.isWindows && MessageBox.Show(message, "Copy", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
 							{
 								return;
 							}
@@ -3978,7 +4101,7 @@ namespace MIDRetail.Windows.Controls
 								message = message.Replace("{0}", _lastValidDragOverNode.Text);
                             }
 
-							if (MessageBox.Show(message, "Reference", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+							if (MIDEnvironment.isWindows && MessageBox.Show(message, "Reference", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
 							{
 								return;
 							}
@@ -4599,7 +4722,14 @@ namespace MIDRetail.Windows.Controls
 		private void HandleException(Exception exc)
         {
             _SAB.ClientServerSession.Audit.Log_Exception(exc, this.Name, eExceptionLogging.logAllInnerExceptions);
-            MessageBox.Show(exc.ToString(), "MIDFormBase.cs - " + this.Name);
+            if (MIDEnvironment.isWindows)
+            {
+                MessageBox.Show(exc.ToString(), "MIDFormBase.cs - " + this.Name);
+            }
+            else // rethrow if not in Windows environment.
+            {
+                throw exc;
+            }
         }
 
         private void HandleException(MIDException MIDexc)
@@ -4641,8 +4771,15 @@ namespace MIDRetail.Windows.Controls
                 Title = errLevel;
                 Msg = MIDexc.Message;
             }
-            MessageBox.Show(this, Msg, Title,
-                buttons, icon);
+            if (MIDEnvironment.isWindows)
+            {
+                MessageBox.Show(this, Msg, Title,
+                    buttons, icon);
+            }
+            else // rethrow if not in Windows environment.
+            {
+                throw MIDexc;
+            }
         }
 	}
 }

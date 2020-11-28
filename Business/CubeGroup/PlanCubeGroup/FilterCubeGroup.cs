@@ -536,20 +536,26 @@ namespace MIDRetail.Business
 		{
 		}
 
-		/// <summary>
-		/// Returns a boolean value indicating if the variable is stored on the database.
-		/// </summary>
-		/// <param name="aVarProf">
-		/// The VariableProfile containing the variable to inspect
-		/// </param>
-		/// <param name="aPlanCellRef">
-		/// The PlanCellReference that points to the Cell to inspect.
-		/// </param>
-		/// <returns>
-		/// A boolean indicating if the variable is stored on the database.
-		/// </returns>
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        override public void ExtractCubeGroup(ExtractOptions aExtractOptions)
+        {
+        }
+        // End TT#2131-MD - JSmith - Halo Integration
 
-		override public bool isDatabaseVariable(VariableProfile aVarProf, PlanCellReference aPlanCellRef)
+        /// <summary>
+        /// Returns a boolean value indicating if the variable is stored on the database.
+        /// </summary>
+        /// <param name="aVarProf">
+        /// The VariableProfile containing the variable to inspect
+        /// </param>
+        /// <param name="aPlanCellRef">
+        /// The PlanCellReference that points to the Cell to inspect.
+        /// </param>
+        /// <returns>
+        /// A boolean indicating if the variable is stored on the database.
+        /// </returns>
+
+        override public bool isDatabaseVariable(VariableProfile aVarProf, PlanCellReference aPlanCellRef)
 		{
 			return aVarProf.isDatabaseVariable(eVariableCategory.Store, aPlanCellRef.GetVersionProfile().Key, eCalendarDateType.Week);
 		}

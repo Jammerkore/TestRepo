@@ -10,7 +10,8 @@ CREATE TABLE [dbo].[FILTER](
 	[FILTER_TYPE] [int] NOT NULL,
 	[FILTER_NAME] [varchar](250) NOT NULL,
 	[IS_LIMITED] [bit] NOT NULL,
-	[RESULT_LIMIT] [int] NOT NULL
+	[RESULT_LIMIT] [int] NOT NULL,
+	[UPDATE_DATE] [datetime] NULL
 )
 GO
 

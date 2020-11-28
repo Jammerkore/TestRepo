@@ -551,7 +551,8 @@ namespace MIDRetail.Business
                     }
                     else
                     {
-                        if (DetailDateProfileList.Count > 1)
+                        if (DetailDateProfileList.Count > 1
+                            || SetSummaryDateProfile)
                         {
                             SummaryDateProfile = DateRangeProfile;
                             DateProfileList.Add(DateRangeProfile);
@@ -617,7 +618,8 @@ namespace MIDRetail.Business
                     }
                     else
                     {
-                        if (DetailDateProfileList.Count > 1)
+                        if (DetailDateProfileList.Count > 1
+                            || SetSummaryDateProfile)
                         {
                             SummaryDateProfile = DateRangeProfile;
                             DateProfileList.Add(DateRangeProfile);

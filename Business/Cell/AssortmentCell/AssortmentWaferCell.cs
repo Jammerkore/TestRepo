@@ -259,6 +259,13 @@ namespace MIDRetail.Business
 			}
 		}
 
+        override public eVariableStyle VariableStyle
+        {
+            get
+            {
+                return _waferCellDetail.VariableStyle;
+            }
+        }
 		//End TT#2 - JScott - Assortment Planning - Phase 2
 		//========
 		// METHODS

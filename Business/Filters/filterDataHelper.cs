@@ -457,7 +457,9 @@ namespace MIDRetail.Business
                 {
                     //Begin TT#1368-MD -jsobek -Header Filters - Remove InUsebyMulti status option
                     int textCode = Convert.ToInt32(dr["TEXT_CODE"], CultureInfo.CurrentUICulture);
-                    //if (textCode != 802702)  // TT#4796 - JSmith - Reinstate Multi-Header
+                    // Begin RO-4303 - JSmith - Disable Multi-Header creation
+                    if (textCode != 802702)  // TT#4796 - JSmith - Reinstate Multi-Header
+                    // End RO-4303 - JSmith - Disable Multi-Header creation
                     {
                         DataRow dr1 = dtHeaderStatuses.NewRow();
                         dr1["FIELD_NAME"] = (string)dr["TEXT_VALUE"];
@@ -470,6 +472,76 @@ namespace MIDRetail.Business
             }
             return dtHeaderStatuses;
         }
+
+        // Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+        private static DataTable dtAssortmentTypes;
+        public static DataTable AssortmentTypesGetDataTable()
+        {
+            if (dtAssortmentTypes == null)
+            {
+                dtAssortmentTypes = new DataTable();
+                dtAssortmentTypes.Columns.Add("FIELD_NAME");
+                dtAssortmentTypes.Columns.Add("FIELD_INDEX", typeof(int));
+
+                //load header type
+                eHeaderType type;
+                DataTable dtTypes = MIDText.GetTextTypeValueFirst(eMIDTextType.eAssortmentDisplayType, eMIDTextOrderBy.TextValue, Convert.ToInt32(eHeaderType.Assortment), Convert.ToInt32(eHeaderType.Placeholder));
+
+                for (int i = dtTypes.Rows.Count - 1; i >= 0; i--)
+                {
+                    DataRow dRow = dtTypes.Rows[i];
+                    
+                    type = (eHeaderType)Convert.ToInt32(dRow["TEXT_CODE"], CultureInfo.CurrentUICulture);
+                    
+                }
+                foreach (DataRow dr in dtTypes.Rows)
+                {
+                    DataRow dr1 = dtAssortmentTypes.NewRow();
+                    dr1["FIELD_NAME"] = (string)dr["TEXT_VALUE"];
+                    dr1["FIELD_INDEX"] = Convert.ToInt32(dr["TEXT_CODE"], CultureInfo.CurrentUICulture);
+                    dtAssortmentTypes.Rows.Add(dr1);
+                }
+            }
+            return dtAssortmentTypes;
+        }
+
+		private static DataTable dtAssortmentStatuses;
+        public static DataTable AssortmentStatusesGetDataTable()
+        {
+            if (dtAssortmentStatuses == null)
+            {
+                dtAssortmentStatuses = new DataTable();
+                dtAssortmentStatuses.Columns.Add("FIELD_NAME");
+                dtAssortmentStatuses.Columns.Add("FIELD_INDEX", typeof(int));
+
+                // load assortment status
+                eHeaderAllocationStatus status;
+                DataTable dtStatus = MIDText.GetTextTypeValueFirst(eMIDTextType.eHeaderAllocationStatus, eMIDTextOrderBy.TextValue);
+                for (int i = dtStatus.Rows.Count - 1; i >= 0; i--)
+                {
+                    DataRow dRow = dtStatus.Rows[i];
+                    status = (eHeaderAllocationStatus)Convert.ToInt32(dRow["TEXT_CODE"], CultureInfo.CurrentUICulture);
+                }
+                foreach (DataRow dr in dtStatus.Rows)
+                {
+                    int textCode = Convert.ToInt32(dr["TEXT_CODE"], CultureInfo.CurrentUICulture);
+                    if ((eHeaderAllocationStatus)textCode == eHeaderAllocationStatus.InUseByMultiHeader)
+                    {
+                        continue;
+                    }
+                    {
+                        DataRow dr1 = dtAssortmentStatuses.NewRow();
+                        dr1["FIELD_NAME"] = (string)dr["TEXT_VALUE"];
+                        dr1["FIELD_INDEX"] = textCode;
+                        dtAssortmentStatuses.Rows.Add(dr1);
+                    }
+                }
+
+            }
+            return dtAssortmentStatuses;
+        }
+		// End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+
         public static string HeaderStatusGetNameFromIndex(int fieldIndex)
         {
             if (dtHeaderStatuses == null)
@@ -1485,7 +1557,23 @@ namespace MIDRetail.Business
 
         //Begin TT#1443-MD -jsobek -Audit Filter
         public static DataSet dsUsersAndGroups;
-        public static DataTable dtActiveUsersWithGroupRID;
+        // Begin TT#5729 - JSmith - Audit Viewer Error with Users condition
+        //public static DataTable dtActiveUsersWithGroupRID;
+        private static DataTable dtActiveUsersWithGroupRID;
+
+        public static DataTable DTActiveUsersWithGroupRID
+        {
+            get
+            {
+                if (dtActiveUsersWithGroupRID == null)
+                {
+                    GetActiveUserDataset();
+                }
+                return dtActiveUsersWithGroupRID;
+            }
+
+        }
+        // End TT#5729 - JSmith - Audit Viewer Error with Users condition
         public static DataSet GetActiveUserDataset()
         {
             if (dsUsersAndGroups == null)

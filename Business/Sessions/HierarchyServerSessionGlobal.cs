@@ -36,6 +36,7 @@ namespace MIDRetail.Business
 
 		//Begin Track #5583 - JScott - Ran an export for Store Data for 5 weeks and it failed.  Audit report attached.
 		static private ArrayList _loadLock;
+        static private ArrayList _exportLock;
 		static private bool _loaded;
 		static private Audit _audit;
 
@@ -174,6 +175,8 @@ namespace MIDRetail.Business
 				_loaded = false;
 
 				//End Track #5583 - JScott - Ran an export for Store Data for 5 weeks and it failed.  Audit report attached.
+                _exportLock = new ArrayList();
+
 				if (!EventLog.SourceExists("MIDHierarchyService"))
 				{
 					EventLog.CreateEventSource("MIDHierarchyService", null);
@@ -423,7 +426,11 @@ namespace MIDRetail.Business
                         _placeholderStyleLabel_2 = MIDText.GetTextOnly(eMIDTextCode.lbl_PhStyleID_2);
                         // End TT#2
 
-						SetInitialMemoryCounts();
+                        // Begin TT#2131-MD - JSmith - Halo Integration
+                        ExtractHierarchyDefinition(GetMainHierarchyData());
+                        // End TT#2131-MD - JSmith - Halo Integration
+
+                        SetInitialMemoryCounts();
 						EventLog.WriteEntry("MIDHierarchyService", "MIDHierarchyService completed building hierarchies", EventLogEntryType.Information);
                        
                         // Begin TT#189 - RMatelic - Remove excessive entries from the Audit
@@ -468,6 +475,192 @@ namespace MIDRetail.Business
 				throw;
 			}
 		}
+
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        static public bool ExtractHierarchyDefinition(HierarchyProfile hp)
+        {
+            ROExtractData ROExtractData = null;
+            if (!ROExtractEnabled
+                || hp == null
+                || hp.HierarchyType != eHierarchyType.organizational)
+            {
+                return true;  // not set up so do not return as an error
+            }
+            lock (_exportLock.SyncRoot)
+            {
+                try
+                {
+                    ROExtractData = new ROExtractData(ROExtractConnectionString);
+
+                    ROExtractData.Hierarchy_Definition_Insert(hp.HierarchyID);
+                    for (int level = 1; level <= hp.HierarchyLevels.Count; level++)
+                    {
+                        HierarchyLevelProfile hlp = (HierarchyLevelProfile)hp.HierarchyLevels[level];
+                        ROExtractData.Hierarchy_Definition_Level_Insert(hlp, level);
+                    }
+
+                    try
+                    {
+                        ROExtractData.OpenUpdateConnection();
+                        ROExtractData.Hierarchy_Definition_Update();
+                        ROExtractData.CommitData();
+                    }
+                    catch (DatabaseNotInCatalog)
+                    {
+                        // this error is ok so swallow the exception
+                    }
+                    catch
+                    {
+                        throw;
+                    }
+                    finally
+                    {
+                        if (ROExtractData != null &&
+                            ROExtractData.ConnectionIsOpen)
+                        {
+                            ROExtractData.CloseUpdateConnection();
+                        }
+                    }
+                }
+                finally
+                {
+
+                }
+            }
+
+            return true;
+        }
+
+        static public bool ExtractHierarchyNodes(List<NodeInfo> aNodeList)
+        {
+            ROExtractData ROExtractData = null;
+            if (!ROExtractEnabled
+                || aNodeList == null
+                || aNodeList.Count == 0)
+            {
+                return true;  // not set up so do not return as an error
+            }
+            HierarchyProfile hp = null;
+            HierarchyNodeProfile hnp = null;
+            HierarchyNodeProfile parent = null;
+            lock (_exportLock.SyncRoot)
+            {
+                try
+                {
+                    ROExtractData = new ROExtractData(ROExtractConnectionString);
+
+                    foreach (NodeInfo ni in aNodeList)
+                    {
+                        if (hp == null
+                            || ni.HomeHierarchyRID != hp.Key)
+                        {
+                            hp = GetHierarchyData(ni.HomeHierarchyRID);
+                        }
+                        hnp = GetNodeData(ni.NodeRID, false);
+                        if (parent == null
+                            || hnp.HomeHierarchyParentRID != parent.Key)
+                        {
+                            parent = GetNodeData(hnp.HomeHierarchyParentRID);
+                        }
+                        ROExtractData.Hierarchy_Data_Insert(hnp, hp.HierarchyID, parent.NodeID);
+                    }
+
+                    try
+                    {
+                        ROExtractData.OpenUpdateConnection();
+                        ROExtractData.Hierarchy_Data_Update();
+                        ROExtractData.CommitData();
+                    }
+                    catch (DatabaseNotInCatalog)
+                    {
+                        // this error is ok so swallow the exception
+                    }
+                    catch
+                    {
+                        throw;
+                    }
+                    finally
+                    {
+                        if (ROExtractData != null &&
+                            ROExtractData.ConnectionIsOpen)
+                        {
+                            ROExtractData.CloseUpdateConnection();
+                        }
+                    }
+                }
+                finally
+                {
+
+                }
+            }
+
+            return true;
+        }
+
+        static public bool ExtractDeleteHierarchyNodes(List<HierarchyNodeProfile> aNodeList)
+        {
+            ROExtractData ROExtractData = null;
+            if (!ROExtractEnabled
+                || aNodeList == null
+                || aNodeList.Count == 0)
+            {
+                return true;  // not set up so do not return as an error
+            }
+            HierarchyProfile hp = null;
+            HierarchyNodeProfile parent = null;
+            lock (_exportLock.SyncRoot)
+            {
+                try
+                {
+                    ROExtractData = new ROExtractData(ROExtractConnectionString);
+
+                    foreach (HierarchyNodeProfile hnp in aNodeList)
+                    {
+                        if (hp == null
+                            || hnp.HomeHierarchyRID != hp.Key)
+                        {
+                            hp = GetHierarchyData(hnp.HomeHierarchyRID);
+                        }
+                        if (parent == null
+                            || hnp.HomeHierarchyParentRID != parent.Key)
+                        {
+                            parent = GetNodeData(hnp.HomeHierarchyParentRID);
+                        }
+                        ROExtractData.Hierarchy_Data_Insert(hnp, hp.HierarchyID, parent.NodeID);
+                    }
+
+                    try
+                    {
+                        ROExtractData.OpenUpdateConnection();
+                        ROExtractData.Hierarchy_Data_Delete();
+                        ROExtractData.CommitData();
+                    }
+                    catch (DatabaseNotInCatalog)
+                    {
+                        // this error is ok so swallow the exception
+                    }
+                    catch
+                    {
+                        throw;
+                    }
+                    finally
+                    {
+                        if (ROExtractData != null &&
+                            ROExtractData.ConnectionIsOpen)
+                        {
+                            ROExtractData.CloseUpdateConnection();
+                        }
+                    }
+                }
+                finally
+                {
+
+                }
+            }
+
+            return true;
+        }
+        // End TT#2131-MD - JSmith - Halo Integration
 
         // Begin TT#2307 - JSmith - Incorrect Stock Values
         static void Messaging_OnMessageSentHandler(object source, MessageEventArgs e)
@@ -1033,8 +1226,28 @@ namespace MIDRetail.Business
 					_nodesByID = new MIDCache<string,int>(aCacheSize, aCacheGroupSize);
 				}
 
-				//End TT#988 - JScott - Add Active Only indicator to Override Low Level Model
-				foreach (DataRow dr in dt.Rows)
+                // Begin TT#2131-MD - JSmith - Halo Integration
+                List<NodeInfo> nodes = new List<NodeInfo>();
+                int commitLimit = 5000;
+                string strCommitLimit = MIDConfigurationManager.AppSettings["CommitLimit"];
+                if (strCommitLimit != null)
+                {
+                    commitLimit = Convert.ToInt32(strCommitLimit);
+                }
+                HierarchyInfo mainHierarchy = null;
+                foreach (KeyValuePair<int, HierarchyInfo> hierarchy in _hierarchiesByRID)
+                {
+                    int hierarchyRID = hierarchy.Key;
+                    HierarchyInfo hi = hierarchy.Value;
+                    if (hi.HierarchyType == eHierarchyType.organizational)
+                    {
+                        mainHierarchy = hi;
+                    }
+                }
+                // End TT#2131-MD - JSmith - Halo Integration
+
+                //End TT#988 - JScott - Add Active Only indicator to Override Low Level Model
+                foreach (DataRow dr in dt.Rows)
 				{
 					errorFound = false;
 					int NodeRID				= Convert.ToInt32(dr["HN_RID"], CultureInfo.CurrentUICulture);
@@ -1049,10 +1262,24 @@ namespace MIDRetail.Business
 						++numNodes;
                         ni = new NodeInfo();
                         BuildNodeInfoFromDataRow(ref ni, dr, nodeInfoTypeEnum.Base); //TT#827-MD -jsobek -Allocation Reviews Performance
-					}
-					
-					// update that the level has nodes
-					if (HomeHierarchyLevel > 0)
+                        // Begin TT#2131-MD - JSmith - Halo Integration
+                        if (mainHierarchy != null
+                            && ni.HomeHierarchyRID == mainHierarchy.HierarchyRID
+                            && ni.Purpose == ePurpose.Default)
+                        {
+                            nodes.Add(ni);
+                        }
+                        if (nodes.Count == commitLimit)
+                        {
+                            ExtractHierarchyNodes(nodes);
+                            nodes = new List<NodeInfo>();
+                        }
+                        // End TT#2131-MD - JSmith - Halo Integration
+
+                    }
+
+                    // update that the level has nodes
+                    if (HomeHierarchyLevel > 0)
 					{
 						HierarchyInfo hi = (HierarchyInfo)_hierarchiesByRID[HomeHierarchyRID];
 						if (hi == null)
@@ -1093,6 +1320,10 @@ namespace MIDRetail.Business
 					}
 					SetNodeRIDByID(NodeID, NodeRID);
 				}
+
+                // Begin TT#2131-MD - JSmith - Halo Integration
+                ExtractHierarchyNodes(nodes);
+                // End TT#2131-MD - JSmith - Halo Integration
 			}
 			catch ( Exception ex )
 			{
@@ -1535,6 +1766,14 @@ namespace MIDRetail.Business
             ni.ApplyHNRIDFrom = Convert.ToInt32(dr["APPLY_HN_RID_FROM"], CultureInfo.CurrentUICulture);
             // END TT#1399
             ni.DeleteNode = Include.ConvertCharToBool(Convert.ToChar(dr["NODE_DELETE_IND"], CultureInfo.CurrentUICulture));  // TT#3630 - JSmith - Delete My Hierarchy
+            if (dr["DIGITAL_ASSET_KEY"] == DBNull.Value)
+            {
+                ni.DigitalAssetKey = Include.Undefined;
+            }
+            else
+            {
+                ni.DigitalAssetKey = Convert.ToInt32(dr["DIGITAL_ASSET_KEY"]);
+            }
         }
         
 
@@ -2489,8 +2728,10 @@ namespace MIDRetail.Business
 				emei.DateRange.RelativeTo = (eDateRangeRelativeTo)Convert.ToInt32(edr["CDR_RELATIVE_TO"], CultureInfo.CurrentUICulture);
 
 				emei.DateRange.SelectedDateType = eCalendarDateType.Week;
-				emei.DateRange.DisplayDate = Calendar.GetDisplayDate(emei.DateRange);
-				++entrySeq;
+                emei.DateRange.Name = Convert.ToString(edr["CDR_NAME"], CultureInfo.CurrentUICulture);
+                emei.DateRange.DisplayDate = Calendar.GetDisplayDate(emei.DateRange);
+
+                ++entrySeq;
 					
 				switch (entryType)
 				{
@@ -4363,7 +4604,8 @@ namespace MIDRetail.Business
 					hp.OTSPlanLevelType = hi.OTSPlanLevelType;
 				if (hp.HierarchyType == eHierarchyType.organizational)
 				{
-					NodeInfo ni = GetNodeCacheByRID(hp.HierarchyRootNodeRID);
+					//NodeInfo ni = GetNodeCacheByRID(hp.HierarchyRootNodeRID);
+                    NodeInfo ni = GetNodeInfoByRID(hp.HierarchyRootNodeRID);
 					hp.OTSPlanLevelHierarchyLevelSequence = ni.OTSPlanLevelHierarchyLevelSequence;
 				}
 					return hp;
@@ -4591,14 +4833,16 @@ namespace MIDRetail.Business
 							// BEGIN TT#1399 - GRT - Alternate Hierarchy Inherit Node Properties
                             ni.ApplyHNRIDFrom = Include.NoRID;
                             // END TT#1399 
-							SetNodeCacheByRID(ni.NodeRID, ni);
+                            ni.DigitalAssetKey = Include.Undefined;
+                            SetNodeCacheByRID(ni.NodeRID, ni);
 							SetNodeRIDByID(ni.NodeID, ni.NodeRID);
 							break;
 						}
 						case eChangeType.update: 
 						{
 							HierarchyInfo hi = (HierarchyInfo)_hierarchiesByRID[hp.Key];
-							NodeInfo ni = GetNodeCacheByRID(hp.HierarchyRootNodeRID);
+							//NodeInfo ni = GetNodeCacheByRID(hp.HierarchyRootNodeRID);
+                            NodeInfo ni = GetNodeInfoByRID(hp.HierarchyRootNodeRID);
 							_hierarchiesByID.Remove(hi.HierarchyID);
 							RemoveNodeRIDByID(ni.NodeID);
 
@@ -4722,7 +4966,8 @@ namespace MIDRetail.Business
                         case eChangeType.markedForDelete:
                         {
                             HierarchyInfo hi = (HierarchyInfo)_hierarchiesByRID[hp.Key];
-                            NodeInfo ni = GetNodeCacheByRID(hp.HierarchyRootNodeRID);
+                            //NodeInfo ni = GetNodeCacheByRID(hp.HierarchyRootNodeRID);
+                            NodeInfo ni = GetNodeInfoByRID(hp.HierarchyRootNodeRID);
                             _hierarchiesByID.Remove(hi.HierarchyID);
                             //RemoveNodeRIDByID(ni.NodeID);
                             hi.HierarchyID = hp.HierarchyID;
@@ -4736,7 +4981,17 @@ namespace MIDRetail.Business
                         }
                         // End TT#3630 - JSmith - Delete My Hierarchy
 					}
-					return hp;
+
+                    // Begin TT#2131-MD - JSmith - Halo Integration
+                    if (hp.HierarchyType == eHierarchyType.organizational
+                        && (hp.HierarchyChangeType == eChangeType.add
+                        || hp.HierarchyChangeType == eChangeType.update))
+                    {
+                        ExtractHierarchyDefinition(hp);
+                    }
+                    // End TT#2131-MD - JSmith - Halo Integration
+
+                    return hp;
 				}
 				catch ( Exception ex )
 				{
@@ -5729,15 +5984,18 @@ namespace MIDRetail.Business
 		/// <returns>An instance of the HierarchyNodeProfile class containing the information for the node</returns>
 		//Begin Track #5378 - color and size not qualified
         //static public HierarchyNodeProfile GetNodeData(int nodeRID, bool chaseHierarchy)
-        static public HierarchyNodeProfile GetNodeData(int nodeRID, bool chaseHierarchy, bool aBuildQualifiedID) 
+        static public HierarchyNodeProfile GetNodeData(int nodeRID, bool chaseHierarchy, bool aBuildQualifiedID, NodeInfo ni = null) 
 		//End Track #5378
 		{
 			try
 			{
-				NodeInfo ni;
+				/*NodeInfo ni*/;
 				try
 				{
-					ni = GetNodeInfoByRID(nodeRID, false);
+                    if (ni == null)
+                    {
+                        ni = GetNodeInfoByRID(nodeRID, false);
+                    }
 					HierarchyNodeProfile hnp = new HierarchyNodeProfile(ni.NodeRID);
 					if (ni.NodeRID <= 0)
 					{
@@ -5767,7 +6025,8 @@ namespace MIDRetail.Business
                     // Begin TT#5185 - JSmith - Error creating Group
 					// BEGIN TT#1399
                     hnp.ApplyHNRIDFrom = ni.ApplyHNRIDFrom;
-                  // END TT#1399
+                    // END TT#1399
+                    hnp.DigitalAssetKey = ni.DigitalAssetKey;
 					hnp.Parents = GetParentRIDs(ni.NodeRID, ni.HomeHierarchyRID);
 					if (hnp.Parents.Count > 0)
 					{
@@ -5845,6 +6104,7 @@ namespace MIDRetail.Business
                     // Begin TT#988 - JSmith - Add Active Only indicator to Override Low Level Model
                     hnp.Active = ni.Active;
                     // End TT#988
+                    hnp.DigitalAssetKey = ni.DigitalAssetKey;
 					HierarchyInfo hi = GetHierarchyInfoByRID(ni.HomeHierarchyRID, true);
 					hnp.HomeHierarchyType = hi.HierarchyType;
                     // Begin Track #5005 - JSmith - Explorer Organization
@@ -5981,7 +6241,8 @@ namespace MIDRetail.Business
                             hnp.PurgeHtReserveAfter == Include.Undefined ||
                             hnp.PurgeHtVSWAfter == Include.Undefined ||
                             hnp.PurgeHtWorkUpTotAfter == Include.Undefined ||
-                            hnp.ApplyHNRIDFrom == Include.Undefined // TT#1401                            
+                            hnp.ApplyHNRIDFrom == Include.Undefined || // TT#1401  
+                            hnp.DigitalAssetKey == Include.Undefined
                             )
                         {
                             // look up hierarchy by checking ancestor list
@@ -6058,6 +6319,13 @@ namespace MIDRetail.Business
                                     hnp.ApplyFromInherited = eInheritedFrom.Node;
                                 }
                                 // END TT#1399
+
+                                if (hnp.DigitalAssetKey == Include.Undefined && ni.DigitalAssetKey != Include.Undefined)
+                                {
+                                    hnp.DigitalAssetKey = ni.DigitalAssetKey;
+                                    hnp.ApplyFromInheritedFrom = ni.NodeRID;
+                                    hnp.ApplyFromInherited = eInheritedFrom.Node;
+                                }
 
                                 // check for Daily history purge criteria
                                 if (hnp.PurgeDailyHistoryAfter == Include.Undefined)
@@ -6657,7 +6925,7 @@ namespace MIDRetail.Business
                                                     assortmentNode.OTSPlanLevelHierarchyLevelSequence, assortmentNode.OTSPlanLevelAnchorNode,
                                                     assortmentNode.OTSPlanLevelMaskField, assortmentNode.OTSPlanLevelMask,
                                                     assortmentNode.IsVirtual, assortmentNode.Purpose, assortmentNode.NodeID, assortmentNode.NodeName,
-                                                    assortmentNode.NodeDescription, assortmentNode.ProductTypeIsOverridden, assortmentNode.ProductType);
+                                                    assortmentNode.NodeDescription, assortmentNode.ProductTypeIsOverridden, assortmentNode.ProductType, assortmentNode.DigitalAssetKey);
                         // Begin TT#1453
                         mhd.CommitData();
                         NodeUpdateProfileInfo(assortmentNode);
@@ -6788,7 +7056,7 @@ namespace MIDRetail.Business
                                                         placeholderStyle.OTSPlanLevelHierarchyLevelSequence, placeholderStyle.OTSPlanLevelAnchorNode,
                                                         placeholderStyle.OTSPlanLevelMaskField, placeholderStyle.OTSPlanLevelMask,
                                                         placeholderStyle.IsVirtual, placeholderStyle.Purpose, placeholderStyle.NodeID, placeholderStyle.NodeName,
-                                                        placeholderStyle.NodeDescription, placeholderStyle.ProductTypeIsOverridden, placeholderStyle.ProductType);
+                                                        placeholderStyle.NodeDescription, placeholderStyle.ProductTypeIsOverridden, placeholderStyle.ProductType, placeholderStyle.DigitalAssetKey);
                             // End TT#1453
                             NodeUpdateProfileInfo(placeholderStyle);
                             placeholderStyles.Add(placeholderStyle);
@@ -6989,7 +7257,7 @@ namespace MIDRetail.Business
                                                             connectorNode.OTSPlanLevelHierarchyLevelSequence, connectorNode.OTSPlanLevelAnchorNode,
                                                             connectorNode.OTSPlanLevelMaskField, connectorNode.OTSPlanLevelMask,
                                                             connectorNode.IsVirtual, connectorNode.Purpose, connectorNode.NodeID, connectorNode.NodeName,
-                                                            connectorNode.NodeDescription, connectorNode.ProductTypeIsOverridden, connectorNode.ProductType);
+                                                            connectorNode.NodeDescription, connectorNode.ProductTypeIsOverridden, connectorNode.ProductType, connectorNode.DigitalAssetKey);
                                 // End TT#1453
                                 NodeUpdateProfileInfo(connectorNode);
                             }
@@ -8177,7 +8445,8 @@ namespace MIDRetail.Business
 				hierarchy_rwl.AcquireWriterLock(WriterLockTimeOut);
 				try
 				{
-					switch (hnp.NodeChangeType)
+                    NodeInfo ni = null;  // TT#2131-MD - JSmith - Halo Integration
+                    switch (hnp.NodeChangeType)
 					{
 						case eChangeType.none: 
 						{
@@ -8185,8 +8454,11 @@ namespace MIDRetail.Business
 						}
 						case eChangeType.add: 
 						{
-							NodeInfo ni = new NodeInfo();
-							ni.NodeRID = hnp.Key;
+                            // Begin TT#2131-MD - JSmith - Halo Integration
+                            //NodeInfo ni = new NodeInfo();
+                            ni = new NodeInfo();
+                            // End TT#2131-MD - JSmith - Halo Integration
+                            ni.NodeRID = hnp.Key;
 							ni.NodeID = hnp.NodeID;
 							ni.NodeName = hnp.NodeName;
 							ni.NodeDescription = hnp.NodeDescription;
@@ -8250,12 +8522,13 @@ namespace MIDRetail.Business
                             ni.Purpose = hnp.Purpose;
                             ni.DeleteNode = hnp.DeleteNode;  // Begin TT#3630 - JSmith - Delete My Hierarchy
                             // Begin TT#988 - JSmith - Add Active Only indicator to Override Low Level Model
-                            hnp.Active = ni.Active;
+                            ni.Active = hnp.Active;
                             // End TT#988
                             // BEGIN TT#1399
                             ni.ApplyHNRIDFrom = hnp.ApplyHNRIDFrom;
                             // END TT#1399
-							SetNodeCacheByRID(ni.NodeRID, ni);
+                            ni.DigitalAssetKey = hnp.DigitalAssetKey;
+                            SetNodeCacheByRID(ni.NodeRID, ni);
 							if (hnp.LevelType == eHierarchyLevelType.Color ||   
 								hnp.LevelType == eHierarchyLevelType.Size)      
 							{
@@ -8275,7 +8548,9 @@ namespace MIDRetail.Business
 							if (ni.HomeHierarchyLevel > 0)
 							{
 								HierarchyInfo hi = GetHierarchyInfoByRID(ni.HomeHierarchyRID, false);
-								if (hi.HierarchyType == eHierarchyType.organizational)
+                                hnp.HomeHierarchyType = hi.HierarchyType;  // TT#2131-MD - JSmith - Halo Integration
+
+                                if (hi.HierarchyType == eHierarchyType.organizational)
 								{
 									HierarchyLevelInfo hli = (HierarchyLevelInfo)hi.HierarchyLevels[ni.HomeHierarchyLevel];
 									//Begin TT#988 - JScott - Add Active Only indicator to Override Low Level Model
@@ -8295,10 +8570,13 @@ namespace MIDRetail.Business
 						}
 						case eChangeType.update: 
 						{
-							NodeInfo ni = GetNodeInfoByRID(hnp.Key);
-							
-							if (hnp.LevelType == eHierarchyLevelType.Color ||   
-								hnp.LevelType == eHierarchyLevelType.Size)      
+                            // Begin TT#2131-MD - JSmith - Halo Integration
+                            //NodeInfo ni = GetNodeInfoByRID(hnp.Key);
+                            ni = GetNodeInfoByRID(hnp.Key);
+                            // End TT#2131-MD - JSmith - Halo Integration
+
+                            if (hnp.LevelType == eHierarchyLevelType.Color ||   
+							hnp.LevelType == eHierarchyLevelType.Size)      
 							{
                                 // Begin TT#634 - JSmith - Color rename
                                 //RemoveNodeRIDByID(hnp.QualifiedNodeID);
@@ -8447,12 +8725,13 @@ namespace MIDRetail.Business
                             ni.Purpose = hnp.Purpose;
                             ni.DeleteNode = hnp.DeleteNode;  // Begin TT#3630 - JSmith - Delete My Hierarchy
                             // Begin TT#988 - JSmith - Add Active Only indicator to Override Low Level Model
-                            hnp.Active = ni.Active;
+                            ni.Active = hnp.Active;
                             // End TT#988
 							// BEGIN TT#1399
                             ni.ApplyHNRIDFrom = hnp.ApplyHNRIDFrom;
                             // END TT#1399
-							SetNodeCacheByRID(hnp.Key, ni);
+                            ni.DigitalAssetKey = hnp.DigitalAssetKey;
+                            SetNodeCacheByRID(hnp.Key, ni);
 							if (hnp.LevelType == eHierarchyLevelType.Color ||   
 								hnp.LevelType == eHierarchyLevelType.Size)      
 							{
@@ -8470,11 +8749,13 @@ namespace MIDRetail.Business
 						}
 						case eChangeType.delete: 
 						{
-							//Begin TT#483 - JScott - Add Size Lost Sales criteria and processing
-							//Begin TT#155 - JScott - Add Size Curve info to Node Properties
-							//DeleteNodeData(hnp.Key, true, false, false, false, false, false, false, hnp.QualifiedNodeID);
-							//DeleteNodeData(hnp.Key, true, false, false, false, false, false, false, false, false, false, hnp.QualifiedNodeID);
-							//End TT#155 - JScott - Add Size Curve info to Node Properties
+                            ni = GetNodeInfoByRID(hnp.Key);  // TT#2131-MD - JSmith - Halo Integration
+
+                            //Begin TT#483 - JScott - Add Size Lost Sales criteria and processing
+                            //Begin TT#155 - JScott - Add Size Curve info to Node Properties
+                            //DeleteNodeData(hnp.Key, true, false, false, false, false, false, false, hnp.QualifiedNodeID);
+                            //DeleteNodeData(hnp.Key, true, false, false, false, false, false, false, false, false, false, hnp.QualifiedNodeID);
+                            //End TT#155 - JScott - Add Size Curve info to Node Properties
                             // Begin TT#3982 - JSmith - Node Properties – Stock Min/Max Apply to lower levels not working
                             //DeleteNodeData(hnp.Key, true, false, false, false, false, false, false, false, false, false, false, false, false, false, hnp.QualifiedNodeID);
                             DeleteNodeData(hnp.Key, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, hnp.QualifiedNodeID);
@@ -8491,7 +8772,10 @@ namespace MIDRetail.Business
 						// Begin TT#3630 - JSmith - Delete My Hierarchy
                         case eChangeType.markedForDelete:
                         {
-                            NodeInfo ni = GetNodeInfoByRID(hnp.Key);
+                            // Begin TT#2131-MD - JSmith - Halo Integration
+                            //NodeInfo ni = GetNodeInfoByRID(hnp.Key);
+                            ni = GetNodeInfoByRID(hnp.Key);
+                            // End TT#2131-MD - JSmith - Halo Integration
 
                             RemoveNodeRIDByID(ni.NodeID);
 
@@ -8505,8 +8789,30 @@ namespace MIDRetail.Business
                         }
 						// End TT#3630 - JSmith - Delete My Hierarchy
 					}
-				}
-				catch ( Exception ex )
+
+                    // Begin TT#2131-MD - JSmith - Halo Integration
+                    if (hnp.HomeHierarchyType == eHierarchyType.organizational
+                        && hnp.Purpose == ePurpose.Default)
+                    {
+                        
+                        if (hnp.NodeChangeType == eChangeType.add
+                         || hnp.NodeChangeType == eChangeType.update)
+                        {
+                            List<NodeInfo> nodeList = new List<NodeInfo>();
+                            nodeList.Add(ni);
+                            ExtractHierarchyNodes(nodeList);
+                        }
+                        else if (hnp.NodeChangeType == eChangeType.markedForDelete
+                            || hnp.NodeChangeType == eChangeType.delete)
+                        {
+                            List<HierarchyNodeProfile> nodeList = new List<HierarchyNodeProfile>();
+                            nodeList.Add(hnp);
+                            ExtractDeleteHierarchyNodes(nodeList);
+                        }
+                    }
+                    // End TT#2131-MD - JSmith - Halo Integration
+                }
+                catch ( Exception ex )
 				{
                     // Begin TT#189 - RMatelic - Remove excessive entries from the Audit - Add if... condition
                     if (Audit != null)
@@ -11340,7 +11646,7 @@ namespace MIDRetail.Business
 								modelEntry.DateRange = eme.DateRange;
 								emi.PriorityShippingEntries.Add(modelEntry);
 							}
-							emi.UpdateDateTime = DateTime.Now;
+							emi.UpdateDateTime = DateTime.Now;  // TT#2131-MD - JSmith - Halo Integration
 							LoadEligibilityModelDates(emi);
 							_eligModelsByRID.Add(emi.ModelRID, emi);
 							_eligModelsByID.Add(emi.ModelID, emi.ModelRID);
@@ -15340,7 +15646,8 @@ namespace MIDRetail.Business
                                     sei.StkLeadWeeks = sep.StkLeadWeeks;
                                 }
 								//END TT#44 - MD - DOConnell - New Store Forecasting Enhancement
-							}
+                                sei.UpdateDate = sep.UpdateDate;   // TT#2131-MD - JSmith - Halo Integration
+                            }
 						}
 					}
 				}
@@ -15513,7 +15820,14 @@ namespace MIDRetail.Business
 						}
 						storeProfile = (StoreProfile)storeList.FindKey(sei.StoreRID);
 
-						// check eligibility
+                        // Begin TT#2131-MD - JSmith - Halo Integration
+                        if (sei.UpdateDate > sep.UpdateDate)
+                        {
+                            sep.UpdateDate = sei.UpdateDate;
+                        }
+                        // End TT#2131-MD - JSmith - Halo Integration
+
+                        // check eligibility
 						if (!sep.EligIsSet)
 						{
 							if ((sep.EligType == eEligibilitySettingType.None && sei.EligModelRID > 0) ||
@@ -15778,6 +16092,7 @@ namespace MIDRetail.Business
 						if (forCopy)
 						{
 							sep.StoreEligChangeType = eChangeType.add;
+                            sep.UpdateDate = DateTime.Now;  // TT#2131-MD - JSmith - Halo Integration
 						}
 
 						if (setSomething &&
@@ -15942,7 +16257,13 @@ namespace MIDRetail.Business
                       sei.StkLeadWeeks = Convert.ToInt32(dr["STOCK_LEAD_WEEKS"], CultureInfo.CurrentUICulture);
                     }
                     //END TT#44 - MD - DOConnell - New Store Forecasting Enhancement
-					nei.StoreEligibility.Add(sei.StoreRID, sei);
+                    // Begin TT#2131-MD - JSmith - Halo Integration
+                    if (dr["UPDATE_DATE"] != DBNull.Value)
+                    {
+                        sei.UpdateDate = Convert.ToDateTime(dr["UPDATE_DATE"], CultureInfo.CurrentUICulture);
+                    }
+                    // End TT#2131-MD - JSmith - Halo Integration
+                    nei.StoreEligibility.Add(sei.StoreRID, sei);
 				}
 			}
 			catch (Exception ex)

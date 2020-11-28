@@ -6303,6 +6303,12 @@ namespace MIDRetail.ForecastComputations
 					while (aInventoryValue > 0 && FWOS < 52)
 					{
 						sales = GetOperandCellValue(aScheduleEntry, aGetCellMode, aSetCellMode, aPlanCellRef, aSalesVar, time, true);
+						// Begin TT#1954-MD - JSmith - Assortment Performance
+                        if (aScheduleEntry.ComputationFormulaReturnType == eComputationFormulaReturnType.Pending)
+                        {
+                            return 0;
+                        }
+						// End TT#1954-MD - JSmith - Assortment Performance
 
 						if (sales == 0)
 						{

@@ -6,7 +6,7 @@ using System.Globalization;
 using MIDRetail.Common;
 using MIDRetail.Data;
 using MIDRetail.DataCommon;
-
+using Logility.ROWebSharedTypes;
 
 namespace MIDRetail.Business.Allocation
 {
@@ -499,6 +499,19 @@ namespace MIDRetail.Business.Allocation
 		//========
 		// METHODS
 		//========
+
+        // Begin TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+        override internal bool CheckForUserData()
+        {
+            if (CheckAllocationCriteriaForUserData(_allocationCriteria))
+            {
+                return true;
+            }
+
+            return false;
+        }
+        // End TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+
 		/// <summary>
 		/// Load tables from the data source tables.
 		/// </summary>
@@ -979,5 +992,34 @@ namespace MIDRetail.Business.Allocation
             return true;
         }
         // End TT#3572 - JSmith - Security- Version set to Deny - Ran a velocity method with this version and receive a Null reference error.
-	}
+
+        // BEGIN RO-642 - RDewey
+        override public FunctionSecurityProfile GetFunctionSecurity()
+        {
+            if (this.GlobalUserType == eGlobalUserType.Global)
+            {
+                return SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.AllocationMethodsGlobalGroupAllocation);
+            }
+            else
+            {
+                return SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.AllocationMethodsUserGroupAllocation);
+            }
+
+        }
+        override public ROMethodProperties MethodGetData(bool processingApply)
+        {
+            throw new NotImplementedException("MethodGetData is not implemented");
+        }
+
+        override public bool MethodSetData(ROMethodProperties methodProperties, bool processingApply)
+        {
+            throw new NotImplementedException("MethodSaveData is not implemented");
+        }
+
+        override public ROMethodProperties MethodCopyData()
+        {
+            throw new NotImplementedException("MethodCopyData is not implemented");
+        }
+        // END RO-642 - RDewey
+    }
 }

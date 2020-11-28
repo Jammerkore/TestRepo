@@ -104,6 +104,11 @@ namespace MIDRetail.Common
             if (_messageThread != null &&
                 _messageThread.IsAlive)
             {
+                // wait until thread done sleeping
+                while (_messageThread.ThreadState == System.Threading.ThreadState.WaitSleepJoin)
+                {
+
+                }
                 _messageThread.Abort();
                 // wait for thread to exit
                 _messageThread.Join();
@@ -162,7 +167,11 @@ namespace MIDRetail.Common
 
                     if (_listenForMessages)
                     {
-                        System.Threading.Thread.Sleep(_messagingInterval);
+                        if (System.Threading.Thread.CurrentThread.ThreadState != System.Threading.ThreadState.Aborted
+                            || System.Threading.Thread.CurrentThread.ThreadState != System.Threading.ThreadState.AbortRequested)
+                        {
+                            System.Threading.Thread.Sleep(_messagingInterval);
+                        }
                     }
                 }
 

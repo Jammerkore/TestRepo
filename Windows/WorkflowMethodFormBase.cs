@@ -166,7 +166,8 @@ namespace MIDRetail.Windows
 			{
 				throw new Exception("SessionAddressBlock is required");
 			}
-			if (aEAB == null)
+			if (aEAB == null
+                && MIDEnvironment.isWindows)
 			{
 				throw new Exception("ExplorerAddressBlock is required");
 			}
@@ -356,16 +357,20 @@ namespace MIDRetail.Windows
 			{
 				if (_dtMethods == null)
 				{
-//Begin Modification - KJohnson - Rollup
-//Begin Modification - KJohnson - Global Unlock
-//Begin Modification - JScott - Export Method - Part 10
-//					_dtMethods = MIDText.GetLabels((int) eMethodType.OTSPlan, (int)eMethodType.ForecastModifySales);
-                    _dtMethods = MIDText.GetLabels((int)eMethodType.OTSPlan, (int)eMethodType.Rollup);
-//End Modification - JScott - Export Method - Part 10
-//End Modification - KJohnson - Global Unlock
-//End Modification - KJohnson - Rollup
+                    //Begin Modification - KJohnson - Rollup
+                    //Begin Modification - KJohnson - Global Unlock
+                    //Begin Modification - JScott - Export Method - Part 10
+                    //					_dtMethods = MIDText.GetLabels((int) eMethodType.OTSPlan, (int)eMethodType.ForecastModifySales);
+                    // Begin TT#2131-MD - JSmith - Halo Integration
+                    //_dtMethods = MIDText.GetLabels((int)eMethodType.OTSPlan, (int)eMethodType.Rollup);
+                    _dtMethods = MIDText.GetLabels((int)eMethodType.OTSPlan, (int)eMethodType.PlanningExtract);
+                    // Ebd TT#2131-MD - JSmith - Halo Integration
+
+                    //End Modification - JScott - Export Method - Part 10
+                    //End Modification - KJohnson - Global Unlock
+                    //End Modification - KJohnson - Rollup
                 }
-				return _dtMethods;
+                return _dtMethods;
 			}
 		}
 		
@@ -2180,6 +2185,14 @@ namespace MIDRetail.Windows
                         }
                     }
                     // End TT#231  
+                    // Begin TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+                    // Do not allow to change Global/User if contains user data
+                    if (_ABM.ContainsUserData == true)
+                    {
+                        formSaveAs.EnableGlobal = false;
+                        formSaveAs.EnableUser = false;
+                    }
+                    // End TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
 				}
 				else
 				{
@@ -2196,6 +2209,14 @@ namespace MIDRetail.Windows
 						formSaveAs.isUserChecked = true;
 					}
                     formSaveAs.SaveAsMethod = MIDText.GetTextOnly(eMIDTextCode.lbl_Workflow);
+                    // Begin TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+                    // Do not allow to change Global/User if contains user data
+                    if (_ABW.ContainsUserData == true)
+                    {
+                        formSaveAs.EnableGlobal = false;
+                        formSaveAs.EnableUser = false;
+                    }
+                    // End TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
 				}
 
                 // Begin MID Track #5857 - JSmith - Cannot “Save As” to a User Method or Workflow
@@ -2480,14 +2501,15 @@ namespace MIDRetail.Windows
 					else
 					{
 						copyCntr++;
-						if (copyCntr > 1)
-						{
-							newName = "Copy" + copyCntr.ToString(CultureInfo.CurrentUICulture) + " of " + name;
-						}
-						else
-						{
-							newName = "Copy of " + name;
-						}
+						//if (copyCntr > 1)
+						//{
+						//	newName = "Copy" + copyCntr.ToString(CultureInfo.CurrentUICulture) + " of " + name;
+						//}
+						//else
+						//{
+						//	newName = "Copy of " + name;
+						//}
+                        newName = Include.GetNewName(name: name, index: copyCntr);
 						if (isMethod)
 						{
 							_ABM.Name = newName;
@@ -2574,14 +2596,15 @@ namespace MIDRetail.Windows
 					else
 					{
 						copyCntr++;
-						if (copyCntr > 1)
-						{
-							newName = "Copy" + copyCntr.ToString(CultureInfo.CurrentUICulture) + " of " + name;
-						}
-						else
-						{
-							newName = "Copy of " + name;
-						}
+						//if (copyCntr > 1)
+						//{
+						//	newName = "Copy" + copyCntr.ToString(CultureInfo.CurrentUICulture) + " of " + name;
+						//}
+						//else
+						//{
+						//	newName = "Copy of " + name;
+						//}
+                        newName = Include.GetNewName(name: name, index: copyCntr);
 						if (isMethod)
 						{
 							_ABM.Name = newName;
@@ -2707,6 +2730,12 @@ namespace MIDRetail.Windows
 					{
 						UpdateExplorer(_ABM);
 					}
+                    // Begin TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+                    else
+                    {
+                        UpdateExplorerNode();
+                    }
+                    // End TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
 				}
 				else
 				{
@@ -2715,6 +2744,12 @@ namespace MIDRetail.Windows
 					{
 						UpdateExplorer(_ABW);
 					}
+                    // Begin TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+                    else
+                    {
+                        UpdateExplorerNode();
+                    }
+                    // End TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
 				}
                 // Begin TT#231 - RMatelic - Add Views to Velocity Matrix and Store Detail
                 if (SaveUserGridView)
@@ -3807,6 +3842,7 @@ namespace MIDRetail.Windows
 			{
 				explorerNode = _explorerNode;
 			}
+            explorerNode.IsMethodOrWorkflowResolved = false;   // TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
 			PropertyChangeEventArgs ea = new PropertyChangeEventArgs(aABM, explorerNode);
 			if (OnPropertyChangeHandler != null)  // throw event to explorer to make changes
 			{
@@ -3825,12 +3861,29 @@ namespace MIDRetail.Windows
 			{
 				explorerNode = _explorerNode;
 			}
+            explorerNode.IsMethodOrWorkflowResolved = false;   // TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
 			PropertyChangeEventArgs ea = new PropertyChangeEventArgs(aABW, explorerNode);
 			if (OnPropertyChangeHandler != null)  // throw event to explorer to make changes
 			{
 				OnPropertyChangeHandler(this, ea);
 			}
 		}
+
+        // Begin TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+        public void UpdateExplorerNode()
+        {
+            MIDWorkflowMethodTreeNode explorerNode = null;
+            if (_explorerNode == null)
+            {
+                explorerNode = GetExplorerNode();
+            }
+            else
+            {
+                explorerNode = _explorerNode;
+            }
+            explorerNode.IsMethodOrWorkflowResolved = false;
+        }
+        // End TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
 
 		private void WorkflowMethodFormBase_Closing(object sender, CancelEventArgs e)
 		{

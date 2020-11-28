@@ -2107,19 +2107,23 @@ namespace MIDRetail.Windows
 				foundForm = false;
 				frm = null;
 
-				foreach (Form childForm in this.ParentForm.MdiChildren) 
-				{
-					if (childForm.GetType().Equals(aType))
-					{
-						frm = childForm;
-						foundForm = true;
+                if (this.ParentForm != null
+                    && this.ParentForm.MdiChildren != null)
+                {
+                    foreach (Form childForm in this.ParentForm.MdiChildren)
+                    {
+                        if (childForm.GetType().Equals(aType))
+                        {
+                            frm = childForm;
+                            foundForm = true;
 
-						if (!aGetLastForm)
-						{
-							break;
-						}
-					}
-				}
+                            if (!aGetLastForm)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                }
 
 				if (aCreateNewForm && !foundForm)
 				{

@@ -2,6 +2,7 @@ net stop MIDRetailControlService
 net stop MIDRetailHierarchyService
 net stop MIDRetailSchedulerService
 net stop MIDRetailStoreService
+net stop MIDRetailJobService
 
 cp MIDRetailControlService.exe.config.batch MIDRetailControlService.exe.config
 
@@ -9,4 +10,3 @@ net start MIDRetailControlService
 net start MIDRetailHierarchyService
 net start MIDRetailSchedulerService
 net start MIDRetailStoreService
-

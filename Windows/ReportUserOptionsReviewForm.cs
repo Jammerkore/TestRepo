@@ -29,7 +29,7 @@ namespace MIDRetail.Windows
         }
         private void ViewReport(object sender, ReportUserOptionsReview.ViewReportEventArgs e)
         {
-            Windows.CrystalReports.UserOptionsReview userOptionsReviewReport = new Windows.CrystalReports.UserOptionsReview();
+            //Windows.CrystalReports.UserOptionsReview userOptionsReviewReport = new Windows.CrystalReports.UserOptionsReview();
             System.Data.DataSet userOptionsReviewDataSet = MIDEnvironment.CreateDataSet("UserOptionsReviewDataSet");
             ReportData reportData = new ReportData();
             reportData.UserOptionsReview_Report(userOptionsReviewDataSet, e.auditLoggingLevel, e.forecastMonitor, e.salesMonitor, e.dcfulfillmentMonitor);
@@ -133,11 +133,24 @@ namespace MIDRetail.Windows
                 dr["DCFULFILLMENT_MONITOR_TEXT"] = dcfulfillmentMonitorActiveText;
             }
 
-            userOptionsReviewReport.SetDataSource(userOptionsReviewDataSet);
-            userOptionsReviewReport.SetParameterValue("@DEFAULT_AUDIT_LEVEL", _SAB.ClientServerSession.Audit.GetDefaultLoggingLevel().ToString());  //Must set the parameter AFTER setting the data source
-            
-            frmReportViewer viewer = new frmReportViewer(_SAB);
-            viewer.ReportSource = userOptionsReviewReport;
+            //userOptionsReviewReport.SetDataSource(userOptionsReviewDataSet);
+            //userOptionsReviewReport.SetParameterValue("@DEFAULT_AUDIT_LEVEL", _SAB.ClientServerSession.Audit.GetDefaultLoggingLevel().ToString());  //Must set the parameter AFTER setting the data source
+
+            //frmReportViewer viewer = new frmReportViewer(_SAB, eReportType.UserOptionsReview);
+            List<ReportInfo> reports = new List<ReportInfo>();
+            reports.Add(new ReportInfo(aReportSource: userOptionsReviewDataSet,
+                reportType: eReportType.UserOptionsReview,
+                reportName: "UserOptions",
+                reportTitle: "Logility - RO - User Options Review" + "                               System Audit Logging Level:" + _SAB.ClientServerSession.Audit.GetDefaultLoggingLevel().ToString(),
+                reportComment: "",
+                reportInformation: "",
+                displayValue: "User Options Review"
+                ));
+            frmReportViewer viewer = new frmReportViewer(aSAB: _SAB, reports: reports);
+            //frmReportViewer viewer = new frmReportViewer(aSAB: _SAB, reportType: eReportType.UserOptionsReview, reportName: "UserOptions", reportTitle: "Logility - RO - User Options Review" + "                               System Audit Logging Level:" + _SAB.ClientServerSession.Audit.GetDefaultLoggingLevel().ToString());
+            //viewer.ReportSource = userOptionsReviewReport;
+            //viewer.ReportSource = userOptionsReviewDataSet;
+
             viewer.Text = "User Options Review Report"; 
             viewer.MdiParent = this.ParentForm;
             viewer.Anchor = AnchorStyles.Left | AnchorStyles.Top;

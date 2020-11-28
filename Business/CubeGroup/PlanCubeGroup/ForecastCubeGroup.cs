@@ -518,8 +518,14 @@ namespace MIDRetail.Business
 			}
 		}
 
-		// Begin Track #5940 stodd
-		override public void CloseCubeGroup()
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        override public void ExtractCubeGroup(ExtractOptions aExtractOptions)
+        {
+        }
+        // End TT#2131-MD - JSmith - Halo Integration
+
+        // Begin Track #5940 stodd
+        override public void CloseCubeGroup()
 		{
 			CloseCubeGroup(false);
 		}

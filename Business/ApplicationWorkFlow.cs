@@ -28,6 +28,8 @@ namespace MIDRetail.Business
 		private eChangeType				_workflow_Change_Type;
 		private ProfileList				_workflow_Steps;
         private SessionAddressBlock     _SAB;
+        private bool? _containsUserData = null;   // TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+        private eLockStatus _lockStatus;
 	
 
 		//=============
@@ -61,11 +63,106 @@ namespace MIDRetail.Business
 			{
 				Populate(aWorkflowRID);
 			}
+            _lockStatus = eLockStatus.Undefined;
 		}
 
 		//===========
 		// PROPERTIES
 		//===========
+        // Begin TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+        /// <summary>
+        /// Gets a flag identifying if the workflow or method contains user data
+        /// </summary>
+        public bool? ContainsUserData
+        {
+            get 
+            {
+                if (_containsUserData == null)
+                {
+                    DetermineIfContainsUserData();
+                }
+                return _containsUserData; 
+            }
+            set 
+            { 
+                _containsUserData = value; 
+            }
+        }
+
+        /// <summary>
+        /// Determines if filter is a user filter
+        /// </summary>
+        /// <param name="aFilterRID">Filter Key</param>
+        /// <returns></returns>
+        public bool IsFilterUser(int aFilterRID)
+        {
+            if (aFilterRID > Include.UndefinedStoreFilter)
+            {
+                FilterData fd = new FilterData();
+                if (fd.FilterGetOwner(aFilterRID) != Include.GlobalUserRID)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Determines if store group/attributes is a user attribute
+        /// </summary>
+        /// <param name="aStoreGroupRID">Store Group Key</param>
+        /// <returns></returns>
+        public bool IsStoreGroupUser(int aStoreGroupRID)
+        {
+            if (aStoreGroupRID > 1)
+            {
+                if (StoreMgmt.StoreGroup_Get(aStoreGroupRID).OwnerUserRID != Include.GlobalUserRID)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Determines if a hierarchy is a user hierarchy 
+        /// </summary>
+        /// <param name="aHierarchyRID">Hierarchy key</param>
+        /// <returns></returns>
+        public bool IsHierarchyUser(int aHierarchyRID)
+        {
+            if (aHierarchyRID > 1)
+            {
+                if (SAB.HierarchyServerSession.GetHierarchyOwner(aHierarchyRID) != Include.GlobalUserRID)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Determines if a node in a hierarchy is from a user hierarchy
+        /// </summary>
+        /// <param name="aHierarchyNodeRID">Node key</param>
+        /// <returns></returns>
+        public bool IsHierarchyNodeUser(int aHierarchyNodeRID)
+        {
+            if (aHierarchyNodeRID > 1)
+            {
+                if (SAB.HierarchyServerSession.GetNodeOwner(aHierarchyNodeRID) != Include.GlobalUserRID)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        // End TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+
         /// <summary>
         /// Gets the SessionAddressBlock.
         /// </summary>
@@ -249,9 +346,41 @@ namespace MIDRetail.Business
 			}
 		}
 
+        /// <summary>
+		/// Gets or set Workflow lock status
+		/// </summary>
+		public eLockStatus LockStatus
+        {
+            get
+            {
+                return _lockStatus;
+            }
+            set
+            {
+                _lockStatus = value;
+            }
+        }
+
 		//========
 		// Methods
 		//========
+
+        // Begin TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+        internal void DetermineIfContainsUserData()
+        {
+            if (GlobalUserType == eGlobalUserType.User)
+            {
+                _containsUserData = CheckForUserData();
+            }
+            else
+            {
+                _containsUserData = false;
+            }
+        }
+
+        abstract internal bool CheckForUserData();
+        // End TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+		
 		private void Populate(int aWorkflowRID)
 		{
 			WorkflowBaseData wb = new WorkflowBaseData();
@@ -333,6 +462,9 @@ namespace MIDRetail.Business
 						wb.DeleteWorkflow();
 						break;
 				}
+                // Begin TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+                _containsUserData = null;
+                // End TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
 			}
 			catch (Exception e)
 			{
@@ -374,8 +506,10 @@ namespace MIDRetail.Business
 		/// Clone can not be overidden in an inheritance chain
 		/// </remarks>
 		abstract public ApplicationBaseWorkFlow Copy(Session aSession, bool aCloneDateRanges);
-	
-	}
+
+        abstract public FunctionSecurityProfile GetFunctionSecurity();
+
+    }
 
 	/// <summary>
 	/// Describes a workflow step instance.

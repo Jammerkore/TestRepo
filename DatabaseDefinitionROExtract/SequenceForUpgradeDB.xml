@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<DatabaseObjects xmlns="http://tempuri.org/SequenceSchema.xsd">
+
+  <!-- Put object in order you want them processed before the remaining objects. -->
+
+ 
+
+  <!-- Generate table object files. (new database only) -->
+  <!--<SQLObject Process="GenerateTableFiles"></SQLObject>-->
+  
+
+
+  <!-- When upgrading, we update the existing tables and add missing columns -->
+  <SQLObject Process="NonOrdered" Type="Table"></SQLObject>
+  <SQLObject Process="NonOrdered" Type="TableKey"></SQLObject>
+  <SQLObject Process="NonOrdered" Type="Index"></SQLObject>
+  <SQLObject Process="NonOrdered" Type="Constraint"></SQLObject>
+
+  <!-- Create the generated table objects from the files. (new database only) -->
+  <!--<SQLObject Process="NonOrdered" Type="Table" IsGenerated="Y" ></SQLObject>-->
+
+  <SQLObject Process="Single" Type="FunctionScalar" Name="UDF_ColumnAlreadyExists"></SQLObject>
+  <!--<SQLObject Process="Single" Type="UpgradeVersion" Name="ver5.2.1.04"></SQLObject>  --><!-- Index renaming -->
+  
+  <!--<SQLObject Process="NonOrdered" Type="Index" IsGenerated="Y" ></SQLObject>
+  <SQLObject Process="NonOrdered" Type="TableKey" IsGenerated="Y" ></SQLObject>
+  <SQLObject Process="NonOrdered" Type="Constraint" IsGenerated="Y" ></SQLObject>-->
+
+
+  <!-- Load text procedures and any other functions/views/procedures used when loading calcs and variables -->
+
+  <!-- Load the calcs and variables -->
+  <SQLObject Process="LoadCalcsAndVariables"></SQLObject>
+  
+  <!-- When upgrading the database, upgrade the variable tables right after you would have created them during a build new database -->
+  <SQLObject Process="UpdateVariableTables"></SQLObject>
+
+  <!-- Always regenerate stored procedures, functions, views, etc.  After the tables have been created or updated. -->
+  <SQLObject Process="GenerateNonTableFiles"></SQLObject>
+  <SQLObject Process="NonOrdered" Type="Drop" IsGenerated="Y" ></SQLObject>
+  
+  <SQLObject Process="NonOrdered" Type="Type" ></SQLObject>
+  <SQLObject Process="NonOrdered" Type="Type" IsGenerated="Y" ></SQLObject>
+  
+  <SQLObject Process="NonOrdered" Type="Trigger"></SQLObject>
+
+  <SQLObject Process="NonOrdered" Type="FunctionScalar"></SQLObject>
+  <SQLObject Process="NonOrdered" Type="FunctionScalar" IsGenerated="Y" ></SQLObject>
+
+  <SQLObject Process="NonOrdered" Type="View"></SQLObject>
+  <SQLObject Process="NonOrdered" Type="View" IsGenerated="Y" ></SQLObject>
+
+  <SQLObject Process="NonOrdered" Type="FunctionTable"></SQLObject>
+  <SQLObject Process="NonOrdered" Type="FunctionTable" IsGenerated="Y"></SQLObject>
+
+  <SQLObject Process="NonOrdered" Type="StoredProcedure"></SQLObject>
+  <SQLObject Process="NonOrdered" Type="StoredProcedure" IsGenerated="Y"></SQLObject>
+
+
+  <!-- Process all the non-applied upgrade version sql files (occurs on both an upgrade and on a new database) -->
+  <SQLObject Process="NonOrdered" Type="UpgradeVersion"></SQLObject>
+
+  <!-- Load the defaults  (new database only) -->
+  <!--<SQLObject Process="Single" Type="Script" Name="Installer_New_INITIAL_LOAD"></SQLObject>-->
+
+  <!-- Execute deferred custom conversions for new databases -->
+  <SQLObject Process="ExecuteDeferredCustomConversions"></SQLObject>
+
+
+</DatabaseObjects>
+
+

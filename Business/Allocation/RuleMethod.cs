@@ -7,6 +7,7 @@ using System.Data.SqlTypes;
 using MIDRetail.Data;
 using MIDRetail.Common;
 using MIDRetail.DataCommon;
+using Logility.ROWebSharedTypes;
 
 namespace MIDRetail.Business.Allocation
 {
@@ -289,6 +290,24 @@ namespace MIDRetail.Business.Allocation
 		//========
 		// METHODS
 		//========
+
+        // Begin TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+        override internal bool CheckForUserData()
+        {
+            if (IsFilterUser(FilterRID))
+            {
+                return true;
+            }
+
+            if (IsStoreGroupUser(SG_RID))
+            {
+                return true;
+            }
+
+            return false;
+        }
+        // End TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+
 		public override void ProcessMethod(
 			ApplicationSessionTransaction aApplicationTransaction,
 			int aStoreFilter, Profile methodProfile)
@@ -2663,7 +2682,83 @@ namespace MIDRetail.Business.Allocation
 		{
 			return true;
 		}
-		// End MID Track 4858
-	}
+        // End MID Track 4858
+
+        override public FunctionSecurityProfile GetFunctionSecurity()
+        {
+            if (this.GlobalUserType == eGlobalUserType.Global)
+            {
+                return SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.AllocationMethodsGlobalRule);
+            }
+            else
+            {
+                return SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.AllocationMethodsUserRule);
+            }
+
+        }
+        // BEGIN RO-2845 Data transport for Rule Method - get data - MGage
+        override public ROMethodProperties MethodGetData(bool processingApply)
+        {
+            ROMethodRuleProperties method = new ROMethodRuleProperties(
+                method: GetName.GetMethod(method: this),
+                description: Method_Description,
+                userKey: User_RID,
+                filter: GetName.GetFilterName(FilterRID),
+                header: GetName.GetHeader(HeaderRID, SAB: SAB),
+                isHeaderMaster: IsHeaderMaster,
+                sortDirection: SortDirection,
+                includeReserveInd: IncludeReserve,
+                componentType: ComponentType,
+                pack: GetName.GetHeaderPack(HeaderRID, PackRID),
+                color: GetName.GetColor(ColorCodeRID, SAB: SAB),
+                includeRuleMethod: IncludeRuleMethod,
+                includeQuantity: IncludeQuantity,
+                excludeRuleMethod: ExcludeRuleMethod,
+                excludeQuantity: ExcludeQuantity,
+                hdr_BC: GetName.GetHeader(HdrBCRID, SAB: SAB),
+                storeGroupLevel: GetName.GetAttributeSetName(StoreGroupLevelRID)
+                );
+            return method;
+        }
+        // END RO-2845 Data transport for Rule Method - get data  - MGage
+        override public bool MethodSetData(ROMethodProperties methodProperties, bool processingApply)
+        {
+            ROMethodRuleProperties roMethodRuleAllocationProperties = (ROMethodRuleProperties)methodProperties;
+
+            try
+            {
+                Method_Description = roMethodRuleAllocationProperties.Description;
+                User_RID = roMethodRuleAllocationProperties.UserKey;
+                _filterRID = roMethodRuleAllocationProperties.Filter.Key;
+                _headerRID = roMethodRuleAllocationProperties.Header.Key;
+                _isHeaderMaster = roMethodRuleAllocationProperties.IsHeaderMaster;
+                _sortDirection = roMethodRuleAllocationProperties.SortDirection;
+                _includeReserve = roMethodRuleAllocationProperties.IncludeReserveInd;
+                _componentType = roMethodRuleAllocationProperties.ComponentType;
+                _packRID = roMethodRuleAllocationProperties.Pack.Key;
+                _colorCodeRID = roMethodRuleAllocationProperties.Color.Key;
+                _includeRuleMethod = roMethodRuleAllocationProperties.IncludeRuleMethod;
+                _includeQuantity = roMethodRuleAllocationProperties.IncludeQuantity;
+                _excludeRuleMethod = roMethodRuleAllocationProperties.ExcludeRuleMethod;
+                _excludeQuantity = roMethodRuleAllocationProperties.ExcludeQuantity;
+                _hdrBCRID = roMethodRuleAllocationProperties.Hdr_BC.Key;
+                _storeGroupLevelRID = roMethodRuleAllocationProperties.StoreGroupLevel.Key;
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+            //throw new NotImplementedException("MethodSaveData is not implemented");
+            
+        }
+
+        override public ROMethodProperties MethodCopyData()
+        {
+            throw new NotImplementedException("MethodCopyData is not implemented");
+        }
+        // END RO-642 - RDewey
+    }
 }
 	

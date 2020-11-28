@@ -1093,6 +1093,7 @@ namespace MIDRetail.Business
         private int                 _applyHNRIDFrom;
         // END TT#1399            
         private bool _deleteNode;	// TT#3630 - JSmith - Delete My Hierarchy
+        private int _digitalAssetKey;
 
 		/// <summary>
 		/// Used to construct an instance of the class.
@@ -1130,6 +1131,7 @@ namespace MIDRetail.Business
             _applyHNRIDFrom = Include.NoRID;
             // END TT#1399 
             _deleteNode = false;  // TT#3630 - JSmith - Delete My Hierarchy
+            _digitalAssetKey = Include.Undefined;
 		}
 
 		// Properties
@@ -1492,9 +1494,15 @@ namespace MIDRetail.Business
         }
         // End // TT#3630 - JSmith - Delete My Hierarchy
 
-		#region ICloneable Members
+        public int DigitalAssetKey
+        {
+            get { return _digitalAssetKey; }
+            set { _digitalAssetKey = value; }
+        }
 
-		public object Clone()
+        #region ICloneable Members
+
+        public object Clone()
 		{
 			try
 			{
@@ -2170,6 +2178,7 @@ namespace MIDRetail.Business
 		private int					_eligibilityModelRID;
 		private bool				_useStoreEligibility;
 		private bool				_storeIneligible;
+        private DateTime _updateDate;
 		private eModifierType		_stkModType;
 		private int					_stkModModelRID;
 		private double				_stkModPct;
@@ -2200,6 +2209,7 @@ namespace MIDRetail.Business
 			_useEligibleModel			= false;
 			_eligibilityModelRID		= Include.NoRID;
 			_storeIneligible			= false;
+            _updateDate = DateTime.MinValue;
 			_useStoreEligibility		= false;
 			_stkModType					= eModifierType.None;
 			_stkModModelRID				= Include.NoRID;
@@ -2264,9 +2274,17 @@ namespace MIDRetail.Business
 			get { return _storeIneligible ; }
 			set { _storeIneligible = value; }
 		}
-		/// <summary>
-		/// Gets or sets the type of stock modifier.
+        /// <summary>
+		/// Gets or sets the date that the store is updated.
 		/// </summary>
+        public DateTime UpdateDate
+        {
+            get { return _updateDate; }
+            set { _updateDate = value; }
+        }
+        /// <summary>
+        /// Gets or sets the type of stock modifier.
+        /// </summary>
 		public eModifierType StkModType 
 		{
 			get { return _stkModType ; }

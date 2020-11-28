@@ -253,6 +253,7 @@ namespace MIDRetail.DatabaseUpdate
         private Infragistics.Win.UltraWinGrid.UltraGrid ugResults;
         private RichTextBox rtbSQL;
         private CheckBox cbModify;
+        private CheckBox cbxInstallNewROExtract;
         System.Security.Principal.WindowsIdentity currentUser = null;
         // End TT#74 MD
 
@@ -495,6 +496,7 @@ namespace MIDRetail.DatabaseUpdate
             this.txtUser = new System.Windows.Forms.TextBox();
             this.txtPassword = new System.Windows.Forms.TextBox();
             this.grpOptions = new System.Windows.Forms.GroupBox();
+            this.cbxInstallNewROExtract = new System.Windows.Forms.CheckBox();
             this.cbxUpdateDatabase = new System.Windows.Forms.CheckBox();
             this.cbxLicenceKey = new System.Windows.Forms.CheckBox();
             this.cbxIgnoreErrors = new System.Windows.Forms.CheckBox();
@@ -755,6 +757,7 @@ namespace MIDRetail.DatabaseUpdate
             // 
             // grpOptions
             // 
+            this.grpOptions.Controls.Add(this.cbxInstallNewROExtract);
             this.grpOptions.Controls.Add(this.cbxUpdateDatabase);
             this.grpOptions.Controls.Add(this.cbxLicenceKey);
             this.grpOptions.Controls.Add(this.cbxIgnoreErrors);
@@ -765,6 +768,15 @@ namespace MIDRetail.DatabaseUpdate
             this.grpOptions.TabIndex = 13;
             this.grpOptions.TabStop = false;
             this.grpOptions.Text = "Options";
+            // 
+            // cbxInstallNewROExtract
+            // 
+            this.cbxInstallNewROExtract.Location = new System.Drawing.Point(16, 121);
+            this.cbxInstallNewROExtract.Name = "cbxInstallNewROExtract";
+            this.cbxInstallNewROExtract.Size = new System.Drawing.Size(234, 24);
+            this.cbxInstallNewROExtract.TabIndex = 13;
+            this.cbxInstallNewROExtract.Text = "Setup New RO Extract Database";
+            this.cbxInstallNewROExtract.CheckedChanged += new System.EventHandler(this.cbxInstallNewROExtract_CheckedChanged);
             // 
             // cbxUpdateDatabase
             // 
@@ -1184,9 +1196,27 @@ namespace MIDRetail.DatabaseUpdate
             EnableQueryTab(false);	// TT#3781 - stodd - add query tab to Database Utilty - 
             //btnExecute.Enabled = false;
             // Begin TT#4080 - stodd - Pre-populate database connection information in the upgrade dialogue window 
-            PopulateDataConnection();
+            string strConnString = PopulateDataConnection();
             // End TT#4080 - stodd - Pre-populate database connection information in the upgrade dialogue window 
-		}
+            if (txtDatabase.Text.Trim().Length > 0)
+            {
+                bool isMIDDatabase = UpdateRoutines.IsMIDDatabase(MessageQueue, strConnString);
+                if (isMIDDatabase)
+                {
+                    cbxInstallNew.Enabled = false;
+                    cbxInstallNewROExtract.Enabled = false;
+                }
+                else
+                {
+                    bool isROExtractDatabase = UpdateRoutines.IsROExtractDatabase(MessageQueue, strConnString);
+                    if (isROExtractDatabase)
+                    {
+                        cbxInstallNew.Enabled = false;
+                        cbxInstallNewROExtract.Enabled = false;
+                    }
+                }
+            }
+        }
 
 		private void btnProcess_Click(object sender, System.EventArgs e)
 		{
@@ -1222,7 +1252,9 @@ namespace MIDRetail.DatabaseUpdate
                 bool blOptions = false;
             if ((cbxUpdateDatabase.Checked == true) ||
                     (cbxLicenceKey.Checked == true) ||
-                    (cbxInstallNew.Checked == true))
+                    (cbxInstallNew.Checked == true) ||
+                    (cbxInstallNewROExtract.Checked == true)
+                    )
                 {
                     blOptions = true;
                 }
@@ -1436,7 +1468,7 @@ namespace MIDRetail.DatabaseUpdate
                 SetLogMessage("Database " + aDatabase + " on Database Server " + aServer + " will be upgraded logged on with user " + aUser, eErrorType.message);
                 bool successful;
                 bool isValidConfiguration;
-                MIDRetail.DatabaseUpdate.UpdateRoutines.ProcessDatabase(MessageQueue, _processedQueue, cbxInstallNew.Checked, cbxUpdateDatabase.Checked, true, IsOneClickUpgrade, cbxLicenceKey.Checked, strConnString, aDatabase, new UpdateRoutines.SetMessageDelegate(SetStatusMessage), new UpdateRoutines.SetMessageToInstallerLog(SetLogInformationalMessage), out successful, out isValidConfiguration);
+                MIDRetail.DatabaseUpdate.UpdateRoutines.ProcessDatabase(MessageQueue, _processedQueue, cbxInstallNew.Checked, cbxInstallNewROExtract.Checked, cbxUpdateDatabase.Checked, true, IsOneClickUpgrade, cbxLicenceKey.Checked, strConnString, aDatabase, new UpdateRoutines.SetMessageDelegate(SetStatusMessage), new UpdateRoutines.SetMessageToInstallerLog(SetLogInformationalMessage), out successful, out isValidConfiguration);
                 bValidConfiguration = isValidConfiguration;
                 bprocessDatabase = successful;
                 FillListBoxes(aDatabase);
@@ -2402,7 +2434,7 @@ namespace MIDRetail.DatabaseUpdate
 					cbxLicenceKey.Enabled = false;
 					BuildDatabases();
 				}
-				else
+				else if (!cbxInstallNewROExtract.Checked)
 				{
                     cbxUpdateDatabase.Enabled = true;
                     cbxLicenceKey.Enabled = true;
@@ -2591,12 +2623,13 @@ namespace MIDRetail.DatabaseUpdate
         }
 
         // Begin TT#4080 - stodd - Pre-populate database connection information in the upgrade dialogue window 
-        private void PopulateDataConnection()
+        private string PopulateDataConnection()
         {
             //disable entry into the connection controls so that the returned info is protected
             EnableManualEntry(false);
             DataConnectionDialog dCon = BuildDataConnectionDialog(true);	// TT#1346-MD - stodd - Database Upgrade does not handle a bad connection string correctly -
             DataConnectionDialog(dCon, true);
+            return dCon.ConnectionString;
         }
         // End TT#4080 - stodd - Pre-populate database connection information in the upgrade dialogue window 
 
@@ -2799,15 +2832,25 @@ namespace MIDRetail.DatabaseUpdate
                     }
 
                     bool isMIDDatabase = UpdateRoutines.IsMIDDatabase(MessageQueue, strConnString);
-                    if (!isMIDDatabase)
+                    bool isROExtractDatabase = UpdateRoutines.IsROExtractDatabase(MessageQueue, strConnString);
+
+                    if (!isMIDDatabase
+                        && !isROExtractDatabase)
                     {
                         cbxInstallNew.Checked = true;
+                        cbxInstallNewROExtract.Enabled = true;
                     }
                     else
                     {
-                        if (cbxInstallNew.Checked)
-                            cbxInstallNew.Checked = false;
-                    }
+                            if (cbxInstallNew.Checked)
+                            {
+                                cbxInstallNew.Checked = false;
+                            }
+                            if (cbxInstallNewROExtract.Checked)
+                            {
+                                cbxInstallNewROExtract.Checked = false;
+                            }
+                        }
 
                     //End TT#1955 - DOConnell - Database Utility changes options incorrectly based on Build Connection setting
                     // Begin TT#1343
@@ -3022,6 +3065,16 @@ namespace MIDRetail.DatabaseUpdate
                         aDatabaseType = eDatabaseType.SQLServer2014;
                         break;
                     // End TT#1795-MD - JSmith - Support 2014
+                    // Begin TT#2130-MD - AGallagher - Support 2016
+                    case UpdateRoutines.CompatibilityLevel.SQL2016:
+                        aDatabaseType = eDatabaseType.SQLServer2016;
+                        break;
+                    // End TT#2130-MD - AGallagher - Support 2016
+                    // Begin TT#1952-MD - AGallagher - Support 2017
+                    case UpdateRoutines.CompatibilityLevel.SQL2017:
+                        aDatabaseType = eDatabaseType.SQLServer2017;
+                        break;
+                    // End TT#1952-MD - AGallagher - Support 2017
                     default:
                         aDatabaseType = eDatabaseType.None;
                         break;
@@ -3355,8 +3408,15 @@ namespace MIDRetail.DatabaseUpdate
 
        }
 
-       // End TT#3781 - stodd - add query tab to Database Utilty
-	}
+        private void cbxInstallNewROExtract_CheckedChanged(object sender, EventArgs e)
+        {
+            cbxInstallNew.Checked = false;
+            cbxLicenceKey.Checked = false;
+            cbxLicenceKey.Enabled = false;
+        }
+
+        // End TT#3781 - stodd - add query tab to Database Utilty
+    }
 
     public enum eErrorType
     {

@@ -8,78 +8,80 @@ using System.Configuration;
 using MIDRetail.Common;
 using MIDRetail.Data;
 using MIDRetail.DataCommon;
+using Logility.ROWebSharedTypes;
 
 namespace MIDRetail.Business
 {
-	/// <summary>
-	/// Summary description for OTSRollupSpreadMethod.
-	/// </summary>
-	public class OTSRollupMethod : OTSPlanBaseMethod
-	{
+    /// <summary>
+    /// Summary description for OTSRollupSpreadMethod.
+    /// </summary>
+    public class OTSRollupMethod : OTSPlanBaseMethod
+    {
         private OTSRollupMethodData _rollupData;
         private DataSet _dsRollup;
-		//private DataTable _dtLowerLevels;  <---DKJ
-		private	int	_hierNodeRid;
+        //private DataTable _dtLowerLevels;  <---DKJ
+        private int _hierNodeRid;
         private HierarchyNodeProfile _hnp;          //tt#1049 - Forecast Audit and Trend Tab Apply to do not match on the merchandise levels - apicchetti - 1/12/2010
-		private int _versionRid;
-		private int _dateRangeRid;
+        private int _versionRid;
+        private int _dateRangeRid;
         private string _lastProcessedDateTime;
         private string _lastProcessedUser;
-        private DataTable _dtEqWgtBasis;			// ANF - Weighting Multiple Basis
-//		private ePlanType _planType; //Chain or Store
-//		private int _storeFilterRid;
-		private ProfileList _groupLevelBasisDetail;
-		private ProfileList _versionProfList;
-		private ProfileList _lowlevelVersionOverrideList;
+        private DataTable _dtEqWgtBasis;            // ANF - Weighting Multiple Basis
+                                                    //		private ePlanType _planType; //Chain or Store
+                                                    //		private int _storeFilterRid;
+        private ProfileList _groupLevelBasisDetail;
+        private ProfileList _versionProfList;
+        private ProfileList _lowlevelVersionOverrideList;
 
-		private string _monitor;
-		private string _monitorFilePath;
-		private SessionAddressBlock _SAB;
-		private string _infoMsg;
-		private PlanCubeGroup _cubeGroup;
-		private PlanOpenParms _openParms;
-		private ApplicationSessionTransaction _applicationTransaction;
-		private string _computationsMode = "Default";
-		private int _nodeOverrideRid = Include.NoRID;
-		private int _versionOverrideRid = Include.NoRID;
-		private int _currentSglRid;
-		private HierarchyNodeList _hnl;	// Issue 5204
+        private string _monitor;
+        private string _monitorFilePath;
+        private SessionAddressBlock _SAB;
+        private string _infoMsg;
+        private PlanCubeGroup _cubeGroup;
+        private PlanOpenParms _openParms;
+        private ApplicationSessionTransaction _applicationTransaction;
+        private string _computationsMode = "Default";
+        private int _nodeOverrideRid = Include.NoRID;
+        private int _versionOverrideRid = Include.NoRID;
+        private int _currentSglRid;
+        private HierarchyNodeList _hnl; // Issue 5204
+        private System.Data.DataTable _dtBasis;  // RO-748 RDewey 
 
-		#region Properties
-		/// <summary>
-		/// Gets the ProfileType of this profile.
-		/// </summary>
-		override public eProfileType ProfileType
-		{
-			get
-			{
-				return eProfileType.MethodRollup;
-			}
-		}
+        #region Properties
+        /// <summary>
+        /// Gets the ProfileType of this profile.
+        /// </summary>
+        override public eProfileType ProfileType
+        {
+            get
+            {
+                return eProfileType.MethodRollup;
+            }
+        }
 
         public DataSet DSRollup
-		{
+        {
             get { return _dsRollup; }
             set { _dsRollup = value; }
-		}
+        }
 
-		//public DataTable DTLowerLevels   <---DKJ
-		//{
-		//	get	{return _dtLowerLevels;}
-		//	set	{_dtLowerLevels = value;}
-		//}
+        //public DataTable DTLowerLevels   <---DKJ
+        //{
+        //	get	{return _dtLowerLevels;}
+        //	set	{_dtLowerLevels = value;}
+        //}
 
-		public int HierNodeRID
-		{
-			get	{return _hierNodeRid;}
-			set	{_hierNodeRid = value;}
-		}
-		
-		public int VersionRID
-		{
-			get	{return _versionRid;}
-			set	{_versionRid = value;}
-		}
+        public int HierNodeRID
+        {
+            get { return _hierNodeRid; }
+            set { _hierNodeRid = value; }
+        }
+
+        public int VersionRID
+        {
+            get { return _versionRid; }
+            set { _versionRid = value; }
+        }
 
         public string LastProcessedDateTime
         {
@@ -94,54 +96,66 @@ namespace MIDRetail.Business
         }
 
         public int DateRangeRID
-		{
-			get	{return _dateRangeRid;}
-			set	{_dateRangeRid = value;}
-		}
+        {
+            get { return _dateRangeRid; }
+            set { _dateRangeRid = value; }
+        }
 
-		#endregion Properties
+        #endregion Properties
 
 
         public OTSRollupMethod(SessionAddressBlock SAB, int aMethodRID)
-			//Begin TT#523 - JScott - Duplicate folder when new folder added
-			//: base(SAB, aMethodRID, eMethodType.Rollup)
-			: base(SAB, aMethodRID, eMethodType.Rollup, eProfileType.MethodRollup)
-			//End TT#523 - JScott - Duplicate folder when new folder added
-		{
-			_groupLevelBasisDetail = new ProfileList(eProfileType.GroupLevelFunction);
-			_SAB = SAB;
+            //Begin TT#523 - JScott - Duplicate folder when new folder added
+            //: base(SAB, aMethodRID, eMethodType.Rollup)
+            : base(SAB, aMethodRID, eMethodType.Rollup, eProfileType.MethodRollup)
+        //End TT#523 - JScott - Duplicate folder when new folder added
+        {
+            _groupLevelBasisDetail = new ProfileList(eProfileType.GroupLevelFunction);
+            _SAB = SAB;
 
-			//_monitor = _SAB.MonitorForecastAppSetting;
-			//_monitorFilePath = _SAB.GetMonitorFilePathAppSetting();
+            //_monitor = _SAB.MonitorForecastAppSetting;
+            //_monitorFilePath = _SAB.GetMonitorFilePathAppSetting();
 
-			if (base.Filled)
-			{
+            if (base.Filled)
+            {
                 _rollupData = new OTSRollupMethodData(aMethodRID, eChangeType.populate);
                 _hierNodeRid = _rollupData.HierNodeRID;
                 _versionRid = _rollupData.VersionRID;
                 _dateRangeRid = _rollupData.CDR_RID;
                 _dsRollup = _rollupData.DSRollup;
                 //_dtLowerLevels = _rollupData.DTLowerLevels;  <---DKJ
-			}
-			else
-			{	//Defaults
-				_hierNodeRid = Include.NoRID;
-				_versionRid = Include.NoRID;
-				_dateRangeRid = Include.NoRID;
-			}	
-		}
+            }
+            else
+            {   //Defaults
+                _hierNodeRid = Include.NoRID;
+                _versionRid = Include.NoRID;
+                _dateRangeRid = Include.NoRID;
+            }
+        }
 
-		/// <summary>
+        // Begin TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+        override internal bool CheckForUserData()
+        {
+            if (IsHierarchyNodeUser(_hierNodeRid))
+            {
+                return true;
+            }
+
+            return false;
+        }
+        // End TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+
+        /// <summary>
         /// Updates the OTS MultiLevel method
-		/// </summary>
-		/// <param name="td">An instance of the TransactionData class which contains the database connection</param>
-		//		new public void Update(TransactionData td)
-		override public void Update(TransactionData td)
-		{
+        /// </summary>
+        /// <param name="td">An instance of the TransactionData class which contains the database connection</param>
+        //		new public void Update(TransactionData td)
+        override public void Update(TransactionData td)
+        {
             if (_rollupData == null || base.Key < 0 || base.Method_Change_Type == eChangeType.add)
-			{
+            {
                 _rollupData = new OTSRollupMethodData(td, base.Key);
-			}
+            }
 
             _rollupData.HierNodeRID = _hierNodeRid;
             _rollupData.VersionRID = _versionRid;
@@ -149,133 +163,133 @@ namespace MIDRetail.Business
             _rollupData.DSRollup = _dsRollup;
             //_rollupData.DTLowerLevels = _dtLowerLevels;  <---DKJ
 
-			try
-			{
-				switch (base.Method_Change_Type)
-				{
-					case eChangeType.add:
-						base.Update(td);
+            try
+            {
+                switch (base.Method_Change_Type)
+                {
+                    case eChangeType.add:
+                        base.Update(td);
                         _rollupData.InsertMethod(base.Key, td);
-						break;
-					case eChangeType.update:
-						base.Update(td);
+                        break;
+                    case eChangeType.update:
+                        base.Update(td);
                         _rollupData.UpdateMethod(base.Key, td);
-						break;
-					case eChangeType.delete:
+                        break;
+                    case eChangeType.delete:
                         _rollupData.DeleteMethod(base.Key, td);
-						base.Update(td);
-						break;
-				}
-			}
-			catch
-			{
-				throw;
-			}
+                        base.Update(td);
+                        break;
+                }
+            }
+            catch
+            {
+                throw;
+            }
 
-			finally
-			{
-			}
-		}
+            finally
+            {
+            }
+        }
 
-		public override void ProcessMethod(
-			ApplicationSessionTransaction aApplicationTransaction,
-			int aStoreFilter, Profile methodProfile)
-		{
-			// Begin MID Track #5210 - JSmith - Out of memory
-			try
-			{
-				// End MID Track #5210
-				ArrayList forecastingOverrideList = aApplicationTransaction.ForecastingOverrideList;
-				if (forecastingOverrideList != null)
-				{
-					foreach (ForecastingOverride fo in forecastingOverrideList)
-					{
-						if (fo.HierarchyNodeRid != Include.NoRID)
-						{
-							this._hierNodeRid = fo.HierarchyNodeRid;
-							this._nodeOverrideRid = fo.HierarchyNodeRid;
-						}
-						if (fo.ForecastVersionRid != Include.NoRID)
-						{
-							this._versionRid = fo.ForecastVersionRid;
-							this._versionOverrideRid = fo.ForecastVersionRid;
-						}
+        public override void ProcessMethod(
+            ApplicationSessionTransaction aApplicationTransaction,
+            int aStoreFilter, Profile methodProfile)
+        {
+            // Begin MID Track #5210 - JSmith - Out of memory
+            try
+            {
+                // End MID Track #5210
+                ArrayList forecastingOverrideList = aApplicationTransaction.ForecastingOverrideList;
+                if (forecastingOverrideList != null)
+                {
+                    foreach (ForecastingOverride fo in forecastingOverrideList)
+                    {
+                        if (fo.HierarchyNodeRid != Include.NoRID)
+                        {
+                            this._hierNodeRid = fo.HierarchyNodeRid;
+                            this._nodeOverrideRid = fo.HierarchyNodeRid;
+                        }
+                        if (fo.ForecastVersionRid != Include.NoRID)
+                        {
+                            this._versionRid = fo.ForecastVersionRid;
+                            this._versionOverrideRid = fo.ForecastVersionRid;
+                        }
 
-						if (_hierNodeRid == Include.NoRID)
-						{
-							_SAB.ApplicationServerSession.Audit.Add_Msg(eMIDMessageLevel.Error, eMIDTextCode.msg_pl_PlanHierarchyNodeMissing, this.ToString());
+                        if (_hierNodeRid == Include.NoRID)
+                        {
+                            _SAB.ApplicationServerSession.Audit.Add_Msg(eMIDMessageLevel.Error, eMIDTextCode.msg_pl_PlanHierarchyNodeMissing, this.ToString());
                             // Begin TT#504-MD - JSmith - Release Action causes the Audit to mark the Client as Stopped instead of Running
                             //_SAB.ApplicationServerSession.Audit.UpdateHeader(eProcessCompletionStatus.Failed, eMIDTextCode.sum_Failed, "", _SAB.GetHighestAuditMessageLevel());
                             // End TT#504-MD - JSmith - Release Action causes the Audit to mark the Client as Stopped instead of Running
-							throw new MIDException(eErrorLevel.severe,
-								(int)eMIDTextCode.msg_pl_PlanHierarchyNodeMissing,
-								MIDText.GetText(eMIDTextCode.msg_pl_PlanHierarchyNodeMissing));
-						}
-						if (_versionRid == Include.NoRID)
-						{
-							_SAB.ApplicationServerSession.Audit.Add_Msg(eMIDMessageLevel.Error, eMIDTextCode.msg_pl_PlanVersionMissing, this.ToString());
+                            throw new MIDException(eErrorLevel.severe,
+                                (int)eMIDTextCode.msg_pl_PlanHierarchyNodeMissing,
+                                MIDText.GetText(eMIDTextCode.msg_pl_PlanHierarchyNodeMissing));
+                        }
+                        if (_versionRid == Include.NoRID)
+                        {
+                            _SAB.ApplicationServerSession.Audit.Add_Msg(eMIDMessageLevel.Error, eMIDTextCode.msg_pl_PlanVersionMissing, this.ToString());
                             // Begin TT#504-MD - JSmith - Release Action causes the Audit to mark the Client as Stopped instead of Running
                             //_SAB.ApplicationServerSession.Audit.UpdateHeader(eProcessCompletionStatus.Failed, eMIDTextCode.sum_Failed, "", _SAB.GetHighestAuditMessageLevel());
                             // End TT#504-MD - JSmith - Release Action causes the Audit to mark the Client as Stopped instead of Running
-							throw new MIDException(eErrorLevel.severe,
-								(int)eMIDTextCode.msg_pl_PlanVersionMissing,
-								MIDText.GetText(eMIDTextCode.msg_pl_PlanVersionMissing));
-						}
-		
-						this.ProcessAction(
-							aApplicationTransaction.SAB,
-							aApplicationTransaction,
-							null,
-							methodProfile,
-							true,
-//Begin Track #5188 - JScott - Method Filters not being over overriden from Workflow
-//							Include.NoRID);
-							aStoreFilter);
-//End Track #5188 - JScott - Method Filters not being over overriden from Workflow
-					}
-				}
-				else
-				{
-					this.ProcessAction(
-						aApplicationTransaction.SAB,
-						aApplicationTransaction,
-						null,
-						methodProfile,
-						true,
-//Begin Track #5188 - JScott - Method Filters not being over overriden from Workflow
-//						Include.NoRID);
-						aStoreFilter);
-//End Track #5188 - JScott - Method Filters not being over overriden from Workflow
-				}
-				// Begin MID Track #5210 - JSmith - Out of memory
+                            throw new MIDException(eErrorLevel.severe,
+                                (int)eMIDTextCode.msg_pl_PlanVersionMissing,
+                                MIDText.GetText(eMIDTextCode.msg_pl_PlanVersionMissing));
+                        }
+
+                        this.ProcessAction(
+                            aApplicationTransaction.SAB,
+                            aApplicationTransaction,
+                            null,
+                            methodProfile,
+                            true,
+                            //Begin Track #5188 - JScott - Method Filters not being over overriden from Workflow
+                            //							Include.NoRID);
+                            aStoreFilter);
+                        //End Track #5188 - JScott - Method Filters not being over overriden from Workflow
+                    }
+                }
+                else
+                {
+                    this.ProcessAction(
+                        aApplicationTransaction.SAB,
+                        aApplicationTransaction,
+                        null,
+                        methodProfile,
+                        true,
+                        //Begin Track #5188 - JScott - Method Filters not being over overriden from Workflow
+                        //						Include.NoRID);
+                        aStoreFilter);
+                    //End Track #5188 - JScott - Method Filters not being over overriden from Workflow
+                }
+                // Begin MID Track #5210 - JSmith - Out of memory
                 WriteAuditInfo();
-			}
-			catch
-			{
-				throw;
-			}
-			finally
-			{
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
                 _rollupData = null;
                 _dsRollup = null;
-				//_dtLowerLevels = null;  <---DKJ
-				_groupLevelBasisDetail = null;
-				_versionProfList = null;
-				_lowlevelVersionOverrideList = null;
-				_cubeGroup = null;
-				_openParms = null;
-				_hnl = null;	
-			}
-			// End MID Track #5210
-		}
+                //_dtLowerLevels = null;  <---DKJ
+                _groupLevelBasisDetail = null;
+                _versionProfList = null;
+                _lowlevelVersionOverrideList = null;
+                _cubeGroup = null;
+                _openParms = null;
+                _hnl = null;
+            }
+            // End MID Track #5210
+        }
 
-		public override void ProcessAction(SessionAddressBlock aSAB, 
-			ApplicationSessionTransaction aApplicationTransaction, 
-			ApplicationWorkFlowStep aWorkFlowStep, 
-			Profile aProfile, bool WriteToDB, int aStoreFilterRID)
-		{
-			try
-			{
+        public override void ProcessAction(SessionAddressBlock aSAB,
+            ApplicationSessionTransaction aApplicationTransaction,
+            ApplicationWorkFlowStep aWorkFlowStep,
+            Profile aProfile, bool WriteToDB, int aStoreFilterRID)
+        {
+            try
+            {
                 MIDRetail.Business.Rollup rollup;
                 int batchSize = 2000;
                 int concurrentProcesses = 3;
@@ -283,36 +297,36 @@ namespace MIDRetail.Business
                 bool honorLocks = false;
                 bool zeroParentsWithNoChildren = true;
                 string fileLocation = null;
-				MIDTimer aTimer = new MIDTimer();
-				_SAB = aSAB;
-				this._applicationTransaction = aApplicationTransaction;
-				_applicationTransaction.OTSPlanActionStatus = eOTSPlanActionStatus.NoActionPerformed;
+                MIDTimer aTimer = new MIDTimer();
+                _SAB = aSAB;
+                this._applicationTransaction = aApplicationTransaction;
+                _applicationTransaction.OTSPlanActionStatus = eOTSPlanActionStatus.NoActionPerformed;
 
                 _infoMsg = "Starting OTS Rollup: " + this.Name;
-				aSAB.ApplicationServerSession.Audit.Add_Msg(eMIDMessageLevel.Information, _infoMsg, this.ToString());
+                aSAB.ApplicationServerSession.Audit.Add_Msg(eMIDMessageLevel.Information, _infoMsg, this.ToString());
 
-				// Begin MID Track 4858 - JSmith - Security changes
-				// Need to check here incase part of workflow
-				if (!AuthorizedToUpdate(_SAB.ApplicationServerSession, _SAB.ClientServerSession.UserRID))
-				{
-					_SAB.ApplicationServerSession.Audit.Add_Msg(eMIDMessageLevel.Warning, eMIDTextCode.msg_NotAuthorizedForNode, this.ToString());
+                // Begin MID Track 4858 - JSmith - Security changes
+                // Need to check here incase part of workflow
+                if (!AuthorizedToUpdate(_SAB.ApplicationServerSession, _SAB.ClientServerSession.UserRID))
+                {
+                    _SAB.ApplicationServerSession.Audit.Add_Msg(eMIDMessageLevel.Warning, eMIDTextCode.msg_NotAuthorizedForNode, this.ToString());
                     // Begin TT#504-MD - JSmith - Release Action causes the Audit to mark the Client as Stopped instead of Running
                     //_SAB.ApplicationServerSession.Audit.UpdateHeader(eProcessCompletionStatus.Failed, eMIDTextCode.sum_Failed, "", _SAB.GetHighestAuditMessageLevel());
                     // End TT#504-MD - JSmith - Release Action causes the Audit to mark the Client as Stopped instead of Running
-					_applicationTransaction.OTSPlanActionStatus = eOTSPlanActionStatus.ActionFailed;
-					return;
-				}
-				// End MID Track 4858
+                    _applicationTransaction.OTSPlanActionStatus = eOTSPlanActionStatus.ActionFailed;
+                    return;
+                }
+                // End MID Track 4858
 
-				aTimer.Start();
+                aTimer.Start();
 
                 //===================== Begin Business Logic ===========================================================
                 // Begin TT#1054 - JSmith - Relieve Intransit not working.
                 //string strParm = ConfigurationSettings.AppSettings["InputFile"];
                 string strParm = MIDConfigurationManager.AppSettings["InputFile"];
                 // End TT#1054
-				if (strParm != null && strParm.Trim() != "")
-				{
+                if (strParm != null && strParm.Trim() != "")
+                {
                     // Begin TT#1054 - JSmith - Relieve Intransit not working.
                     //fileLocation = ConfigurationSettings.AppSettings["InputFile"];
                     fileLocation = MIDConfigurationManager.AppSettings["InputFile"];
@@ -320,68 +334,68 @@ namespace MIDRetail.Business
                 }
                 else
                 {
-					fileLocation = null;
-				}
+                    fileLocation = null;
+                }
 
                 // Begin TT#1054 - JSmith - Relieve Intransit not working.
                 //strParm = ConfigurationSettings.AppSettings["BatchSize"];
                 strParm = MIDConfigurationManager.AppSettings["BatchSize"];
                 // End TT#1054
-				if (strParm != null)
-				{
-					try
-					{
-						batchSize = Convert.ToInt32(strParm);
-					}
-					catch
-					{
-					}
-				}
+                if (strParm != null)
+                {
+                    try
+                    {
+                        batchSize = Convert.ToInt32(strParm);
+                    }
+                    catch
+                    {
+                    }
+                }
 
                 // Begin TT#1054 - JSmith - Relieve Intransit not working.
                 //strParm = ConfigurationSettings.AppSettings["ConcurrentProcesses"];
                 strParm = MIDConfigurationManager.AppSettings["ConcurrentProcesses"];
                 // End TT#1054
-				if (strParm != null)
-				{
-					try
-					{
-						concurrentProcesses = Convert.ToInt32(strParm);
-					}
-					catch
-					{
-					}
-				}
+                if (strParm != null)
+                {
+                    try
+                    {
+                        concurrentProcesses = Convert.ToInt32(strParm);
+                    }
+                    catch
+                    {
+                    }
+                }
 
                 // Begin TT#1054 - JSmith - Relieve Intransit not working.
                 //strParm = ConfigurationSettings.AppSettings["IncludeZeroInAverage"];
                 strParm = MIDConfigurationManager.AppSettings["IncludeZeroInAverage"];
                 // End TT#1054
-				if (strParm != null)
-				{
-					try
-					{
-						includeZeroInAverage = Convert.ToBoolean(strParm);
-					}
-					catch
-					{
-					}
-				}
+                if (strParm != null)
+                {
+                    try
+                    {
+                        includeZeroInAverage = Convert.ToBoolean(strParm);
+                    }
+                    catch
+                    {
+                    }
+                }
 
                 // Begin TT#1054 - JSmith - Relieve Intransit not working.
                 //strParm = ConfigurationSettings.AppSettings["HonorLocks"];
                 strParm = MIDConfigurationManager.AppSettings["HonorLocks"];
                 // End TT#1054
-				if (strParm != null)
-				{
-					try
-					{
-						honorLocks = Convert.ToBoolean(strParm);
-					}
-					catch
-					{
-					}
-				}
+                if (strParm != null)
+                {
+                    try
+                    {
+                        honorLocks = Convert.ToBoolean(strParm);
+                    }
+                    catch
+                    {
+                    }
+                }
 
                 // Begin TT#1054 - JSmith - Relieve Intransit not working.
                 //strParm = ConfigurationSettings.AppSettings["ZeroParentsWithNoChildren"];
@@ -409,7 +423,7 @@ namespace MIDRetail.Business
 
                     _applicationTransaction.OTSPlanActionStatus = eOTSPlanActionStatus.ActionFailed;
                 }
-                else 
+                else
                 {
                     // Begin Track #6346 - JSmith - Duplicate rows after Rollup
                     //int aProcessID = (_SAB.ClientServerSession.UserRID * 1000000) + (int)eProcesses.rollup;
@@ -426,16 +440,16 @@ namespace MIDRetail.Business
                     }
                     // End TT#2090
                     //End Track 6082
-                
+
                     if (rollup.ScheduleRollup)
                     {
                         rollup.ProcessRollupRequests(aProcessID, SAB.ClientServerSession);
                     }
                     //_SAB.ClientServerSession.Audit.RollupAuditInfo_Add(rollup.TotalItems, batchSize, concurrentProcesses,
                     //    rollup.TotalBatches, rollup.TotalErrors);
-                
+
                     aTimer.Stop();
-                
+
                     _infoMsg = "Completed OTS Rollup: " + this.Name + " Elasped time: " + aTimer.ElaspedTimeString;
                     aSAB.ApplicationServerSession.Audit.Add_Msg(eMIDMessageLevel.Information, _infoMsg, this.ToString());
 
@@ -450,171 +464,171 @@ namespace MIDRetail.Business
                         _applicationTransaction.OTSPlanActionStatus = eOTSPlanActionStatus.ActionFailed;
                     }
                     //End TT#971
-                
+
                 }
                 //===================== End Business Logic ===========================================================
 
-			}
-			catch
-			{
-				throw;
-			}
-		}
-	
-		// BEGIN ANF - Weighting Multiple Basis
-		private void ProcessEqualizedWeighting(ApplicationSessionTransaction aApplicationTransaction)
-		{
-			BasisProfile basisProfile;
-			BasisDetailProfile basisDetailProfile;
-			try
-			{
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        // BEGIN ANF - Weighting Multiple Basis
+        private void ProcessEqualizedWeighting(ApplicationSessionTransaction aApplicationTransaction)
+        {
+            BasisProfile basisProfile;
+            BasisDetailProfile basisDetailProfile;
+            try
+            {
                 _dtEqWgtBasis = _dsRollup.Tables[0].Copy();
-	
-				foreach (DataRow eqRow in _dtEqWgtBasis.Rows) 
-				{
-					eqRow["WEIGHT"] = 1; // change wgt to 1 to get raw basis  
-				}
 
-				FillOpenParmForWeightedBasis(Include.AllStoreGroupRID);
-			 
-				((ChainMultiLevelPlanMaintCubeGroup)_cubeGroup).OpenCubeGroup(_openParms);	
-				
-				float totRawBasis = 0;
-				ArrayList alBasisTotal = new ArrayList();
-				//========================================================
-				// Get raw basis totals
-				//========================================================
-				for (int j = 0; j < _openParms.BasisProfileList.Count; j++)
-				{
-					basisProfile = (BasisProfile)_openParms.BasisProfileList[j];  
-					for (int i = 0; i < basisProfile.BasisDetailProfileList.Count; i++)
-					{
-						basisDetailProfile = (BasisDetailProfile)basisProfile.BasisDetailProfileList[i];
-						float basisTotal = SumBasisValues(basisDetailProfile.Key, basisDetailProfile);
-						alBasisTotal.Add(basisTotal);
-						totRawBasis += basisTotal;
-					}		
-				}
-				//========================================================
-				// Replace entered weight with calculated equalized weight
-				//========================================================
+                foreach (DataRow eqRow in _dtEqWgtBasis.Rows)
+                {
+                    eqRow["WEIGHT"] = 1; // change wgt to 1 to get raw basis  
+                }
+
+                FillOpenParmForWeightedBasis(Include.AllStoreGroupRID);
+
+                ((ChainMultiLevelPlanMaintCubeGroup)_cubeGroup).OpenCubeGroup(_openParms);
+
+                float totRawBasis = 0;
+                ArrayList alBasisTotal = new ArrayList();
+                //========================================================
+                // Get raw basis totals
+                //========================================================
+                for (int j = 0; j < _openParms.BasisProfileList.Count; j++)
+                {
+                    basisProfile = (BasisProfile)_openParms.BasisProfileList[j];
+                    for (int i = 0; i < basisProfile.BasisDetailProfileList.Count; i++)
+                    {
+                        basisDetailProfile = (BasisDetailProfile)basisProfile.BasisDetailProfileList[i];
+                        float basisTotal = SumBasisValues(basisDetailProfile.Key, basisDetailProfile);
+                        alBasisTotal.Add(basisTotal);
+                        totRawBasis += basisTotal;
+                    }
+                }
+                //========================================================
+                // Replace entered weight with calculated equalized weight
+                //========================================================
                 for (int k = 0; k < _dsRollup.Tables[0].Rows.Count; k++)
-				{
-					if ((float)alBasisTotal[k] > 0)		// Issue 4817 stodd
-					{
+                {
+                    if ((float)alBasisTotal[k] > 0)     // Issue 4817 stodd
+                    {
                         DataRow row = _dsRollup.Tables[0].Rows[k];
-			
-						float enteredWeight = (float)Convert.ToDouble(row["WEIGHT"],CultureInfo.CurrentUICulture);
-				 
-						float equalizedWeight = (totRawBasis * enteredWeight) / (float)alBasisTotal[k];
 
-						row["WEIGHT"] = equalizedWeight;
+                        float enteredWeight = (float)Convert.ToDouble(row["WEIGHT"], CultureInfo.CurrentUICulture);
 
-						string msg = "Weighted Basis Info: " + equalizedWeight.ToString() + " = " +  " (" + totRawBasis.ToString() + " * " +
-							enteredWeight.ToString() + ") / " + alBasisTotal[k].ToString();
-						_SAB.ApplicationServerSession.Audit.Add_Msg(eMIDMessageLevel.Information, msg, this.ToString());
-					}
-				}
-			
-				((PlanCubeGroup)_cubeGroup).CloseCubeGroup();
-				 
-				_cubeGroup = (PlanCubeGroup)aApplicationTransaction.CreateChainMultiLevelPlanMaintCubeGroup();
+                        float equalizedWeight = (totRawBasis * enteredWeight) / (float)alBasisTotal[k];
 
-				FillOpenParmForPlan();
-				FillOpenParmForBasis(Include.AllStoreGroupRID);
-			}
-			catch
-			{
-				throw;
-			}
-		} 
+                        row["WEIGHT"] = equalizedWeight;
 
-		/// <summary>
-		/// Fills in the weighted basis part of the CubeGroup open parms.
-		/// </summary>
-		private void FillOpenParmForWeightedBasis(int sglRid)
-		{
-			BasisProfile basisProfile = null;
-			BasisDetailProfile basisDetailProfile;
-			int bdpKey = 1;
-			HierarchyNodeProfile hnp = null;
+                        string msg = "Weighted Basis Info: " + equalizedWeight.ToString() + " = " + " (" + totRawBasis.ToString() + " * " +
+                            enteredWeight.ToString() + ") / " + alBasisTotal[k].ToString();
+                        _SAB.ApplicationServerSession.Audit.Add_Msg(eMIDMessageLevel.Information, msg, this.ToString());
+                    }
+                }
 
-			int maxRows = this._dtEqWgtBasis.Rows.Count;  //the eq weight basis detail table
-			for (int row=0;row<maxRows;row++)
-			{
-				//=======================
-				// Set up Basis Profile
-				//=======================
-				int key = row; 
-				key++;
-				basisProfile = new BasisProfile(key, null, _openParms);
-				basisProfile.BasisType = eTyLyType.NonTyLy;
-			 
-				//=====================
-				// Get Hierarchy Node
-				//=====================
-				int basisHierNodeRid = this._hierNodeRid;
-				hnp = _SAB.HierarchyServerSession.GetNodeData(basisHierNodeRid);
-						
-				int basisVersionRid = Convert.ToInt32(_dtEqWgtBasis.Rows[row]["FV_RID"], CultureInfo.CurrentUICulture);
-				int basisDateRangeRid = Convert.ToInt32(_dtEqWgtBasis.Rows[row]["CDR_RID"], CultureInfo.CurrentUICulture);
-				 
-				basisDetailProfile = new BasisDetailProfile(bdpKey++, _openParms);
-				
-				ForecastVersionProfileBuilder fvpb = new ForecastVersionProfileBuilder();
+                ((PlanCubeGroup)_cubeGroup).CloseCubeGroup();
 
-				basisDetailProfile.VersionProfile = fvpb.Build(basisVersionRid);
-				basisDetailProfile.HierarchyNodeProfile = hnp;
-				DateRangeProfile drp = _SAB.ApplicationServerSession.Calendar.GetDateRange(basisDateRangeRid);
-				basisDetailProfile.DateRangeProfile = drp;
-				basisDetailProfile.IncludeExclude = eBasisIncludeExclude.Include;
-				
-				if (_dtEqWgtBasis.Rows[row]["WEIGHT"] == System.DBNull.Value)
-				{
-					basisDetailProfile.Weight = 1;
-				}
-				else
-				{
-					basisDetailProfile.Weight = (float)Convert.ToDouble(_dtEqWgtBasis.Rows[row]["WEIGHT"], CultureInfo.CurrentUICulture);
-				}
-				basisProfile.BasisDetailProfileList.Add(basisDetailProfile);
-			
-				_openParms.BasisProfileList.Add(basisProfile);
-		 	}
-		}
+                _cubeGroup = (PlanCubeGroup)aApplicationTransaction.CreateChainMultiLevelPlanMaintCubeGroup();
 
-		public float SumBasisValues(int aBasisNumber, BasisDetailProfile aBasisDetailProfile)
-		{
-			float rawBasisTotal = 0;
-			
-			Cube myCube = _cubeGroup.GetCube(eCubeType.ChainBasisLowLevelTotalDateTotal);
-			
-			PlanCellReference planCellRef = new PlanCellReference((PlanCube)myCube);
-			planCellRef[eProfileType.LowLevelTotalVersion]= Include.FV_PlanLowLevelTotalRID;
-			planCellRef[eProfileType.Basis] = aBasisNumber;
-			planCellRef[eProfileType.QuantityVariable] = _cubeGroup.Transaction.PlanComputations.PlanQuantityVariables.ValueQuantity.Key;
+                FillOpenParmForPlan();
+                FillOpenParmForBasis(Include.AllStoreGroupRID);
+            }
+            catch
+            {
+                throw;
+            }
+        }
 
-			if (aBasisDetailProfile.HierarchyNodeProfile.OTSPlanLevelType == eOTSPlanLevelType.Regular)
-			{
-				planCellRef[eProfileType.TimeTotalVariable] = (_cubeGroup.Transaction.PlanComputations.PlanVariables.SalesRegularUnitsVariable.GetTimeTotalVariable(1)).Key;                            
-				planCellRef[eProfileType.Variable] = _cubeGroup.Transaction.PlanComputations.PlanVariables.SalesRegularUnitsVariable.Key;
-			}
-			else
-			{
-				planCellRef[eProfileType.TimeTotalVariable] = (_cubeGroup.Transaction.PlanComputations.PlanVariables.SalesTotalUnitsVariable.GetTimeTotalVariable(1)).Key;
-				planCellRef[eProfileType.Variable] = _cubeGroup.Transaction.PlanComputations.PlanVariables.SalesTotalUnitsVariable.Key;
-			}
-			 
-			ArrayList basisCellRefs = planCellRef.GetSpreadDetailCellRefArray(false);
+        /// <summary>
+        /// Fills in the weighted basis part of the CubeGroup open parms.
+        /// </summary>
+        private void FillOpenParmForWeightedBasis(int sglRid)
+        {
+            BasisProfile basisProfile = null;
+            BasisDetailProfile basisDetailProfile;
+            int bdpKey = 1;
+            HierarchyNodeProfile hnp = null;
 
-			foreach (PlanCellReference pcr in basisCellRefs)
-			{
-				rawBasisTotal += (float)pcr.CurrentCellValue;
-			}
+            int maxRows = this._dtEqWgtBasis.Rows.Count;  //the eq weight basis detail table
+            for (int row = 0; row < maxRows; row++)
+            {
+                //=======================
+                // Set up Basis Profile
+                //=======================
+                int key = row;
+                key++;
+                basisProfile = new BasisProfile(key, null, _openParms);
+                basisProfile.BasisType = eTyLyType.NonTyLy;
 
-			return rawBasisTotal;
-		}
-		// END ANF - Weighting Multiple Basis
+                //=====================
+                // Get Hierarchy Node
+                //=====================
+                int basisHierNodeRid = this._hierNodeRid;
+                hnp = _SAB.HierarchyServerSession.GetNodeData(basisHierNodeRid);
+
+                int basisVersionRid = Convert.ToInt32(_dtEqWgtBasis.Rows[row]["FV_RID"], CultureInfo.CurrentUICulture);
+                int basisDateRangeRid = Convert.ToInt32(_dtEqWgtBasis.Rows[row]["CDR_RID"], CultureInfo.CurrentUICulture);
+
+                basisDetailProfile = new BasisDetailProfile(bdpKey++, _openParms);
+
+                ForecastVersionProfileBuilder fvpb = new ForecastVersionProfileBuilder();
+
+                basisDetailProfile.VersionProfile = fvpb.Build(basisVersionRid);
+                basisDetailProfile.HierarchyNodeProfile = hnp;
+                DateRangeProfile drp = _SAB.ApplicationServerSession.Calendar.GetDateRange(basisDateRangeRid);
+                basisDetailProfile.DateRangeProfile = drp;
+                basisDetailProfile.IncludeExclude = eBasisIncludeExclude.Include;
+
+                if (_dtEqWgtBasis.Rows[row]["WEIGHT"] == System.DBNull.Value)
+                {
+                    basisDetailProfile.Weight = 1;
+                }
+                else
+                {
+                    basisDetailProfile.Weight = (float)Convert.ToDouble(_dtEqWgtBasis.Rows[row]["WEIGHT"], CultureInfo.CurrentUICulture);
+                }
+                basisProfile.BasisDetailProfileList.Add(basisDetailProfile);
+
+                _openParms.BasisProfileList.Add(basisProfile);
+            }
+        }
+
+        public float SumBasisValues(int aBasisNumber, BasisDetailProfile aBasisDetailProfile)
+        {
+            float rawBasisTotal = 0;
+
+            Cube myCube = _cubeGroup.GetCube(eCubeType.ChainBasisLowLevelTotalDateTotal);
+
+            PlanCellReference planCellRef = new PlanCellReference((PlanCube)myCube);
+            planCellRef[eProfileType.LowLevelTotalVersion] = Include.FV_PlanLowLevelTotalRID;
+            planCellRef[eProfileType.Basis] = aBasisNumber;
+            planCellRef[eProfileType.QuantityVariable] = _cubeGroup.Transaction.PlanComputations.PlanQuantityVariables.ValueQuantity.Key;
+
+            if (aBasisDetailProfile.HierarchyNodeProfile.OTSPlanLevelType == eOTSPlanLevelType.Regular)
+            {
+                planCellRef[eProfileType.TimeTotalVariable] = (_cubeGroup.Transaction.PlanComputations.PlanVariables.SalesRegularUnitsVariable.GetTimeTotalVariable(1)).Key;
+                planCellRef[eProfileType.Variable] = _cubeGroup.Transaction.PlanComputations.PlanVariables.SalesRegularUnitsVariable.Key;
+            }
+            else
+            {
+                planCellRef[eProfileType.TimeTotalVariable] = (_cubeGroup.Transaction.PlanComputations.PlanVariables.SalesTotalUnitsVariable.GetTimeTotalVariable(1)).Key;
+                planCellRef[eProfileType.Variable] = _cubeGroup.Transaction.PlanComputations.PlanVariables.SalesTotalUnitsVariable.Key;
+            }
+
+            ArrayList basisCellRefs = planCellRef.GetSpreadDetailCellRefArray(false);
+
+            foreach (PlanCellReference pcr in basisCellRefs)
+            {
+                rawBasisTotal += (float)pcr.CurrentCellValue;
+            }
+
+            return rawBasisTotal;
+        }
+        // END ANF - Weighting Multiple Basis
 
         private void GetAuditInfo()
         {
@@ -689,36 +703,36 @@ namespace MIDRetail.Business
 
         }
 
-		public override bool WithinTolerance(double aTolerancePercent)
-		{
-			return true;
-		}
+        public override bool WithinTolerance(double aTolerancePercent)
+        {
+            return true;
+        }
 
-		/// <summary>
-		/// Fills in the plan part of the CubeGroup open parms
-		/// </summary>
-		private void FillOpenParmForPlan()
-		{
-			_openParms = new PlanOpenParms(ePlanSessionType.ChainMultiLevel, _computationsMode);
+        /// <summary>
+        /// Fills in the plan part of the CubeGroup open parms
+        /// </summary>
+        private void FillOpenParmForPlan()
+        {
+            _openParms = new PlanOpenParms(ePlanSessionType.ChainMultiLevel, _computationsMode);
 
-			if (this.GlobalUserType == eGlobalUserType.User)
-			{
-				_openParms.FunctionSecurityProfile = new FunctionSecurityProfile((int)eSecurityFunctions.ForecastMethodsUserCopyChain);
-			}
-			else
-			{
-				_openParms.FunctionSecurityProfile = new FunctionSecurityProfile((int)eSecurityFunctions.ForecastMethodsGlobalCopyChain);
-			}
-			_openParms.FunctionSecurityProfile.SetAllowUpdate();
+            if (this.GlobalUserType == eGlobalUserType.User)
+            {
+                _openParms.FunctionSecurityProfile = new FunctionSecurityProfile((int)eSecurityFunctions.ForecastMethodsUserCopyChain);
+            }
+            else
+            {
+                _openParms.FunctionSecurityProfile = new FunctionSecurityProfile((int)eSecurityFunctions.ForecastMethodsGlobalCopyChain);
+            }
+            _openParms.FunctionSecurityProfile.SetAllowUpdate();
 
-			HierarchyNodeProfile hnp = _SAB.HierarchyServerSession.GetNodeData(this.HierNodeRID);
+            HierarchyNodeProfile hnp = _SAB.HierarchyServerSession.GetNodeData(this.HierNodeRID);
 
-			//hnp.ChainSecurityProfile = new HierarchyNodeSecurityProfile(this.HierNodeRID);
-			//hnp.ChainSecurityProfile.SetReadOnly();
-			//ForecastVersionProfileBuilder fvpb = new ForecastVersionProfileBuilder();
-			//VersionProfile vp = fvpb.Build(VersionRID);
-			//vp.ChainSecurity = new VersionSecurityProfile(this.VersionRID);
-			//vp.ChainSecurity.SetReadOnly();
+            //hnp.ChainSecurityProfile = new HierarchyNodeSecurityProfile(this.HierNodeRID);
+            //hnp.ChainSecurityProfile.SetReadOnly();
+            //ForecastVersionProfileBuilder fvpb = new ForecastVersionProfileBuilder();
+            //VersionProfile vp = fvpb.Build(VersionRID);
+            //vp.ChainSecurity = new VersionSecurityProfile(this.VersionRID);
+            //vp.ChainSecurity.SetReadOnly();
 
             hnp.ChainSecurityProfile = _SAB.ClientServerSession.GetMyUserNodeSecurityAssignment(this.HierNodeRID, (int)eSecurityTypes.Chain);
             //hnp.ChainSecurityProfile.SetReadOnly();
@@ -732,43 +746,43 @@ namespace MIDRetail.Business
             vp.StoreSecurity = _SAB.ClientServerSession.GetMyVersionSecurityAssignment(this.VersionRID, (int)eSecurityTypes.Store);
             //vp.StoreSecurity.SetReadOnly();
 
-			_openParms.ChainHLPlanProfile.VersionProfile = vp;
-			_openParms.StoreHLPlanProfile.VersionProfile = vp;
-			
-			_openParms.StoreHLPlanProfile.NodeProfile = hnp;		// ANF - Weighting Multiple Basis
+            _openParms.ChainHLPlanProfile.VersionProfile = vp;
+            _openParms.StoreHLPlanProfile.VersionProfile = vp;
+
+            _openParms.StoreHLPlanProfile.NodeProfile = hnp;		// ANF - Weighting Multiple Basis
             _openParms.ChainHLPlanProfile.NodeProfile = hnp;
             _openParms.DateRangeProfile = _SAB.ApplicationServerSession.Calendar.GetDateRange(this.DateRangeRID);
-            _openParms.LowLevelVersionDefault = vp;		
+            _openParms.LowLevelVersionDefault = vp;
 
             //_openParms.StoreGroupRID = Include.AllStoreGroupRID;	// ANF - Weighting Multiple Basis
             _openParms.StoreGroupRID = SG_RID;
 
-			
+
             //_openParms.LowLevelsType = this.LowerLevelType; 
             //_openParms.LowLevelsOffset = this.LowerLevelOffset;
             //_openParms.LowLevelsSequence = this.LowerLevelSequence;
 
-			if (_computationsMode != null)
-			{
-				_openParms.ComputationsMode = _computationsMode;
-			}
-			else
-			{
-				_openParms.ComputationsMode = _SAB.ApplicationServerSession.ComputationsCollection.GetDefaultComputations().Name;
-			}
+            if (_computationsMode != null)
+            {
+                _openParms.ComputationsMode = _computationsMode;
+            }
+            else
+            {
+                _openParms.ComputationsMode = _SAB.ApplicationServerSession.ComputationsCollection.GetDefaultComputations().Name;
+            }
 
-			// BEGIN Issue 4328 - stodd 2.28.07
-			// BEGIN Issue 5204 - stodd 2.15.08
-			_hnl = null;
-			// END Issue 5204
+            // BEGIN Issue 4328 - stodd 2.28.07
+            // BEGIN Issue 5204 - stodd 2.15.08
+            _hnl = null;
+            // END Issue 5204
             //BuildLowLevelVersionOverrideList(HierNodeRID, LowerLevelType, LowerLevelOffset, LowerLevelSequence); <---DKJ
             BuildLowLevelVersionOverrideList(HierNodeRID, eLowLevelsType.LevelOffset, 1, 0);
             // END Issue 4328
 
-			BuildLowLevelVersionList();
+            BuildLowLevelVersionList();
 
             GetAuditInfo();
-		}
+        }
 
         private void BuildLowLevelVersionList()
         {
@@ -915,121 +929,121 @@ namespace MIDRetail.Business
                 //}
                 //else
                 //{
-                    lvop.VersionIsOverridden = false;
-                    //Begin Track #4457 - JSmith - Add forecast versions
-                    //					lvop.VersionProfile = new VersionProfile(_versionRid);
-                    ForecastVersionProfileBuilder fvpb = new ForecastVersionProfileBuilder();
-                    lvop.VersionProfile = fvpb.Build(_versionRid);
-                    //End Track #4457
-                    lvop.VersionProfile.ChainSecurity = new VersionSecurityProfile(_versionRid);
+                lvop.VersionIsOverridden = false;
+                //Begin Track #4457 - JSmith - Add forecast versions
+                //					lvop.VersionProfile = new VersionProfile(_versionRid);
+                ForecastVersionProfileBuilder fvpb = new ForecastVersionProfileBuilder();
+                lvop.VersionProfile = fvpb.Build(_versionRid);
+                //End Track #4457
+                lvop.VersionProfile.ChainSecurity = new VersionSecurityProfile(_versionRid);
 
-                    lvop.Exclude = false;
-                    _lowlevelVersionOverrideList.Add(lvop);
+                lvop.Exclude = false;
+                _lowlevelVersionOverrideList.Add(lvop);
                 //}
             }
             return _lowlevelVersionOverrideList;
         }
 
 
-		/// <summary>
-		/// Fills in the basis part of the CubeGroup open parms.
-		/// </summary>
-		private void FillOpenParmForBasis(int sglRid)
-		{
-			BasisProfile basisProfile;
-			BasisDetailProfile basisDetailProfile;
-			int bdpKey = 1;
-			HierarchyNodeProfile hnp = null;
+        /// <summary>
+        /// Fills in the basis part of the CubeGroup open parms.
+        /// </summary>
+        private void FillOpenParmForBasis(int sglRid)
+        {
+            BasisProfile basisProfile;
+            BasisDetailProfile basisDetailProfile;
+            int bdpKey = 1;
+            HierarchyNodeProfile hnp = null;
 
-			//=======================
-			// Set up Basis Profile
-			//=======================
-			basisProfile = new BasisProfile(1, null, _openParms);
-			basisProfile.BasisType = eTyLyType.NonTyLy;
+            //=======================
+            // Set up Basis Profile
+            //=======================
+            basisProfile = new BasisProfile(1, null, _openParms);
+            basisProfile.BasisType = eTyLyType.NonTyLy;
 
             int maxRows = this._dsRollup.Tables[0].Rows.Count;  //the basis detail table
-			for (int row=0;row<maxRows;row++)
-			{
-				{
-					//=====================
-					// Get Hierarchy Node
-					//=====================
-					int basisHierNodeRid = this._hierNodeRid;
-					hnp = _SAB.HierarchyServerSession.GetNodeData(basisHierNodeRid);
+            for (int row = 0; row < maxRows; row++)
+            {
+                {
+                    //=====================
+                    // Get Hierarchy Node
+                    //=====================
+                    int basisHierNodeRid = this._hierNodeRid;
+                    hnp = _SAB.HierarchyServerSession.GetNodeData(basisHierNodeRid);
 
                     int basisVersionRid = Convert.ToInt32(_dsRollup.Tables[0].Rows[row]["FV_RID"], CultureInfo.CurrentUICulture);
                     int basisDateRangeRid = Convert.ToInt32(_dsRollup.Tables[0].Rows[row]["CDR_RID"], CultureInfo.CurrentUICulture);
 
-					basisDetailProfile = new BasisDetailProfile(bdpKey++, _openParms);
-					//Begin Track #4457 - JSmith - Add forecast versions
-//					basisDetailProfile.VersionProfile = new VersionProfile(basisVersionRid);
-					ForecastVersionProfileBuilder fvpb = new ForecastVersionProfileBuilder();
-					basisDetailProfile.VersionProfile = fvpb.Build(basisVersionRid);
-					//End Track #4457
-					basisDetailProfile.HierarchyNodeProfile = hnp;
-					DateRangeProfile drp = _SAB.ApplicationServerSession.Calendar.GetDateRange(basisDateRangeRid);
-					basisDetailProfile.DateRangeProfile = drp;
+                    basisDetailProfile = new BasisDetailProfile(bdpKey++, _openParms);
+                    //Begin Track #4457 - JSmith - Add forecast versions
+                    //					basisDetailProfile.VersionProfile = new VersionProfile(basisVersionRid);
+                    ForecastVersionProfileBuilder fvpb = new ForecastVersionProfileBuilder();
+                    basisDetailProfile.VersionProfile = fvpb.Build(basisVersionRid);
+                    //End Track #4457
+                    basisDetailProfile.HierarchyNodeProfile = hnp;
+                    DateRangeProfile drp = _SAB.ApplicationServerSession.Calendar.GetDateRange(basisDateRangeRid);
+                    basisDetailProfile.DateRangeProfile = drp;
 
-					basisDetailProfile.IncludeExclude = eBasisIncludeExclude.Include;
+                    basisDetailProfile.IncludeExclude = eBasisIncludeExclude.Include;
                     //basisDetailProfile.IncludeExclude = (eBasisIncludeExclude)Convert.ToInt32(_dsRollup.Tables[1].Rows[row]["INCLUDE_EXCLUDE"], CultureInfo.CurrentUICulture);
                     if (_dsRollup.Tables[0].Rows[row]["WEIGHT"] == System.DBNull.Value)
-						basisDetailProfile.Weight = 1;
-					else
+                        basisDetailProfile.Weight = 1;
+                    else
                         basisDetailProfile.Weight = (float)Convert.ToDouble(_dsRollup.Tables[0].Rows[row]["WEIGHT"], CultureInfo.CurrentUICulture);
-					basisProfile.BasisDetailProfileList.Add(basisDetailProfile);
-				}
-			}
-			_openParms.BasisProfileList.Add(basisProfile);
-		}
+                    basisProfile.BasisDetailProfileList.Add(basisDetailProfile);
+                }
+            }
+            _openParms.BasisProfileList.Add(basisProfile);
+        }
 
-		private void Save()
-		{
-			try
-			{
-				PlanSaveParms planSaveParms = new PlanSaveParms();
-				
-				planSaveParms.SaveChainLowLevel = true;	
-				
-				_cubeGroup.SaveCubeGroup(planSaveParms);
-			}
-			catch
-			{
-				throw;
-			}
-		}
+        private void Save()
+        {
+            try
+            {
+                PlanSaveParms planSaveParms = new PlanSaveParms();
 
-		/// <summary>
-		/// Returns a copy of this object.
-		/// </summary>
-		/// <param name="aSession">
-		/// The current session
-		/// </param>
-		/// <param name="aCloneDateRanges">
-		/// A flag identifying if date ranges are to be cloned or use the original</param>
-		/// <returns>
-		/// A copy of the object.
-		/// </returns>
+                planSaveParms.SaveChainLowLevel = true;
+
+                _cubeGroup.SaveCubeGroup(planSaveParms);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Returns a copy of this object.
+        /// </summary>
+        /// <param name="aSession">
+        /// The current session
+        /// </param>
+        /// <param name="aCloneDateRanges">
+        /// A flag identifying if date ranges are to be cloned or use the original</param>
+        /// <returns>
+        /// A copy of the object.
+        /// </returns>
         // Begin Track #5912 - JSmith - Save As needs to clone custom override models
         //override public ApplicationBaseMethod Copy(Session aSession, bool aCloneDateRanges)
         override public ApplicationBaseMethod Copy(Session aSession, bool aCloneDateRanges, bool aCloneCustomOverrideModels)
         // End Track #5912
-		{
+        {
             OTSRollupMethod newOTSRollupMethod = null;
-			int maxRows;
-			int basisDateRangeRid;
+            int maxRows;
+            int basisDateRangeRid;
 
-			try
-			{
+            try
+            {
                 newOTSRollupMethod = (OTSRollupMethod)this.MemberwiseClone();
-				if (aCloneDateRanges &&
-					DateRangeRID != Include.UndefinedCalendarDateRange)
-				{
+                if (aCloneDateRanges &&
+                    DateRangeRID != Include.UndefinedCalendarDateRange)
+                {
                     newOTSRollupMethod.DateRangeRID = aSession.Calendar.GetDateRangeClone(DateRangeRID).Key;
-				}
-				else
-				{
+                }
+                else
+                {
                     newOTSRollupMethod.DateRangeRID = DateRangeRID;
-				}
+                }
                 newOTSRollupMethod.DSRollup = DSRollup.Copy();
                 // Begin Track #5869 - JSmith - When doing a Save as for a Roll up method receive an Argument Eception
                 //if (aCloneDateRanges)
@@ -1054,127 +1068,277 @@ namespace MIDRetail.Business
                 newOTSRollupMethod.VersionRID = VersionRID;
                 newOTSRollupMethod.Virtual_IND = Virtual_IND;
 
-				if (_lowlevelVersionOverrideList != null)
-				{
-					if (_versionProfList == null)
-					{
-						_versionProfList = _SAB.ClientServerSession.GetUserForecastVersions();
-					}
+                if (_lowlevelVersionOverrideList != null)
+                {
+                    if (_versionProfList == null)
+                    {
+                        _versionProfList = _SAB.ClientServerSession.GetUserForecastVersions();
+                    }
                     CopyVersionOverrideList(newOTSRollupMethod);
-				}
+                }
 
                 return newOTSRollupMethod;
-			}
-			catch (Exception exc)
-			{
-				string message = exc.ToString();
-				throw;
-			}
-		}
+            }
+            catch (Exception exc)
+            {
+                string message = exc.ToString();
+                throw;
+            }
+        }
 
         private void CopyVersionOverrideList(OTSRollupMethod OTSRollupMethod)
-		{
-			try
-			{
+        {
+            try
+            {
                 OTSRollupMethod._lowlevelVersionOverrideList = new ProfileList(eProfileType.LowLevelVersionOverride);
-				foreach(LowLevelVersionOverrideProfile lvop in _lowlevelVersionOverrideList.ArrayList)
-				{
-					LowLevelVersionOverrideProfile newlvop = lvop.Copy();
-					if (newlvop.VersionProfile == null)
-					{
-						newlvop.VersionProfile = (VersionProfile)_versionProfList.FindKey(_versionRid);
-					}
+                foreach (LowLevelVersionOverrideProfile lvop in _lowlevelVersionOverrideList.ArrayList)
+                {
+                    LowLevelVersionOverrideProfile newlvop = lvop.Copy();
+                    if (newlvop.VersionProfile == null)
+                    {
+                        newlvop.VersionProfile = (VersionProfile)_versionProfList.FindKey(_versionRid);
+                    }
                     OTSRollupMethod._lowlevelVersionOverrideList.Add(newlvop);
-				}
-			}
-			catch (Exception exc)
-			{
-				string message = exc.ToString();
-				throw;
-			}
-		}
+                }
+            }
+            catch (Exception exc)
+            {
+                string message = exc.ToString();
+                throw;
+            }
+        }
 
-		// Begin MID Track 4858 - JSmith - Security changes
-		/// <summary>
-		/// Returns a flag identifying if the user can update the data on the method.
-		/// </summary>
-		/// <param name="aSession">
-		/// The current session
-		/// </param>
-		/// <param name="aUserRID">
-		/// The internal key of the user</param>
-		/// <returns>
-		/// A flag.
-		/// </returns>
-		override public bool AuthorizedToUpdate(Session aSession, int aUserRID)
-		{
-			try
-			{
-				if (VersionRID == Include.NoRID ||
-					HierNodeRID == Include.NoRID)
-				{
-					return false;
-				}
+        // Begin MID Track 4858 - JSmith - Security changes
+        /// <summary>
+        /// Returns a flag identifying if the user can update the data on the method.
+        /// </summary>
+        /// <param name="aSession">
+        /// The current session
+        /// </param>
+        /// <param name="aUserRID">
+        /// The internal key of the user</param>
+        /// <returns>
+        /// A flag.
+        /// </returns>
+        override public bool AuthorizedToUpdate(Session aSession, int aUserRID)
+        {
+            try
+            {
+                if (VersionRID == Include.NoRID ||
+                    HierNodeRID == Include.NoRID)
+                {
+                    return false;
+                }
 
-				// BEGIN Track #5858 stodd
-				HierarchyNodeSecurityProfile storeNodeSecurity = SAB.ClientServerSession.GetMyUserNodeSecurityAssignment(HierNodeRID, (int)eSecurityTypes.Store);
-				HierarchyNodeSecurityProfile chainNodeSecurity = SAB.ClientServerSession.GetMyUserNodeSecurityAssignment(HierNodeRID, (int)eSecurityTypes.Chain);
-				if (!storeNodeSecurity.AllowUpdate)
-				{
-					if (!chainNodeSecurity.AllowUpdate)
-					{
-						return false;
-					}
-				}
-				VersionSecurityProfile storeVersionSecurity = SAB.ClientServerSession.GetMyVersionSecurityAssignment(VersionRID, (int)eSecurityTypes.Store);
-				VersionSecurityProfile chainVersionSecurity = SAB.ClientServerSession.GetMyVersionSecurityAssignment(VersionRID, (int)eSecurityTypes.Chain);
-				if (!storeVersionSecurity.AllowUpdate)
-				{
-					if (!chainVersionSecurity.AllowUpdate)
-					{
-						return false;
-					}
-				}
+                // BEGIN Track #5858 stodd
+                HierarchyNodeSecurityProfile storeNodeSecurity = SAB.ClientServerSession.GetMyUserNodeSecurityAssignment(HierNodeRID, (int)eSecurityTypes.Store);
+                HierarchyNodeSecurityProfile chainNodeSecurity = SAB.ClientServerSession.GetMyUserNodeSecurityAssignment(HierNodeRID, (int)eSecurityTypes.Chain);
+                if (!storeNodeSecurity.AllowUpdate)
+                {
+                    if (!chainNodeSecurity.AllowUpdate)
+                    {
+                        return false;
+                    }
+                }
+                VersionSecurityProfile storeVersionSecurity = SAB.ClientServerSession.GetMyVersionSecurityAssignment(VersionRID, (int)eSecurityTypes.Store);
+                VersionSecurityProfile chainVersionSecurity = SAB.ClientServerSession.GetMyVersionSecurityAssignment(VersionRID, (int)eSecurityTypes.Chain);
+                if (!storeVersionSecurity.AllowUpdate)
+                {
+                    if (!chainVersionSecurity.AllowUpdate)
+                    {
+                        return false;
+                    }
+                }
 
-				//FillOpenParmForPlan();
-				//foreach (PlanProfile planProf in _openParms.LowLevelPlanProfileList)
-				//{
-				//    if (planProf.IncludeExclude == eBasisIncludeExclude.Include)
-				//    {
-				//        if (planProf.VersionProfile == null ||
-				//            !planProf.VersionProfile.ChainSecurity.AllowUpdate)
-				//        {
-				//            return false;
-				//        }
-				//        HierarchyNodeSecurityProfile hierNodeSecurity = SAB.ClientServerSession.GetMyUserNodeSecurityAssignment(planProf.NodeProfile.Key, (int)eSecurityTypes.Store);
-				//        if (!hierNodeSecurity.AllowUpdate)
-				//        {
-				//            return false;
-				//        }
-				//    }
-				//}
-				//return true;
+                //FillOpenParmForPlan();
+                //foreach (PlanProfile planProf in _openParms.LowLevelPlanProfileList)
+                //{
+                //    if (planProf.IncludeExclude == eBasisIncludeExclude.Include)
+                //    {
+                //        if (planProf.VersionProfile == null ||
+                //            !planProf.VersionProfile.ChainSecurity.AllowUpdate)
+                //        {
+                //            return false;
+                //        }
+                //        HierarchyNodeSecurityProfile hierNodeSecurity = SAB.ClientServerSession.GetMyUserNodeSecurityAssignment(planProf.NodeProfile.Key, (int)eSecurityTypes.Store);
+                //        if (!hierNodeSecurity.AllowUpdate)
+                //        {
+                //            return false;
+                //        }
+                //    }
+                //}
+                //return true;
 
-				//VersionSecurityProfile versionSecurity = SAB.ClientServerSession.GetMyVersionSecurityAssignment(VersionRID, (int)eSecurityTypes.Store);
-				//if (!versionSecurity.AllowUpdate)
-				//{
-				//    return false;
-				//}
-				//HierarchyNodeSecurityProfile hierNodeSecurity = SAB.ClientServerSession.GetMyUserNodeSecurityAssignment(HierNodeRID, (int)eSecurityTypes.Store);
-				//if (!hierNodeSecurity.AllowUpdate)
-				//{
-				//    return false;
-				//}
-				// End Tack #5858
-				return true;
-			}
-			catch (Exception exc)
-			{
-				string message = exc.ToString();
-				throw;
-			}
-		}
-		// End MID Track 4858
+                //VersionSecurityProfile versionSecurity = SAB.ClientServerSession.GetMyVersionSecurityAssignment(VersionRID, (int)eSecurityTypes.Store);
+                //if (!versionSecurity.AllowUpdate)
+                //{
+                //    return false;
+                //}
+                //HierarchyNodeSecurityProfile hierNodeSecurity = SAB.ClientServerSession.GetMyUserNodeSecurityAssignment(HierNodeRID, (int)eSecurityTypes.Store);
+                //if (!hierNodeSecurity.AllowUpdate)
+                //{
+                //    return false;
+                //}
+                // End Tack #5858
+                return true;
+            }
+            catch (Exception exc)
+            {
+                string message = exc.ToString();
+                throw;
+            }
+        }
+        // End MID Track 4858
+
+        // BEGIN RO-642 - RDewey
+        override public FunctionSecurityProfile GetFunctionSecurity()
+        {
+            if (this.GlobalUserType == eGlobalUserType.Global)
+            {
+                return SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.ForecastMethodsGlobalRollup);
+            }
+            else
+            {
+                return SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.ForecastMethodsUserRollup);
+            }
+
+        }
+        override public ROMethodProperties MethodGetData(bool processingApply)
+        {
+            // Begin RO-748 RDewey
+            eROLevelsType levelType;
+            string strLevelType;
+
+            ROMethodRollupProperties method = new ROMethodRollupProperties(
+                method: GetName.GetMethod(method: this),
+                description: Method_Description,
+                userKey: User_RID,
+                merchandise: GetName.GetMerchandiseName(nodeRID: _hierNodeRid, SAB: SAB),
+                version: GetName.GetVersion(versionRID: _versionRid, SAB: SAB),
+                dateRange: GetName.GetCalendarDateRange(calendarDateRID: _dateRangeRid, SAB: SAB),
+                methodRollupBasisOptions: new System.Collections.Generic.List<ROMethodRollupOptionsBasis>()
+                );
+
+            for (int k = 0; k < _dsRollup.Tables[0].Rows.Count; k++)
+            {
+                DataRow row = _dsRollup.Tables[0].Rows[k];
+
+                ROLevelInformation fromLevelInformation = new ROLevelInformation();
+                fromLevelInformation.LevelSequence = Convert.ToInt32(row["FROM_LEVEL_SEQ"]);
+                strLevelType = Convert.ToString(row["FROM_LEVEL_TYPE"]);
+                Enum.TryParse(strLevelType, out levelType);
+                if (levelType == eROLevelsType.Characteristic)
+                {
+                    levelType = eROLevelsType.HierarchyLevel;
+                }
+                fromLevelInformation.LevelType = levelType;
+                try
+                {
+                    fromLevelInformation.LevelOffset = Convert.ToInt32(row["FROM_LEVEL_OFFSET"]);
+                }
+                catch
+                {
+                    fromLevelInformation.LevelOffset = -1;
+                }
+
+                fromLevelInformation.LevelValue = GetName.GetLevelName(levelType, fromLevelInformation.LevelSequence, fromLevelInformation.LevelOffset, SAB);
+
+                ROLevelInformation toLevelInformation = new ROLevelInformation();
+
+                toLevelInformation.LevelSequence = Convert.ToInt32(row["TO_LEVEL_SEQ"]);
+                strLevelType = Convert.ToString(row["TO_LEVEL_TYPE"]);
+                Enum.TryParse(strLevelType, out levelType);
+                if (levelType == eROLevelsType.Characteristic)
+                {
+                    levelType = eROLevelsType.HierarchyLevel;
+                }
+                toLevelInformation.LevelType = levelType;
+                try
+                {
+                    toLevelInformation.LevelOffset = Convert.ToInt32(row["TO_LEVEL_OFFSET"]);
+                }
+                catch
+                {
+                    toLevelInformation.LevelOffset = -1;
+                }
+                toLevelInformation.LevelValue = GetName.GetLevelName(levelType, toLevelInformation.LevelSequence, toLevelInformation.LevelOffset, SAB);
+                ROMethodRollupOptionsBasis options = new ROMethodRollupOptionsBasis(
+                    optionsDetailSeq: Convert.ToInt32(row["DETAIL_SEQ"]),
+                    fromMerchandise: GetName.GetMerchandiseName(Convert.ToInt32(row["FROM_LEVEL_HRID"]), SAB),
+                    fromROLevelInformation: fromLevelInformation,
+                    toMerchandise: GetName.GetMerchandiseName(Convert.ToInt32(row["TO_LEVEL_HRID"]), SAB),
+                    toROLevelInformation: toLevelInformation,
+                    isStore: Convert.ToBoolean(row["Store"]),
+                    isChain: Convert.ToBoolean(row["Chain"]),
+                    isStoreToChain: Convert.ToBoolean(row["StoreToChain"])
+                    );
+                method.MethodRollupBasisOptions.Add(options);
+            }
+
+            return method;
+        }
+
+        override public bool MethodSetData(ROMethodProperties methodProperties, bool processingApply)
+        {
+            ROMethodRollupProperties roMethodRollupProperties = (ROMethodRollupProperties)methodProperties;
+            try
+            {
+                _versionRid = roMethodRollupProperties.Version.Key;
+                _dateRangeRid = roMethodRollupProperties.DateRange.Key;
+                _hierNodeRid = roMethodRollupProperties.Merchandise.Key;
+
+                // The stored procedure will delete all the BASIS_DETAIL rows and re-add them.
+                if (_dsRollup != null)
+                {
+                    _dsRollup.Tables[0].Rows.Clear();
+                }
+                else
+                {
+                    LoadBasis();
+                }
+
+                DataRow row;
+                int intDetailSeq = -1;
+
+                foreach (ROMethodRollupOptionsBasis optionsBasis in roMethodRollupProperties.MethodRollupBasisOptions)
+                {
+                    row = _dsRollup.Tables[0].NewRow();
+                    intDetailSeq += 1;
+                    row["DETAIL_SEQ"] = intDetailSeq;
+                    row["FromLevel"] = optionsBasis.FromROLevelInformation.LevelValue;
+                    row["FROM_LEVEL_HRID"] = optionsBasis.FromMerchandise.Key;
+                    row["FROM_LEVEL_TYPE"] = optionsBasis.FromROLevelInformation.LevelType;
+                    row["FROM_LEVEL_SEQ"] = optionsBasis.FromROLevelInformation.LevelSequence;
+                    row["FROM_LEVEL_OFFSET"] = optionsBasis.FromROLevelInformation.LevelOffset;
+                    row["ToLevel"] = optionsBasis.ToROLevelInformation.LevelValue;
+                    row["TO_LEVEL_HRID"] = optionsBasis.ToMerchandise.Key;
+                    row["TO_LEVEL_TYPE"] = optionsBasis.ToROLevelInformation.LevelType;
+                    row["TO_LEVEL_SEQ"] = optionsBasis.ToROLevelInformation.LevelSequence;
+                    row["TO_LEVEL_OFFSET"] = optionsBasis.ToROLevelInformation.LevelOffset;
+                    row["Store"] = optionsBasis.IsStore;
+                    row["Chain"] = optionsBasis.IsChain;
+                    row["StoreToChain"] = optionsBasis.IsStoreToChain;
+                    row["STORE_IND"] = Convert.ToInt16(optionsBasis.IsStore);
+                    row["CHAIN_IND"] = Convert.ToInt16(optionsBasis.IsChain);
+                    row["STORE_TO_CHAIN_IND"] = Convert.ToInt16(optionsBasis.IsStoreToChain);
+                    _dsRollup.Tables[0].Rows.Add(row);
+                }
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+
+            //throw new NotImplementedException("MethodSaveData is not implemented");
+        }
+
+        override public ROMethodProperties MethodCopyData()
+        {
+            throw new NotImplementedException("MethodCopyData is not implemented");
+        }
+        // END RO-642 - RDewey
 
         // Begin MID Track 5852 - KJohnson - Security changes
         public bool StoreAuthorizedToUpdate()
@@ -1242,7 +1406,35 @@ namespace MIDRetail.Business
         }
         // End MID Track 5852
 
-	}
+        // Begin RO-748 RDewey - Data Transport For Rollup Method - Need to define Basis DataTable when creating new Rollup Methods
+        private void LoadBasis()
+        {
+                _dtBasis = MIDEnvironment.CreateDataTable("Basis");
 
-	
+                _dtBasis.Columns.Add("DETAIL_SEQ", System.Type.GetType("System.Int32")); //this column will be hidden.
+                _dtBasis.Columns.Add("FromLevel", System.Type.GetType("System.Object"));
+                _dtBasis.Columns.Add("FROM_LEVEL_HRID", System.Type.GetType("System.Int32")); //this column will be hidden.
+                _dtBasis.Columns.Add("FROM_LEVEL_TYPE", System.Type.GetType("System.Int32")); //this column will be hidden.
+                _dtBasis.Columns.Add("FROM_LEVEL_SEQ", System.Type.GetType("System.Int32")); //this column will be hidden.
+                _dtBasis.Columns.Add("FROM_LEVEL_OFFSET", System.Type.GetType("System.Int32")); //this column will be hidden.
+                _dtBasis.Columns.Add("ToLevel", System.Type.GetType("System.Object"));
+                _dtBasis.Columns.Add("TO_LEVEL_HRID", System.Type.GetType("System.Int32")); //this column will be hidden.
+                _dtBasis.Columns.Add("TO_LEVEL_TYPE", System.Type.GetType("System.Int32")); //this column will be hidden.
+                _dtBasis.Columns.Add("TO_LEVEL_SEQ", System.Type.GetType("System.Int32")); //this column will be hidden.
+                _dtBasis.Columns.Add("TO_LEVEL_OFFSET", System.Type.GetType("System.Int32")); //this column will be hidden.
+                _dtBasis.Columns.Add("Store", System.Type.GetType("System.Boolean"));
+                _dtBasis.Columns.Add("Chain", System.Type.GetType("System.Boolean"));
+                _dtBasis.Columns.Add("StoreToChain", System.Type.GetType("System.Boolean"));
+                _dtBasis.Columns.Add("STORE_IND", System.Type.GetType("System.Int32")); //this column will be hidden.
+                _dtBasis.Columns.Add("CHAIN_IND", System.Type.GetType("System.Int32")); //this column will be hidden.
+                _dtBasis.Columns.Add("STORE_TO_CHAIN_IND", System.Type.GetType("System.Int32")); //this column will be hidden.
+                                                                   
+                if (_dsRollup == null)
+                { 
+                    _dsRollup = new DataSet();
+                    _dsRollup.Tables.Add(_dtBasis);
+                }
+        }
+        // End RO-748 RDewey
+    }
 }

@@ -3082,7 +3082,411 @@ namespace MIDRetail.Data
 			    }
 			}
 
-			public static MID_METHOD_MOD_SALES_READ_def MID_METHOD_MOD_SALES_READ = new MID_METHOD_MOD_SALES_READ_def();
+            // Begin TT#2131-MD - JSmith - Halo Integration
+            public static MID_METHOD_PLANNING_EXTRACT_READ_def MID_METHOD_PLANNING_EXTRACT_READ = new MID_METHOD_PLANNING_EXTRACT_READ_def();
+            public class MID_METHOD_PLANNING_EXTRACT_READ_def : baseStoredProcedure
+            {
+                //"file:///C:\SCMVS2010\gohere.html?filepath=DatabaseDefinition\SQL_StoredProcedures\MID_METHOD_PLANNING_EXTRACT_READ.SQL"
+
+                private intParameter METHOD_RID;
+
+                public MID_METHOD_PLANNING_EXTRACT_READ_def()
+                {
+                    base.procedureName = "MID_METHOD_PLANNING_EXTRACT_READ";
+                    base.procedureType = storedProcedureTypes.Read;
+                    base.tableNames.Add("METHOD_PLANNING_EXTRACT");
+                    METHOD_RID = new intParameter("@METHOD_RID", base.inputParameterList);
+                }
+
+                public DataTable Read(DatabaseAccess _dba, int? METHOD_RID)
+                {
+                    lock (typeof(MID_METHOD_PLANNING_EXTRACT_READ_def))
+                    {
+                        this.METHOD_RID.SetValue(METHOD_RID);
+                        return ExecuteStoredProcedureForRead(_dba);
+                    }
+                }
+            }
+
+            public static MID_METHOD_PLANNING_EXTRACT_VARIABLES_READ_def MID_METHOD_PLANNING_EXTRACT_VARIABLES_READ = new MID_METHOD_PLANNING_EXTRACT_VARIABLES_READ_def();
+            public class MID_METHOD_PLANNING_EXTRACT_VARIABLES_READ_def : baseStoredProcedure
+            {
+                //"file:///C:\SCMVS2010\gohere.html?filepath=DatabaseDefinition\SQL_StoredProcedures\MID_METHOD_PLANNING_EXTRACT_VARIABLES_READ.SQL"
+
+                private intParameter METHOD_RID;
+
+                public MID_METHOD_PLANNING_EXTRACT_VARIABLES_READ_def()
+                {
+                    base.procedureName = "MID_METHOD_PLANNING_EXTRACT_VARIABLES_READ";
+                    base.procedureType = storedProcedureTypes.Read;
+                    base.tableNames.Add("METHOD_PLANNING_EXTRACT_VARIABLES");
+                    METHOD_RID = new intParameter("@METHOD_RID", base.inputParameterList);
+                }
+
+                public DataTable Read(DatabaseAccess _dba, int? METHOD_RID)
+                {
+                    lock (typeof(MID_METHOD_PLANNING_EXTRACT_VARIABLES_READ_def))
+                    {
+                        this.METHOD_RID.SetValue(METHOD_RID);
+                        return ExecuteStoredProcedureForRead(_dba);
+                    }
+                }
+            }
+
+            public static MID_METHOD_PLANNING_EXTRACT_INSERT_def MID_METHOD_PLANNING_EXTRACT_INSERT = new MID_METHOD_PLANNING_EXTRACT_INSERT_def();
+            public class MID_METHOD_PLANNING_EXTRACT_INSERT_def : baseStoredProcedure
+            {
+                //"file:///C:\SCMVS2010\gohere.html?filepath=DatabaseDefinition\SQL_StoredProcedures\MID_METHOD_PLANNING_EXTRACT_INSERT.SQL"
+
+                private intParameter METHOD_RID;
+                private intParameter HN_RID;
+                private intParameter FV_RID;
+                private intParameter CDR_RID;
+                private intParameter STORE_FILTER_RID;
+                private charParameter CHAIN_IND;
+                private charParameter STORE_IND;
+                private charParameter ATTRIBUTE_SET_IND;
+                private intParameter ATTRIBUTE_RID;
+                private charParameter LOW_LEVELS_IND;
+                private charParameter LOW_LEVELS_ONLY_IND;
+                private intParameter LOW_LEVELS_TYPE;
+                private intParameter LOW_LEVEL_SEQUENCE;
+                private intParameter LOW_LEVEL_OFFSET;
+                private charParameter SHOW_INELIGIBLE_IND;
+                private charParameter EXCLUDE_ZERO_VALUES_IND;
+                private intParameter CONCURRENT_PROCESSES;
+                private intParameter OLL_RID;
+                private datetimeParameter UPDATE_DATE;
+                private datetimeParameter EXTRACT_DATE;
+
+                public MID_METHOD_PLANNING_EXTRACT_INSERT_def()
+                {
+                    base.procedureName = "MID_METHOD_PLANNING_EXTRACT_INSERT";
+                    base.procedureType = storedProcedureTypes.Insert;
+                    base.tableNames.Add("METHOD_PLANNING_EXTRACT");
+                    METHOD_RID = new intParameter("@METHOD_RID", base.inputParameterList);
+                    HN_RID = new intParameter("@HN_RID", base.inputParameterList);
+                    FV_RID = new intParameter("@FV_RID", base.inputParameterList);
+                    CDR_RID = new intParameter("@CDR_RID", base.inputParameterList);
+                    STORE_FILTER_RID = new intParameter("@STORE_FILTER_RID", base.inputParameterList);
+                    CHAIN_IND = new charParameter("@CHAIN_IND", base.inputParameterList);
+                    STORE_IND = new charParameter("@STORE_IND", base.inputParameterList);
+                    ATTRIBUTE_SET_IND = new charParameter("@ATTRIBUTE_SET_IND", base.inputParameterList);
+                    ATTRIBUTE_RID = new intParameter("@ATTRIBUTE_RID", base.inputParameterList);
+                    LOW_LEVELS_IND = new charParameter("@LOW_LEVELS_IND", base.inputParameterList);
+                    LOW_LEVELS_ONLY_IND = new charParameter("@LOW_LEVELS_ONLY_IND", base.inputParameterList);
+                    LOW_LEVELS_TYPE = new intParameter("@LOW_LEVELS_TYPE", base.inputParameterList);
+                    LOW_LEVEL_SEQUENCE = new intParameter("@LOW_LEVEL_SEQUENCE", base.inputParameterList);
+                    LOW_LEVEL_OFFSET = new intParameter("@LOW_LEVEL_OFFSET", base.inputParameterList);
+                    SHOW_INELIGIBLE_IND = new charParameter("@SHOW_INELIGIBLE_IND", base.inputParameterList);
+                    EXCLUDE_ZERO_VALUES_IND = new charParameter("@EXCLUDE_ZERO_VALUES_IND", base.inputParameterList);
+                    CONCURRENT_PROCESSES = new intParameter("@CONCURRENT_PROCESSES", base.inputParameterList);
+                    OLL_RID = new intParameter("@OLL_RID", base.inputParameterList);
+                    UPDATE_DATE = new datetimeParameter("@UPDATE_DATE", base.inputParameterList);
+                    EXTRACT_DATE = new datetimeParameter("@EXTRACT_DATE", base.inputParameterList);
+                }
+
+                public int Insert(DatabaseAccess _dba,
+                                  int? METHOD_RID,
+                                  int? HN_RID,
+                                  int? FV_RID,
+                                  int? CDR_RID,
+                                  int? STORE_FILTER_RID,
+                                  char? CHAIN_IND,
+                                  char? STORE_IND,
+                                  char? ATTRIBUTE_SET_IND,
+                                  int? ATTRIBUTE_RID,
+                                  char? LOW_LEVELS_IND,
+                                  char? LOW_LEVELS_ONLY_IND,
+                                  int? LOW_LEVELS_TYPE,
+                                  int? LOW_LEVEL_SEQUENCE,
+                                  int? LOW_LEVEL_OFFSET,
+                                  char? SHOW_INELIGIBLE_IND,
+                                  char? EXCLUDE_ZERO_VALUES_IND,
+                                  int? CONCURRENT_PROCESSES,
+                                  int? OLL_RID,
+                                  DateTime? UPDATE_DATE,
+                                  DateTime? EXTRACT_DATE
+                                  )
+                {
+                    lock (typeof(MID_METHOD_PLANNING_EXTRACT_INSERT_def))
+                    {
+                        this.METHOD_RID.SetValue(METHOD_RID);
+                        this.HN_RID.SetValue(HN_RID);
+                        this.FV_RID.SetValue(FV_RID);
+                        this.CDR_RID.SetValue(CDR_RID);
+                        this.STORE_FILTER_RID.SetValue(STORE_FILTER_RID);
+                        this.CHAIN_IND.SetValue(CHAIN_IND);
+                        this.STORE_IND.SetValue(STORE_IND);
+                        this.ATTRIBUTE_SET_IND.SetValue(ATTRIBUTE_SET_IND);
+                        this.ATTRIBUTE_RID.SetValue(ATTRIBUTE_RID);
+                        this.LOW_LEVELS_IND.SetValue(LOW_LEVELS_IND);
+                        this.LOW_LEVELS_ONLY_IND.SetValue(LOW_LEVELS_ONLY_IND);
+                        this.LOW_LEVELS_TYPE.SetValue(LOW_LEVELS_TYPE);
+                        this.LOW_LEVEL_SEQUENCE.SetValue(LOW_LEVEL_SEQUENCE);
+                        this.LOW_LEVEL_OFFSET.SetValue(LOW_LEVEL_OFFSET);
+                        this.SHOW_INELIGIBLE_IND.SetValue(SHOW_INELIGIBLE_IND);
+                        this.EXCLUDE_ZERO_VALUES_IND.SetValue(EXCLUDE_ZERO_VALUES_IND);
+                        this.CONCURRENT_PROCESSES.SetValue(CONCURRENT_PROCESSES);
+                        this.OLL_RID.SetValue(OLL_RID);
+                        this.UPDATE_DATE.SetValue(UPDATE_DATE);
+                        this.EXTRACT_DATE.SetValue(EXTRACT_DATE);
+                        return ExecuteStoredProcedureForInsert(_dba);
+                    }
+                }
+            }
+
+            public static MID_METHOD_PLANNING_EXTRACT_UPDATE_def MID_METHOD_PLANNING_EXTRACT_UPDATE = new MID_METHOD_PLANNING_EXTRACT_UPDATE_def();
+            public class MID_METHOD_PLANNING_EXTRACT_UPDATE_def : baseStoredProcedure
+            {
+                //"file:///C:\SCMVS2010\gohere.html?filepath=DatabaseDefinition\SQL_StoredProcedures\MID_METHOD_PLANNING_EXTRACT_UPDATE.SQL"
+
+                private intParameter METHOD_RID;
+                private intParameter HN_RID;
+                private intParameter FV_RID;
+                private intParameter CDR_RID;
+                private intParameter STORE_FILTER_RID;
+                private charParameter CHAIN_IND;
+                private charParameter STORE_IND;
+                private charParameter ATTRIBUTE_SET_IND;
+                private intParameter ATTRIBUTE_RID;
+                private charParameter LOW_LEVELS_IND;
+                private charParameter LOW_LEVELS_ONLY_IND;
+                private intParameter LOW_LEVELS_TYPE;
+                private intParameter LOW_LEVEL_SEQUENCE;
+                private intParameter LOW_LEVEL_OFFSET;
+                private charParameter SHOW_INELIGIBLE_IND;
+                private charParameter EXCLUDE_ZERO_VALUES_IND;
+                private intParameter CONCURRENT_PROCESSES;
+                private intParameter OLL_RID;
+                private datetimeParameter UPDATE_DATE;
+                private datetimeParameter EXTRACT_DATE;
+
+                public MID_METHOD_PLANNING_EXTRACT_UPDATE_def()
+                {
+                    base.procedureName = "MID_METHOD_PLANNING_EXTRACT_UPDATE";
+                    base.procedureType = storedProcedureTypes.Update;
+                    base.tableNames.Add("METHOD_PLANNING_EXTRACT");
+                    METHOD_RID = new intParameter("@METHOD_RID", base.inputParameterList);
+                    HN_RID = new intParameter("@HN_RID", base.inputParameterList);
+                    FV_RID = new intParameter("@FV_RID", base.inputParameterList);
+                    CDR_RID = new intParameter("@CDR_RID", base.inputParameterList);
+                    STORE_FILTER_RID = new intParameter("@STORE_FILTER_RID", base.inputParameterList);
+                    CHAIN_IND = new charParameter("@CHAIN_IND", base.inputParameterList);
+                    STORE_IND = new charParameter("@STORE_IND", base.inputParameterList);
+                    ATTRIBUTE_SET_IND = new charParameter("@ATTRIBUTE_SET_IND", base.inputParameterList);
+                    ATTRIBUTE_RID = new intParameter("@ATTRIBUTE_RID", base.inputParameterList);
+                    LOW_LEVELS_IND = new charParameter("@LOW_LEVELS_IND", base.inputParameterList);
+                    LOW_LEVELS_ONLY_IND = new charParameter("@LOW_LEVELS_ONLY_IND", base.inputParameterList);
+                    LOW_LEVELS_TYPE = new intParameter("@LOW_LEVELS_TYPE", base.inputParameterList);
+                    LOW_LEVEL_SEQUENCE = new intParameter("@LOW_LEVEL_SEQUENCE", base.inputParameterList);
+                    LOW_LEVEL_OFFSET = new intParameter("@LOW_LEVEL_OFFSET", base.inputParameterList);
+                    SHOW_INELIGIBLE_IND = new charParameter("@SHOW_INELIGIBLE_IND", base.inputParameterList);
+                    EXCLUDE_ZERO_VALUES_IND = new charParameter("@EXCLUDE_ZERO_VALUES_IND", base.inputParameterList);
+                    CONCURRENT_PROCESSES = new intParameter("@CONCURRENT_PROCESSES", base.inputParameterList);
+                    OLL_RID = new intParameter("@OLL_RID", base.inputParameterList);
+                    UPDATE_DATE = new datetimeParameter("@UPDATE_DATE", base.inputParameterList);
+                    EXTRACT_DATE = new datetimeParameter("@EXTRACT_DATE", base.inputParameterList);
+                }
+
+                public int Update(DatabaseAccess _dba,
+                                  int? METHOD_RID,
+                                  int? HN_RID,
+                                  int? FV_RID,
+                                  int? CDR_RID,
+                                  int? STORE_FILTER_RID,
+                                  char? CHAIN_IND,
+                                  char? STORE_IND,
+                                  char? ATTRIBUTE_SET_IND,
+                                  int? ATTRIBUTE_RID,
+                                  char? LOW_LEVELS_IND,
+                                  char? LOW_LEVELS_ONLY_IND,
+                                  int? LOW_LEVELS_TYPE,
+                                  int? LOW_LEVEL_SEQUENCE,
+                                  int? LOW_LEVEL_OFFSET,
+                                  char? SHOW_INELIGIBLE_IND,
+                                  char? EXCLUDE_ZERO_VALUES_IND,
+                                  int? CONCURRENT_PROCESSES,
+                                  int? OLL_RID,
+                                  DateTime? UPDATE_DATE,
+                                  DateTime? EXTRACT_DATE
+                                  )
+                {
+                    lock (typeof(MID_METHOD_PLANNING_EXTRACT_UPDATE_def))
+                    {
+                        this.METHOD_RID.SetValue(METHOD_RID);
+                        this.HN_RID.SetValue(HN_RID);
+                        this.FV_RID.SetValue(FV_RID);
+                        this.CDR_RID.SetValue(CDR_RID);
+                        this.STORE_FILTER_RID.SetValue(STORE_FILTER_RID);
+                        this.CHAIN_IND.SetValue(CHAIN_IND);
+                        this.STORE_IND.SetValue(STORE_IND);
+                        this.ATTRIBUTE_SET_IND.SetValue(ATTRIBUTE_SET_IND);
+                        this.ATTRIBUTE_RID.SetValue(ATTRIBUTE_RID);
+                        this.LOW_LEVELS_IND.SetValue(LOW_LEVELS_IND);
+                        this.LOW_LEVELS_ONLY_IND.SetValue(LOW_LEVELS_ONLY_IND);
+                        this.LOW_LEVELS_TYPE.SetValue(LOW_LEVELS_TYPE);
+                        this.LOW_LEVEL_SEQUENCE.SetValue(LOW_LEVEL_SEQUENCE);
+                        this.LOW_LEVEL_OFFSET.SetValue(LOW_LEVEL_OFFSET);
+                        this.SHOW_INELIGIBLE_IND.SetValue(SHOW_INELIGIBLE_IND);
+                        this.EXCLUDE_ZERO_VALUES_IND.SetValue(EXCLUDE_ZERO_VALUES_IND);
+                        this.CONCURRENT_PROCESSES.SetValue(CONCURRENT_PROCESSES);
+                        this.OLL_RID.SetValue(OLL_RID);
+                        this.UPDATE_DATE.SetValue(UPDATE_DATE);
+                        this.EXTRACT_DATE.SetValue(EXTRACT_DATE);
+                        return ExecuteStoredProcedureForUpdate(_dba);
+                    }
+                }
+            }
+
+            public static MID_METHOD_PLANNING_EXTRACT_EXTRACT_DATE_UPDATE_def MID_METHOD_PLANNING_EXTRACT_EXTRACT_DATE_UPDATE = new MID_METHOD_PLANNING_EXTRACT_EXTRACT_DATE_UPDATE_def();
+            public class MID_METHOD_PLANNING_EXTRACT_EXTRACT_DATE_UPDATE_def : baseStoredProcedure
+            {
+                //"file:///C:\SCMVS2010\gohere.html?filepath=DatabaseDefinition\SQL_StoredProcedures\MID_METHOD_PLANNING_EXTRACT_UPDATE.SQL"
+
+                private intParameter METHOD_RID;
+                private datetimeParameter EXTRACT_DATE;
+
+                public MID_METHOD_PLANNING_EXTRACT_EXTRACT_DATE_UPDATE_def()
+                {
+                    base.procedureName = "MID_METHOD_PLANNING_EXTRACT_EXTRACT_DATE_UPDATE";
+                    base.procedureType = storedProcedureTypes.Update;
+                    base.tableNames.Add("METHOD_PLANNING_EXTRACT");
+                    METHOD_RID = new intParameter("@METHOD_RID", base.inputParameterList);
+                    EXTRACT_DATE = new datetimeParameter("@EXTRACT_DATE", base.inputParameterList);
+                }
+
+                public int Update(DatabaseAccess _dba,
+                                  int? METHOD_RID,
+                                  DateTime? EXTRACT_DATE
+                                  )
+                {
+                    lock (typeof(MID_METHOD_PLANNING_EXTRACT_EXTRACT_DATE_UPDATE_def))
+                    {
+                        this.METHOD_RID.SetValue(METHOD_RID);
+                        this.EXTRACT_DATE.SetValue(EXTRACT_DATE);
+                        return ExecuteStoredProcedureForUpdate(_dba);
+                    }
+                }
+            }
+
+            public static MID_METHOD_PLANNING_EXTRACT_DELETE_def MID_METHOD_PLANNING_EXTRACT_DELETE = new MID_METHOD_PLANNING_EXTRACT_DELETE_def();
+            public class MID_METHOD_PLANNING_EXTRACT_DELETE_def : baseStoredProcedure
+            {
+                //"file:///C:\SCMVS2010\gohere.html?filepath=DatabaseDefinition\SQL_StoredProcedures\MID_METHOD_PLANNING_EXTRACT_DELETE.SQL"
+
+                private intParameter METHOD_RID;
+
+                public MID_METHOD_PLANNING_EXTRACT_DELETE_def()
+                {
+                    base.procedureName = "MID_METHOD_PLANNING_EXTRACT_DELETE";
+                    base.procedureType = storedProcedureTypes.Delete;
+                    base.tableNames.Add("METHOD_PLANNING_EXTRACT");
+                    METHOD_RID = new intParameter("@METHOD_RID", base.inputParameterList);
+                }
+
+                public int Delete(DatabaseAccess _dba, int? METHOD_RID)
+                {
+                    lock (typeof(MID_METHOD_PLANNING_EXTRACT_DELETE_def))
+                    {
+                        this.METHOD_RID.SetValue(METHOD_RID);
+                        return ExecuteStoredProcedureForDelete(_dba);
+                    }
+                }
+            }
+
+            public static MID_METHOD_PLANNING_EXTRACT_READ_FROM_NODE_def MID_METHOD_PLANNING_EXTRACT_READ_FROM_NODE = new MID_METHOD_PLANNING_EXTRACT_READ_FROM_NODE_def();
+            public class MID_METHOD_PLANNING_EXTRACT_READ_FROM_NODE_def : baseStoredProcedure
+            {
+                //"file:///C:\SCMVS2010\gohere.html?filepath=DatabaseDefinition\SQL_StoredProcedures\MID_METHOD_PLANNING_EXTRACT_READ_FROM_NODE.SQL"
+
+                private intParameter HN_RID;
+
+                public MID_METHOD_PLANNING_EXTRACT_READ_FROM_NODE_def()
+                {
+                    base.procedureName = "MID_METHOD_PLANNING_EXTRACT_READ_FROM_NODE";
+                    base.procedureType = storedProcedureTypes.Read;
+                    base.tableNames.Add("METHOD_PLANNING_EXTRACT");
+                    HN_RID = new intParameter("@HN_RID", base.inputParameterList);
+                }
+
+                public DataTable Read(DatabaseAccess _dba, int? HN_RID)
+                {
+                    lock (typeof(MID_METHOD_PLANNING_EXTRACT_READ_FROM_NODE_def))
+                    {
+                        this.HN_RID.SetValue(HN_RID);
+                        return ExecuteStoredProcedureForRead(_dba);
+                    }
+                }
+            }
+
+            public static MID_METHOD_PLANNING_EXTRACT_VARIABLES_DELETE_def MID_METHOD_PLANNING_EXTRACT_VARIABLES_DELETE = new MID_METHOD_PLANNING_EXTRACT_VARIABLES_DELETE_def();
+            public class MID_METHOD_PLANNING_EXTRACT_VARIABLES_DELETE_def : baseStoredProcedure
+            {
+                //"file:///C:\SCMVS2010\gohere.html?filepath=DatabaseDefinition\SQL_StoredProcedures\MID_METHOD_PLANNING_EXTRACT_VARIABLES_DELETE.SQL"
+
+                private intParameter METHOD_RID;
+
+                public MID_METHOD_PLANNING_EXTRACT_VARIABLES_DELETE_def()
+                {
+                    base.procedureName = "MID_METHOD_PLANNING_EXTRACT_VARIABLES_DELETE";
+                    base.procedureType = storedProcedureTypes.Delete;
+                    base.tableNames.Add("METHOD_PLANNING_EXTRACT_VARIABLES");
+                    METHOD_RID = new intParameter("@METHOD_RID", base.inputParameterList);
+                }
+
+                public int Delete(DatabaseAccess _dba, int? METHOD_RID)
+                {
+                    lock (typeof(MID_METHOD_PLANNING_EXTRACT_VARIABLES_DELETE_def))
+                    {
+                        this.METHOD_RID.SetValue(METHOD_RID);
+                        return ExecuteStoredProcedureForDelete(_dba);
+                    }
+                }
+            }
+
+            public static MID_METHOD_PLANNING_EXTRACT_VARIABLES_INSERT_def MID_METHOD_PLANNING_EXTRACT_VARIABLES_INSERT = new MID_METHOD_PLANNING_EXTRACT_VARIABLES_INSERT_def();
+            public class MID_METHOD_PLANNING_EXTRACT_VARIABLES_INSERT_def : baseStoredProcedure
+            {
+                //"file:///C:\SCMVS2010\gohere.html?filepath=DatabaseDefinition\SQL_StoredProcedures\MID_METHOD_PLANNING_EXTRACT_VARIABLES_INSERT.SQL"
+
+                private intParameter METHOD_RID;
+                private intParameter VARIABLE_RID;
+                private intParameter VARIABLE_TYPE;
+                private intParameter VARIABLE_SEQ;
+
+                public MID_METHOD_PLANNING_EXTRACT_VARIABLES_INSERT_def()
+                {
+                    base.procedureName = "MID_METHOD_PLANNING_EXTRACT_VARIABLES_INSERT";
+                    base.procedureType = storedProcedureTypes.Insert;
+                    base.tableNames.Add("METHOD_PLANNING_EXTRACT_VARIABLES");
+                    METHOD_RID = new intParameter("@METHOD_RID", base.inputParameterList);
+                    VARIABLE_RID = new intParameter("@VARIABLE_RID", base.inputParameterList);
+                    VARIABLE_TYPE = new intParameter("@VARIABLE_TYPE", base.inputParameterList);
+                    VARIABLE_SEQ = new intParameter("@VARIABLE_SEQ", base.inputParameterList);
+                }
+
+                public int Insert(DatabaseAccess _dba,
+                                  int? METHOD_RID,
+                                  int? VARIABLE_RID,
+                                  int? VARIABLE_TYPE,
+                                  int? VARIABLE_SEQ
+                                  )
+                {
+                    lock (typeof(MID_METHOD_PLANNING_EXTRACT_VARIABLES_INSERT_def))
+                    {
+                        this.METHOD_RID.SetValue(METHOD_RID);
+                        this.VARIABLE_RID.SetValue(VARIABLE_RID);
+                        this.VARIABLE_TYPE.SetValue(VARIABLE_TYPE);
+                        this.VARIABLE_SEQ.SetValue(VARIABLE_SEQ);
+                        return ExecuteStoredProcedureForInsert(_dba);
+                    }
+                }
+            }
+
+            // End TT#2131-MD - JSmith - Halo Integration
+
+            public static MID_METHOD_MOD_SALES_READ_def MID_METHOD_MOD_SALES_READ = new MID_METHOD_MOD_SALES_READ_def();
 			public class MID_METHOD_MOD_SALES_READ_def : baseStoredProcedure
 			{
 				//"file:///C:\SCMVS2010\gohere.html?filepath=DatabaseDefinition\SQL_StoredProcedures\MID_METHOD_MOD_SALES_READ.SQL"

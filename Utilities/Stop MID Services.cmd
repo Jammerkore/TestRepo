@@ -2,4 +2,4 @@ net stop MIDRetailControlService
 net stop MIDRetailHierarchyService
 net stop MIDRetailSchedulerService
 net stop MIDRetailStoreService
-
+net stop MIDRetailJobService

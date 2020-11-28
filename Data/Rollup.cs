@@ -408,6 +408,25 @@ namespace MIDRetail.Data
 			}
 		}
 
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        public DataTable GetProcessedItems(int aProcess, int aHierarchyRID)
+        {
+            try
+            {
+                DataTable dt = StoredProcedures.MID_ROLLUP_ITEM_READ_PROCESSED.Read(_dba,
+                                                                        PROCESS: aProcess,
+                                                                        PH_RID: aHierarchyRID
+                                                                        );
+                return dt;
+            }
+            catch (Exception err)
+            {
+                string message = err.ToString();
+                throw;
+            }
+        }
+        // End TT#2131-MD - JSmith - Halo Integration
+
         public int DetermineBatches(int aProcess, int aHierarchyRID, int aRollupType, int aVersion, int aLevel, int aBatchSize, int aNumberOfTables)
 		{
 			int batches = 0;

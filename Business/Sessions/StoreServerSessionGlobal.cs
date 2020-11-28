@@ -22,6 +22,7 @@ namespace MIDRetail.Business
         //=======
       
         static private ArrayList _loadLock;
+        static private ArrayList _exportLock;
         static private bool _loaded;
         static private Audit _audit;
 
@@ -54,6 +55,7 @@ namespace MIDRetail.Business
                 _loaded = false;
 
                 //End Track #5583 - JScott - Ran an export for Store Data for 5 weeks and it failed.  Audit report attached.
+                _exportLock = new ArrayList();
                 if (!EventLog.SourceExists("MIDStoreService"))
                 {
                     EventLog.CreateEventSource("MIDStoreService", null);
@@ -1002,6 +1004,12 @@ namespace MIDRetail.Business
                     _dtAllStores.Rows.Add(dr);
                     // End TT#5703 - JSmith - IndexOutOfRange error updating new store
                     StoreMgmt.StoreProfile_AddInStoreMgmt(sp);  // TT#5800 - JSmith - Store Load API reverting VSW characteristic back to value prior to a manual change
+                    // Begin TT#2131-MD - JSmith - Halo Integration
+                    ProfileList storeList = new ProfileList(eProfileType.Store);
+                    storeList.Add(sp);
+                    ExtractStoreData(storeList);
+                    ExtractStoreCharacteristicData(storeList);
+                    // End TT#2131-MD - JSmith - Halo Integration
                 }
                 finally
                 {
@@ -1038,6 +1046,19 @@ namespace MIDRetail.Business
                     }
                     // End TT#2095-MD - JSmith - Discrepancy in Store Status
                     StoreMgmt.StoreProfile_UpdateInStoreMgmt(sp);  // TT#5800 - JSmith - Store Load API reverting VSW characteristic back to value prior to a manual change
+                    // Begin TT#2131-MD - JSmith - Halo Integration
+                    if (sp.ActiveInd)
+                    {
+                        ProfileList storeList = new ProfileList(eProfileType.Store);
+                        storeList.Add(sp);
+                        ExtractStoreData(storeList);
+                        ExtractStoreCharacteristicData(storeList);
+                    }
+                    else
+                    {
+                        DeleteExtractStoreData(sp);
+                    }
+                    // End TT#2131-MD - JSmith - Halo Integration
                 }
                 finally
                 {
@@ -1153,6 +1174,11 @@ namespace MIDRetail.Business
                             //=========================
                             BuildStoreServerGlobalArea();
 
+                            // Begin TT#2131-MD - JSmith - Halo Integration
+                            ExtractStoreData(_allStoreList);
+                            ExtractStoreCharacteristicData(_allStoreList);
+                            // End TT#2131-MD - JSmith - Halo Integration
+
                             // Begin TT#3352 - JSmith - ANF Adults - AcquireStoreWriterLock errors
                             //StoreServerGlobal.RefreshSortOfGroupLevels();
                             // End TT#3352 - JSmith - ANF Adults - AcquireStoreWriterLock errors
@@ -1200,6 +1226,226 @@ namespace MIDRetail.Business
                 throw;
             }
         }
+
+
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        static public bool ExtractStoreData(ProfileList aStoreList)
+        {
+            ROExtractData ROExtractData = null;
+            if (!ROExtractEnabled
+                || aStoreList == null
+                || aStoreList.Count == 0)
+            {
+                return true;  // not set up so do not return as an error
+            }
+            lock (_exportLock.SyncRoot)
+            {
+                try
+                {
+                    ROExtractData = new ROExtractData(ROExtractConnectionString);
+
+                    foreach (StoreProfile sp in aStoreList)
+                    {
+                        ROExtractData.Stores_Data_Insert(sp);
+                    }
+
+                    try
+                    {
+                        ROExtractData.OpenUpdateConnection();
+                        ROExtractData.Stores_Data_Update();
+                        ROExtractData.CommitData();
+                    }
+                    catch (DatabaseNotInCatalog)
+                    {
+                        // this error is ok so swallow the exception
+                    }
+                    catch
+                    {
+                        throw;
+                    }
+                    finally
+                    {
+                        if (ROExtractData != null &&
+                            ROExtractData.ConnectionIsOpen)
+                        {
+                            ROExtractData.CloseUpdateConnection();
+                        }
+                    }
+                }
+                finally
+                {
+
+                }
+            }
+
+            return true;
+        }
+
+        static public bool DeleteExtractStoreData(StoreProfile sp)
+        {
+            ROExtractData ROExtractData = null;
+            if (!ROExtractEnabled
+                || sp == null
+                || sp.ActiveInd)
+            {
+                return true;  // not set up so do not return as an error
+            }
+            lock (_exportLock.SyncRoot)
+            {
+                try
+                {
+                    ROExtractData = new ROExtractData(ROExtractConnectionString);
+
+                    ROExtractData.Stores_Data_Insert(sp);
+
+                    try
+                    {
+                        ROExtractData.OpenUpdateConnection();
+                        ROExtractData.Store_Data_Delete();
+                        ROExtractData.CommitData();
+                    }
+                    catch (DatabaseNotInCatalog)
+                    {
+                        // this error is ok so swallow the exception
+                    }
+                    catch
+                    {
+                        throw;
+                    }
+                    finally
+                    {
+                        if (ROExtractData != null &&
+                            ROExtractData.ConnectionIsOpen)
+                        {
+                            ROExtractData.CloseUpdateConnection();
+                        }
+                    }
+                }
+                finally
+                {
+
+                }
+            }
+
+            return true;
+        }
+
+        static public bool ExtractStoreCharacteristicData(ProfileList aStoreList)
+        {
+            ROExtractData ROExtractData = null;
+            StoreMaint storeMaintData = new StoreMaint();
+            StoreCharRead StoreCharReadData = new StoreCharRead();
+            DataTable dtStoreCharValues = null;
+            int SC_RID;
+            
+            if (!ROExtractEnabled
+                || aStoreList == null
+                || aStoreList.Count == 0)
+            {
+                return true;  // not set up so do not return as an error
+            }
+            lock (_exportLock.SyncRoot)
+            {
+                try
+                {
+                    dtStoreCharValues = StoreCharReadData.GetAllStoreCharacteristicValues();
+                    ROExtractData = new ROExtractData(ROExtractConnectionString);
+                    string Characteristic, Value;
+                    ROExtractData.OpenUpdateConnection();
+
+                    foreach (StoreProfile sp in aStoreList)
+                    {
+                        ROExtractData.Initialize();
+                        DataSet dsValues = storeMaintData.ReadStoresFieldsForMaint(sp.Key);
+
+                        foreach (DataRow drChar in dsValues.Tables[1].Rows)
+                        { 
+                            Characteristic = string.Empty;
+                            Value = string.Empty;
+                            if (drChar["SCG_ID"] != DBNull.Value)
+                            {
+                                Characteristic = Convert.ToString(drChar["SCG_ID"]);
+                            }
+                            fieldDataTypes dataType = fieldDataTypes.FromChar(Convert.ToInt32(drChar["SCG_TYPE"]), drChar["SCG_LIST_IND"].ToString());
+                            eStoreCharType scgType = (eStoreCharType)(int)drChar["SCG_TYPE"];
+                            if (dataType == fieldDataTypes.List)
+                            {
+                                if (drChar["SC_RID"] != DBNull.Value)
+                                {
+                                    SC_RID = Convert.ToInt32(drChar["SC_RID"]);
+                                    DataRow[] drCharValue = dtStoreCharValues.Select("SC_RID=" + SC_RID);
+                                    switch (scgType)
+                                    {
+                                        case eStoreCharType.date:
+                                            if (drCharValue[0]["DATE_VALUE"] != DBNull.Value)
+                                            {
+                                                Convert.ToString(drCharValue[0]["DATE_VALUE"]);
+                                            }
+                                            break;
+                                        case eStoreCharType.number:
+                                            if (drCharValue[0]["NUMBER_VALUE"] != DBNull.Value)
+                                            {
+                                                Convert.ToString(drCharValue[0]["NUMBER_VALUE"]);
+                                            }
+                                            break;
+                                        case eStoreCharType.dollar:
+                                            if (drCharValue[0]["DOLLAR_VALUE"] != DBNull.Value)
+                                            {
+                                                Convert.ToString(drCharValue[0]["DOLLAR_VALUE"]);
+                                            }
+                                            break;
+                                        default:
+                                            if (drCharValue[0]["TEXT_VALUE"] != DBNull.Value)
+                                            {
+                                                Value = Convert.ToString(drCharValue[0]["TEXT_VALUE"]);
+                                            }
+                                            break;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (drChar["CHAR_VALUE"] != DBNull.Value)
+                                {
+                                    Value = Convert.ToString(drChar["CHAR_VALUE"]);
+                                }
+                            }
+                            ROExtractData.Stores_Characteristics_Insert(sp.StoreId, Characteristic, Value);
+                        }
+
+                        ROExtractData.Stores_Characteristics_Update();
+                    }
+
+                    try
+                    {
+                        ROExtractData.CommitData();
+                    }
+                    catch (DatabaseNotInCatalog)
+                    {
+                        // this error is ok so swallow the exception
+                    }
+                    catch
+                    {
+                        throw;
+                    }
+                    finally
+                    {
+                        if (ROExtractData != null &&
+                            ROExtractData.ConnectionIsOpen)
+                        {
+                            ROExtractData.CloseUpdateConnection();
+                        }
+                    }
+                }
+                finally
+                {
+
+                }
+            }
+
+            return true;
+        }
+        // End TT#2131-MD - JSmith - Halo Integration
 
         // Begin TT#2307 - JSmith - Incorrect Stock Values
         static void Messaging_OnMessageSentHandler(object source, MessageEventArgs e)

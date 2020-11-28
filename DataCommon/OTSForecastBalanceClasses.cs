@@ -376,7 +376,8 @@ namespace MIDRetail.DataCommon
 			return base.GetHashCode();
 		}
 	}
-	public class LowLevelCombo
+    [Serializable()]
+    public class LowLevelCombo
 	{
 		//=======
 		// FIELDS

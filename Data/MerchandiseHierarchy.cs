@@ -633,7 +633,7 @@ namespace MIDRetail.Data
 			int OTSPlanLevelRID, int OTSPlanLevelSequence,
 			int OTSPlanLevelAnchorNode, eMaskField OTSPlanLevelMaskField, 
             string OTSPlanLevelMask, bool virtualInd,
-            ePurpose aPurpose)
+            ePurpose aPurpose, int digitalAssetsKey)
 		{
 			try
 			{         
@@ -697,7 +697,8 @@ namespace MIDRetail.Data
                                                              OTS_FORECAST_LEVEL_MASK_FIELD: OTS_FORECAST_LEVEL_MASK_FIELD_Nullable,
                                                              OTS_FORECAST_LEVEL_MASK: OTS_FORECAST_LEVEL_MASK,
                                                              VIRTUAL_IND: Include.ConvertBoolToChar(virtualInd),
-                                                             PURPOSE: (int)aPurpose
+                                                             PURPOSE: (int)aPurpose,
+                                                             DIGITAL_ASSET_KEY: digitalAssetsKey
                                                              );
 			}
 			catch ( Exception err )
@@ -743,7 +744,7 @@ namespace MIDRetail.Data
             int OTSPlanLevelRID, int OTSPlanLevelSequence,
             int OTSPlanLevelAnchorNode, eMaskField OTSPlanLevelMaskField, string OTSPlanLevelMask, bool virtualInd,
             ePurpose aPurpose, string nodeID, string nodeName, string description,
-            bool productTypeIsOverridden, eProductType productType)
+            bool productTypeIsOverridden, eProductType productType, int digitalAssetsKey)
         {
             try
             {
@@ -821,7 +822,8 @@ namespace MIDRetail.Data
                                                                                         NODE_ID: nodeID,
                                                                                         NODE_NAME: nodeName,
                                                                                         NODE_DESCRIPTION: description,
-                                                                                        PRODUCT_TYPE: PRODUCT_TYPE
+                                                                                        PRODUCT_TYPE: PRODUCT_TYPE,
+                                                                                        DIGITAL_ASSET_KEY: digitalAssetsKey
                                                                                         );
             }
             catch (Exception err)
@@ -927,7 +929,7 @@ namespace MIDRetail.Data
             int OTSPlanLevelRID, int OTSPlanLevelSequence,
             int OTSPlanLevelAnchorNode, eMaskField OTSPlanLevelMaskField, string OTSPlanLevelMask, bool virtualInd,
             ePurpose aPurpose, int colorCodeRID, string colorDescription,
-            string aStyleNodeID)
+            string aStyleNodeID, int digitalAssetsKey)
         {
             try
             {
@@ -995,7 +997,8 @@ namespace MIDRetail.Data
                                                                                          PURPOSE: (int)aPurpose,
                                                                                          COLOR_CODE_RID: colorCodeRID,
                                                                                          COLOR_DESCRIPTION: colorDescription,
-                                                                                         STYLE_NODE_ID: aStyleNodeID
+                                                                                         STYLE_NODE_ID: aStyleNodeID,
+                                                                                         DIGITAL_ASSET_KEY: digitalAssetsKey
                                                                                          );
             }
             catch (Exception err)
@@ -1156,7 +1159,7 @@ namespace MIDRetail.Data
             int OTSPlanLevelRID, int OTSPlanLevelSequence,
             int OTSPlanLevelAnchorNode, eMaskField OTSPlanLevelMaskField, string OTSPlanLevelMask, bool virtualInd,
             ePurpose aPurpose, int sizeCodeRID,
-            string aStyleNodeID, string aColorNodeID)
+            string aStyleNodeID, string aColorNodeID, int digitalAssetsKey)
         {
             try
             {
@@ -1225,7 +1228,8 @@ namespace MIDRetail.Data
                                                                                        PURPOSE: (int)aPurpose,
                                                                                        SIZE_CODE_RID: sizeCodeRID,
                                                                                        STYLE_NODE_ID: aStyleNodeID,
-                                                                                       COLOR_NODE_ID: aColorNodeID
+                                                                                       COLOR_NODE_ID: aColorNodeID,
+                                                                                       DIGITAL_ASSET_KEY: digitalAssetsKey
                                                                                        );
             }
             catch (Exception err)
@@ -2265,7 +2269,25 @@ namespace MIDRetail.Data
 				string message = err.ToString();
 				throw;
 			}
-		}
+        }
+
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        public void EligModelUpdateEligUpdateDate(int EligModelRID)
+        {
+            try
+            {
+                DateTime updateDate = DateTime.Now;
+                StoredProcedures.MID_ELIG_MODEL_UPDATE_ELIG_UPDATE_DATE.Update(_dba, EM_RID: EligModelRID, UPDATE_DATE: updateDate);
+            }
+            catch (Exception err)
+            {
+                string message = err.ToString();
+                throw;
+            }
+        }
+        // End TT#2131-MD - JSmith - Halo Integration
+
+
 
         public DataTable GetFilteredOverrideLowLevelModels(string overrideLowLevelModelNameFilter, bool isCaseSensitive)
         {
@@ -3325,7 +3347,7 @@ namespace MIDRetail.Data
 			eSimilarStoreType simStoreType, double simStoreRatio, int untilDate,
 			bool aPresPlusSalesIsSet, bool aPresPlusSales
 			//BEGIN TT#44 - MD - DOConnell - New Store Forecasting Enhancement
-			, int stkLeadWeeks)
+			, int stkLeadWeeks, DateTime updateDate)
 			//END TT#44 - MD - DOConnell - New Store Forecasting Enhancement
 			// END MID Track #4827
 		{
@@ -3384,7 +3406,8 @@ namespace MIDRetail.Data
                                                                      SIMILAR_STORE_RATIO: simStoreRatio,
                                                                      UNTIL_DATE: untilDate_Nullable,
                                                                      PRESENTATION_PLUS_SALES_IND: presentationPlusSalesChar_Nullable,
-                                                                     STOCK_LEAD_WEEKS: stkLeadWeeks
+                                                                     STOCK_LEAD_WEEKS: stkLeadWeeks,
+                                                                     UPDATE_DATE: updateDate
                                                                      );
 			}
 			catch ( Exception err )
@@ -3405,7 +3428,7 @@ namespace MIDRetail.Data
 			eSimilarStoreType simStoreType, double simStoreRatio, int untilDate,
 			bool aPresPlusSalesIsSet, bool aPresPlusSales
 			//BEGIN TT#44 - MD - DOConnell - New Store Forecasting Enhancement
-			, int stkLeadWeeks)
+			, int stkLeadWeeks, DateTime updateDate)
 			//END TT#44 - MD - DOConnell - New Store Forecasting Enhancement
 			// END MID Track #4827
 		{
@@ -3465,7 +3488,8 @@ namespace MIDRetail.Data
                                                                      SIMILAR_STORE_RATIO: simStoreRatio,
                                                                      UNTIL_DATE: untilDate_Nullable,
                                                                      PRESENTATION_PLUS_SALES_IND: presentationPlusSalesChar_Nullable,
-                                                                     STOCK_LEAD_WEEKS: stkLeadWeeks
+                                                                     STOCK_LEAD_WEEKS: stkLeadWeeks,
+                                                                     UPDATE_DATE: updateDate
                                                                      );
 			}
 			catch ( Exception err )

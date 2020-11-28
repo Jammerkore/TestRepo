@@ -3,7 +3,7 @@
 --dv Description: Reads the user from the user name
 --dv =============================================
 CREATE PROCEDURE [dbo].[MID_APPLICATION_USER_READ_FROM_NAME]
-	@USER_NAME varchar(30)
+	@USER_NAME varchar(256)
 AS
 BEGIN
 	SET NOCOUNT ON;

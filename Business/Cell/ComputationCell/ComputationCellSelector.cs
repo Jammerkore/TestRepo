@@ -207,7 +207,13 @@ namespace MIDRetail.Business
                         //End TT#2 - JScott - Assortment Planning - Phase 2
                         (compCellRef.isCellFormulaPending(_scheduleEntry) || compCellRef.isCellSpreadPending(_scheduleEntry)))
 					{
-						throw new CellPendingException(compCellRef);
+                        //Begin TT#1659-MD -jsobek -CelllPendingException Performance
+                        //throw new CellPendingException(compCellRef);
+                        _scheduleEntry.LastPendingCell = compCellRef;
+                        aCancel = true;
+                        _scheduleEntry.ComputationFormulaReturnType = eComputationFormulaReturnType.Pending;
+                        return;
+                        //End TT#1659-MD -jsobek -CelllPendingException Performance
 					}
 
 					cellValue = compCellRef.GetCellValue(_getCellMode, _useHiddenValues);
@@ -327,7 +333,13 @@ namespace MIDRetail.Business
                             //End TT#2 - JScott - Assortment Planning - Phase 2
                             (compCellRef.isCellFormulaPending(_scheduleEntry) || compCellRef.isCellSpreadPending(_scheduleEntry)))
 						{
-							throw new CellPendingException(compCellRef);
+                            //Begin TT#1659-MD -jsobek -CelllPendingException Performance
+                            //throw new CellPendingException(compCellRef);
+                            _scheduleEntry.LastPendingCell = compCellRef;
+                            aCancel = true;
+                            _scheduleEntry.ComputationFormulaReturnType = eComputationFormulaReturnType.Pending;
+                            return;
+                            //End TT#1659-MD -jsobek -CelllPendingException Performance
 						}
 
 						cellValue = compCellRef.GetCellValue(_getCellMode, _useHiddenValues);

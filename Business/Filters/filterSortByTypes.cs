@@ -13,18 +13,33 @@ namespace MIDRetail.Business
     {
         public static List<filterSortByTypes> sortByTypeList = new List<filterSortByTypes>();
         public static readonly filterSortByTypes StoreCharacteristics = new filterSortByTypes("Store Characteristics", 0, new List<filterTypes>() { filterTypes.StoreFilter, filterTypes.StoreGroupFilter });
-        public static readonly filterSortByTypes HeaderCharacteristics = new filterSortByTypes("Header Characteristics", 1, new List<filterTypes>() { filterTypes.HeaderFilter, filterTypes.AssortmentFilter }); //TT#1468-MD -jsobek -Header Filter Sort Options
+        // Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+		//public static readonly filterSortByTypes HeaderCharacteristics = new filterSortByTypes("Header Characteristics", 1, new List<filterTypes>() { filterTypes.HeaderFilter, filterTypes.AssortmentFilter }); //TT#1468-MD -jsobek -Header Filter Sort Options
+		public static readonly filterSortByTypes HeaderCharacteristics = new filterSortByTypes("Header Characteristics", 1, new List<filterTypes>() { filterTypes.HeaderFilter }); //TT#1468-MD -jsobek -Header Filter Sort Options
+		// End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
         public static readonly filterSortByTypes StoreFields = new filterSortByTypes("Store Fields", 2, new List<filterTypes>() { filterTypes.StoreFilter, filterTypes.StoreGroupFilter });
-        public static readonly filterSortByTypes HeaderFields = new filterSortByTypes("Header Fields", 3, new List<filterTypes>() { filterTypes.HeaderFilter, filterTypes.AssortmentFilter }); //TT#1468-MD -jsobek -Header Filter Sort Options
+        // Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+		//public static readonly filterSortByTypes HeaderFields = new filterSortByTypes("Header Fields", 3, new List<filterTypes>() { filterTypes.HeaderFilter, filterTypes.AssortmentFilter }); //TT#1468-MD -jsobek -Header Filter Sort Options
+		public static readonly filterSortByTypes HeaderFields = new filterSortByTypes("Header Fields", 3, new List<filterTypes>() { filterTypes.HeaderFilter }); //TT#1468-MD -jsobek -Header Filter Sort Options
+		// BegEndin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
         public static readonly filterSortByTypes Variables = new filterSortByTypes("Variables", 4, new List<filterTypes>() { filterTypes.StoreFilter });
         //public static readonly filterSortByTypes HeaderType = new filterSortByTypes("Header Type", 5, new List<filterTypes>() { filterTypes.HeaderFilter, filterTypes.AssortmentFilter });
         public static readonly filterSortByTypes StoreStatus = new filterSortByTypes("Store Status", 6, new List<filterTypes>() { filterTypes.StoreFilter, filterTypes.StoreGroupFilter });
-        public static readonly filterSortByTypes HeaderStatus = new filterSortByTypes("Header Status", 7, new List<filterTypes>() { filterTypes.HeaderFilter, filterTypes.AssortmentFilter }); //TT#1468-MD -jsobek -Header Filter Sort Options
-        public static readonly filterSortByTypes HeaderDate = new filterSortByTypes("Header Date", 8, new List<filterTypes>() { filterTypes.HeaderFilter, filterTypes.AssortmentFilter }); //TT#1468-MD -jsobek -Header Filter Sort Options
+        // Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+		//public static readonly filterSortByTypes HeaderStatus = new filterSortByTypes("Header Status", 7, new List<filterTypes>() { filterTypes.HeaderFilter, filterTypes.AssortmentFilter }); //TT#1468-MD -jsobek -Header Filter Sort Options
+        //public static readonly filterSortByTypes HeaderDate = new filterSortByTypes("Header Date", 8, new List<filterTypes>() { filterTypes.HeaderFilter, filterTypes.AssortmentFilter }); //TT#1468-MD -jsobek -Header Filter Sort Options
+		public static readonly filterSortByTypes HeaderStatus = new filterSortByTypes("Header Status", 7, new List<filterTypes>() { filterTypes.HeaderFilter }); //TT#1468-MD -jsobek -Header Filter Sort Options
+        public static readonly filterSortByTypes HeaderDate = new filterSortByTypes("Header Date", 8, new List<filterTypes>() { filterTypes.HeaderFilter }); //TT#1468-MD -jsobek -Header Filter Sort Options
+		// End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
         //public static readonly filterSortByTypes HeaderReleaseDate = new filterSortByTypes("Release Date", 9, new List<filterTypes>() { filterTypes.HeaderFilter, filterTypes.AssortmentFilter });
         public static readonly filterSortByTypes ProductSearchFields = new filterSortByTypes("Product Search Fields", 10, new List<filterTypes>() { filterTypes.ProductFilter }); //TT#1388-MD -jsobek -Product Filters
         //public static readonly filterSortByTypes ProductCharacteristics = new filterSortByTypes("Product Characteristics", 11, new List<filterTypes>() { filterTypes.ProductFilter }); //TT#1388-MD -jsobek -Product Filters
-        public static readonly filterSortByTypes AuditSearchFields = new filterSortByTypes("Audit Search Fields", 12, new List<filterTypes>() { filterTypes.AuditFilter }); 
+        public static readonly filterSortByTypes AuditSearchFields = new filterSortByTypes("Audit Search Fields", 12, new List<filterTypes>() { filterTypes.AuditFilter });
+        // Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+        public static readonly filterSortByTypes AssortmentStatus = new filterSortByTypes("Status", 13, new List<filterTypes>() { filterTypes.AssortmentFilter });
+        public static readonly filterSortByTypes AssortmentDate = new filterSortByTypes("Date", 14, new List<filterTypes>() { filterTypes.AssortmentFilter });
+        public static readonly filterSortByTypes AssortmentFields = new filterSortByTypes("Assortment Fields", 15, new List<filterTypes>() { filterTypes.AssortmentFilter });
+        // End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
       
         private filterSortByTypes(string Name, int dbIndex, List<filterTypes> filterTypeList)
         {

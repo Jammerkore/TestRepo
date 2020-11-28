@@ -53,7 +53,7 @@ namespace MIDRetail.Windows
         private MIDFilterNode _globalNode;
         private MIDFilterNode _sharedNode;
 
-        public ExplorerAddressBlock EAB;
+        public ExplorerAddressBlock EAB = null;
 
         private filterTypes treeFilterType = filterTypes.AssortmentFilter;
 
@@ -1600,14 +1600,15 @@ namespace MIDRetail.Windows
                 {
                     index++;
 
-                    if (index > 1)
-                    {
-                        newName = "Copy (" + index + ") of " + aFilterName;
-                    }
-                    else
-                    {
-                        newName = "Copy of " + aFilterName;
-                    }
+                    //if (index > 1)
+                    //{
+                    //    newName = "Copy (" + index + ") of " + aFilterName;
+                    //}
+                    //else
+                    //{
+                    //    newName = "Copy of " + aFilterName;
+                    //}
+                    newName = Include.GetNewName(name: aFilterName, index: index);
 
                     key = _dlFilters.FilterGetKey(treeFilterType, aUserRID, newName);
                 }
@@ -2445,7 +2446,10 @@ namespace MIDRetail.Windows
                                 //}
                                 fc.valueToCompareInt = filterProf.OwnerUserRID; //we need to update the condition so we can build formatted text
                             }
-                            int newConditionRID = _dlFilters.InsertCondition(fc.conditionFilterRID, fc.Seq, fc.ParentSeq, fc.SiblingSeq, fc.dictionaryIndex, fc.logicIndex, fc.fieldIndex, fc.operatorIndex, fc.valueTypeIndex, fc.dateTypeIndex, fc.numericTypeIndex, fc.valueToCompare, fc.valueToCompareDouble, fc.valueToCompareDouble2, fc.valueToCompareInt, fc.valueToCompareInt2, fc.valueToCompareBool, fc.valueToCompareDateFrom, fc.valueToCompareDateTo, fc.valueToCompareDateBetweenFromDays, fc.valueToCompareDateBetweenToDays, fc.variable1_Index, fc.variable1_VersionIndex, fc.variable1_HN_RID, fc.variable1_CDR_RID, fc.variable1_VariableValueTypeIndex, fc.variable1_TimeTypeIndex, fc.operatorVariablePercentageIndex, fc.variable2_Index, fc.variable2_VersionIndex, fc.variable2_HN_RID, fc.variable2_CDR_RID, fc.variable2_VariableValueTypeIndex, fc.variable2_TimeTypeIndex, fc.headerMerchandise_HN_RID, fc.sortByTypeIndex, fc.sortByFieldIndex, fc.listConstantType.dbIndex);
+							// Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+							//int newConditionRID = _dlFilters.InsertCondition(fc.conditionFilterRID, fc.Seq, fc.ParentSeq, fc.SiblingSeq, fc.dictionaryIndex, fc.logicIndex, fc.fieldIndex, fc.operatorIndex, fc.valueTypeIndex, fc.dateTypeIndex, fc.numericTypeIndex, fc.valueToCompare, fc.valueToCompareDouble, fc.valueToCompareDouble2, fc.valueToCompareInt, fc.valueToCompareInt2, fc.valueToCompareBool, fc.valueToCompareDateFrom, fc.valueToCompareDateTo, fc.valueToCompareDateBetweenFromDays, fc.valueToCompareDateBetweenToDays, fc.variable1_Index, fc.variable1_VersionIndex, fc.variable1_HN_RID, fc.variable1_CDR_RID, fc.variable1_VariableValueTypeIndex, fc.variable1_TimeTypeIndex, fc.operatorVariablePercentageIndex, fc.variable2_Index, fc.variable2_VersionIndex, fc.variable2_HN_RID, fc.variable2_CDR_RID, fc.variable2_VariableValueTypeIndex, fc.variable2_TimeTypeIndex, fc.headerMerchandise_HN_RID, fc.sortByTypeIndex, fc.sortByFieldIndex, fc.listConstantType.dbIndex);
+                            int newConditionRID = _dlFilters.InsertCondition(fc.conditionFilterRID, fc.Seq, fc.ParentSeq, fc.SiblingSeq, fc.dictionaryIndex, fc.logicIndex, fc.fieldIndex, fc.operatorIndex, fc.valueTypeIndex, fc.dateTypeIndex, fc.numericTypeIndex, fc.valueToCompare, fc.valueToCompareDouble, fc.valueToCompareDouble2, fc.valueToCompareInt, fc.valueToCompareInt2, fc.valueToCompareBool, fc.valueToCompareDateFrom, fc.valueToCompareDateTo, fc.valueToCompareDateBetweenFromDays, fc.valueToCompareDateBetweenToDays, fc.variable1_Index, fc.variable1_VersionIndex, fc.variable1_HN_RID, fc.variable1_CDR_RID, fc.variable1_VariableValueTypeIndex, fc.variable1_TimeTypeIndex, fc.operatorVariablePercentageIndex, fc.variable2_Index, fc.variable2_VersionIndex, fc.variable2_HN_RID, fc.variable2_CDR_RID, fc.variable2_VariableValueTypeIndex, fc.variable2_TimeTypeIndex, fc.headerMerchandise_HN_RID, fc.sortByTypeIndex, fc.sortByFieldIndex, fc.listConstantType.dbIndex, fc.date_CDR_RID);
+							// End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
 
 
                             DataRow[] drListValues = dtListValues.Select("CONDITION_RID=" + oldConditionRID);

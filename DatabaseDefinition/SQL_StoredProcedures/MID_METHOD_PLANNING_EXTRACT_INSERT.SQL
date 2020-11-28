@@ -1,0 +1,80 @@
+--dv =============================================
+--dv Create date:	2/23/2018
+--dv Description:	Inserts a row into the method planning extract table
+--dv =============================================
+CREATE PROCEDURE [dbo].[MID_METHOD_PLANNING_EXTRACT_INSERT]
+	@METHOD_RID int,
+	@HN_RID int, 
+	@FV_RID int, 
+	@CDR_RID int, 
+	@STORE_FILTER_RID int, 
+	@CHAIN_IND char(1), 
+	@STORE_IND char(1), 
+	@ATTRIBUTE_SET_IND char(1), 
+	@ATTRIBUTE_RID int,
+	@LOW_LEVELS_IND char(1), 
+	@LOW_LEVELS_ONLY_IND char(1),
+	@LOW_LEVELS_TYPE int, 
+	@LOW_LEVEL_SEQUENCE int, 
+	@LOW_LEVEL_OFFSET int, 
+	@SHOW_INELIGIBLE_IND char(1), 
+	@EXCLUDE_ZERO_VALUES_IND char(1), 
+	@CONCURRENT_PROCESSES int, 
+	@OLL_RID int,
+	@UPDATE_DATE datetime,
+	@EXTRACT_DATE datetime
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	INSERT INTO METHOD_PLANNING_EXTRACT
+		(
+		METHOD_RID, 
+		HN_RID, 
+		FV_RID, 
+		CDR_RID, 
+		STORE_FILTER_RID, 
+		CHAIN_IND,
+		STORE_IND,
+		ATTRIBUTE_SET_IND,
+		ATTRIBUTE_RID, 
+		LOW_LEVELS_IND, 
+		LOW_LEVELS_ONLY_IND,
+		LOW_LEVELS_TYPE, 
+		LOW_LEVEL_SEQUENCE, 
+		LOW_LEVEL_OFFSET, 
+		SHOW_INELIGIBLE_IND, 
+		EXCLUDE_ZERO_VALUES_IND, 
+		CONCURRENT_PROCESSES, 
+		OLL_RID,
+		UPDATE_DATE,
+	        EXTRACT_DATE
+		)
+	VALUES
+		(
+		@METHOD_RID, 
+		@HN_RID, 
+		@FV_RID, 
+		@CDR_RID, 
+		@STORE_FILTER_RID, 
+		@CHAIN_IND,
+		@STORE_IND,
+		@ATTRIBUTE_SET_IND,
+		@ATTRIBUTE_RID, 
+		@LOW_LEVELS_IND, 
+		@LOW_LEVELS_ONLY_IND,
+		@LOW_LEVELS_TYPE, 
+		@LOW_LEVEL_SEQUENCE, 
+		@LOW_LEVEL_OFFSET, 
+		@SHOW_INELIGIBLE_IND, 
+		@EXCLUDE_ZERO_VALUES_IND, 
+		@CONCURRENT_PROCESSES, 
+		@OLL_RID,
+		@UPDATE_DATE,
+	        @EXTRACT_DATE
+		)
+
+	SELECT @@ROWCOUNT
+
+END
+GO

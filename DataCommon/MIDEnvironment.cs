@@ -18,6 +18,12 @@ namespace MIDRetail.DataCommon
         //=======
         // FIELDS
         //=======
+        public static bool ExtractIsEnabled = false;
+        // for web
+        public static bool isWindows = true;
+        public static string _Message = null;
+        public static bool _isChangedToReadOnly = false;
+        public static bool _requestFailed = false;
 
         //=============
         // CONSTRUCTORS
@@ -34,6 +40,45 @@ namespace MIDRetail.DataCommon
         // PROPERTIES
         //===========
 
+        public static string Message
+        {
+            get
+            {
+                return _Message;
+            }
+            set
+            {
+                if (!string.IsNullOrEmpty(value)
+                    && string.IsNullOrEmpty(_Message))
+                {
+                    _Message = value;
+                }
+            }
+        }
+
+        public static bool isChangedToReadOnly
+        {
+            get
+            {
+                return _isChangedToReadOnly;
+            }
+            set
+            {
+                _isChangedToReadOnly = value;
+            }
+        }
+
+        public static bool requestFailed
+        {
+            get
+            {
+                return _requestFailed;
+            }
+            set
+            {
+                _requestFailed = value;
+            }
+        }
         //========
         // METHODS
         //========
@@ -167,6 +212,13 @@ namespace MIDRetail.DataCommon
                 string message = exc.ToString();
                 throw;
             }
+        }
+
+        public static void ResetFields()
+        {
+            _Message = null;
+            _isChangedToReadOnly = false;
+            _requestFailed = false;
         }
 
     }

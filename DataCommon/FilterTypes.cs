@@ -7,7 +7,10 @@ using System.Text;
 namespace MIDRetail.DataCommon
 {
 
-    public delegate void SetCalendarDateRangeForPlanDelegate(int DateRangeRID);
+    // Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+	//public delegate void SetCalendarDateRangeForPlanDelegate(int DateRangeRID);
+	public delegate void SetCalendarDateRangeForPlanDelegate(int DateRangeRID, bool RestrictToOnlyWeeks, bool RestrictToSingleDate, bool AllowDynamic, bool AllowDynamicToPlan, bool AllowDynamicToStoreOpen);
+	// End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
     public delegate string GetDateRangeTextForPlanDelegate(int DateRangeRID);
     public delegate string GetTextFromHierarchyNodeDelegate(int hnRID);
     public delegate bool IsStoreGroupOrLevelInUse(eProfileType etype, int aRID);

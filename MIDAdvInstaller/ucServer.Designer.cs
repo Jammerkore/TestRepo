@@ -52,6 +52,9 @@
             this.lblInstallDir2 = new System.Windows.Forms.Label();
             this.rdoInstallConfiguration = new System.Windows.Forms.RadioButton();
             this.rdoInstallTypical = new System.Windows.Forms.RadioButton();
+            this.lblDataDir = new System.Windows.Forms.Label();
+            this.btnDataFolder = new System.Windows.Forms.Button();
+            this.txtDataFolder = new System.Windows.Forms.TextBox();
             this.grpServer.SuspendLayout();
             this.gbxConfigureUsing.SuspendLayout();
             this.gbxStartType.SuspendLayout();
@@ -61,17 +64,20 @@
             // 
             // grpServer
             // 
-            this.grpServer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpServer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpServer.Controls.Add(this.lblDataDir);
+            this.grpServer.Controls.Add(this.btnDataFolder);
+            this.grpServer.Controls.Add(this.txtDataFolder);
             this.grpServer.Controls.Add(this.gbxConfigureUsing);
             this.grpServer.Controls.Add(this.gbxStartType);
             this.grpServer.Controls.Add(this.lblInstallDir);
             this.grpServer.Controls.Add(this.btnInstallFolder);
             this.grpServer.Controls.Add(this.txtInstallFolder);
             this.grpServer.Controls.Add(this.clstServices);
-            this.grpServer.Location = new System.Drawing.Point(7, 44);
+            this.grpServer.Location = new System.Drawing.Point(7, 0);
             this.grpServer.Name = "grpServer";
-            this.grpServer.Size = new System.Drawing.Size(665, 137);
+            this.grpServer.Size = new System.Drawing.Size(665, 181);
             this.grpServer.TabIndex = 0;
             this.grpServer.TabStop = false;
             // 
@@ -79,9 +85,9 @@
             // 
             this.gbxConfigureUsing.Controls.Add(this.rdoUseIPAddress);
             this.gbxConfigureUsing.Controls.Add(this.rdoUseMachineName);
-            this.gbxConfigureUsing.Location = new System.Drawing.Point(320, 54);
+            this.gbxConfigureUsing.Location = new System.Drawing.Point(503, 105);
             this.gbxConfigureUsing.Name = "gbxConfigureUsing";
-            this.gbxConfigureUsing.Size = new System.Drawing.Size(125, 76);
+            this.gbxConfigureUsing.Size = new System.Drawing.Size(125, 66);
             this.gbxConfigureUsing.TabIndex = 39;
             this.gbxConfigureUsing.TabStop = false;
             this.gbxConfigureUsing.Text = "Configure Using";
@@ -89,7 +95,7 @@
             // rdoUseIPAddress
             // 
             this.rdoUseIPAddress.AutoSize = true;
-            this.rdoUseIPAddress.Location = new System.Drawing.Point(12, 43);
+            this.rdoUseIPAddress.Location = new System.Drawing.Point(12, 41);
             this.rdoUseIPAddress.Name = "rdoUseIPAddress";
             this.rdoUseIPAddress.Size = new System.Drawing.Size(76, 17);
             this.rdoUseIPAddress.TabIndex = 1;
@@ -114,9 +120,9 @@
             // 
             this.gbxStartType.Controls.Add(this.rdoStartTypeManual);
             this.gbxStartType.Controls.Add(this.rdoStartTypeAuto);
-            this.gbxStartType.Location = new System.Drawing.Point(200, 54);
+            this.gbxStartType.Location = new System.Drawing.Point(383, 105);
             this.gbxStartType.Name = "gbxStartType";
-            this.gbxStartType.Size = new System.Drawing.Size(103, 76);
+            this.gbxStartType.Size = new System.Drawing.Size(103, 68);
             this.gbxStartType.TabIndex = 38;
             this.gbxStartType.TabStop = false;
             this.gbxStartType.Text = "Start Type";
@@ -124,7 +130,7 @@
             // rdoStartTypeManual
             // 
             this.rdoStartTypeManual.AutoSize = true;
-            this.rdoStartTypeManual.Location = new System.Drawing.Point(15, 43);
+            this.rdoStartTypeManual.Location = new System.Drawing.Point(15, 41);
             this.rdoStartTypeManual.Name = "rdoStartTypeManual";
             this.rdoStartTypeManual.Size = new System.Drawing.Size(60, 17);
             this.rdoStartTypeManual.TabIndex = 1;
@@ -146,7 +152,7 @@
             // lblInstallDir
             // 
             this.lblInstallDir.AutoSize = true;
-            this.lblInstallDir.Location = new System.Drawing.Point(45, 28);
+            this.lblInstallDir.Location = new System.Drawing.Point(24, 53);
             this.lblInstallDir.Name = "lblInstallDir";
             this.lblInstallDir.Size = new System.Drawing.Size(118, 13);
             this.lblInstallDir.TabIndex = 13;
@@ -155,7 +161,7 @@
             // btnInstallFolder
             // 
             this.btnInstallFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnInstallFolder.Location = new System.Drawing.Point(552, 25);
+            this.btnInstallFolder.Location = new System.Drawing.Point(531, 50);
             this.btnInstallFolder.Name = "btnInstallFolder";
             this.btnInstallFolder.Size = new System.Drawing.Size(102, 23);
             this.btnInstallFolder.TabIndex = 12;
@@ -165,9 +171,9 @@
             // 
             // txtInstallFolder
             // 
-            this.txtInstallFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtInstallFolder.Location = new System.Drawing.Point(178, 26);
+            this.txtInstallFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtInstallFolder.Location = new System.Drawing.Point(157, 51);
             this.txtInstallFolder.Name = "txtInstallFolder";
             this.txtInstallFolder.ReadOnly = true;
             this.txtInstallFolder.Size = new System.Drawing.Size(368, 20);
@@ -179,7 +185,7 @@
             this.clstServices.BackColor = System.Drawing.SystemColors.Control;
             this.clstServices.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.clstServices.CheckOnClick = true;
-            this.clstServices.ColumnWidth = 115;
+            this.clstServices.ColumnWidth = 130;
             this.clstServices.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.clstServices.FormattingEnabled = true;
             this.clstServices.IntegralHeight = false;
@@ -188,18 +194,20 @@
             "Control Service",
             "Hierarchy Service",
             "Scheduler Service",
-            "Store Service"});
-            this.clstServices.Location = new System.Drawing.Point(47, 52);
+            "Store Service",
+            "RO Web Job Service",
+            "RO Web Service"});
+            this.clstServices.Location = new System.Drawing.Point(26, 105);
             this.clstServices.MultiColumn = true;
             this.clstServices.Name = "clstServices";
-            this.clstServices.Size = new System.Drawing.Size(155, 77);
+            this.clstServices.Size = new System.Drawing.Size(351, 62);
             this.clstServices.TabIndex = 6;
             // 
             // rdoInstallServer
             // 
             this.rdoInstallServer.AutoSize = true;
             this.rdoInstallServer.ForeColor = System.Drawing.Color.MediumBlue;
-            this.rdoInstallServer.Location = new System.Drawing.Point(16, 41);
+            this.rdoInstallServer.Location = new System.Drawing.Point(16, 32);
             this.rdoInstallServer.Name = "rdoInstallServer";
             this.rdoInstallServer.Size = new System.Drawing.Size(124, 17);
             this.rdoInstallServer.TabIndex = 2;
@@ -209,9 +217,9 @@
             // 
             // grpInstalledServerComponents
             // 
-            this.grpInstalledServerComponents.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpInstalledServerComponents.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.grpInstalledServerComponents.Controls.Add(this.lblTasks);
             this.grpInstalledServerComponents.Controls.Add(this.cboTasks);
             this.grpInstalledServerComponents.Controls.Add(this.lstInstalledServices);
@@ -233,13 +241,24 @@
             // 
             // cboTasks
             // 
+            this.cboTasks.AutoAdjust = true;
+            this.cboTasks.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.cboTasks.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.cboTasks.DataSource = null;
+            this.cboTasks.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboTasks.DropDownWidth = 206;
             this.cboTasks.FormattingEnabled = true;
             this.cboTasks.Items.AddRange(new object[] {
             "Upgrade",
             "Uninstall",
             "Configure"});
+            this.cboTasks.IgnoreFocusLost = false;
+            this.cboTasks.ItemHeight = 13;
             this.cboTasks.Location = new System.Drawing.Point(447, 17);
+            this.cboTasks.Margin = new System.Windows.Forms.Padding(0);
+            this.cboTasks.MaxDropDownItems = 25;
             this.cboTasks.Name = "cboTasks";
+            this.cboTasks.SetToolTip = "";
             this.cboTasks.Size = new System.Drawing.Size(206, 21);
             this.cboTasks.TabIndex = 8;
             this.cboTasks.Text = "Upgrade";
@@ -248,9 +267,9 @@
             // lstInstalledServices
             // 
             this.lstInstalledServices.AllowDrop = true;
-            this.lstInstalledServices.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.lstInstalledServices.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lstInstalledServices.FormattingEnabled = true;
             this.lstInstalledServices.IntegralHeight = false;
             this.lstInstalledServices.Location = new System.Drawing.Point(47, 44);
@@ -275,8 +294,8 @@
             // 
             // grpClientConfiguration
             // 
-            this.grpClientConfiguration.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpClientConfiguration.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.grpClientConfiguration.Controls.Add(this.btnConfigurationInstallFolder);
             this.grpClientConfiguration.Controls.Add(this.txtConfigurationInstallFolder);
             this.grpClientConfiguration.Controls.Add(this.lblInstallDir2);
@@ -300,8 +319,8 @@
             // 
             // txtConfigurationInstallFolder
             // 
-            this.txtConfigurationInstallFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtConfigurationInstallFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtConfigurationInstallFolder.Location = new System.Drawing.Point(178, 25);
             this.txtConfigurationInstallFolder.Name = "txtConfigurationInstallFolder";
             this.txtConfigurationInstallFolder.ReadOnly = true;
@@ -341,6 +360,37 @@
             this.rdoInstallTypical.Text = "Typical Server Install";
             this.rdoInstallTypical.UseVisualStyleBackColor = true;
             this.rdoInstallTypical.CheckedChanged += new System.EventHandler(this.rdoInstallTypical_CheckedChanged);
+            // 
+            // lblDataDir
+            // 
+            this.lblDataDir.AutoSize = true;
+            this.lblDataDir.Location = new System.Drawing.Point(24, 79);
+            this.lblDataDir.Name = "lblDataDir";
+            this.lblDataDir.Size = new System.Drawing.Size(113, 13);
+            this.lblDataDir.TabIndex = 42;
+            this.lblDataDir.Text = "Choose data directory:";
+            // 
+            // btnDataFolder
+            // 
+            this.btnDataFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDataFolder.Location = new System.Drawing.Point(531, 76);
+            this.btnDataFolder.Name = "btnDataFolder";
+            this.btnDataFolder.Size = new System.Drawing.Size(102, 23);
+            this.btnDataFolder.TabIndex = 41;
+            this.btnDataFolder.Text = "Change Directory";
+            this.btnDataFolder.UseVisualStyleBackColor = true;
+            this.btnDataFolder.Click += new System.EventHandler(this.btnDataFolder_Click);
+            // 
+            // txtDataFolder
+            // 
+            this.txtDataFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtDataFolder.Location = new System.Drawing.Point(157, 77);
+            this.txtDataFolder.Name = "txtDataFolder";
+            this.txtDataFolder.ReadOnly = true;
+            this.txtDataFolder.Size = new System.Drawing.Size(368, 20);
+            this.txtDataFolder.TabIndex = 40;
+            this.txtDataFolder.Text = "C:\\MIDRetail";
             // 
             // ucServer
             // 
@@ -398,5 +448,8 @@
         private System.Windows.Forms.RadioButton rdoUseIPAddress;
         private System.Windows.Forms.RadioButton rdoUseMachineName;
         private System.Windows.Forms.RadioButton rdoInstallTypical;
+        private System.Windows.Forms.Label lblDataDir;
+        private System.Windows.Forms.Button btnDataFolder;
+        public System.Windows.Forms.TextBox txtDataFolder;
     }
 }

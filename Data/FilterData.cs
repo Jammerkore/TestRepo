@@ -197,6 +197,60 @@ namespace MIDRetail.Data
                 throw;
             }
         }
+
+        // Begin TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+        public int FilterGetOwner(int filterRid)
+        {
+            try
+            {
+                DataTable dt = StoredProcedures.MID_FILTER_READ.Read(_dba, FILTER_RID: filterRid);
+
+                if (dt.Rows.Count == 1)
+                {
+                    return Convert.ToInt32(dt.Rows[0]["OWNER_USER_RID"]);
+                }
+                else
+                {
+                    return Include.Undefined;
+                }
+            }
+            catch (Exception exc)
+            {
+                string message = exc.ToString();
+                throw;
+            }
+        }
+        // End TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+
+        public DateTime FilterGetUpdateDate(int filterRid)
+        {
+            try
+            {
+                DataTable dt = StoredProcedures.MID_FILTER_READ.Read(_dba, FILTER_RID: filterRid);
+
+                if (dt.Rows.Count == 1)
+                {
+                    if (dt.Rows[0]["UPDATE_DATE"] == System.DBNull.Value)
+                    {
+                        return DateTime.MinValue;
+                    }
+                    else
+                    {
+                        return Convert.ToDateTime(dt.Rows[0]["UPDATE_DATE"]);
+                    }
+                }
+                else
+                {
+                    return DateTime.MinValue;
+                }
+            }
+            catch (Exception exc)
+            {
+                string message = exc.ToString();
+                throw;
+            }
+        }
+
         public void FilterUpdate(StoreFilterProfile aStoreFilterProfile)
         {
             try
@@ -376,7 +430,8 @@ namespace MIDRetail.Data
                                     //int aHEADER_PH_RID,
                                     int aSORT_BY_TYPE_INDEX,
                                     int aSORT_BY_FIELD_INDEX,
-                                    int aLIST_VALUE_CONSTANT_INDEX
+                                    int aLIST_VALUE_CONSTANT_INDEX,
+                                    int aDATE_CDR_RID   // TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
                                   )
         {
             try
@@ -485,6 +540,11 @@ namespace MIDRetail.Data
                 int? LIST_VALUE_CONSTANT_INDEX_Nullable = null;
                 if (aLIST_VALUE_CONSTANT_INDEX != -1 && aLIST_VALUE_CONSTANT_INDEX != 0) LIST_VALUE_CONSTANT_INDEX_Nullable = aLIST_VALUE_CONSTANT_INDEX;
 
+                // Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+				int? DATE_CDR_RID_Nullable = null;
+                if (aDATE_CDR_RID != Include.UndefinedCalendarDateRange) DATE_CDR_RID_Nullable = aDATE_CDR_RID;
+				// End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+
                 int newConditionRID = StoredProcedures.MID_FILTER_CONDITION_INSERT.InsertAndReturnRID(_dba,
                                                                                 FILTER_RID: aFILTER_RID,
                                                                                 SEQ: aSEQ,
@@ -524,7 +584,8 @@ namespace MIDRetail.Data
                                                                                 //HEADER_PH_RID: HEADER_PH_RID_Nullable,
                                                                                 SORT_BY_TYPE_INDEX: SORT_BY_TYPE_INDEX_Nullable,
                                                                                 SORT_BY_FIELD_INDEX: SORT_BY_FIELD_INDEX_Nullable,
-                                                                                LIST_VALUE_CONSTANT_INDEX: LIST_VALUE_CONSTANT_INDEX_Nullable
+                                                                                LIST_VALUE_CONSTANT_INDEX: LIST_VALUE_CONSTANT_INDEX_Nullable,
+                                                                                DATE_CDR_RID: DATE_CDR_RID_Nullable   // TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
                                                                                 );
                 _dba.CommitData();
                 _dba.CloseUpdateConnection();

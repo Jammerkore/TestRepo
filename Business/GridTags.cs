@@ -1359,7 +1359,29 @@ namespace MIDRetail.Business
 				}
 			}
 
-			public void LoadPageInBackground()
+            //BEGIN RO-2960 - RDewey - Code to workaround threading issue for RO Assortment Matrix
+            public void LoadPageForMatrix()
+            {
+                try
+                {
+                    if (_isLoading)
+                    {
+                        WaitForPageLoad();
+                    }
+                    else if (!_isLoaded)
+                    {
+                        _priority = 2;
+                        LoadMyPageForMatrix();
+                    }
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+            }
+            //END RO-2960 RDewey 
+
+            public void LoadPageInBackground()
 			{
 				try
 				{
@@ -1411,32 +1433,60 @@ namespace MIDRetail.Business
 					_isLoading = false;
 				}
 			}
-		}
 
-		//=============
-		// CONSTRUCTORS
-		//=============
+            //BEGIN RO-2960 RDewey - Code to bypass threading issue with ROWeb Assortment Matrix
+            private void LoadMyPageForMatrix()
+            {
+                Rectangle pageBound;
+                try
+                {
+                    _isLoading = true;
+                    pageBound = _gridTag.GetPageBoundary(_page);
+                    _pageLoadDelegate(_grid, pageBound.X, pageBound.Y, pageBound.Width, pageBound.Height, _priority);
 
-		/// <summary>
-		/// Creates a new instance of PagingGridTag.
-		/// </summary>
-		/// <param name="aGridId">
-		/// The numeric id that uniquely identifies the grid.
-		/// </param>
-		/// <param name="aGrid">
-		/// The C1FlexGrid this instance will be attached to.
-		/// </param>
-		/// <param name="aRowHeaderGrid">
-		/// The C1FlexGrid that contains the Row Headers.
-		/// </param>
-		/// <param name="aColHeaderGrid">
-		/// The C1FlexGrid that contains the Column Headers.
-		/// </param>
-		/// <param name="aPageLoadDelegate">
-		/// A delegate that points to a page load routine.
-		/// </param>
+					_isLoaded = true;
+				}
+				catch (EndPageLoadThreadException)
+				{
+					_isLoaded = false;
+				}
+				catch (Exception)
+				{
+					_isLoaded = false;
+					throw;
+				}
+				finally
+				{
+					_isLoading = false;
+				}
+			}
+            //END RO-2960 RDewey 
+        }
 
-		public PagingGridTag(
+        //=============
+        // CONSTRUCTORS
+        //=============
+
+        /// <summary>
+        /// Creates a new instance of PagingGridTag.
+        /// </summary>
+        /// <param name="aGridId">
+        /// The numeric id that uniquely identifies the grid.
+        /// </param>
+        /// <param name="aGrid">
+        /// The C1FlexGrid this instance will be attached to.
+        /// </param>
+        /// <param name="aRowHeaderGrid">
+        /// The C1FlexGrid that contains the Row Headers.
+        /// </param>
+        /// <param name="aColHeaderGrid">
+        /// The C1FlexGrid that contains the Column Headers.
+        /// </param>
+        /// <param name="aPageLoadDelegate">
+        /// A delegate that points to a page load routine.
+        /// </param>
+
+        public PagingGridTag(
 			int aGridId,
 			C1FlexGrid aGrid,
 			C1FlexGrid aRowHeaderGrid,
@@ -1793,7 +1843,21 @@ namespace MIDRetail.Business
 			}
 		}
 
-		public void LoadPageInBackground(Point aPage)
+        //BEGIN RO-2960 RDewey - Code added to bypass threading issue with C1FlexGrid in ROWeb Assortment Matrix
+        public void LoadPageForMatrix(Point aPage)
+        {
+            try
+            {
+                GetPageLoadInfoForMatrix(aPage).LoadPageForMatrix();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        //END RO-2960 RDewey 
+
+        public void LoadPageInBackground(Point aPage)
 		{
 			try
 			{
@@ -1964,7 +2028,26 @@ namespace MIDRetail.Business
 			}
 		}
 
-		private Point CalculatePage(int aRow, int aCol)
+        //BEGIN RO-2960 RDewey - Code added to bypass threading issue in C1FlexGrid for ROWebAssortment Matrix
+        private PageLoadInfo GetPageLoadInfoForMatrix(Point aPage)
+        {
+            try
+            {
+                if (PagesLoadInfo[aPage.X, aPage.Y] == null)
+                {
+                    PagesLoadInfo[aPage.X, aPage.Y] = new PageLoadInfo(this, _grid, aPage, _pageLoadDelegate);
+                }
+
+                return PagesLoadInfo[aPage.X, aPage.Y];
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        //END RO-2960 RDewey 
+
+        private Point CalculatePage(int aRow, int aCol)
 		{
 			try
 			{

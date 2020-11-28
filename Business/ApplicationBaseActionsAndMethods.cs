@@ -1,8 +1,11 @@
 using System;
 using System.Globalization;
+using System.Collections.Generic;
+using System.Data;
 using MIDRetail.Data;
 using MIDRetail.DataCommon;
 using MIDRetail.Common;
+using Logility.ROWebSharedTypes;
 
 namespace MIDRetail.Business
 {
@@ -106,6 +109,8 @@ namespace MIDRetail.Business
 		private eChangeType		_method_Change_Type;
 		private eMethodStatus	_methodStatus;
         private int _customOLL_RID;     // MID Track #5530 - add CUSTOM_OLL_RID column 
+        private bool? _containsUserData = null;   // TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+        private eLockStatus _lockStatus;
 
 		//============
 		// Constructor
@@ -146,6 +151,7 @@ namespace MIDRetail.Business
 			{
 				Populate(aMethodRID);
 			}
+            _lockStatus = eLockStatus.Undefined;
 		}
 
 		//===========
@@ -282,6 +288,117 @@ namespace MIDRetail.Business
             set { _customOLL_RID = value; }
         }
         // END MID Track #5530  
+
+        // Begin TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+		/// <summary>
+        /// Gets a flag identifying if the workflow or method contains user data
+        /// </summary>
+        public bool? ContainsUserData
+        {
+            get 
+            { 
+                if (_containsUserData == null)
+                {
+                    DetermineIfContainsUserData();
+                }
+                return _containsUserData; 
+            }
+            set 
+            { 
+                _containsUserData = value; 
+            }
+        }
+
+        /// <summary>
+		/// Gets or set Workflow lock status
+		/// </summary>
+		public eLockStatus LockStatus
+        {
+            get
+            {
+                return _lockStatus;
+            }
+            set
+            {
+                _lockStatus = value;
+            }
+        }
+
+        /// <summary>
+        /// Determines if filter is a user filter
+        /// </summary>
+        /// <param name="aFilterRID">Filter Key</param>
+        /// <returns></returns>
+        public bool IsFilterUser(int aFilterRID)
+        {
+            if (aFilterRID > Include.UndefinedStoreFilter)
+            {
+                FilterData fd = new FilterData();
+                if (fd.FilterGetOwner(aFilterRID) != Include.GlobalUserRID)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Determines if store group/attributes is a user attribute
+        /// </summary>
+        /// <param name="aStoreGroupRID">Store Group Key</param>
+        /// <returns></returns>
+        public bool IsStoreGroupUser(int aStoreGroupRID)
+        {
+            if (aStoreGroupRID > 1)
+            {
+                if (StoreMgmt.StoreGroup_Get(aStoreGroupRID).OwnerUserRID != Include.GlobalUserRID)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Determines if a hierarchy is a user hierarchy 
+        /// </summary>
+        /// <param name="aHierarchyRID">Hierarchy key</param>
+        /// <returns></returns>
+        public bool IsHierarchyUser(int aHierarchyRID)
+        {
+            if (aHierarchyRID > 1)
+            {
+                if (SAB.HierarchyServerSession.GetHierarchyOwner(aHierarchyRID) != Include.GlobalUserRID)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Determines if a node in a hierarchy is from a user hierarchy
+        /// </summary>
+        /// <param name="aHierarchyNodeRID">Node key</param>
+        /// <returns></returns>
+        public bool IsHierarchyNodeUser(int aHierarchyNodeRID)
+        {
+            if (aHierarchyNodeRID > 1)
+            {
+                if (SAB.HierarchyServerSession.GetNodeOwner(aHierarchyNodeRID) != Include.GlobalUserRID
+                    )
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+		// End TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+
 		//========
 		// METHODS
 		//========
@@ -382,6 +499,22 @@ namespace MIDRetail.Business
 			}
 		}
 
+        // Begin TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+        internal void DetermineIfContainsUserData()
+        {
+            if (GlobalUserType == eGlobalUserType.User)
+            {
+                _containsUserData = CheckForUserData();
+            }
+            else
+            {
+                _containsUserData = false;
+            }
+        }
+
+        abstract internal bool CheckForUserData();
+        // End TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+
         // Begin TT#1966-MD - JSmith- DC Fulfillment
         protected void WriteBeginProcessingMessage()
         {
@@ -455,6 +588,10 @@ namespace MIDRetail.Business
                     mb.UpdateMethod(td, SAB.ClientServerSession.UserRID);
                     // End TT#1510-MD - JSmith - Correct Method and Workflow Change History and Add Fields for Windows User and Machine
 				}
+
+                // Begin TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+                _containsUserData = null;
+                // End TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
 			}
 			catch (Exception e)
 			{
@@ -518,5 +655,60 @@ namespace MIDRetail.Business
             return true;
         }
         // End TT#3572 - JSmith - Security- Version set to Deny - Ran a velocity method with this version and receive a Null reference error.
-	}
+
+        //RO-642 - Generic classes for handling Allocation Methods
+        abstract public FunctionSecurityProfile GetFunctionSecurity();
+
+        abstract public ROMethodProperties MethodGetData(bool processingApply);
+
+        abstract public bool MethodSetData(ROMethodProperties methodProperties, bool processingApply);
+
+        abstract public ROMethodProperties MethodCopyData();
+
+        internal static List<KeyValuePair<int, string>> DataTableToKeyValues(DataTable dataTable, string keyColName, string valueColName, bool includeusername = false)
+        {
+            List<KeyValuePair<int, string>> keyValueList = new List<KeyValuePair<int, string>>();
+
+            foreach (DataRow aRow in dataTable.Rows)
+            {
+                int key = Convert.ToInt32(aRow[keyColName]);
+                string value = Convert.ToString(aRow[valueColName]);
+                if (includeusername)
+                {
+                    value = Adjust_Name(aRow["METHOD_NAME"].ToString(), Convert.ToInt32(aRow["USER_RID"]));
+                }
+                else
+                {
+                    value = Convert.ToString(aRow[valueColName]);
+                }
+                keyValueList.Add(new KeyValuePair<int, string>(key, value));
+            }
+            return keyValueList;
+        }
+
+        internal static DataTable SortDataTable(DataTable dataTable, string sColName, bool bAscending = true)
+        {
+            DataView dv = dataTable.DefaultView;
+
+            if (bAscending)
+            {
+                dv.Sort = sColName + " ASC";
+            }
+            else
+            {
+                dv.Sort = sColName + " DESC";
+            }
+
+            return dv.ToTable();
+        }
+
+        internal static string Adjust_Name(string aMethodName, int aUserRID)
+        {
+            if (aUserRID != Include.GlobalUserRID)
+            {
+                aMethodName += " (" + UserNameStorage.GetUserName(aUserRID) + ")";
+            }
+            return aMethodName;
+        }
+    }
 }

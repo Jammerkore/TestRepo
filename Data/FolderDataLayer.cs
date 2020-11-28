@@ -16,6 +16,12 @@ namespace MIDRetail.Data
 
 		}
 
+        public FolderDataLayer(TransactionData td)
+            : base(td.DBA, true) 
+        {
+
+        }
+
 		#region FOLDER
 
 		/// <summary>
@@ -160,6 +166,25 @@ namespace MIDRetail.Data
                     name = Convert.ToString(dt.Rows[0]["FOLDER_ID"], CultureInfo.CurrentCulture);
                 }
                 return name;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public eProfileType Folder_GetType(int aFolderRID)
+        {
+            DataTable dt;
+            eProfileType folderType = eProfileType.None;
+            try
+            {
+                dt = Folder_Read(aFolderRID);
+                if (dt != null && dt.Rows.Count == 1)
+                {
+                    folderType = (eProfileType)Convert.ToInt32(dt.Rows[0]["FOLDER_TYPE"]);
+                }
+                return folderType;
             }
             catch
             {

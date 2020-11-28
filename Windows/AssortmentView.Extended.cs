@@ -342,30 +342,34 @@ namespace MIDRetail.Windows
                 _noSizeDimensionLbl = MIDText.GetTextOnly((int)eMIDTextCode.lbl_NoSecondarySize);
                 _txtInheritedFrom = MIDText.GetTextOnly(eMIDTextCode.lbl_Inherited_From);
 
-                cmsInsert.Text = MIDText.GetTextOnly(eMIDTextCode.lbl_Insert);
-                cmsInsertPhStyle.Text = MIDText.GetTextOnly(eMIDTextCode.lbl_PhStyleName);
-                cmsInsertPack.Text = MIDText.GetTextOnly(eMIDTextCode.lbl_Pack);
-                cmsInsertPackColor.Text = MIDText.GetTextOnly(eMIDTextCode.lbl_PackColor);
-                cmsInsertPackSize.Text = MIDText.GetTextOnly(eMIDTextCode.lbl_PackSize);
-                cmsInsertBulkColor.Text = MIDText.GetTextOnly(eMIDTextCode.lbl_BulkColor);
-                cmsInsertBulkSize.Text = MIDText.GetTextOnly(eMIDTextCode.lbl_BulkSize);
-                cmsInsertMTColorRow.Text = MIDText.GetTextOnly(eMIDTextCode.lbl_EmptyRow);
-                cmsChooseColor.Text = MIDText.GetTextOnly(eMIDTextCode.lbl_ColorBrowser);
-                cmsRemove.Text = MIDText.GetTextOnly(eMIDTextCode.lbl_Remove);
 
-				// BEGIN TT#732-MD - Stodd - add radio button
-				midToolbarRadioButton1.Button1.Text = MIDText.GetTextOnly(eMIDTextCode.lbl_Attribute);
-				midToolbarRadioButton1.Button2.Text = MIDText.GetTextOnly(eMIDTextCode.lbl_Store_Grades);
-				// END TT#732-MD - Stodd - add radio button
-				
-				// Begin TT#952 - MD - Add Matrix to Group Allocation - 
-				// FROM GA STODD
-				midToolbarRadioButton2.Button1.Text = MIDText.GetTextOnly(eMIDTextCode.lbl_Group);
-				midToolbarRadioButton2.Button2.Text = MIDText.GetTextOnly(eMIDTextCode.lbl_Headers);
+                if (MIDEnvironment.isWindows)
+                {
+                    cmsInsert.Text = MIDText.GetTextOnly(eMIDTextCode.lbl_Insert);
+                    cmsInsertPhStyle.Text = MIDText.GetTextOnly(eMIDTextCode.lbl_PhStyleName);
+                    cmsInsertPack.Text = MIDText.GetTextOnly(eMIDTextCode.lbl_Pack);
+                    cmsInsertPackColor.Text = MIDText.GetTextOnly(eMIDTextCode.lbl_PackColor);
+                    cmsInsertPackSize.Text = MIDText.GetTextOnly(eMIDTextCode.lbl_PackSize);
+                    cmsInsertBulkColor.Text = MIDText.GetTextOnly(eMIDTextCode.lbl_BulkColor);
+                    cmsInsertBulkSize.Text = MIDText.GetTextOnly(eMIDTextCode.lbl_BulkSize);
+                    cmsInsertMTColorRow.Text = MIDText.GetTextOnly(eMIDTextCode.lbl_EmptyRow);
+                    cmsChooseColor.Text = MIDText.GetTextOnly(eMIDTextCode.lbl_ColorBrowser);
+                    cmsRemove.Text = MIDText.GetTextOnly(eMIDTextCode.lbl_Remove);
 
-                midToolbarRadioButton2.ForeColor = ((UltraToolbar)ultraToolbarsManager1.Toolbars[0]).ToolbarsManager.Appearance.ForeColor;
-                midToolbarRadioButton2.BackColor = ((UltraToolbar)ultraToolbarsManager1.Toolbars[0]).ToolbarsManager.Appearance.BackColor;
-				// Begin TT#952 - MD - Add Matrix to Group Allocation - 
+                    // BEGIN TT#732-MD - Stodd - add radio button
+                    midToolbarRadioButton1.Button1.Text = MIDText.GetTextOnly(eMIDTextCode.lbl_Attribute);
+                    midToolbarRadioButton1.Button2.Text = MIDText.GetTextOnly(eMIDTextCode.lbl_Store_Grades);
+                    // END TT#732-MD - Stodd - add radio button
+
+                    // Begin TT#952 - MD - Add Matrix to Group Allocation - 
+                    // FROM GA STODD
+                    midToolbarRadioButton2.Button1.Text = MIDText.GetTextOnly(eMIDTextCode.lbl_Group);
+                    midToolbarRadioButton2.Button2.Text = MIDText.GetTextOnly(eMIDTextCode.lbl_Headers);
+
+                    midToolbarRadioButton2.ForeColor = ((UltraToolbar)ultraToolbarsManager1.Toolbars[0]).ToolbarsManager.Appearance.ForeColor;
+                    midToolbarRadioButton2.BackColor = ((UltraToolbar)ultraToolbarsManager1.Toolbars[0]).ToolbarsManager.Appearance.BackColor;
+                    // Begin TT#952 - MD - Add Matrix to Group Allocation - 
+                }
 
                 // Begin TT#1498-MD- RMatelic - ASST - MU% not calcing on the fly for the Detail section
                 _lblUnitRetail = MIDText.GetTextOnly((int)eAssortmentTotalVariables.UnitRetail);
@@ -2015,7 +2019,7 @@ namespace MIDRetail.Windows
                                 {
                                     throw new MIDException(eErrorLevel.severe, 0, _sab.ClientServerSession.Audit.GetText(eMIDTextCode.msg_CantRetrieveSizeCode) + " " + aSize.SizeKey.ToString(CultureInfo.CurrentUICulture));
                                 }
-                                MessageBox.Show(string.Format(MIDText.GetText(eMIDTextCode.msg_SizeCodeNotInGroup), scp.SizeCodeName, scp.SizeCodeID, sgp.SizeGroupName));
+                                DisplayMessages.Show(string.Format(MIDText.GetText(eMIDTextCode.msg_SizeCodeNotInGroup), scp.SizeCodeName, scp.SizeCodeID, sgp.SizeGroupName));
                                 return null;
                             }
                             else
@@ -2150,7 +2154,7 @@ namespace MIDRetail.Windows
                                     throw new MIDException(eErrorLevel.severe, 0,
                                           string.Format(MIDText.GetText(eMIDTextCode.msg_SizeCodeRetrieveError), aSize.ContentCodeRID.ToString(CultureInfo.CurrentUICulture)));
                                 }
-                                MessageBox.Show(string.Format(MIDText.GetText(eMIDTextCode.msg_SizeCodeNotInGroup), scp.SizeCodeName, scp.SizeCodeID, sgp.SizeGroupName));
+                                DisplayMessages.Show(string.Format(MIDText.GetText(eMIDTextCode.msg_SizeCodeNotInGroup), scp.SizeCodeName, scp.SizeCodeID, sgp.SizeGroupName));
                                 return null;
                             }
                             else
@@ -3205,7 +3209,7 @@ namespace MIDRetail.Windows
             {
                 if (!RequiredFieldEntered(cell, ref errorMessage))
                 {
-                    MessageBox.Show(errorMessage, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    DisplayMessages.Show(errorMessage, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return false;
                 }
                 else
@@ -3232,21 +3236,21 @@ namespace MIDRetail.Windows
 
                 if (anchorID.Trim() == string.Empty)
                 {
-                    MessageBox.Show(errorMessage1, this.Text);
+                    DisplayMessages.Show(errorMessage1, this.Text);
                     return -1;
                 }
                 HierarchyNodeProfile anchorHnp = _sab.HierarchyServerSession.GetNodeData(anchorID);
                 if (anchorHnp.Key == -1)
                 {
                     string errorMessage3 = errorMessage2 + Environment.NewLine + errorMessage1;
-                    MessageBox.Show(errorMessage3, this.Text);
+                    DisplayMessages.Show(errorMessage3, this.Text);
                     return -1;
                 }
 
                 if (anchorHnp.HomeHierarchyLevel >= _hlpStyle.Level)
                 {
                     string errorMessage3 = _sab.ClientServerSession.Audit.GetText(eMIDTextCode.msg_as_InvalideAnchorNodeLevel);
-                    MessageBox.Show(errorMessage3, this.Text);
+                    DisplayMessages.Show(errorMessage3, this.Text);
                     return -1;
                 }
                 return anchorHnp.Key;
@@ -3283,7 +3287,7 @@ namespace MIDRetail.Windows
                 else
                 {
                     string errorMessage = _sab.ClientServerSession.Audit.GetText(eMIDTextCode.msg_as_AsrtNodePhNodeNotLinked);
-                    MessageBox.Show(errorMessage, this.Text);
+                    DisplayMessages.Show(errorMessage, this.Text);
                     isValidLink = false;
                 }
             }
@@ -3308,14 +3312,14 @@ namespace MIDRetail.Windows
 
                 if (productID.Trim() == string.Empty)
                 {
-                    MessageBox.Show(errorMessage1, this.Text);
+                    DisplayMessages.Show(errorMessage1, this.Text);
                     return -1;
                 }
                 HierarchyNodeProfile styleParentHnp = _sab.HierarchyServerSession.GetNodeData(productID);
                 if (styleParentHnp.Key == -1)
                 {
                     string errorMessage3 = errorMessage2 + Environment.NewLine + errorMessage1;
-                    MessageBox.Show(errorMessage3, this.Text);
+                    DisplayMessages.Show(errorMessage3, this.Text);
                     return -1;
                 }
 
@@ -3326,7 +3330,7 @@ namespace MIDRetail.Windows
                 if (hlp.LevelType != eHierarchyLevelType.Style)
                 {
                     string errorMessage3 = errorMessage2 + Environment.NewLine + errorMessage1;
-                    MessageBox.Show(errorMessage3, this.Text);
+                    DisplayMessages.Show(errorMessage3, this.Text);
                     return -1;
                 }
                 return styleParentHnp.Key;
@@ -3357,7 +3361,7 @@ namespace MIDRetail.Windows
                         AddErrorMessage(emm);
                     }
                     //EAB.Explorer.DisplayWorkspacePane();    // MID Track #5501 - add 'nag' message
-                    MessageBox.Show(_errors, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    DisplayMessages.Show(_errors, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     dataIsValid = false;
                 }
             }
@@ -3708,7 +3712,7 @@ namespace MIDRetail.Windows
                     // Begin TT#1324 - RMatelic - When adding a new Style, the description does not update.
                     //errorMessage = string.Format(_sab.ClientServerSession.Audit.GetText(eMIDTextCode.msg_LevelNotFoundAddQuestion),
                     //                             _hlpStyle.LevelID, styleID);
-                    //DialogResult ret = MessageBox.Show(errorMessage, string.Empty, MessageBoxButtons.YesNo,
+                    //DialogResult ret = DisplayMessages.Show(errorMessage, string.Empty, MessageBoxButtons.YesNo,
                     //                   MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
                                
                     errorMessage = string.Format(MIDText.GetTextOnly(eMIDTextCode.msg_LevelNotFoundAddQuestion),
@@ -3755,7 +3759,7 @@ namespace MIDRetail.Windows
                                 errorFound = true;
                             }
                             // Begin TT#2002-MD - JSmith - Adding a new style that does not exist in the hierarchy.  Does not add to the hierarchy until the asst is closed and a Tools Refresh is done.  Should it add on the fly?
-                            else
+                            else if (MIDEnvironment.isWindows)
                             {
                                 _eab.MerchandiseExplorer.IRefresh();
                             }
@@ -3768,7 +3772,7 @@ namespace MIDRetail.Windows
                 {
                     errorMessage = string.Format(MIDText.GetText(eMIDTextCode.msg_Data1NotValidData2),
                                                  styleID, _hlpStyle.LevelID);
-                    MessageBox.Show(errorMessage, this.Text);
+                    DisplayMessages.Show(errorMessage, this.Text);
                     validStyle = false;
                     errorFound = true;
                 }
@@ -3808,7 +3812,7 @@ namespace MIDRetail.Windows
                         errorMessage = string.Format(MIDText.GetText(eMIDTextCode.msg_as_DupPhStylesNotAllowed),
                                                       _lblPlaceholder + " " + _hlpStyle.LevelID);
                         validStyle = false;
-                        MessageBox.Show(errorMessage, this.Text);
+                        DisplayMessages.Show(errorMessage, this.Text);
                         break;
                     }
                 }
@@ -4027,6 +4031,11 @@ namespace MIDRetail.Windows
         {
             try
             {
+                if (!MIDEnvironment.isWindows)
+                {
+                    return;
+                }
+
                 switch (_currentTabPage.Name)
                 {
                     case "tabContent":
@@ -4725,7 +4734,7 @@ namespace MIDRetail.Windows
                             EditMsgs.Message emm = (EditMsgs.Message)em.EditMessages[i];
                             AddErrorMessage(emm);
                         }
-                        MessageBox.Show(_errors, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        DisplayMessages.Show(_errors, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                     return;
                 }
@@ -5234,7 +5243,7 @@ namespace MIDRetail.Windows
                 else
                 {
                     errorMessage = _sab.ClientServerSession.Audit.GetText(eMIDTextCode.msg_pl_InvalidValueFormat);
-                    MessageBox.Show(errorMessage, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    DisplayMessages.Show(errorMessage, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             catch
@@ -5276,7 +5285,7 @@ namespace MIDRetail.Windows
                                     EditMsgs.Message emm = (EditMsgs.Message)em.EditMessages[i];
                                     AddErrorMessage(emm);
                                 }
-                                MessageBox.Show(_errors, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                DisplayMessages.Show(_errors, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
                             }
                             okToAdd = false;
                         }
@@ -5295,7 +5304,8 @@ namespace MIDRetail.Windows
             bool isFirstHeader = false;
             try
             {
-                if (cmsContentInsert.Visible)  // context menus don't AutoClose when there's a TextBox 
+                if (cmsContentInsert != null
+                    && cmsContentInsert.Visible)  // context menus don't AutoClose when there's a TextBox 
                 {
                     cmsContentInsert.Close();
                     cmsContentGrid.Close();
@@ -5397,7 +5407,8 @@ namespace MIDRetail.Windows
 				//}
 				// END TT#2152 - stodd - new highlighted row not in selected list 
 
-                if (!_addingHeaderToAssortment)
+                if (!_addingHeaderToAssortment
+                    && MIDEnvironment.isWindows)
                 {
                     //SaveAndUpdateAssortmentTab(); 
                     OnAssortmentSaveHeaderData(null);	// TT#921 - MD - replace IRefresh with ReloadUpdatedHeaders for workspaces
@@ -6090,7 +6101,7 @@ namespace MIDRetail.Windows
                 // does it already exist?
                 if (_dsDetails.Relations.Contains(sizeTableName))
                 {
-                    MessageBox.Show(_sab.ClientServerSession.Audit.GetText(eMIDTextCode.msg_SizeTableExists));
+                    DisplayMessages.Show(_sab.ClientServerSession.Audit.GetText(eMIDTextCode.msg_SizeTableExists));
                     return;
                 }
 
@@ -6099,7 +6110,7 @@ namespace MIDRetail.Windows
                 AllocationProfile ap = GetAllocationProfile(headerRID);
                 if (ap.SizeGroupRID == Include.UndefinedSizeGroupRID)
                 {
-                    MessageBox.Show(_sab.ClientServerSession.Audit.GetText(eMIDTextCode.msg_SizeGroupRequired),
+                    DisplayMessages.Show(_sab.ClientServerSession.Audit.GetText(eMIDTextCode.msg_SizeGroupRequired),
                             this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
@@ -6250,7 +6261,7 @@ namespace MIDRetail.Windows
                 // does it already exist?
                 if (_dsDetails.Relations.Contains(sizeTableName))
                 {
-                    MessageBox.Show(_sab.ClientServerSession.Audit.GetText(eMIDTextCode.msg_SizeTableExists));
+                    DisplayMessages.Show(_sab.ClientServerSession.Audit.GetText(eMIDTextCode.msg_SizeTableExists));
                     return;
                 }
 
@@ -6259,7 +6270,7 @@ namespace MIDRetail.Windows
                 AllocationProfile ap = GetAllocationProfile(headerRID);
                 if (ap.SizeGroupRID == Include.UndefinedSizeGroupRID)
                 {
-                    MessageBox.Show(_sab.ClientServerSession.Audit.GetText(eMIDTextCode.msg_SizeGroupRequired),
+                    DisplayMessages.Show(_sab.ClientServerSession.Audit.GetText(eMIDTextCode.msg_SizeGroupRequired),
                            _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
@@ -6393,6 +6404,11 @@ namespace MIDRetail.Windows
 
         private void cmsRemove_Click(object sender, EventArgs e)
         {
+            RemoveFromAssortment();
+        }
+
+        public void RemoveFromAssortment()
+        { 
             Cursor.Current = Cursors.WaitCursor;
             UltraGridRow headerRow = null;
             UltraGridRow asrtRow = null;
@@ -6421,7 +6437,7 @@ namespace MIDRetail.Windows
                 //}
                 if (errorFound)
                 {
-                    MessageBox.Show(errMessage, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    DisplayMessages.Show(errMessage, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
@@ -6431,7 +6447,8 @@ namespace MIDRetail.Windows
                 }
                  
                 // TODO; some rows added to placeholders can be deleted; may need some additional logic
-                if (_rClickRow.Band.Key != "Header")
+                if (_rClickRow != null
+                    && _rClickRow.Band.Key != "Header")
                 {
                     headerRow = _rClickRow.ParentRow;
                     while (headerRow.Band.Key != "Header")
@@ -6564,8 +6581,12 @@ namespace MIDRetail.Windows
 
                     string message = string.Format(MIDText.GetTextOnly(eMIDTextCode.msg_DeleteRows), deleteRowCount.ToString());
                     message += Environment.NewLine + MIDText.GetTextOnly((int)eMIDTextCode.msg_ContinueQuestion);
-                    diagResult = MessageBox.Show(message, _lblDeleteRow, System.Windows.Forms.MessageBoxButtons.YesNo,
-                                              System.Windows.Forms.MessageBoxIcon.Question);
+                    diagResult = DialogResult.Yes;
+                    if (MIDEnvironment.isWindows)
+                    {
+                        diagResult = DisplayMessages.Show(message, _lblDeleteRow, System.Windows.Forms.MessageBoxButtons.YesNo,
+                                              System.Windows.Forms.MessageBoxIcon.Question, false, DialogResult.Yes);
+                    }
 					// End TT#1053 - MD - stodd - removing/adding headers to GA - 
 					
                     if (diagResult == System.Windows.Forms.DialogResult.No)
@@ -7168,8 +7189,12 @@ namespace MIDRetail.Windows
 								
                                 errMessage += Environment.NewLine + MIDText.GetTextOnly((int)eMIDTextCode.msg_ContinueQuestion);
 
-                                DialogResult diagResult = MessageBox.Show(errMessage, this.Text, System.Windows.Forms.MessageBoxButtons.YesNo,
-                                                          System.Windows.Forms.MessageBoxIcon.Question);
+                                DialogResult diagResult = DialogResult.Yes;
+                                if (MIDEnvironment.isWindows)
+                                {
+                                    diagResult = DisplayMessages.Show(errMessage, this.Text, System.Windows.Forms.MessageBoxButtons.YesNo,
+                                                              System.Windows.Forms.MessageBoxIcon.Question, false, DialogResult.Yes);
+                                }
 
                                 if (diagResult == System.Windows.Forms.DialogResult.No)
                                 {
@@ -7272,7 +7297,7 @@ namespace MIDRetail.Windows
                             }
                             if (errorFound)
                             {
-                                MessageBox.Show(errMessage, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                DisplayMessages.Show(errMessage, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
                                 RemoveAndDequeueHeader(addedHdrRID);
                                 return;
                             }
@@ -8120,7 +8145,7 @@ namespace MIDRetail.Windows
                 }
                 if (errorFound)
                 {
-                    MessageBox.Show(errMessage, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    DisplayMessages.Show(errMessage, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 _validHeaderSelection = !errorFound;	// TT#1395-MD - stodd - Adding VSW Headers to a Group produces incorrect messages
             }
@@ -11057,7 +11082,7 @@ namespace MIDRetail.Windows
 
                 if ((bandKeyParts[0] != "Header") && !AllowPlaceholderUpdate(headerRow))
                 {
-                    MessageBox.Show(deleteMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    DisplayMessages.Show(deleteMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return false;
                 }
 
@@ -12049,8 +12074,12 @@ namespace MIDRetail.Windows
 
                 message += Environment.NewLine + MIDText.GetTextOnly((int)eMIDTextCode.msg_ContinueQuestion);
 
-                DialogResult diagResult = MessageBox.Show(message, _lblDeleteRow, System.Windows.Forms.MessageBoxButtons.YesNo,
-                    System.Windows.Forms.MessageBoxIcon.Question);
+                DialogResult diagResult = DialogResult.Yes;
+                if (MIDEnvironment.isWindows)
+                {
+                    diagResult = DisplayMessages.Show(message, _lblDeleteRow, System.Windows.Forms.MessageBoxButtons.YesNo,
+                    System.Windows.Forms.MessageBoxIcon.Question, false, DialogResult.Yes);
+                }
 
                 if (diagResult == System.Windows.Forms.DialogResult.No)
                 {
@@ -12124,7 +12153,7 @@ namespace MIDRetail.Windows
 
                     if ((bandKeyParts[0] != "Header") && !AllowPlaceholderUpdate(headerRow))
                     {
-                        MessageBox.Show(deleteMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        DisplayMessages.Show(deleteMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return false;
                     }
 
@@ -13229,7 +13258,7 @@ namespace MIDRetail.Windows
                     }
                     if (colorCodeRID == Include.NoRID)
                     {
-                        MessageBox.Show("Not enough available Placeholder colors");
+                        DisplayMessages.Show("Not enough available Placeholder colors");
                         return false;
                     }
 
@@ -13598,7 +13627,7 @@ namespace MIDRetail.Windows
             // TT#1483-MD - RMatelic - Asst - when attaching a header receive mssg Unable to determine where to add row:please select a valid row before adding a new row.  Select OK get null reference exception
             //if (ugDetails.ActiveRow == null)
             //{
-            //    MessageBox.Show(_sab.ClientServerSession.Audit.GetText(eMIDTextCode.msg_UnableToAddRow),
+            //    DisplayMessages.Show(_sab.ClientServerSession.Audit.GetText(eMIDTextCode.msg_UnableToAddRow),
             //                this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
             //    return false;
             //}
@@ -13666,7 +13695,7 @@ namespace MIDRetail.Windows
                     case "HeaderID": //  needs to use NewValue
                         if (!ValidHeaderID(e.Cell, ref errorMessage, Convert.ToString(e.NewValue, CultureInfo.CurrentUICulture)))
                         {
-                            MessageBox.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            DisplayMessages.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                             e.Cancel = true;
                             return;
                         }
@@ -13679,7 +13708,7 @@ namespace MIDRetail.Windows
                                 //if (!_creatingMulti)
                                 //{
                                 //    errorMessage = _sab.ClientServerSession.Audit.GetText(eMIDTextCode.msg_HeaderTypeNotAllowed);
-                                //    MessageBox.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                //    DisplayMessages.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                                 //    e.Cancel = true;
                                 //}
                                 break;
@@ -13688,7 +13717,7 @@ namespace MIDRetail.Windows
                                 if (ap.Packs != null && ap.Packs.Count > 0)
                                 {
                                     errorMessage = _sab.ClientServerSession.Audit.GetText(eMIDTextCode.msg_InvalidTypeForHeadersWithPacks);
-                                    MessageBox.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    DisplayMessages.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                                     e.Cancel = true;
                                 }
                                 break;
@@ -13733,7 +13762,7 @@ namespace MIDRetail.Windows
                             if (styleID.Trim() == string.Empty)
                             {
                                 errorMessage = string.Format(MIDText.GetText(eMIDTextCode.msg_MustBeCorrectLevel), _hlpStyle.LevelID);
-                                MessageBox.Show(errorMessage, _windowName);
+                                DisplayMessages.Show(errorMessage, _windowName);
                                 e.Cancel = true;
                             }
 
@@ -13814,7 +13843,7 @@ namespace MIDRetail.Windows
                             if (!allSizesFound && ap.Placeholder && !_removingHeaderFromAssortment)
                             {
                                 errorMessage = _sab.ClientServerSession.Audit.GetText(eMIDTextCode.msg_al_DeleteExistingSizes);
-                                MessageBox.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                DisplayMessages.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                                 e.Cancel = true;
                             }
                             else
@@ -13836,7 +13865,7 @@ namespace MIDRetail.Windows
                                 {
                                     errorMessage = string.Format(MIDText.GetText(eMIDTextCode.msg_Data1NotValidData2),
                                                    workFlow, MIDText.GetTextOnly(eMIDTextCode.lbl_Workflow));
-                                    MessageBox.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    DisplayMessages.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                                     e.Cancel = true;
                                 }
                                 else
@@ -13893,7 +13922,7 @@ namespace MIDRetail.Windows
                         case eHeaderCharType.dollar:
                             if (!ValidCharNumber(ref e, ref errorMessage))
                             {
-                                MessageBox.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                DisplayMessages.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                                 e.Cancel = true;
                             }
                             break;
@@ -13901,7 +13930,7 @@ namespace MIDRetail.Windows
                         case eHeaderCharType.date:
                             if (!ValidCharDate(ref e, ref errorMessage))
                             {
-                                MessageBox.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                DisplayMessages.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                                 e.Cancel = true;
                             }
                             break;
@@ -13914,7 +13943,7 @@ namespace MIDRetail.Windows
                         {
                             errorMessage = string.Format(_sab.ClientServerSession.Audit.GetText(eMIDTextCode.msg_LevelNotFoundAddQuestion),
                                      hcgp.ID, e.NewValue.ToString());
-                            DialogResult ret = MessageBox.Show(errorMessage, string.Empty, MessageBoxButtons.YesNo,
+                            DialogResult ret = DisplayMessages.Show(errorMessage, string.Empty, MessageBoxButtons.YesNo,
                                                MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
                             if (ret == DialogResult.No)
                             {
@@ -13967,7 +13996,7 @@ namespace MIDRetail.Windows
                         {
                             if (!RequiredFieldEntered(e.Cell, ref errorMessage))
                             {
-                                MessageBox.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                DisplayMessages.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                                 e.Cancel = true;
                             }
                         }
@@ -13977,7 +14006,7 @@ namespace MIDRetail.Windows
 
                             if (!ValidPackName(e.Cell, packName, ref errorMessage))
                             {
-                                MessageBox.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                DisplayMessages.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                                 e.Cell.Appearance.Image = null;
                                 e.Cell.Tag = null;
                                 e.Cancel = true;
@@ -14008,7 +14037,7 @@ namespace MIDRetail.Windows
                         {
                             if (!RequiredFieldEntered(e.Cell, ref errorMessage))
                             {
-                                MessageBox.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                DisplayMessages.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                                 e.Cancel = true;
                             }
                             else
@@ -14018,7 +14047,7 @@ namespace MIDRetail.Windows
                                 {
 
                                     errorMessage = _sab.ClientServerSession.Audit.GetText(eMIDTextCode.msg_as_PlaceholderEntryNotAllowed);
-                                    MessageBox.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    DisplayMessages.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                                     e.Cancel = true;
                                 }
                             }
@@ -14027,7 +14056,7 @@ namespace MIDRetail.Windows
                         {
                             if (!ValidPackColor(e.Cell, packColor, ref errorMessage))
                             {
-                                MessageBox.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                DisplayMessages.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                                 e.Cell.Appearance.Image = null;
                                 e.Cell.Tag = null;
                                 e.Cancel = true;
@@ -14057,7 +14086,7 @@ namespace MIDRetail.Windows
                         string bulkColor = e.NewValue.ToString();
                         if (!RequiredFieldEntered(e.Cell, ref errorMessage))
                         {
-                            MessageBox.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            DisplayMessages.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                             e.Cancel = true;
                         }
                         else
@@ -14066,7 +14095,7 @@ namespace MIDRetail.Windows
                             if (ccp.Key != Include.NoRID && ccp.VirtualInd)
                             {
                                 errorMessage = _sab.ClientServerSession.Audit.GetText(eMIDTextCode.msg_as_PlaceholderEntryNotAllowed);
-                                MessageBox.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                DisplayMessages.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                                 e.Cancel = true;
                             }
                         }
@@ -14074,7 +14103,7 @@ namespace MIDRetail.Windows
                         { 
                             if (!ValidBulkColor(e.Cell, bulkColor, ref errorMessage))
                             {
-                                MessageBox.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                DisplayMessages.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                                 e.Cell.Appearance.Image = null;
                                 e.Cell.Tag = null;
                                 e.Cancel = true;
@@ -14372,7 +14401,7 @@ namespace MIDRetail.Windows
                             RequiredFieldEntered(e.Cell.Row.Cells["Description"], ref message);
 
                             errorMessage = string.Format(MIDText.GetText(eMIDTextCode.msg_MustBeCorrectLevel), _hlpStyle.LevelID);
-                            MessageBox.Show(errorMessage, _windowName);
+                            DisplayMessages.Show(errorMessage, _windowName);
                         }
                         break;
 
@@ -14553,7 +14582,7 @@ namespace MIDRetail.Windows
                         }
                         else if (!ValidMultiple(e.Cell, ref errorMessage))
                         {
-                            MessageBox.Show(_sab.ClientServerSession.Audit.GetText(eMIDTextCode.msg_MultipleCannotBeLessThan1));
+                            DisplayMessages.Show(_sab.ClientServerSession.Audit.GetText(eMIDTextCode.msg_MultipleCannotBeLessThan1));
                             return;
                         }
                         else
@@ -15772,7 +15801,7 @@ namespace MIDRetail.Windows
                
                 if (!RequiredFieldEntered(e.Cell, ref errorMessage))
                 {
-                    MessageBox.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    DisplayMessages.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
                
@@ -16094,7 +16123,7 @@ namespace MIDRetail.Windows
                         errorMessage = string.Empty;
                         if (!RequiredFieldEntered(e.Cell, ref errorMessage))
                         {
-                            MessageBox.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            DisplayMessages.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                             return;
                         }
 
@@ -16299,7 +16328,7 @@ namespace MIDRetail.Windows
                         errorMessage = string.Empty;
                         if (!RequiredFieldEntered(e.Cell, ref errorMessage))
                         {
-                            MessageBox.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            DisplayMessages.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                             return;
                         }
 
@@ -16345,7 +16374,7 @@ namespace MIDRetail.Windows
                         errorMessage = string.Empty;
                         if (!RequiredFieldEntered(e.Cell, ref errorMessage))
                         {
-                            MessageBox.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            DisplayMessages.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                             return;
                         }
                         // Multi header totals get calculated in AllocationProfile
@@ -16865,7 +16894,7 @@ namespace MIDRetail.Windows
 						//errorMessage = string.Empty;
 						//if (!RequiredFieldEntered(e.Cell, ref errorMessage))
 						//{
-						//    MessageBox.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+						//    DisplayMessages.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
 						//    return;
 						//}
 
@@ -16910,7 +16939,7 @@ namespace MIDRetail.Windows
 					//    errorMessage = string.Empty;
 					//    if (!RequiredFieldEntered(e.Cell, ref errorMessage))
 					//    {
-					//        MessageBox.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+					//        DisplayMessages.Show(errorMessage, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
 					//        return;
 					//    }
 					//    // Multi header totals get calculated in AllocationProfile
@@ -17446,6 +17475,11 @@ namespace MIDRetail.Windows
 		// Begin TT#921 - MD - replace IRefresh with ReloadUpdatedHeaders for workspaces
         private void ReloadUpdatedHeadersInAssortmentWorkspace()
         {
+            if (!MIDEnvironment.isWindows)
+            {
+                return;
+            }
+
 			// Begin TT#952 - MD - stodd - add matrix to Group Allocation Review
             if (IsAssortment)
             {
@@ -17511,6 +17545,11 @@ namespace MIDRetail.Windows
 
         private void ReloadUpdatedHeadersInAllocationWorkspace(int [] hdrRidList)
         {
+            if (!MIDEnvironment.isWindows)
+            {
+                return;
+            }
+
             _eab.AllocationWorkspaceExplorer.ReloadUpdatedHeaders(hdrRidList);
         }
 		// End TT#921 - MD - replace IRefresh with ReloadUpdatedHeaders for workspaces
@@ -17797,7 +17836,7 @@ namespace MIDRetail.Windows
                             EditMsgs.Message emm = (EditMsgs.Message)em.EditMessages[i];
                             AddErrorMessage(emm);
                         }
-                        MessageBox.Show(_errors, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        DisplayMessages.Show(_errors, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                     e.Cancel = true;
                 }
@@ -17854,7 +17893,7 @@ namespace MIDRetail.Windows
                             EditMsgs.Message emm = (EditMsgs.Message)em.EditMessages[i];
                             AddErrorMessage(emm);
                         }
-                        MessageBox.Show(_errors, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        DisplayMessages.Show(_errors, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                     e.Cancel = true;
                 }
@@ -18563,14 +18602,14 @@ namespace MIDRetail.Windows
                 }
                 else
                 {
-                    MessageBox.Show(MIDText.GetTextOnly(eMIDTextCode.msg_InvalidDataType));
+                    DisplayMessages.Show(MIDText.GetTextOnly(eMIDTextCode.msg_InvalidDataType));
                 }
             }
             catch (Exception)
             {
                 //string text = string.Format(MIDText.GetTextOnly(eMIDTextCode.msg_MustBeStyleOrProductNode), _hlpStyle.LevelID, _hlpProduct.LevelID);
                 string text = MIDText.GetTextOnly(eMIDTextCode.msg_InvalidDataType);
-                MessageBox.Show(text);
+                DisplayMessages.Show(text);
             }
         }
 
@@ -18586,7 +18625,7 @@ namespace MIDRetail.Windows
                 HierarchyNodeSecurityProfile securityNode = _sab.ClientServerSession.GetMyUserNodeSecurityAssignment(cbp.Key, (int)eSecurityTypes.Allocation);
                 if (!securityNode.AllowUpdate)
                 {
-                    MessageBox.Show(_sab.ClientServerSession.Audit.GetText(eMIDTextCode.msg_NotAuthorizedForNode));
+                    DisplayMessages.Show(_sab.ClientServerSession.Audit.GetText(eMIDTextCode.msg_NotAuthorizedForNode));
                 }
                 else
 				//END TT#564 - MD - DOConnell - Allow a header to be dragged and dropped onto a placeholder color
@@ -18668,7 +18707,7 @@ namespace MIDRetail.Windows
                         RequiredFieldEntered(aRow.Cells["Description"], ref message);
 
                         errorMessage = string.Format(MIDText.GetText(eMIDTextCode.msg_MustBeCorrectLevel), _hlpStyle.LevelID);
-                        MessageBox.Show(errorMessage, this.Text);
+                        DisplayMessages.Show(errorMessage, this.Text);
                         aRow.Cells["Style"].Activated = true;
                         ugDetails.PerformAction(Infragistics.Win.UltraWinGrid.UltraGridAction.EnterEditMode, false, false);
                     }
@@ -18734,7 +18773,7 @@ namespace MIDRetail.Windows
             }
         }
 
-        private void ColorDragDrop(UltraGridRow aRow, int aColorCodeRID)
+        public void ColorDragDrop(UltraGridRow aRow, int aColorCodeRID)
         {
             try
             {
@@ -19043,6 +19082,7 @@ namespace MIDRetail.Windows
                                 errMessage,
                                 "Invalid Header Add",
                                 System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Asterisk);
+                    MIDEnvironment.requestFailed = true;
                     return false;
                 }
                	// End TT#1053 - MD - stodd - removing/adding headers to GA - 
@@ -19081,6 +19121,7 @@ namespace MIDRetail.Windows
                                 errMessage,
                                 "Enqueue Error",
                                 System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Asterisk);
+                    MIDEnvironment.requestFailed = true;
                     return false;
                 // Begin TT#1069 - md - stodd - exception when dropping headers
                 }
@@ -19534,7 +19575,7 @@ namespace MIDRetail.Windows
                 Title += errLevel;
                 Msg = MIDexc.Message;
             }
-            MessageBox.Show(this, Msg, Title, buttons, icon);
+            DisplayMessages.Show(this, Msg, Title, buttons, icon);
         }
 
         #endregion
@@ -19542,6 +19583,13 @@ namespace MIDRetail.Windows
         #region Save Header Data
         private void SaveAndUpdateAssortmentTab()
         {
+            if (!MIDEnvironment.isWindows)
+            {
+                _dtHeaders.AcceptChanges();
+                OnAssortmentSaveHeaderData(null);
+                return;
+            }
+
             try
             {
                 _dtHeaders.AcceptChanges();
@@ -22348,7 +22396,7 @@ namespace MIDRetail.Windows
             }
             catch (BadDataInClipboardException)
             {
-                MessageBox.Show(_sab.ClientServerSession.Audit.GetText(eMIDTextCode.msg_BadDataInClipboard),
+                DisplayMessages.Show(_sab.ClientServerSession.Audit.GetText(eMIDTextCode.msg_BadDataInClipboard),
                     this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             catch (Exception exception)
@@ -22408,8 +22456,8 @@ namespace MIDRetail.Windows
                 {
                     string message = MIDText.GetTextOnly(eMIDTextCode.msg_as_ApplyCharsToLowerLevels);
 
-                    dialogResult = MessageBox.Show(message, this.Text, MessageBoxButtons.YesNoCancel,
-                                   MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
+                    dialogResult = DisplayMessages.Show(message, this.Text, MessageBoxButtons.YesNoCancel,
+                                   MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, false, DialogResult.Yes);
                 }
 
                 return dialogResult;
@@ -23483,6 +23531,11 @@ namespace MIDRetail.Windows
 		/// <returns></returns>
 		private bool isColumnOnTotalGrid(string colCaption, ref int aColumn)
 		{
+            if (!MIDEnvironment.isWindows)
+            {
+                return false;
+            }
+
 			bool colFound = false;
 			try
 			{
@@ -23512,6 +23565,11 @@ namespace MIDRetail.Windows
 		/// <returns></returns>
 		private bool isColumnOnDetailGrid(string colCaption, ref List<int> aColumnList)
 		{
+            if (!MIDEnvironment.isWindows)
+            {
+                return false;
+            }
+
 			bool colFound = false;
 			try
 			{
@@ -23552,21 +23610,24 @@ namespace MIDRetail.Windows
                         row["PLANLEVEL"] = aLevelText;
                         string data = string.Empty;
                         bool colFound = false;
-                        for (int gRow = 0; gRow < g4.Rows.Count; gRow++)
+                        if (MIDEnvironment.isWindows)
                         {
-                            for (int gCol = 0; gCol < g4.Cols.Count; gCol++)
+                            for (int gRow = 0; gRow < g4.Rows.Count; gRow++)
                             {
-                                if (g4.GetDataDisplay(gRow, gCol) == oldText)
+                                for (int gCol = 0; gCol < g4.Cols.Count; gCol++)
                                 {
-                                    colFound = true;
-                                    g4[gRow, gCol] = aLevelText;
-                                    g4.AutoSizeCol(gCol);
+                                    if (g4.GetDataDisplay(gRow, gCol) == oldText)
+                                    {
+                                        colFound = true;
+                                        g4[gRow, gCol] = aLevelText;
+                                        g4.AutoSizeCol(gCol);
+                                        break;
+                                    }
+                                }
+                                if (colFound)
+                                {
                                     break;
                                 }
-                            }
-                            if (colFound)
-                            {
-                                break;
                             }
                         }
                         break;

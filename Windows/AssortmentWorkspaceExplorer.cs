@@ -359,9 +359,10 @@ namespace MIDRetail.Windows
                     int viewRID = _userGridView.UserGridView_Read(_SAB.ClientServerSession.UserRID, eLayoutID.assortmentWorkspaceGrid);
                     //Begin TT#1313-MD -jsobek -Header Filters
                     bool useViewWorkspaceFilter = false;
+                    bool useFilterSorting = false;   // TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
                     if (viewRID != Include.NoRID && !_fromFilterWindow)
                     {
-                        bool useFilterSorting = false;
+                        //bool useFilterSorting = false;   // TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
                         int workspaceFilterRID = _gridViewData.GridViewReadWorkspaceFilterRID(viewRID, ref useFilterSorting);
                         if (workspaceFilterRID != Include.NoRID)
                         {
@@ -383,7 +384,10 @@ namespace MIDRetail.Windows
                     LoadHeadersOnGrid();
                     BindViewCombo();
                     BindFilterComboBox();
-                    SetUserView(viewRID);
+					// Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+                    //SetUserView(viewRID);
+                    SetUserView(viewRID, useFilterSorting);
+					// End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
                     SetViewComboEnabled();
                     SetHeaderFilter(_headerFilterRID);	// TT#1386-MD - stodd - merge assortment into 5.4
                     //End TT#1313-MD -jsobek -Header Filters
@@ -2856,7 +2860,10 @@ namespace MIDRetail.Windows
 			}
 		}
 
-		private void SetUserView(int aViewRID)
+        // Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+		//private void SetUserView(int aViewRID)
+		private void SetUserView(int aViewRID, bool useFilterSorting)
+		// End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
 		{
 			try
 			{
@@ -2871,7 +2878,10 @@ namespace MIDRetail.Windows
                     cmbView.SelectedValue = aViewRID;
                     // End TT#1337-MD - stodd - On Assortment Explorer, replace toolbar combobox with MID Enhanced combobox
 					// END TT#765-MD - Stodd - Add toolbars to Assortment Workspace
-					ApplyViewToGridLayout(aViewRID);
+                    // Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+					//ApplyViewToGridLayout(aViewRID);
+					ApplyViewToGridLayout(aViewRID, useFilterSorting);
+					// End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
 				}
 			}
 			catch
@@ -2921,7 +2931,10 @@ namespace MIDRetail.Windows
         //End TT#316 - MD - DOConnell - Replace all Windows Combobox controls with new enhanced control
 		// END TT#765-MD - Stodd - Add toolbars to Assortment Workspace
 
-        private void ApplyViewToGridLayout(int aViewRID)
+        // Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+		//private void ApplyViewToGridLayout(int aViewRID)
+		private void ApplyViewToGridLayout(int aViewRID, bool useFilterSorting)
+		// End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
         {
             try
             {
@@ -2975,18 +2988,27 @@ namespace MIDRetail.Windows
                         width = -1;
                     }
 
-                    if (sortDirection == eSortDirection.Ascending || sortDirection == eSortDirection.Descending)
-                    {
-                        sortSequence = Convert.ToInt32(row["SORT_SEQUENCE"], CultureInfo.CurrentUICulture);
-                        if (!sortedColumns.ContainsKey(sortSequence))
-                        {
-                            sortedColumns.Add(sortSequence, row);
-                        }
-                    }
-                    else
+                    // Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+					if (useFilterSorting)
                     {
                         sortSequence = -1;
                     }
+                    else
+                    {
+					// End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+                        if (sortDirection == eSortDirection.Ascending || sortDirection == eSortDirection.Descending)
+                        {
+                            sortSequence = Convert.ToInt32(row["SORT_SEQUENCE"], CultureInfo.CurrentUICulture);
+                            if (!sortedColumns.ContainsKey(sortSequence))
+                            {
+                                sortedColumns.Add(sortSequence, row);
+                            }
+                        }
+                        else
+                        {
+                            sortSequence = -1;
+                        }
+                    }   // TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
 
                     if (ugAssortments.DisplayLayout.Bands.Exists(bandKey))
                     {
@@ -4279,7 +4301,10 @@ namespace MIDRetail.Windows
                     //}
                     //End TT#1313-MD -jsobek -Header Filter
 
-                    ApplyViewToGridLayout(viewRID);	
+                    // Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+					//ApplyViewToGridLayout(viewRID);
+					ApplyViewToGridLayout(viewRID, useFilterSorting);
+					// End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only	
 					// End TT#1360-MD - stodd - Convert Dropdowns on Assortment Workspace to be MID Enhanced Dropdowns
 				}
 			}

@@ -2370,7 +2370,11 @@ namespace MIDRetail.Business
                 {
 					if (aCompCellRef.isCellFormulaPending(aScheduleEntry) || aCompCellRef.isCellSpreadPending(aScheduleEntry))
 					{
-						throw new CellPendingException(aCompCellRef);
+					    // Begin TT#1954-MD - JSmith - Assortment Performance
+                        aScheduleEntry.LastPendingCell = aCompCellRef;
+                        aScheduleEntry.ComputationFormulaReturnType = eComputationFormulaReturnType.Pending;
+                        //throw new CellPendingException(aCompCellRef);
+						// End TT#1954-MD - JSmith - Assortment Performance
 					}
 				}
 			}

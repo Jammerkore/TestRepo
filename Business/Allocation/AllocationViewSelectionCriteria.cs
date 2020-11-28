@@ -1254,10 +1254,14 @@ namespace MIDRetail.Business.Allocation
                   	break;
 				}
 				default:
-				{
-					System.Windows.Forms.MessageBox.Show("Selected View is not Implemented");
-					break;
-				}
+                    {
+                        //System.Windows.Forms.MessageBox.Show("Selected View is not Implemented");
+                        DialogResult diagResult = _trans.SAB.MessageCallback.HandleMessage(
+                                            MIDText.GetText(eMIDTextCode.msg_al_SelectedViewNotValid),
+                                            "",
+                                            MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.None);
+                        break;
+                    }
 			}
 			//			this._trans.SAB.ApplicationServerSession.Audit.Add_Msg(eMIDMessageLevel.Information,"     End:  BuildWafers()", this.GetType().Name);
 
@@ -1605,6 +1609,11 @@ namespace MIDRetail.Business.Allocation
 			headerCoordListB.Add(aWaferCoordinate); // TT#59 Implement Store Temp Locks
 			aWaferCoordinate = new AllocationWaferCoordinate(eAllocationWaferVariable.RuleResults);
 			headerCoordListC.Add(aWaferCoordinate); // TT#59 Implement Store Temp Locks
+
+            if (this._trans.Velocity == null)
+            {
+                aVelocityView = false;
+            }
 
 			if (aVelocityView && this._trans.Velocity.Component.ComponentType == eComponentType.Total)
 			{
@@ -3020,10 +3029,14 @@ namespace MIDRetail.Business.Allocation
 					break;
 				}
 				default:
-				{
-					System.Windows.Forms.MessageBox.Show("Selected GroupBy is not implemented for Style View");
-					break;
-				}
+                    {
+                        //System.Windows.Forms.MessageBox.Show("Selected GroupBy is not implemented for Style View");
+                        DialogResult diagResult = _trans.SAB.MessageCallback.HandleMessage(
+                                            MIDText.GetText(eMIDTextCode.msg_al_InvalidStyleGroupBy),
+                                            "",
+                                            MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.None);
+                        break;
+                    }
 			}
 
 			coordListA = new AllocationWaferCoordinateList(_trans);
@@ -3123,10 +3136,14 @@ namespace MIDRetail.Business.Allocation
 					break;
 				}
 				default:
-				{
-					System.Windows.Forms.MessageBox.Show("Selected GroupBy is not implemented for Style View");
-					break;
-				}
+                    {
+                        //System.Windows.Forms.MessageBox.Show("Selected GroupBy is not implemented for Style View");
+                        DialogResult diagResult = _trans.SAB.MessageCallback.HandleMessage(
+                                            MIDText.GetText(eMIDTextCode.msg_al_InvalidStyleGroupBy),
+                                            "",
+                                            MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.None);
+                        break;
+                    }
 			}
 
             ProfileList sgll = StoreMgmt.StoreGroup_GetLevelListFilled(this.StoreGroupRID); //_storeServerSession.GetStoreGroupLevelList(this.StoreGroupRID);
@@ -3575,10 +3592,14 @@ namespace MIDRetail.Business.Allocation
 					break;
 				}
 				default:
-				{
-					System.Windows.Forms.MessageBox.Show("Selected GroupBy is not implemented for Summary View");
-					break;
-				}
+                    {
+                        //System.Windows.Forms.MessageBox.Show("Selected GroupBy is not implemented for Summary View");
+                        DialogResult diagResult = _trans.SAB.MessageCallback.HandleMessage(
+                                            MIDText.GetText(eMIDTextCode.msg_al_InvalidSummaryGroupBy),
+                                            "",
+                                            MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.None);
+                        break;
+                    }
 			}
 		}
 		#endregion SummaryView
@@ -3716,8 +3737,12 @@ namespace MIDRetail.Business.Allocation
 					}
 					default:
 					{
-						System.Windows.Forms.MessageBox.Show("Selected 2nd GroupBy is not implemented for Size View");
-						break;
+						//System.Windows.Forms.MessageBox.Show("Selected 2nd GroupBy is not implemented for Size View");
+                        DialogResult diagResult = _trans.SAB.MessageCallback.HandleMessage(
+                                            MIDText.GetText(eMIDTextCode.msg_al_InvalidSizeGroupBy),
+                                            "",
+                                            MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.None);
+                        break;
 					}
 				}
 //			}
@@ -5194,10 +5219,14 @@ namespace MIDRetail.Business.Allocation
 					break;
 				}
 				default:
-				{
-					System.Windows.Forms.MessageBox.Show("Selected GroupBy is not implemented for Size View");
-					break;
-				}
+                    {
+                        //System.Windows.Forms.MessageBox.Show("Selected GroupBy is not implemented for Size View");
+                        DialogResult diagResult = _trans.SAB.MessageCallback.HandleMessage(
+                                            MIDText.GetText(eMIDTextCode.msg_al_InvalidSizeGroupBy),
+                                            "",
+                                            MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.None);
+                        break;
+                    }
 			}
 			return rowGroup;
 		}

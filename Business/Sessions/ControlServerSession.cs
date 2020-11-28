@@ -55,18 +55,24 @@ namespace MIDRetail.Business
         static private ProcessStateManager _processStateManager;
         static private Dictionary<eProcesses, List<ProcessControlRule>> _processRules;
         static private ArrayList _permissionLock;
-		// End TT#1581-MD - stodd - API Header Reconcile
-        
+        // End TT#1581-MD - stodd - API Header Reconcile
 
-		//=============
-		// CONSTRUCTORS
-		//=============
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        static private string _ROExtractConnectionString;
+        static private Dictionary<long, ExtractSessionEntry> _extractSessions;
+        static private ArrayList _extractLock;
+        // End TT#2131-MD - JSmith - Halo Integration
 
-		/// <summary>
-		/// Creates a new instance of ControlServerGlobal
-		/// </summary>
 
-		static ControlServerGlobal()
+        //=============
+        // CONSTRUCTORS
+        //=============
+
+        /// <summary>
+        /// Creates a new instance of ControlServerGlobal
+        /// </summary>
+
+        static ControlServerGlobal()
 		{
 			try
 			{
@@ -79,10 +85,11 @@ namespace MIDRetail.Business
 				// Begin TT#1581-MD - stodd - API Header Reconcile
                 _permissionLock = new ArrayList();
                 _processStateManager = new ProcessStateManager();
-				// End TT#1581-MD - stodd - API Header Reconcile
-				
-				//End Track #5583 - JScott - Ran an export for Store Data for 5 weeks and it failed.  Audit report attached.
-				if (!EventLog.SourceExists("MIDControlService"))
+                // End TT#1581-MD - stodd - API Header Reconcile
+                _extractLock = new ArrayList();  // TT#2131-MD - JSmith - Halo Integration
+
+                //End Track #5583 - JScott - Ran an export for Store Data for 5 weeks and it failed.  Audit report attached.
+                if (!EventLog.SourceExists("MIDControlService"))
 				{
 					EventLog.CreateEventSource("MIDControlService", null);
 				}
@@ -218,18 +225,18 @@ namespace MIDRetail.Business
                 return _processRules;
             }
         }
-		// End TT#1581-MD - stodd - API Header Reconcile
+        // End TT#1581-MD - stodd - API Header Reconcile
 
-		//========
-		// METHODS
-		//========
+        //========
+        // METHODS
+        //========
 
-		/// <summary>
-		/// The Load method is called by the service or client to trigger the instantiation of the static ControlServerGlobal
-		/// object.
-		/// </summary>
+        /// <summary>
+        /// The Load method is called by the service or client to trigger the instantiation of the static ControlServerGlobal
+        /// object.
+        /// </summary>
 
-		static public void Load(bool aLocalCtrlServer)
+        static public void Load(bool aLocalCtrlServer)
 		{
 			try
 			{
@@ -249,7 +256,7 @@ namespace MIDRetail.Business
 							MIDConnectionString.ConnectionString = MIDConfigurationManager.AppSettings["ConnectionString"];
 						}
 						// END MID Track #4373
-		
+
 						MarkRunningProcesses();
 		
 						// BEGIN MID Track #4572 - John Smith - clear enqueues on global start
@@ -282,7 +289,9 @@ namespace MIDRetail.Business
                             _audit = new Audit(eProcesses.controlService, Include.AdministratorUserRID);
                         }
                         // End TT#189
-		
+
+                        
+
                         // Begin TT#2307 - JSmith - Incorrect Stock Values
                         int messagingInterval = Include.Undefined;
                         object parm = MIDConfigurationManager.AppSettings["MessagingInterval"];
@@ -341,10 +350,16 @@ namespace MIDRetail.Business
                         }
                         //End TT#1517-MD -jsobek -Store Service Optimization
 
+                        // Begin TT#2131-MD - JSmith - Halo Integration
+                        _ROExtractConnectionString = MIDConfigurationManager.AppSettings["ROExtractConnectionString"];
+                        CloseAllExtractSessions();
+                        _extractSessions = new Dictionary<long, ExtractSessionEntry>();
+                        // End TT#2131-MD - JSmith - Halo Integration
+
                         // TESTING OINLY
                         //string msg = "";
                         //GetProcessingPermission(eProcesses.headerLoad, 10001, ref msg);
-						_loaded = true;
+                        _loaded = true;
 					}
 				}
 				//End Track #5583 - JScott - Ran an export for Store Data for 5 weeks and it failed.  Audit report attached.
@@ -662,8 +677,18 @@ namespace MIDRetail.Business
                         processCannotBeRunning = Include.ConvertCharToBool(Convert.ToChar(aRow["PROCESS_CANNOT_BE_RUNNING_IND"]));
                     }
                     int processID = int.Parse(aRow["PROCESS_ID"].ToString());
+                    DateTime lastModifiedDatTime = Include.UndefinedDate;
+                    if (aRow["LAST_MODIFIED_DATETIME"] != DBNull.Value)
+                    {
+                        lastModifiedDatTime = Convert.ToDateTime(aRow["LAST_MODIFIED_DATETIME"]);
+                    }
+                    string lastModifiedBy = string.Empty;
+                    if (aRow["LAST_MODIFIED_BY"] != DBNull.Value)
+                    {
+                        lastModifiedBy = Convert.ToString(aRow["LAST_MODIFIED_BY"]);
+                    }
 
-                    ProcessControlRule aRule = new ProcessControlRule(API_ID, processMustBeRunning, processCannotBeRunning, processID);
+                    ProcessControlRule aRule = new ProcessControlRule(API_ID, processMustBeRunning, processCannotBeRunning, processID, lastModifiedDatTime, lastModifiedBy);
                     ruleList.Add(aRule);
                 }
 
@@ -813,7 +838,7 @@ namespace MIDRetail.Business
                             _processStateManager.RemoveProcess(aProcess, aProcessId);
                         }
                     }
-                    else
+                    else if (isRunning)
                     {
                         _processStateManager.AddProcess(aProcess, aProcessId, isRunning);
                     }
@@ -853,11 +878,12 @@ namespace MIDRetail.Business
                 }
             }
         }
-		// End TT#1581-MD - stodd - API Header Reconcile
+        // End TT#1581-MD - stodd - API Header Reconcile
 
 
+       
 
-    // BEGIN TT#187 - Truncate Virtual Locks RBeck
+        // BEGIN TT#187 - Truncate Virtual Locks RBeck
 
         // Begin Track #6346 - JSmith - Duplicate rows after Rollup
         static public int GetSessionID()
@@ -891,21 +917,170 @@ namespace MIDRetail.Business
 				secAdminData.CloseUpdateConnection();
 			}
 		}
-		//End TT#1206 - JScott - Unable to Assign a User to Another User
-	}
+        //End TT#1206 - JScott - Unable to Assign a User to Another User
 
-	/// <summary>
-	/// ControlServerSession is a class that contains fields, properties, and methods that are available to other sessions
-	/// of the system.
-	/// </summary>
-	/// <remarks>
-	/// The ControlServerSession class is the interface to the ControlServer functionality.  All requests for functionality
-	/// or information in the ControlServer should be made through methods and properties in this class.
-	/// </remarks>
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        static public string GetROExtractConnectionString()
+        {
+            try
+            {
+                return _ROExtractConnectionString;
+            }
+            catch (Exception ex)
+            {
+                EventLog.WriteEntry("MIDControlService", ex.Message, EventLogEntryType.Error);
+                throw new MIDException(eErrorLevel.severe, 0, "MIDControlService: ControlServerGlobal encountered error - " + ex.Message);
+            }
+            finally
+            {
+            }
+        }
 
-	//Begin TT#708 - JScott - Services need a Retry availalbe.
-	//public class ControlServerSession : Session
-	public class ControlServerSessionRemote : SessionRemote
+
+        static public long OpenExtractSession()
+        {
+            long processId = Include.Undefined;
+
+            try
+            {
+                if (!ROExtractEnabled)
+                {
+                    return Include.Undefined;
+                }
+
+                lock (_extractLock.SyncRoot)
+                {
+                    processId = DateTime.Now.Ticks;
+                    ExtractSessionEntry ese = new ExtractSessionEntry(processId, true);
+                    ROExtractData ROExtractData = new ROExtractData(_ROExtractConnectionString);
+
+                    try
+                    {
+                        ROExtractData.OpenUpdateConnection();
+                        ROExtractData.Extract_Session_Update(ese.ProcessId, ese.IsRunning, ese.StartDateTime, null);
+                        ROExtractData.CommitData();
+                    }
+                    catch (Exception ex)
+                    {
+                        EventLog.WriteEntry("MIDControlService", ex.Message, EventLogEntryType.Error);
+                        throw new MIDException(eErrorLevel.severe, 0, "MIDControlService: ControlServerGlobal encountered error - " + ex.Message);
+                    }
+                    finally
+                    {
+                        ROExtractData.CloseUpdateConnection();
+                    }
+                    _extractSessions.Add(ese.ProcessId, ese);
+                }
+            }
+            catch (Exception ex)
+            {
+                EventLog.WriteEntry("MIDControlService", ex.Message, EventLogEntryType.Error);
+                throw new MIDException(eErrorLevel.severe, 0, "MIDControlService: ControlServerGlobal encountered error - " + ex.Message);
+            }
+            finally
+            {
+            }
+
+            return processId;
+        }
+
+        static public bool CloseExtractSession(long aExtractProcessId)
+        {
+            try
+            {
+                if (!ROExtractEnabled)
+                {
+                    return true;
+                }
+
+                lock (_extractLock.SyncRoot)
+                {
+                    ExtractSessionEntry ese = null;
+
+                    if (_extractSessions.TryGetValue(aExtractProcessId, out ese))
+                    {
+                        ROExtractData ROExtractData = new ROExtractData(_ROExtractConnectionString);
+
+                        try
+                        {
+                            ROExtractData.OpenUpdateConnection();
+                            ROExtractData.Extract_Session_Update(ese.ProcessId, false, ese.StartDateTime, DateTime.Now);
+                            ROExtractData.CommitData();
+                        }
+                        catch (Exception ex)
+                        {
+                            EventLog.WriteEntry("MIDControlService", ex.Message, EventLogEntryType.Error);
+                            throw new MIDException(eErrorLevel.severe, 0, "MIDControlService: ControlServerGlobal encountered error - " + ex.Message);
+                        }
+                        finally
+                        {
+                            ROExtractData.CloseUpdateConnection();
+                        }
+                        _extractSessions.Remove(ese.ProcessId);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                EventLog.WriteEntry("MIDControlService", ex.Message, EventLogEntryType.Error);
+                throw new MIDException(eErrorLevel.severe, 0, "MIDControlService: ControlServerGlobal encountered error - " + ex.Message);
+            }
+            finally
+            {
+            }
+
+            return true;
+        }
+        
+        static public void CloseAllExtractSessions()
+        {
+            try
+            {
+                if (!ROExtractEnabled)
+                {
+                    return;
+                }
+                ROExtractData ROExtractData = new ROExtractData(_ROExtractConnectionString);
+                if (ROExtractData.Extract_Session_Active())
+                {
+                    try
+                    {
+                        ROExtractData.OpenUpdateConnection();
+                        ROExtractData.CloseAllExtractSessions();
+                        ROExtractData.CommitData();
+                    }
+                    catch (Exception ex)
+                    {
+                        EventLog.WriteEntry("MIDControlService", ex.Message, EventLogEntryType.Error);
+                        throw new MIDException(eErrorLevel.severe, 0, "MIDControlService: ControlServerGlobal encountered error - " + ex.Message);
+                    }
+                    finally
+                    {
+                        ROExtractData.CloseUpdateConnection();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                EventLog.WriteEntry("MIDControlService", ex.Message, EventLogEntryType.Error);
+                throw new MIDException(eErrorLevel.severe, 0, "MIDControlService: ControlServerGlobal encountered error - " + ex.Message);
+            }
+        }
+        // End TT#2131-MD - JSmith - Halo Integration
+    }
+
+    /// <summary>
+    /// ControlServerSession is a class that contains fields, properties, and methods that are available to other sessions
+    /// of the system.
+    /// </summary>
+    /// <remarks>
+    /// The ControlServerSession class is the interface to the ControlServer functionality.  All requests for functionality
+    /// or information in the ControlServer should be made through methods and properties in this class.
+    /// </remarks>
+
+    //Begin TT#708 - JScott - Services need a Retry availalbe.
+    //public class ControlServerSession : Session
+    public class ControlServerSessionRemote : SessionRemote
 	//End TT#708 - JScott - Services need a Retry availalbe.
 	{
 
@@ -924,22 +1099,24 @@ namespace MIDRetail.Business
         // End TT#1581-MD - stodd - Header Reconcile - process control
 
         private HeaderIDGenerator headerIDGenerator = null;
-      
 
-		//=============
-		// CONSTRUCTORS
-		//=============
+        private long _extractProcessId = Include.Undefined;  // TT#2131-MD - JSmith - Halo Integration
 
-		/// <summary>
-		/// Creates a new instance of ControlSessionGlobal as either local or remote, depending on the value of aLocal
-		/// </summary>
-		/// <param name="aLocal">
-		/// A boolean that indicates whether this class is being instantiated in the Client or in a remote service.
-		/// </param>
 
-		//Begin TT#708 - JScott - Services need a Retry availalbe.
-		//public ControlServerSession(bool aLocal)
-		public ControlServerSessionRemote(bool aLocal)
+        //=============
+        // CONSTRUCTORS
+        //=============
+
+        /// <summary>
+        /// Creates a new instance of ControlSessionGlobal as either local or remote, depending on the value of aLocal
+        /// </summary>
+        /// <param name="aLocal">
+        /// A boolean that indicates whether this class is being instantiated in the Client or in a remote service.
+        /// </param>
+
+        //Begin TT#708 - JScott - Services need a Retry availalbe.
+        //public ControlServerSession(bool aLocal)
+        public ControlServerSessionRemote(bool aLocal)
 		//Begin TT#708 - JScott - Services need a Retry availalbe.
 			: base(aLocal)
 		{
@@ -961,7 +1138,7 @@ namespace MIDRetail.Business
 				_connectionString = value;
 			}
 		}
-// (CSMITH) - END MID Track #3369
+        // (CSMITH) - END MID Track #3369
 
         /// <summary>
         /// Gets the thread ID of the client.
@@ -1084,7 +1261,14 @@ namespace MIDRetail.Business
         {
             try
             {
-                SetProcessState(CurrentProcess, CurrentProcessID, false);	// TT#1581-MD - stodd Header Reconcile
+                SetProcessState(CurrentProcess, CurrentProcessID, false);   // TT#1581-MD - stodd Header Reconcile
+
+                // Begin TT#2131-MD - JSmith - Halo Integration
+                if (_extractProcessId != Include.Undefined)
+                {
+                    CloseExtractSession(_extractProcessId);
+                }
+                // End TT#2131-MD - JSmith - Halo Integration
 
                 // Begin TT#739-MD - JSmith - Delete Stores
                 // Uncomment if using SQLBulkCopy
@@ -1339,6 +1523,47 @@ namespace MIDRetail.Business
 				throw;
 			}
 		}
+
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        /// <summary>
+		/// GetROExtractConnectionString returns RO Export database connection string
+		/// </summary>
+		/// <returns>
+		/// The RO Export database connection string for the control server
+		/// </returns>
+		public string GetROExtractConnectionString()
+        {
+            try
+            {
+                return ControlServerGlobal.GetROExtractConnectionString();
+            }
+
+            catch (Exception Ex)
+            {
+                string exceptMsg = Ex.ToString();
+
+                throw;
+            }
+        }
+
+        public long OpenExtractSession()
+        {
+            _extractProcessId = ControlServerGlobal.OpenExtractSession();
+            return _extractProcessId;
+        }
+
+        public bool CloseExtractSession(long aExtractProcessId)
+        {
+            bool extractSessionClosed = false;
+            
+            extractSessionClosed = ControlServerGlobal.CloseExtractSession(aExtractProcessId);
+            if (extractSessionClosed)
+            {
+                _extractProcessId = Include.Undefined;
+            }
+            return extractSessionClosed;
+        }
+        // End TT#2131-MD - JSmith - Halo Integration
 
         // Begin Track #6346 - JSmith - Duplicate rows after Rollup
         public int GetSessionID()
@@ -2289,7 +2514,102 @@ namespace MIDRetail.Business
 			}
 		}
 
-		public int GetSessionID()
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        public string GetROExtractConnectionString()
+        {
+            try
+            {
+                for (int i = 0; i < ServiceRetryCount; i++)
+                {
+                    try
+                    {
+                        return ControlServerSessionRemote.GetROExtractConnectionString();
+                    }
+                    catch (Exception exc)
+                    {
+                        if (isServiceRetryException(exc))
+                        {
+                            Thread.Sleep(ServiceRetryInterval);
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                }
+
+                throw new ServiceUnavailable(MIDText.GetTextOnly((int)SessionType));
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public long OpenExtractSession()
+        {
+            try
+            {
+                for (int i = 0; i < ServiceRetryCount; i++)
+                {
+                    try
+                    {
+                        return ControlServerSessionRemote.OpenExtractSession();
+                    }
+                    catch (Exception exc)
+                    {
+                        if (isServiceRetryException(exc))
+                        {
+                            Thread.Sleep(ServiceRetryInterval);
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                }
+
+                throw new ServiceUnavailable(MIDText.GetTextOnly((int)SessionType));
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public bool CloseExtractSession(long aProcessId)
+        {
+            try
+            {
+                for (int i = 0; i < ServiceRetryCount; i++)
+                {
+                    try
+                    {
+                        return ControlServerSessionRemote.CloseExtractSession(aProcessId);
+                    }
+                    catch (Exception exc)
+                    {
+                        if (isServiceRetryException(exc))
+                        {
+                            Thread.Sleep(ServiceRetryInterval);
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                }
+
+                throw new ServiceUnavailable(MIDText.GetTextOnly((int)SessionType));
+            }
+            catch
+            {
+                throw;
+            }
+        }
+        // End TT#2131-MD - JSmith - Halo Integration
+
+        public int GetSessionID()
 		{
 			try
 			{
@@ -2459,6 +2779,8 @@ namespace MIDRetail.Business
         private bool _mustBeRunning;
         private bool _cannotBeRunning;
         private int _processID;
+        private DateTime _lastModifiedDateTime;
+        private string _lastModifiedBy;
 
         public int API_ID
         {
@@ -2474,6 +2796,10 @@ namespace MIDRetail.Business
             {
                 return _mustBeRunning;
             }
+            set
+            {
+                _mustBeRunning = value;
+            }
         }
 
         public bool CannotBeRunning
@@ -2481,6 +2807,10 @@ namespace MIDRetail.Business
             get
             {
                 return _cannotBeRunning;
+            }
+            set
+            {
+                _cannotBeRunning = value;
             }
         }
 
@@ -2492,12 +2822,38 @@ namespace MIDRetail.Business
             }
         }
 
-        public ProcessControlRule(int API_ID, bool mustBeRunning, bool cannotBeRunning, int ProcessID)
+        public DateTime LastModifiedDateTime
+        {
+            get
+            {
+                return _lastModifiedDateTime;
+            }
+            set
+            {
+                _lastModifiedDateTime = value;
+            }
+        }
+
+        public string LastModifiedBy
+        {
+            get
+            {
+                return _lastModifiedBy;
+            }
+            set
+            {
+                _lastModifiedBy = value;
+            }
+        }
+
+        public ProcessControlRule(int API_ID, bool mustBeRunning, bool cannotBeRunning, int ProcessID, DateTime lastModifiedDateTime, string lastModifiedBy)
         {
             _API_ID = API_ID;
             _mustBeRunning = mustBeRunning;
             _cannotBeRunning = cannotBeRunning;
             _processID = ProcessID;
+            _lastModifiedDateTime = lastModifiedDateTime;
+            _lastModifiedBy = lastModifiedBy;
         }
     }
 
@@ -2717,5 +3073,48 @@ namespace MIDRetail.Business
             set { _isRunning = value; }
         }
     }
-	// End TT#1581-MD - stodd - API Header Reconcile
+    // End TT#1581-MD - stodd - API Header Reconcile
+
+    // Begin TT#2131-MD - JSmith - Halo Integration
+    [Serializable()]
+    public class ExtractSessionEntry
+    {
+       
+        private long _processId;
+        private bool _isRunning;
+        private DateTime _startDateTime;
+        private DateTime _endDateTime;
+
+        public ExtractSessionEntry(long processId, bool isRunning)
+        {
+           _processId = processId;
+            _isRunning = isRunning;
+            _startDateTime = DateTime.Now;
+        }
+
+        public long ProcessId
+        {
+            get { return _processId; }
+            set { _processId = value; }
+        }
+
+        public bool IsRunning
+        {
+            get { return _isRunning; }
+            set { _isRunning = value; }
+        }
+
+        public DateTime StartDateTime
+        {
+            get { return _startDateTime; }
+            set { _startDateTime = value; }
+        }
+
+        public DateTime EndDateTime
+        {
+            get { return _endDateTime; }
+            set { _endDateTime = value; }
+        }
+    }
+    // End TT#2131-MD - JSmith - Halo Integration
 }

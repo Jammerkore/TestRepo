@@ -24,6 +24,7 @@ namespace MIDRetail.CopyRelease
     {
         string _SQLServerPath;
         string _DatabasePath;
+        string _DatabasePathROExtract;
         string _LicenseKeyGeneratorPath;
         string _ReportsPath;
         string _XSDPath;
@@ -448,6 +449,7 @@ namespace MIDRetail.CopyRelease
                 RenameSCMBranch();
 
                 UpdateStatus("Done");
+                btnClose.Focus();
                 MessageBox.Show("Release has been copied");
             }
             catch (Exception exc)
@@ -465,7 +467,7 @@ namespace MIDRetail.CopyRelease
             try
             {
                 //Begin TT#1973 - JSmith - Add custom attribute to contain client to use when creating releases
-                //System.Reflection.Assembly assembly = System.Reflection.Assembly.LoadFrom(@"C:\scmvs2013\Working 4.0 Fixes\ApplicationClient\bin\Release\MIDRetail.exe");
+                //System.Reflection.Assembly assembly = System.Reflection.Assembly.LoadFrom(@"C:\scmvs2017\Working 4.0 Fixes\ApplicationClient\bin\Release\MIDRetail.exe");
                 System.Reflection.Assembly assembly = System.Reflection.Assembly.LoadFrom(txtRLQAPath.Text + @"\Application\Installer\Install Files\Client\MIDRetail.exe");
                 if (assembly == null)
                 {
@@ -562,7 +564,8 @@ namespace MIDRetail.CopyRelease
                      _clientInfo.PlanningInstalled, planningExpiration,
                      _clientInfo.AssortmentInstalled, assortmentExpiration,
                      _clientInfo.GroupAllocationInstalled, groupAllocationExpiration,	// TT#1247-MD - stodd - Add Group Allocation as a License Key option -
-                     _clientInfo.MasterInstalled, masterExpiration);
+                     _clientInfo.MasterInstalled, masterExpiration,
+                     _clientInfo.AnalyticsInstalled, 0);    // TT#2131-MD - JSmith - Halo Integration
 
                 writer.WriteLine(key);
             }
@@ -650,7 +653,7 @@ namespace MIDRetail.CopyRelease
 
         private void UpdateConfigFile()
         {
-            string configFile = @"C:\scmvs2013\build\CopyRelease\files_sign.config";
+            string configFile = @"C:\scmvs2017\build\CopyRelease\files_sign.config";
 
             //get the xml document
             XmlDocument xmlDoc = new XmlDocument();
@@ -690,6 +693,8 @@ namespace MIDRetail.CopyRelease
                 _MIDRetailInfoPath = releasePath + "\\" + "Information";
                 _SQLServerPath = releasePath + "\\" + "Application";
                 _DatabasePath = _SQLServerPath + "\\" + "Database";
+                _DatabasePathROExtract = _SQLServerPath + "\\" + "DatabaseROExtract";
+
                 _LicenseKeyGeneratorPath = _SQLServerPath + "\\" + "LicenseKeyGenerator";
                 _ReportsPath = _SQLServerPath + "\\" + "Reports";
                 _XSDPath = _SQLServerPath + "\\" + "XSDs";
@@ -721,6 +726,21 @@ namespace MIDRetail.CopyRelease
                     Directory.CreateDirectory(_DatabasePath + "\\" + Include.SQL_FOLDER_VIEWS);
                     Directory.CreateDirectory(_DatabasePath + "\\" + Include.SQL_FOLDER_UPGRADE_VERSIONS);
                     // End TT#TT#846-MD - JSmith - New Stored Procedures for Performance
+                    Directory.CreateDirectory(_DatabasePathROExtract);
+                    Directory.CreateDirectory(_DatabasePathROExtract + "\\" + Include.SQL_FOLDER_CONSTRAINTS);
+                    Directory.CreateDirectory(_DatabasePathROExtract + "\\" + Include.SQL_FOLDER_SCALAR_FUNCTIONS);
+                    Directory.CreateDirectory(_DatabasePathROExtract + "\\" + Include.SQL_FOLDER_TABLE_FUNCTIONS);
+                    Directory.CreateDirectory(_DatabasePathROExtract + "\\" + Include.SQL_FOLDER_GENERATED_NONTABLE_FILES);
+                    Directory.CreateDirectory(_DatabasePathROExtract + "\\" + Include.SQL_FOLDER_GENERATED_TABLE_FILES);
+                    Directory.CreateDirectory(_DatabasePathROExtract + "\\" + Include.SQL_FOLDER_INDEXES);
+                    Directory.CreateDirectory(_DatabasePathROExtract + "\\" + Include.SQL_FOLDER_SCRIPTS);
+                    Directory.CreateDirectory(_DatabasePathROExtract + "\\" + Include.SQL_FOLDER_STORED_PROCEDURES);
+                    Directory.CreateDirectory(_DatabasePathROExtract + "\\" + Include.SQL_FOLDER_TABLE_KEYS);
+                    Directory.CreateDirectory(_DatabasePathROExtract + "\\" + Include.SQL_FOLDER_TABLES);
+                    Directory.CreateDirectory(_DatabasePathROExtract + "\\" + Include.SQL_FOLDER_TRIGGERS);
+                    Directory.CreateDirectory(_DatabasePathROExtract + "\\" + Include.SQL_FOLDER_TYPES);
+                    Directory.CreateDirectory(_DatabasePathROExtract + "\\" + Include.SQL_FOLDER_VIEWS);
+                    Directory.CreateDirectory(_DatabasePathROExtract + "\\" + Include.SQL_FOLDER_UPGRADE_VERSIONS);
 
                     if (!cbxQACalcOnly.Checked)
                     {
@@ -779,11 +799,24 @@ namespace MIDRetail.CopyRelease
                 CopyFiles(buildPath + "\\DatabaseDefinition" + "\\" + Include.SQL_FOLDER_TYPES, _DatabasePath + "\\" + Include.SQL_FOLDER_TYPES, "*.SQL");
                 CopyFiles(buildPath + "\\DatabaseDefinition" + "\\" + Include.SQL_FOLDER_VIEWS, _DatabasePath + "\\" + Include.SQL_FOLDER_VIEWS, "*.SQL");
                 CopyFiles(buildPath + "\\DatabaseDefinition" + "\\" + Include.SQL_FOLDER_UPGRADE_VERSIONS, _DatabasePath + "\\" + Include.SQL_FOLDER_UPGRADE_VERSIONS, "*.SQL");
-                // End TT#TT#846-MD - JSmith - New Stored Procedures for Performance
-                
+
+                CopyFiles(buildPath + "\\SQLServerDatabaseUpdate\\bin\\Release", _DatabasePathROExtract);
+                CopyFiles(buildPath + "\\DatabaseDefinitionROExtract" + "\\" + Include.SQL_FOLDER_CONSTRAINTS, _DatabasePathROExtract + "\\" + Include.SQL_FOLDER_CONSTRAINTS, "*.SQL");
+                CopyFiles(buildPath + "\\DatabaseDefinitionROExtract" + "\\" + Include.SQL_FOLDER_SCALAR_FUNCTIONS, _DatabasePathROExtract + "\\" + Include.SQL_FOLDER_SCALAR_FUNCTIONS, "*.SQL");
+                CopyFiles(buildPath + "\\DatabaseDefinitionROExtract" + "\\" + Include.SQL_FOLDER_TABLE_FUNCTIONS, _DatabasePathROExtract + "\\" + Include.SQL_FOLDER_TABLE_FUNCTIONS, "*.SQL");
+                CopyFiles(buildPath + "\\DatabaseDefinitionROExtract" + "\\" + Include.SQL_FOLDER_INDEXES, _DatabasePathROExtract + "\\" + Include.SQL_FOLDER_INDEXES, "*.SQL");
+                CopyFiles(buildPath + "\\DatabaseDefinitionROExtract" + "\\" + Include.SQL_FOLDER_SCRIPTS, _DatabasePathROExtract + "\\" + Include.SQL_FOLDER_SCRIPTS, "*.SQL");
+                CopyFiles(buildPath + "\\DatabaseDefinitionROExtract" + "\\" + Include.SQL_FOLDER_STORED_PROCEDURES, _DatabasePathROExtract + "\\" + Include.SQL_FOLDER_STORED_PROCEDURES, "*.SQL");
+                CopyFiles(buildPath + "\\DatabaseDefinitionROExtract" + "\\" + Include.SQL_FOLDER_TABLE_KEYS, _DatabasePathROExtract + "\\" + Include.SQL_FOLDER_TABLE_KEYS, "*.SQL");
+                CopyFiles(buildPath + "\\DatabaseDefinitionROExtract" + "\\" + Include.SQL_FOLDER_TABLES, _DatabasePathROExtract + "\\" + Include.SQL_FOLDER_TABLES, "*.SQL");
+                CopyFiles(buildPath + "\\DatabaseDefinitionROExtract" + "\\" + Include.SQL_FOLDER_TRIGGERS, _DatabasePathROExtract + "\\" + Include.SQL_FOLDER_TRIGGERS, "*.SQL");
+                CopyFiles(buildPath + "\\DatabaseDefinitionROExtract" + "\\" + Include.SQL_FOLDER_TYPES, _DatabasePathROExtract + "\\" + Include.SQL_FOLDER_TYPES, "*.SQL");
+                CopyFiles(buildPath + "\\DatabaseDefinitionROExtract" + "\\" + Include.SQL_FOLDER_VIEWS, _DatabasePathROExtract + "\\" + Include.SQL_FOLDER_VIEWS, "*.SQL");
+                CopyFiles(buildPath + "\\DatabaseDefinitionROExtract" + "\\" + Include.SQL_FOLDER_UPGRADE_VERSIONS, _DatabasePathROExtract + "\\" + Include.SQL_FOLDER_UPGRADE_VERSIONS, "*.SQL");
+
                 if (!cbxQACalcOnly.Checked)
                 {
-                    CopyFiles(buildPath + "\\MIDAdvInstaller\\bin\\Release", _InstallerPath);
+                    CopyFiles(buildPath + "\\MIDAdvInstaller\\bin\\Release", _InstallerPath, new string[] { "Infragistics", "Microsoft.VisualStudio", "Microsoft.MSXML" });
                     CopyFiles(buildPath + "\\MIDRegExtract\\bin\\Release", _InstallerPath);
                     CopyFolder("C:\\Temp\\Installer", _InstallFilesPath);
 
@@ -875,8 +908,12 @@ namespace MIDRetail.CopyRelease
                 CopyFile(buildPath + "\\DatabaseDefinition\\SequenceForDeleting.xml", _DatabasePath + "\\SequenceForDeleting.xml");
                 CopyFile(buildPath + "\\DatabaseDefinition\\SequenceForNewDB.xml", _DatabasePath + "\\SequenceForNewDB.xml");
                 CopyFile(buildPath + "\\DatabaseDefinition\\SequenceForUpgradeDB.xml", _DatabasePath + "\\SequenceForUpgradeDB.xml");
-             
-             
+
+                CopyFile(buildPath + "\\DatabaseDefinitionROExtract\\SequenceSchema.xsd", _DatabasePathROExtract + "\\SequenceSchema.xsd");
+                CopyFile(buildPath + "\\DatabaseDefinitionROExtract\\SequenceForDeleting.xml", _DatabasePathROExtract + "\\SequenceForDeleting.xml");
+                CopyFile(buildPath + "\\DatabaseDefinitionROExtract\\SequenceForNewDB.xml", _DatabasePathROExtract + "\\SequenceForNewDB.xml");
+                CopyFile(buildPath + "\\DatabaseDefinitionROExtract\\SequenceForUpgradeDB.xml", _DatabasePathROExtract + "\\SequenceForUpgradeDB.xml");
+
                 CopyFile(buildPath + "\\DataCommon\\MIDSettings.config", _ConfigFilePath + "\\MIDSettings.config");
                 CopyFile(buildPath + "\\DatabaseDefinition\\MarkStoresForDeletion.SQL", _UtilitiesPath + "\\MarkStoresForDeletion.SQL");
                 CopyFile(buildPath + "\\DatabaseDefinition\\ReadMe.txt", _MIDRetailInfoPath + "\\ReadMe.txt");
@@ -894,8 +931,10 @@ namespace MIDRetail.CopyRelease
                 CopyFile(buildPath + "\\DatabaseDefinition\\AddDefaultSchedules.SQL", _UtilitiesPath + "\\AddDefaultSchedules.SQL");  // TT#930 - MD - JSmith - Initial Install - Create recommended/default System Task Lists/Jobs with a SQL Script
 
 
-                CopyFile("\\\\Midretail14\\MIDRETAIL\\Development\\Crystal Reports VS2013 - V13_0_12\\CRRuntime_64bit_13_0_12.msi", _UtilitiesPath + "\\CRRuntime_64bit_13_0_12.msi");
-                CopyFile("\\\\Midretail14\\MIDRETAIL\\Development\\Crystal Reports VS2013 - V13_0_12\\CRRuntime_32bit_13_0_12.msi", _UtilitiesPath + "\\CRRuntime_32bit_13_0_12.msi");
+                //CopyFile("\\\\Midretail14\\MIDRETAIL\\Development\\Crystal Reports VS2013 - V13_0_12\\CRRuntime_64bit_13_0_12.msi", _UtilitiesPath + "\\CRRuntime_64bit_13_0_12.msi");
+                //CopyFile("\\\\Midretail14\\MIDRETAIL\\Development\\Crystal Reports VS2013 - V13_0_12\\CRRuntime_32bit_13_0_12.msi", _UtilitiesPath + "\\CRRuntime_32bit_13_0_12.msi");
+				//CopyFile("\\\\Midretail14\\MIDRETAIL\\Development\\Crystal Reports VS2017 - V13_0_21\\CRRuntime_64bit_13_0_21.msi", _UtilitiesPath + "\\CRRuntime_64bit_13_0_21.msi");
+    //            CopyFile("\\\\Midretail14\\MIDRETAIL\\Development\\Crystal Reports VS2017 - V13_0_21\\CRRuntime_32bit_13_0_21.msi", _UtilitiesPath + "\\CRRuntime_32bit_13_0_21.msi");
                 
                 CopyFiles(buildPath + "\\MIDAdvInstaller\\InstallUtil.exe", _InstallerPath);
             }
@@ -927,12 +966,12 @@ namespace MIDRetail.CopyRelease
             }
         }
 
-        private void CopyFiles(string aSourceFolder, string aDestinationFolder)
+        private void CopyFiles(string aSourceFolder, string aDestinationFolder, string[] strExcludeList = null)
         {
-            CopyFiles(aSourceFolder, aDestinationFolder, "*");
+            CopyFiles(aSourceFolder, aDestinationFolder, "*", strExcludeList);
         }
 
-        private void CopyFiles(string aSourceFolder, string aDestinationFolder, string aMask)
+        private void CopyFiles(string aSourceFolder, string aDestinationFolder, string aMask, string[] strExcludeList = null)
         {
             FileInfo[] files;
             DirectoryInfo directoryInfo;
@@ -947,14 +986,34 @@ namespace MIDRetail.CopyRelease
                     files = directoryInfo.GetFiles(aMask);
                     foreach (FileInfo file in files)
                     {
+                        bool blFoundExclusion = false;
                         if (file.Extension.Equals(".pdb", StringComparison.CurrentCultureIgnoreCase) || 
                             file.FullName.Contains("MySCMServerInfo") ||
+                            file.FullName.Contains("CrystalDecisions") ||
                             file.Extension.Equals(".csproj", StringComparison.CurrentCultureIgnoreCase)
                             )
                         {
+                            blFoundExclusion = true;
+                        }
+
+                        if (strExcludeList != null)
+                        {
+                            
+                            foreach (string strExclude in strExcludeList)
+                            {
+                                if (file.FullName.Contains(strExclude))
+                                {
+                                    blFoundExclusion = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (blFoundExclusion)
+                        {
                             continue;
                         }
-                        
+
                         if (!Directory.Exists(aDestinationFolder))
                         {
                             Directory.CreateDirectory(aDestinationFolder);
@@ -1307,6 +1366,7 @@ namespace MIDRetail.CopyRelease
             cbxMaster.Enabled = enable;
             cbxPlanning.Enabled = enable;
             cbxSize.Enabled = enable;
+            cbxAnalytics.Enabled = Enabled;  // TT#2131-MD - JSmith - Halo Integration
         }
 		// End TT#1247-MD - add Group Allocation license key - 
 
@@ -1365,6 +1425,7 @@ namespace MIDRetail.CopyRelease
             cbxMaster.Checked = aClient.MasterInstalled;
             cbxAssortment.Checked = aClient.AssortmentInstalled;
             cbxGroupAllocation.Checked = aClient.GroupAllocationInstalled;
+            cbxAnalytics.Checked = aClient.AnalyticsInstalled;  // TT#2131-MD - JSmith - Halo Integration
         }
 		// End TT#1247-MD - stodd - Add Group Allocation as a License Key option -
 
@@ -1487,11 +1548,11 @@ namespace MIDRetail.CopyRelease
                     // Begin TT#451-MD - JSmith - Deliver releases as iso or daa file instead of zipped
                     //txtFTPZipFileName.Text = txtFTPReleasePath.Text.Substring(index + 1) + ".zip";
                     if (_clientInfo.ShipAsISO)
-                        {
+                    {
                             SetISO();
                             //txtFTPZipFileName.Text = txtFTPReleasePath.Text.Substring(index + 1) + ".daa";
                             txtFTPZipFileName.Text = txtFTPReleasePath.Text.Substring(index + 1) + _suffix;
-                        }
+                    }
                     else
                     {
                         txtFTPZipFileName.Text = txtFTPReleasePath.Text.Substring(index + 1) + ".zip";
@@ -1517,6 +1578,7 @@ namespace MIDRetail.CopyRelease
                 _suffix = ".daa";
             }
         }
+		
         private void btnFTPPath_Click(object sender, EventArgs e)
         {
             DialogResult retCode;
@@ -1576,6 +1638,13 @@ namespace MIDRetail.CopyRelease
             _clientInfo.GroupAllocationInstalled = cbxGroupAllocation.Checked;
         }
 		// End TT#1247-MD - stodd - Add Group Allocation as a License Key option -
+
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        private void cbxAnalytics_CheckedChanged(object sender, EventArgs e)
+        {
+            _clientInfo.AnalyticsInstalled = cbxAnalytics.Checked;
+        }
+        // Begin TT#2131-MD - JSmith - Halo Integration
 
     }
 
@@ -1707,6 +1776,14 @@ namespace MIDRetail.CopyRelease
         }
         // End TT#451-MD - JSmith - Deliver releases as iso or daa file instead of zipped
 
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        public bool AnalyticsInstalled
+        {
+            get { return _client.AnalyticsInstalled; }
+            set { _client.AnalyticsInstalled = value; }
+        }
+        // End TT#2131-MD - JSmith - Halo Integration
+		
         public bool Notdaa
         {
             get { return _client.Notdaa; }

@@ -25,7 +25,23 @@ namespace MIDRetail.Data
 
 		}
 
-	
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        public DataTable GetAllStoreCharacteristicValues()
+        {
+            try
+            {
 
-	}
+                return StoredProcedures.MID_STORE_CHAR_READ_ALL.Read(_dba
+                                                         );
+
+            }
+            catch (Exception err)
+            {
+                string message = err.ToString();
+                throw;
+            }
+        }
+        // End TT#2131-MD - JSmith - Halo Integration
+
+    }
 }

@@ -19,7 +19,8 @@ BEGIN
 		HN_RID INT,
 		BN_ID VARCHAR(356) COLLATE Latin1_General_CS_AS,
 		BN_NAME VARCHAR(50) COLLATE Latin1_General_CS_AS,
-		BN_DESCRIPTION VARCHAR(250) COLLATE Latin1_General_CS_AS
+		BN_DESCRIPTION VARCHAR(250) COLLATE Latin1_General_CS_AS,
+		HOME_LEVEL INT
 		)
 
 	INSERT #TEMP (
@@ -27,7 +28,8 @@ BEGIN
 		HN_RID,
 		BN_ID,
 		BN_NAME,
-		BN_DESCRIPTION
+		BN_DESCRIPTION,
+		HOME_LEVEL
 		)
 	EXEC SP_GET_ALL_DESCENDANTS_BY_LEVEL_REPORT @SELECTED_NODE_RID,
 		@LEVEL
@@ -36,6 +38,7 @@ BEGIN
 		hn.PARENT_HN_RID,
 		dpd.HN_RID,
 		'[Defaults]' AS [DateRange],
+		dbo.UDF_MID_GET_STORE_TEXT (st.ST_RID) AS [STORE_TEXT],
 		st.ST_ID,
 		st.STORE_NAME,
 		hn.BN_ID,
@@ -58,6 +61,7 @@ BEGIN
 		--	ELSE RTRIM(hn.BN_ID) + ' [' + RTRIM(hn.BN_NAME) + ']'
 		--	END AS [DISPLAY_TEXT],
 		-- End TT#5382 - JSmith - Product descriptor not displayed when the Store Eligibility is set at the color level
+		dpd.DAY1 + dpd.DAY2 + dpd.DAY3 + dpd.DAY4 + dpd.DAY5 + dpd.DAY6 + dpd.DAY7 AS TOTALPCT,
 		dpd.DAY1,
 		dpd.DAY2,
 		dpd.DAY3,
@@ -109,6 +113,7 @@ BEGIN
 				THEN 'Weeks ' + SUBSTRING(CONVERT(VARCHAR(6), fw.FISCAL_WEEK), 5, 6) + '/' + SUBSTRING(CONVERT(VARCHAR(6), fw.FISCAL_WEEK), 1, 4) + ' - ' + SUBSTRING(CONVERT(VARCHAR(6), fw1.FISCAL_WEEK), 5, 6) + '/' + SUBSTRING(CONVERT(VARCHAR(6), fw1.FISCAL_WEEK), 1, 4)
 			ELSE '[Defaults]'
 			END AS [DateRange],
+		dbo.UDF_MID_GET_STORE_TEXT (st.ST_RID) AS [STORE_TEXT],
 		st.ST_ID,
 		st.STORE_NAME,
 		hn.BN_ID,
@@ -131,6 +136,7 @@ BEGIN
 		--	ELSE RTRIM(hn.BN_ID) + ' [' + RTRIM(hn.BN_NAME) + ']'
 		--	END AS [DISPLAY_TEXT],
 		-- End TT#5382 - JSmith - Product descriptor not displayed when the Store Eligibility is set at the color level
+		dp.DAY1 + dp.DAY2 + dp.DAY3 + dp.DAY4 + dp.DAY5 + dp.DAY6 + dp.DAY7 AS TOTALPCT,
 		dp.DAY1,
 		dp.DAY2,
 		dp.DAY3,

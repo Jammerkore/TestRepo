@@ -8,6 +8,7 @@ using System.Globalization;
 using MIDRetail.Data;
 using MIDRetail.Common;
 using MIDRetail.DataCommon;
+using Logility.ROWebSharedTypes;
 
 namespace MIDRetail.Business.Allocation
 {
@@ -196,6 +197,14 @@ namespace MIDRetail.Business.Allocation
         //========
         // METHODS
         //========
+
+        // Begin TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+        override internal bool CheckForUserData()
+        {
+            return false;
+        }
+        // End TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+
         private void ApplySystemDefaults()
         {
             GlobalOptionsProfile gop = SAB.ApplicationServerSession.GlobalOptions;
@@ -1152,6 +1161,78 @@ namespace MIDRetail.Business.Allocation
         {
             return true;
         }
+
+        // BEGIN RO-642 - RDewey
+        override public FunctionSecurityProfile GetFunctionSecurity()
+        {
+            if (this.GlobalUserType == eGlobalUserType.Global)
+            {
+                return SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.AllocationMethodsGlobalDCFulfillment);
+            }
+            else
+            {
+                return SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.AllocationMethodsUserDCFulfillment);
+            }
+
+        }
+        override public ROMethodProperties MethodGetData(bool processingApply)
+        {
+            ROMethodDCStoreCharacteristicSet dCStoreCharacteristicSet = new ROMethodDCStoreCharacteristicSet();
+            ROMethodDCFulfillmentProperties method = new ROMethodDCFulfillmentProperties(
+                method: GetName.GetMethod(method: this),
+                description: Method_Description,
+                userKey: User_RID,
+                dCFulfillmentSplitOption: _methodData.SplitOption,
+                applyMinimumsInd: _methodData.ApplyMinimumsInd,
+                prioritizeType: GetName.GetPrioritizeHeaderBy(_methodData.PrioritizeType, _methodData.Hcg_RID, _methodData.HeaderField),
+                headersOrder: _methodData.HeadersOrder,
+                split_By_Option: _methodData.Split_By_Option,
+                within_Dc: _methodData.Within_Dc,
+                split_By_Reserve: _methodData.Split_By_Reserve,
+                storesOrder: _methodData.StoresOrder,
+                dCStoreCharacteristicSet: DCStoreCharacteristicSet.BuildDCStoreCharacteristicSet(_methodData.Method_RID, eMethodType.DCFulfillment, dtStoreOrder, SAB)
+                );
+            return method;
+        }
+
+        override public bool MethodSetData(ROMethodProperties methodProperties, bool processingApply)
+        {
+            ROMethodDCFulfillmentProperties rOMethodDCFulfillmentProperties = (ROMethodDCFulfillmentProperties)methodProperties;
+
+            try
+            {
+                Method_Description = rOMethodDCFulfillmentProperties.Description;
+                SplitOption = rOMethodDCFulfillmentProperties.DCFulfillmentSplitOption;
+                ApplyMinimumsInd = rOMethodDCFulfillmentProperties.ApplyMinimumsInd;
+                if (_methodData.Hcg_RID != Include.NoRID)
+                {
+                    Hcg_RID = rOMethodDCFulfillmentProperties.PrioritizeType.Key;
+                }
+                else
+                {
+                    HeaderField = rOMethodDCFulfillmentProperties.PrioritizeType.Key;
+                }
+                HeadersOrder = rOMethodDCFulfillmentProperties.HeadersOrder;
+                Split_By_Option = rOMethodDCFulfillmentProperties.Split_By_Option;
+                Within_Dc = rOMethodDCFulfillmentProperties.Within_Dc;
+                Split_By_Reserve = rOMethodDCFulfillmentProperties.Split_By_Reserve;
+                StoresOrder = rOMethodDCFulfillmentProperties.StoresOrder;
+                dtStoreOrder = DCStoreCharacteristicSet.BuildDTStoreOrder(_methodData.Method_RID, rOMethodDCFulfillmentProperties.DCStoreCharacteristicSet, dtStoreOrder, SAB);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+
+            //throw new NotImplementedException("MethodSaveData is not implemented");
+        }
+
+        override public ROMethodProperties MethodCopyData()
+        {
+            throw new NotImplementedException("MethodCopyData is not implemented");
+        }
+        // END RO-642 - RDewey
     }
 }
 

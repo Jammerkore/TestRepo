@@ -48,7 +48,10 @@ namespace MIDRetailInstaller
         //control button click
         private void btnConfig_File_Click(object sender, EventArgs e)
         {
-            openConfig_File.FileName = lblConfig_File.Text;
+            //openConfig_File.FileName = lblConfig_File.Text;
+            openConfig_File.InitialDirectory = System.IO.Path.GetDirectoryName(lblConfig_File.Text);
+            string strExtension = System.IO.Path.GetExtension(lblConfig_File.Text);
+            openConfig_File.Filter = "File|*" + strExtension;
             if (openConfig_File.ShowDialog() == DialogResult.OK)
             {
                 Config_File = openConfig_File.FileName;

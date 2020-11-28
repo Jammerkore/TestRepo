@@ -413,7 +413,8 @@ namespace MIDRetail.Business
 		protected FormulaSpreadProfile _formulaSpreadProfile;
 		protected int _schedulePriority;
 		protected int _cubePriority;
-		protected ComputationCellReference _lastPendingCell;
+		protected ComputationCellReference _lastPendingCell = null;   // RO-4741 - JSmith - Need to scroll to variables prior to making change
+        protected eComputationFormulaReturnType _computationFormulaReturnType;   // TT#1954-MD - JSmith - Assortment Performance
 
 		//=============
 		// CONSTRUCTORS
@@ -439,6 +440,7 @@ namespace MIDRetail.Business
 			_formulaSpreadProfile = aFormulaSpreadProfile;
 			_schedulePriority = aSchedulePriority;
 			_cubePriority = aCubePriority;
+            _computationFormulaReturnType = eComputationFormulaReturnType.Successful;   // TT#1954-MD - JSmith - Assortment Performance
 		}
 
 		//===========
@@ -529,10 +531,40 @@ namespace MIDRetail.Business
 			}
 			set
 			{
-				_lastPendingCell = value;
+                // Begin RO-4741 - JSmith - Need to scroll to variables prior to making change
+				//_lastPendingCell = value;
+                if (_lastPendingCell == null)
+                {
+                    _lastPendingCell = value;
+                }
+				// End RO-4741 - JSmith - Need to scroll to variables prior to making change
 			}
 		}
-	}
+
+        // Begin TT#1954-MD - JSmith - Assortment Performance
+        public eComputationFormulaReturnType ComputationFormulaReturnType
+        {
+            get
+            {
+                return _computationFormulaReturnType;
+            }
+            set
+            {
+                _computationFormulaReturnType = value;
+            }
+        }
+		// End TT#1954-MD - JSmith - Assortment Performance
+
+        //===========
+        // METHODS
+        //===========
+		// Begin RO-4741 - JSmith - Need to scroll to variables prior to making change
+        public void ClearLastPendingCell()
+        {
+            _lastPendingCell = null;
+        }
+		// End RO-4741 - JSmith - Need to scroll to variables prior to making change
+    }
 
 	/// <summary>
 	/// ComputationScheduleFormulaEntry is a class that stores the CellReference and Formula for a scheduled
@@ -786,8 +818,9 @@ namespace MIDRetail.Business
 		/// Checks to see if the spread-from or any spread-to cell is pending.  Also builds the included and excluded cell lists.
 		/// </summary>
 
-		public void CheckSpreadCellsForPending()
+        public void CheckSpreadCellsForPending(out bool isPendingException) //TT#1659-MD -jsobek -CelllPendingException Performance
 		{
+            isPendingException = false; //TT#1659-MD -jsobek -CelllPendingException Performance
 			try
 			{
 				//Begin Track #5829 - JScott - Month did not change for COGS/GM/RM BOP Inv/CF BOP Inv
@@ -795,7 +828,12 @@ namespace MIDRetail.Business
 				if (ComputationCellRef.isCellFormulaPending(this, true) || ComputationCellRef.isCellSpreadPending(this, true))
 				//End Track #5829 - JScott - Month did not change for COGS/GM/RM BOP Inv/CF BOP Inv
 				{
-					throw new CellPendingException(ComputationCellRef);
+                    //Begin TT#1659-MD -jsobek -CelllPendingException Performance
+                    //throw new CellPendingException(ComputationCellRef);
+                    isPendingException = true;
+                    _lastPendingCell = ComputationCellRef;
+                    return;
+                    //End TT#1659-MD -jsobek -CelllPendingException Performance
 				}
 
 				foreach (ComputationCellReference compCellRef in _spreadCellRefList)
@@ -807,7 +845,18 @@ namespace MIDRetail.Business
 						if (compCellRef.isCellFormulaPending(this, true) || compCellRef.isCellSpreadPending(this, true))
 						//End Track #5829 - JScott - Month did not change for COGS/GM/RM BOP Inv/CF BOP Inv
 						{
-							throw new CellPendingException(compCellRef);
+                            //Begin TT#1659-MD -jsobek -CelllPendingException Performance
+                            //throw new CellPendingException(ComputationCellRef);
+                            isPendingException = true;
+                            //Begin TT#1659-MD -RMatelic - CelllPendingException Performance >>> correct next line
+                            //_lastPendingCell = ComputationCellRef;
+							// Begin RO-4741 - JSmith - Need to scroll to variables prior to making change
+                            //_lastPendingCell = compCellRef;
+                            LastPendingCell = compCellRef;
+							// End RO-4741 - JSmith - Need to scroll to variables prior to making change
+                            //End TT#1659-MD 
+                            return;
+                            //End TT#1659-MD -jsobek -CelllPendingException Performance
 						}
 						else
 						{
@@ -835,11 +884,19 @@ namespace MIDRetail.Business
 					}
 				}
 			}
+			// Begin RO-4741 - JSmith - Need to scroll to variables prior to making change
+			//catch (CellPendingException exc)
+            //{
+            //    _lastPendingCell = exc.ComputationCellReference;
+            //    throw;
+            //}
 			catch (CellPendingException exc)
 			{
-				_lastPendingCell = exc.ComputationCellReference;
-				throw;
+                //_lastPendingCell = exc.ComputationCellReference;
+                LastPendingCell = exc.ComputationCellReference;
+                throw;
 			}
+			// End RO-4741 - JSmith - Need to scroll to variables prior to making change
 			catch (Exception exc)
 			{
 				string message = exc.ToString();
@@ -1297,6 +1354,13 @@ namespace MIDRetail.Business
 					aSpreadFromCellRef.AddCellScheduledSpread(aSpread.Key);
 					spreadFromScheduleEntry = aSpreadFromCellRef.CreateScheduleSpreadEntry(aSpread, 0, aSpreadFromCellRef.ComputationCube.CubePriority);
 
+
+                    //Begin TT#1659-MD -jsobek -CelllPendingException Performance
+                    spreadFromScheduleEntry.SpreadCellRefList = aSpreadToCellRefs;
+                    _scheduleList.Add(spreadFromScheduleEntry);
+                    //End TT#1659-MD -jsobek -CelllPendingException Performance
+
+
                     //Begin TT#2 - JScott - Assortment Planning - Phase 2
                     //if (aSpread.PostExecuteReInit)
                     //{
@@ -1377,8 +1441,10 @@ namespace MIDRetail.Business
 						//End Track #5809 - JScott - Circular Reference when changing Low-Level-Totals in Multi-Chain
 					}
 
-					spreadFromScheduleEntry.SpreadCellRefList = aSpreadToCellRefs;
-					_scheduleList.Add(spreadFromScheduleEntry);
+                    //Begin TT#1659-MD -jsobek -CelllPendingException Performance
+					//spreadFromScheduleEntry.SpreadCellRefList = aSpreadToCellRefs;
+					//_scheduleList.Add(spreadFromScheduleEntry);
+                    //End TT#1659-MD -jsobek -CelllPendingException Performance
 				}
 			}
 			catch (Exception exc)
@@ -1508,12 +1574,23 @@ namespace MIDRetail.Business
 									//{
 									//    scheduleQueue.Enqueue(scheduleEntry);
 									//}
+                                    _compCubeGroup.ClearPendingUndoList();   // TT#1954-MD - JSmith - Assortment Performance
 									retCode = intProcessScheduleEntry(scheduleEntry);
 
-									if (retCode == eComputationFormulaReturnType.Pending)
+                                    // Begin TT#1954-MD - JSmith - Assortment Performance
+                                    //if (retCode == eComputationFormulaReturnType.Pending)
+                                    //{
+                                    //    scheduleQueue.Enqueue(scheduleEntry);
+                                    //}
+									if (retCode == eComputationFormulaReturnType.Pending
+                                        || scheduleEntry.ComputationFormulaReturnType == eComputationFormulaReturnType.Pending)
 									{
+                                        _compCubeGroup.UndoLastPendingRecompute();
+                                        scheduleEntry.ComputationFormulaReturnType = eComputationFormulaReturnType.Successful;
+                                        scheduleEntry.ClearLastPendingCell();   // RO-4741 - JSmith - Need to scroll to variables prior to making change
 										scheduleQueue.Enqueue(scheduleEntry);
 									}
+									// End TT#1954-MD - JSmith - Assortment Performance
 									else if (retCode == eComputationFormulaReturnType.SkippedAutoTotal)
 									{
 										autoTotalsQueueSkipped++;
@@ -1590,12 +1667,23 @@ namespace MIDRetail.Business
 										//{
 										//    scheduleQueue.Enqueue(scheduleEntry);
 										//}
+                                        _compCubeGroup.ClearPendingUndoList();   // TT#1954-MD - JSmith - Assortment Performance
 										retCode = intProcessScheduleEntry(scheduleEntry);
 
-										if (retCode == eComputationFormulaReturnType.Pending)
+                                        // Begin TT#1954-MD - JSmith - Assortment Performance
+                                        //if (retCode == eComputationFormulaReturnType.Pending)
+                                        //{
+                                        //    scheduleQueue.Enqueue(scheduleEntry);
+                                        //}
+										if (retCode == eComputationFormulaReturnType.Pending
+                                            || scheduleEntry.ComputationFormulaReturnType == eComputationFormulaReturnType.Pending)
 										{
+                                            _compCubeGroup.UndoLastPendingRecompute();
+                                            scheduleEntry.ComputationFormulaReturnType = eComputationFormulaReturnType.Successful;
+                                            scheduleEntry.ClearLastPendingCell();   // RO-4741 - JSmith - Need to scroll to variables prior to making change
 											scheduleQueue.Enqueue(scheduleEntry);
 										}
+										// End TT#1954-MD - JSmith - Assortment Performance
 										else if (retCode == eComputationFormulaReturnType.SkippedAutoTotal)
 										{
 											autoTotalsQueueSkipped++;
@@ -2192,7 +2280,14 @@ namespace MIDRetail.Business
 						{
 							retCode = aScheduleEntry.FormulaSpreadProfile.ExecuteCalc(aScheduleEntry, eGetCellMode.Current, eSetCellMode.Computation, "ComputationSchedule::intProcessScheduleEntry::3");
 
-							if (retCode == eComputationFormulaReturnType.Successful)
+                            // Begin TT#1954-MD - JSmith - Assortment Performance
+							//if (retCode == eComputationFormulaReturnType.Successful)
+                            if (aScheduleEntry.ComputationFormulaReturnType == eComputationFormulaReturnType.Pending)
+                            {
+                                retCode = eComputationFormulaReturnType.Pending;
+                            }
+							else if (retCode == eComputationFormulaReturnType.Successful)
+							// End TT#1954-MD - JSmith - Assortment Performance
 							{
 								aScheduleEntry.ComputationCellRef.ClearCellScheduledFormula();
 							}
@@ -2214,28 +2309,38 @@ namespace MIDRetail.Business
 						if (aScheduleEntry.LastPendingCell == null || (!aScheduleEntry.LastPendingCell.isCellFormulaPending(aScheduleEntry, true) && !aScheduleEntry.LastPendingCell.isCellSpreadPending(aScheduleEntry, true)))
 						//End Track #5829 - JScott - Month did not change for COGS/GM/RM BOP Inv/CF BOP Inv
 						{
-							((ComputationScheduleSpreadEntry)aScheduleEntry).CheckSpreadCellsForPending();
+							//Begin TT#1659-MD -jsobek -CelllPendingException Performance
+                            bool isPendingException = false;
+							((ComputationScheduleSpreadEntry)aScheduleEntry).CheckSpreadCellsForPending(out isPendingException);
+                            if (isPendingException == false)
+                            {
 
-							if (((ComputationScheduleSpreadEntry)aScheduleEntry).IncludedCellRefHash.Count > 0 ||
-								((ComputationScheduleSpreadEntry)aScheduleEntry).ComputationCellRef.isCellCompChanged)
-							{
-								retCode = aScheduleEntry.FormulaSpreadProfile.ExecuteCalc(aScheduleEntry, eGetCellMode.Current, eSetCellMode.Computation, "ComputationSchedule::intProcessScheduleEntry::3");
-							}
-							else
-							{
-								retCode = eComputationFormulaReturnType.Successful;
-							}
+                                if (((ComputationScheduleSpreadEntry)aScheduleEntry).IncludedCellRefHash.Count > 0 ||
+                                    ((ComputationScheduleSpreadEntry)aScheduleEntry).ComputationCellRef.isCellCompChanged)
+                                {
+                                    retCode = aScheduleEntry.FormulaSpreadProfile.ExecuteCalc(aScheduleEntry, eGetCellMode.Current, eSetCellMode.Computation, "ComputationSchedule::intProcessScheduleEntry::3");
+                                }
+                                else
+                                {
+                                    retCode = eComputationFormulaReturnType.Successful;
+                                }
 
-							if (retCode == eComputationFormulaReturnType.Successful)
-							{
-								if (((ComputationScheduleSpreadEntry)aScheduleEntry).SpreadCellRefList != null)
-								{
-									foreach (ComputationCellReference compCellRef in ((ComputationScheduleSpreadEntry)aScheduleEntry).SpreadCellRefList)
-									{
-										compCellRef.ClearCellScheduledSpread();
-									}
-								}
-							}
+                                if (retCode == eComputationFormulaReturnType.Successful)
+                                {
+                                    if (((ComputationScheduleSpreadEntry)aScheduleEntry).SpreadCellRefList != null)
+                                    {
+                                        foreach (ComputationCellReference compCellRef in ((ComputationScheduleSpreadEntry)aScheduleEntry).SpreadCellRefList)
+                                        {
+                                            compCellRef.ClearCellScheduledSpread();
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                retCode = eComputationFormulaReturnType.Pending;
+                            }
+                            //End TT#1659-MD -jsobek -CelllPendingException Performance
 						}
 						else
 						{

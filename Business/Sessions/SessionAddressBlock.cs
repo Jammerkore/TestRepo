@@ -66,6 +66,8 @@ namespace MIDRetail.Business
 // (CSMITH) - BEG MID Track #3369: DB Connection String hardcoded in config files
 		private string _connectionString = null;
 // (CSMITH) - END MID Track #3369
+        private string _ROExtractConnectionString = null;   // TT#2131-MD - JSmith - Halo Integration
+        private bool _ROExtractEnabled = false;    // TT#2131-MD - JSmith - Halo Integration
         private MIDMenuEvent _MIDMenuEvent;
 		private bool _forceLocal;
         private bool _allowDebugging;
@@ -361,6 +363,30 @@ namespace MIDRetail.Business
 			}
 		}
 // (CSMITH) - END MID Track #3369
+
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        public string ROExtractConnectionString
+        {
+            get
+            {
+                return _ROExtractConnectionString;
+            }
+
+            set
+            {
+                _ROExtractConnectionString = value;
+            }
+        }
+
+        public bool ROExtractEnabled
+        {
+            get
+            {
+                return _ROExtractEnabled;
+            }
+        }
+        // End TT#2131-MD - JSmith - Halo Integration
+
         public bool AllowDebugging
         {
             get
@@ -716,6 +742,14 @@ namespace MIDRetail.Business
 							{
 								ConnectionString = MIDConfigurationManager.AppSettings["ConnectionString"];
 							}
+
+                            // Begin TT#2131-MD - JSmith - Halo Integration
+                            if (ROExtractConnectionString == null)
+                            {
+                                ROExtractConnectionString = MIDConfigurationManager.AppSettings["ROExtractConnectionString"];
+                            }
+                            // End TT#2131-MD - JSmith - Halo Integration
+							
 							//Begin Assortment
 							if (ConnectionString == null)
 							{
@@ -752,6 +786,13 @@ namespace MIDRetail.Business
 							{
 								ConnectionString = MIDConfigurationManager.AppSettings["ConnectionString"];
 							}
+
+                            // Begin TT#2131-MD - JSmith - Halo Integration
+                            if (ROExtractConnectionString == null)
+                            {
+                                ROExtractConnectionString = MIDConfigurationManager.AppSettings["ROExtractConnectionString"];
+                            }
+                            // End TT#2131-MD - JSmith - Halo Integration
 
 							if (ConnectionString == null)
 							{
@@ -826,18 +867,32 @@ namespace MIDRetail.Business
 
 				MIDConnectionString.ConnectionString = ConnectionString;
 
-				//---------------------------
-				// Retrieve list of servers from Control Service
-				//
-				// Get list of the remaining services from the Control Service
-				//---------------------------
+                // Begin TT#2131-MD - JSmith - Halo Integration
+                if (ROExtractConnectionString == null)
+                {
+                    if (!localCtrlServer)
+                    {
+                        ROExtractConnectionString = _controlServerSessionRemote.GetROExtractConnectionString();
+                    }
+                    else
+                    {
+                        ROExtractConnectionString = MIDConfigurationManager.AppSettings["ROExtractConnectionString"];
+                    }
+                }
+                // End TT#2131-MD - JSmith - Halo Integration
 
-				//Begin TT#1165 - JScott - Login Performance
-				////Begin TT#708 - JScott - Services need a Retry availalbe.
-				////_serverGroup = _controlServerSession.GetServers();
-				//_serverGroup = _controlServerSessionRemote.GetServers();
-				////End TT#708 - JScott - Services need a Retry availalbe.
-				_serverGroup = _controlServerSessionRemote.GetServers(true, localStoreServer, localHierServer, localAppServer, false, localHeaderServer);
+                //---------------------------
+                // Retrieve list of servers from Control Service
+                //
+                // Get list of the remaining services from the Control Service
+                //---------------------------
+
+                //Begin TT#1165 - JScott - Login Performance
+                ////Begin TT#708 - JScott - Services need a Retry availalbe.
+                ////_serverGroup = _controlServerSession.GetServers();
+                //_serverGroup = _controlServerSessionRemote.GetServers();
+                ////End TT#708 - JScott - Services need a Retry availalbe.
+                _serverGroup = _controlServerSessionRemote.GetServers(true, localStoreServer, localHierServer, localAppServer, false, localHeaderServer);
 				//End TT#1165 - JScott - Login Performance
 
 				//---------------------------
@@ -1324,6 +1379,27 @@ namespace MIDRetail.Business
                     clientServerDatabaseName = _controlServerSessionRemote.GetDatabaseName();
 				}
 
+                // Begin TT#2131-MD - JSmith - Halo Integration
+                _ROExtractEnabled = false;
+                if (!string.IsNullOrWhiteSpace(_ROExtractConnectionString)
+                    && ClientServerSession.GlobalOptions.AppConfig.AnalyticsInstalled)
+                {
+                   try
+                    {
+                        ROExtractData ROExtractData = new ROExtractData(_ROExtractConnectionString);
+                        if (ROExtractData.RO_Extract_Exists())
+                        {
+                            _ROExtractEnabled = true;
+                        }
+                    }
+                    catch
+                    {
+                        EventLog.WriteEntry("MIDRetail", "Not an Analytics database.  Extract will not be allowed.", EventLogEntryType.Error);
+                    }
+                }
+                MIDEnvironment.ExtractIsEnabled = ROExtractEnabled;
+                // End TT#2131-MD - JSmith - Halo Integration
+
                 // Begin TT#195 MD - JSmith - Add environment authentication
                 if (_storeServerSessionRemote != null)
                 {
@@ -1514,7 +1590,15 @@ namespace MIDRetail.Business
 				throw;
 			}
 		}
-
+		// BEGIN TT#1156
+        public void GetServiceServerInfo(out string appSetControlServer, out string appSetLocalStoreServer, out string appSetLocalHierarchyServer, out string appSetLocalApplicationServer)
+        {
+            appSetControlServer = MIDConfigurationManager.AppSettings["ControlServer"];
+            appSetLocalStoreServer = MIDConfigurationManager.AppSettings["LocalStoreServer"];
+            appSetLocalHierarchyServer = MIDConfigurationManager.AppSettings["LocalHierarchyServer"];
+            appSetLocalApplicationServer = MIDConfigurationManager.AppSettings["LocalApplicationServer"];
+        }
+		// END TT#1156
         //Begin TT#901-MD -jsobek -Batch Only Mode
         public void GetSocketSettingsFromConfigFile(out string controlServerName, out int controlServerPort, out double clientTimerIntervalInMilliseconds, out double serverTimerIntervalInMilliseconds)
         {
@@ -1548,6 +1632,7 @@ namespace MIDRetail.Business
                 string userInfo = tagInfo;
                 userInfo += SocketSharedRoutines.Tags.rowStart;
                 userInfo += SocketSharedRoutines.Tags.userNameStart + ClientServerSession.GetUserName(ClientServerSession.UserRID) + SocketSharedRoutines.Tags.userNameEnd;
+                userInfo += SocketSharedRoutines.Tags.clientTypeStart + MIDText.GetTextOnly(eMIDTextCode.lbl_RemoteSystemOptions_ShowCurrentUserGrid_ClientType_Windows) + SocketSharedRoutines.Tags.clientTypeEnd;
                 userInfo += SocketSharedRoutines.Tags.machineNameStart + ClientServerSession.GetMachineName() + SocketSharedRoutines.Tags.machineNameEnd;
                 userInfo += SocketSharedRoutines.Tags.appStatusStart + "Logged In" + SocketSharedRoutines.Tags.appStatusEnd;
                 userInfo += SocketSharedRoutines.Tags.rowEnd;
@@ -1562,6 +1647,7 @@ namespace MIDRetail.Business
                     string sRow = SocketSharedRoutines.GetInfoFromTags(info, SocketSharedRoutines.Tags.rowStart, SocketSharedRoutines.Tags.rowEnd);
                     System.Data.DataRow dr = dsCurrentUsers.Tables[0].NewRow();
                     dr["USER_NAME"] = SocketSharedRoutines.GetInfoFromTags(info, SocketSharedRoutines.Tags.userNameStart, SocketSharedRoutines.Tags.userNameEnd);
+                    dr["CLIENT_TYPE"] = SocketSharedRoutines.GetInfoFromTags(info, SocketSharedRoutines.Tags.clientTypeStart, SocketSharedRoutines.Tags.clientTypeEnd);
                     dr["MACHINE_NAME"] = SocketSharedRoutines.GetInfoFromTags(info, SocketSharedRoutines.Tags.machineNameStart, SocketSharedRoutines.Tags.machineNameEnd);
                     dr["APP_STATUS"] = SocketSharedRoutines.GetInfoFromTags(info, SocketSharedRoutines.Tags.appStatusStart, SocketSharedRoutines.Tags.appStatusEnd);
                     dr["CLIENT_IP"] = SocketSharedRoutines.GetInfoFromTags(info, SocketSharedRoutines.Tags.clientIPAddressStart, SocketSharedRoutines.Tags.clientIPAddressEnd);
@@ -1582,6 +1668,7 @@ namespace MIDRetail.Business
             dsCurrentUsers = new System.Data.DataSet();
             dsCurrentUsers.Tables.Add("CurrentUsers");
             dsCurrentUsers.Tables[0].Columns.Add("USER_NAME");
+            dsCurrentUsers.Tables[0].Columns.Add("CLIENT_TYPE");
             dsCurrentUsers.Tables[0].Columns.Add("MACHINE_NAME");
             dsCurrentUsers.Tables[0].Columns.Add("APP_STATUS");
             dsCurrentUsers.Tables[0].Columns.Add("CLIENT_IP");
@@ -1660,7 +1747,8 @@ namespace MIDRetail.Business
                     if (MIDOnlyFunctionsStr == "true" || MIDOnlyFunctionsStr == "yes" || MIDOnlyFunctionsStr == "t" || MIDOnlyFunctionsStr == "y" || MIDOnlyFunctionsStr == "1")
                     {
                         EventLog.WriteEntry("MIDRetail", "Waiting 20 seconds");
-                        if (ControlServerSession.isSessionRunningRemote())
+                        if (ControlServerSession != null
+                            && ControlServerSession.isSessionRunningRemote())
                         {
                             System.Threading.Thread.Sleep(20000);
                         }

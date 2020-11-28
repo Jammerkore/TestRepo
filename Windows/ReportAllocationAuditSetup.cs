@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Configuration;
 using System.ComponentModel;
 using System.Data;
@@ -9,11 +10,11 @@ using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
 
-using CrystalDecisions.CrystalReports.Engine;
-using CrystalDecisions.Shared;
-using CrystalDecisions.Windows.Forms;
-using CrystalDecisions.ReportSource;
-using CrystalDecisions.CrystalReports.ViewerObjectModel;
+//using CrystalDecisions.CrystalReports.Engine;
+//using CrystalDecisions.Shared;
+//using CrystalDecisions.Windows.Forms;
+//using CrystalDecisions.ReportSource;
+//using CrystalDecisions.CrystalReports.ViewerObjectModel;
 
 using MIDRetail.Business;
 using MIDRetail.Common;
@@ -494,42 +495,52 @@ namespace MIDRetail.Windows
                                                  processToDate,
                                                  headerRIDTextList);    // TT#397
 
-                Windows.CrystalReports.AllocationAudit allocationAuditReport = new Windows.CrystalReports.AllocationAudit();
-                allocationAuditReport.Subreports["HeaderAuditStyleAllocationSub.rpt"].SetDataSource(ds);
-                allocationAuditReport.Subreports["HeaderAuditSizeAllocationSub.rpt"].SetDataSource(ds);
+                //Windows.CrystalReports.AllocationAudit allocationAuditReport = new Windows.CrystalReports.AllocationAudit();
+                //allocationAuditReport.Subreports["HeaderAuditStyleAllocationSub.rpt"].SetDataSource(ds);
+                //allocationAuditReport.Subreports["HeaderAuditSizeAllocationSub.rpt"].SetDataSource(ds);
 
-                allocationAuditReport.SetParameterValue("@SELECTED_NODE_RID", this.NodeRID == -1 ? 0 : this.NodeRID);
-                //allocationAuditReport.SetParameterValue("@PLAN_HNRID", this._planLevelRid);
-                // Begin TT#350 - RMatelic - Report does not show any allocations
-                //allocationAuditReport.SetParameterValue("@PLAN_HNRID", this._planLevelRid == -1 ? 0 : this._planLevelRid);
-                allocationAuditReport.SetParameterValue("@PLAN_HNRID", this.PlanLevelRID == -1 ? 0 : this.PlanLevelRID);
-                // End TT#350 
-                allocationAuditReport.SetParameterValue("@USER_RID", userRid);
-                allocationAuditReport.SetParameterValue("@USER_GROUP_RID", userGroupRid);
-                allocationAuditReport.SetParameterValue("@PROCESS_FROM_DATE", processFromDate);
-                allocationAuditReport.SetParameterValue("@PROCESS_TO_DATE", processToDate);
+                //allocationAuditReport.SetParameterValue("@SELECTED_NODE_RID", this.NodeRID == -1 ? 0 : this.NodeRID);
+                ////allocationAuditReport.SetParameterValue("@PLAN_HNRID", this._planLevelRid);
+                //// Begin TT#350 - RMatelic - Report does not show any allocations
+                ////allocationAuditReport.SetParameterValue("@PLAN_HNRID", this._planLevelRid == -1 ? 0 : this._planLevelRid);
+                //allocationAuditReport.SetParameterValue("@PLAN_HNRID", this.PlanLevelRID == -1 ? 0 : this.PlanLevelRID);
+                //// End TT#350 
+                //allocationAuditReport.SetParameterValue("@USER_RID", userRid);
+                //allocationAuditReport.SetParameterValue("@USER_GROUP_RID", userGroupRid);
+                //allocationAuditReport.SetParameterValue("@PROCESS_FROM_DATE", processFromDate);
+                //allocationAuditReport.SetParameterValue("@PROCESS_TO_DATE", processToDate);
                 // Begin TT#350 - RMatelic - Report does not show any allocations - unrelated to specific issue; use main hierarchy top node if none specified
                 //allocationAuditReport.SetParameterValue("@Node", txtMerchandise.Text);
                 if (this.NodeRID == -1)
                 {
                     HierarchyProfile hp = _SAB.HierarchyServerSession.GetMainHierarchyData();
                     HierarchyNodeProfile hnp = _SAB.HierarchyServerSession.GetNodeData(hp.HierarchyRootNodeRID);
-                    allocationAuditReport.SetParameterValue("@Node", hnp.LevelText);
+                    //allocationAuditReport.SetParameterValue("@Node", hnp.LevelText);
                 }
                 else
                 {
-                    allocationAuditReport.SetParameterValue("@Node", txtMerchandise.Text);
+                    //allocationAuditReport.SetParameterValue("@Node", txtMerchandise.Text);
                 }
                 // End TT#350
-                allocationAuditReport.SetParameterValue("@PlanLevel", txtPlanLevel.Text);
-                allocationAuditReport.SetParameterValue("@User", userName);
-                allocationAuditReport.SetParameterValue("@TimePeriod", dtpFromDate.Text + " - " + dtpDate.Text);
+                //allocationAuditReport.SetParameterValue("@PlanLevel", txtPlanLevel.Text);
+                //allocationAuditReport.SetParameterValue("@User", userName);
+                //allocationAuditReport.SetParameterValue("@TimePeriod", dtpFromDate.Text + " - " + dtpDate.Text);
 
-                frmReportViewer viewer = new frmReportViewer(_SAB);
+                //frmReportViewer viewer = new frmReportViewer(aSAB: _SAB, reportType: eReportType.AllocationAuditSetup, reportName: "AllocationAuditSetup", reportTitle: "Allocation Audit Setup");
+                List<ReportInfo> reports = new List<ReportInfo>();
+                reports.Add(new ReportInfo(aReportSource: ds,
+                    reportType: eReportType.AllocationAuditSetup,
+                    reportName: "AllocationAuditSetup",
+                    reportTitle: "Logilitity - RO - Allocation Audit Setup",
+                    reportComment: "",
+                    reportInformation: "",
+                    displayValue: "Allocation Audit Setup"
+                    ));
+                frmReportViewer viewer = new frmReportViewer(aSAB: _SAB, reports: reports);
                 viewer.Text = "Allocation Audit";
                 viewer.MdiParent = this.ParentForm;
                 viewer.Anchor = AnchorStyles.Left | AnchorStyles.Top;
-                viewer.ReportSource = allocationAuditReport;
+                //viewer.ReportSource = ds;
                 viewer.Show();
                 viewer.BringToFront();
             }

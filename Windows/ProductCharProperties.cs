@@ -612,7 +612,7 @@ namespace MIDRetail.Windows
                 
 				HierarchyTreeView tempTreeView = new HierarchyTreeView();
                 tempTreeView.InitializeTreeView(SAB, false, ParentForm.GetType().FullName == "MIDRetail.Windows.Explorer" ? ParentForm : ParentForm.Owner);
-                MIDHierarchyNode tempNode = new MIDHierarchyNode(SAB, eTreeNodeType.ObjectNode, hnp, hnp.Text, Include.NoRID, Include.NoRID, null, Include.NoRID, Include.NoRID, Include.NoRID);
+                MIDHierarchyNode tempNode = new MIDHierarchyNode(SAB, eTreeNodeType.ObjectNode, hnp, hnp.Text, Include.NoRID, Include.NoRID, null, Include.NoRID, Include.NoRID, Include.NoRID, hnp.LevelType);
                 TreeNodeClipboardProfile cbp = new TreeNodeClipboardProfile(tempNode);
                 cbp.Action = aAction;
 				tempTreeView.Nodes.Add(tempNode);

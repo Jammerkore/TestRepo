@@ -9,8 +9,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("Logility - RO UnitTesting")]
 [assembly: AssemblyConfiguration("Base")]
 [assembly: AssemblyCompany("Logility, Inc.")]
-[assembly: AssemblyProduct("Logility- RO")]
-[assembly: AssemblyCopyright("Copyright © Logility, Inc. 2017")]
+[assembly: AssemblyProduct("Logility - RO")]
+[assembly: AssemblyCopyright("Copyright © Logility, Inc. 2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,4 +32,4 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("17.04.*")]
+[assembly: AssemblyVersion("19.04.*")]

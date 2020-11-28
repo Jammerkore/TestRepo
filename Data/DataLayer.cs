@@ -86,7 +86,7 @@ namespace MIDRetail.Data
         }
         // end TT#1185 - Verifry Enq Before Update
 
-		public bool ConnectionIsOpen 
+        public bool ConnectionIsOpen 
 		{
 			get 
             {

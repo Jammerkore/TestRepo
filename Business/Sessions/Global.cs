@@ -53,6 +53,10 @@ namespace MIDRetail.Business
         static private string _configuration;
         // End TT#195 MD
 
+        static private string _ROExtractConnectionString = null;   // TT#2131-MD - JSmith - Halo Integration
+        static private bool _ROExtractEnabled = false;    // TT#2131-MD - JSmith - Halo Integration
+        static private GlobalOptionsProfile _gop = null;    // TT#2131-MD - JSmith - Halo Integration
+
 		/// <summary>
 		/// Gets the Calendar.
 		/// </summary>
@@ -106,6 +110,31 @@ namespace MIDRetail.Business
             get { return _configuration; }
         }
         // End TT#195 MD
+
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        static public string ROExtractConnectionString
+        {
+            get { return _ROExtractConnectionString; }
+        }
+
+        static public bool ROExtractEnabled
+        {
+            get { return _ROExtractEnabled; }
+        }
+
+        static public GlobalOptionsProfile GlobalOptions
+        {
+            get
+            {
+                if (_gop == null)
+                {
+                    _gop = new GlobalOptionsProfile(-1);
+                    _gop.LoadOptions();
+                }
+                return _gop;
+            }
+        }
+        // End TT#2131-MD - JSmith - Halo Integration
 
         static Global()
 		{
@@ -161,6 +190,28 @@ namespace MIDRetail.Business
                         //Load cache data here...
                         UserNameStorage.SetDelegate_GetUnknownUserName(new UserNameStorage.GetUnknownUserNameDelegate(GetUnknownUserName));
                         PopulateUserNameStorageCache(); //TT#827-MD -jsobek -Allocation Reviews Performance
+
+                        // Begin TT#2131-MD - JSmith - Halo Integration
+                        _ROExtractEnabled = false;
+                        _ROExtractConnectionString = MIDConfigurationManager.AppSettings["ROExtractConnectionString"];
+                        if (!string.IsNullOrWhiteSpace(_ROExtractConnectionString)
+                            && GlobalOptions.AppConfig.AnalyticsInstalled)
+                        {
+                            try
+                            {
+                                ROExtractData ROExtractData = new ROExtractData(_ROExtractConnectionString);
+                                if (ROExtractData.RO_Extract_Exists())
+                                {
+                                    _ROExtractEnabled = true;
+                                }
+                            }
+                            catch
+                            {
+                                EventLog.WriteEntry("MIDRetail", "Not an Analytics database.  Extract will not be allowed.", EventLogEntryType.Error);
+                            }
+                        }
+
+                        // End TT#2131-MD - JSmith - Halo Integration
 
 						_loaded = true;
 					}

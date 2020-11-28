@@ -444,7 +444,7 @@ namespace MIDRetail.UnitTestingControlProcessing
             try
             {
                 _jobName = aJobName;
-                _schedulerInterfacePath = @"C:\MIDRetail\Batch\ScheduleInterface.exe";
+                _schedulerInterfacePath = @"C:\Logility\RO\Batch\ScheduleInterface.exe";
 
 
 #if (DEBUG)
@@ -453,10 +453,10 @@ namespace MIDRetail.UnitTestingControlProcessing
                 object value = MIDConfigurationManager.AppSettings["SchedulerInterfacePath"];
                 if (value != null)
                 {
-                    _schedulerInterfacePath = @"C:\MIDRetail\Batch\ScheduleInterface.exe";
+                    _schedulerInterfacePath = @"C:\Logility\RO\Batch\ScheduleInterface.exe";
                 }
 #endif
-                //_schedulerInterfacePath = @"C:\MIDRetail\Batch\ScheduleInterface.exe";
+                //_schedulerInterfacePath = @"C:\Logility\RO\Batch\ScheduleInterface.exe";
 
             }
             catch (ThreadAbortException exc)

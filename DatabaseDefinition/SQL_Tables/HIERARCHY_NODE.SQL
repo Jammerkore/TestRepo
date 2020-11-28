@@ -23,6 +23,7 @@ create table [dbo].[HIERARCHY_NODE] (
 	"ACTIVE_IND" char(1) null,
 	--"INACTIVE_DATE" smalldatetime null  -- TT#3630 - JSmith - Delete My Hierarchy
 	"INACTIVE_DATE" smalldatetime null,   -- TT#3630 - JSmith - Delete My Hierarchy
-	"NODE_DELETE_IND" char(1) null)       -- TT#3630 - JSmith - Delete My Hierarchy  
+	"NODE_DELETE_IND" char(1) null,       -- TT#3630 - JSmith - Delete My Hierarchy  
+	"DIGITAL_ASSET_KEY" int null)
 
 go

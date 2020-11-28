@@ -407,22 +407,22 @@ namespace MIDRetail.Business
 			{
 				hierarchyID = fields[1];
 				
-				if (fields.Length < 3 || fields[2] == null || fields[2].Length == 0)   
+				if (fields.Length < 4 || fields[3] == null || fields[3].Length == 0)   
 				{
 					hierarchyType = "open";
 				}
 				else
 				{
-					hierarchyType = fields[2];
+					hierarchyType = fields[3];
 				}
 
-				if (fields.Length < 4 || fields[3] == null || fields[3].Length == 0)   
+				if (fields.Length < 5 || fields[4] == null || fields[4].Length == 0)   
 				{
 					hierarchyColor = Include.MIDDefaultColor;
 				}
 				else
 				{
-					hierarchyColor = fields[3];
+					hierarchyColor = fields[4];
 				}
 
                 return AddHierarchyRecord(hierarchyID, hierarchyType, hierarchyColor);

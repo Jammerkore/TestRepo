@@ -296,7 +296,7 @@ namespace MIDRetail.Data
 				ds = MIDEnvironment.CreateDataSet();
 
 				dtBasis = SetupBasisTable();
-				dtDetails = SetupDetailsTable();
+				dtDetails = SetupBasisDetailsTable();
 
                 dtBasis = StoredProcedures.MID_USER_PLAN_BASIS_READ.Read(_dba, USER_RID: UserID);
 					
@@ -317,7 +317,7 @@ namespace MIDRetail.Data
 			}
 		}
 
-		private DataTable SetupBasisTable()
+		public DataTable SetupBasisTable()
 		{
 			DataTable dt;
 
@@ -336,7 +336,7 @@ namespace MIDRetail.Data
 			}
 		}
 
-		private DataTable SetupDetailsTable()
+		public DataTable SetupBasisDetailsTable()
 		{
 			DataTable dt;
 

@@ -1004,6 +1004,7 @@ namespace MIDRetail.Data
                 private stringParameter OTS_FORECAST_LEVEL_MASK;
                 private charParameter VIRTUAL_IND;
                 private intParameter PURPOSE;
+                private intParameter DIGITAL_ASSET_KEY;
 
                 public MID_HIERARCHY_UPDATE_def()
                 {
@@ -1025,6 +1026,7 @@ namespace MIDRetail.Data
                     OTS_FORECAST_LEVEL_MASK = new stringParameter("@OTS_FORECAST_LEVEL_MASK", base.inputParameterList);
                     VIRTUAL_IND = new charParameter("@VIRTUAL_IND", base.inputParameterList);
                     PURPOSE = new intParameter("@PURPOSE", base.inputParameterList);
+                    DIGITAL_ASSET_KEY = new intParameter("@DIGITAL_ASSET_KEY", base.inputParameterList);
                 }
 
                 public int Update(DatabaseAccess _dba, 
@@ -1042,7 +1044,8 @@ namespace MIDRetail.Data
                                   int? OTS_FORECAST_LEVEL_MASK_FIELD,
                                   string OTS_FORECAST_LEVEL_MASK,
                                   char? VIRTUAL_IND,
-                                  int? PURPOSE
+                                  int? PURPOSE,
+                                  int? DIGITAL_ASSET_KEY
                                   )
                 {
                     lock (typeof(MID_HIERARCHY_UPDATE_def))
@@ -1062,6 +1065,7 @@ namespace MIDRetail.Data
                         this.OTS_FORECAST_LEVEL_MASK.SetValue(OTS_FORECAST_LEVEL_MASK);
                         this.VIRTUAL_IND.SetValue(VIRTUAL_IND);
                         this.PURPOSE.SetValue(PURPOSE);
+                        this.DIGITAL_ASSET_KEY.SetValue(DIGITAL_ASSET_KEY);
                         return ExecuteStoredProcedureForUpdate(_dba);
                     }
                 }
@@ -1148,6 +1152,7 @@ namespace MIDRetail.Data
                 private stringParameter NODE_NAME;
                 private stringParameter NODE_DESCRIPTION;
                 private intParameter PRODUCT_TYPE;
+                private intParameter DIGITAL_ASSET_KEY;
                 private intParameter HN_RID; //Declare Output Parameter
 
                 public SP_MID_HIERNODE_BASE_INSERT_def()
@@ -1175,6 +1180,7 @@ namespace MIDRetail.Data
                     NODE_NAME = new stringParameter("@NODE_NAME", base.inputParameterList);
                     NODE_DESCRIPTION = new stringParameter("@NODE_DESCRIPTION", base.inputParameterList);
                     PRODUCT_TYPE = new intParameter("@PRODUCT_TYPE", base.inputParameterList);
+                    DIGITAL_ASSET_KEY = new intParameter("@DIGITAL_ASSET_KEY", base.inputParameterList);
 
                     HN_RID = new intParameter("@HN_RID", base.outputParameterList); //Add Output Parameter
                 }
@@ -1199,7 +1205,8 @@ namespace MIDRetail.Data
                                               string NODE_ID,
                                               string NODE_NAME,
                                               string NODE_DESCRIPTION,
-                                              int? PRODUCT_TYPE
+                                              int? PRODUCT_TYPE,
+                                              int? DIGITAL_ASSET_KEY
                                               )
                 {
                     lock (typeof(SP_MID_HIERNODE_BASE_INSERT_def))
@@ -1224,6 +1231,7 @@ namespace MIDRetail.Data
                         this.NODE_NAME.SetValue(NODE_NAME);
                         this.NODE_DESCRIPTION.SetValue(NODE_DESCRIPTION);
                         this.PRODUCT_TYPE.SetValue(PRODUCT_TYPE);
+                        this.DIGITAL_ASSET_KEY.SetValue(DIGITAL_ASSET_KEY);
 
                         this.HN_RID.SetValue(null); //Initialize Output Parameter
                         return base.ExecuteStoredProcedureForInsertAndReturnRID(_dba);
@@ -1255,6 +1263,7 @@ namespace MIDRetail.Data
                 private intParameter COLOR_CODE_RID;
                 private stringParameter COLOR_DESCRIPTION;
                 private stringParameter STYLE_NODE_ID;
+                private intParameter DIGITAL_ASSET_KEY;
                 private intParameter HN_RID; //Declare Output Parameter
 
                 public SP_MID_HIERNODE_COLOR_INSERT_def()
@@ -1281,6 +1290,7 @@ namespace MIDRetail.Data
                     COLOR_CODE_RID = new intParameter("@COLOR_CODE_RID", base.inputParameterList);
                     COLOR_DESCRIPTION = new stringParameter("@COLOR_DESCRIPTION", base.inputParameterList);
                     STYLE_NODE_ID = new stringParameter("@STYLE_NODE_ID", base.inputParameterList);
+                    DIGITAL_ASSET_KEY = new intParameter("@DIGITAL_ASSET_KEY", base.inputParameterList);
 
                     HN_RID = new intParameter("@HN_RID", base.outputParameterList); //Add Output Parameter
                 }
@@ -1304,7 +1314,8 @@ namespace MIDRetail.Data
                                               int? PURPOSE,
                                               int? COLOR_CODE_RID,
                                               string COLOR_DESCRIPTION,
-                                              string STYLE_NODE_ID
+                                              string STYLE_NODE_ID,
+                                              int? DIGITAL_ASSET_KEY
                                               )
                 {
                     lock (typeof(SP_MID_HIERNODE_COLOR_INSERT_def))
@@ -1328,6 +1339,7 @@ namespace MIDRetail.Data
                         this.COLOR_CODE_RID.SetValue(COLOR_CODE_RID);
                         this.COLOR_DESCRIPTION.SetValue(COLOR_DESCRIPTION);
                         this.STYLE_NODE_ID.SetValue(STYLE_NODE_ID);
+                        this.DIGITAL_ASSET_KEY.SetValue(DIGITAL_ASSET_KEY);
 
                         this.HN_RID.SetValue(null);  //Initialize Output Parameter
                         return base.ExecuteStoredProcedureForInsertAndReturnRID(_dba);
@@ -1359,6 +1371,7 @@ namespace MIDRetail.Data
                 private intParameter SIZE_CODE_RID;
                 private stringParameter STYLE_NODE_ID;
                 private stringParameter COLOR_NODE_ID;
+                private intParameter DIGITAL_ASSET_KEY;
                 private intParameter HN_RID; //Declare Output Parameter
 
                 public SP_MID_HIERNODE_SIZE_INSERT_def()
@@ -1385,6 +1398,7 @@ namespace MIDRetail.Data
                     SIZE_CODE_RID = new intParameter("@SIZE_CODE_RID", base.inputParameterList);
                     STYLE_NODE_ID = new stringParameter("@STYLE_NODE_ID", base.inputParameterList);
                     COLOR_NODE_ID = new stringParameter("@COLOR_NODE_ID", base.inputParameterList);
+                    DIGITAL_ASSET_KEY = new intParameter("@DIGITAL_ASSET_KEY", base.inputParameterList);
 
                     HN_RID = new intParameter("@HN_RID", base.outputParameterList); //Add Output Parameter
                 }
@@ -1408,7 +1422,8 @@ namespace MIDRetail.Data
                                               int? PURPOSE,
                                               int? SIZE_CODE_RID,
                                               string STYLE_NODE_ID,
-                                              string COLOR_NODE_ID
+                                              string COLOR_NODE_ID,
+                                              int? DIGITAL_ASSET_KEY
                                               )
                 {
                     lock (typeof(SP_MID_HIERNODE_SIZE_INSERT_def))
@@ -1432,6 +1447,7 @@ namespace MIDRetail.Data
                         this.SIZE_CODE_RID.SetValue(SIZE_CODE_RID);
                         this.STYLE_NODE_ID.SetValue(STYLE_NODE_ID);
                         this.COLOR_NODE_ID.SetValue(COLOR_NODE_ID);
+                        this.DIGITAL_ASSET_KEY.SetValue(DIGITAL_ASSET_KEY);
 
                         this.HN_RID.SetValue(null); //Initialize Output Parameter
                         return base.ExecuteStoredProcedureForInsertAndReturnRID(_dba);
@@ -3629,6 +3645,38 @@ namespace MIDRetail.Data
                 }
             }
 
+            // Begin TT#2131-MD - JSmith - Halo Integration
+            public static MID_ELIG_MODEL_UPDATE_ELIG_UPDATE_DATE_def MID_ELIG_MODEL_UPDATE_ELIG_UPDATE_DATE = new MID_ELIG_MODEL_UPDATE_ELIG_UPDATE_DATE_def();
+            public class MID_ELIG_MODEL_UPDATE_ELIG_UPDATE_DATE_def : baseStoredProcedure
+            {
+                private intParameter EM_RID;
+                private datetimeParameter UPDATE_DATE;
+
+                public MID_ELIG_MODEL_UPDATE_ELIG_UPDATE_DATE_def()
+                {
+                    base.procedureName = "MID_ELIG_MODEL_UPDATE_ELIG_UPDATE_DATE";
+                    base.procedureType = storedProcedureTypes.Update;
+                    base.tableNames.Add("STOCK_MODIFIER_MODEL");
+                    EM_RID = new intParameter("@EM_RID", base.inputParameterList);
+                    UPDATE_DATE = new datetimeParameter("@UPDATE_DATE", base.inputParameterList);
+                }
+
+                public int Update(DatabaseAccess _dba,
+                                  int? EM_RID,
+                                  DateTime? UPDATE_DATE
+                                  )
+                {
+                    lock (typeof(MID_ELIG_MODEL_UPDATE_ELIG_UPDATE_DATE_def))
+                    {
+                        this.EM_RID.SetValue(EM_RID);
+                        this.UPDATE_DATE.SetValue(UPDATE_DATE);
+
+                        return ExecuteStoredProcedureForUpdate(_dba);
+                    }
+                }
+            }
+            // End TT#2131-MD - JSmith - Halo Integration
+
             public static MID_STOCK_MODIFIER_MODEL_READ_ALL_def MID_STOCK_MODIFIER_MODEL_READ_ALL = new MID_STOCK_MODIFIER_MODEL_READ_ALL_def();
             public class MID_STOCK_MODIFIER_MODEL_READ_ALL_def : baseStoredProcedure
             {
@@ -4805,6 +4853,7 @@ namespace MIDRetail.Data
                 private intParameter UNTIL_DATE;
                 private charParameter PRESENTATION_PLUS_SALES_IND;
                 private intParameter STOCK_LEAD_WEEKS;
+                private datetimeParameter UPDATE_DATE;
 
                 public MID_STORE_ELIGIBILITY_INSERT_def()
                 {
@@ -4830,6 +4879,7 @@ namespace MIDRetail.Data
                     UNTIL_DATE = new intParameter("@UNTIL_DATE", base.inputParameterList);
                     PRESENTATION_PLUS_SALES_IND = new charParameter("@PRESENTATION_PLUS_SALES_IND", base.inputParameterList);
                     STOCK_LEAD_WEEKS = new intParameter("@STOCK_LEAD_WEEKS", base.inputParameterList);
+                    UPDATE_DATE = new datetimeParameter("@UPDATE_DATE", base.inputParameterList);
                 }
 
                 public int Insert(DatabaseAccess _dba, 
@@ -4851,7 +4901,8 @@ namespace MIDRetail.Data
                                   double? SIMILAR_STORE_RATIO,
                                   int? UNTIL_DATE,
                                   char? PRESENTATION_PLUS_SALES_IND,
-                                  int? STOCK_LEAD_WEEKS
+                                  int? STOCK_LEAD_WEEKS,
+                                  DateTime? UPDATE_DATE
                                   )
                 {
                     lock (typeof(MID_STORE_ELIGIBILITY_INSERT_def))
@@ -4875,6 +4926,7 @@ namespace MIDRetail.Data
                         this.UNTIL_DATE.SetValue(UNTIL_DATE);
                         this.PRESENTATION_PLUS_SALES_IND.SetValue(PRESENTATION_PLUS_SALES_IND);
                         this.STOCK_LEAD_WEEKS.SetValue(STOCK_LEAD_WEEKS);
+                        this.UPDATE_DATE.SetValue(UPDATE_DATE);
                         return ExecuteStoredProcedureForInsert(_dba);
                     }
                 }
@@ -4902,6 +4954,7 @@ namespace MIDRetail.Data
                 private intParameter UNTIL_DATE;
                 private charParameter PRESENTATION_PLUS_SALES_IND;
                 private intParameter STOCK_LEAD_WEEKS;
+                private datetimeParameter UPDATE_DATE;
 
                 public MID_STORE_ELIGIBILITY_UPDATE_def()
                 {
@@ -4927,6 +4980,7 @@ namespace MIDRetail.Data
                     UNTIL_DATE = new intParameter("@UNTIL_DATE", base.inputParameterList);
                     PRESENTATION_PLUS_SALES_IND = new charParameter("@PRESENTATION_PLUS_SALES_IND", base.inputParameterList);
                     STOCK_LEAD_WEEKS = new intParameter("@STOCK_LEAD_WEEKS", base.inputParameterList);
+                    UPDATE_DATE = new datetimeParameter("@UPDATE_DATE", base.inputParameterList);
                 }
 
                 public int Update(DatabaseAccess _dba, 
@@ -4948,7 +5002,8 @@ namespace MIDRetail.Data
                                   double? SIMILAR_STORE_RATIO,
                                   int? UNTIL_DATE,
                                   char? PRESENTATION_PLUS_SALES_IND,
-                                  int? STOCK_LEAD_WEEKS
+                                  int? STOCK_LEAD_WEEKS,
+                                  DateTime? UPDATE_DATE
                                   )
                 {
                     lock (typeof(MID_STORE_ELIGIBILITY_UPDATE_def))
@@ -4972,6 +5027,7 @@ namespace MIDRetail.Data
                         this.UNTIL_DATE.SetValue(UNTIL_DATE);
                         this.PRESENTATION_PLUS_SALES_IND.SetValue(PRESENTATION_PLUS_SALES_IND);
                         this.STOCK_LEAD_WEEKS.SetValue(STOCK_LEAD_WEEKS);
+                        this.UPDATE_DATE.SetValue(UPDATE_DATE);
                         return ExecuteStoredProcedureForUpdate(_dba);
                     }
                 }

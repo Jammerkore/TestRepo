@@ -832,11 +832,12 @@ namespace MIDRetail.DataCommon
 // END TT#1399
         private bool _commitOnSuccessfulUpdate;  // TT#3173 - JSmith - Severe Error during History Load
         private bool _deleteNode;	// TT#3630 - JSmith - Delete My Hierarchy
+        private int _digitalAssetKey;
 
-		/// <summary>
-		/// Used to construct an instance of the class.
-		/// </summary>
-		public HierarchyNodeProfile(int aKey)
+        /// <summary>
+        /// Used to construct an instance of the class.
+        /// </summary>
+        public HierarchyNodeProfile(int aKey)
 			: base(aKey)
 		{
 			_nodeChangeType = eChangeType.none;
@@ -920,7 +921,9 @@ namespace MIDRetail.DataCommon
             //END TT#400-MD-VStuart-Add Header Purge Criteria by Header Type
 			 _commitOnSuccessfulUpdate = false;  // TT#3173 - JSmith - Severe Error during History Load
              _deleteNode = false;  // TT#3630 - JSmith - Delete My Hierarchy
-		}
+            _digitalAssetKey = Include.Undefined;
+
+        }
 
 		/// <summary>
 		/// Returns the eProfileType of this profile.
@@ -1896,6 +1899,12 @@ namespace MIDRetail.DataCommon
         }
         // End // TT#3630 - JSmith - Delete My Hierarchy
 
+        public int DigitalAssetKey
+        {
+            get { return _digitalAssetKey; }
+            set { _digitalAssetKey = value; }
+        }
+
         public object Clone()
         {
             HierarchyNodeProfile hierarchyNodeProfile;
@@ -2007,6 +2016,7 @@ namespace MIDRetail.DataCommon
             hierarchyNodeProfile._ApplyHNRIDFrom = _ApplyHNRIDFrom;
             // END TT#1399
             hierarchyNodeProfile._commitOnSuccessfulUpdate = _commitOnSuccessfulUpdate; // TT#3173 - JSmith - Severe Error during History Load
+            hierarchyNodeProfile.DigitalAssetKey = _digitalAssetKey;
 
             return hierarchyNodeProfile;
         }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using MIDRetail.Common;
 using MIDRetail.DataCommon;
 
@@ -359,5 +360,131 @@ namespace MIDRetail.Business
 				throw;
 			}
 		}
-	}
+
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        public void ExtractCube(ExtractOptions aExtractOptions)
+        {
+            PlanCellReference planCellRef;
+            Dictionary<TimeTotalVariableProfile, double> valueCol;
+            Dictionary<TimeTotalVariableProfile, string> stringCol;
+            PlanWaferCell waferCell;
+            int writeCount;
+            string timePeriod;
+
+            try
+            {
+                if (!PlanCubeGroup.ROExtractEnabled)
+                {
+                    return;
+                }
+
+                timePeriod = PlanCubeGroup.OpenParms.DateRangeProfile.DisplayDate;
+
+                PlanCubeGroup.ROExtractData.OpenUpdateConnection();
+
+                try
+                {
+                    PlanCubeGroup.ROExtractData.Variable_Init();
+                    writeCount = 0;
+
+                    valueCol = new Dictionary<TimeTotalVariableProfile, double>();
+                    stringCol = new Dictionary<TimeTotalVariableProfile, string>();
+
+                    planCellRef = (PlanCellReference)CreateCellReference();
+                    planCellRef[eProfileType.Version] = PlanCubeGroup.OpenParms.StoreHLPlanProfile.VersionProfile.Key;
+                    planCellRef[eProfileType.HierarchyNode] = PlanCubeGroup.OpenParms.StoreHLPlanProfile.NodeProfile.Key;
+                    planCellRef[eProfileType.QuantityVariable] = CubeGroup.Transaction.PlanComputations.PlanQuantityVariables.ValueQuantity.Key;
+
+                    foreach (StoreGroupLevelProfile storeGroupLevelProf in PlanCubeGroup.GetMasterProfileList(eProfileType.StoreGroupLevel))
+                    {
+                        valueCol.Clear();
+                        stringCol.Clear();
+
+                        planCellRef[eProfileType.StoreGroupLevel] = storeGroupLevelProf.Key;
+
+                        foreach (TimeTotalVariableProfile varProf in PlanCubeGroup.TotalVariables.GetStoreTimeTotalVariableList())
+                        {
+                            // skip variables not selected
+                            if (!aExtractOptions.TimeTotalVarProfList.Contains(varProf.Key))
+                            {
+                                continue;
+                            }
+
+                            planCellRef[eProfileType.Variable] = varProf.ParentVariableProfile.Key;
+                            planCellRef[eProfileType.TimeTotalVariable] = varProf.Key;
+
+                            if (varProf.FormatType == eValueFormatType.GenericNumeric)
+                            {
+                                if (planCellRef.CurrentCellValue != 0
+                                    || !aExtractOptions.ExcludeZeroValues
+                                    || planCellRef.isCellChanged)
+                                {
+                                    valueCol.Add(varProf, planCellRef.CurrentCellValue);
+                                }
+                            }
+                            else
+                            {
+                                waferCell = new PlanWaferCell(planCellRef, planCellRef.CurrentCellValue, "1", "1", false);
+                                if (!string.IsNullOrEmpty(waferCell.ValueAsString)
+                                    || !aExtractOptions.ExcludeZeroValues
+                                    || planCellRef.isCellChanged)
+                                {
+                                    stringCol.Add(varProf, waferCell.ValueAsString);
+                                }
+                            }
+                        }
+
+                        if (valueCol.Count > 0
+                            || stringCol.Count > 0)
+                        {
+                            PlanCubeGroup.ROExtractData.Planning_Attributes_Total_Insert(
+                                PlanCubeGroup.OpenParms.StoreHLPlanProfile.NodeProfile.NodeID,
+                                timePeriod,
+                                aExtractOptions.Attribute,
+                                storeGroupLevelProf.Name,
+                                PlanCubeGroup.OpenParms.StoreHLPlanProfile.VersionProfile.Description,
+                                aExtractOptions.FilterName,
+                                valueCol,
+                                stringCol);
+
+                            writeCount += (valueCol.Count + stringCol.Count);
+
+                            if (writeCount > MIDConnectionString.CommitLimit)
+                            {
+                                PlanCubeGroup.ROExtractData.Planning_Attributes_Total_Update();
+                                PlanCubeGroup.ROExtractData.CommitData();
+                                PlanCubeGroup.ROExtractData.Variable_Init();
+                                writeCount = 0;
+                            }
+                        }
+                    }
+
+                    if (writeCount > 0)
+                    {
+                        PlanCubeGroup.ROExtractData.Planning_Attributes_Total_Update();
+                    }
+
+                    PlanCubeGroup.ROExtractData.CommitData();
+                }
+                catch (Exception exc)
+                {
+                    string message = exc.ToString();
+                    throw;
+                }
+                finally
+                {
+                    if (PlanCubeGroup.ROExtractData.ConnectionIsOpen)
+                    {
+                        PlanCubeGroup.ROExtractData.CloseUpdateConnection();
+                    }
+                }
+            }
+            catch (Exception exc)
+            {
+                string message = exc.ToString();
+                throw;
+            }
+        }
+        // End TT#2131-MD - JSmith - Halo Integration
+    }
 }

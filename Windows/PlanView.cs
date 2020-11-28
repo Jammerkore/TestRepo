@@ -23,6 +23,8 @@ using MIDRetail.DataCommon;
 using MIDRetail.Data;
 using MIDRetail.Windows.Controls;
 
+using Logility.ROUI;
+
 namespace MIDRetail.Windows
 {
 	public partial class PlanView : MIDFormBase, IFormBase

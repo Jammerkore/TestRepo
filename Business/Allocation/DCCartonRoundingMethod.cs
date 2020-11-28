@@ -6,6 +6,7 @@ using System.Diagnostics;
 using MIDRetail.Data;
 using MIDRetail.Common;
 using MIDRetail.DataCommon;
+using Logility.ROWebSharedTypes;
 
 namespace MIDRetail.Business.Allocation
 {
@@ -74,6 +75,19 @@ namespace MIDRetail.Business.Allocation
         //========
         // METHODS
         //========
+
+        // Begin TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+        override internal bool CheckForUserData()
+        {
+            if (IsFilterUser(SG_RID))
+            {
+                return true;
+            }
+
+            return false;
+        }
+        // End TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+
         public override void ProcessMethod(
             ApplicationSessionTransaction aApplicationTransaction,
             int aStoreFilter, Profile methodProfile)
@@ -1594,6 +1608,65 @@ namespace MIDRetail.Business.Allocation
         { 
             return true;
         }
+
+        // BEGIN RO-642 - RDewey
+        override public FunctionSecurityProfile GetFunctionSecurity()
+        {
+            if (this.GlobalUserType == eGlobalUserType.Global)
+            {
+                return SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.AllocationMethodsGlobalDCCartonRounding);
+            }
+            else
+            {
+                return SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.AllocationMethodsUserDCCartonRounding);
+            }
+
+        }
+        override public ROMethodProperties MethodGetData(bool processingApply)
+        {
+            ROMethodDCCartonRoundingProperties method = new ROMethodDCCartonRoundingProperties(
+                method: GetName.GetMethod(method: this),
+                description: Method_Description,
+                userKey: User_RID,
+                attribute: GetName.GetAttributeName(_methodData.SG_RID),
+                allocateOverageTo: _methodData.ApplyOverageTo
+                );
+            return method;
+
+        }
+
+        override public bool MethodSetData(ROMethodProperties methodProperties, bool processingApply)
+        {
+            ROMethodDCCartonRoundingProperties roMethodDCCartonRoundingProperties = (ROMethodDCCartonRoundingProperties)methodProperties;
+            if (_methodData == null)
+            {
+                _methodData = new DCCartonRoundingMethodData();
+            }
+            try
+            {
+                //_methodData.ApplyOverageTo = roMethodDCCartonRoundingProperties.AllocateOverageTo;
+                //_methodData.SG_RID = roMethodDCCartonRoundingProperties.Attribute.Key;
+                APPLY_OVERAGE_TO = roMethodDCCartonRoundingProperties.AllocateOverageTo;
+                SG_RID = roMethodDCCartonRoundingProperties.Attribute.Key;
+                _methodData.Method_Description = roMethodDCCartonRoundingProperties.Description;
+                _methodData.Method_RID = roMethodDCCartonRoundingProperties.Method.Key;
+                _methodData.Method_Name = roMethodDCCartonRoundingProperties.Method.Value;
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+
+            //throw new NotImplementedException("MethodSaveData is not implemented");
+        }
+
+        override public ROMethodProperties MethodCopyData()
+        {
+            throw new NotImplementedException("MethodCopyData is not implemented");
+        }
+        // END RO-642 - RDewey
     }
 
     internal class DCInfo
@@ -1659,6 +1732,8 @@ namespace MIDRetail.Business.Allocation
             _stores = new ProfileList(eProfileType.Store);
             _includesReserveOnly = false;	// TT#1698-MD - stodd - Recieve Warning Error (total not spread) when processing Carton Rounding on Headers within a Group
         }
+
+
     }
 }
 

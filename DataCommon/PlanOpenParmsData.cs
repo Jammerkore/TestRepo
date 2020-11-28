@@ -168,6 +168,7 @@ namespace MIDRetail.DataCommon
 
 		private Hashtable _basisProfileListHash;
 		private bool _weeksCalculated;
+        private bool _setSummaryDateProfile;
 		private ePlanDisplayType _displayType;
 		private DateRangeProfile _summaryDateProfile;
 		private ProfileList _detailDateProfileList;
@@ -201,6 +202,7 @@ namespace MIDRetail.DataCommon
 			_updateAuditHeaderOnError = true;
 //End - Abercrombie & Fitch #4411
             _includeLocks = true; // TT#TT#739-MD - JSmith - delete stores
+            _setSummaryDateProfile = false;
 		}
 
 		//===========
@@ -621,6 +623,12 @@ namespace MIDRetail.DataCommon
 			get	{return _weeksCalculated;}
 			set	{_weeksCalculated = value;}
 		}
+
+        public bool SetSummaryDateProfile
+        {
+            get { return _setSummaryDateProfile; }
+            set { _setSummaryDateProfile = value; }
+        }
 
 		public ePlanDisplayType DisplayType
 		{

@@ -82,6 +82,13 @@ namespace MIDRetail.Data
             get { return _bPC_Name; }
         }
         /// <summary>
+        /// Gets the BPC_RID (Vendor RID)
+        /// </summary>
+        public int BPC_RID
+        {
+            get { return _bPC_RID; }
+        }
+        /// <summary>
         /// Gets the Pack Minimum Order: if the BPC_Name is present, this value is the BPC_Pack_Min; otherwise, it is a value specified by the user for this method. // TT#787 Vendor Min Order applies only to packs
         /// </summary>
         public int Pack_MIN // TT#787 Vendor Min Order applies only to packs

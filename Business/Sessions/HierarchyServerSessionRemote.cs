@@ -1093,7 +1093,7 @@ namespace MIDRetail.Business
                                                      OTSPlanLevelIsOverridden, ePlanLevelSelectType.HierarchyLevel,
                                                      ePlanLevelLevelType.HierarchyLevel, OTSPlanLevelHierarchyRID, OTSPlanLevelHierarchyLevelSequence,
                                                      OTSPlanLevelAnchorNode, maskField, OTSPlanLevelMask, false, ePurpose.Default, hp.HierarchyID, hp.HierarchyID,
-                                                     hp.HierarchyID, false, eProductType.Undefined);
+                                                     hp.HierarchyID, false, eProductType.Undefined, Include.Undefined);
                         // End TT#1453
 						hp.HierarchyRootNodeRID = hierarchyNodeRID;
 						for (int level = 1; level <= hp.HierarchyLevels.Count; level++) // levels begin at 1 since the hierarchy occupies level 0
@@ -1170,7 +1170,7 @@ namespace MIDRetail.Business
 							eHierarchyLevelType.Undefined, false, eOTSPlanLevelType.Undefined, false, 
 							OTSPlanLevelIsOverridden, ePlanLevelSelectType.HierarchyLevel, 
 							ePlanLevelLevelType.HierarchyLevel, OTSPlanLevelHierarchyRID, OTSPlanLevelHierarchyLevelSequence,
-                            OTSPlanLevelAnchorNode, maskField, OTSPlanLevelMask, false, ePurpose.Default);
+                            OTSPlanLevelAnchorNode, maskField, OTSPlanLevelMask, false, ePurpose.Default, Include.Undefined);
 						
 						_mhd.Hierarchy_BasicNode_Update(hp.HierarchyRootNodeRID, 
 							hp.HierarchyID, hp.HierarchyID, hp.HierarchyID, false, eProductType.Undefined);
@@ -1977,7 +1977,7 @@ namespace MIDRetail.Business
                                                                                    hnp.OTSPlanLevelIsOverridden, hnp.OTSPlanLevelSelectType, hnp.OTSPlanLevelLevelType,
                                                                                    hnp.OTSPlanLevelHierarchyRID, hnp.OTSPlanLevelHierarchyLevelSequence,
                                                                                    hnp.OTSPlanLevelAnchorNode, hnp.OTSPlanLevelMaskField, hnp.OTSPlanLevelMask, hnp.IsVirtual, hnp.Purpose, 
-                                                                                   hnp.ColorOrSizeCodeRID, hnp.NodeDescription, fields[0]);
+                                                                                   hnp.ColorOrSizeCodeRID, hnp.NodeDescription, fields[0], hnp.DigitalAssetKey);
                                             break;
                                         }
                                     case eHierarchyLevelType.Size:
@@ -2004,7 +2004,7 @@ namespace MIDRetail.Business
                                                                                   hnp.OTSPlanLevelIsOverridden, hnp.OTSPlanLevelSelectType, hnp.OTSPlanLevelLevelType,
                                                                                   hnp.OTSPlanLevelHierarchyRID, hnp.OTSPlanLevelHierarchyLevelSequence,
                                                                                   hnp.OTSPlanLevelAnchorNode, hnp.OTSPlanLevelMaskField, hnp.OTSPlanLevelMask, hnp.IsVirtual, hnp.Purpose, 
-                                                                                  hnp.ColorOrSizeCodeRID, fields[0], fields[1]);
+                                                                                  hnp.ColorOrSizeCodeRID, fields[0], fields[1], hnp.DigitalAssetKey);
                                             break;
                                         }
                                     default:
@@ -2022,7 +2022,7 @@ namespace MIDRetail.Business
                                                                                    hnp.OTSPlanLevelHierarchyRID, hnp.OTSPlanLevelHierarchyLevelSequence,
                                                                                    hnp.OTSPlanLevelAnchorNode, hnp.OTSPlanLevelMaskField, hnp.OTSPlanLevelMask, hnp.IsVirtual, hnp.Purpose, 
                                                                                    hnp.NodeID, hnp.NodeName,
-                                                hnp.NodeDescription, hnp.ProductTypeIsOverridden, hnp.ProductType);
+                                                hnp.NodeDescription, hnp.ProductTypeIsOverridden, hnp.ProductType, hnp.DigitalAssetKey);
                                             break;
                                         }
                                 }
@@ -2058,7 +2058,7 @@ namespace MIDRetail.Business
                                     hnp.OTSPlanLevelType, hnp.UseBasicReplenishment,
                                     hnp.OTSPlanLevelIsOverridden, hnp.OTSPlanLevelSelectType, hnp.OTSPlanLevelLevelType,
                                     hnp.OTSPlanLevelHierarchyRID, hnp.OTSPlanLevelHierarchyLevelSequence,
-                                    hnp.OTSPlanLevelAnchorNode, hnp.OTSPlanLevelMaskField, hnp.OTSPlanLevelMask, hnp.IsVirtual, hnp.Purpose);
+                                    hnp.OTSPlanLevelAnchorNode, hnp.OTSPlanLevelMaskField, hnp.OTSPlanLevelMask, hnp.IsVirtual, hnp.Purpose, hnp.DigitalAssetKey);
                                 // BEGIN TT#1399
                                 _mhd.Hierarchy_Properties_Update(hnp.Key, hnp.ApplyHNRIDFrom);
                                 // END TT#1399
@@ -4994,14 +4994,15 @@ namespace MIDRetail.Business
 					while (newNode.Key != Include.NoRID)
 					{
 						copyCntr++;
-						if (copyCntr > 1)
-						{
-							newName = "Copy" + copyCntr.ToString(CultureInfo.CurrentUICulture) + " of " + hnp.NodeID;
-						}
-						else
-						{
-							newName = "Copy of " + hnp.NodeID;
-						}
+                        //if (copyCntr > 1)
+                        //{
+                        //	newName = "Copy" + copyCntr.ToString(CultureInfo.CurrentUICulture) + " of " + hnp.NodeID;
+                        //}
+                        //else
+                        //{
+                        //	newName = "Copy of " + hnp.NodeID;
+                        //}
+                        newName = Include.GetNewName(name: hnp.NodeID, index: copyCntr);
 						newNode = GetNodeData(newName);
 					}
 					hnp.NodeChangeType = eChangeType.add;
@@ -5009,7 +5010,8 @@ namespace MIDRetail.Business
 					if (hnp.LevelType == eHierarchyLevelType.Color ||
 						hnp.LevelType == eHierarchyLevelType.Size)
 					{
-						hnp.NodeDescription = "Copy of " + hnp.NodeDescription;
+                        //hnp.NodeDescription = "Copy of " + hnp.NodeDescription;
+                        hnp.NodeDescription = hnp.NodeDescription + " - Copy";
 					}
 					else
 					{
@@ -5355,7 +5357,10 @@ namespace MIDRetail.Business
 					case eChangeType.update: 
 					{
 						_mhd.OpenUpdateConnection();
-						_mhd.EligModelSalesEntry_Delete(emp.Key);
+                        // Begin TT#2131-MD - JSmith - Halo Integration
+                        _mhd.EligModelUpdateEligUpdateDate(emp.Key);
+                        // End TT#2131-MD - JSmith - Halo Integration
+                        _mhd.EligModelSalesEntry_Delete(emp.Key);
 						_mhd.EligModelStockEntry_Delete(emp.Key);
 						_mhd.EligModelPriShipEntry_Delete(emp.Key);
 						foreach(EligModelEntry eme in emp.ModelEntries)
@@ -5405,7 +5410,10 @@ namespace MIDRetail.Business
 					case eChangeType.delete: 
 					{
 						_mhd.OpenUpdateConnection();
-						_mhd.EligModelSalesEntry_Delete(emp.Key);
+                        // Begin TT#2131-MD - JSmith - Halo Integration
+                        _mhd.EligModelUpdateEligUpdateDate(emp.Key);
+                        // End TT#2131-MD - JSmith - Halo Integration
+                        _mhd.EligModelSalesEntry_Delete(emp.Key);
 						_mhd.EligModelStockEntry_Delete(emp.Key);
 						_mhd.EligModelPriShipEntry_Delete(emp.Key);
 						_mhd.EligModel_Delete(emp.Key);
@@ -5456,7 +5464,7 @@ namespace MIDRetail.Business
 		/// <param name="aAllowReadOnly">This flag identifies if the lock type can be changed to read only if an update
 		/// lock can not be obtained</param>
 		/// <returns>An instance of the HierarchyProfile object containing information about the hierarchy</returns>
-		public ModelProfile GetModelDataForUpdate(eModelType aModelType, int aModelRID, bool aAllowReadOnly)
+		public ModelProfile GetModelDataForUpdate(eModelType aModelType, int aModelRID, bool aAllowReadOnly, bool isWindows)
 		{
 			string errMsg;
 			bool enqueueWriteLocked = false;
@@ -5524,9 +5532,16 @@ namespace MIDRetail.Business
 					if (aAllowReadOnly)
 					{
 						mp.ModelLockStatus = eLockStatus.ReadOnly;
-						errMsg += "Do you wish to continue with the model as read-only?";
+                        if (isWindows)
+                        {
+                            errMsg += "Do you wish to continue with the model as read-only?";
+                        }
+                        else
+                        {
+                            errMsg += "The model is not available to be updated at this time.";
+                        }
 
-						diagResult = SessionAddressBlock.MessageCallback.HandleMessage(
+                        diagResult = SessionAddressBlock.MessageCallback.HandleMessage(
 							errMsg,
 							"Model Conflict",
 							System.Windows.Forms.MessageBoxButtons.OKCancel, System.Windows.Forms.MessageBoxIcon.Asterisk);
@@ -5561,12 +5576,165 @@ namespace MIDRetail.Business
 			}
 		}
 
-		/// <summary>
-		/// Requests the session dequeue the model.
+        /// <summary>
+		/// Requests the session get model information.
 		/// </summary>
 		/// <param name="aModelType">The type of the model</param>
 		/// <param name="aModelRID">The record id of the model</param>
-		public void DequeueModel(eModelType aModelType, int aModelRID)
+		/// <returns>An instance of the HierarchyProfile object containing information about the hierarchy</returns>
+		public ModelProfile GetModelData(eModelType aModelType, int aModelRID)
+        {
+            bool enqueueWriteLocked = false;
+            try
+            {
+                HierarchyServerGlobal.AcquireEnqueueWriterLock();
+                enqueueWriteLocked = true;
+                ModelProfile mp = null;
+
+                switch (aModelType)
+                {
+                    case eModelType.Eligibility:
+                        mp = HierarchyServerGlobal.GetEligModelData(aModelRID);
+                        break;
+                    case eModelType.SalesModifier:
+                        mp = HierarchyServerGlobal.GetSlsModModelData(aModelRID);
+                        break;
+                    case eModelType.StockModifier:
+                        mp = HierarchyServerGlobal.GetStkModModelData(aModelRID);
+                        break;
+                    case eModelType.FWOSModifier:
+                        mp = HierarchyServerGlobal.GetFWOSModModelData(aModelRID);
+                        break;
+                    case eModelType.SizeAlternates:
+                        mp = HierarchyServerGlobal.GetSizeAltModelData(aModelRID);
+                        break;
+                    case eModelType.SizeConstraints:
+                        mp = HierarchyServerGlobal.GetSizeConstraintModelData(aModelRID);
+                        break;
+                    case eModelType.SizeCurve:
+                        mp = HierarchyServerGlobal.GetSizeCurveGroupData(aModelRID);
+                        break;
+                    case eModelType.SizeGroup:
+                        mp = HierarchyServerGlobal.GetSizeGroupData(aModelRID);
+                        break;
+                    case eModelType.FWOSMax:
+                        mp = HierarchyServerGlobal.GetFWOSMaxModelData(aModelRID);
+                        break;
+                }
+
+                return mp;
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                if (enqueueWriteLocked)
+                {
+                    HierarchyServerGlobal.ReleaseEnqueueWriterLock();
+                }
+            }
+        }
+
+        /// <summary>
+		/// Requests the session get model information.
+		/// </summary>
+		/// <param name="aModelType">The type of the model</param>
+		/// <param name="aModelID">The record id of the model</param>
+		/// <returns>An instance of the HierarchyProfile object containing information about the hierarchy</returns>
+		public ModelProfile GetModelData(eModelType aModelType, string aModelID)
+        {
+            bool enqueueWriteLocked = false;
+            try
+            {
+                HierarchyServerGlobal.AcquireEnqueueWriterLock();
+                enqueueWriteLocked = true;
+                ModelProfile mp = null;
+                SizeModelData sizeModelData;
+                DataTable dt;
+                int modelRID;
+
+                switch (aModelType)
+                {
+                    case eModelType.Eligibility:
+                        mp = HierarchyServerGlobal.GetEligModelData(aModelID);
+                        break;
+                    case eModelType.SalesModifier:
+                        mp = HierarchyServerGlobal.GetSlsModModelData(aModelID);
+                        break;
+                    case eModelType.StockModifier:
+                        mp = HierarchyServerGlobal.GetStkModModelData(aModelID);
+                        break;
+                    case eModelType.FWOSModifier:
+                        mp = HierarchyServerGlobal.GetFWOSModModelData(aModelID);
+                        break;
+                    case eModelType.SizeAlternates:
+                        modelRID = Include.NoRID;
+                        sizeModelData = new SizeModelData();
+                        dt = sizeModelData.SizeAlternateModel_Read(aModelID);
+                        if (dt.Rows.Count > 0)
+                        {
+                            modelRID = Convert.ToInt32(dt.Rows[0]["SIZE_ALTERNAME_RID"]);
+                        }
+                        mp = HierarchyServerGlobal.GetSizeAltModelData(modelRID);
+                        break;
+                    case eModelType.SizeConstraints:
+                        modelRID = Include.NoRID;
+                        sizeModelData = new SizeModelData();
+                        dt = sizeModelData.SizeConstraintModel_Read(aModelID);
+                        if (dt.Rows.Count > 0)
+                        {
+                            modelRID = Convert.ToInt32(dt.Rows[0]["SIZE_CONSTRAINT_RID"]);
+                        }
+                        mp = HierarchyServerGlobal.GetSizeConstraintModelData(modelRID);
+                        break;
+                    case eModelType.SizeCurve:
+                        modelRID = Include.NoRID;
+                        SizeCurve SizeCurveData = new SizeCurve();
+                        dt = SizeCurveData.GetFilteredSizeCurveGroupsCaseSensitive(aModelID);
+                        if (dt.Rows.Count > 0)
+                        {
+                            modelRID = Convert.ToInt32(dt.Rows[0]["SIZE_CURVE_GROUP_RID"]);
+                        }
+                        mp = HierarchyServerGlobal.GetSizeCurveGroupData(modelRID);
+                        break;
+                    case eModelType.SizeGroup:
+                        modelRID = Include.NoRID;
+                        SizeGroup sizeGroupData = new SizeGroup();
+                        dt = sizeGroupData.GetSizeGroup(aModelID);
+                        if (dt.Rows.Count > 0)
+                        {
+                            modelRID = Convert.ToInt32(dt.Rows[0]["SIZE_GROUP_RID"]);
+                        }
+                        mp = HierarchyServerGlobal.GetSizeGroupData(modelRID);
+                        break;
+                    case eModelType.FWOSMax:
+                        mp = HierarchyServerGlobal.GetFWOSMaxModelData(aModelID);
+                        break;
+                }
+
+                return mp;
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                if (enqueueWriteLocked)
+                {
+                    HierarchyServerGlobal.ReleaseEnqueueWriterLock();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Requests the session dequeue the model.
+        /// </summary>
+        /// <param name="aModelType">The type of the model</param>
+        /// <param name="aModelRID">The record id of the model</param>
+        public void DequeueModel(eModelType aModelType, int aModelRID)
 		{
 			try
 			{
@@ -6386,7 +6554,7 @@ namespace MIDRetail.Business
 								sep.SimStoreType, sep.SimStoreRatio, sep.SimStoreUntilDateRangeRID,
 								sep.PresPlusSalesIsSet, sep.PresPlusSalesInd
 								//BEGIN TT#44 - MD - DOConnell - New Store Forecasting Enhancement
-								, sep.StkLeadWeeks);
+								, sep.StkLeadWeeks, sep.UpdateDate);
 								//END TT#44 - MD - DOConnell - New Store Forecasting Enhancement
 							switch (sep.SimStoreType)
 							{
@@ -6408,7 +6576,7 @@ namespace MIDRetail.Business
 								sep.SimStoreType, sep.SimStoreRatio, sep.SimStoreUntilDateRangeRID,
 								sep.PresPlusSalesIsSet, sep.PresPlusSalesInd
 								//BEGIN TT#44 - MD - DOConnell - New Store Forecasting Enhancement
-								, sep.StkLeadWeeks);
+								, sep.StkLeadWeeks, sep.UpdateDate);
 								//END TT#44 - MD - DOConnell - New Store Forecasting Enhancement
 							if (sep.SimStoresChanged)
 							{

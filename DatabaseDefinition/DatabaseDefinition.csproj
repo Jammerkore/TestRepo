@@ -26,8 +26,8 @@
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
-    <SignAssembly>true</SignAssembly>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>..\midretailinccert.pfx</AssemblyOriginatorKeyFile>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -96,108 +96,6 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release Oracle|AnyCPU' ">
-    <OutputPath>bin\Debug\</OutputPath>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <BaseAddress>285212672</BaseAddress>
-    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <ConfigurationOverrideFile>
-    </ConfigurationOverrideFile>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DocumentationFile>
-    </DocumentationFile>
-    <DebugSymbols>true</DebugSymbols>
-    <FileAlignment>4096</FileAlignment>
-    <NoStdLib>false</NoStdLib>
-    <NoWarn>
-    </NoWarn>
-    <Optimize>false</Optimize>
-    <RegisterForComInterop>false</RegisterForComInterop>
-    <RemoveIntegerChecks>false</RemoveIntegerChecks>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <WarningLevel>4</WarningLevel>
-    <DebugType>full</DebugType>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Full Debug SQL Server|AnyCPU' ">
-    <OutputPath>bin\Debug\</OutputPath>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <BaseAddress>285212672</BaseAddress>
-    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <ConfigurationOverrideFile>
-    </ConfigurationOverrideFile>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DocumentationFile>
-    </DocumentationFile>
-    <DebugSymbols>true</DebugSymbols>
-    <FileAlignment>4096</FileAlignment>
-    <NoStdLib>false</NoStdLib>
-    <NoWarn>
-    </NoWarn>
-    <Optimize>false</Optimize>
-    <RegisterForComInterop>false</RegisterForComInterop>
-    <RemoveIntegerChecks>false</RemoveIntegerChecks>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <WarningLevel>4</WarningLevel>
-    <DebugType>full</DebugType>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug SQL Server|AnyCPU' ">
-    <OutputPath>bin\Debug\</OutputPath>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <BaseAddress>285212672</BaseAddress>
-    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <ConfigurationOverrideFile>
-    </ConfigurationOverrideFile>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DocumentationFile>
-    </DocumentationFile>
-    <DebugSymbols>true</DebugSymbols>
-    <FileAlignment>4096</FileAlignment>
-    <NoStdLib>false</NoStdLib>
-    <NoWarn>
-    </NoWarn>
-    <Optimize>false</Optimize>
-    <RegisterForComInterop>false</RegisterForComInterop>
-    <RemoveIntegerChecks>false</RemoveIntegerChecks>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <WarningLevel>4</WarningLevel>
-    <DebugType>full</DebugType>
-    <ErrorReport>prompt</ErrorReport>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release SQL Server|AnyCPU' ">
-    <OutputPath>bin\Release\</OutputPath>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <BaseAddress>285212672</BaseAddress>
-    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <ConfigurationOverrideFile>
-    </ConfigurationOverrideFile>
-    <DefineConstants>TRACE</DefineConstants>
-    <DocumentationFile>
-    </DocumentationFile>
-    <DebugSymbols>false</DebugSymbols>
-    <FileAlignment>4096</FileAlignment>
-    <NoStdLib>false</NoStdLib>
-    <NoWarn>
-    </NoWarn>
-    <Optimize>true</Optimize>
-    <RegisterForComInterop>false</RegisterForComInterop>
-    <RemoveIntegerChecks>false</RemoveIntegerChecks>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <WarningLevel>4</WarningLevel>
-    <DebugType>none</DebugType>
-    <ErrorReport>prompt</ErrorReport>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x86\Debug\</OutputPath>
@@ -212,53 +110,6 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <BaseAddress>285212672</BaseAddress>
-    <Optimize>true</Optimize>
-    <FileAlignment>4096</FileAlignment>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release Oracle|x86' ">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Release Oracle\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <BaseAddress>285212672</BaseAddress>
-    <FileAlignment>4096</FileAlignment>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Full Debug SQL Server|x86' ">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Full Debug SQL Server\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <BaseAddress>285212672</BaseAddress>
-    <FileAlignment>4096</FileAlignment>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug SQL Server|x86' ">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Debug SQL Server\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <BaseAddress>285212672</BaseAddress>
-    <FileAlignment>4096</FileAlignment>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release SQL Server|x86' ">
-    <OutputPath>bin\x86\Release SQL Server\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <BaseAddress>285212672</BaseAddress>
     <Optimize>true</Optimize>
@@ -293,7 +144,32 @@
     <Content Include="SQL_Constraints\METHOD_CREATE_MASTER_HEADERS_OVERRIDE_FK2.SQL" />
     <Content Include="SQL_Constraints\METHOD_CREATE_MASTER_HEADERS_OVERRIDE_FK1.SQL" />
     <Content Include="SQL_Constraints\METHOD_CREATE_MASTER_HEADERS_MERCHANDISE_FK2.SQL" />
+    <Content Include="SQL_Functions_Scalar\UDF_MID_GET_TIMEID_FROM_DATE.SQL" />
+    <Content Include="SQL_StoredProcedures\MID_API_PROCESS_CONTROL_RULES_UPDATE.SQL" />
+    <Content Include="SQL_StoredProcedures\MID_EXTRACT_PLANNING_CONTROL_CLEAR_EXTRACT_DATES.SQL" />
+    <Content Include="SQL_StoredProcedures\MID_EXTRACT_PLANNING_CONTROL_CHAIN_FORECAST_DELETE_FOR_PURGE.SQL" />
+    <Content Include="SQL_StoredProcedures\MID_EXTRACT_PLANNING_CONTROL_CHAIN_FORECAST_DELETE_FOR_PURGE_FOR_DATE.SQL" />
+    <Content Include="SQL_StoredProcedures\MID_EXTRACT_PLANNING_CONTROL_CHAIN_HISTORY_DELETE_FOR_PURGE.SQL" />
+    <Content Include="SQL_StoredProcedures\MID_EXTRACT_PLANNING_CONTROL_STORE_HISTORY_DELETE_FOR_PURGE.SQL" />
+    <Content Include="SQL_StoredProcedures\MID_EXTRACT_PLANNING_CONTROL_CHAIN_HISTORY_DELETE_FOR_PURGE_FOR_DATE.SQL" />
+    <Content Include="SQL_StoredProcedures\MID_EXTRACT_PLANNING_CONTROL_STORE_HISTORY_DELETE_FOR_PURGE_FOR_DATE.SQL" />
+    <Content Include="SQL_StoredProcedures\MID_EXTRACT_PLANNING_CONTROL_STORE_FORECAST_DELETE_FOR_PURGE.SQL" />
+    <Content Include="SQL_StoredProcedures\MID_EXTRACT_PLANNING_CONTROL_STORE_FORECAST_DELETE_FOR_PURGE_FOR_DATE.SQL" />
+    <Content Include="SQL_StoredProcedures\MID_HEADER_CHAR_READ_DATE_VALUE_FOR_DUPLICATE.SQL" />
+    <Content Include="SQL_StoredProcedures\MID_HEADER_CHAR_READ_DOLLAR_VALUE_FOR_DUPLICATE.SQL" />
+    <Content Include="SQL_StoredProcedures\MID_HEADER_CHAR_READ_NUMBER_VALUE_FOR_DUPLICATE.SQL" />
+    <Content Include="SQL_StoredProcedures\MID_HEADER_CHAR_READ_TEXT_VALUE_FOR_DUPLICATE.SQL" />
     <Content Include="SQL_StoredProcedures\MID_HEADER_READ_FOR_WORKSPACE.SQL" />
+    <Content Include="SQL_StoredProcedures\MID_METHOD_PLANNING_EXTRACT_DELETE.SQL" />
+    <Content Include="SQL_StoredProcedures\MID_METHOD_PLANNING_EXTRACT_INSERT.SQL" />
+    <Content Include="SQL_StoredProcedures\MID_METHOD_PLANNING_EXTRACT_READ.SQL" />
+    <Content Include="SQL_StoredProcedures\MID_METHOD_PLANNING_EXTRACT_READ_FROM_NODE.SQL" />
+    <Content Include="SQL_StoredProcedures\MID_METHOD_PLANNING_EXTRACT_EXTRACT_DATE_UPDATE.SQL" />
+    <Content Include="SQL_StoredProcedures\MID_METHOD_PLANNING_EXTRACT_UPDATE.SQL" />
+    <Content Include="SQL_StoredProcedures\MID_METHOD_PLANNING_EXTRACT_VARIABLES_DELETE.SQL" />
+    <Content Include="SQL_StoredProcedures\MID_METHOD_PLANNING_EXTRACT_VARIABLES_INSERT.SQL" />
+    <Content Include="SQL_StoredProcedures\MID_METHOD_PLANNING_EXTRACT_VARIABLES_READ.SQL" />
+    <Content Include="SQL_StoredProcedures\MID_ROLLUP_ITEM_READ_PROCESSED.SQL" />
     <Content Include="SQL_StoredProcedures\MID_STORE_GROUP_COUNT.SQL" />
     <Content Include="SQL_StoredProcedures\MID_SYSTEM_OPTIONS_DC_FULFILLMENT_STORE_ORDER_DELETE_ALL.SQL" />
     <Content Include="SQL_StoredProcedures\MID_HEADER_DIST_CENTER_READ_ALL.SQL" />
@@ -319,6 +195,9 @@
     <Content Include="SQL_StoredProcedures\MID_SYSTEM_OPTIONS_DC_FULFILLMENT_STORE_ORDER_INSERT.SQL" />
     <Content Include="SQL_StoredProcedures\MID_SYSTEM_OPTIONS_DC_FULFILLMENT_STORE_ORDER_READ.SQL" />
     <Content Include="SQL_StoredProcedures\MID_SYSTEM_OPTIONS_DC_FULFILLMENT_STORE_ORDER_DELETE.SQL" />
+    <Content Include="SQL_StoredProcedures\MID_EXTRACT_PLANNING_CONTROL_READ.SQL" />
+    <Content Include="SQL_StoredProcedures\MID_EXTRACT_PLANNING_CONTROL_WRITE.SQL" />
+    <Content Include="SQL_StoredProcedures\MID_ELIG_MODEL_UPDATE_ELIG_UPDATE_DATE.SQL" />
     <Content Include="SQL_StoredProcedures\SP_MID_GET_HIERARCHY_DESCENDANT_LEVELS.SQL" />
     <Content Include="SQL_Constraints\APPLICATION_USER_UC1.SQL" />
     <Content Include="SQL_Constraints\ASSORTMENT_USER_VIEW_JOIN_HDR_FK1.SQL" />
@@ -2467,7 +2346,9 @@
     <Content Include="SQL_TableKeys\METHOD_CREATE_MASTER_HEADERS_MERCHANDISE_PK.SQL" />
     <Content Include="SQL_TableKeys\METHOD_CREATE_MASTER_HEADERS_OVERRIDE_PK.SQL" />
     <Content Include="SQL_TableKeys\METHOD_DC_CARTON_ROUNDING_PK.SQL" />
+    <Content Include="SQL_TableKeys\METHOD_PLANNING_EXTRACT_PK.SQL" />
     <Content Include="SQL_TableKeys\METHOD_EXPORT_PK.SQL" />
+    <Content Include="SQL_TableKeys\METHOD_PLANNING_EXTRACT_VARIABLES_PK.SQL" />
     <Content Include="SQL_TableKeys\METHOD_EXPORT_VARIABLES_PK.SQL" />
     <Content Include="SQL_TableKeys\METHOD_FILL_SIZE_HOLES_PK.SQL" />
     <Content Include="SQL_TableKeys\METHOD_GENERAL_ALLOCATION_PK.SQL" />
@@ -2581,6 +2462,7 @@
     <Content Include="SQL_TableKeys\STOCK_MIN_MAX_PK.SQL" />
     <Content Include="SQL_TableKeys\STOCK_MODIFIER_MODEL_ENTRY_PK.SQL" />
     <Content Include="SQL_TableKeys\STOCK_MODIFIER_MODEL_PK.SQL" />
+    <Content Include="SQL_TableKeys\EXTRACT_PLANNING_CONTROL_PK.SQL" />
     <Content Include="SQL_TableKeys\STORES_PK.SQL" />
     <Content Include="SQL_TableKeys\STORE_CAPACITY_PK.SQL" />
     <Content Include="SQL_TableKeys\STORE_CHAR_GROUP_PK.SQL" />
@@ -2654,9 +2536,12 @@
     <Content Include="SQL_Tables\HEADER_PACK_ASSOCIATION.SQL" />
     <Content Include="SQL_Tables\HEADER_RECONCILE_INFO.SQL" />
     <Content Include="SQL_Tables\HEADER_SEQUENCE.SQL" />
+    <None Include="SQL_Tables\EXTRACT_PLANNING_CONTROL.SQL" />
     <Content Include="SQL_Tables\HIER_RECLASS_INFO.SQL" />
     <Content Include="SQL_Tables\METHOD_DC_FULFILLMENT.SQL" />
     <Content Include="SQL_Tables\METHOD_CREATE_MASTER_HEADERS.SQL" />
+    <Content Include="SQL_Tables\METHOD_PLANNING_EXTRACT.SQL" />
+    <Content Include="SQL_Tables\METHOD_PLANNING_EXTRACT_VARIABLES.SQL" />
     <Content Include="SQL_Tables\SYSTEM_OPTIONS_DC_FULFILLMENT_STORE_ORDER.SQL" />
     <Content Include="SQL_Tables\METHOD_DC_FULFILLMENT_STORE_ORDER.SQL" />
     <Content Include="SQL_Tables\METHOD_CREATE_MASTER_HEADERS_MERCHANDISE.SQL" />
@@ -3795,6 +3680,7 @@
     <Content Include="SQL_Types\FILTER_LIST_VALUE_TYPE.SQL" />
     <Content Include="SQL_Types\HDR_RID_TYPE.SQL" />
     <Content Include="SQL_Types\FOLDER_TYPE.SQL" />
+    <Content Include="SQL_Types\EXTRACT_PLANNING_CONTROL_TYPE.SQL" />
     <Content Include="SQL_Types\MID_CHN_FOR_WK_READ_LOCK_TYPE.SQL" />
     <Content Include="SQL_Types\MID_CHN_FOR_WK_READ_TYPE.SQL" />
     <Content Include="SQL_Types\MID_CHN_HIS_WK_READ_TYPE.SQL" />
@@ -3853,12 +3739,17 @@
     <Content Include="SQL_Views\VW_STORE_INTRANSIT.SQL" />
     <Content Include="SQL_Views\VW_TOTAL_ALLOCATION.SQL" />
     <Content Include="SQL_Views\VW_WORKFLOW_READ.SQL" />
+    <Content Include="UpgradeVersions\ver19.03.0.01.SQL" />
+    <Content Include="UpgradeVersions\ver18.01.0.01.SQL" />
     <Content Include="UpgradeVersions\ver17.02.0.04.SQL" />
     <Content Include="UpgradeVersions\ver17.02.0.06.SQL" />
     <Content Include="UpgradeVersions\ver17.02.0.05.SQL" />
     <Content Include="UpgradeVersions\ver17.04.0.03.SQL" />
     <Content Include="UpgradeVersions\ver17.04.0.02.SQL" />
     <Content Include="UpgradeVersions\ver17.02.0.08.SQL" />
+    <Content Include="UpgradeVersions\ver18.01.0.03.SQL" />
+    <Content Include="UpgradeVersions\ver18.01.0.02.SQL" />
+    <Content Include="UpgradeVersions\ver19.03.0.02.SQL" />
     <Content Include="UpgradeVersions\ver5.0.0.33.SQL" />
     <Content Include="UpgradeVersions\ver5.2.1.19.SQL" />
     <Content Include="UpgradeVersions\ver5.4.0.01.SQL" />

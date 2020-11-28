@@ -26,9 +26,12 @@ namespace MIDRetail.Business
 		DataTable _functionsDataTable = null;
 //Begin Track #5091 - JScott - Secuirty Lights don't change when permission changes
 		Hashtable _functionActionHash = null;
-//End Track #5091 - JScott - Secuirty Lights don't change when permission changes
+        //End Track #5091 - JScott - Secuirty Lights don't change when permission changes
+        DataTable _userSecurityGroupsDataTable = null;
+        DataTable _activeSecurityGroupsDataTable = null;
+        DataTable _securityGroupsDataTable = null;
 
-		public Security()
+        public Security()
 		{
 			_userRID = 0;
 			_secAdmin = new SecurityAdmin();
@@ -43,7 +46,31 @@ namespace MIDRetail.Business
 			get { return _userRID ; }
 		}
 
-		public eSecurityAuthenticate SetUserPassword(string userName, string oldPassword, string newPassword)
+        public DataTable ActiveSecurityGroupsDataTable
+        {
+            get
+            {
+                if (_activeSecurityGroupsDataTable == null)
+                {
+                    _activeSecurityGroupsDataTable = _secAdmin.GetActiveGroups();
+                }
+                return _activeSecurityGroupsDataTable;
+            }
+        }
+
+        public DataTable SecurityGroupsDataTable
+        {
+            get
+            {
+                if (_securityGroupsDataTable == null)
+                {
+                    _securityGroupsDataTable = _secAdmin.GetGroups();
+                }
+                return _securityGroupsDataTable;
+            }
+        }
+
+        public eSecurityAuthenticate SetUserPassword(string userName, string oldPassword, string newPassword)
 		{
 			try
 			{
@@ -1160,7 +1187,455 @@ namespace MIDRetail.Business
 			}
 		}
 //Begin Track #5091 - JScott - Secuirty Lights don't change when permission changes
-	}
 
+        public int AddUser(string userID, string password = null, string fullName = null, string description = null, bool isActive = true, int createUserLikeKey = Include.NoRID)
+        {
+
+            int newUserRID = Include.NoRID;
+
+            if (createUserLikeKey <= 0)
+            {
+                try // create user
+                {
+                    _secAdmin.OpenUpdateConnection();
+                    newUserRID = _secAdmin.CreateUser(userID, password, fullName, description,
+                        isActive ? eSecurityActivation.Activate : eSecurityActivation.Deactivate);
+                    _secAdmin.CommitData();
+
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+                finally
+                {
+                    _secAdmin.CloseUpdateConnection();
+                }
+            }
+            else
+            {
+                try // create user like
+                {
+                    // first get information about existing user
+                    int sourceUserRID = createUserLikeKey;
+                    DataTable dtSrcGroups = _secAdmin.GetGroups(sourceUserRID);
+                    DataTable dtSrcNodes = _secAdmin.GetUserNodesAssignment(sourceUserRID);
+                    DataTable dtSrcVersions = _secAdmin.GetUserVersionsAssignment(sourceUserRID);
+                    DataTable dtSrcFunctions = _secAdmin.GetUserFunctionsAssignment(sourceUserRID);
+
+                    // create the new user
+                    _secAdmin.OpenUpdateConnection();
+                    newUserRID = _secAdmin.CreateUser(userID, null, fullName, description,
+                        isActive ? eSecurityActivation.Activate : eSecurityActivation.Deactivate);
+
+                    // add new user to groups
+                    foreach (DataRow dr in dtSrcGroups.Rows)
+                    {
+                        _secAdmin.AddUserToGroup(newUserRID, Convert.ToInt32(dr["GROUP_RID"], CultureInfo.CurrentUICulture));
+                    }
+
+                    // assign node permissions to new user
+                    foreach (DataRow dr in dtSrcNodes.Rows)
+                    {
+                        _secAdmin.AssignUserNode(newUserRID,
+                            Convert.ToInt32(dr["HN_RID"], CultureInfo.CurrentUICulture),
+                            (eSecurityActions)Convert.ToInt32(dr["ACTION_ID"], CultureInfo.CurrentUICulture),
+                            (eDatabaseSecurityTypes)Convert.ToInt32(dr["SEC_TYPE"], CultureInfo.CurrentUICulture),
+                            (eSecurityLevel)Convert.ToInt32(dr["SEC_LVL_ID"], CultureInfo.CurrentUICulture));
+                    }
+
+                    // assign version permissions to new user
+                    foreach (DataRow dr in dtSrcVersions.Rows)
+                    {
+                        _secAdmin.AssignUserVersion(newUserRID,
+                            Convert.ToInt32(dr["FV_RID"], CultureInfo.CurrentUICulture),
+                            (eSecurityActions)Convert.ToInt32(dr["ACTION_ID"], CultureInfo.CurrentUICulture),
+                            (eDatabaseSecurityTypes)Convert.ToInt32(dr["SEC_TYPE"], CultureInfo.CurrentUICulture),
+                            (eSecurityLevel)Convert.ToInt32(dr["SEC_LVL_ID"], CultureInfo.CurrentUICulture));
+                    }
+
+                    // assign function permissions to new user
+                    foreach (DataRow dr in dtSrcFunctions.Rows)
+                    {
+                        _secAdmin.AssignUserFunction(newUserRID,
+                            (eSecurityFunctions)Convert.ToInt32(dr["FUNC_ID"], CultureInfo.CurrentUICulture),
+                            (eSecurityActions)Convert.ToInt32(dr["ACTION_ID"], CultureInfo.CurrentUICulture),
+                            (eSecurityLevel)Convert.ToInt32(dr["SEC_LVL_ID"], CultureInfo.CurrentUICulture));
+                    }
+
+
+                    _secAdmin.CommitData();
+
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+                finally
+                {
+                    _secAdmin.CloseUpdateConnection();
+                }
+            }
+
+            int key;
+            if (newUserRID > Include.NoRID)
+            {
+                key = CreateNewWorkflowMethodExplorerFolder(newUserRID);
+                CreateNewOTSForecastGroup(newUserRID, key);
+                CreateNewAllocationGroup(newUserRID, key);
+            }
+
+            return newUserRID;
+        }
+
+        public void UpdateUser(int userKey, string userID, string password = null, string fullName = null, string description = null, bool isActive = true)
+        {
+            int userRID = userKey;
+
+            string newPassword = null;
+
+            try
+            {
+                _secAdmin.OpenUpdateConnection();
+                _secAdmin.UpdateUser(userRID,
+                    userID,
+                    newPassword,
+                    fullName,
+                    description,
+                    isActive ? eSecurityActivation.Activate : eSecurityActivation.Deactivate);
+                _secAdmin.CommitData();
+
+                UserNameStorage.PopulateUserNameStorageCache(_secAdmin.GetUserNameStorageCache());
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                _secAdmin.CloseUpdateConnection();
+            }
+
+        }
+
+        public void AssignUser(int userKey, string userID, string password = null, string fullName = null, string description = null, bool isActive = true)
+        {
+            int userRID = userKey;
+
+            string newPassword = null;
+
+            try
+            {
+                _secAdmin.OpenUpdateConnection();
+                _secAdmin.UpdateUser(userRID,
+                    userID,
+                    newPassword,
+                    fullName,
+                    description,
+                    isActive ? eSecurityActivation.Activate : eSecurityActivation.Deactivate);
+                _secAdmin.CommitData();
+
+                UserNameStorage.PopulateUserNameStorageCache(_secAdmin.GetUserNameStorageCache());
+
+                //if (_assignedToChanged)
+                //{
+                //    assignedUserRID = GetAssignedToUser(userRID);
+                //    if (cboAssignToUser.SelectedIndex > 0)
+                //    {
+                //        //Begin TT#677 - JScott - Tasklists disappearing from Tasklist Explorer
+                //        dtUserSession = _secAdmin.GetUserSession(userRID, eSessionStatus.LoggedIn);
+
+                //        if (dtUserSession.Rows.Count > 0)
+                //        {
+                //            message = SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_CannotAssignLoggedOnUser);
+                //            MessageBox.Show(message, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //            return;
+                //        }
+
+                //        //End TT#677 - JScott - Tasklists disappearing from Tasklist Explorer
+                //        if (cbxPermanentlyMove.Checked)
+                //        {
+                //            message = SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_PermanentMoveWarning);
+                //            message = message.Replace("{0}", txtChangeUserID.Text);
+                //            // Begin TT#532-MD - JSmith - Export method tried to create a new method and receive a TargetInvocationException.  Also tried to open all existing methods and received the same error.
+                //            //message = message.Replace("{1}", cboAssignToUser.SelectedText);
+                //            message = message.Replace("{1}", cboAssignToUser.Get_SelectedText());
+                //            // End TT#532-MD - JSmith - Export method tried to create a new method and receive a TargetInvocationException.  Also tried to open all existing methods and received the same error.
+                //            if (MessageBox.Show(message, this.Text,
+                //                MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
+                //                == DialogResult.No)
+                //            {
+                //                return;
+                //            }
+                //        }
+                //        // if already assigned to different user, unassign first
+                //        if (assignedUserRID != Include.NoRID &&
+                //            ((ComboObject)(cboAssignToUser.SelectedItem)).Key != assignedUserRID)
+                //        {
+                //            UnassignUser(userRID, assignedUserRID);
+                //        }
+                //        AssignUser(userRID, ((ComboObject)(cboAssignToUser.SelectedItem)).Key, cbxPermanentlyMove.Checked);
+                //        if (cbxPermanentlyMove.Checked)
+                //        {
+                //            message = SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_PermanentMoveConfirmation);
+                //        }
+                //        else
+                //        {
+                //            message = SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_AssignConfirmation);
+                //        }
+                //        message = message.Replace("{0}", txtChangeUserID.Text);
+                //        message = message.Replace("{1}", cboAssignToUser.Text);
+                //        MessageBox.Show(message, this.Text, MessageBoxButtons.OK);
+                //    }
+                //    else
+                //    {
+                //        UnassignUser(userRID, assignedUserRID);
+                //    }
+                //}
+                //End Track #4815
+            }
+            catch (Exception error)
+            {
+                MIDEnvironment.requestFailed = true;
+                MIDEnvironment.Message = error.Message;
+            }
+            finally
+            {
+                _secAdmin.CloseUpdateConnection();
+            }
+
+        }
+
+        private int Folder_Create(int aUserRID, string aText, eProfileType aFolderType)
+        {
+            int key;
+            FolderDataLayer dlFolder;
+            try
+            {
+                dlFolder = new FolderDataLayer();
+                dlFolder.OpenUpdateConnection();
+
+                try
+                {
+                    key = dlFolder.Folder_Create(aUserRID, aText, aFolderType);
+                    dlFolder.CommitData();
+                }
+                catch (Exception exc)
+                {
+                    string message = exc.ToString();
+                    throw;
+                }
+                finally
+                {
+                    dlFolder.CloseUpdateConnection();
+                }
+
+                return key;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private int CreateNewWorkflowMethodExplorerFolder(int aUserRID)
+        {
+            DataTable dtFolders;
+            FolderDataLayer dlFolder;
+            int key;
+
+            try
+            {
+                dlFolder = new FolderDataLayer();
+
+                dtFolders = dlFolder.Folder_Read(aUserRID, eProfileType.WorkflowMethodMainUserFolder);
+                if (dtFolders == null || dtFolders.Rows.Count == 0)
+                {
+                    key = Folder_Create(aUserRID, "My Workflow/Methods", eProfileType.WorkflowMethodMainUserFolder);
+                }
+                else
+                {
+                    key = Convert.ToInt32(dtFolders.Rows[0]["FOLDER_RID"]);
+                }
+
+                return key;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private void CreateNewOTSForecastGroup(int aUserRID, int aFolderRID)
+        {
+            string newNodeName;
+            FolderProfile newFolderProf;
+            FolderDataLayer dlFolder;
+
+            try
+            {
+                dlFolder = new FolderDataLayer();
+
+                newNodeName = MIDText.GetTextOnly((int)eWorkflowType.Forecast);
+
+                dlFolder.OpenUpdateConnection();
+
+                try
+                {
+                    newFolderProf = new FolderProfile(Include.NoRID, aUserRID, eProfileType.WorkflowMethodOTSForcastFolder, newNodeName, aUserRID);
+                    newFolderProf.Key = dlFolder.Folder_Create(newFolderProf.UserRID, newFolderProf.Name, newFolderProf.FolderType);
+                    dlFolder.Folder_Item_Insert(aFolderRID, newFolderProf.Key, eProfileType.WorkflowMethodOTSForcastFolder);
+
+                    dlFolder.CommitData();
+                }
+                catch (Exception exc)
+                {
+                    string message = exc.ToString();
+                    throw;
+                }
+                finally
+                {
+                    dlFolder.CloseUpdateConnection();
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private void CreateNewAllocationGroup(int aUserRID, int aFolderRID)
+        {
+            string newNodeName;
+            FolderProfile newFolderProf;
+            FolderDataLayer dlFolder;
+
+            try
+            {
+                dlFolder = new FolderDataLayer();
+
+                newNodeName = MIDText.GetTextOnly((int)eWorkflowType.Allocation);
+
+                dlFolder.OpenUpdateConnection();
+
+                try
+                {
+                    newFolderProf = new FolderProfile(Include.NoRID, aUserRID, eProfileType.WorkflowMethodAllocationFolder, newNodeName, aUserRID);
+                    newFolderProf.Key = dlFolder.Folder_Create(newFolderProf.UserRID, newFolderProf.Name, newFolderProf.FolderType);
+                    dlFolder.Folder_Item_Insert(aFolderRID, newFolderProf.Key, eProfileType.WorkflowMethodAllocationFolder);
+
+                    dlFolder.CommitData();
+                }
+                catch (Exception exc)
+                {
+                    string message = exc.ToString();
+                    throw;
+                }
+                finally
+                {
+                    dlFolder.CloseUpdateConnection();
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public void AssignUserToGroup(int userKey, string groupID)
+        {
+            int groupKey = Include.NoRID;
+
+            try
+            {
+                groupKey = GetGroupKey(groupID: groupID);
+                if (groupKey != Include.NoRID
+                    && !IsUserInGroup(userKey: userKey, groupID: groupID))
+                {
+                    _secAdmin.OpenUpdateConnection();
+                    _secAdmin.AddUserToGroup(userKey, groupKey);
+                    _secAdmin.CommitData();
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                _secAdmin.CloseUpdateConnection();
+            }
+
+        }
+
+        private int GetGroupKey(string groupID)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(groupID))
+                {
+                    DataRow[] groupRows = ActiveSecurityGroupsDataTable.Select("GROUP_NAME = '" + groupID + "'");
+                    if (groupRows.Length > 0)
+                    {
+                        return Convert.ToInt32(groupRows[0]["GROUP_RID"]);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return Include.NoRID;
+        }
+
+        public bool IsUserInGroup(int userKey, int groupKey)
+        {
+            try
+            {
+                if (userKey != Include.NoRID
+                    && groupKey != Include.NoRID)
+                {
+                    DataTable dtSrcGroups = _secAdmin.GetGroups(userKey);
+                    DataRow[] userGroupRows = dtSrcGroups.Select("GROUP_RID = " + groupKey);
+                    if (userGroupRows.Length > 0)
+                    {
+                        return true;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return false;
+
+        }
+
+        public bool IsUserInGroup(int userKey, string groupID)
+        {
+            try
+            {
+                if (userKey != Include.NoRID
+                    && !string.IsNullOrEmpty(groupID))
+                {
+                    DataTable dtSrcGroups = _secAdmin.GetGroups(userKey);
+                    DataRow[] userGroupRows = dtSrcGroups.Select("GROUP_NAME = '" + groupID + "'");
+                    if (userGroupRows.Length > 0)
+                    {
+                        return true;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return false;
+
+        }
+    }
 
 }

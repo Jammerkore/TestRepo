@@ -237,7 +237,7 @@ namespace MIDRetailInstaller
             string strDescription = "";
 
             //get the description datatable
-            DataTable dtDesc = dsInstallerInfo.Tables["description"];
+            DataTable dtDesc = dsInstallerInfo.Tables[InstallerConstants.cTable_Description];
 
             //select the correct description
             DataRow[] rows = dtDesc.Select("id = '" + ID + "'");
@@ -257,7 +257,7 @@ namespace MIDRetailInstaller
             string[] items = null;
 
             //get the description datatable
-            DataTable dtDesc = dsInstallerInfo.Tables["description"];
+            DataTable dtDesc = dsInstallerInfo.Tables[InstallerConstants.cTable_Description];
 
             //select the correct description
             DataRow[] rows = dtDesc.Select("id = '" + ID + "'");
@@ -265,7 +265,7 @@ namespace MIDRetailInstaller
             //set the description
             if (rows.Length > 0)
             {
-                items = rows[0].Field<string>("list").Trim().Split('|');
+                items = rows[0].Field<string>(InstallerConstants.cControlType_List).Trim().Split('|');
             }
 
             //return the description
@@ -433,7 +433,7 @@ namespace MIDRetailInstaller
                     #region control_creation
                     //loop thru the table and add controls to the panel
                     //get the configuration table
-                    DataTable dtConfiguration = dsInstallerInfo.Tables["configuration"];
+                    DataTable dtConfiguration = dsInstallerInfo.Tables[InstallerConstants.cTable_Configuration];
 
                     DataRow[] drConfigRows = dtConfiguration.Select("config_file='" + strConfigFile + "' or config_file='ALL'", "setting ASC");
 
@@ -443,13 +443,19 @@ namespace MIDRetailInstaller
                     foreach (DataRow dr in drConfigRows)
                     {
                         //label control
-                        string strKeyText = dr.Field<string>("setting").Trim();
+                        string strKeyText = dr.Field<string>(InstallerConstants.cConfigurationField_Setting).Trim();
+
+                        if (strConfig.Contains("Job")
+                            && strKeyText.Contains("value"))
+                        {
+                            bool stop = true;
+                        }
 
                         //edit control
                         string control_type = "";
                         List<string> pick_list;
                         string description = "";
-                        string setting = dr.Field<string>("setting").Trim();
+                        string setting = dr.Field<string>(InstallerConstants.cConfigurationField_Setting).Trim();
                         if (!GetControl(dr, strConfigFile, setting, out control_type, out pick_list, out description))
                         {
                             blErrorCreatingPanels = true;
@@ -457,13 +463,15 @@ namespace MIDRetailInstaller
 
                         switch (control_type)
                         {
-                            case "boolean":
+                            case InstallerConstants.cControlType_Boolean:
 
                                 //create the needed control
                                 Config_Combo cboValue = new Config_Combo(frame);
-                                cboValue.Config_Combo_Label = dr.Field<string>("setting").Trim();
+                                cboValue.Config_Combo_Label = dr.Field<string>(InstallerConstants.cConfigurationField_Setting).Trim();
                                 //cboValue.Config_Combo_Text = dr.Field<string>("value").Trim();
-                                cboValue.Config_Combo_Text = configFiles.GetConfigValue(dr.Field<string>("setting").Trim(), dr.Field<string>("id").Trim(), config, MIDSettings, dr, out from);
+                                cboValue.Config_Combo_Text = configFiles.GetConfigValue(dr.Field<string>(InstallerConstants.cConfigurationField_Parent).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_LookupType).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_Setting).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_ID).Trim(), config, MIDSettings, dr, out from);
+                                cboValue.Parent = dr.Field<string>(InstallerConstants.cConfigurationField_Parent).Trim();
+                                cboValue.LookupType = dr.Field<string>(InstallerConstants.cConfigurationField_LookupType).Trim();
                                 cboValue.Left = 0;
                                 cboValue.Top = control_top;
                                 cboValue.Config_Combo_Click += new EventHandler(this.lblKey_Click);
@@ -487,13 +495,15 @@ namespace MIDRetailInstaller
 
                                 break;
 
-                            case "window_style":
-                            case "list":
+                            case InstallerConstants.cControlType_WindowStyle:
+                            case InstallerConstants.cControlType_List:
 
                                 //create the needed control
                                 Config_Combo cboStyle = new Config_Combo(frame);
-                                cboStyle.Config_Combo_Label = dr.Field<string>("setting").Trim();
-                                cboStyle.Config_Combo_Text = configFiles.GetConfigValue(dr.Field<string>("setting").Trim(), dr.Field<string>("id").Trim(), config, MIDSettings, dr, out from);
+                                cboStyle.Config_Combo_Label = dr.Field<string>(InstallerConstants.cConfigurationField_Setting).Trim();
+                                cboStyle.Config_Combo_Text = configFiles.GetConfigValue(dr.Field<string>(InstallerConstants.cConfigurationField_Parent).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_LookupType).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_Setting).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_ID).Trim(), config, MIDSettings, dr, out from);
+                                cboStyle.Parent = dr.Field<string>(InstallerConstants.cConfigurationField_Parent).Trim();
+                                cboStyle.LookupType = dr.Field<string>(InstallerConstants.cConfigurationField_LookupType).Trim();
                                 cboStyle.Left = 0;
                                 cboStyle.Top = control_top;
                                 cboStyle.Config_Combo_Click += new EventHandler(this.lblKey_Click);
@@ -517,12 +527,14 @@ namespace MIDRetailInstaller
 
                                 break;
 
-                            case "directory":
+                            case InstallerConstants.cControlType_Directory:
 
                                 //create the directory control
                                 Config_Directory dir = new Config_Directory(frame);
-                                dir.ConfigDirLabel = dr.Field<string>("setting").Trim();
-                                dir.ConfigurationDirectory = configFiles.GetConfigValue(dr.Field<string>("setting").Trim(), dr.Field<string>("id").Trim(), config, MIDSettings, dr, out from);
+                                dir.ConfigDirLabel = dr.Field<string>(InstallerConstants.cConfigurationField_Setting).Trim();
+                                dir.ConfigurationDirectory = configFiles.GetConfigValue(dr.Field<string>(InstallerConstants.cConfigurationField_Parent).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_LookupType).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_Setting).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_ID).Trim(), config, MIDSettings, dr, out from);
+                                dir.Parent = dr.Field<string>(InstallerConstants.cConfigurationField_Parent).Trim();
+                                dir.LookupType = dr.Field<string>(InstallerConstants.cConfigurationField_LookupType).Trim();
                                 //dir.Tag = strKeyText + "|" + description;
                                 dir.Tag = new InstallerConfigValueTag(strKeyText + "|" + description, from, dir.ConfigurationDirectory);
                                 dir.Left = 0;
@@ -538,12 +550,14 @@ namespace MIDRetailInstaller
 
                                 break;
 
-                            case "open_file":
+                            case InstallerConstants.cControlType_OpenFile:
 
                                 //create the directory control
                                 Config_OpenFile cFile = new Config_OpenFile(frame);
-                                cFile.ConfigFileLabel = dr.Field<string>("setting").Trim();
-                                cFile.ConfigurationFile = configFiles.GetConfigValue(dr.Field<string>("setting").Trim(), dr.Field<string>("id").Trim(), config, MIDSettings, dr, out from);
+                                cFile.ConfigFileLabel = dr.Field<string>(InstallerConstants.cConfigurationField_Setting).Trim();
+                                cFile.ConfigurationFile = configFiles.GetConfigValue(dr.Field<string>(InstallerConstants.cConfigurationField_Parent).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_LookupType).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_Setting).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_ID).Trim(), config, MIDSettings, dr, out from);
+                                cFile.Parent = dr.Field<string>(InstallerConstants.cConfigurationField_Parent).Trim();
+                                cFile.LookupType = dr.Field<string>(InstallerConstants.cConfigurationField_LookupType).Trim();
                                 //cFile.Tag = strKeyText + "|" + description;
                                 cFile.Tag = new InstallerConfigValueTag(strKeyText + "|" + description, from, cFile.ConfigurationFile);
                                 cFile.Left = 0;
@@ -559,12 +573,14 @@ namespace MIDRetailInstaller
 
                                 break;
 
-                            case "sql_connect":
+                            case InstallerConstants.cControlType_SQLConnect:
 
                                 //create the directory control
                                 Config_Sql cSql = new Config_Sql(frame);
-                                cSql.ConfigSqlLabel = dr.Field<string>("setting").Trim();
-                                cSql.ConfigurationSql = configFiles.GetConfigValue(dr.Field<string>("setting").Trim(), dr.Field<string>("id").Trim(), config, MIDSettings, dr, out from);
+                                cSql.ConfigSqlLabel = dr.Field<string>(InstallerConstants.cConfigurationField_Setting).Trim();
+                                cSql.ConfigurationSql = configFiles.GetConfigValue(dr.Field<string>(InstallerConstants.cConfigurationField_Parent).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_LookupType).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_Setting).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_ID).Trim(), config, MIDSettings, dr, out from);
+                                cSql.Parent = dr.Field<string>(InstallerConstants.cConfigurationField_Parent).Trim();
+                                cSql.LookupType = dr.Field<string>(InstallerConstants.cConfigurationField_LookupType).Trim();
                                 //cSql.Tag = strKeyText + "|" + description;
                                 cSql.Tag = new InstallerConfigValueTag(strKeyText + "|" + description, from, cSql.ConfigurationSql);
                                 cSql.Left = 0;
@@ -580,17 +596,19 @@ namespace MIDRetailInstaller
 
                                 break;
 
-                            case "thousands":
+                            case InstallerConstants.cControlType_Thousands:
 
                                 //create the needed control
                                 Config_Numeric nmThousands = new Config_Numeric(frame);
                                 nmThousands.Config_Numeric_Minimum = 0;
                                 nmThousands.Config_Numeric_Maximum = 9000000;
                                 nmThousands.Config_Numeric_Increment = 1000;
-                                nmThousands.Config_Numeric_Label = dr.Field<string>("setting").Trim();
+                                nmThousands.Config_Numeric_Label = dr.Field<string>(InstallerConstants.cConfigurationField_Setting).Trim();
                                 // Begin TT#2261 - JSmith - Installer needs to override values not within range of data
-                                //nmThousands.Config_Numeric_Value = Convert.ToInt32(configFiles.GetConfigValue(dr.Field<string>("setting").Trim(), dr.Field<string>("id").Trim(), config, MIDSettings, dr, out from));
-                                value = Convert.ToInt32(configFiles.GetConfigValue(dr.Field<string>("setting").Trim(), dr.Field<string>("id").Trim(), config, MIDSettings, dr, out from));
+                                //nmThousands.Config_Numeric_Value = Convert.ToInt32(configFiles.GetConfigValue(dr.Field<string>(InstallerConstants.cConfigurationField_Setting).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_ID).Trim(), config, MIDSettings, dr, out from));
+                                value = Convert.ToInt32(configFiles.GetConfigValue(dr.Field<string>(InstallerConstants.cConfigurationField_Parent).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_LookupType).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_Setting).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_ID).Trim(), config, MIDSettings, dr, out from));
+                                nmThousands.Parent = dr.Field<string>(InstallerConstants.cConfigurationField_Parent).Trim();
+                                nmThousands.LookupType = dr.Field<string>(InstallerConstants.cConfigurationField_LookupType).Trim();
                                 // End TT#2261
                                 nmThousands.Left = 0;
                                 nmThousands.Top = control_top;
@@ -610,17 +628,19 @@ namespace MIDRetailInstaller
 
                                 break;
 
-                            case "hundreds":
+                            case InstallerConstants.cControlType_Hundreds:
 
                                 //create the needed control
                                 Config_Numeric nmHundreds = new Config_Numeric(frame);
                                 nmHundreds.Config_Numeric_Minimum = 0;
                                 nmHundreds.Config_Numeric_Maximum = 90000;
                                 nmHundreds.Config_Numeric_Increment = 100;
-                                nmHundreds.Config_Numeric_Label = dr.Field<string>("setting").Trim();
+                                nmHundreds.Config_Numeric_Label = dr.Field<string>(InstallerConstants.cConfigurationField_Setting).Trim();
                                 // Begin TT#2261 - JSmith - Installer needs to override values not within range of data
-                                //nmHundreds.Config_Numeric_Value = Convert.ToInt32(configFiles.GetConfigValue(dr.Field<string>("setting").Trim(), dr.Field<string>("id").Trim(), config, MIDSettings, dr, out from));
-                                value = Convert.ToInt32(configFiles.GetConfigValue(dr.Field<string>("setting").Trim(), dr.Field<string>("id").Trim(), config, MIDSettings, dr, out from));
+                                //nmHundreds.Config_Numeric_Value = Convert.ToInt32(configFiles.GetConfigValue(dr.Field<string>(InstallerConstants.cConfigurationField_Setting).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_ID).Trim(), config, MIDSettings, dr, out from));
+                                value = Convert.ToInt32(configFiles.GetConfigValue(dr.Field<string>(InstallerConstants.cConfigurationField_Parent).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_LookupType).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_Setting).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_ID).Trim(), config, MIDSettings, dr, out from));
+                                nmHundreds.Parent = dr.Field<string>(InstallerConstants.cConfigurationField_Parent).Trim();
+                                nmHundreds.LookupType = dr.Field<string>(InstallerConstants.cConfigurationField_LookupType).Trim();
                                 // End TT#2261
                                 nmHundreds.Left = 0;
                                 nmHundreds.Top = control_top;
@@ -640,17 +660,19 @@ namespace MIDRetailInstaller
 
                                 break;
 
-                            case "tens":
+                            case InstallerConstants.cControlType_Tens:
 
                                 //create the needed control
                                 Config_Numeric nmTens = new Config_Numeric(frame);
                                 nmTens.Config_Numeric_Minimum = 0;
                                 nmTens.Config_Numeric_Maximum = 9000;
                                 nmTens.Config_Numeric_Increment = 10;
-                                nmTens.Config_Numeric_Label = dr.Field<string>("setting").Trim();
+                                nmTens.Config_Numeric_Label = dr.Field<string>(InstallerConstants.cConfigurationField_Setting).Trim();
                                 // Begin TT#2261 - JSmith - Installer needs to override values not within range of data
-                                //nmTens.Config_Numeric_Value = Convert.ToInt32(configFiles.GetConfigValue(dr.Field<string>("setting").Trim(), dr.Field<string>("id").Trim(), config, MIDSettings, dr, out from));
-                                value = Convert.ToInt32(configFiles.GetConfigValue(dr.Field<string>("setting").Trim(), dr.Field<string>("id").Trim(), config, MIDSettings, dr, out from));
+                                //nmTens.Config_Numeric_Value = Convert.ToInt32(configFiles.GetConfigValue(dr.Field<string>(InstallerConstants.cConfigurationField_Setting).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_ID).Trim(), config, MIDSettings, dr, out from));
+                                value = Convert.ToInt32(configFiles.GetConfigValue(dr.Field<string>(InstallerConstants.cConfigurationField_Parent).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_LookupType).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_Setting).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_ID).Trim(), config, MIDSettings, dr, out from));
+                                nmTens.Parent = dr.Field<string>(InstallerConstants.cConfigurationField_Parent).Trim();
+                                nmTens.LookupType = dr.Field<string>(InstallerConstants.cConfigurationField_LookupType).Trim();
                                 // End TT#2261
                                 nmTens.Left = 0;
                                 nmTens.Top = control_top;
@@ -670,17 +692,19 @@ namespace MIDRetailInstaller
 
                                 break;
 
-                            case "numeric":
+                            case InstallerConstants.cControlType_Numeric:
 
                                 //create the needed control
                                 Config_Numeric nmNumeric = new Config_Numeric(frame);
                                 nmNumeric.Config_Numeric_Minimum = 0;
                                 nmNumeric.Config_Numeric_Maximum = 5000;
                                 nmNumeric.Config_Numeric_Increment = 1;
-                                nmNumeric.Config_Numeric_Label = dr.Field<string>("setting").Trim();
+                                nmNumeric.Config_Numeric_Label = dr.Field<string>(InstallerConstants.cConfigurationField_Setting).Trim();
                                 // Begin TT#2261 - JSmith - Installer needs to override values not within range of data
-                                //nmNumeric.Config_Numeric_Value = Convert.ToInt32(configFiles.GetConfigValue(dr.Field<string>("setting").Trim(), dr.Field<string>("id").Trim(), config, MIDSettings, dr, out from));
-                                value = Convert.ToInt32(configFiles.GetConfigValue(dr.Field<string>("setting").Trim(), dr.Field<string>("id").Trim(), config, MIDSettings, dr, out from));
+                                //nmNumeric.Config_Numeric_Value = Convert.ToInt32(configFiles.GetConfigValue(dr.Field<string>(InstallerConstants.cConfigurationField_Setting).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_ID).Trim(), config, MIDSettings, dr, out from));
+                                value = Convert.ToInt32(configFiles.GetConfigValue(dr.Field<string>(InstallerConstants.cConfigurationField_Parent).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_LookupType).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_Setting).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_ID).Trim(), config, MIDSettings, dr, out from));
+                                nmNumeric.Parent = dr.Field<string>(InstallerConstants.cConfigurationField_Parent).Trim();
+                                nmNumeric.LookupType = dr.Field<string>(InstallerConstants.cConfigurationField_LookupType).Trim();
                                 // End TT#2261
                                 nmNumeric.Left = 0;
                                 nmNumeric.Top = control_top;
@@ -700,12 +724,14 @@ namespace MIDRetailInstaller
 
                                 break;
 
-                            case "password":
+                            case InstallerConstants.cControlType_Password:
 
                                 //create the needed control
                                 Config_Password txtPwd = new Config_Password(frame);
-                                txtPwd.Config_Password_Label = dr.Field<string>("setting").Trim();
-                                txtPwd.Config_Password_Text = configFiles.GetConfigValue(dr.Field<string>("setting").Trim(), dr.Field<string>("id").Trim(), config, MIDSettings, dr, out from);
+                                txtPwd.Config_Password_Label = dr.Field<string>(InstallerConstants.cConfigurationField_Setting).Trim();
+                                txtPwd.Config_Password_Text = configFiles.GetConfigValue(dr.Field<string>(InstallerConstants.cConfigurationField_Parent).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_LookupType).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_Setting).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_ID).Trim(), config, MIDSettings, dr, out from);
+                                txtPwd.Parent = dr.Field<string>(InstallerConstants.cConfigurationField_Parent).Trim();
+                                txtPwd.LookupType = dr.Field<string>(InstallerConstants.cConfigurationField_LookupType).Trim();
                                 txtPwd.Left = 0;
                                 txtPwd.Top = control_top;
                                 //txtPwd.Tag = strKeyText + "|" + description;
@@ -725,8 +751,10 @@ namespace MIDRetailInstaller
 
                                 //create the needed control
                                 Config_Text txtValue = new Config_Text(frame);
-                                txtValue.Config_Text_Label = dr.Field<string>("setting").Trim();
-                                txtValue.Config_Text_Text = configFiles.GetConfigValue(dr.Field<string>("setting").Trim(), dr.Field<string>("id").Trim(), config, MIDSettings, dr, out from);
+                                txtValue.Config_Text_Label = dr.Field<string>(InstallerConstants.cConfigurationField_Setting).Trim();
+                                txtValue.Config_Text_Text = configFiles.GetConfigValue(dr.Field<string>(InstallerConstants.cConfigurationField_Parent).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_LookupType).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_Setting).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_ID).Trim(), config, MIDSettings, dr, out from);
+                                txtValue.Parent = dr.Field<string>(InstallerConstants.cConfigurationField_Parent).Trim();
+                                txtValue.LookupType = dr.Field<string>(InstallerConstants.cConfigurationField_LookupType).Trim();
                                 txtValue.Left = 0;
                                 txtValue.Top = control_top;
                                 //txtValue.Tag = strKeyText + "|" + description;
@@ -837,7 +865,7 @@ namespace MIDRetailInstaller
             try
             {
                 //get the configuration table
-                //DataTable dtConfiguration = dsInstallerInfo.Tables["configuration"];
+                //DataTable dtConfiguration = dsInstallerInfo.Tables[InstallerConstants.cTable_Configuration];
 
                 //get the application name from the path
                 char[] delim = @"\".ToCharArray();
@@ -858,39 +886,39 @@ namespace MIDRetailInstaller
                 }
 
                 //get the control type to load
-                control_type = drConfigRow.Field<string>("type").Trim();
+                control_type = drConfigRow.Field<string>(InstallerConstants.cSettingValue_Type).Trim();
 
                 //get the id of the control to load
-                string control_id = drConfigRow.Field<string>("id").Trim();
+                string control_id = drConfigRow.Field<string>(InstallerConstants.cConfigurationField_ID).Trim();
                 description = GetDescription(control_id);
 
                 //define the pick list (if needed) for the control to load
                 pick_list = new List<string>();
-                if (control_type == "boolean")
+                if (control_type == InstallerConstants.cControlType_Boolean)
                 {
                     //get the setting values
-                    DataTable dtBoolean = dsInstallerInfo.Tables["boolean"];
+                    DataTable dtBoolean = dsInstallerInfo.Tables[InstallerConstants.cTable_Boolean];
 
                     //loop thru the settings and add them to the list
                     for (int intSetting = 0; intSetting < dtBoolean.Rows.Count; intSetting++)
                     {
-                        pick_list.Add(dtBoolean.Rows[intSetting].Field<string>("setting"));
+                        pick_list.Add(dtBoolean.Rows[intSetting].Field<string>(InstallerConstants.cConfigurationField_Setting));
                     }
                 }
 
-                if (control_type == "window_style")
+                if (control_type == InstallerConstants.cControlType_WindowStyle)
                 {
                     //get the setting values
-                    DataTable dtStyle = dsInstallerInfo.Tables["window_style"];
+                    DataTable dtStyle = dsInstallerInfo.Tables[InstallerConstants.cTable_WindowStyle];
 
                     //loop thru the settings and add them to the list
                     for (int intSetting = 0; intSetting < dtStyle.Rows.Count; intSetting++)
                     {
-                        pick_list.Add(dtStyle.Rows[intSetting].Field<string>("setting"));
+                        pick_list.Add(dtStyle.Rows[intSetting].Field<string>(InstallerConstants.cConfigurationField_Setting));
                     }
                 }
 
-                if (control_type == "list")
+                if (control_type == InstallerConstants.cControlType_List)
                 {
                     string[] items = GetList(control_id);
 
@@ -927,7 +955,7 @@ namespace MIDRetailInstaller
             try
             {
                 //get the configuration table
-                DataTable dtConfiguration = dsInstallerInfo.Tables["configuration"];
+                DataTable dtConfiguration = dsInstallerInfo.Tables[InstallerConstants.cTable_Configuration];
 
                 //get the application name from the path
                 char[] delim = @"\".ToCharArray();
@@ -943,38 +971,38 @@ namespace MIDRetailInstaller
                 }
 
                 //get the control type to load
-                control_type = drConfigRow.Field<string>("type").Trim();
+                control_type = drConfigRow.Field<string>(InstallerConstants.cSettingValue_Type).Trim();
 
                 //get the default value
-                strDefault = drConfigRow.Field<string>("defaultValue").Trim();
+                strDefault = drConfigRow.Field<string>(InstallerConstants.cSettingValue_DefaultValue).Trim();
 
                 //get the id of the control to load
-                string control_id = drConfigRow.Field<string>("id").Trim();
+                string control_id = drConfigRow.Field<string>(InstallerConstants.cConfigurationField_ID).Trim();
                 description = GetDescription(control_id);
 
                 //define the pick list (if needed) for the control to load
                 pick_list = new List<string>();
-                if (control_type == "boolean")
+                if (control_type == InstallerConstants.cControlType_Boolean)
                 {
                     //get the setting values
-                    DataTable dtBoolean = dsInstallerInfo.Tables["boolean"];
+                    DataTable dtBoolean = dsInstallerInfo.Tables[InstallerConstants.cTable_Boolean];
 
                     //loop thru the settings and add them to the list
                     for (int intSetting = 0; intSetting < dtBoolean.Rows.Count; intSetting++)
                     {
-                        pick_list.Add(dtBoolean.Rows[intSetting].Field<string>("setting"));
+                        pick_list.Add(dtBoolean.Rows[intSetting].Field<string>(InstallerConstants.cConfigurationField_Setting));
                     }
                 }
 
-                if (control_type == "window_style")
+                if (control_type == InstallerConstants.cControlType_WindowStyle)
                 {
                     //get the setting values
-                    DataTable dtStyle = dsInstallerInfo.Tables["window_style"];
+                    DataTable dtStyle = dsInstallerInfo.Tables[InstallerConstants.cTable_WindowStyle];
 
                     //loop thru the settings and add them to the list
                     for (int intSetting = 0; intSetting < dtStyle.Rows.Count; intSetting++)
                     {
-                        pick_list.Add(dtStyle.Rows[intSetting].Field<string>("setting"));
+                        pick_list.Add(dtStyle.Rows[intSetting].Field<string>(InstallerConstants.cConfigurationField_Setting));
                     }
                 }
             }
@@ -1010,7 +1038,7 @@ namespace MIDRetailInstaller
                 try
                 {
                     connProp.ConnectionStringBuilder.ConnectionString = ((Config_Sql)clicked_control).ConfigurationSql;
-                    connProp.ConnectionStringBuilder["Password"] = "********";
+                    connProp.ConnectionStringBuilder[InstallerConstants.cControlType_Password] = "********";
                     txtDescription.Text += Environment.NewLine + "Value:" + connProp.ConnectionStringBuilder.ConnectionString;
                 }
                 catch
@@ -1182,6 +1210,8 @@ namespace MIDRetailInstaller
                     char[] delim = "|".ToCharArray();
                     string[] strTagParts = ((InstallerConfigValueTag)asControl.Tag).Description.Split(delim);
                     string strKey = strTagParts[0].ToString().Trim();
+                    string strParent = ((InstallerControl)asControl).Parent;
+                    string strLookupType = ((InstallerControl)asControl).LookupType;
 
                     if (valueTag.ValueChangeType == eConfigChangeType.Changed)
                     {
@@ -1232,7 +1262,7 @@ namespace MIDRetailInstaller
                         msg = msg.Replace("{2}", valueTag.OriginalValue);
                         msg = msg.Replace("{3}", value);
                         frame.SetLogMessage(msg, eErrorType.message);
-                        configFiles.SetConfigValue(null, doc, strKey, value);
+                        configFiles.SetConfigValue(null, doc, strParent, strLookupType, strKey, value);
 						// End TT#1668
                         //}
                         //End TT#1821 - DOConnell - Installer Config values cannot be removed or emptied
@@ -1240,7 +1270,7 @@ namespace MIDRetailInstaller
                     else if (valueTag.ValueChangeType == eConfigChangeType.Remove)
                     {
                         blSave = true;
-                        configFiles.DeleteKey(doc, strKey);
+                        configFiles.DeleteKey(doc, strParent, strLookupType, strKey);
                     }
 
                 }
@@ -1340,7 +1370,7 @@ namespace MIDRetailInstaller
                 string strTagText = lblDescription.Text.Trim() + "|" + txtDescription.Text.Trim();
                 // End TT#4524 - JSmith - Cannot remove setting from configuration file
 
-                DataTable dtConfiguration = dsInstallerInfo.Tables["configuration"];
+                DataTable dtConfiguration = dsInstallerInfo.Tables[InstallerConstants.cTable_Configuration];
                 DataRow[] drConfigRows = dtConfiguration.Select("(config_file='" + configTag.FileName + "' or config_file='ALL') and setting = '" + lblDescription.Text.Trim() + "'");
                 dr = drConfigRows[0];
 
@@ -1350,7 +1380,7 @@ namespace MIDRetailInstaller
                     valueTag = (InstallerConfigValueTag)setting.Tag;
                     if (valueTag.Description.ToString().Trim() == strTagText)
                     {
-                        value = configFiles.GetConfigValue(dr.Field<string>("setting").Trim(), dr.Field<string>("id").Trim(), null, configTag.MIDSettings, dr, out from);
+                        value = configFiles.GetConfigValue(dr.Field<string>(InstallerConstants.cConfigurationField_Parent).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_LookupType).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_Setting).Trim(), dr.Field<string>(InstallerConstants.cConfigurationField_ID).Trim(), null, configTag.MIDSettings, dr, out from);
                         if (setting is MIDRetailInstaller.Config_Combo)
                         {
                             ((Config_Combo)setting).Config_Combo_Text = value;

@@ -29,8 +29,8 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <IsWebBootstrapper>true</IsWebBootstrapper>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
-    <SignAssembly>true</SignAssembly>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>..\midretailinccert.pfx</AssemblyOriginatorKeyFile>
     <PublishUrl>http://localhost/MIDRetail.Windows/</PublishUrl>
     <Install>true</Install>
@@ -98,131 +98,6 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug Oracle|AnyCPU' ">
-    <OutputPath>bin\Debug\</OutputPath>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <BaseAddress>285212672</BaseAddress>
-    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <ConfigurationOverrideFile>
-    </ConfigurationOverrideFile>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DocumentationFile>MIDRetail.Windows.xml</DocumentationFile>
-    <DebugSymbols>true</DebugSymbols>
-    <FileAlignment>4096</FileAlignment>
-    <NoStdLib>false</NoStdLib>
-    <NoWarn>
-    </NoWarn>
-    <Optimize>false</Optimize>
-    <RegisterForComInterop>false</RegisterForComInterop>
-    <RemoveIntegerChecks>false</RemoveIntegerChecks>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <WarningLevel>3</WarningLevel>
-    <DebugType>full</DebugType>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release Oracle|AnyCPU' ">
-    <OutputPath>bin\Debug\</OutputPath>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <BaseAddress>285212672</BaseAddress>
-    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <ConfigurationOverrideFile>
-    </ConfigurationOverrideFile>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DocumentationFile>MIDRetail.Windows.xml</DocumentationFile>
-    <DebugSymbols>true</DebugSymbols>
-    <FileAlignment>4096</FileAlignment>
-    <NoStdLib>false</NoStdLib>
-    <NoWarn>
-    </NoWarn>
-    <Optimize>false</Optimize>
-    <RegisterForComInterop>false</RegisterForComInterop>
-    <RemoveIntegerChecks>false</RemoveIntegerChecks>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <WarningLevel>3</WarningLevel>
-    <DebugType>full</DebugType>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Full Debug SQL Server|AnyCPU' ">
-    <OutputPath>bin\Debug\</OutputPath>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <BaseAddress>285212672</BaseAddress>
-    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <ConfigurationOverrideFile>
-    </ConfigurationOverrideFile>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DocumentationFile>
-    </DocumentationFile>
-    <DebugSymbols>true</DebugSymbols>
-    <FileAlignment>4096</FileAlignment>
-    <NoStdLib>false</NoStdLib>
-    <NoWarn>
-    </NoWarn>
-    <Optimize>false</Optimize>
-    <RegisterForComInterop>false</RegisterForComInterop>
-    <RemoveIntegerChecks>false</RemoveIntegerChecks>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <WarningLevel>4</WarningLevel>
-    <DebugType>full</DebugType>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug SQL Server|AnyCPU' ">
-    <OutputPath>bin\Debug\</OutputPath>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <BaseAddress>285212672</BaseAddress>
-    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <ConfigurationOverrideFile>
-    </ConfigurationOverrideFile>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DocumentationFile>
-    </DocumentationFile>
-    <DebugSymbols>true</DebugSymbols>
-    <FileAlignment>4096</FileAlignment>
-    <NoStdLib>false</NoStdLib>
-    <NoWarn>
-    </NoWarn>
-    <Optimize>false</Optimize>
-    <RegisterForComInterop>false</RegisterForComInterop>
-    <RemoveIntegerChecks>false</RemoveIntegerChecks>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <WarningLevel>4</WarningLevel>
-    <DebugType>full</DebugType>
-    <ErrorReport>prompt</ErrorReport>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release SQL Server|AnyCPU' ">
-    <OutputPath>bin\Release\</OutputPath>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <BaseAddress>285212672</BaseAddress>
-    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <ConfigurationOverrideFile>
-    </ConfigurationOverrideFile>
-    <DefineConstants>TRACE</DefineConstants>
-    <DocumentationFile>
-    </DocumentationFile>
-    <DebugSymbols>false</DebugSymbols>
-    <FileAlignment>4096</FileAlignment>
-    <NoStdLib>false</NoStdLib>
-    <NoWarn>
-    </NoWarn>
-    <Optimize>true</Optimize>
-    <RegisterForComInterop>false</RegisterForComInterop>
-    <RemoveIntegerChecks>false</RemoveIntegerChecks>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <WarningLevel>4</WarningLevel>
-    <DebugType>none</DebugType>
-    <ErrorReport>prompt</ErrorReport>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x86\Debug\</OutputPath>
@@ -237,69 +112,6 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <BaseAddress>285212672</BaseAddress>
-    <Optimize>true</Optimize>
-    <FileAlignment>4096</FileAlignment>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug Oracle|x86' ">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Debug Oracle\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <BaseAddress>285212672</BaseAddress>
-    <DocumentationFile>MIDRetail.Windows.xml</DocumentationFile>
-    <WarningLevel>3</WarningLevel>
-    <FileAlignment>4096</FileAlignment>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release Oracle|x86' ">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Release Oracle\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <BaseAddress>285212672</BaseAddress>
-    <DocumentationFile>MIDRetail.Windows.xml</DocumentationFile>
-    <WarningLevel>3</WarningLevel>
-    <FileAlignment>4096</FileAlignment>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Full Debug SQL Server|x86' ">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Full Debug SQL Server\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <BaseAddress>285212672</BaseAddress>
-    <FileAlignment>4096</FileAlignment>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug SQL Server|x86' ">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Debug SQL Server\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <BaseAddress>285212672</BaseAddress>
-    <FileAlignment>4096</FileAlignment>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release SQL Server|x86' ">
-    <OutputPath>bin\x86\Release SQL Server\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <BaseAddress>285212672</BaseAddress>
     <Optimize>true</Optimize>
@@ -382,10 +194,6 @@
       <SpecificVersion>False</SpecificVersion>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CrystalDecisions.CrystalReports.Engine, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
-    <Reference Include="CrystalDecisions.ReportSource, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
-    <Reference Include="CrystalDecisions.Shared, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
-    <Reference Include="CrystalDecisions.Windows.Forms, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
     <Reference Include="C1.Win.C1FlexGrid.2, Version=2.6.20073.357, Culture=neutral, PublicKeyToken=79882d576c6336da, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
@@ -469,6 +277,13 @@
     <Compile Include="AdvancedStoreEligibility.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="CalendarDateSelectorManager.cs" />
+    <Compile Include="MethodPlanningExtract.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MethodPlanningExtract.Designer.cs">
+      <DependentUpon>MethodPlanningExtract.cs</DependentUpon>
+    </Compile>
     <Compile Include="MethodCreateMasterHeaders.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -497,9 +312,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>MethodDCCartonRounding.resx</DependentUpon>
-    </Compile>
-    <Compile Include="MIDFilterStoreGroupTreeView.cs">
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="ProgressForm.cs">
       <SubType>Form</SubType>
@@ -580,15 +392,7 @@
     <Compile Include="AssortmentWorkspaceExplorer.Designer.cs">
       <DependentUpon>AssortmentWorkspaceExplorer.cs</DependentUpon>
     </Compile>
-    <Compile Include="AuditViewer.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="AuditViewer.Designer.cs">
-      <DependentUpon>AuditViewer.cs</DependentUpon>
-    </Compile>
-    <Compile Include="AuditFilter.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="AuditFilter.cs" />
     <Compile Include="AuditReclassViewer.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -679,17 +483,6 @@
     <Compile Include="ForecastAnalysisForm.Designer.cs">
       <DependentUpon>ForecastAnalysisForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="CrystalReports\AllocationByStore1.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>AllocationByStore.rpt</DependentUpon>
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="CrystalReports\DataSets\AllocationByStore.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>AllocationByStore.xsd</DependentUpon>
-    </Compile>
     <Compile Include="MIDFilterStoreTreeView.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -701,16 +494,6 @@
     </Compile>
     <Compile Include="PlanChainLadderChart.cs">
       <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="CrystalReports\DataSets\UserOptionsReviewDataSet.cs">
-      <DependentUpon>UserOptionsReviewDataSet.xsd</DependentUpon>
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="CrystalReports\UserOptionsReview.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>UserOptionsReview.rpt</DependentUpon>
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="PlanChainLadderManager.cs" />
     <Compile Include="PlanChainLadderManagerData.cs" />
@@ -735,132 +518,8 @@
     <Compile Include="ReportUserOptionsReviewForm.Designer.cs">
       <DependentUpon>ReportUserOptionsReviewForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="CrystalReports\AuditReclassReport2.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>AuditReclassReport2.rpt</DependentUpon>
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="CopyForecastMethod.cs">
       <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="CrystalReports\DataSets\AllocationAuditDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>AllocationAuditDataSet.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="CrystalReports\DataSets\AuditReclassDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>AuditReclassDataSet.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="CrystalReports\DataSets\ChainSetPercentDataSet.cs">
-      <DependentUpon>ChainSetPercentDataSet.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="CrystalReports\DataSets\CharacteristicDataSet.Designer.cs">
-      <DependentUpon>CharacteristicDataSet.xsd</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="CrystalReports\DataSets\ChainSetPercentDataSet.Designer.cs">
-      <DependentUpon>ChainSetPercentDataSet.xsd</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="CrystalReports\DataSets\UserOptionsReviewDataSet.Designer.cs">
-      <DependentUpon>UserOptionsReviewDataSet.xsd</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="CrystalReports\DataSets\SizeCurveSimilarStoresDataSet1.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>SizeCurveSimilarStoresDataSet.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="CrystalReports\DataSets\SizeCurveToleranceDataSet.Designer.cs">
-      <DependentUpon>SizeCurveToleranceDataSet.xsd</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="CrystalReports\DataSets\SizeCurveDataSet.Designer.cs">
-      <DependentUpon>SizeCurveDataSet.xsd</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="CrystalReports\DataSets\VSWDataSet.Designer.cs">
-      <DependentUpon>VSWDataSet.xsd</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="CrystalReports\DataSets\DailyPercentagesDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DailyPercentagesDataSet.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="CrystalReports\DataSets\ForecastAuditMerchandiseDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ForecastAuditMerchandiseDataSet.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="CrystalReports\DataSets\ForecastAuditModifySalesDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ForecastAuditModifySalesDataSet.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="CrystalReports\DataSets\ForecastAuditOTSForecastDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ForecastAuditOTSForecastDataSet.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="CrystalReports\DataSets\ForecastLevelDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ForecastLevelDataSet.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="CrystalReports\DataSets\ForecastReportNamesDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ForecastReportNamesDataSet.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="CrystalReports\DataSets\ForecastTypeDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ForecastTypeDataSet.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="CrystalReports\DataSets\GetReportsDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>GetReportsDataSet.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="CrystalReports\DataSets\PurgeDatesDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>PurgeDatesDataSet.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="CrystalReports\DataSets\StockMinMaxDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>StockMinMaxDataSet.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="CrystalReports\DataSets\StoreCapacityDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>StoreCapacityDataSet.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="CrystalReports\DataSets\StoreEligibilityDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>StoreEligibilityDataSet.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="CrystalReports\DataSets\StoreGradesDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>StoreGradesDataSet.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="CrystalReports\DataSets\VelocityGradesDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>VelocityGradesDataSet.xsd</DependentUpon>
     </Compile>
     <Compile Include="CustomWindowsRoutines.cs">
       <SubType>Code</SubType>
@@ -915,9 +574,6 @@
     </Compile>
     <Compile Include="FilterStoreExplorer.Designer.cs">
       <DependentUpon>FilterStoreExplorer.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FilterProperties.cs">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="ForecastBalance.cs">
       <SubType>Form</SubType>
@@ -1134,33 +790,7 @@
     <Compile Include="ReportNodePropertiesOverridesSetup.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ReportParam.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="CrystalReports\AllocationAudit.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>AllocationAudit.rpt</DependentUpon>
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="CrystalReports\ForecastAuditMerchandise.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ForecastAuditMerchandise.rpt</DependentUpon>
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="CrystalReports\ForecastAuditMethod.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ForecastAuditMethod.rpt</DependentUpon>
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="CrystalReports\NodePropertiesOverrides.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>NodePropertiesOverrides.rpt</DependentUpon>
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="ReportParam.cs" />
     <Compile Include="ReportViewer.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1395,6 +1025,10 @@
       <DependentUpon>AdvancedStoreEligibility.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="MethodPlanningExtract.resx">
+      <DependentUpon>MethodPlanningExtract.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="MethodCreateMasterHeaders.resx">
       <DependentUpon>MethodCreateMasterHeaders.cs</DependentUpon>
     </EmbeddedResource>
@@ -1462,9 +1096,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="AssortmentWorkspaceExplorer.resx">
       <DependentUpon>AssortmentWorkspaceExplorer.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="AuditViewer.resx">
-      <DependentUpon>AuditViewer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="AuditFilter.resx">
       <DependentUpon>AuditFilter.cs</DependentUpon>
@@ -1544,20 +1175,12 @@
     <EmbeddedResource Include="ForecastAnalysisForm.resx">
       <DependentUpon>ForecastAnalysisForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="CrystalReports\AllocationByStore.rpt">
-      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
-      <LastGenOutput>AllocationByStore1.cs</LastGenOutput>
-    </EmbeddedResource>
     <EmbeddedResource Include="ReportAllocationByStoreForm.resx">
       <DependentUpon>ReportAllocationByStoreForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PlanChainLadderChart.resx">
       <DependentUpon>PlanChainLadderChart.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="CrystalReports\UserOptionsReview.rpt">
-      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
-      <LastGenOutput>UserOptionsReview.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="PlanChainLadderView.resx">
       <DependentUpon>PlanChainLadderView.cs</DependentUpon>
@@ -1570,10 +1193,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ReportUserOptionsReviewForm.resx">
       <DependentUpon>ReportUserOptionsReviewForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="CrystalReports\AuditReclassReport2.rpt">
-      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
-      <LastGenOutput>AuditReclassReport2.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="CopyForecastMethod.resx">
       <DependentUpon>CopyForecastMethod.cs</DependentUpon>
@@ -1620,10 +1239,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FilterStoreExplorer.resx">
       <DependentUpon>FilterStoreExplorer.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FilterProperties.resx">
-      <DependentUpon>FilterProperties.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ForecastBalance.resx">
@@ -1820,22 +1435,6 @@
     <EmbeddedResource Include="ReportParam.resx">
       <DependentUpon>ReportParam.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="CrystalReports\AllocationAudit.rpt">
-      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
-      <LastGenOutput>AllocationAudit.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="CrystalReports\ForecastAuditMerchandise.rpt">
-      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
-      <LastGenOutput>ForecastAuditMerchandise.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="CrystalReports\ForecastAuditMethod.rpt">
-      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
-      <LastGenOutput>ForecastAuditMethod.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="CrystalReports\NodePropertiesOverrides.rpt">
-      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
-      <LastGenOutput>NodePropertiesOverrides.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="ReportViewer.resx">
       <DependentUpon>ReportViewer.cs</DependentUpon>
@@ -2089,275 +1688,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="CrystalReports\DataSets\AllocationAuditDataSet.xsc">
-      <DependentUpon>AllocationAuditDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\AllocationAuditDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>AllocationAuditDataSet.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="CrystalReports\DataSets\AllocationAuditDataSet.xss">
-      <DependentUpon>AllocationAuditDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\AllocationByStore.xsc">
-      <DependentUpon>AllocationByStore.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\AllocationByStore.xsd">
-      <SubType>Designer</SubType>
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>AllocationByStore.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="CrystalReports\DataSets\AllocationByStore.xss">
-      <DependentUpon>AllocationByStore.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\AuditReclassDataSet.xsc">
-      <DependentUpon>AuditReclassDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\AuditReclassDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>AuditReclassDataSet.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="CrystalReports\DataSets\AuditReclassDataSet.xss">
-      <DependentUpon>AuditReclassDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\CharacteristicDataSet.xsc">
-      <DependentUpon>CharacteristicDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\CharacteristicDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>CharacteristicDataSet.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="CrystalReports\DataSets\CharacteristicDataSet.xss">
-      <DependentUpon>CharacteristicDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\ChainSetPercentDataSet.xsc">
-      <DependentUpon>ChainSetPercentDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\ChainSetPercentDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>ChainSetPercentDataSet.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="CrystalReports\DataSets\ChainSetPercentDataSet.xss">
-      <DependentUpon>ChainSetPercentDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\UserOptionsReviewDataSet.xsc">
-      <DependentUpon>UserOptionsReviewDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\UserOptionsReviewDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>UserOptionsReviewDataSet.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="CrystalReports\DataSets\UserOptionsReviewDataSet.xss">
-      <DependentUpon>UserOptionsReviewDataSet.xsd</DependentUpon>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="CrystalReports\DataSets\SizeCurveSimilarStoresDataSet.xsc">
-      <DependentUpon>SizeCurveSimilarStoresDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\SizeCurveSimilarStoresDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>SizeCurveSimilarStoresDataSet1.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="CrystalReports\DataSets\SizeCurveSimilarStoresDataSet.xss">
-      <DependentUpon>SizeCurveSimilarStoresDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\SizeCurveToleranceDataSet.xsc">
-      <DependentUpon>SizeCurveToleranceDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\SizeCurveToleranceDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>SizeCurveToleranceDataSet.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="CrystalReports\DataSets\SizeCurveToleranceDataSet.xss">
-      <DependentUpon>SizeCurveToleranceDataSet.xsd</DependentUpon>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="CrystalReports\DataSets\SizeCurveDataSet.xsc">
-      <DependentUpon>SizeCurveDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\SizeCurveDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>SizeCurveDataSet.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="CrystalReports\DataSets\SizeCurveDataSet.xss">
-      <DependentUpon>SizeCurveDataSet.xsd</DependentUpon>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="CrystalReports\DataSets\VSWDataSet.xsc">
-      <DependentUpon>VSWDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\VSWDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>VSWDataSet.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="CrystalReports\DataSets\VSWDataSet.xss">
-      <DependentUpon>VSWDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\DailyPercentagesDataSet.xsc">
-      <DependentUpon>DailyPercentagesDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\DailyPercentagesDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>DailyPercentagesDataSet.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="CrystalReports\DataSets\DailyPercentagesDataSet.xss">
-      <DependentUpon>DailyPercentagesDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\ForecastAuditMerchandiseDataSet.xsc">
-      <DependentUpon>ForecastAuditMerchandiseDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\ForecastAuditMerchandiseDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>ForecastAuditMerchandiseDataSet.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="CrystalReports\DataSets\ForecastAuditMerchandiseDataSet.xss">
-      <DependentUpon>ForecastAuditMerchandiseDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\ForecastAuditModifySalesDataSet.xsc">
-      <DependentUpon>ForecastAuditModifySalesDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\ForecastAuditModifySalesDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>ForecastAuditModifySalesDataSet.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="CrystalReports\DataSets\ForecastAuditModifySalesDataSet.xss">
-      <DependentUpon>ForecastAuditModifySalesDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\ForecastAuditOTSForecastDataSet.xsc">
-      <DependentUpon>ForecastAuditOTSForecastDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\ForecastAuditOTSForecastDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>ForecastAuditOTSForecastDataSet.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="CrystalReports\DataSets\ForecastAuditOTSForecastDataSet.xss">
-      <DependentUpon>ForecastAuditOTSForecastDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\ForecastLevelDataSet.xsc">
-      <DependentUpon>ForecastLevelDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\ForecastLevelDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>ForecastLevelDataSet.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="CrystalReports\DataSets\ForecastLevelDataSet.xss">
-      <DependentUpon>ForecastLevelDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\ForecastReportNamesDataSet.xsc">
-      <DependentUpon>ForecastReportNamesDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\ForecastReportNamesDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>ForecastReportNamesDataSet.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="CrystalReports\DataSets\ForecastReportNamesDataSet.xss">
-      <DependentUpon>ForecastReportNamesDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\ForecastTypeDataSet.xsc">
-      <DependentUpon>ForecastTypeDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\ForecastTypeDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>ForecastTypeDataSet.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="CrystalReports\DataSets\ForecastTypeDataSet.xss">
-      <DependentUpon>ForecastTypeDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\GetReportsDataSet.xsc">
-      <DependentUpon>GetReportsDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\GetReportsDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>GetReportsDataSet.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="CrystalReports\DataSets\GetReportsDataSet.xss">
-      <DependentUpon>GetReportsDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\PurgeDatesDataSet.xsc">
-      <DependentUpon>PurgeDatesDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\PurgeDatesDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>PurgeDatesDataSet.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="CrystalReports\DataSets\PurgeDatesDataSet.xss">
-      <DependentUpon>PurgeDatesDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\StockMinMaxDataSet.xsc">
-      <DependentUpon>StockMinMaxDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\StockMinMaxDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>StockMinMaxDataSet.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="CrystalReports\DataSets\StockMinMaxDataSet.xss">
-      <DependentUpon>StockMinMaxDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\StoreCapacityDataSet.xsc">
-      <DependentUpon>StoreCapacityDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\StoreCapacityDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>StoreCapacityDataSet.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="CrystalReports\DataSets\StoreCapacityDataSet.xss">
-      <DependentUpon>StoreCapacityDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\StoreEligibilityDataSet.xsc">
-      <DependentUpon>StoreEligibilityDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\StoreEligibilityDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>StoreEligibilityDataSet.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="CrystalReports\DataSets\StoreEligibilityDataSet.xss">
-      <DependentUpon>StoreEligibilityDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\StoreGradesDataSet.xsc">
-      <DependentUpon>StoreGradesDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\StoreGradesDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>StoreGradesDataSet.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="CrystalReports\DataSets\StoreGradesDataSet.xss">
-      <DependentUpon>StoreGradesDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\VelocityGradesDataSet.xsc">
-      <DependentUpon>VelocityGradesDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="CrystalReports\DataSets\VelocityGradesDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>VelocityGradesDataSet.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="CrystalReports\DataSets\VelocityGradesDataSet.xss">
-      <DependentUpon>VelocityGradesDataSet.xsd</DependentUpon>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Business\Business.csproj">
       <Project>{934F0067-9BD4-4283-9580-F0B024C2D29D}</Project>
       <Name>Business</Name>
@@ -2378,6 +1708,10 @@
     <ProjectReference Include="..\Data\Data.csproj">
       <Project>{90D34E6E-6872-4531-8283-F9A7450C4BAF}</Project>
       <Name>Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ROUI\ROUI.csproj">
+      <Project>{938466d3-7f2c-4c44-9433-2bc59ee91efa}</Project>
+      <Name>ROUI</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

@@ -505,7 +505,7 @@ namespace UnitTesting
         }
         private static void ValidateTests()
         {
-            //string sPathInsertOrder = @"C:\MIDRetail\UnitTesting\delete_order.csv";
+            //string sPathInsertOrder = @"C:\Logility\RO\UnitTesting\delete_order.csv";
             //System.IO.StreamReader sr = new System.IO.StreamReader(sPathInsertOrder);
             //string sInsertOrder = sr.ReadToEnd();
             //sr.Close();

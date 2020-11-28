@@ -266,7 +266,7 @@ namespace MIDRetail.Windows
 		private void HandleExceptions(System.Exception exc)
 		{
 			Debug.WriteLine(exc.ToString());
-			MessageBox.Show(exc.ToString());
+			DisplayMessages.Show(exc.ToString());
 		}
 
 		protected void FormatForXP(Control ctl)
@@ -453,12 +453,20 @@ namespace MIDRetail.Windows
         }
    		// End TT#795-MD - stodd - Build Packs not working on a Placeholder in an assortment.
 
-		#endregion Properties
-		// END TT#371-MD - stodd -  Velocity Interactive on Assortment
+        public UltraGrid UltraGridDetails
+        {
+            get
+            {
+                return ugDetails;
+            }
+        }
 
-		#region Constructor
+        #endregion Properties
+        // END TT#371-MD - stodd -  Velocity Interactive on Assortment
 
-		public AssortmentView(ExplorerAddressBlock eab, ApplicationSessionTransaction trans, eAssortmentWindowType windowType)
+        #region Constructor
+
+        public AssortmentView(ExplorerAddressBlock eab, ApplicationSessionTransaction trans, eAssortmentWindowType windowType)
 			: base(trans.SAB)
 		{
 			try
@@ -476,10 +484,13 @@ namespace MIDRetail.Windows
 				_pageLoadLock = new MIDReaderWriterLock();
 				_loadHash = new Hashtable();
 
-				g2MouseUpRefireHandler += new System.Windows.Forms.MouseEventHandler(this.g2_MouseUp);
-				g3MouseUpRefireHandler += new System.Windows.Forms.MouseEventHandler(this.g3_MouseUp);
+                if (MIDEnvironment.isWindows)
+                {
+                    g2MouseUpRefireHandler += new System.Windows.Forms.MouseEventHandler(this.g2_MouseUp);
+                    g3MouseUpRefireHandler += new System.Windows.Forms.MouseEventHandler(this.g3_MouseUp);
 
-				InitializeComponent();
+                    InitializeComponent();
+                }
 
 				if (windowType == eAssortmentWindowType.AllocationSummary)
 				{
@@ -791,6 +802,11 @@ namespace MIDRetail.Windows
         /// <param name="viewRid">View Rid from the Save Window</param>
 		public void SaveUserAssortmentData(int savedViewRid)	// TT#857 - MD - stodd - assortment not honoring view
 		{
+            if (!MIDEnvironment.isWindows)
+            {
+                return;
+            }
+
 			try
 			{
 				// BEGIN TT#376-MD - stodd - Update Enqueue logic
@@ -1018,7 +1034,7 @@ namespace MIDRetail.Windows
 			}
 			catch (IOException IOex)
 			{
-				MessageBox.Show(IOex.Message);
+				DisplayMessages.Show(IOex.Message);
 				return;
 			}
 			catch (Exception exc)
@@ -1072,11 +1088,11 @@ namespace MIDRetail.Windows
 					errorMsg = NoSelectError;
 					if (IsGroupAllocation)
 					{
-						MessageBox.Show(errorMsg, MIDText.GetTextOnly((int)eMIDTextCode.frm_GroupAllocationReview), MessageBoxButtons.OK, MessageBoxIcon.Error);
+						DisplayMessages.Show(errorMsg, MIDText.GetTextOnly((int)eMIDTextCode.frm_GroupAllocationReview), MessageBoxButtons.OK, MessageBoxIcon.Error);
 					}
 					else
 					{
-						MessageBox.Show(errorMsg, MIDText.GetTextOnly((int)eMIDTextCode.frm_AssortmentReview), MessageBoxButtons.OK, MessageBoxIcon.Error);
+						DisplayMessages.Show(errorMsg, MIDText.GetTextOnly((int)eMIDTextCode.frm_AssortmentReview), MessageBoxButtons.OK, MessageBoxIcon.Error);
 					}
 				}
 			}
@@ -1092,11 +1108,11 @@ namespace MIDRetail.Windows
 					errorMsg = NoSelectError;
 					if (IsGroupAllocation)
 					{
-						MessageBox.Show(errorMsg, MIDText.GetTextOnly((int)eMIDTextCode.frm_GroupAllocationReview), MessageBoxButtons.OK, MessageBoxIcon.Error);
+						DisplayMessages.Show(errorMsg, MIDText.GetTextOnly((int)eMIDTextCode.frm_GroupAllocationReview), MessageBoxButtons.OK, MessageBoxIcon.Error);
 					}
 					else
 					{
-						MessageBox.Show(errorMsg, MIDText.GetTextOnly((int)eMIDTextCode.frm_AssortmentReview), MessageBoxButtons.OK, MessageBoxIcon.Error);
+						DisplayMessages.Show(errorMsg, MIDText.GetTextOnly((int)eMIDTextCode.frm_AssortmentReview), MessageBoxButtons.OK, MessageBoxIcon.Error);
 					}
 				}
 			}
@@ -1113,7 +1129,7 @@ namespace MIDRetail.Windows
 					_checkForExportSelected = false;
 					_exportDetails = false;
 					_ultraGridExcelExporter1.Export(this.ugDetails, myFilepath);
-					MessageBox.Show(MessBoxAlltext1 + myFilepath + MessBoxAlltext2 + ugDetails.Rows.Count);
+					DisplayMessages.Show(MessBoxAlltext1 + myFilepath + MessBoxAlltext2 + ugDetails.Rows.Count);
 				}
 			}
 			catch (Exception ex)
@@ -1133,7 +1149,7 @@ namespace MIDRetail.Windows
 					_checkForExportSelected = true;
 					_exportDetails = false;
 					_ultraGridExcelExporter1.Export(this.ugDetails, myFilepath);
-					MessageBox.Show(MessBoxSHtext1 + myFilepath + MessBoxSHtext2 + ugDetails.Selected.Rows.Count);
+					DisplayMessages.Show(MessBoxSHtext1 + myFilepath + MessBoxSHtext2 + ugDetails.Selected.Rows.Count);
 				}
 			}
 			catch (Exception ex)
@@ -1153,7 +1169,7 @@ namespace MIDRetail.Windows
 					_checkForExportSelected = true;
 					_exportDetails = true;
 					_ultraGridExcelExporter1.Export(this.ugDetails, myFilepath);
-					MessageBox.Show(MessBoxSHDtext1 + myFilepath + MessBoxSHDtext2 + ugDetails.Selected.Rows.Count);
+					DisplayMessages.Show(MessBoxSHDtext1 + myFilepath + MessBoxSHDtext2 + ugDetails.Selected.Rows.Count);
 				}
 			}
 			catch (Exception ex)
@@ -1349,7 +1365,7 @@ namespace MIDRetail.Windows
                                 }
                                 else
                                 {
-                                    MessageBox.Show(_sab.ClientServerSession.Audit.GetText(eMIDTextCode.msg_al_SummaryReviewNotValidForGroupHeaderMode));
+                                    DisplayMessages.Show(_sab.ClientServerSession.Audit.GetText(eMIDTextCode.msg_al_SummaryReviewNotValidForGroupHeaderMode));
                                     return;
                                 }
                                 // End TT#4793 - stodd - GA- Heades are different styles-> Velocity basis is color-> get Vel basis error-> accidentally select Summary review-> get Index out of range-> select ok and attemt to cancel group-> get Null reference error.
@@ -1434,7 +1450,7 @@ namespace MIDRetail.Windows
                             {
                                 string msgCaption = _sab.ClientServerSession.Audit.GetText(eMIDTextCode.msg_al_GroupAllocationSizeViewProhibitedCaption);
                                 string msg = _sab.ClientServerSession.Audit.GetText(eMIDTextCode.msg_al_GroupAllocationSizeViewProhibited);
-                                MessageBox.Show(msg, msgCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                DisplayMessages.Show(msg, msgCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                                 return;
                             }
                             // End TT#1222-MD - stodd - When opening Size Review when Group Allocation is in "Group" mode and the matrix tab, size review gets a "No Displayable Sizes" error.
@@ -1508,7 +1524,7 @@ namespace MIDRetail.Windows
 
 				if (!okToContinue)
 				{
-					MessageBox.Show(_sab.ClientServerSession.Audit.GetText(eMIDTextCode.msg_NotAuthorized));
+					DisplayMessages.Show(_sab.ClientServerSession.Audit.GetText(eMIDTextCode.msg_NotAuthorized));
 					return;
 				}
 
@@ -1618,7 +1634,7 @@ namespace MIDRetail.Windows
 						if (IsProcessAsHeaders)
                     	{
                         	string msg = _sab.ClientServerSession.Audit.GetText(eMIDTextCode.msg_al_NoHeadersSelectedInGroupAllocation);
-                        	DialogResult diagResult = MessageBox.Show(msg, "No Headers Selected", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+                        	DialogResult diagResult = DisplayMessages.Show(msg, "No Headers Selected", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
                         	if (diagResult == System.Windows.Forms.DialogResult.Cancel)
                         	{
                             	okToContinue = false;
@@ -1811,7 +1827,7 @@ namespace MIDRetail.Windows
 					errorMessage = _sab.ClientServerSession.Audit.GetText(eMIDTextCode.msg_SizeReviewInvalid);
 			}
 			if (!sizesExist)
-				MessageBox.Show(errorMessage, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+				DisplayMessages.Show(errorMessage, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 			// END MID Track #2547
 			return sizesExist;
 		}
@@ -2284,7 +2300,7 @@ namespace MIDRetail.Windows
 				// End TT#952 - MD - stodd - Add Matrix Merge
 				if (_storeProfileList.Count == 0)
 				{
-					MessageBox.Show("Applied filter(s) have resulted in no displayable Stores.", "Filter Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					DisplayMessages.Show("Applied filter(s) have resulted in no displayable Stores.", "Filter Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				}
 
 				_workingDetailProfileList = _storeProfileList;
@@ -2536,6 +2552,147 @@ namespace MIDRetail.Windows
 			}
 		}
 
+        public void InitializeNonWindows(AssortmentCubeGroup asrtCubeGroup, int viewKey)
+        {
+            // instantiate content grid and events
+            this.ugDetails = new Infragistics.Win.UltraWinGrid.UltraGrid();
+            this.ugDetails.Name = "ugDetails";
+            // grid must be added to controls list before rows will be available
+            this.Controls.Add(ugDetails);
+            this.Location = new System.Drawing.Point(4, 22);
+            this.Size = new System.Drawing.Size(1123, 313);
+
+            this.ugDetails.AfterCellUpdate += new Infragistics.Win.UltraWinGrid.CellEventHandler(this.ugDetails_AfterCellUpdate);
+            this.ugDetails.InitializeLayout += new Infragistics.Win.UltraWinGrid.InitializeLayoutEventHandler(this.ugDetails_InitializeLayout);
+            this.ugDetails.InitializeRow += new Infragistics.Win.UltraWinGrid.InitializeRowEventHandler(this.ugDetails_InitializeRow);
+            this.ugDetails.AfterRowsDeleted += new System.EventHandler(this.ugDetails_AfterRowsDeleted);
+            this.ugDetails.AfterRowInsert += new Infragistics.Win.UltraWinGrid.RowEventHandler(this.ugDetails_AfterRowInsert);
+            this.ugDetails.CellChange += new Infragistics.Win.UltraWinGrid.CellEventHandler(this.ugDetails_CellChange);
+            this.ugDetails.BeforeCellUpdate += new Infragistics.Win.UltraWinGrid.BeforeCellUpdateEventHandler(this.ugDetails_BeforeCellUpdate);
+            this.ugDetails.BeforeRowsDeleted += new Infragistics.Win.UltraWinGrid.BeforeRowsDeletedEventHandler(this.ugDetails_BeforeRowsDeleted);
+
+            // Instantiate menu items so won't get null reference setting visibility
+            this.cmiColChooser = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmiRowChooser = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmiLockSeparator = new System.Windows.Forms.ToolStripSeparator();
+            this.cmiLockCell = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmiLockColumn = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmiUnlockColumn = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmiLockRow = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmiUnlockRow = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmiLockSheet = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmiUnlockSheet = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmiCascadeLockCell = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmiCascadeUnlockCell = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmiCascadeLockColumn = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmiCascadeUnlockColumn = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmiCascadeLockRow = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmiCascadeUnlockRow = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmiCascadeLockSection = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmiCascadeUnlockSection = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmiFreezeSeparator = new System.Windows.Forms.ToolStripSeparator();
+            this.cmiFreezeColumn = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmiCloseStyle = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmiCloseColumn = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmiOpenColumn = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmiCloseRow = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmiOpenRow = new System.Windows.Forms.ToolStripMenuItem();
+
+            if (IsGroupAllocation)
+            {
+                FunctionSecurity = _sab.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.GroupAllocationReview);
+                _assortReviewAssortmentSecurity = _sab.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.GroupAllocationMatrix);
+                _assortReviewContentSecurity = _sab.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.GroupAllocationContent);
+                _assortReviewCharacteristicSecurity = _sab.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.GroupAllocationCharacteristic);
+                _userViewSecurity = SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.GroupAllocationViewsUser);
+                _globalViewSecurity = SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.GroupAllocationViewsGlobal);
+            }
+            else
+            {
+                FunctionSecurity = _sab.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.AssortmentReview);
+                _assortReviewAssortmentSecurity = _sab.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.AssortmentReviewAssortment);
+                _assortReviewContentSecurity = _sab.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.AssortmentReviewContent);
+                _assortReviewCharacteristicSecurity = _sab.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.AssortmentReviewCharacteristic);
+                _userViewSecurity = SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.AssortmentViewsUser);
+                _globalViewSecurity = SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.AssortmentViewsGlobal);
+            }
+
+            _asrtCubeGroup = asrtCubeGroup;
+
+            //Retrieve Variable Lists
+
+            _componentVariables = _asrtCubeGroup.AssortmentComponentVariables;
+            _totalVariables = _asrtCubeGroup.AssortmentComputations.AssortmentTotalVariables;
+            _detailVariables = _asrtCubeGroup.AssortmentComputations.AssortmentDetailVariables;
+            _summaryVariables = _asrtCubeGroup.AssortmentComputations.AssortmentSummaryVariables;
+            _quantityVariables = _asrtCubeGroup.AssortmentComputations.AssortmentQuantityVariables;
+
+            //Retrieve Variable ProfileLists
+
+            _componentColumnProfileList = (ProfileList)_componentVariables.VariableProfileList.Clone();
+            _totalColumnProfileList = _totalVariables.VariableProfileList;
+            //Begin TT#2 - JScott - Assortment Planning - Phase 2
+            _planRowProfileList = _transaction.PlanComputations.PlanVariables.GetAssortmentPlanningVariableList();
+            //End TT#2 - JScott - Assortment Planning - Phase 2
+            _detailColumnProfileList = _detailVariables.VariableProfileList;
+            _detailRowProfileList = _quantityVariables.VariableProfileList;
+            _summaryRowProfileList = _summaryVariables.VariableProfileList;
+
+            //Retrieve StoreGradeProfile list
+
+            _storeGradeProfileList = _asrtCubeGroup.GetFilteredProfileList(eProfileType.StoreGrade);
+
+            //Get Header information
+
+            if (_transaction.AllocationCriteriaExists)
+            {
+                _transaction.UpdateAllocationViewSelectionHeaders();
+                _transaction.AssortmentView = this;
+
+                _headerList = (AllocationHeaderProfileList)_transaction.GetMasterProfileList(eProfileType.AllocationHeader);
+
+                foreach (AllocationHeaderProfile ahp in _headerList)
+                {
+                    if (ahp.HeaderType == eHeaderType.Assortment)
+                    {
+                        _assortmentProfile = (AssortmentProfile)_transaction.GetAssortmentMemberProfile(ahp.Key);
+
+                        _sab.ApplicationServerSession.AddOpenAsrtView(ahp.Key, this);
+                    }
+                }
+            }
+
+            //Get Component Information for all selected headers
+
+            _dtHeaders = _asrtCubeGroup.GetAssortmentComponents();
+
+            AssortmentProfile asp1 = (AssortmentProfile)_asrtCubeGroup.DefaultAllocationProfile;
+            _assortmentRid = asp1.Key;
+
+            _groupName = asp1.HeaderID;
+
+            InitializeContentTabData();
+
+            _assortmentViewData = new AssortmentViewData();
+
+            _selectableComponentColumnHeaders = new ArrayList();
+            _selectableSummaryRowHeaders = new ArrayList();
+            _selectableTotalColumnHeaders = new ArrayList();
+            _selectableTotalRowHeaders = new ArrayList();   
+            _selectableDetailColumnHeaders = new ArrayList();
+            _selectableDetailRowHeaders = new ArrayList();
+            _sortedComponentColumnHeaders = new SortedList();
+            _sortedSummaryRowHeaders = new SortedList();
+            _sortedTotalColumnHeaders = new SortedList();
+            _sortedDetailColumnHeaders = new SortedList();
+            _sortedDetailRowHeaders = new SortedList();
+
+            LoadView(viewKey);
+
+            _formLoading = false;
+            ugDetails.Selected.Rows.Clear();
+        }
+
         // Begin TT#1149-MD - RMatelic - GA Matrix - Content Tab - Headings should save based on user preference (like the Content Tab) 
         private void LoadToolBarLayout()
         {
@@ -2712,6 +2869,10 @@ namespace MIDRetail.Windows
 		/// <param name="enable"></param>
         private void EnableCreatePlaceholderAction(bool enable)
 		{
+            if (!MIDEnvironment.isWindows)
+            {
+                return;
+            }
 			// Begin TT#1452-MD - stodd - The Assortment Review screen no long manages when the "Create Placeholders" action is available.
             // Begin TT#1265-MD - stodd - Balance Assortment action gets “Action Successful” but values in grid do not change.
             //Infragistics.Win.UltraWinToolbars.ComboBoxTool cbo = (Infragistics.Win.UltraWinToolbars.ComboBoxTool)this.ultraToolbarsManager1.Tools["cboAssortmentAction"];
@@ -2789,6 +2950,10 @@ namespace MIDRetail.Windows
 		/// <param name="enable"></param>
         private void EnableBalanceAssortmentAction(bool enable)
 		{
+            if (!MIDEnvironment.isWindows)
+            {
+                return;
+            }
 			// Begin TT#1452-MD - stodd - The Assortment Review screen no long manages when the "Create Placeholders" action is available.
             // Begin TT#1265-MD - stodd - Balance Assortment action gets “Action Successful” but values in grid do not change.
             //Infragistics.Win.UltraWinToolbars.ComboBoxTool cbo = (Infragistics.Win.UltraWinToolbars.ComboBoxTool)this.ultraToolbarsManager1.Tools["cboAssortmentAction"];
@@ -3401,7 +3566,7 @@ namespace MIDRetail.Windows
                     //string errMessage = SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_as_InvalidPostReceiptView);
                     string errMessage = MIDText.GetTextOnly(eMIDTextCode.msg_as_InvalidPostReceiptView);
 					//END TT#1518 - MD- DOConnell - Audit is being proliferated with "Null" messages when working within an assortment
-                    MessageBox.Show(errMessage);
+                    DisplayMessages.Show(errMessage);
                 }
                 // End TT#857 - MD - stodd - assortment not honoring view
                 ChangePending = true; //TT#490 - MD - STodd
@@ -3466,7 +3631,7 @@ namespace MIDRetail.Windows
 
 		//                        if (_storeProfileList.Count == 0)
 		//                        {
-		//                            MessageBox.Show("Applied filter(s) have resulted in no displayable Stores.", "Filter Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+		//                            DisplayMessages.Show("Applied filter(s) have resulted in no displayable Stores.", "Filter Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 		//                        }
 
 		//                        _workingDetailProfileList = new ProfileList(eProfileType.Store);
@@ -3586,7 +3751,7 @@ namespace MIDRetail.Windows
                 if (viewRow == null)
                 {
                     string errMessage = SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_as_GridViewDoesNotExist);
-                    MessageBox.Show(errMessage);
+                    DisplayMessages.Show(errMessage);
                     LoadViewsOnToolbar();
                     _viewDeleted = true;
                     SetSelectedView(-1);
@@ -6357,6 +6522,10 @@ namespace MIDRetail.Windows
 
 			try
 			{
+                if (!MIDEnvironment.isWindows)
+                {
+                    return;
+                }
 				if (g1.Cols.Fixed > 0)
 				{
 					g1.AutoSizeCols(0, 0, g1.Rows.Count - 1, g1.Cols.Fixed - 1, 0, AutoSizeFlags.None);
@@ -6414,6 +6583,10 @@ namespace MIDRetail.Windows
 
 			try
 			{
+                if (!MIDEnvironment.isWindows)
+                {
+                    return;
+                }
 				g2.AutoSizeCols(g2.Rows.Fixed, 0, g2.Rows.Count - 1, g2.Cols.Count - 1, 0, AutoSizeFlags.None);
 				g5.AutoSizeCols(g5.Rows.Fixed, 0, g5.Rows.Count - 1, g5.Cols.Count - 1, 0, AutoSizeFlags.None);
 				g8.AutoSizeCols(g8.Rows.Fixed, 0, g8.Rows.Count - 1, g8.Cols.Count - 1, 0, AutoSizeFlags.None);
@@ -6464,6 +6637,10 @@ namespace MIDRetail.Windows
 
 			try
 			{
+                if (!MIDEnvironment.isWindows)
+                {
+                    return;
+                }
 				g3.AutoSizeCols(g3.Rows.Fixed, 0, g3.Rows.Count - 1, g3.Cols.Count - 1, 0, AutoSizeFlags.None);
 				g6.AutoSizeCols(g6.Rows.Fixed, 0, g6.Rows.Count - 1, g6.Cols.Count - 1, 0, AutoSizeFlags.None);
 				g9.AutoSizeCols(g9.Rows.Fixed, 0, g9.Rows.Count - 1, g9.Cols.Count - 1, 0, AutoSizeFlags.None);
@@ -8646,7 +8823,7 @@ namespace MIDRetail.Windows
 			catch (NothingToSpreadException ex)
 			{
 				string message = ex.Message;
-				MessageBox.Show(message, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				DisplayMessages.Show(message, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				//string message = MIDText.GetText(eMIDTextCode.msg_ChainWeekLowLvlSpreadFailed);
 				SAB.ApplicationServerSession.Audit.Add_Msg(eMIDMessageLevel.Warning, ex.ToString(), this.ToString());
 			}
@@ -8681,7 +8858,7 @@ namespace MIDRetail.Windows
 				// END TT#488-MD - Stodd - Group Allocation
 				if (action == Include.NoRID)
 				{
-					MessageBox.Show(_sab.ClientServerSession.Audit.GetText(eMIDTextCode.msg_ActionIsRequired), this.Text);
+					DisplayMessages.Show(_sab.ClientServerSession.Audit.GetText(eMIDTextCode.msg_ActionIsRequired), this.Text);
 					return;
 				}
 
@@ -8808,7 +8985,7 @@ namespace MIDRetail.Windows
                         actionText = cmbAllocationActions.SelectedText;
 						// End TT#4071 - stodd - Matrix does not allow search for attribute - 
 					}
-					MessageBox.Show(message, actionText, MessageBoxButtons.OK, MessageBoxIcon.Information);
+					DisplayMessages.Show(message, actionText, MessageBoxButtons.OK, MessageBoxIcon.Information);
 					// END TT#488-MD - Stodd - Group Allocation
 				}
 				else if (_transaction != null)
@@ -8841,7 +9018,7 @@ namespace MIDRetail.Windows
                         actionText = cmbAllocationActions.SelectedText;
 						// End TT#4071 - stodd - Matrix does not allow search for attribute - 
 					}
-					MessageBox.Show(message, actionText, MessageBoxButtons.OK, MessageBoxIcon.Information);
+					DisplayMessages.Show(message, actionText, MessageBoxButtons.OK, MessageBoxIcon.Information);
 					// END TT#488-MD - Stodd - Group Allocation
 				}
 				// END TT#217-MD - stodd - unable to run workflow methods against assortment
@@ -9118,7 +9295,7 @@ namespace MIDRetail.Windows
 			}
 			catch (SpreadFailed err)
 			{
-				MessageBox.Show(err.Message, this.Text);
+				DisplayMessages.Show(err.Message, this.Text);
 			}
 			catch (HeaderInUseException err)
 			{
@@ -9130,7 +9307,7 @@ namespace MIDRetail.Windows
 					else
 						headerListMsg = " " + headerId;
 				}
-				MessageBox.Show(err.Message + headerListMsg, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+				DisplayMessages.Show(err.Message + headerListMsg, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 			catch (Exception err)
 			{
@@ -9763,7 +9940,7 @@ namespace MIDRetail.Windows
 		//            else
 		//                headerListMsg = " " + headerId;
 		//        }
-		//        MessageBox.Show(err.Message + headerListMsg, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+		//        DisplayMessages.Show(err.Message + headerListMsg, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 		//    }
 		//    catch (Exception err)
 		//    {
@@ -10136,7 +10313,7 @@ namespace MIDRetail.Windows
 					else
 						headerListMsg = " " + headerId;
 				}
-				MessageBox.Show(err.Message + headerListMsg, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+				DisplayMessages.Show(err.Message + headerListMsg, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 			catch (Exception err)
 			{
@@ -10208,7 +10385,8 @@ namespace MIDRetail.Windows
             //    if "Process As Headers", process ALL headers
             // Otherwise, look at "Process As" and the selected header list
 			//=========================================================================
-			if (tabControl.SelectedIndex == 0)
+			if (tabControl != null
+                && tabControl.SelectedIndex == 0)
 			{
                 if (IsGroupAllocation)
                 {	
@@ -10762,7 +10940,7 @@ namespace MIDRetail.Windows
 						(MIDText.GetText(eMIDTextCode.msg_HeaderStatusDisallowsAction),
 						MIDText.GetTextOnly((int)ap.HeaderAllocationStatus));
 
-					MessageBox.Show(errorMessage, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+					DisplayMessages.Show(errorMessage, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 					okToProcess = false;
 					break;
 				}
@@ -10783,7 +10961,7 @@ namespace MIDRetail.Windows
 						errorMessage = string.Format
 							(MIDText.GetText(eMIDTextCode.msg_ActionNotAllowed),
 							errorParm);
-						MessageBox.Show(errorMessage, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+						DisplayMessages.Show(errorMessage, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 						okToProcess = false;
 						break;
 					}
@@ -10807,7 +10985,7 @@ namespace MIDRetail.Windows
                                     && member.DCFulfillmentProcessed)
                                     {
                                         errorMessage = string.Format(MIDText.GetText(eMIDTextCode.msg_al_DCFulfillmentProcessedActionNotAllowed), ap.HeaderID);
-                                        MessageBox.Show(errorMessage, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                        DisplayMessages.Show(errorMessage, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
                                         okToProcess = false;
                                         break;
                                     }
@@ -10819,7 +10997,7 @@ namespace MIDRetail.Windows
                                     && ap.DCFulfillmentProcessed)
                                 {
                                     errorMessage = string.Format(MIDText.GetText(eMIDTextCode.msg_al_DCFulfillmentProcessedActionNotAllowed), ap.HeaderID);
-                                    MessageBox.Show(errorMessage, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    DisplayMessages.Show(errorMessage, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
                                     okToProcess = false;
                                     break;
                                 }
@@ -10827,7 +11005,7 @@ namespace MIDRetail.Windows
                                     && !ap.DCFulfillmentProcessed)
                                 {
                                     errorMessage = string.Format(MIDText.GetText(eMIDTextCode.msg_al_DCFulfillmentNotProcessedActionNotAllowed), ap.HeaderID);
-                                    MessageBox.Show(errorMessage, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    DisplayMessages.Show(errorMessage, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
                                     okToProcess = false;
                                     break;
                                 }
@@ -10853,7 +11031,7 @@ namespace MIDRetail.Windows
                             MIDText.GetTextOnly((int)aAction));
 					//END TT#1524 - MD - DOConnell - Track down and correct the Audit Messages with "Unknown" for the module name.
 					
-					DialogResult diagResult = MessageBox.Show(errorMessage, this.Text,
+					DialogResult diagResult = DisplayMessages.Show(errorMessage, this.Text,
 						MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                     if (diagResult == System.Windows.Forms.DialogResult.No)
                     {
@@ -10902,7 +11080,7 @@ namespace MIDRetail.Windows
                     eMIDTextCode.msg_as_NoHeadersPlaceholdersSelected,
                     errorMessage,
                     "Assortment View");
-                MessageBox.Show(errorMessage, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                DisplayMessages.Show(errorMessage, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 okToProcess = false;
             }
 			// End TT#219 - MD - DOConnell - Spread Average not getting expected results
@@ -10918,7 +11096,7 @@ namespace MIDRetail.Windows
                         eMIDTextCode.msg_as_InvalidActionAttributeChanged,
                         errorMessage,
                         "Assortment View");
-                    MessageBox.Show(errorMessage, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    DisplayMessages.Show(errorMessage, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     okToProcess = false;
                 }
 
@@ -11543,6 +11721,11 @@ namespace MIDRetail.Windows
 
 		private void spcHScrollLevel1_SplitterMoved(object sender, SplitterEventArgs e)
 		{
+            if (!MIDEnvironment.isWindows)
+            {
+                return;
+            }
+
 			SplitContainer splitter;
 
 			try
@@ -11637,6 +11820,11 @@ namespace MIDRetail.Windows
 
 		private void spcHScrollLevel1_DoubleClick(object sender, System.EventArgs e)
 		{
+            if (!MIDEnvironment.isWindows)
+            {
+                return;
+            }
+
 			try
 			{
 				CalcRowSplitPosition12(true);
@@ -11651,6 +11839,11 @@ namespace MIDRetail.Windows
 
 		private void spcHScrollLevel2_SplitterMoved(object sender, SplitterEventArgs e)
 		{
+            if (!MIDEnvironment.isWindows)
+            {
+                return;
+            }
+
 			SplitContainer splitter;
 
 			try
@@ -11704,6 +11897,11 @@ namespace MIDRetail.Windows
 
 		private void spcHScrollLevel2_DoubleClick(object sender, System.EventArgs e)
 		{
+            if (!MIDEnvironment.isWindows)
+            {
+                return;
+            }
+
 			try
 			{
 				CalcRowSplitPosition4(true);
@@ -11718,6 +11916,11 @@ namespace MIDRetail.Windows
 
 		private void spcVLevel1_SplitterMoved(object sender, SplitterEventArgs e)
 		{
+            if (!MIDEnvironment.isWindows)
+            {
+                return;
+            }
+
 			SplitContainer splitter;
 
 			try
@@ -11734,6 +11937,11 @@ namespace MIDRetail.Windows
 
 		private void spcVLevel1_DoubleClick(object sender, System.EventArgs e)
 		{
+            if (!MIDEnvironment.isWindows)
+            {
+                return;
+            }
+
 			try
 			{
 				CalcColSplitPosition2(true);
@@ -11748,6 +11956,11 @@ namespace MIDRetail.Windows
 
 		private void spcVLevel2_SplitterMoved(object sender, SplitterEventArgs e)
 		{
+            if (!MIDEnvironment.isWindows)
+            {
+                return;
+            }
+
 			SplitContainer splitter;
 
 			try
@@ -11764,6 +11977,11 @@ namespace MIDRetail.Windows
 
 		private void spcVLevel2_DoubleClick(object sender, System.EventArgs e)
 		{
+            if (!MIDEnvironment.isWindows)
+            {
+                return;
+            }
+
 			try
 			{
 				CalcColSplitPosition3(true);
@@ -11778,6 +11996,11 @@ namespace MIDRetail.Windows
 
 		private void SplitterMouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
+            if (!MIDEnvironment.isWindows)
+            {
+                return;
+            }
+
 			try
 			{
 				_currSplitterTag = (SplitterTag)((SplitContainer)sender).Tag;
@@ -13024,7 +13247,7 @@ namespace MIDRetail.Windows
 			}
 			catch (FormatException)
 			{
-				MessageBox.Show(MIDText.GetText(eMIDTextCode.msg_pl_InvalidInput), _windowName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				DisplayMessages.Show(MIDText.GetText(eMIDTextCode.msg_pl_InvalidInput), _windowName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				grid[e.Row, e.Col] = _holdValue;
 			}
 			catch (CellUnavailableException)
@@ -13082,7 +13305,7 @@ namespace MIDRetail.Windows
 			}
 			catch (FormatException)
 			{
-				MessageBox.Show(MIDText.GetText(eMIDTextCode.msg_pl_InvalidInput), _windowName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				DisplayMessages.Show(MIDText.GetText(eMIDTextCode.msg_pl_InvalidInput), _windowName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				grid[e.Row, e.Col] = _holdValue;
 			}
 			catch (CellUnavailableException)
@@ -13126,7 +13349,7 @@ namespace MIDRetail.Windows
 			}
 			catch (FormatException)
 			{
-				MessageBox.Show(MIDText.GetText(eMIDTextCode.msg_pl_InvalidInput), _windowName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				DisplayMessages.Show(MIDText.GetText(eMIDTextCode.msg_pl_InvalidInput), _windowName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				grid[row, col] = _holdValue;
 			}
 			catch (CellUnavailableException)
@@ -13228,7 +13451,7 @@ namespace MIDRetail.Windows
 					catch (NothingToSpreadException ex)
 					{
 						string message = ex.Message;
-						MessageBox.Show(message, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						DisplayMessages.Show(message, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 						//string message = MIDText.GetText(eMIDTextCode.msg_ChainWeekLowLvlSpreadFailed);
 						SAB.ApplicationServerSession.Audit.Add_Msg(eMIDMessageLevel.Warning, ex.ToString(), this.ToString());
 					}
@@ -13534,7 +13757,7 @@ namespace MIDRetail.Windows
 				if (errorsFound)
 				{
 					string errorMessage = SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_UnauthorizedFunctionAccess);
-					MessageBox.Show(errorMessage, Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+					DisplayMessages.Show(errorMessage, Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 					e.Cancel = true;
 				}
 			}
@@ -15831,7 +16054,7 @@ namespace MIDRetail.Windows
 					AssortmentCellFlagValues.isFixed(cellTag.ComputationCellFlags) ||
 					ComputationCellFlagValues.isReadOnly(cellTag.ComputationCellFlags))
 				{
-					MessageBox.Show(MIDText.GetText(eMIDTextCode.msg_pl_NotLockable), _windowName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					DisplayMessages.Show(MIDText.GetText(eMIDTextCode.msg_pl_NotLockable), _windowName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				}
 				else
 				{
@@ -16446,7 +16669,7 @@ namespace MIDRetail.Windows
 					AssortmentCellFlagValues.isFixed(cellTag.ComputationCellFlags) ||
 					ComputationCellFlagValues.isReadOnly(cellTag.ComputationCellFlags))
 				{
-					MessageBox.Show(MIDText.GetText(eMIDTextCode.msg_pl_NotLockable), _windowName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					DisplayMessages.Show(MIDText.GetText(eMIDTextCode.msg_pl_NotLockable), _windowName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				}
 				else
 				{
@@ -17740,6 +17963,11 @@ namespace MIDRetail.Windows
 		{
 			try
 			{
+                if (!MIDEnvironment.isWindows)
+                {
+                    return;
+                }
+
 				FormatCol1Grids(aClearGrid);
 				FormatCol2Grids(aClearGrid, -1, SortEnum.none);
 				FormatCol3Grids(aClearGrid, -1, SortEnum.none);
@@ -19652,7 +19880,7 @@ namespace MIDRetail.Windows
 			}
 			catch (IOException IOex)
 			{
-				MessageBox.Show(IOex.Message);
+				DisplayMessages.Show(IOex.Message);
 				return;
 			}
 			catch (Exception exc)
@@ -21378,7 +21606,7 @@ namespace MIDRetail.Windows
 			SAB.ApplicationServerSession.Audit.Add_Msg(eMIDMessageLevel.Error, msgText, this.GetType().Name);
 			// Message to user
 			msgText = string.Format(MIDText.GetText((int)eAllocationActionStatus.NoHeaderResourceLocks));
-			MessageBox.Show(msgText, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+			DisplayMessages.Show(msgText, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
 			// Close Review windows
 			CloseView();
 		}
@@ -21485,7 +21713,7 @@ namespace MIDRetail.Windows
                         {
                             string msgText = string.Format(MIDText.GetText(eMIDTextCode.msg_as_NoHeadersPlaceholdersSelected));
                             SAB.ApplicationServerSession.Audit.Add_Msg(eMIDMessageLevel.Error, msgText, this.GetType().Name);
-                            MessageBox.Show(msgText, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            DisplayMessages.Show(msgText, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                             return;
                         }
                         // End TT#904 - MD - wrong message was displaying
@@ -21618,7 +21846,7 @@ namespace MIDRetail.Windows
 								 msgText = msgText.Replace("{0}", "an Assortment placehold.");   // TT#1057 - MD - stodd - prevent allocation override against a GA
                                 SAB.ApplicationServerSession.Audit.Add_Msg(eMIDMessageLevel.Error, msgText, this.GetType().Name);
                                 // Message to user;
-                                MessageBox.Show(msgText, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                DisplayMessages.Show(msgText, _windowName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                                 //END TT#806-MD-DOConnell-Assortment Placeholder on Content Tab-> ignores all criteria when a general method is processed - seems to use allocation defaults 
                             }
                         }
@@ -21628,7 +21856,7 @@ namespace MIDRetail.Windows
                             string message = MIDText.GetTextOnly((int)actionStatus);
                             // BEGIN TT#488-MD - Stodd - Group Allocation
                             //string actionText = ((Infragistics.Win.UltraWinToolbars.ComboBoxTool)this.ultraToolbarsManager1.Tools["cboAssortmentAction"]).Text;
-                            MessageBox.Show(message, e.MethodType.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            DisplayMessages.Show(message, e.MethodType.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Information);
                             // END TT#488-MD - Stodd - Group Allocation
                         }
 
@@ -21675,7 +21903,7 @@ namespace MIDRetail.Windows
                     "Group Allocation Method");
 
                 string message = MIDText.GetTextOnly((int)eAllocationActionStatus.NoActionPerformed);
-                MessageBox.Show(message, e.MethodType.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                DisplayMessages.Show(message, e.MethodType.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Information);
                 okToProcess = false;	// TT#952 - MD - stodd - add matrix to Group Allocation Review
             }
             // End TT#1030 - MD - stodd - GA method error message
@@ -21695,7 +21923,7 @@ namespace MIDRetail.Windows
                     e.MethodType.ToString());
 
                 string message = MIDText.GetTextOnly((int)eAllocationActionStatus.NoActionPerformed);
-                MessageBox.Show(message, e.MethodType.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                DisplayMessages.Show(message, e.MethodType.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Information);
                 okToProcess = false;	// TT#952 - MD - stodd - add matrix to Group Allocation Review
             }
 
@@ -21711,7 +21939,7 @@ namespace MIDRetail.Windows
                 SAB.ApplicationServerSession.Audit.Add_Msg(eMIDMessageLevel.Error, msgText, this.GetType().Name);
 
                 string message = MIDText.GetTextOnly((int)eAllocationActionStatus.NoActionPerformed);
-                MessageBox.Show(message, e.MethodType.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                DisplayMessages.Show(message, e.MethodType.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Information);
                 okToProcess = false;	// TT#952 - MD - stodd - add matrix to Group Allocation Review
             }
 			// End TT#1060 - md - stodd - allow Alloc Override to process against GA headers - 
@@ -21723,7 +21951,7 @@ namespace MIDRetail.Windows
                 SAB.ApplicationServerSession.Audit.Add_Msg(eMIDMessageLevel.Error, msgText, this.GetType().Name);
 
                 string message = MIDText.GetTextOnly((int)eMIDTextCode.msg_as_GeneralAllocationMethodNotAllowed_On_Assortment); 
-                MessageBox.Show(message, e.MethodType.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                DisplayMessages.Show(message, e.MethodType.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Information);
                 okToProcess = false;	// TT#952 - MD - stodd - add matrix to Group Allocation Review
             }
             else
@@ -21739,7 +21967,7 @@ namespace MIDRetail.Windows
                 string msgText = MIDText.GetTextOnly((int)eMIDTextCode.msg_as_GeneralAllocationMethodNotAllowed);
                 SAB.ApplicationServerSession.Audit.Add_Msg(eMIDMessageLevel.Error, msgText, this.GetType().Name);
                 string message = MIDText.GetTextOnly((int)eAllocationActionStatus.NoActionPerformed);
-                MessageBox.Show(message, e.MethodType.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                DisplayMessages.Show(message, e.MethodType.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Information);
                 okToProcess = false;	
             }
             // End TT#1139-MD - stodd - prevent Gen Alloc method on headers
@@ -21956,7 +22184,7 @@ namespace MIDRetail.Windows
                     if (!headersFound)
                     {
                         string errorMessage = _sab.ClientServerSession.Audit.GetText(eMIDTextCode.msg_as_ConfirmEmptyGroupAllocationDelete);
-                        DialogResult diagResult = MessageBox.Show(errorMessage, this.Text, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+                        DialogResult diagResult = DisplayMessages.Show(errorMessage, this.Text, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
                         if (diagResult == System.Windows.Forms.DialogResult.OK)
                         {
                             ChangePending = false;	// TT#952 - MD - stodd - add matrix to Group Allocation Review
@@ -22653,7 +22881,7 @@ namespace MIDRetail.Windows
 					{
 						_checkForExportSelected = false;
 						this.ultraGridExcelExporter1.Export(_ug, myFilepath);
-						MessageBox.Show(MessBoxText1 + myFilepath + "\r\n" + MessBoxText2 + _ug.Rows.Count);
+						DisplayMessages.Show(MessBoxText1 + myFilepath + "\r\n" + MessBoxText2 + _ug.Rows.Count);
 					}
 				}
 				catch (Exception ex)
@@ -22730,7 +22958,7 @@ namespace MIDRetail.Windows
 					{
 						_checkForExportSelected = true;
 						this.ultraGridExcelExporter1.Export(_ug, myFilepath);
-						MessageBox.Show(MessBoxText1 + myFilepath + "\r\n" + MessBoxText2 + _ug.Selected.Rows.Count);
+						DisplayMessages.Show(MessBoxText1 + myFilepath + "\r\n" + MessBoxText2 + _ug.Selected.Rows.Count);
 					}
 				}
 				catch (Exception ex)

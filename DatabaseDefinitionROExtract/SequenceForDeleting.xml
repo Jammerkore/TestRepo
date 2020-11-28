@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<DatabaseObjects xmlns="http://tempuri.org/SequenceSchema.xsd">
+
+  <!-- Put object in order you want these object deleted.  These objects will get deleted for either a new database, or when upgrading a database. -->
+
+  <!--<SQLObject Process="Single" Type="Trigger"  Name="trgEnableWorkflow" ></SQLObject>-->
+
+
+  <!--<SQLObject Process="Single" Type="StoredProcedure"  Name="SP_GET_FORECAST_REPORT_NAMES" ></SQLObject>-->
+  
+
+  <!--<SQLObject Process="Single" Type="FunctionScalar"  Name="UDF_MID_NUM_STORES_MARKED_FOR_DELETE"></SQLObject>-->
+ 
+
+
+  <!--<SQLObject Process="Single" Type="Type"  Name="MID_CHN_FOR_WK_READ_LOCK_TYPE" Ignore="Y"></SQLObject>-->
+  
+  <SQLObject Process="NonOrdered" Type="StoredProcedure"  Name="" ></SQLObject>
+  <SQLObject Process="NonOrdered" Type="View"  Name="" ></SQLObject>
+  <SQLObject Process="NonOrdered" Type="FunctionTable"  Name="" ></SQLObject>
+  <SQLObject Process="NonOrdered" Type="FunctionScalar"  Name="" ></SQLObject>
+  <SQLObject Process="NonOrdered" Type="Trigger"  Name="" ></SQLObject>
+  <SQLObject Process="NonOrdered" Type="Type"  Name="" ></SQLObject>
+  
+</DatabaseObjects>
+
+

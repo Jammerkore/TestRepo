@@ -4,7 +4,7 @@
 --dv =============================================
 CREATE PROCEDURE [dbo].[MID_APPLICATION_USER_UPDATE_NAME]
 	@USER_RID int,
-	@USER_NAME varchar(30)
+	@USER_NAME varchar(256)
 AS
 BEGIN
 	SET NOCOUNT ON;

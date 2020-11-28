@@ -1,0 +1,609 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.Text;
+using System.Threading.Tasks;
+
+using MIDRetail.DataCommon;
+
+namespace Logility.ROWebSharedTypes
+{
+    [DataContract(Name = "ROTreeNodeParms", Namespace = "http://Logility.ROWeb/")]
+    public class ROTreeNodeParms : ROParms 
+    {
+        [DataMember(IsRequired = true)]
+        private eProfileType _profileType;
+        [DataMember(IsRequired = true)]
+        private int _key;
+        [DataMember(IsRequired = true)]
+        private int _ownerUserRID;
+        [DataMember(IsRequired = true)]
+        private eROApplicationType _ROApplicationType;
+        [DataMember(IsRequired = true)]
+        private string _uniqueID;
+
+        public ROTreeNodeParms(string sROUserID, string sROSessionID, eROClass ROClass, eRORequest RORequest, long ROInstanceID,
+                                        eProfileType profileType, int key, int ownerUserRID = Include.NoRID, eROApplicationType ROApplicationType = eROApplicationType.All,
+                                        string uniqueID = null)
+            : base(sROUserID, sROSessionID, ROClass, RORequest, ROInstanceID)
+        {
+            _profileType = profileType;
+            _key = key;
+            _ownerUserRID = ownerUserRID;
+            _ROApplicationType = ROApplicationType;
+            _uniqueID = uniqueID;
+        }
+
+        public eProfileType ProfileType { get { return _profileType; } }
+
+        public int Key { get { return _key; } }
+
+        public int OwnerUserRID { get { return _ownerUserRID; } }
+
+        public eROApplicationType ROApplicationType { get { return _ROApplicationType; } }
+
+        public string UniqueID { get { return _uniqueID; } }
+    }
+
+    [DataContract(Name = "ROMethodParms", Namespace = "http://Logility.ROWeb/")]
+    public class ROMethodParms : ROParms
+    {
+        [DataMember(IsRequired = true)]
+        private eMethodType _methodType;
+        [DataMember(IsRequired = true)]
+        private int _key;
+        [DataMember(IsRequired = true)]
+        private bool _readOnly;
+
+        public ROMethodParms(string sROUserID, string sROSessionID, eROClass ROClass, eRORequest RORequest, long ROInstanceID,
+                                        eMethodType methodType, int key = Include.Undefined, bool readOnly = false)
+            : base(sROUserID, sROSessionID, ROClass, RORequest, ROInstanceID)
+        {
+            _methodType = methodType;
+            _key = key;
+            _readOnly = readOnly;
+        }
+
+        public eMethodType MethodType { get { return _methodType; } }
+
+        public int Key { get { return _key; } }
+
+        public bool ReadOnly { get { return _readOnly; } }
+    }
+
+    [DataContract(Name = "ROMethodPropertiesParms", Namespace = "http://Logility.ROWeb/")]
+    public class ROMethodPropertiesParms : ROParms
+    {
+        [DataMember(IsRequired = true)]
+        private ROMethodProperties _ROMethodProperties;
+        [DataMember(IsRequired = true)]
+        private int _folderKey;
+        [DataMember(IsRequired = true)]
+        private string _folderUniqueID;
+
+        public ROMethodPropertiesParms(string sROUserID, string sROSessionID, eROClass ROClass, eRORequest RORequest, long ROInstanceID, ROMethodProperties ROMethodProperties, int folderKey = Include.NoRID, string folderUniqueID = null) :
+            base(sROUserID, sROSessionID, ROClass, RORequest, ROInstanceID)
+        {
+            _ROMethodProperties = ROMethodProperties;
+            _folderKey = folderKey;
+            _folderUniqueID = folderUniqueID;
+        }
+
+        public ROMethodProperties ROMethodProperties { get { return _ROMethodProperties; } }
+
+        public int FolderKey { get { return _folderKey; } set { _folderKey = value; } }
+
+        public string FolderUniqueID { get { return _folderUniqueID; } set { _folderUniqueID = value; } }
+
+    }
+
+    [DataContract(Name = "ROInUseParms", Namespace = "http://Logility.ROWeb/")]
+    public class ROInUseParms : ROParms
+    {
+        [DataMember(IsRequired = true)]
+        private eProfileType _itemProfileType;
+        [DataMember(IsRequired = true)]
+        private int _key;
+
+        public ROInUseParms(string sROUserID, string sROSessionID, eROClass ROClass, eRORequest RORequest, long ROInstanceID, eProfileType itemProfileType, int key) :
+            base(sROUserID, sROSessionID, ROClass, RORequest, ROInstanceID)
+        {
+            _itemProfileType = itemProfileType;
+            _key = key;
+        }
+
+        public eProfileType ItemProfileType { get { return _itemProfileType; } }
+
+        public int Key { get { return _key; } set { _key = value; } }
+
+    }
+
+
+    [DataContract(Name = "ROWorkflowPropertiesParms", Namespace = "http://Logility.ROWeb/")]
+    public class ROWorkflowPropertiesParms : ROParms
+    {
+        [DataMember(IsRequired = true)]
+        private ROWorkflow _ROWorkflow;
+
+        [DataMember(IsRequired = true)]
+        private int _folderKey;
+
+        [DataMember(IsRequired = true)]
+        private string _folderUniqueID;
+
+        public ROWorkflowPropertiesParms(string sROUserID, string sROSessionID, eROClass ROClass, eRORequest RORequest, long ROInstanceID, ROWorkflow ROWorkflow, int folderKey = Include.NoRID, string folderUniqueID = null) :
+            base(sROUserID, sROSessionID, ROClass, RORequest, ROInstanceID)
+        {
+            _ROWorkflow = ROWorkflow;
+            _folderKey = folderKey;
+            _folderUniqueID = folderUniqueID;
+        }
+
+        public ROWorkflow ROWorkflow { get { return _ROWorkflow; } }
+
+        public int FolderKey { get { return _folderKey; } set { _folderKey = value; } }
+
+        public string FolderUniqueID { get { return _folderUniqueID; } set { _folderUniqueID = value; } }
+
+    }
+
+    [DataContract(Name = "ROReleaseResourceParms", Namespace = "http://Logility.ROWeb/")]
+    public class ROReleaseResourceParms : ROParms
+    {
+        [DataMember(IsRequired = true)]
+        private bool _allUsers;
+
+        [DataMember(IsRequired = true)]
+        private int _userKey;
+
+        public ROReleaseResourceParms(string sROUserID, string sROSessionID, eROClass ROClass, eRORequest RORequest, long ROInstanceID, bool AllUsers = false, int userKey = Include.Undefined) :
+            base(sROUserID, sROSessionID, ROClass, RORequest, ROInstanceID)
+        {
+            _allUsers = AllUsers;
+            _userKey = userKey;
+        }
+
+        public bool AllUsers { get { return _allUsers; } }
+
+        public int UserKey { get { return _userKey; } set { _userKey = value; } }
+
+    }
+
+    [DataContract(Name = "ROBaseUpdateParms", Namespace = "http://Logility.ROWeb/")]
+    public abstract class ROBaseUpdateParms : ROParms
+    {
+        [DataMember(IsRequired = true)]
+        private eProfileType _profileType;
+
+        [DataMember(IsRequired = true)]
+        private int _key;
+
+        [DataMember(IsRequired = true)]
+        private string _name;
+
+        [DataMember(IsRequired = true)]
+        private string _newName;
+
+        [DataMember(IsRequired = true)]
+        private int _userKey;
+
+        [DataMember(IsRequired = true)]
+        private eProfileType _parentProfileType;
+
+        [DataMember(IsRequired = true)]
+        private int _parentKey;
+
+        [DataMember(IsRequired = true)]
+        private int _parentUserKey;
+
+        [DataMember(IsRequired = true)]
+        private eProfileType _toParentProfileType;
+
+        [DataMember(IsRequired = true)]
+        private int _toParentKey;
+
+        [DataMember(IsRequired = true)]
+        private int _newUserKey;
+
+        [DataMember(IsRequired = true)]
+        private string _uniqueID;
+
+        [DataMember(IsRequired = true)]
+        private string _parentUniqueID;
+
+        [DataMember(IsRequired = true)]
+        private string _toParentUniqueID;
+
+        public ROBaseUpdateParms(
+            string sROUserID, 
+            string sROSessionID, 
+            eROClass ROClass, 
+            eRORequest RORequest, 
+            long ROInstanceID, 
+            eProfileType profileType, 
+            int key, 
+            string name, 
+            string newName = null, 
+            int userKey = Include.NoRID,
+            eProfileType parentProfileType = eProfileType.None,
+            int parentKey = Include.NoRID,
+            int parentUserKey = Include.NoRID,
+            eProfileType toParentProfileType = eProfileType.None,
+            int toParentKey = Include.NoRID,
+            int newUserKey = Include.NoRID,
+            string uniqueID = null,
+            string parentUniqueID = null,
+            string toParentUniqueID = null
+            ) 
+            : base(sROUserID, sROSessionID, ROClass, RORequest, ROInstanceID)
+        {
+            _profileType = profileType;
+            _key = key;
+            _name = name;
+            _newName = newName;
+            _userKey = userKey;
+            _parentProfileType = parentProfileType;
+            _parentKey = parentKey;
+            _parentUserKey = parentUserKey;
+            _toParentProfileType = toParentProfileType;
+            _toParentKey = toParentKey;
+            _newUserKey = newUserKey;
+            _uniqueID = uniqueID;
+            _parentUniqueID = parentUniqueID;
+            _toParentUniqueID = toParentUniqueID;
+        }
+
+        public eProfileType ProfileType { get { return _profileType; } }
+        public int Key { get { return _key; } }
+        public string Name { get { return _name; } }
+        public string NewName { get { return _newName; } }
+        public int UserKey { get { return _userKey; } }
+        public eProfileType ParentProfileType { get { return _parentProfileType; } }
+        public int ParentKey { get { return _parentKey; } }
+        public int ParentUserKey { get { return _parentUserKey; } }
+        public eProfileType ToParentProfileType { get { return _toParentProfileType; } }
+        public int ToParentKey { get { return _toParentKey; } }
+        public int NewUserKey { get { return _newUserKey; } }
+        public string UniqueID { get { return _uniqueID; } }
+        public string ParentUniqueID { get { return _parentUniqueID; } }
+        public string ToParentUniqueID { get { return _toParentUniqueID; } }
+
+    }
+
+    [DataContract(Name = "ROWorklistUpdateParms", Namespace = "http://Logility.ROWeb/")]
+    public class ROWorklistUpdateParms : ROBaseUpdateParms
+    {
+        public ROWorklistUpdateParms(
+            string sROUserID,
+            string sROSessionID,
+            eROClass ROClass,
+            eRORequest RORequest,
+            long ROInstanceID,
+            eProfileType profileType,
+            int key,
+            string name,
+            string newName = null,
+            int userKey = Include.NoRID,
+            eProfileType parentProfileType = eProfileType.None,
+            int parentKey = Include.NoRID,
+            int toParentKey = Include.NoRID,
+            int newUserKey = Include.NoRID
+            )
+            : base(sROUserID: sROUserID,
+                    sROSessionID: sROSessionID,
+                    ROClass: ROClass,
+                    RORequest: RORequest,
+                    ROInstanceID: ROInstanceID,
+                    profileType: profileType,
+                    key: key,
+                    name: name,
+                    newName: newName,
+                    userKey: userKey,
+                    parentProfileType: parentProfileType,
+                    parentKey: parentKey,
+                    toParentKey: toParentKey,
+                    newUserKey: newUserKey
+                  )
+        {
+
+        }
+    }
+
+    [DataContract(Name = "ROWorklistRenameParms", Namespace = "http://Logility.ROWeb/")]
+    public class ROWorklistRenameParms : ROBaseUpdateParms
+    {
+        public ROWorklistRenameParms(
+            string sROUserID,
+            string sROSessionID,
+            eROClass ROClass,
+            eRORequest RORequest,
+            long ROInstanceID,
+            eProfileType profileType,
+            int key,
+            string name,
+            string newName
+            )
+            : base(sROUserID : sROUserID,
+                    sROSessionID: sROSessionID,
+                    ROClass : ROClass,
+                    RORequest: eRORequest.Rename,
+                    ROInstanceID: ROInstanceID,
+                    profileType: profileType,
+                    key: key,
+                    name: name,
+                    newName: newName
+                  )
+        {
+
+        }
+    }
+
+    [DataContract(Name = "ROWorklistDeleteParms", Namespace = "http://Logility.ROWeb/")]
+    public class ROWorklistDeleteParms : ROBaseUpdateParms
+    {
+        public ROWorklistDeleteParms(
+            string sROUserID,
+            string sROSessionID,
+            eROClass ROClass,
+            eRORequest RORequest,
+            long ROInstanceID,
+            eProfileType profileType,
+            int key,
+            string name
+            )
+            : base(sROUserID: sROUserID,
+                    sROSessionID: sROSessionID,
+                    ROClass: ROClass,
+                    RORequest: eRORequest.Delete,
+                    ROInstanceID: ROInstanceID,
+                    profileType: profileType,
+                    key: key,
+                    name: name
+                  )
+        {
+
+        }
+    }
+
+    [DataContract(Name = "ROWorklistCopyParms", Namespace = "http://Logility.ROWeb/")]
+    public class ROWorklistCopyParms : ROBaseUpdateParms
+    {
+        public ROWorklistCopyParms(
+            string sROUserID,
+            string sROSessionID,
+            eROClass ROClass,
+            eRORequest RORequest,
+            long ROInstanceID,
+            eProfileType profileType,
+            int key,
+            string name,
+            int userKey,
+            eProfileType parentProfileType,
+            int parentKey,
+            int toParentKey,
+            int newUserKey
+            )
+            : base(sROUserID: sROUserID,
+                    sROSessionID: sROSessionID,
+                    ROClass: ROClass,
+                    RORequest: eRORequest.Copy,
+                    ROInstanceID: ROInstanceID,
+                    profileType: profileType,
+                    key: key,
+                    name: name,
+                    userKey: userKey,
+                    parentProfileType: parentProfileType,
+                    parentKey: parentKey,
+                    toParentKey: toParentKey,
+                    newUserKey: newUserKey
+                  )
+        {
+
+        }
+    }
+
+    [DataContract(Name = "RODataExplorerRenameParms", Namespace = "http://Logility.ROWeb/")]
+    public class RODataExplorerRenameParms : ROBaseUpdateParms
+    {
+        public RODataExplorerRenameParms(
+            string sROUserID,
+            string sROSessionID,
+            eROClass ROClass,
+            eRORequest RORequest,
+            long ROInstanceID,
+            eProfileType profileType,
+            int key,
+            string name,
+            string newName,
+            string uniqueID = null
+            )
+            : base(sROUserID: sROUserID,
+                    sROSessionID: sROSessionID,
+                    ROClass: ROClass,
+                    RORequest: eRORequest.Rename,
+                    ROInstanceID: ROInstanceID,
+                    profileType: profileType,
+                    key: key,
+                    name: name,
+                    newName: newName,
+                    uniqueID: uniqueID
+                  )
+        {
+
+        }
+    }
+
+    [DataContract(Name = "RODataExplorerCopyParms", Namespace = "http://Logility.ROWeb/")]
+    public class RODataExplorerCopyParms : ROBaseUpdateParms
+    {
+        public RODataExplorerCopyParms(
+            string sROUserID,
+            string sROSessionID,
+            eROClass ROClass,
+			eRORequest RORequest,
+            long ROInstanceID,
+            eProfileType profileType,
+            int key,
+            string name,
+            int userKey,
+            //eProfileType parentProfileType = eProfileType.None,
+            //int parentKey = Include.NoRID,
+            //int parentUserKey = Include.NoRID,
+            eProfileType toParentProfileType = eProfileType.None,
+            int toParentKey = Include.NoRID,
+            int toParentUserKey = Include.NoRID,
+            string toParentUniqueID = null
+            )
+            : base(sROUserID: sROUserID,
+                    sROSessionID: sROSessionID,
+                    ROClass: ROClass,
+                    RORequest:eRORequest.Copy,
+                    ROInstanceID: ROInstanceID,
+                    profileType: profileType,
+                    key: key,
+                    name: name,
+                    userKey: userKey,
+                    //parentProfileType: parentProfileType,
+                    //parentKey: parentKey,
+                    //parentUserKey: parentUserKey,
+                    toParentProfileType: toParentProfileType,
+                    toParentKey: toParentKey,
+                    newUserKey: toParentUserKey,
+                    toParentUniqueID: toParentUniqueID
+                  )
+        {
+
+        }
+    }
+
+    [DataContract(Name = "RODataExplorerShortcutParms", Namespace = "http://Logility.ROWeb/")]
+    public class RODataExplorerShortcutParms : ROBaseUpdateParms
+    {
+        public RODataExplorerShortcutParms(
+            string sROUserID,
+            string sROSessionID,
+            eROClass ROClass,
+            eRORequest RORequest,
+            long ROInstanceID,
+            eProfileType profileType,
+            int key,
+            string name,
+            int userKey = Include.NoRID,
+            eProfileType parentProfileType = eProfileType.None,
+            int parentKey = Include.NoRID,
+            int parentUserKey = Include.NoRID,
+            eProfileType toParentProfileType = eProfileType.None,
+            int toParentKey = Include.NoRID,
+            int toParentUserKey = Include.NoRID,
+            string parentUniqueID = null,
+            string toParentUniqueID = null
+            )
+            : base(sROUserID: sROUserID,
+                    sROSessionID: sROSessionID,
+                    ROClass: ROClass,
+                    RORequest: RORequest,
+                    ROInstanceID: ROInstanceID,
+                    profileType: profileType,
+                    key: key,
+                    name: name,
+                    userKey: userKey,
+                    parentProfileType: parentProfileType,
+                    parentKey: parentKey,
+                    parentUserKey: parentUserKey,
+                    toParentProfileType: toParentProfileType,
+                    toParentKey: toParentKey,
+                    newUserKey: toParentUserKey,
+                    parentUniqueID: parentUniqueID,
+                    toParentUniqueID: toParentUniqueID
+                  )
+        {
+
+        }
+    }
+
+    [DataContract(Name = "RODataExplorerFolderParms", Namespace = "http://Logility.ROWeb/")]
+    public class RODataExplorerFolderParms : ROBaseUpdateParms
+    {
+        public RODataExplorerFolderParms(
+            string sROUserID,
+            string sROSessionID,
+            eROClass ROClass,
+            eRORequest RORequest,
+            long ROInstanceID,
+            eProfileType profileType = eProfileType.None,
+            int key = Include.NoRID,
+            string name = null,
+            int userKey = Include.NoRID,
+            eProfileType parentProfileType = eProfileType.None,
+            int parentKey = Include.NoRID,
+            int parentUserKey = Include.NoRID,
+            eProfileType toParentProfileType = eProfileType.None,
+            int toParentKey = Include.NoRID,
+            int toParentUserKey = Include.NoRID,
+            string uniqueID = null,
+            string parentUniqueID = null,
+            string toParentUniqueID = null
+            )
+            : base(sROUserID: sROUserID,
+                    sROSessionID: sROSessionID,
+                    ROClass: ROClass,
+                    RORequest: RORequest,
+                    ROInstanceID: ROInstanceID,
+                    profileType: profileType,
+                    key: key,
+                    name: name,
+                    userKey: userKey,
+                    parentProfileType: parentProfileType,
+                    parentKey: parentKey,
+                    parentUserKey: parentUserKey,
+                    toParentProfileType: toParentProfileType,
+                    toParentKey: toParentKey,
+                    newUserKey: toParentUserKey,
+                    uniqueID: uniqueID,
+                    parentUniqueID: parentUniqueID,
+                    toParentUniqueID: toParentUniqueID
+                  )
+        {
+
+        }
+    }
+
+    [DataContract(Name = "RODataExplorerSaveAsParms", Namespace = "http://Logility.ROWeb/")]
+    public class RODataExplorerSaveAsParms : ROBaseUpdateParms
+    {
+        public RODataExplorerSaveAsParms(
+            string sROUserID,
+            string sROSessionID,
+            eROClass ROClass,
+            eRORequest RORequest,
+            long ROInstanceID,
+            eProfileType profileType,
+            int key,
+            string name,
+			string newName,
+            int userKey,
+            eProfileType toParentProfileType,
+            int toParentKey,
+            int toParentUserKey
+            )
+            : base(sROUserID: sROUserID,
+                    sROSessionID: sROSessionID,
+                    ROClass: ROClass,
+                    RORequest: eRORequest.SaveAs,
+                    ROInstanceID: ROInstanceID,
+                    profileType: profileType,
+                    key: key,
+                    name: name,
+					newName: newName,
+                    userKey: userKey,
+                    toParentProfileType: toParentProfileType,
+                    toParentKey: toParentKey,
+                    newUserKey: toParentUserKey
+                  )
+        {
+
+        }
+    }
+}

@@ -300,6 +300,11 @@ namespace MIDRetail.Data
 			{
 				char dynamicSwitch = Include.ConvertBoolToChar(isDynamicSwitchDate);
 				int cdr_rid = -1;
+
+                if (cdr_name == null)
+                {
+                    cdr_name = string.Empty;
+                }
                 
                 cdr_rid = StoredProcedures.SP_MID_CALENDARDTRANGE_INSERT.InsertAndReturnRID(_dba, 
                                                                                             CDR_START: cdr_start,
@@ -324,7 +329,12 @@ namespace MIDRetail.Data
 			int cdr_relative_to, string cdr_name, bool isDynamicSwitchDate, int dynamicSwitchDate)
 		{
 			try
-			{    
+			{
+                if (cdr_name == null)
+                {
+                    cdr_name = string.Empty;
+                }
+
                 StoredProcedures.MID_CALENDAR_DATE_RANGE_UPDATE.Update(_dba,
                                                                        CDR_RID: cdr_rid,
                                                                        CDR_START: cdr_start,
@@ -348,6 +358,11 @@ namespace MIDRetail.Data
 		{
 			try
 			{
+                if (cdr_name == null)
+                {
+                    cdr_name = string.Empty;
+                }
+
                 StoredProcedures.MID_CALENDAR_DATE_RANGE_UPDATE_NAME.Update(_dba, 
                                                                             CDR_RID: cdr_rid,
                                                                             CDR_NAME: cdr_name

@@ -303,6 +303,11 @@ namespace MIDRetail.PlanForecasting
 										_transaction.ProcessMethod(eMethodType.Export, methodRid);
 										break;
                                     //End Enhancement - JScott - Export Method - Part 11
+                                    // Begin TT#2131-MD - JSmith - Halo Integration
+                                    case eMethodType.PlanningExtract:
+                                        _transaction.ProcessMethod(eMethodType.PlanningExtract, methodRid);
+                                        break;
+                                    // End TT#2131-MD - JSmith - Halo Integration
                                     //Begin Enhancement - KJohnson - Global Unlock
                                     case eMethodType.GlobalUnlock:
                                         _transaction.ProcessMethod(eMethodType.GlobalUnlock, methodRid);

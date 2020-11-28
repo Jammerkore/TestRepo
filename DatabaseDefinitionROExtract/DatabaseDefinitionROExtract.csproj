@@ -1,0 +1,87 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\midretailinccert.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="SQL_Functions_Scalar\UDF_ColumnAlreadyExists.SQL" />
+    <None Remove="SQL_StoredProcedures\MID_APPLICATION_DB_CONVERSION_QUEUE_DELETE_FROM_FUNCTION.SQL" />
+    <None Remove="SQL_StoredProcedures\MID_APPLICATION_DB_CONVERSION_QUEUE_READ_DEFERRED.SQL" />
+    <None Remove="SQL_StoredProcedures\MID_APPLICATION_DB_CONVERSION_QUEUE_READ_IMMEDIATE.SQL" />
+    <None Remove="SQL_StoredProcedures\MID_TABLE_READ_SCHEMA.SQL" />
+    <None Remove="SQL_StoredProcedures\RO_Database_Exists.SQL" />
+    <None Remove="SQL_StoredProcedures\RO_Extract_Session_Active.SQL" />
+    <None Remove="SQL_StoredProcedures\RO_Extract_Session_Read.SQL" />
+    <None Remove="SQL_StoredProcedures\RO_Extract_Session_Read_All.SQL" />
+    <None Remove="SQL_StoredProcedures\RO_Extract_Session_Update_All_For_Close.SQL" />
+    <None Remove="SQL_StoredProcedures\RO_Extract_Session_Write.SQL" />
+    <None Remove="SQL_StoredProcedures\RO_Hierarchy_Data_Delete.SQL" />
+    <None Remove="SQL_StoredProcedures\RO_Hierarchy_Data_Write.SQL" />
+    <None Remove="SQL_StoredProcedures\RO_Hierarchy_Definition_Write.SQL" />
+    <None Remove="SQL_StoredProcedures\RO_Stores_Characteristics_Delete.SQL" />
+    <None Remove="SQL_StoredProcedures\RO_Stores_Characteristics_Write.SQL" />
+    <None Remove="SQL_StoredProcedures\RO_Stores_Data_Delete.SQL" />
+    <None Remove="SQL_StoredProcedures\RO_Stores_Data_Write.SQL" />
+    <None Remove="SQL_TableKeys\APPLICATION_UPGRADE_HISTORY_PK.SQL" />
+    <None Remove="SQL_TableKeys\APPLICATION_VERSION_PK.SQL" />
+    <None Remove="SQL_TableKeys\Extract_Session_PK.SQL" />
+    <None Remove="SQL_TableKeys\Stores_Characteristics_PK.SQL" />
+    <None Remove="SQL_TableKeys\Stores_Data_PK.SQL" />
+    <None Remove="SQL_Tables\APPLICATION_DB_CONVERSION_QUEUE.SQL" />
+    <None Remove="SQL_Tables\APPLICATION_UPGRADE_HISTORY.SQL" />
+    <None Remove="SQL_Tables\APPLICATION_VERSION.SQL" />
+    <None Remove="SQL_Types\Hierarchy_Data_Type.SQL" />
+    <None Remove="SQL_Types\Hierarchy_Definition_Type.SQL" />
+    <None Remove="SQL_Types\Stores_Characteristics_Type.SQL" />
+    <None Remove="SQL_Types\Stores_Data_Type.SQL" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="SQL_Functions_Scalar\UDF_ColumnAlreadyExists.SQL" />
+    <Content Include="SQL_StoredProcedures\MID_APPLICATION_DB_CONVERSION_QUEUE_DELETE_FROM_FUNCTION.SQL" />
+    <Content Include="SQL_StoredProcedures\MID_APPLICATION_DB_CONVERSION_QUEUE_READ_DEFERRED.SQL" />
+    <Content Include="SQL_StoredProcedures\MID_APPLICATION_DB_CONVERSION_QUEUE_READ_IMMEDIATE.SQL" />
+    <Content Include="SQL_StoredProcedures\MID_TABLE_READ_SCHEMA.SQL" />
+    <Content Include="SQL_StoredProcedures\RO_Extract_Session_Active.SQL" />
+    <Content Include="SQL_StoredProcedures\RO_Extract_Session_Read_All.SQL" />
+    <Content Include="SQL_StoredProcedures\RO_Extract_Session_Read.SQL" />
+    <Content Include="SQL_StoredProcedures\RO_Extract_Session_Update_All_For_Close.SQL" />
+    <Content Include="SQL_StoredProcedures\RO_Extract_Session_Write.SQL" />
+    <Content Include="SQL_StoredProcedures\RO_Hierarchy_Data_Delete.SQL" />
+    <Content Include="SQL_StoredProcedures\RO_Hierarchy_Definition_Write.SQL" />
+    <Content Include="SQL_StoredProcedures\RO_Stores_Characteristics_Delete.SQL" />
+    <Content Include="SQL_StoredProcedures\RO_Stores_Data_Delete.SQL" />
+    <Content Include="SQL_StoredProcedures\RO_Stores_Characteristics_Write.SQL" />
+    <Content Include="SQL_StoredProcedures\RO_Database_Exists.SQL" />
+    <Content Include="SQL_StoredProcedures\RO_Stores_Data_Write.SQL" />
+    <Content Include="SQL_StoredProcedures\RO_Hierarchy_Data_Write.SQL" />
+    <Content Include="SQL_TableKeys\APPLICATION_UPGRADE_HISTORY_PK.SQL" />
+    <Content Include="SQL_TableKeys\Stores_Characteristics_PK.SQL" />
+    <Content Include="SQL_TableKeys\Stores_Data_PK.SQL" />
+    <Content Include="SQL_TableKeys\Extract_Session_PK.SQL" />
+    <Content Include="SQL_TableKeys\APPLICATION_VERSION_PK.SQL" />
+    <Content Include="SQL_Tables\APPLICATION_DB_CONVERSION_QUEUE.SQL" />
+    <Content Include="SQL_Tables\APPLICATION_UPGRADE_HISTORY.SQL" />
+    <Content Include="SQL_Tables\APPLICATION_VERSION.SQL" />
+    <Content Include="SQL_Types\Stores_Characteristics_Type.SQL" />
+    <Content Include="SQL_Types\Stores_Data_Type.SQL" />
+    <Content Include="SQL_Types\Hierarchy_Definition_Type.SQL" />
+    <Content Include="SQL_Types\Hierarchy_Data_Type.SQL" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="UpgradeVersions\" />
+    <Folder Include="SQL_Views\" />
+    <Folder Include="SQL_Triggers\" />
+    <Folder Include="SQL_Scripts\" />
+    <Folder Include="SQL_Indexes\" />
+    <Folder Include="SQL_GeneratedTableFiles\" />
+    <Folder Include="SQL_GeneratedNonTableFiles\" />
+    <Folder Include="SQL_Functions_Table\" />
+    <Folder Include="SQL_Constraints\" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,6 @@
+alter table "METHOD_PLANNING_EXTRACT_VARIABLES"
+	add constraint "METHOD_PLANNING_EXTRACT_VARIABLES_PK" primary key nonclustered ("METHOD_RID", "VARIABLE_RID", "VARIABLE_TYPE")   
+
+
+
+GO

@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{938466D3-7F2C-4C44-9433-2BC59EE91EFA}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Logility.ROUI</RootNamespace>
+    <AssemblyName>ROUI</AssemblyName>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\midretailinccert.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="C1.Win.C1FlexGrid.2, Version=2.6.20142.835, Culture=neutral, PublicKeyToken=79882d576c6336da, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Program Files (x86)\ComponentOne\Studio for WinForms\bin\v2\C1.Win.C1FlexGrid.2.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Planning\BasisLabel.cs" />
+    <Compile Include="Planning\ROPlanChainManager.cs" />
+    <Compile Include="Planning\ROPlanChainManagerData.cs" />
+    <Compile Include="Planning\ROPlanStoreMultiLevelManager.cs" />
+    <Compile Include="Planning\ROPlanChainMultiLevelManager.cs" />
+    <Compile Include="Planning\ROPlanStoreMultiLevelManagerData.cs" />
+    <Compile Include="Planning\ROPlanChainMultiLevelManagerData.cs" />
+    <Compile Include="Planning\ROPlanStoreSingleLevelManagerData.cs" />
+    <Compile Include="Planning\ROPlanStoreSingleLevelManager.cs" />
+    <Compile Include="Planning\ROPlanChainSingleLevelManagerData.cs" />
+    <Compile Include="Planning\ROPlanChainSingleLevelManager.cs" />
+    <Compile Include="Planning\ROPlanManager.cs" />
+    <Compile Include="Planning\ROPlanManagerData.cs" />
+    <Compile Include="Planning\ROPlanStoreManager.cs" />
+    <Compile Include="Planning\ROPlanStoreManagerData.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ROManager.cs" />
+    <Compile Include="ROManagerData.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Business\Business.csproj">
+      <Project>{934f0067-9bd4-4283-9580-f0b024c2d29d}</Project>
+      <Name>Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{bc3abad0-6c39-4385-8229-850e87dd22d0}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DataCommon\DataCommon.csproj">
+      <Project>{f33fc337-30fc-409c-898d-df39a2016b6b}</Project>
+      <Name>DataCommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Data\Data.csproj">
+      <Project>{90d34e6e-6872-4531-8283-f9a7450c4baf}</Project>
+      <Name>Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ROWebSharedTypes\ROWebSharedTypes.csproj">
+      <Project>{e1cf2528-f7a3-4ad1-b5a0-03869fd4a02b}</Project>
+      <Name>ROWebSharedTypes</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Administration\" />
+    <Folder Include="Allocation\" />
+    <Folder Include="Assortment\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

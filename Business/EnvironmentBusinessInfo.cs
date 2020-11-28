@@ -46,7 +46,14 @@ namespace MIDRetail.Business
                             SAB.ClientServerSession.GlobalOptions.AppConfig.GroupAllocationTempLicense, SAB.ClientServerSession.GlobalOptions.AppConfig.GroupAllocationExpirationDays);
         }
         // End TT#1247-MD - stodd - Add Group Allocation as a License Key option -
-        
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        public static string GetAnalyticsInstalledInfo(SessionAddressBlock SAB)
+        {
+            return GetAddOnInfo(eMIDTextCode.lbl_Analytics, SAB.ClientServerSession.GlobalOptions.AppConfig.AnalyticsInstalled,
+                            SAB.ClientServerSession.GlobalOptions.AppConfig.AnalyticsTempLicense, SAB.ClientServerSession.GlobalOptions.AppConfig.AnalyticsExpirationDays);
+        }
+        // End TT#2131-MD - JSmith - Halo Integration
+
 
         private static string GetAddOnInfo(eMIDTextCode aApplication, bool aApplicationInstalled, bool aTempLicense, int aExpireDays)
         {
@@ -166,6 +173,7 @@ namespace MIDRetail.Business
             s += GetSizeInstalledInfo(SAB) + newline;
             s += GetPlanningInstalledInfo(SAB) + newline;
             s += GetAssortmentInstalledInfo(SAB) + newline;
+			s += GetAnalyticsInstalledInfo(SAB) + newline;
 
             return s;
         }

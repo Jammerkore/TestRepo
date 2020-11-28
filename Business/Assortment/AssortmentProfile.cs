@@ -633,7 +633,7 @@ namespace MIDRetail.Business
                                                 throw new Exception(
                                                     "Assortment Instances out of sync: Assortment Instance ID = ["
                                                     + InstanceID.ToString()
-                                                    + "];  Member Assortment Insance ID = ["
+                                                    + "];  Member Assortment Instance ID = ["
                                                     + ap.AssortmentInstanceID.ToString()
                                                     + "]");
                                             }

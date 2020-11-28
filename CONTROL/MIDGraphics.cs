@@ -173,6 +173,14 @@ namespace MIDRetail.Windows.Controls
             get
             {
                 string applicationRoot;
+                // Begin TT#1953-MD - RO Web
+                applicationRoot = MIDConfigurationManager.AppSettings["GraphicsDirectory"];
+                if (!string.IsNullOrEmpty(applicationRoot))
+                {
+                    return applicationRoot;
+                }
+                // End TT#1953-MD - RO Web
+
 #if (DEBUG)
                 applicationRoot = MIDConfigurationManager.AppSettings[Include.MIDApplicationRoot];
                 if (string.IsNullOrEmpty(applicationRoot))

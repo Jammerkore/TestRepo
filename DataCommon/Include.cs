@@ -333,6 +333,35 @@ namespace MIDRetail.DataCommon
         public const string DBChainWeeklyForecastNoZeroRollupSP = "SP_MID_CHN_FOR_WK_NOZERO_ROLLUP";
         // End Track #6395
 
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        public const string DBROExtractStoresDataTable = "Stores_Data";
+        public const string DBROExtractStoresCharacteristicsDataTable = "Stores_Characteristics";
+        public const string DBROExtractHierarchyDefinitionTable = "Hierarchy_Definition";
+        public const string DBROExtractHierarchyDataTable = "Hierarchy_Data";
+        public const string DBROExtractPlanningChainTable = "Planning_Chain";
+
+        public const string DBROExtractPlanningChainTotalTable = "Planning_Chain_Total";
+        public const string DBROExtractPlanningStoresTable = "Planning_Stores";
+        public const string DBROExtractPlanningStoresTotalTable = "Planning_Stores_Total";
+        public const string DBROExtractPlanningAttributesTable = "Planning_Attributes";
+        public const string DBROExtractPlanningAttributesTotalTable = "Planning_Attributes_Total";
+
+        public const string DBROExtractPlanningChainType = "Planning_Chain_Type";
+        public const string DBROExtractPlanningChainTotalType = "Planning_Chain_Total_Type";
+        public const string DBROExtractPlanningStoresType = "Planning_Stores_Type";
+        public const string DBROExtractPlanningStoresTotalType = "Planning_Stores_Total_Type";
+        public const string DBROExtractPlanningAttributesType = "Planning_Attributes_Type";
+        public const string DBROExtractPlanningAttributesTotalType = "Planning_Attributes_Total_Type";
+
+        public const string DBROExtractPlanningChainSP = "RO_Planning_Chain_Write";
+        public const string DBROExtractPlanningChainTotalSP = "RO_Planning_Chain_Total_Write";
+        public const string DBROExtractPlanningStoresSP = "RO_Planning_Stores_Write";
+        public const string DBROExtractPlanningStoresTotalSP = "RO_Planning_Stores_Total_Write";
+        public const string DBROExtractPlanningAttributesSP = "RO_Planning_Attributes_Write";
+        public const string DBROExtractPlanningAttributesTotalSP = "RO_Planning_Attributes_Total_Write";
+
+        // End TT#2131-MD - JSmith - Halo Integration
+
         public const string SQL_FOLDER_CONSTRAINTS = "SQL_Constraints";
         public const string SQL_FOLDER_SCALAR_FUNCTIONS = "SQL_Functions_Scalar";
         public const string SQL_FOLDER_TABLE_FUNCTIONS = "SQL_Functions_Table";
@@ -2041,8 +2070,25 @@ namespace MIDRetail.DataCommon
             return alTasks;
         }
         // End TT#4106 - JSmith - Task List Explorer - Allows users to copy/paste read only system task lists.
-	}
-     
+
+        public static string GetNewName(string name, int index)
+        {
+            string newName;
+
+            if (index > 1)
+            {
+                newName = name + " - Copy (" + index + ")";
+            }
+            else
+            {
+                newName = name + " - Copy";
+            }
+
+            return newName;
+        }
+        // End TT#4106 - JSmith - Task List Explorer - Allows users to copy/paste read only system task lists.
+    }
+
     // begin TT#41 - MD - Jellis - Size Inventory Min Max pt 1
     public class MID_HashCode
     {

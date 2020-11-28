@@ -145,5 +145,19 @@ namespace MIDRetail.Windows.Controls
             }
             //End TT#1660-MD -jsobek -Filters - Between Date - Time Sensitive Option
         }
+
+        // Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+		public void AdjustDateBetweenFields(bool AllowTimeSensitiveDateCheck, bool SpecifyWeeks)
+        {
+            if (!AllowTimeSensitiveDateCheck)
+            {
+                chkTimeSensitive.Visible = false;
+            }
+            if (SpecifyWeeks)
+            {
+                this.ultraLabel2.Text = "weeks"; ;
+            }
+        }
+		// End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
     }
 }

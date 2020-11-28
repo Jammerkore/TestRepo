@@ -84,6 +84,7 @@ namespace MIDRetail.Common
 		private DataTable _dtDateSelection;
 		private DataTable _dtYears;
 		private ArrayList _yearsInDateRangeSelector;
+        private DataTable _dtSmallDateSelection = null;  // TT#1953-MD - RO Web
 
 		private DataSet _dsCalendarDisplay;
 		private DataTable _dtDisplaySeasons;
@@ -219,6 +220,40 @@ namespace MIDRetail.Common
 				return _dtDateSelection; 
 			}
 		}
+
+        // Begin TT#1953-MD - RO Web
+        /// <summary>
+        /// Returns the Date Range Selector Data Table.  This is used only 
+        /// in conjunction with the date range selector.
+        /// </summary>
+        public DataTable DateSmallSelectionDataTable
+        {
+            get
+            {
+                if (_dtSmallDateSelection == null
+                    || _dtSmallDateSelection.Rows.Count == 0)
+                {
+                    string dateSelect = "Year IN (";
+                    int selectYear = _currentWeek.FiscalYear - 5;
+                    dateSelect += selectYear.ToString();
+                    for (int i = 0; i < 9; i++)
+                    {
+                        ++selectYear;
+                        dateSelect += "," + selectYear.ToString();
+                    }
+                    dateSelect += ")";
+                    DataRow[] drows = DateSelectionDataTable.Select(dateSelect);
+                    _dtSmallDateSelection = DateSelectionDataTable.Clone();
+                    for (int i = 0; i < drows.Length; i++)
+                    {
+                        _dtSmallDateSelection.ImportRow(drows[i]);
+                    }
+                }
+
+                return _dtSmallDateSelection.Copy();
+            }
+        }
+        // Begin TT#1953-MD - RO Web
 
 		/// <summary>
 		/// Returns the Calendar Display Data Set.  This is used only 

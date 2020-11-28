@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Configuration;
 using System.ComponentModel;
 using System.Data;
@@ -9,11 +10,11 @@ using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
 
-using CrystalDecisions.CrystalReports.Engine;
-using CrystalDecisions.Shared;
-using CrystalDecisions.Windows.Forms;
-using CrystalDecisions.ReportSource;
-using CrystalDecisions.CrystalReports.ViewerObjectModel;
+//using CrystalDecisions.CrystalReports.Engine;
+//using CrystalDecisions.Shared;
+//using CrystalDecisions.Windows.Forms;
+//using CrystalDecisions.ReportSource;
+//using CrystalDecisions.CrystalReports.ViewerObjectModel;
 
 using MIDRetail.Business;
 using MIDRetail.Common;
@@ -708,7 +709,7 @@ namespace MIDRetail.Windows
                 //Windows.CrystalReports.ForecastAuditMethod forecastAuditMethodReport = new Windows.CrystalReports.ForecastAuditMethod();
                 if (_reportName == "ForecastAuditMerchandise")
                 {
-                    Windows.CrystalReports.ForecastAuditMerchandise forecastAuditReport = new Windows.CrystalReports.ForecastAuditMerchandise();
+                    //Windows.CrystalReports.ForecastAuditMerchandise forecastAuditReport = new Windows.CrystalReports.ForecastAuditMerchandise();
                     System.Data.DataSet ds = MIDEnvironment.CreateDataSet("ForecastAuditMerchandiseDataSet");
                     reportData.ForecastAuditMerchandise_Report(ds,
                                                               this.NodeRID == -1 ? 0 : this.NodeRID,
@@ -720,26 +721,37 @@ namespace MIDRetail.Windows
                                                               lastWeek,
                                                               processFromDate,
                                                               processToDate);
-                    forecastAuditReport.SetDataSource(ds);
+                    //forecastAuditReport.SetDataSource(ds);
 
-                    forecastAuditReport.SetParameterValue("@NodeName", nodeName);
-                    forecastAuditReport.SetParameterValue("@LowerLevel", lowLevelStr);
-                    forecastAuditReport.SetParameterValue("@Timeperiod", timePeriod);
+                    //forecastAuditReport.SetParameterValue("@NodeName", nodeName);
+                    //forecastAuditReport.SetParameterValue("@LowerLevel", lowLevelStr);
+                    //forecastAuditReport.SetParameterValue("@Timeperiod", timePeriod);
 
-                    frmReportViewer viewer = new frmReportViewer(_SAB);
+                    //frmReportViewer viewer = new frmReportViewer(_SAB, eReportType.ForecastAuditSetup);
+                    //frmReportViewer viewer = new frmReportViewer(aSAB: _SAB, reportType: eReportType.ForecastAuditSetup, reportName: "ForecastAuditSetup", reportTitle: "Forecast Audit Setup");
+                    List<ReportInfo> reports = new List<ReportInfo>();
+                    reports.Add(new ReportInfo(aReportSource: ds,
+                        reportType: eReportType.ForecastAuditSetup,
+                        reportName: "ForecastAuditSetup",
+                        reportTitle: "Logilitity - RO - Forecast Audit Setup",
+                        reportComment: "",
+                        reportInformation: "",
+                        displayValue: "Forecast Audit Setup"
+                        ));
+                    frmReportViewer viewer = new frmReportViewer(aSAB: _SAB, reports: reports);
                     viewer.Text = "Forecast Audit Merchandise";
                     viewer.MdiParent = this.ParentForm;
                     viewer.Anchor = AnchorStyles.Left | AnchorStyles.Top;
-                    viewer.ReportSource = forecastAuditReport;
+                    //viewer.ReportSource = ds;
                     viewer.Show();
                     viewer.BringToFront();
                 }
                 else
                 {
-                    Windows.CrystalReports.ForecastAuditMethod forecastAuditReport = new Windows.CrystalReports.ForecastAuditMethod();
+                    //Windows.CrystalReports.ForecastAuditMethod forecastAuditReport = new Windows.CrystalReports.ForecastAuditMethod();
                     System.Data.DataSet ds1 = MIDEnvironment.CreateDataSet("ForecastReportNamesDataSet");
                     reportData.ForecastReportNames_Report(ds1);
-                    forecastAuditReport.SetDataSource(ds1);
+                    //forecastAuditReport.SetDataSource(ds1);
 
                     System.Data.DataSet ds2 = MIDEnvironment.CreateDataSet("ForecastAuditOTSForecastDataSet");
                     reportData.ForecastAuditOTSForecast_Report(ds2,
@@ -750,7 +762,7 @@ namespace MIDRetail.Windows
                                                               userGroupRid,
                                                               firstWeek,
                                                               lastWeek);
-                    forecastAuditReport.Subreports["Forecast Audit OTS Forecast.rpt"].SetDataSource(ds2);
+                    //forecastAuditReport.Subreports["Forecast Audit OTS Forecast.rpt"].SetDataSource(ds2);
 
                     System.Data.DataSet ds3 = MIDEnvironment.CreateDataSet("ForecastAuditModifySalesDataSet");
                     reportData.ForecastAuditModifySales_Report(ds3,
@@ -761,25 +773,36 @@ namespace MIDRetail.Windows
                                                               userGroupRid,
                                                               firstWeek,
                                                               lastWeek);
-                    forecastAuditReport.Subreports["Fore Audit Modify Sales.rpt"].SetDataSource(ds3);
+                    //forecastAuditReport.Subreports["Fore Audit Modify Sales.rpt"].SetDataSource(ds3);
 
-                    forecastAuditReport.SetParameterValue("@SELECTED_NODE_RID", this.NodeRID == -1 ? 0 : this.NodeRID);
-                    forecastAuditReport.SetParameterValue("@LOWER_LEVEL", lowLevelNo);
-                    forecastAuditReport.SetParameterValue("@FV_RID", versionRid);
-                    forecastAuditReport.SetParameterValue("@USER_RID", userRid);
-                    forecastAuditReport.SetParameterValue("@USER_GROUP_RID", userGroupRid);
+                    //forecastAuditReport.SetParameterValue("@SELECTED_NODE_RID", this.NodeRID == -1 ? 0 : this.NodeRID);
+                    //forecastAuditReport.SetParameterValue("@LOWER_LEVEL", lowLevelNo);
+                    //forecastAuditReport.SetParameterValue("@FV_RID", versionRid);
+                    //forecastAuditReport.SetParameterValue("@USER_RID", userRid);
+                    //forecastAuditReport.SetParameterValue("@USER_GROUP_RID", userGroupRid);
 
-                    forecastAuditReport.SetParameterValue("@NodeName", nodeName);
-                    forecastAuditReport.SetParameterValue("@LowerLevel", lowLevelStr);
-                    forecastAuditReport.SetParameterValue("@Timeperiod", timePeriod);
-                    forecastAuditReport.SetParameterValue("@TIME_RANGE_BEGIN", firstWeek);
-                    forecastAuditReport.SetParameterValue("@TIME_RANGE_END", lastWeek);
+                    //forecastAuditReport.SetParameterValue("@NodeName", nodeName);
+                    //forecastAuditReport.SetParameterValue("@LowerLevel", lowLevelStr);
+                    //forecastAuditReport.SetParameterValue("@Timeperiod", timePeriod);
+                    //forecastAuditReport.SetParameterValue("@TIME_RANGE_BEGIN", firstWeek);
+                    //forecastAuditReport.SetParameterValue("@TIME_RANGE_END", lastWeek);
 
-                    frmReportViewer viewer = new frmReportViewer(_SAB);
+                    //frmReportViewer viewer = new frmReportViewer(_SAB, eReportType.ForecastAuditSetup);
+                    //frmReportViewer viewer = new frmReportViewer(aSAB: _SAB, reportType: eReportType.ForecastAuditSetup, reportName: "ForecastAuditSetup", reportTitle: "Forecast Audit Setup");
+                    List<ReportInfo> reports = new List<ReportInfo>();
+                    reports.Add(new ReportInfo(aReportSource: ds1,
+                        reportType: eReportType.ForecastAuditSetup,
+                        reportName: "ForecastAuditSetup",
+                        reportTitle: "Logilitity - RO - Forecast Audit Setup",
+                        reportComment: "",
+                        reportInformation: "",
+                        displayValue: "Forecast Audit Setup"
+                        ));
+                    frmReportViewer viewer = new frmReportViewer(aSAB: _SAB, reports: reports);
                     viewer.Text = "Forecast Audit Method";
                     viewer.MdiParent = this.ParentForm;
                     viewer.Anchor = AnchorStyles.Left | AnchorStyles.Top;
-                    viewer.ReportSource = forecastAuditReport;
+                    //viewer.ReportSource = ds1;
                     viewer.Show();
                     viewer.BringToFront();
                 }

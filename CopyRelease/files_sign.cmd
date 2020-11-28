@@ -1,1 +1,1 @@
-%windir%\system32\windowspowershell\v1.0\powershell.exe "C:\scmvs2013\build\CopyRelease\files_sign.ps1"
+%windir%\system32\windowspowershell\v1.0\powershell.exe "C:\scmvs2017\build\CopyRelease\files_sign.ps1"

@@ -419,7 +419,10 @@ namespace MIDRetail.Windows
 
                     if (this._executeAfterEditing)
                     {
-                        this._EAB.AllocationWorkspaceExplorer.BindFilterComboBox();
+                        // Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+                        //this._EAB.AllocationWorkspaceExplorer.BindFilterComboBox();
+                        this._EAB.AssortmentWorkspaceExplorer.BindFilterComboBox();
+                        // End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
                         this._EAB.AssortmentWorkspaceExplorer.SetHeaderFilter(e.filterToSave.filterRID);
                     }
                     else

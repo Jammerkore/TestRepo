@@ -154,7 +154,13 @@ namespace MIDRetail.Business
                             //End TT#2 - JScott - Assortment Planning - Phase 2
                             (planCellRef.isCellFormulaPending(_scheduleEntry) || planCellRef.isCellSpreadPending(_scheduleEntry)))
                         {
-                            throw new CellPendingException(planCellRef);
+                            //Begin TT#1659-MD -jsobek -CelllPendingException Performance
+                            //throw new CellPendingException(planCellRef); 
+                            _scheduleEntry.LastPendingCell = planCellRef;
+                            aCancel = true;
+                            _scheduleEntry.ComputationFormulaReturnType = eComputationFormulaReturnType.Pending;
+                            return;
+                            //End TT#1659-MD -jsobek -CelllPendingException Performance
                         }
 
                         cellValue = planCellRef.GetCellValue(_getCellMode, _useHiddenValues);
@@ -275,7 +281,13 @@ namespace MIDRetail.Business
                                 //End TT#2 - JScott - Assortment Planning - Phase 2
                                 (planCellRef.isCellFormulaPending(_scheduleEntry) || planCellRef.isCellSpreadPending(_scheduleEntry)))
 							{
-                                throw new CellPendingException(planCellRef);
+                                //Begin TT#1659-MD -jsobek -CelllPendingException Performance
+                                //throw new CellPendingException(planCellRef); 
+                                _scheduleEntry.LastPendingCell = planCellRef;
+                                aCancel = true;
+                                _scheduleEntry.ComputationFormulaReturnType = eComputationFormulaReturnType.Pending;
+                                return;
+                                //End TT#1659-MD -jsobek -CelllPendingException Performance
                             }
 
                             cellValue = planCellRef.GetCellValue(_getCellMode, _useHiddenValues);

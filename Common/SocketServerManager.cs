@@ -6,6 +6,7 @@ using System.Threading;
 using System.Net;
 using System.Net.Sockets;
 using System.Diagnostics;
+using System.ServiceProcess;
 
 using MIDRetail.DataCommon;
 using MIDRetail.Data;
@@ -23,6 +24,7 @@ namespace MIDRetail.Common
         public Audit audit;
         public bool IsApplicationInBatchOnlyMode;
         public string BatchModeLastChangedBy = string.Empty;
+        public System.Net.Sockets.Socket jobServiceClientSocket = null;
 
         private System.Timers.Timer activeRequestTimer;
 
@@ -180,59 +182,65 @@ namespace MIDRetail.Common
             }
             if (commandFromClient == SocketSharedRoutines.SocketServerCommands.SetBatchOnlyModeOn.commandName)
             {
-                IsApplicationInBatchOnlyMode = true;
-                BatchModeLastChangedBy = RemoteSystemOptions.Messages.BatchOnlyModeOnLastChangedByPrefix + tagInfo;
+                if (StopJobService())
+                {
+                    IsApplicationInBatchOnlyMode = true;
+                    BatchModeLastChangedBy = RemoteSystemOptions.Messages.BatchOnlyModeOnLastChangedByPrefix + tagInfo;
 
-                audit.Add_Msg(eMIDMessageLevel.Information, BatchModeLastChangedBy, SocketSharedRoutines.moduleNameForAuditLogs, true);
-                //Automatically issue a client shutdown command when Batch Only Mode is set on
-                SendCommandToClients(SocketSharedRoutines.SocketClientCommands.ShutDown, tagInfo, fromClientSocket);
+                    audit.Add_Msg(eMIDMessageLevel.Information, BatchModeLastChangedBy, SocketSharedRoutines.moduleNameForAuditLogs, true);
+                    //Automatically issue a client shutdown command when Batch Only Mode is set on
+                    SendCommandToClients(SocketSharedRoutines.SocketClientCommands.ShutDown, tagInfo, fromClientSocket);
 
-                //Begin TT#1517-MD -jsobek -Store Service Optimization
-                //Wait 30 seconds then remove old data
-                Thread.Sleep(30000);
-                StoreGroupMaint groupData = new StoreGroupMaint();
-                try
-                {
-                    groupData.OpenUpdateConnection();
-                    groupData.StoreGroupJoinHistory_DeleteAll();
-                    groupData.CommitData();
+                    //Begin TT#1517-MD -jsobek -Store Service Optimization
+                    //Wait 30 seconds then remove old data
+                    Thread.Sleep(30000);
+                    StoreGroupMaint groupData = new StoreGroupMaint();
+                    try
+                    {
+                        groupData.OpenUpdateConnection();
+                        groupData.StoreGroupJoinHistory_DeleteAll();
+                        groupData.CommitData();
+                    }
+                    catch (Exception ex)
+                    {
+                        HandleException(ex);
+                    }
+                    finally
+                    {
+                        groupData.CloseUpdateConnection();
+                    }
+                    //End TT#1517-MD -jsobek -Store Service Optimization
                 }
-                catch (Exception ex)
-                {
-                    HandleException(ex);
-                }
-                finally
-                {
-                    groupData.CloseUpdateConnection();
-                }
-                //End TT#1517-MD -jsobek -Store Service Optimization
             }
             if (commandFromClient == SocketSharedRoutines.SocketServerCommands.SetBatchOnlyModeOff.commandName)
             {
-                // Begin RO-3962 - JSmith - Purge is not deleting dynamic empty set attribute sets
-                //Wait 30 seconds then remove old data
-                Thread.Sleep(30000);
-                StoreGroupMaint groupData = new StoreGroupMaint();
-                try
+                if (StartJobService())
                 {
-                    groupData.OpenUpdateConnection();
-                    groupData.StoreGroupJoinHistory_DeleteAll();
-                    groupData.CommitData();
-                }
-                catch (Exception ex)
-                {
-                    HandleException(ex);
-                }
-                finally
-                {
-                    groupData.CloseUpdateConnection();
-                }
-                // End RO-3962 - JSmith - Purge is not deleting dynamic empty set attribute sets
+                    // Begin RO-3962 - JSmith - Purge is not deleting dynamic empty set attribute sets
+                    //Wait 30 seconds then remove old data
+                    Thread.Sleep(30000);
+                    StoreGroupMaint groupData = new StoreGroupMaint();
+                    try
+                    {
+                        groupData.OpenUpdateConnection();
+                        groupData.StoreGroupJoinHistory_DeleteAll();
+                        groupData.CommitData();
+                    }
+                    catch (Exception ex)
+                    {
+                        HandleException(ex);
+                    }
+                    finally
+                    {
+                        groupData.CloseUpdateConnection();
+                    }
+                    // End RO-3962 - JSmith - Purge is not deleting dynamic empty set attribute sets
 
-                IsApplicationInBatchOnlyMode = false;
-                BatchModeLastChangedBy = RemoteSystemOptions.Messages.BatchOnlyModeOffLastChangedByPrefix + tagInfo;
+                    IsApplicationInBatchOnlyMode = false;
+                    BatchModeLastChangedBy = RemoteSystemOptions.Messages.BatchOnlyModeOffLastChangedByPrefix + tagInfo;
 
-                audit.Add_Msg(eMIDMessageLevel.Information, BatchModeLastChangedBy, SocketSharedRoutines.moduleNameForAuditLogs, true);
+                    audit.Add_Msg(eMIDMessageLevel.Information, BatchModeLastChangedBy, SocketSharedRoutines.moduleNameForAuditLogs, true);
+                }
             }
             if (commandFromClient == SocketSharedRoutines.SocketServerCommands.GetClientList.commandName)
             {
@@ -268,7 +276,7 @@ namespace MIDRetail.Common
                 while (currentRowPosition != -1)
                 {
                     string sRow = SocketSharedRoutines.GetInfoFromTags(info, SocketSharedRoutines.Tags.rowStart, SocketSharedRoutines.Tags.rowEnd);
-
+                    string user = SocketSharedRoutines.GetInfoFromTags(info, SocketSharedRoutines.Tags.userNameStart, SocketSharedRoutines.Tags.userNameEnd);
                     string clientIP = SocketSharedRoutines.GetInfoFromTags(info, SocketSharedRoutines.Tags.clientIPAddressStart, SocketSharedRoutines.Tags.clientIPAddressEnd);
                     string clientPort = SocketSharedRoutines.GetInfoFromTags(info, SocketSharedRoutines.Tags.clientPortStart, SocketSharedRoutines.Tags.clientPortEnd);
 
@@ -280,7 +288,13 @@ namespace MIDRetail.Common
                         });
                     if (clientToShutDown != null)
                     {
-                        SendCommandToClient(SocketSharedRoutines.SocketClientCommands.ShutDown, issuedBy, clientToShutDown);
+                        string commandInfoTag = issuedBy;
+                        if (jobServiceClientSocket != null
+						    && SocketSharedRoutines.AreSocketRemoteEndPointsEqual(clientToShutDown, jobServiceClientSocket))
+                        {
+                            commandInfoTag += "|" + user;
+                        }
+                        SendCommandToClient(SocketSharedRoutines.SocketClientCommands.ShutDown, commandInfoTag, clientToShutDown);
                     }
 
                     int nextRowPosition = info.IndexOf(SocketSharedRoutines.Tags.rowEnd) + SocketSharedRoutines.Tags.rowEnd.Length;
@@ -288,6 +302,10 @@ namespace MIDRetail.Common
                     currentRowPosition = info.IndexOf(SocketSharedRoutines.Tags.rowStart);
                 }
             
+            }
+            if (commandFromClient == SocketSharedRoutines.SocketServerCommands.SetAsJobServiceClient)
+            {
+                jobServiceClientSocket = fromClientSocket;
             }
         }
 
@@ -752,6 +770,116 @@ namespace MIDRetail.Common
             {
                 HandleException(ex);
             }
+        }
+
+        public bool StartJobService()
+        {
+            string ServiceName = "MIDRetailJobService";
+
+            bool started = false;
+            try
+            {
+                // check if service exists.  If service does not exist.  Return true to not stop process.
+                ServiceController ctl = ServiceController.GetServices().FirstOrDefault(s => s.ServiceName == ServiceName);
+                if (ctl == null)
+                {
+                    return true;
+                }
+
+                // Check whether the service is running.
+
+                ServiceController sc = new ServiceController(ServiceName);
+
+                if (sc.Status == ServiceControllerStatus.Stopped)
+                {
+                    // Start the service if the current status is stopped.
+                    try
+                    {
+                        // Stop the service, and wait until its status is "Stopped".
+                        sc.Start();
+                        sc.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 10, 0));
+                        started = true;
+                    }
+                    catch (System.ServiceProcess.TimeoutException)
+                    {
+                        audit.Add_Msg(eMIDMessageLevel.Severe, "Service " + ServiceName + " did not start in a timely manner. Check Event Viewer", SocketSharedRoutines.moduleNameForAuditLogs, true);
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        audit.Add_Msg(eMIDMessageLevel.Severe, "Could not start service " + ServiceName, SocketSharedRoutines.moduleNameForAuditLogs, true);
+                    }
+                }
+                else if (sc.Status == ServiceControllerStatus.Running)
+                {
+                    started = true;
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                started = false;
+            }
+            catch (Exception ex)
+            {
+                HandleException(ex);
+            }
+
+            return started;
+        }
+
+        public bool StopJobService()
+        {
+            string ServiceName = "MIDRetailJobService";
+
+            bool stopped = false;
+            try
+            {
+                // check if service exists.  If service does not exist.  Return true to not stop process.
+                ServiceController ctl = ServiceController.GetServices().FirstOrDefault(s => s.ServiceName == ServiceName);
+                if (ctl == null)
+                {
+                    return true;
+                }
+
+                // Check whether the service is running.
+
+                ServiceController sc = new ServiceController(ServiceName);
+
+                if (sc.Status == ServiceControllerStatus.Running)
+                {
+                    // Stop the service if the current status is running.
+                    try
+                    {
+                        // Stop the service, and wait until its status is "Stopped".
+                        sc.Stop();
+                        sc.WaitForStatus(ServiceControllerStatus.Stopped, new TimeSpan(0, 10, 0));
+                        stopped = true;
+                        Thread.Sleep(5000);
+
+                    }
+                    catch (System.ServiceProcess.TimeoutException)
+                    {
+                        audit.Add_Msg(eMIDMessageLevel.Severe, "Service " + ServiceName + " did not stop in a timely manner. Check Event Viewer", SocketSharedRoutines.moduleNameForAuditLogs, true);
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        audit.Add_Msg(eMIDMessageLevel.Severe, "Could not stop service " + ServiceName, SocketSharedRoutines.moduleNameForAuditLogs, true);
+                    }
+                }
+                else if (sc.Status == ServiceControllerStatus.Stopped)
+                {
+                    stopped = true;
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                stopped = false;
+            }
+            catch (Exception ex)
+            {
+                HandleException(ex);
+            }
+
+            return stopped;
         }
     }
 

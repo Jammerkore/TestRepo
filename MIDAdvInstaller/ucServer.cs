@@ -37,6 +37,7 @@ namespace MIDRetailInstaller
 
         //install folder string
         string InstallFolder = "";
+        string DataFolder = "";
         string ConfigurationInstallFolder = "";
 
         string sInstallerLocation = String.Empty;
@@ -57,6 +58,8 @@ namespace MIDRetailInstaller
         // End TT#581-MD - JSmith - Configuration Cleanup
 
         MIDEncryption encryption = new MIDEncryption();
+
+        public string strInstallLocation = null;
         public ucServer(InstallerFrame p_frame, ucInstallationLog p_log, string installerLocation)
         {
             //pass the frame object to this object
@@ -75,6 +78,8 @@ namespace MIDRetailInstaller
 
             InstallFolder = ConfigurationManager.AppSettings["ServicesInstallLocation"].ToString();
             txtInstallFolder.Text = InstallFolder;
+            DataFolder = ConfigurationManager.AppSettings["DataDirectoriesLocation"].ToString();
+            txtDataFolder.Text = DataFolder;
             ConfigurationInstallFolder = ConfigurationManager.AppSettings["ClientConfigurationLocation"].ToString();
             txtConfigurationInstallFolder.Text = ConfigurationInstallFolder;
 
@@ -186,6 +191,7 @@ namespace MIDRetailInstaller
         private void ucServer_Load(object sender, EventArgs e)
         {
             bool isService = true;
+            bool blInstallDuringTypical;
              // Begin TT#74 MD - JSmith - One-button Upgrade
             ////get a list of the installed clients
             //List<string> installedServices = GetInstalledServices();
@@ -211,6 +217,7 @@ namespace MIDRetailInstaller
             Stack stkInstalledIndexes = new Stack();
             for (int intItem = 0; intItem < clstServices.Items.Count; intItem++)
             {
+                blInstallDuringTypical = true;
                 if(clstServices.Items[intItem].ToString().Contains("Client") != true)
                 {
                     switch (clstServices.Items[intItem].ToString())
@@ -229,6 +236,16 @@ namespace MIDRetailInstaller
                             key = InstallerConstants.cHierarchyServiceKey;
                             isService = true;
                             
+                            break;
+                        case InstallerConstants.cJobServiceName:
+                            key = InstallerConstants.cJobServiceKey;
+                            isService = true;
+                            blInstallDuringTypical = false;
+
+                            break;
+                        case InstallerConstants.cROWebServiceName:
+                            blInstallDuringTypical = false;
+
                             break;
                         case InstallerConstants.cSchedulerServiceName:
                             key = InstallerConstants.cSchedulerServiceKey;
@@ -255,7 +272,10 @@ namespace MIDRetailInstaller
                     }
                     else
                     {
-                        clstServices.SetItemChecked(intItem, true);
+                        if (blInstallDuringTypical)
+                        {
+                            clstServices.SetItemChecked(intItem, true);
+                        }
                         if (isService)
                         {
                             gbxStartType.Visible = true;
@@ -289,6 +309,7 @@ namespace MIDRetailInstaller
                 rdoInstallTypical.Checked = true;
                 rdoInstalledServerTasks.Enabled = false;
                 //frame.InstallTask = eInstallTasks.typicalInstall;
+                clstServices.Enabled = true;
             }
             else
             {
@@ -444,7 +465,8 @@ namespace MIDRetailInstaller
                 frame.SetStatusMessage(frame.GetText("SelectInstalledServer"));
 
                 //enable the needed controls
-                grpServer.Enabled = false;
+                //grpServer.Enabled = false;
+                SetServerGroupBoxEnabled(false);
                 grpClientConfiguration.Enabled = false;
                 grpInstalledServerComponents.Enabled = true;
 
@@ -471,7 +493,8 @@ namespace MIDRetailInstaller
                 //enable the needed controls
                 grpInstalledServerComponents.Enabled = false;
                 grpClientConfiguration.Enabled = false;
-                grpServer.Enabled = false;
+                //grpServer.Enabled = false;
+                SetServerGroupBoxEnabled(true);
 
                 //set the install task value on the frame
                 frame.InstallTask = eInstallTasks.typicalInstall;
@@ -490,7 +513,8 @@ namespace MIDRetailInstaller
                 //enable the needed controls
                 grpInstalledServerComponents.Enabled = false;
                 grpClientConfiguration.Enabled = false;
-                grpServer.Enabled = true;
+                //grpServer.Enabled = true;
+                SetServerGroupBoxEnabled(true);
 
                 //set the install task value on the frame
                 frame.InstallTask = eInstallTasks.install;
@@ -508,7 +532,8 @@ namespace MIDRetailInstaller
                 //enable the needed controls
                 grpInstalledServerComponents.Enabled = false;
                 grpClientConfiguration.Enabled = true;
-                grpServer.Enabled = false;
+                //grpServer.Enabled = false;
+                SetServerGroupBoxEnabled(false);
 
                 //set the install task value on the frame
                 frame.InstallTask = eInstallTasks.installConfiguration;
@@ -534,6 +559,17 @@ namespace MIDRetailInstaller
             {
                 log.AddLogEntry("Installed Service List: " + err, eErrorType.warning);
             }
+        }
+
+        private void SetServerGroupBoxEnabled(bool blEnable)
+        {
+            gbxStartType.Enabled = blEnable;
+            gbxConfigureUsing.Enabled = blEnable;
+            txtInstallFolder.Enabled = blEnable;
+            btnInstallFolder.Enabled = blEnable;
+            txtDataFolder.Enabled = blEnable;
+            btnDataFolder.Enabled = blEnable;
+            clstServices.Enabled = blEnable;
         }
 
         public void removeComponentFromList(string TargetLocation)
@@ -734,6 +770,7 @@ namespace MIDRetailInstaller
                                     // Begin TT#3763 - JSmith - One-Click Upgrade fails for batch servers
                                     frame.CleanupFolders(strParentDir + @"\StoreDelete");
                                     // End TT#3763 - JSmith - One-Click Upgrade fails for batch servers
+                                    frame.CleanupFolders(strParentDir + @"\HierarchyLevelMaintenance");
                                     strParentDir += @"\Transactions";
                                 }
 
@@ -760,6 +797,16 @@ namespace MIDRetailInstaller
                     else if (entryType == eEntryType.MIDHierarchyService.ToString())
                     {
                         key = InstallerConstants.cHierarchyServiceName;
+                        isService = true;
+                    }
+                    else if (entryType == eEntryType.MIDJobService.ToString())
+                    {
+                        key = InstallerConstants.cJobServiceName;
+                        isService = true;
+                    }
+                    else if (entryType == eEntryType.MIDROWebService.ToString())
+                    {
+                        key = InstallerConstants.cROWebServiceName;
                         isService = true;
                     }
                     else if (entryType == eEntryType.MIDSchedulerService.ToString())
@@ -1028,6 +1075,39 @@ namespace MIDRetailInstaller
                         blInstallService = true;
                         intAppIdx = eEntryType.MIDHierarchyService;
 
+                    }
+                    else if (ConfigurationManager.AppSettings["JobServiceNames"].Contains(strExeFile) == true)
+                    {
+                        if (frame._64bit == false)
+                        {
+                            strFile = InstallerConstants.cJobServiceArchive;
+                        }
+                        else
+                        {
+                            strFile = InstallerConstants.cJobServiceArchive64;
+                        }
+
+                        strServName = InstallerConstants.cJobServiceName;
+                        strServKey = InstallerConstants.cJobServiceKey;
+                        blInstallService = true;
+                        intAppIdx = eEntryType.MIDJobService;
+
+                    }
+                    else if (ConfigurationManager.AppSettings["ROWebServiceNames"].Contains(strExeFile) == true)
+                    {
+                        if (frame._64bit == false)
+                        {
+                            strFile = InstallerConstants.cROWebServiceArchive;
+                        }
+                        else
+                        {
+                            strFile = InstallerConstants.cROWebServiceArchive64;
+                        }
+
+                        strServName = InstallerConstants.cROWebServiceName;
+                        strServKey = InstallerConstants.cROWebServiceKey;
+                        blInstallService = false;
+                        intAppIdx = eEntryType.MIDROWebService;
                     }
                     else if(ConfigurationManager.AppSettings["SchedulerServiceNames"].Contains(strExeFile) == true)
                     {
@@ -1345,14 +1425,16 @@ namespace MIDRetailInstaller
                 //string strServAbbr = "";
                 //eEntryType intAppIdx = eEntryType.None;
                 string strTargetLocation;
-                if (installFolder == null)
-                {
+                //if (installFolder == null)
+                //{
                     strTargetLocation = txtInstallFolder.Text;
-                }
-                else
-                {
-                    strTargetLocation = installFolder;
-                }
+                //}
+                //else
+                //{
+                //    strTargetLocation = installFolder;
+                //}
+
+                strInstallLocation = strTargetLocation;
 
                 string strTargetDrive = Directory.GetDirectoryRoot(strTargetLocation).ToString().Trim();
                 string strTargetParent = Directory.GetParent(strTargetLocation).ToString().Trim();
@@ -1445,8 +1527,8 @@ namespace MIDRetailInstaller
 				// End TT#1668
                 config.ReplaceDefaultsInConfigFiles(strTargetLocation, strTargetLocation, null, configureBy, strTargetDrive);
                 // set the values to cause encryption
-                config.SetConfigValue(strTargetLocation + @"\" + ConfigurationFileName, "User", "administrator");
-                config.SetConfigValue(strTargetLocation + @"\" + ConfigurationFileName, "Password", "administrator");
+                config.SetConfigValue(strTargetLocation + @"\" + ConfigurationFileName, InstallerConstants.cParent_AppSettings, InstallerConstants.cLookupType_Child, "User", "administrator");
+                config.SetConfigValue(strTargetLocation + @"\" + ConfigurationFileName, InstallerConstants.cParent_AppSettings, InstallerConstants.cLookupType_Child, "Password", "administrator");
 
                 frame.RebuildComponentLists();
 
@@ -1486,11 +1568,11 @@ namespace MIDRetailInstaller
             {
 
                 /* Begin TT#1192 - Batch executable files blocked after initial install/upgrade - APicchetti - 3/17/2011 */
-                ProcessStartInfo psi = new ProcessStartInfo();
-                psi.WindowStyle = ProcessWindowStyle.Hidden;
-                psi.Arguments = "-s -d " + installFolder;
-                psi.FileName = Directory.GetParent(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"\streams.exe";
-                Process.Start(psi);
+                //ProcessStartInfo psi = new ProcessStartInfo();
+                //psi.WindowStyle = ProcessWindowStyle.Hidden;
+                //psi.Arguments = "-s -d " + installFolder;
+                //psi.FileName = Directory.GetParent(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"\streams.exe";
+                //Process.Start(psi);
                 /* End TT#1192 - Batch executable files blocked after initial install/upgrade - APicchetti - 3/17/2011 */
 
                 //change cursor back to default
@@ -1508,6 +1590,7 @@ namespace MIDRetailInstaller
             blAddExeNameToDisplay = true;
             strAppFile = null;
             strExeFile = null;
+            bool setRecoveryOptions = false;   // RO-4749 - JSmith - Set Recovery Options for Job Service
 
             try
             {
@@ -1568,6 +1651,40 @@ namespace MIDRetailInstaller
                         intAppIdx = eEntryType.MIDHierarchyService;
                         blInstallService = true;
                         strTargetLocation += @"\" + ConfigurationManager.AppSettings["InstallMerchandiseServiceFolder"].ToString();
+
+                        break;
+                    case InstallerConstants.cJobServiceName:
+                        if (frame._64bit == false)
+                        {
+                            strFile = InstallerConstants.cJobServiceArchive;
+                        }
+                        else
+                        {
+                            strFile = InstallerConstants.cJobServiceArchive64;
+                        }
+
+                        //strExeFile = InstallerConstants.cJobServiceExecutableName;
+                        strServKey = InstallerConstants.cJobServiceKey;
+                        intAppIdx = eEntryType.MIDJobService;
+                        blInstallService = true;
+                        strTargetLocation += @"\" + ConfigurationManager.AppSettings["InstallJobServiceFolder"].ToString();
+                        setRecoveryOptions = true;   // RO-4749 - JSmith - Set Recovery Options for Job Service
+
+                        break;
+                    case InstallerConstants.cROWebServiceName:
+                        if (frame._64bit == false)
+                        {
+                            strFile = InstallerConstants.cROWebServiceArchive;
+                        }
+                        else
+                        {
+                            strFile = InstallerConstants.cROWebServiceArchive64;
+                        }
+
+                        strServKey = InstallerConstants.cROWebServiceKey;
+                        intAppIdx = eEntryType.MIDROWebService;
+                        blInstallService = false;
+                        strTargetLocation += @"\" + ConfigurationManager.AppSettings["InstallROWebServiceFolder"].ToString();
 
                         break;
                     case InstallerConstants.cSchedulerServiceName:
@@ -1635,7 +1752,10 @@ namespace MIDRetailInstaller
                     //install service
                     if (blInstallService)
                     {
-                        ServiceInstall(strExeFile, strTargetLocation, false, rdoStartTypeAuto.Checked);
+                        // Begin RO-4749 - JSmith - Set Recovery Options for Job Service
+                        //ServiceInstall(strExeFile, strTargetLocation, false, rdoStartTypeAuto.Checked);
+                        ServiceInstall(strExeFile, strTargetLocation, false, rdoStartTypeAuto.Checked, setRecoveryOptions);
+                        // Begin RO-4749 - JSmith - Set Recovery Options for Job Service
                     }
 
                     //register service
@@ -1668,15 +1788,26 @@ namespace MIDRetailInstaller
                 if (Install_Upgrade == "Install")
                 {
                     // Get and parse my directory string.
-                    var directories = ConfigurationManager.AppSettings["DataDirectoriesLocation"];
-                    var dirs = directories.Split(new[] {'|'}, System.StringSplitOptions.RemoveEmptyEntries);
+                    //var directories = ConfigurationManager.AppSettings["DataDirectoriesLocation"];
+                    //var dirs = directories.Split(new[] {'|'}, System.StringSplitOptions.RemoveEmptyEntries);
+
+                    //// Loop through the directories.
+                    //foreach (string item in dirs)
+                    //{
+                    //    if (!Directory.Exists(item))
+                    //    {
+                    //        Directory.CreateDirectory(item);
+                    //    }
+                    //}
+                    var directories = ConfigurationManager.AppSettings["DataDirectories"];
+                    var dirs = directories.Split(new[] { '|' }, System.StringSplitOptions.RemoveEmptyEntries);
 
                     // Loop through the directories.
                     foreach (string item in dirs)
                     {
-                        if (!Directory.Exists(item))
+                        if (!Directory.Exists(txtDataFolder.Text + @"\" + item))
                         {
-                            Directory.CreateDirectory(item);
+                            Directory.CreateDirectory(txtDataFolder.Text + @"\" + item);
                         }
                     }
                 }
@@ -1757,8 +1888,8 @@ namespace MIDRetailInstaller
 					// End TT#1668
                     config.ReplaceDefaultsInConfigFiles(ConfigurationInstallFolder, ConfigurationInstallFolder, null, configureBy, strTargetDrive);
                     // set the values to cause encryption
-                    config.SetConfigValue(ConfigurationInstallFolder + @"\" + ConfigurationFileName, "User", "administrator");
-                    config.SetConfigValue(ConfigurationInstallFolder + @"\" + ConfigurationFileName, "Password", "administrator");
+                    config.SetConfigValue(ConfigurationInstallFolder + @"\" + ConfigurationFileName, InstallerConstants.cParent_AppSettings, InstallerConstants.cLookupType_Child, "User", "administrator");
+                    config.SetConfigValue(ConfigurationInstallFolder + @"\" + ConfigurationFileName, InstallerConstants.cParent_AppSettings, InstallerConstants.cLookupType_Child, "Password", "administrator");
 
                     if (!frame.blPreviousInstalls)
                     {
@@ -2204,7 +2335,10 @@ namespace MIDRetailInstaller
             // END TT#1283
         }
 
-        private void ServiceInstall(string ExeFileName, string strTargetFolder, bool startService, bool setStartAuto)
+        // Begin RO-4749 - JSmith - Set Recovery Options for Job Service
+        //private void ServiceInstall(string ExeFileName, string strTargetFolder, bool startService, bool setStartAuto)
+        private void ServiceInstall(string ExeFileName, string strTargetFolder, bool startService, bool setStartAuto, bool setRecoveryOptions = false)
+        // End RO-4749 - JSmith - Set Recovery Options for Job Service
         {
             try
             {
@@ -2283,6 +2417,20 @@ namespace MIDRetailInstaller
                     servAutostart.Close();
                     // End TT#330-MD - JSmith - Add description to MIDRetail client and all services so displays in Task Manager and Services.
 
+                    // Begin RO-4749 - JSmith - Set Recovery Options for Job Service
+                    if (setRecoveryOptions)
+                    {
+                        servAutostart = new Process();
+                        servAutostart.StartInfo.FileName = System.Environment.GetEnvironmentVariable("windir") + @"\system32\sc.exe";
+                        //servAutostart.StartInfo.Arguments = string.Format("failure \"{0}\" reset= 0 actions= restart/60000", ServiceName);
+                        servAutostart.StartInfo.Arguments = string.Format("failure \"{0}\" reset= 0 actions= restart/60000/restart/60000//60000 ", ServiceName);
+                        servAutostart.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                        servAutostart.Start();
+                        servAutostart.WaitForExit();
+                        servAutostart.Close();
+                    }
+                    // End RO-4749 - JSmith - Set Recovery Options for Job Service
+
                     //start the service
                     if (startService)
                     {
@@ -2325,7 +2473,8 @@ namespace MIDRetailInstaller
             try
             {
                 // not a service so exit
-                if (entryType == eEntryType.MIDAPI.ToString())
+                if (entryType == eEntryType.MIDAPI.ToString()
+                    || entryType == eEntryType.MIDROWebService.ToString())
                 {
                     if (frame.FileInUse(ApplicationFolder))
                     {
@@ -2442,6 +2591,10 @@ namespace MIDRetailInstaller
                 install_dir = folderInstallFolder.SelectedPath;
 
             }
+            else
+            {
+                install_dir = initial_dir;
+            }
 
             //create the directory and clean-up the initial if not used
             if (initial_dir != install_dir)
@@ -2459,8 +2612,63 @@ namespace MIDRetailInstaller
             {
                 InstallFolder = initial_dir;
             }
+
+            string strPathRoot = Path.GetPathRoot(InstallFolder);
+            txtConfigurationInstallFolder.Text = txtConfigurationInstallFolder.Text.Replace(@"C:\", strPathRoot);
+            ConfigurationInstallFolder = txtConfigurationInstallFolder.Text;
         }
 
+        private void btnDataFolder_Click(object sender, EventArgs e)
+        {
+            //set initial directory
+            string initial_dir = txtDataFolder.Text;
+            bool initial_dir_exists = true;
+
+            //create the initial directory if it doesn't exist
+            if (initial_dir == "")
+            {
+                initial_dir = "C:";
+            }
+            if (Directory.Exists(initial_dir) == false)
+            {
+                //Directory.CreateDirectory(initial_dir);
+                frame.CreateDirectory(initial_dir);
+                initial_dir_exists = false;
+            }
+
+            //select the initial directory
+            folderInstallFolder.SelectedPath = initial_dir;
+
+            //set the install directory
+            string install_dir = "";
+            if (DialogResult.OK == folderInstallFolder.ShowDialog())
+            {
+                folderInstallFolder.ShowNewFolderButton = true;
+                install_dir = folderInstallFolder.SelectedPath;
+
+            }
+            else
+            {
+                InstallFolder = initial_dir;
+            }
+
+            //create the directory and clean-up the initial if not used
+            if (initial_dir != install_dir)
+            {
+                if (initial_dir_exists == false)
+                {
+                    frame.DeleteFolder(initial_dir);
+                }
+
+                InstallFolder = install_dir;
+
+                txtDataFolder.Text = install_dir;
+            }
+            else
+            {
+                InstallFolder = initial_dir;
+            }
+        }
         private void btnConfigurationInstallFolder_Click(object sender, EventArgs e)
         {
             //set initial directory
@@ -2580,6 +2788,8 @@ namespace MIDRetailInstaller
             }
             return successful;
         }
+
+
         // End TT#74 MD
     }
 }

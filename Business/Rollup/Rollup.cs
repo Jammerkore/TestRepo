@@ -975,8 +975,8 @@ namespace MIDRetail.Business
                                     typeID, fromPhOffsetInd, fromLevel, toPhOffsetInd, toLevel, aSession, rollupDays, intransitOnly, aProcessID);
                                 if (requestsBuiltSuccessfully)
                                 {
-                                    _rd.CommitData();
-                                }
+								_rd.CommitData();
+							}
                                 else
                                 {
                                     return false;
@@ -988,13 +988,13 @@ namespace MIDRetail.Business
 								if (rollDayToWeek)
 								{
 									typeID = Convert.ToInt32(eRollType.storeDailyHistoryToWeeks);
-                                    requestsBuiltSuccessfully = BuildRollupRequests(weekProfileList, phRID, hnp.HomeHierarchyType,
+                                    requestsBuiltSuccessfully = BuildRollupRequests(weekProfileList, phRID, hnp.HomeHierarchyType, 
                                         hnRID, versionRID,
                                         typeID, fromPhOffsetInd, fromLevel, toPhOffsetInd, toLevel, aSession, rollupDays, intransitOnly, aProcessID);
                                     if (requestsBuiltSuccessfully)
                                     {
-                                        _rd.CommitData();
-                                    }
+									_rd.CommitData();
+								}
                                     else
                                     {
                                         return false;
@@ -1004,12 +1004,12 @@ namespace MIDRetail.Business
 									rollLevel)
 								{
 									typeID = Convert.ToInt32(eRollType.storeDailyHistory);
-                                    requestsBuiltSuccessfully = BuildRollupRequests(weekProfileList, phRID, hnp.HomeHierarchyType,
+                                    requestsBuiltSuccessfully = BuildRollupRequests(weekProfileList, phRID, hnp.HomeHierarchyType, 
                                         hnRID, versionRID,
                                         typeID, fromPhOffsetInd, fromLevel, toPhOffsetInd, toLevel, aSession, rollupDays, intransitOnly, aProcessID);
                                     if (requestsBuiltSuccessfully)
                                     {
-                                        _rd.CommitData();
+									_rd.CommitData();
                                     }
                                     else
                                     {
@@ -1027,29 +1027,29 @@ namespace MIDRetail.Business
 									{
 										typeID = Convert.ToInt32(eRollType.storeWeeklyForecast);
 									}
-                                    requestsBuiltSuccessfully = BuildRollupRequests(weekProfileList, phRID, hnp.HomeHierarchyType,
+                                    requestsBuiltSuccessfully = BuildRollupRequests(weekProfileList, phRID, hnp.HomeHierarchyType, 
                                         hnRID, versionRID,
                                         typeID, fromPhOffsetInd, fromLevel, toPhOffsetInd, toLevel, aSession, rollupDays, intransitOnly, aProcessID);
                                     if (requestsBuiltSuccessfully)
                                     {
-                                        _rd.CommitData();
-                                    }
+									_rd.CommitData();
+								}
                                     else
                                     {
                                         return false;
                                     }
                                 }
-                            }
+							}
 							if (rollStoreToChain)
 							{
 								typeID = Convert.ToInt32(eRollType.storeToChain);
-                                requestsBuiltSuccessfully = BuildRollupRequests(weekProfileList, phRID, hnp.HomeHierarchyType,
+                                requestsBuiltSuccessfully = BuildRollupRequests(weekProfileList, phRID, hnp.HomeHierarchyType, 
                                     hnRID, versionRID,
                                     typeID, fromPhOffsetInd, fromLevel, toPhOffsetInd, toLevel, aSession, rollupDays, intransitOnly, aProcessID);
                                 if (requestsBuiltSuccessfully)
                                 {
-                                    _rd.CommitData();
-                                }
+								_rd.CommitData();
+							}
                                 else
                                 {
                                     return false;
@@ -1058,12 +1058,12 @@ namespace MIDRetail.Business
 							if (rollIntransit)
 							{
 								typeID = Convert.ToInt32(eRollType.storeExternalIntransit);
-                                requestsBuiltSuccessfully = BuildRollupRequests(weekProfileList, phRID, hnp.HomeHierarchyType,
+                                requestsBuiltSuccessfully = BuildRollupRequests(weekProfileList, phRID, hnp.HomeHierarchyType, 
                                     hnRID, Include.FV_ActualRID,
                                     typeID, fromPhOffsetInd, fromLevel, toPhOffsetInd, toLevel, aSession, rollupDays, intransitOnly, aProcessID);
                                 if (requestsBuiltSuccessfully)
                                 {
-                                    _rd.CommitData();
+								_rd.CommitData();
                                 }
                                 else
                                 {
@@ -2593,6 +2593,13 @@ namespace MIDRetail.Business
                         }
                     }
 
+                    // Begin TT#2131-MD - JSmith - Halo Integration
+                    if (MIDEnvironment.ExtractIsEnabled)
+                    {
+                        AddExtractPlanningControlRecords(aProcess);
+                    }
+                    // End TT#2131-MD - JSmith - Halo Integration
+
                     // remove all processed items
                     if (!_rd.ConnectionIsOpen)
                     {
@@ -2640,6 +2647,85 @@ namespace MIDRetail.Business
             }
 
         }
+
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        /// <summary>
+        /// Adds Extract Planning Control records for organizational hierarchy weekly values
+        /// </summary>
+        /// <param name="aProcess"></param>
+        /// <returns></returns>
+        private bool AddExtractPlanningControlRecords(int aProcess)
+        {
+            VariablesData varData = new VariablesData(_SAB.ApplicationServerSession.GlobalOptions.NumberOfStoreDataTables);
+            HierarchyProfile hp = _SAB.HierarchyServerSession.GetMainHierarchyData();
+            DataTable dt = _rd.GetProcessedItems(aProcess, hp.Key);
+            int type;
+            int writeCount = 0;
+            try
+            {
+                if (dt.Rows.Count > 0)
+                {
+                    varData.OpenUpdateConnection();
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        type = Convert.ToInt32(dr["ITEM_TYPE"]);
+                        if (type == (int)eRollType.chainWeeklyForecast
+                            || type == (int)eRollType.chainWeeklyHistory
+                            || type == (int)eRollType.storeToChain
+                            || type == (int)eRollType.storeWeeklyForecast
+                            || type == (int)eRollType.storeWeeklyHistory)
+                        {
+
+                            varData.AddPlanningExtractControlValue(
+                            Convert.ToInt32(dr["HN_RID"]),
+                            Convert.ToInt32(dr["TIME_ID"]),
+                            Convert.ToInt32(dr["FV_RID"]),
+                            GetPlanType(type)
+                            );
+                            ++writeCount;
+                            if (writeCount > MIDConnectionString.CommitLimit)
+                            {
+                                varData.EXTRACT_PLANNING_CONTROL_Update();
+                            }
+                        }
+                    }
+
+                    if (writeCount > 0)
+                    {
+                        varData.EXTRACT_PLANNING_CONTROL_Update();
+                    }
+                    varData.CommitData();
+                }
+            }
+            catch (Exception exc)
+            {
+                string message = exc.ToString();
+                throw;
+            }
+            finally
+            {
+                if (varData.ConnectionIsOpen)
+                {
+                    varData.CloseUpdateConnection();
+                }
+            }
+            return true;
+        }
+
+        private ePlanType GetPlanType(int type)
+        {
+            if (type == (int)eRollType.chainWeeklyForecast
+                    || type == (int)eRollType.chainWeeklyHistory
+                    || type == (int)eRollType.storeToChain)
+            {
+                return ePlanType.Chain;
+            }
+            else
+            {
+                return ePlanType.Store;
+            }
+        }
+        // End TT#2131-MD - JSmith - Halo Integration
 
         public void GetForecastVersions()
         {

@@ -615,24 +615,27 @@ namespace MIDRetailInstaller
                 DirectoryInfo di;
 
                 // get root folders
-                foreach (DictionaryEntry MIDRegistered in htMIDRegistered)
+                if (htMIDRegistered != null)
                 {
-                    component = (string)MIDRegistered.Key;
-                    if (component.Contains(@"\GlobalSettings"))
+                    foreach (DictionaryEntry MIDRegistered in htMIDRegistered)
                     {
-                        di = Directory.GetParent(component).Parent.Parent;
-                        htApplicationFolders[di.Name] = null;
-                        htApplicationRootFolders[di.Name] = null;
-                    }
-                    else if (component.Contains(@"\Batch"))
-                    {
-                        di = Directory.GetParent(component);
-                        htApplicationRootFolders[di.Name] = null;
-                    }
-                    else if (component.Contains(@"Service.exe"))
-                    {
-                        di = Directory.GetParent(component).Parent;
-                        htApplicationRootFolders[di.Name] = null;
+                        component = (string)MIDRegistered.Key;
+                        if (component.Contains(@"\GlobalSettings"))
+                        {
+                            di = Directory.GetParent(component).Parent.Parent;
+                            htApplicationFolders[di.Name] = null;
+                            htApplicationRootFolders[di.Name] = null;
+                        }
+                        else if (component.Contains(@"\Batch"))
+                        {
+                            di = Directory.GetParent(component);
+                            htApplicationRootFolders[di.Name] = null;
+                        }
+                        else if (component.Contains(@"Service.exe"))
+                        {
+                            di = Directory.GetParent(component).Parent;
+                            htApplicationRootFolders[di.Name] = null;
+                        }
                     }
                 }
                 foreach (Environment.SpecialFolder sp in Enum.GetValues(typeof(Environment.SpecialFolder)))
@@ -1020,6 +1023,10 @@ namespace MIDRetailInstaller
                 string logName = ((FileStream)InstallLog.BaseStream).Name;
                 string[] logNameParts = logName.Split('\\');
                 installLog.Flush();
+                if (!Directory.Exists(LogLocation))
+                {
+                    Directory.CreateDirectory(LogLocation);
+                }
                 File.Copy(logName, LogLocation + @"\" + logNameParts[logNameParts.Length - 1], true);
             }
         }
@@ -1540,6 +1547,11 @@ namespace MIDRetailInstaller
         // Begin TT#74 MD - JSmith - One-button Upgrade
         public bool isServiceRunning(string ServiceName)
         {
+            if (ServiceName == "ROWebHost")
+            {
+                return false;
+            }
+
             ServiceController sc = new ServiceController(ServiceName);
 
             return (sc.Status == ServiceControllerStatus.Running);
@@ -2734,14 +2746,14 @@ namespace MIDRetailInstaller
 
                             break;
 
-                        case eInstallTasks.crystalReports:
-                            //log message
-                            ucInstallationLog1.AddLogEntry("User has chosen to install Crystal Reports", eErrorType.message);
+                        //case eInstallTasks.crystalReports:
+                        //    //log message
+                        //    ucInstallationLog1.AddLogEntry("User has chosen to install Crystal Reports", eErrorType.message);
 
-                            //set control 
-                            ProcessControl.UtilitiesPane = (ucUtilities)ucControl;
+                        //    //set control 
+                        //    ProcessControl.UtilitiesPane = (ucUtilities)ucControl;
 
-                            break;
+                        //    break;
 
                         case eInstallTasks.scan:
 
@@ -2777,7 +2789,7 @@ namespace MIDRetailInstaller
                             }
 
                             rescan.txtInstruction.Text = "You can scan your local drives for previously " +
-                                "installed MIDRetail components and register them. After the scan, the " +
+                                "installed Logility RO components and register them. After the scan, the " +
                                 "components that are left checked will be register on the 'Finish' click. " +
                                 "If you don't want to scan and register the previously installed components, " +
                                 "just click the 'Finish' button.";
@@ -3483,6 +3495,7 @@ namespace MIDRetailInstaller
             bool isAppServer = false;
             string MIDSettings = null;
             string connectionString = null;
+            string ROExtractconnectionString = null;  // TT#2131-MD - JSmith - Halo Integration
             bool successful = true;
             // ENd TT#74 MD
             ProgressBarSetValue(0);
@@ -3515,6 +3528,7 @@ namespace MIDRetailInstaller
                             string entryType;
                             bool blServicesRunning = false;
                             bool blDatabaseValid = false;
+                            int intServicesCount = 0; ;
                             ArrayList alRunningServices = new ArrayList();  // TT#3633 - JSmith - All Services restart after the One-Click upgrade - does not restart only the services that were originally started/running.
 							// Begin TT#3506 - JSmith - Change One Click install to verify SQL Server and Database Compatibility Level before starting install
                             bool blDatabaseCompatible = false;
@@ -3546,6 +3560,7 @@ namespace MIDRetailInstaller
                                         string[] location = component.Split('\\');
                                         string[] ExecValues = location[location.Length - 1].Split('.');
                                         blServicesRunning = isServiceRunning(ExecValues[0]);
+                                        ++intServicesCount;
                                         // Begin TT#3633 - JSmith - All Services restart after the One-Click upgrade - does not restart only the services that were originally started/running.
                                         if (blServicesRunning)
                                         {
@@ -3560,7 +3575,7 @@ namespace MIDRetailInstaller
                                         blDatabaseCompatibleChecked = true;  // TT#3763 - JSmith - One-Click Upgrade fails for batch servers
                                         cf = new ConfigFiles(this, installer_data, ucInstallationLog1);
                                         XmlDocument doc = cf.GetXmlDocument(component + ".config");
-                                        MIDSettings = cf.GetValue(doc, "File");
+                                        MIDSettings = cf.GetValue(doc, InstallerConstants.cParent_AppSettings, InstallerConstants.cLookupType_Child, "File");
                                         if (!string.IsNullOrEmpty(MIDSettings))
                                         {
                                             connectionString = GetMIDSettingsDBConnectionString(MIDSettings);
@@ -3572,6 +3587,8 @@ namespace MIDRetailInstaller
                                                 blDatabaseValid = VerifySQLVersion_Edition(connectionString, out sql_version, out sql_level, out sql_edition, out serverName, out databaseName, out databaseUser, out databasePwd, out blDatabaseCompatible, out compatibilityLevel);
                                                 // End TT#3506 - JSmith - Change One Click install to verify SQL Server and Database Compatibility Level before starting install
                                             }
+
+                                            ROExtractconnectionString = GetMIDSettingsROExtractDBConnectionString(MIDSettings);  // TT#2131-MD - JSmith - Halo Integration
                                         }
 
                                         if (!blDatabaseValid)
@@ -3586,7 +3603,9 @@ namespace MIDRetailInstaller
                                         string[] location = component.Split('\\');
                                         string[] ExecValues = location[location.Length - 1].Split('.');
                                         blServicesRunning = isServiceRunning(ExecValues[0]);
-                                        if (blServicesRunning)
+                                        ++intServicesCount;
+                                        if (blServicesRunning
+                                            && entryType != InstallerConstants.cJobServiceKey)  // do not restart job service
                                         {
                                             alRunningServices.Add(ExecValues[0]);
                                         }
@@ -3597,7 +3616,7 @@ namespace MIDRetailInstaller
 
                             if (isAppServer)
                             {
-                                ProgressBarSetMaximum(htMIDRegistered.Count + 5 + (alRunningServices.Count * 2));
+                                ProgressBarSetMaximum(htMIDRegistered.Count + intServicesCount + 3 + (alRunningServices.Count * 2));
                             }
                             else
                             {
@@ -3756,6 +3775,20 @@ namespace MIDRetailInstaller
                                                         successful = false;
                                                     }
                                                     // End TT#1822-MD - JSmith - Installer not detecting incomplete install
+
+                                                    // Begin TT#2131-MD - JSmith - Halo Integration
+                                                    if (successful
+                                                        && !string.IsNullOrEmpty(ROExtractconnectionString))
+                                                    {
+                                                        SetStatusMessage(GetText("databaseMaintenance"));
+                                                        ProgressBarIncrementValue(1);
+                                                        if (utilities.DoDatabaseMaintenance(ROExtractconnectionString, true))
+                                                        {
+                                                            ProgressBarIncrementValue(1);
+                                                            SetStatusMessage(GetText("databaseMaintenanceComplete"));
+                                                        }
+                                                    }
+                                                    // End TT#2131-MD - JSmith - Halo Integration
                                                 }
                                                 // Begin TT#3763 - JSmith - One-Click Upgrade fails for batch servers
                                                 else
@@ -4139,6 +4172,7 @@ namespace MIDRetailInstaller
 
                                 //perform install
                                 lstResult = ProcessControl.ServerPane.Install(ConfigurationManager.AppSettings["ServicesInstallLocation"].ToString());
+                                string strInstallLocation = ProcessControl.ServerPane.strInstallLocation;
 
                                 if (lstResult.Count == 0)
                                 {
@@ -4179,15 +4213,18 @@ namespace MIDRetailInstaller
 
                                 //log the action
                                 ucInstallationLog1.AddLogEntry("Installing auto upgrade client global configuration", eErrorType.message);
+                                string strClientConfigurationLocation = ConfigurationManager.AppSettings["ClientConfigurationLocation"].ToString();
+                                string strPathRoot = Path.GetPathRoot(strInstallLocation);
+                                strClientConfigurationLocation = strClientConfigurationLocation.Replace(@"C:\", strPathRoot);
 
                                 //run the server InstallGlobalConfiguration
-                                lstResult = server.InstallGlobalConfiguration(ConfigurationManager.AppSettings["ClientConfigurationLocation"].ToString());
+                                lstResult = server.InstallGlobalConfiguration(strClientConfigurationLocation);
 
                                 if (lstResult.Count > 0)
                                 {
-                                    string globalSettings = ConfigurationManager.AppSettings["ClientConfigurationLocation"].ToString() + @"\" + ConfigurationManager.AppSettings["MIDSettings_config"].ToString();
-                                    cf.SetConfigValue(globalSettings, "AutoUpgradeClient", "True");
-                                    cf.SetConfigValue(globalSettings, "AutoUpgradePath", ConfigurationManager.AppSettings["AutoUpgradeShareLocation"].ToString().Replace("%machine%", GetMachineName()) + @"\" + ConfigurationManager.AppSettings["InstallClientFolder"].ToString());
+                                    string globalSettings = strClientConfigurationLocation + @"\" + ConfigurationManager.AppSettings["MIDSettings_config"].ToString();
+                                    cf.SetConfigValue(globalSettings, InstallerConstants.cParent_AppSettings, InstallerConstants.cLookupType_Child,  "AutoUpgradeClient", "True");
+                                    cf.SetConfigValue(globalSettings, InstallerConstants.cParent_AppSettings, InstallerConstants.cLookupType_Child, "AutoUpgradePath", ConfigurationManager.AppSettings["AutoUpgradeShareLocation"].ToString().Replace("%machine%", GetMachineName()) + @"\" + ConfigurationManager.AppSettings["InstallClientFolder"].ToString());
                                     //cf.SetConfigValue(globalSettings, "HeaderReleaseFilePath", @"\\" + GetMachineName() + @"\" + ConfigurationManager.AppSettings["ReleaseShareName"].ToString());
 
                                     foreach (string Item in lstResult)
@@ -4204,22 +4241,27 @@ namespace MIDRetailInstaller
                                         ProcessControl.ClientPane = new ucClient(this, ucInstallationLog1);
                                     }
 
+                                    string clientInstallLocation = ConfigurationManager.AppSettings["ClientInstallLocation"].ToString();
+                                    if (strInstallLocation != null)
+                                    {
+                                        clientInstallLocation = strInstallLocation;
+                                    }
                                     //perform install client
                                     strTarget = "";
                                     // Begin TT#1249 - stodd - 
-                                    blResult = ProcessControl.ClientPane.Install(ConfigurationManager.AppSettings["ClientInstallLocation"].ToString(), null, null, null, out strTarget, false);
+                                    blResult = ProcessControl.ClientPane.Install(clientInstallLocation, null, null, null, out strTarget, false);
                                     // Begin TT#1249 - stodd - 
 
                                     if (blResult == true)
                                     {
-                                        string clientSettings = ConfigurationManager.AppSettings["ClientInstallLocation"].ToString()
+                                        string clientSettings = clientInstallLocation
                                             + @"\" + ConfigurationManager.AppSettings["InstallClientFolder"].ToString()
                                             + @"\" + ConfigurationManager.AppSettings["Client_Folder"].ToString()
                                             + @"\" + ConfigurationManager.AppSettings["MIDRetail_config"].ToString();
-                                        //C:\MIDRetailClient\Client\GlobalSettings
+                                        //C:\Logility\ROClient\Client\GlobalSettings
                                         string configFile = ConfigurationManager.AppSettings["ClientConfigurationShareLocation"].ToString().Replace("%machine%", GetMachineName())
                                             + @"\" + ConfigurationManager.AppSettings["MIDSettings_config"].ToString();
-                                        cf.SetConfigValue(clientSettings, "file", configFile);
+                                        cf.SetConfigValue(clientSettings, InstallerConstants.cParent_AppSettings, InstallerConstants.cLookupType_Child, "file", configFile);
                                         //add application to a list needed by the config control
                                         lstFilesToConfig4.Add(Directory.GetParent(strTarget).ToString().Trim() + @"\");
                                     }
@@ -4227,22 +4269,26 @@ namespace MIDRetailInstaller
                                     //perform install auto upgrade client
                                     strTarget = "";
                                     ProcessControl.ClientPane.BInstallingAutoUpgradeClient = true;
+                                    string strAutoUpgradeClientLocation = ConfigurationManager.AppSettings["AutoUpgradeClientLocation"].ToString();
+                                    string strSharePath = ConfigurationManager.AppSettings["SharePath"].ToString();
+                                    strAutoUpgradeClientLocation = strAutoUpgradeClientLocation.Replace(@"C:\", strPathRoot);
+                                    strSharePath = strSharePath.Replace(@"C:\", strPathRoot);
                                     // Begin TT#1249 - stodd - 
-                                    blResult = ProcessControl.ClientPane.Install(ConfigurationManager.AppSettings["AutoUpgradeClientLocation"].ToString(), ConfigurationManager.AppSettings["SharePath"].ToString(), ConfigurationManager.AppSettings["ShareName"].ToString(), ConfigurationManager.AppSettings["ShortcutName"].ToString(), out strTarget, true);
+                                    blResult = ProcessControl.ClientPane.Install(strAutoUpgradeClientLocation, strSharePath, ConfigurationManager.AppSettings["ShareName"].ToString(), ConfigurationManager.AppSettings["ShortcutName"].ToString(), out strTarget, true);
                                     // Begin TT#1249 - stodd - 
                                     ProcessControl.ClientPane.BInstallingAutoUpgradeClient = false;
 
                                     if (blResult == true)
                                     {
-                                        //C:\MIDRetailClient\Client\AutoUpgrade\Client\Client
+                                        //C:\Logility\ROClient\Client\AutoUpgrade\Client\Client
                                         string clientSettings = ConfigurationManager.AppSettings["AutoUpgradeClientLocation"].ToString()
                                             + @"\" + ConfigurationManager.AppSettings["InstallClientFolder"].ToString()
                                             + @"\" + ConfigurationManager.AppSettings["Client_Folder"].ToString()
                                             + @"\" + ConfigurationManager.AppSettings["MIDRetail_config"].ToString();
-                                        //C:\MIDRetailClient\Client\GlobalSettings
+                                        //C:\Logility\ROClient\Client\GlobalSettings
                                         string configFile = ConfigurationManager.AppSettings["ClientConfigurationShareLocation"].ToString().Replace("%machine%", GetMachineName())
                                             + @"\" + ConfigurationManager.AppSettings["MIDSettings_config"].ToString();
-                                        cf.SetConfigValue(clientSettings, "file", configFile);
+                                        cf.SetConfigValue(clientSettings, InstallerConstants.cParent_AppSettings, InstallerConstants.cLookupType_Child, "file", configFile);
                                         //add application to a list needed by the config control
                                         lstFilesToConfig4.Add(Directory.GetParent(strTarget).ToString().Trim() + @"\");
                                     }
@@ -4575,10 +4621,10 @@ namespace MIDRetailInstaller
 
                                 break;
 
-                            case eInstallTasks.crystalReports:
-                                successful = utilities.InstallCrystalReports(false);
+                            //case eInstallTasks.crystalReports:
+                            //    successful = utilities.InstallCrystalReports(false);
 
-                                break;
+                            //    break;
                         }
 
                         break;
@@ -5014,6 +5060,12 @@ namespace MIDRetailInstaller
         {
             DirectoryInfo di;
             DirectoryInfo folder;
+            if (Directory.Exists(aFolder))
+            {
+                DeleteFolder(aFolder);
+            }
+            return;
+
             bool deletingFolders = true;
             while (deletingFolders)
             {
@@ -5260,6 +5312,33 @@ namespace MIDRetailInstaller
 
             return DBConnString;
         }
+
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        private string GetMIDSettingsROExtractDBConnectionString(string MIDSettings_Location)
+        {
+            string DBConnString = "";
+
+            XPathDocument doc = new XPathDocument(MIDSettings_Location);
+
+            MIDRetail.Encryption.MIDEncryption crypt = new MIDRetail.Encryption.MIDEncryption();
+
+            foreach (XPathNavigator child in doc.CreateNavigator().Select("appSettings/*"))
+            {
+                if (child.LocalName == "add")
+                {
+                    child.MoveToFirstAttribute();           //move to the key attribute
+                    if (child.Value == "ROExtractConnectionString")
+                    {
+                        child.MoveToNextAttribute();        //move to the value attribute
+
+                        DBConnString = crypt.Decrypt(child.Value);
+                    }
+                }
+            }
+
+            return DBConnString;
+        }
+        // End TT#2131-MD - JSmith - Halo Integration
 
         // Begin TT#74 MD - JSmith - One-button Upgrade
         // Begin TT#3506 - JSmith - Change One Click install to verify SQL Server and Database Compatibility Level before starting install

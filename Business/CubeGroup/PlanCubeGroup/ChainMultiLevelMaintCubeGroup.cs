@@ -693,11 +693,17 @@ namespace MIDRetail.Business
 			}
 		}
 
-		/// <summary>
-		/// Closes this PlanCubeGroup.
-		/// </summary>
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        override public void ExtractCubeGroup(ExtractOptions aExtractOptions)
+        {
+        }
+        // End TT#2131-MD - JSmith - Halo Integration
 
-		override public void CloseCubeGroup()
+        /// <summary>
+        /// Closes this PlanCubeGroup.
+        /// </summary>
+
+        override public void CloseCubeGroup()
 		{
 			try
 			{

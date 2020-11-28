@@ -16693,13 +16693,15 @@ namespace MIDRetail.Windows
                 cmsReviewGroupAllocation.Visible = _SAB.ClientServerSession.GlobalOptions.AppConfig.GroupAllocationInstalled;
                 if (_SAB.ClientServerSession.GlobalOptions.AppConfig.GroupAllocationInstalled)
                 {
+                    // Begin RO-4303 - JSmith - Disable Multi-Header creation
                     // Begin TT#4796 - AGallagher - Reinstate Multi-Header  
-                    //cmsMultiCreate.Visible = false; // TT#1036 - MD - stodd - remove ability to create multi-headers
-                    //cmsMultiAddTo.Visible = false;  // TT#3991 - RMatelic - Multi Add To option is available when Group Allocation is installed
-                    cmsMultiCreate.Visible = true; // TT#1036 - MD - stodd - remove ability to create multi-headers
-                    cmsMultiAddTo.Visible = true;  // TT#3991 - RMatelic - Multi Add To option is available when Group Allocation is installed
+                    cmsMultiCreate.Visible = false; // TT#1036 - MD - stodd - remove ability to create multi-headers
+                    cmsMultiAddTo.Visible = false;  // TT#3991 - RMatelic - Multi Add To option is available when Group Allocation is installed
+                    //cmsMultiCreate.Visible = true; // TT#1036 - MD - stodd - remove ability to create multi-headers
+                    //cmsMultiAddTo.Visible = true;  // TT#3991 - RMatelic - Multi Add To option is available when Group Allocation is installed
 
                     // End TT#4796 - AGallagher - Reinstate Multi-Header  
+                    // End RO-4303 - JSmith - Disable Multi-Header creation
                 }
 				// End TT#1247-MD - stodd - Add Group Allocation as a License Key option -
 

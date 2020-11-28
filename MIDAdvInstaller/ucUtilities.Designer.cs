@@ -33,7 +33,7 @@
             this.rdoStopServices = new System.Windows.Forms.RadioButton();
             this.rdoRescan = new System.Windows.Forms.RadioButton();
             this.rdoEventSource = new System.Windows.Forms.RadioButton();
-            this.rdoCrystalReports = new System.Windows.Forms.RadioButton();
+            //this.rdoCrystalReports = new System.Windows.Forms.RadioButton();
             this.SuspendLayout();
             // 
             // rdoDatabaseMaintenance
@@ -96,20 +96,20 @@
             // 
             // rdoCrystalReports
             // 
-            this.rdoCrystalReports.AutoSize = true;
-            this.rdoCrystalReports.Location = new System.Drawing.Point(252, 261);
-            this.rdoCrystalReports.Name = "rdoCrystalReports";
-            this.rdoCrystalReports.Size = new System.Drawing.Size(126, 17);
-            this.rdoCrystalReports.TabIndex = 17;
-            this.rdoCrystalReports.Text = "Install Crystal Reports";
-            this.rdoCrystalReports.UseVisualStyleBackColor = true;
-            this.rdoCrystalReports.CheckedChanged += new System.EventHandler(this.rdoCrystalReports_CheckedChanged);
+            //this.rdoCrystalReports.AutoSize = true;
+            //this.rdoCrystalReports.Location = new System.Drawing.Point(252, 261);
+            //this.rdoCrystalReports.Name = "rdoCrystalReports";
+            //this.rdoCrystalReports.Size = new System.Drawing.Size(126, 17);
+            //this.rdoCrystalReports.TabIndex = 17;
+            //this.rdoCrystalReports.Text = "Install Crystal Reports";
+            //this.rdoCrystalReports.UseVisualStyleBackColor = true;
+            //this.rdoCrystalReports.CheckedChanged += new System.EventHandler(this.rdoCrystalReports_CheckedChanged);
             // 
             // ucUtilities
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.rdoCrystalReports);
+            //this.Controls.Add(this.rdoCrystalReports);
             this.Controls.Add(this.rdoEventSource);
             this.Controls.Add(this.rdoRescan);
             this.Controls.Add(this.rdoStopServices);
@@ -129,6 +129,6 @@
         private System.Windows.Forms.RadioButton rdoStopServices;
         private System.Windows.Forms.RadioButton rdoRescan;
         private System.Windows.Forms.RadioButton rdoEventSource;
-        private System.Windows.Forms.RadioButton rdoCrystalReports;
+        //private System.Windows.Forms.RadioButton rdoCrystalReports;
     }
 }

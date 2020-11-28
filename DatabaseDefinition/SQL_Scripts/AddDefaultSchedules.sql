@@ -12,8 +12,8 @@ declare @installDir varchar(50), @dataDir varchar(50), @rollFromColor int
 --   @installDir - the location where the MIDRetail application is found
 --   @dataDir - the location where the MIDRetailData is found
 --   @rollFromColor - identifies if lowest roll level is color: 1=True;0=False (will roll from Style level)
-set @installDir = 'C:\MIDRetail'
-set @dataDir = 'C:\MIDRetailData'
+set @installDir = 'C:\Logility\RO'
+set @dataDir = 'C:\Logility\ROData'
 set @rollFromColor = 1
 
 set nocount on
@@ -458,7 +458,19 @@ INSERT INTO TASK(TASKLIST_RID, TASK_SEQUENCE, TASK_TYPE, MAX_MESSAGE_LEVEL,
 INSERT INTO TASK_POSTING(TASKLIST_RID, TASK_SEQUENCE, INPUT_DIRECTORY, FILE_MASK, CONCURRENT_FILES, RUN_UNTIL_FILE_PRESENT_IND, RUN_UNTIL_FILE_MASK, FILE_PROCESSING_DIRECTION) 
       VALUES(@taskListRID, @taskSequence, @dataDir + '\Headers', 'hdrtrg', 6, '0', ' ', @useConfigSettings)
 
-
+-- add Product Characteristics Load task list and task
+exec [dbo].[SP_MID_TASKLIST_INSERT] 'Product Characteristics Load',@systemUserRID,0,@systemUserRID,@currentDate,@administratorUserRID,@currentDate, @taskListRID OUTPUT
+insert into USER_ITEM(USER_RID, ITEM_TYPE, ITEM_RID, OWNER_USER_RID) values (@systemUserRID,46,@taskListRID,@systemUserRID)
+insert into FOLDER_JOIN(PARENT_FOLDER_RID, CHILD_ITEM_RID, CHILD_ITEM_TYPE) values (@folderRID, @taskListRID, 46)
+set @taskSequence = 0
+INSERT INTO TASK(TASKLIST_RID, TASK_SEQUENCE, TASK_TYPE, MAX_MESSAGE_LEVEL, 
+                EMAIL_SUCCESS_FROM, EMAIL_SUCCESS_TO, EMAIL_SUCCESS_CC, EMAIL_SUCCESS_BCC, EMAIL_SUCCESS_SUBJECT, EMAIL_SUCCESS_BODY,
+                EMAIL_FAILURE_FROM, EMAIL_FAILURE_TO, EMAIL_FAILURE_CC, EMAIL_FAILURE_BCC, EMAIL_FAILURE_SUBJECT, EMAIL_FAILURE_BODY) 
+                VALUES(@taskListRID, @taskSequence, 800401, @severeLevel, 
+                null, null, null, null, null, null, 
+                null, null, null, null, null, null)
+INSERT INTO TASK_POSTING(TASKLIST_RID, TASK_SEQUENCE, INPUT_DIRECTORY, FILE_MASK, CONCURRENT_FILES, RUN_UNTIL_FILE_PRESENT_IND, RUN_UNTIL_FILE_MASK, FILE_PROCESSING_DIRECTION) 
+      VALUES(@taskListRID, @taskSequence, @dataDir + '\Product Characteristics', 'trg', 1, '0', ' ', @useConfigSettings)
 
 
 -- add Weekly folder
@@ -565,9 +577,12 @@ INSERT INTO JOB_TASKLIST_JOIN(JOB_RID, TASKLIST_RID, TASKLIST_SEQUENCE)
 select @taskListRID = TASKLIST_RID from TASKLIST t where t.TASKLIST_NAME = 'Alternate Hierarchy Load'
 INSERT INTO JOB_TASKLIST_JOIN(JOB_RID, TASKLIST_RID, TASKLIST_SEQUENCE)
 	VALUES(@jobRID, @taskListRID, 3)
-select @taskListRID = TASKLIST_RID from TASKLIST t where t.TASKLIST_NAME = 'Reclass Rollup'
+select @taskListRID = TASKLIST_RID from TASKLIST t where t.TASKLIST_NAME = 'Product Characteristics Load'
 INSERT INTO JOB_TASKLIST_JOIN(JOB_RID, TASKLIST_RID, TASKLIST_SEQUENCE)
 	VALUES(@jobRID, @taskListRID, 4)
+select @taskListRID = TASKLIST_RID from TASKLIST t where t.TASKLIST_NAME = 'Reclass Rollup'
+INSERT INTO JOB_TASKLIST_JOIN(JOB_RID, TASKLIST_RID, TASKLIST_SEQUENCE)
+	VALUES(@jobRID, @taskListRID, 5)
 
 -- add Daily History job and task lists
 exec [dbo].[SP_MID_JOB_INSERT] 'Daily History','0',@administratorUserRID,@currentDate,@administratorUserRID,@currentDate, @jobRID OUTPUT

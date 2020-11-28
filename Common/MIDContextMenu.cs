@@ -21,12 +21,12 @@ namespace MIDRetail.Common
 //			ButtonTool btInsertAfter				= new ButtonTool("btInsertAfter");
 //			btInsertAfter.SharedProps.Caption		= MIDText.GetTextOnly(eMIDTextCode.lbl_Insert_after);
 //			btInsertAfter.SharedProps.Shortcut		= Shortcut.CtrlShiftA;
-//			ilMethodsGrid.Images.Add(Image.FromFile("C:\\scmvs2013\\allocation\\Graphics\\Right.bmp"));
+//			ilMethodsGrid.Images.Add(Image.FromFile("C:\\scmvs2017\\allocation\\Graphics\\Right.bmp"));
 //			this.utmMethodsGrid.ImageListSmall = this.ilMethodsGrid;
 //			//				btInsertAfter.SharedProps.AppearancesLarge.Appearance.Image	= Image.FromFile(MIDConfigurationManager.AppSettings["ApplicationRoot"] + Include.MIDGraphicsDir + "\\Right.bmp");
 //			//				btInsertAfter.SharedProps.AppearancesSmall.Appearance.Image	= Image.FromFile(MIDConfigurationManager.AppSettings["ApplicationRoot"] + Include.MIDGraphicsDir + "\\Right.bmp");
-//			//				btInsertAfter.SharedProps.AppearancesLarge.Appearance.Image	= Image.FromFile("C:\\scmvs2013\\allocation\\Graphics\\Right.bmp");
-//			//				btInsertAfter.SharedProps.AppearancesSmall.Appearance.Image	= Image.FromFile("C:\\scmvs2013\\allocation\\Graphics\\Right.bmp");
+//			//				btInsertAfter.SharedProps.AppearancesLarge.Appearance.Image	= Image.FromFile("C:\\scmvs2017\\allocation\\Graphics\\Right.bmp");
+//			//				btInsertAfter.SharedProps.AppearancesSmall.Appearance.Image	= Image.FromFile("C:\\scmvs2017\\allocation\\Graphics\\Right.bmp");
 //			btInsertAfter.SharedProps.AppearancesSmall.Appearance.Image	= 0;
 //			this.utmMethodsGrid.Tools.Add(btInsertAfter);
 //
@@ -54,8 +54,8 @@ namespace MIDRetail.Common
 //			//				insertMenuTool.Settings.Appearance.BackColor			= SystemColors.ControlDark;
 //			//				insertMenuTool.Settings.Appearance.BackColor2			= SystemColors.Control;
 //			insertMenuTool.Settings.Appearance.BackGradientStyle	= GradientStyle.HorizontalBump;
-//			//				insertMenuTool.SharedProps.AppearancesLarge.Appearance.Image	= Image.FromFile("C:\\scmvs2013\\allocation\\Graphics\\Right.bmp");
-//			//				insertMenuTool.SharedProps.AppearancesSmall.Appearance.Image	= Image.FromFile("C:\\scmvs2013\\allocation\\Graphics\\Right.bmp");
+//			//				insertMenuTool.SharedProps.AppearancesLarge.Appearance.Image	= Image.FromFile("C:\\scmvs2017\\allocation\\Graphics\\Right.bmp");
+//			//				insertMenuTool.SharedProps.AppearancesSmall.Appearance.Image	= Image.FromFile("C:\\scmvs2017\\allocation\\Graphics\\Right.bmp");
 //			insertMenuTool.SharedProps.AppearancesSmall.Appearance.Image	= 0;
 //
 //

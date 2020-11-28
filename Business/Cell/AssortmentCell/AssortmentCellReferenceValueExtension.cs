@@ -305,13 +305,23 @@ namespace MIDRetail.Business
 		{
 			try
 			{
+			    // Begin TT#1954-MD - JSmith - Assortment Performance
+				// Begin RO-4741 - JSmith - Need to scroll to variables prior to making change
+				//_assortmentCellRef.AssortmentCube.AssortmentCubeGroup.BackupCellForPendingUndo(_assortmentCellRef.AssortmentCell, (AssortmentCell)_assortmentCellRef.CellCopy(), null, null);
+                _assortmentCellRef.AssortmentCube.AssortmentCubeGroup.BackupCellForPendingUndo(_assortmentCellRef.AssortmentCell, (AssortmentCell)_assortmentCellRef.CellCopy(), null, null, eSetCellMode.Entry);
+				// End RO-4741 - JSmith - Need to scroll to variables prior to making change
+				// End TT#1954-MD - JSmith - Assortment Performance
+
 				InitCellValue();
 
 				if (!_assortmentCellRef.AssortmentCell.isNull)
 				{
 					if (aBlock != _assortmentCellRef.AssortmentCell.isBlocked)
 					{
-						_assortmentCellRef.AssortmentCube.AssortmentCubeGroup.BackupCellForUndo(_assortmentCellRef.AssortmentCell, (AssortmentCell)_assortmentCellRef.CellCopy());
+						// Begin RO-4741 - JSmith - Need to scroll to variables prior to making change
+						//_assortmentCellRef.AssortmentCube.AssortmentCubeGroup.BackupCellForUndo(_assortmentCellRef.AssortmentCell, (AssortmentCell)_assortmentCellRef.CellCopy());
+						_assortmentCellRef.AssortmentCube.AssortmentCubeGroup.BackupCellForUndo(_assortmentCellRef.AssortmentCell, (AssortmentCell)_assortmentCellRef.CellCopy(), eSetCellMode.Entry);
+						// End RO-4741 - JSmith - Need to scroll to variables prior to making change
 						_assortmentCellRef.AssortmentCell.isBlocked = aBlock;
 						_assortmentCellRef.AssortmentCell.isChanged = true;
 					}

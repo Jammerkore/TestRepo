@@ -49,7 +49,8 @@ BEGIN
         HEADER_HN_RID,
         SORT_BY_TYPE_INDEX,
         SORT_BY_FIELD_INDEX,
-        LIST_VALUE_CONSTANT_INDEX
+        LIST_VALUE_CONSTANT_INDEX,
+		DATE_CDR_RID
 	) 
 	VALUES
 	(
@@ -92,7 +93,8 @@ BEGIN
         null, --@HEADER_HN_RID,
         null, --@SORT_BY_TYPE_INDEX,
         null, --@SORT_BY_FIELD_INDEX,
-        null --@LIST_VALUE_CONSTANT_INDEX
+        null, --@LIST_VALUE_CONSTANT_INDEX
+		null --@DATE_CDR_RID,
 	)
 
 		INSERT INTO FILTER_CONDITION
@@ -136,7 +138,8 @@ BEGIN
         HEADER_HN_RID,
         SORT_BY_TYPE_INDEX,
         SORT_BY_FIELD_INDEX,
-        LIST_VALUE_CONSTANT_INDEX
+        LIST_VALUE_CONSTANT_INDEX,
+		DATE_CDR_RID
 	) 
 	VALUES
 	(
@@ -179,7 +182,8 @@ BEGIN
         null, --@HEADER_HN_RID,
         null, --@SORT_BY_TYPE_INDEX,
         null, --@SORT_BY_FIELD_INDEX,
-        null --@LIST_VALUE_CONSTANT_INDEX
+        null, --@LIST_VALUE_CONSTANT_INDEX
+		null --@DATE_CDR_RID
 	)
 
 

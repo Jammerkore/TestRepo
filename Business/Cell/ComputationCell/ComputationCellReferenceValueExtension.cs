@@ -133,6 +133,13 @@ namespace MIDRetail.Business
 
 			try
 			{
+			    // Begin TT#1954-MD - JSmith - Assortment Performance
+				// Begin RO-4741 - JSmith - Need to scroll to variables prior to making change
+				//_computationCellRef.ComputationCube.ComputationCubeGroup.BackupCellForPendingUndo(_computationCellRef.ComputationCell, (ComputationCell)_computationCellRef.CellCopy(), GetExtensionCell(false), _extCell == null ? null : (ExtensionCell)GetExtensionCell(false).Copy());
+                _computationCellRef.ComputationCube.ComputationCubeGroup.BackupCellForPendingUndo(_computationCellRef.ComputationCell, (ComputationCell)_computationCellRef.CellCopy(), GetExtensionCell(false), _extCell == null ? null : (ExtensionCell)GetExtensionCell(false).Copy(), eSetCellMode.Entry);
+				// End RO-4741 - JSmith - Need to scroll to variables prior to making change
+				// End TT#1954-MD - JSmith - Assortment Performance
+
 				InitCellValue();
 
 				if (!_computationCellRef.ComputationCell.isCellHasNoValue)
@@ -149,7 +156,10 @@ namespace MIDRetail.Business
 						GetExtensionCell(true);
 
 						_extCell.GetCompInfo(_computationCellRef).PreviousValue = (ComputationCell)_computationCellRef.CellCopy();
-						_computationCellRef.ComputationCube.ComputationCubeGroup.BackupCellForUndo(_computationCellRef.ComputationCell, _extCell.GetCompInfo(_computationCellRef).PreviousValue);
+						// Begin RO-4741 - JSmith - Need to scroll to variables prior to making change
+						//_computationCellRef.ComputationCube.ComputationCubeGroup.BackupCellForUndo(_computationCellRef.ComputationCell, _extCell.GetCompInfo(_computationCellRef).PreviousValue);
+						_computationCellRef.ComputationCube.ComputationCubeGroup.BackupCellForUndo(_computationCellRef.ComputationCell, _extCell.GetCompInfo(_computationCellRef).PreviousValue, eSetCellMode.Entry);
+						// End RO-4741 - JSmith - Need to scroll to variables prior to making change
 
 						if (!_computationCellRef.isCellUserChanged)
 						{
@@ -258,6 +268,13 @@ namespace MIDRetail.Business
 
 			try
 			{
+			    // Begin TT#1954-MD - JSmith - Assortment Performance
+				// Begin RO-4741 - JSmith - Need to scroll to variables prior to making change
+				//_computationCellRef.ComputationCube.ComputationCubeGroup.BackupCellForPendingUndo(_computationCellRef.ComputationCell, (ComputationCell)_computationCellRef.CellCopy(), GetExtensionCell(false), _extCell == null ? null : (ExtensionCell)GetExtensionCell(false).Copy());
+                _computationCellRef.ComputationCube.ComputationCubeGroup.BackupCellForPendingUndo(_computationCellRef.ComputationCell, (ComputationCell)_computationCellRef.CellCopy(), GetExtensionCell(false), _extCell == null ? null : (ExtensionCell)GetExtensionCell(false).Copy(), aSetCellMode);
+				// End RO-4741 - JSmith - Need to scroll to variables prior to making change
+				// End TT#1954-MD - JSmith - Assortment Performance
+
 				InitCellValue();
 				if (!isAsrtSimStore)
 				{
@@ -306,7 +323,10 @@ namespace MIDRetail.Business
 								//Begin Track #5829 - JScott - Month did not change for COGS/GM/RM BOP Inv/CF BOP Inv
 								//_extCell.GetCompInfo(_computationCellRef).PreviousValue = copyCell;
 								//End Track #5829 - JScott - Month did not change for COGS/GM/RM BOP Inv/CF BOP Inv
-								_computationCellRef.ComputationCube.ComputationCubeGroup.BackupCellForUndo(_computationCellRef.ComputationCell, copyCell);
+								// Begin RO-4741 - JSmith - Need to scroll to variables prior to making change
+								//_computationCellRef.ComputationCube.ComputationCubeGroup.BackupCellForUndo(_computationCellRef.ComputationCell, copyCell);
+								_computationCellRef.ComputationCube.ComputationCubeGroup.BackupCellForUndo(_computationCellRef.ComputationCell, copyCell, aSetCellMode);
+								// End RO-4741 - JSmith - Need to scroll to variables prior to making change
 
 								if (!_extCell.isPostInitValueSet)
 								{
@@ -334,7 +354,10 @@ namespace MIDRetail.Business
 								GetExtensionCell(true);
 
 								_extCell.GetCompInfo(_computationCellRef).PreviousValue = (ComputationCell)_computationCellRef.CellCopy();
-								_computationCellRef.ComputationCube.ComputationCubeGroup.BackupCellForUndo(_computationCellRef.ComputationCell, _extCell.GetCompInfo(_computationCellRef).PreviousValue);
+								// Begin RO-4741 - JSmith - Need to scroll to variables prior to making change
+								//								_computationCellRef.ComputationCube.ComputationCubeGroup.BackupCellForUndo(_computationCellRef.ComputationCell, _extCell.GetCompInfo(_computationCellRef).PreviousValue);
+								_computationCellRef.ComputationCube.ComputationCubeGroup.BackupCellForUndo(_computationCellRef.ComputationCell, _extCell.GetCompInfo(_computationCellRef).PreviousValue, aSetCellMode);
+								// End RO-4741 - JSmith - Need to scroll to variables prior to making change
 
 								if (!_extCell.isPostInitValueSet)
 								{
@@ -408,6 +431,13 @@ namespace MIDRetail.Business
 		{
 			try
 			{
+			    // Begin TT#1954-MD - JSmith - Assortment Performance
+				// Begin RO-4741 - JSmith - Need to scroll to variables prior to making change
+				//_computationCellRef.ComputationCube.ComputationCubeGroup.BackupCellForPendingUndo(_computationCellRef.ComputationCell, (ComputationCell)_computationCellRef.CellCopy(), GetExtensionCell(false), _extCell == null ? null : (ExtensionCell)GetExtensionCell(false).Copy());
+                _computationCellRef.ComputationCube.ComputationCubeGroup.BackupCellForPendingUndo(_computationCellRef.ComputationCell, (ComputationCell)_computationCellRef.CellCopy(), GetExtensionCell(false), _extCell == null ? null : (ExtensionCell)GetExtensionCell(false).Copy(), eSetCellMode.Entry);
+				// End RO-4741 - JSmith - Need to scroll to variables prior to making change
+				// End TT#1954-MD - JSmith - Assortment Performance
+
 				if (_computationCellRef.ComputationCell.Value != aValue || _computationCellRef.ComputationCell.isLocked != aLock)
 				{
 					if (!_computationCellRef.ComputationCell.isCellAvailableForCopy)
@@ -415,7 +445,10 @@ namespace MIDRetail.Business
 						throw new CellNotAvailableException(_computationCellRef.GetCellDescription());
 					}
 
-					_computationCellRef.ComputationCube.ComputationCubeGroup.BackupCellForUndo(_computationCellRef.ComputationCell, (ComputationCell)_computationCellRef.CellCopy());
+					// Begin RO-4741 - JSmith - Need to scroll to variables prior to making change
+					//_computationCellRef.ComputationCube.ComputationCubeGroup.BackupCellForUndo(_computationCellRef.ComputationCell, (ComputationCell)_computationCellRef.CellCopy());
+					_computationCellRef.ComputationCube.ComputationCubeGroup.BackupCellForUndo(_computationCellRef.ComputationCell, (ComputationCell)_computationCellRef.CellCopy(), eSetCellMode.Entry);
+					// End RO-4741 - JSmith - Need to scroll to variables prior to making change
 
 					if (_computationCellRef.ComputationCell.Value != aValue)
 					{
@@ -455,13 +488,23 @@ namespace MIDRetail.Business
 		{
 			try
 			{
+			    // Begin TT#1954-MD - JSmith - Assortment Performance
+				// Begin RO-4741 - JSmith - Need to scroll to variables prior to making change
+				//_computationCellRef.ComputationCube.ComputationCubeGroup.BackupCellForPendingUndo(_computationCellRef.ComputationCell, (ComputationCell)_computationCellRef.CellCopy(), null, null);
+                _computationCellRef.ComputationCube.ComputationCubeGroup.BackupCellForPendingUndo(_computationCellRef.ComputationCell, (ComputationCell)_computationCellRef.CellCopy(), null, null, eSetCellMode.Entry);
+				// End RO-4741 - JSmith - Need to scroll to variables prior to making change
+				// End TT#1954-MD - JSmith - Assortment Performance
+
 				InitCellValue();
 
 				if (_computationCellRef.ComputationCell.isCellAvailableForLocking)
 				{
 					if (aValue != _computationCellRef.ComputationCell.isLocked)
 					{
-						_computationCellRef.ComputationCube.ComputationCubeGroup.BackupCellForUndo(_computationCellRef.ComputationCell, (ComputationCell)_computationCellRef.CellCopy());
+						// Begin RO-4741 - JSmith - Need to scroll to variables prior to making change
+						//_computationCellRef.ComputationCube.ComputationCubeGroup.BackupCellForUndo(_computationCellRef.ComputationCell, (ComputationCell)_computationCellRef.CellCopy());
+						_computationCellRef.ComputationCube.ComputationCubeGroup.BackupCellForUndo(_computationCellRef.ComputationCell, (ComputationCell)_computationCellRef.CellCopy(), eSetCellMode.Entry);
+						// End RO-4741 - JSmith - Need to scroll to variables prior to making change
 						_computationCellRef.ComputationCell.isLocked = aValue;
 						_computationCellRef.ComputationCell.isChanged = true;
 					}

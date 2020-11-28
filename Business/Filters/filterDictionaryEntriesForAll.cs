@@ -159,7 +159,10 @@ namespace MIDRetail.Business
             formattedText += filterUtility.FormatNormal(options, " " + base.groupSettings.groupTitle);
             formattedText += filterUtility.FormatOperator(options, " " + filterListOperatorTypes.FromIndex(fc.operatorIndex).symbol);
             formattedText += filterUtility.FormatValue(options, " (");
-            formattedText += filterUtility.FormatValue(options, filterUtility.GetDisplayListWithParent(fc.listConstantType, fc.GetListValues(filterListValueTypes.Users), filterDataHelper.dtActiveUsersWithGroupRID, base.groupSettings.fieldForData, base.groupSettings.fieldForDisplay));
+            // Begin TT#5729 - JSmith - Audit Viewer Error with Users condition
+            //formattedText += filterUtility.FormatValue(options, filterUtility.GetDisplayListWithParent(fc.listConstantType, fc.GetListValues(filterListValueTypes.Users), filterDataHelper.dtActiveUsersWithGroupRID, base.groupSettings.fieldForData, base.groupSettings.fieldForDisplay));
+            formattedText += filterUtility.FormatValue(options, filterUtility.GetDisplayListWithParent(fc.listConstantType, fc.GetListValues(filterListValueTypes.Users), filterDataHelper.DTActiveUsersWithGroupRID, base.groupSettings.fieldForData, base.groupSettings.fieldForDisplay));
+            // End TT#5729 - JSmith - Audit Viewer Error with Users condition
             formattedText += filterUtility.FormatValue(options, ")");
             fc.NodeFormattedText = formattedText;
         }

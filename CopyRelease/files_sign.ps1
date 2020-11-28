@@ -1,4 +1,4 @@
-C:\scmvs2013\build\CopyRelease\LoadConfig C:\scmvs2013\build\CopyRelease\files_sign.config
+C:\scmvs2017\build\CopyRelease\LoadConfig C:\scmvs2017\build\CopyRelease\files_sign.config
 
 function Get-AssemblyStrongName($assemblyPath)
 {

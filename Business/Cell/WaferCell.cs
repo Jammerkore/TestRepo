@@ -71,6 +71,8 @@ namespace MIDRetail.Business
 
 		abstract public int NumberOfDecimals { get; }
 
+        abstract public eVariableStyle VariableStyle { get; }
+
 		//========
 		// METHODS
 		//========
@@ -247,6 +249,14 @@ namespace MIDRetail.Business
 				return 0;
 			}
 		}
+
+        override public eVariableStyle VariableStyle
+        {
+            get
+            {
+                return eVariableStyle.None;
+            }
+        }
 
 		//========
 		// METHODS
@@ -518,6 +528,14 @@ namespace MIDRetail.Business
 				return _numDecimals;
 			}
 		}
+
+        override public eVariableStyle VariableStyle
+        {
+            get
+            {
+                return _varStyle;
+            }
+        }
 
 		//========
 		// METHODS
@@ -828,6 +846,14 @@ namespace MIDRetail.Business
 			}
 		}
 
+        override public eVariableStyle VariableStyle
+        {
+            get
+            {
+                return eVariableStyle.None;
+            }
+        }
+
 		//========
 		// METHODS
 		//========
@@ -1056,6 +1082,14 @@ namespace MIDRetail.Business
 			}
 		}
 
+        override public eVariableStyle VariableStyle
+        {
+            get
+            {
+                return eVariableStyle.None;
+            }
+        }
+
 		//========
 		// METHODS
 		//========
@@ -1208,6 +1242,8 @@ namespace MIDRetail.Business
 		/// </summary>
 
 		abstract public int NumberOfDecimals { get; }
+
+        abstract public eVariableStyle VariableStyle { get; }
 
 		//End TT#2 - JScott - Assortment Planning - Phase 2
 		////========

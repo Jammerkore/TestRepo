@@ -8,6 +8,7 @@
 using System;
 using System.Data;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
@@ -46,6 +47,10 @@ namespace MIDRetail.Data
         //}
         // End TT#5124 - JSmith - Performance
 
+        //Begin  TT#2131-MD - JSmith - Halo Integration
+        private ExtractValueManager evm = null;
+        // End TT#2131-MD - JSmith - Halo Integration
+
         public VariablesData(int aNumberOfStoreDataTables)
             : base()
         {
@@ -53,6 +58,10 @@ namespace MIDRetail.Data
             {
                 this._numberOfStoreDataTables = aNumberOfStoreDataTables;
                 //_writeXML = false;
+                if (MIDEnvironment.ExtractIsEnabled)
+                {
+                    evm = new ExtractValueManager();
+                }
             }
             catch
             {
@@ -249,8 +258,12 @@ namespace MIDRetail.Data
             return StoredProcedures.SP_MID_CHN_FOR_WK_LOCK_READ.Read(_dba, dt: dtVariable);
         }
 
+        // Begin TT#2131-MD - JSmith - Halo Integration
+		//public void ChainWeek_Update_Insert(int HN_RID, int TIME_ID, int FV_RID,
+        //    Hashtable values, Hashtable locks, bool aSaveLocks)
         public void ChainWeek_Update_Insert(int HN_RID, int TIME_ID, int FV_RID,
-            Hashtable values, Hashtable locks, bool aSaveLocks)
+            Hashtable values, Hashtable locks, bool aSaveLocks, bool cellChanged = true)
+        // End TT#2131-MD - JSmith - Halo Integration
         {
             try
             {
@@ -263,6 +276,14 @@ namespace MIDRetail.Data
                 //    //ChainWeek_Update_SQLInsert(HN_RID, TIME_ID, FV_RID, values, locks, aSaveLocks);
                 //    throw new Exception("Store Daily History Update Insert Exception - Must use write XML.");
                 //}
+
+                // Begin TT#2131-MD - JSmith - Halo Integration
+                if (MIDEnvironment.ExtractIsEnabled
+                    && cellChanged)
+                {
+                    evm.AddValue(HN_RID, FV_RID, ePlanType.Chain, TIME_ID);
+                }
+                // End TT#2131-MD - JSmith - Halo Integration
             }
             catch
             {
@@ -350,6 +371,13 @@ namespace MIDRetail.Data
         {
             try
             {
+                // Begin TT#2131-MD - JSmith - Halo Integration
+                if (MIDEnvironment.ExtractIsEnabled)
+                {
+                    EXTRACT_PLANNING_CONTROL_Update();
+                }
+                // End TT#2131-MD - JSmith - Halo Integration
+
                 // only send document if values or flags were sent
                 if ((_dtVariableValues != null &&
                    _dtVariableValues.Rows.Count > 0) ||
@@ -969,9 +997,12 @@ namespace MIDRetail.Data
         }
 
 
-
+        // Begin TT#2131-MD - JSmith - Halo Integration
+		//public void StoreWeek_Update_Insert(int HN_RID, int TIME_ID, int FV_RID, int StoreRID,
+        //    Hashtable values, Hashtable locks, bool aSaveLocks)
         public void StoreWeek_Update_Insert(int HN_RID, int TIME_ID, int FV_RID, int StoreRID,
-            Hashtable values, Hashtable locks, bool aSaveLocks)
+            Hashtable values, Hashtable locks, bool aSaveLocks, bool cellChanged = true)
+        // End TT#2131-MD - JSmith - Halo Integration
         {
             try
             {
@@ -984,6 +1015,14 @@ namespace MIDRetail.Data
                 //    //StoreWeek_Update_SQLInsert(HN_RID, TIME_ID, FV_RID, StoreRID, values, locks, aSaveLocks);
                 //    throw new Exception("Store Week History Update Insert Exception - Must use write XML.");
                 //}
+
+                // Begin TT#2131-MD - JSmith - Halo Integration
+                if (MIDEnvironment.ExtractIsEnabled
+                    && cellChanged)
+                {
+                    evm.AddValue(HN_RID, FV_RID, ePlanType.Store, TIME_ID);
+                }
+                // End TT#2131-MD - JSmith - Halo Integration
             }
             catch
             {
@@ -1082,6 +1121,13 @@ namespace MIDRetail.Data
         {
             try
             {
+                // Begin TT#2131-MD - JSmith - Halo Integration
+                if (MIDEnvironment.ExtractIsEnabled)
+                {
+                    EXTRACT_PLANNING_CONTROL_Update();
+                }
+                // End TT#2131-MD - JSmith - Halo Integration
+
                 // Begin TT#3373 - JSmith - Save Store Forecast receive DBNull error
                 // only send document if values or flags were sent
                 //for (int i = 0; i<_numberOfStoreDataTables; i++)
@@ -1112,6 +1158,13 @@ namespace MIDRetail.Data
         {
             try
             {
+                // Begin TT#2131-MD - JSmith - Halo Integration
+                if (MIDEnvironment.ExtractIsEnabled)
+                {
+                    EXTRACT_PLANNING_CONTROL_Update();
+                }
+                // End TT#2131-MD - JSmith - Halo Integration
+
                 // only send document if values or flags were sent
                 DataTable dtVariableValues = (DataTable)_variableWriteDT[aTableNumber];
                 // Begin TT#3373 - JSmith - Save Store Forecast receive DBNull error
@@ -2128,6 +2181,196 @@ namespace MIDRetail.Data
                 throw;
             }
         }
+
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        public void AddPlanningExtractControlValue(int HN_RID, int TIME_ID, int FV_RID,
+            ePlanType PlanType)
+        {
+            try
+            {
+                if (MIDEnvironment.ExtractIsEnabled)
+                {
+                    evm.AddValue(HN_RID, FV_RID, PlanType, TIME_ID);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public void EXTRACT_PLANNING_CONTROL_Update(bool forExtract = false)
+        {
+            try
+            {
+                DataTable dtExtractValues;
+                if (MIDEnvironment.ExtractIsEnabled
+                    && evm.ContainsValues)
+                {
+                    dtExtractValues = DatabaseSchema.GetTableSchema("EXTRACT_PLANNING_CONTROL");
+                    evm.PopulateDataTable(dtExtractValues, forExtract);
+
+                    // only send document if values were sent
+                    if (dtExtractValues != null &&
+                       dtExtractValues.Rows.Count > 0)
+                    {
+                        StoredProcedures.MID_EXTRACT_PLANNING_CONTROL_WRITE.Insert(_dba,
+                                                                        dt: dtExtractValues
+                                                                        );
+                    }
+                    evm.Clear();
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public DataTable EXTRACT_PLANNING_CONTROL_Read(int HN_RID,
+                                      int FV_RID,
+                                      ePlanType PLAN_TYPE)
+        {
+            try
+            {
+                DataTable dt = null;
+                if (MIDEnvironment.ExtractIsEnabled)
+                {
+                    dt = StoredProcedures.MID_EXTRACT_PLANNING_CONTROL_READ.Read(_dba,
+                                                                        HN_RID: HN_RID,
+                                                                        FV_RID: FV_RID,
+                                                                        PLAN_TYPE: Convert.ToInt32(PLAN_TYPE)
+                                                                        );
+                }
+                return dt;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public void EXTRACT_PLANNING_CONTROL_CLEAR_EXTRACT_DATES()
+        {
+            try
+            {
+                StoredProcedures.MID_EXTRACT_PLANNING_CONTROL_CLEAR_EXTRACT_DATES.Update(_dba);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public int EXTRACT_PLANNING_CONTROL_ChainForecastDeleteLessThanDate(int aCommitLimit)
+        {
+            try
+            {
+                return StoredProcedures.MID_EXTRACT_PLANNING_CONTROL_CHAIN_FORECAST_DELETE_FOR_PURGE.Delete(_dba, COMMIT_LIMIT: aCommitLimit);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public int EXTRACT_PLANNING_CONTROL_ChainForecastDeleteLessThanDate(int aPurgeDate, int aCommitLimit)
+        {
+            try
+            {
+                return StoredProcedures.MID_EXTRACT_PLANNING_CONTROL_CHAIN_FORECAST_DELETE_FOR_PURGE_FOR_DATE.Delete(_dba,
+                                                                                                COMMIT_LIMIT: aCommitLimit,
+                                                                                                TIME_ID: aPurgeDate
+                                                                                                );
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public int EXTRACT_PLANNING_CONTROL_ChainHistoryDeleteLessThanDate(int aCommitLimit)
+        {
+            try
+            {
+                return StoredProcedures.MID_EXTRACT_PLANNING_CONTROL_CHAIN_HISTORY_DELETE_FOR_PURGE.Delete(_dba, COMMIT_LIMIT: aCommitLimit);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public int EXTRACT_PLANNING_CONTROL_ChainHistoryDeleteLessThanDate(int aPurgeDate, int aCommitLimit)
+        {
+            try
+            {
+                return StoredProcedures.MID_EXTRACT_PLANNING_CONTROL_CHAIN_HISTORY_DELETE_FOR_PURGE_FOR_DATE.Delete(_dba,
+                                                                                                COMMIT_LIMIT: aCommitLimit,
+                                                                                                TIME_ID: aPurgeDate
+                                                                                                );
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public int EXTRACT_PLANNING_CONTROL_StoreForecastDeleteLessThanDate(int aCommitLimit)
+        {
+            try
+            {
+                return StoredProcedures.MID_EXTRACT_PLANNING_CONTROL_STORE_FORECAST_DELETE_FOR_PURGE.Delete(_dba, COMMIT_LIMIT: aCommitLimit);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public int EXTRACT_PLANNING_CONTROL_StoreForecastDeleteLessThanDate(int aPurgeDate, int aCommitLimit)
+        {
+            try
+            {
+                return StoredProcedures.MID_EXTRACT_PLANNING_CONTROL_STORE_FORECAST_DELETE_FOR_PURGE_FOR_DATE.Delete(_dba,
+                                                                                                COMMIT_LIMIT: aCommitLimit,
+                                                                                                TIME_ID: aPurgeDate
+                                                                                                );
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public int EXTRACT_PLANNING_CONTROL_StoreHistoryDeleteLessThanDate(int aCommitLimit)
+        {
+            try
+            {
+                return StoredProcedures.MID_EXTRACT_PLANNING_CONTROL_STORE_HISTORY_DELETE_FOR_PURGE.Delete(_dba, COMMIT_LIMIT: aCommitLimit);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public int EXTRACT_PLANNING_CONTROL_StoreHistoryDeleteLessThanDate(int aPurgeDate, int aCommitLimit)
+        {
+            try
+            {
+                return StoredProcedures.MID_EXTRACT_PLANNING_CONTROL_STORE_HISTORY_DELETE_FOR_PURGE_FOR_DATE.Delete(_dba,
+                                                                                                COMMIT_LIMIT: aCommitLimit,
+                                                                                                TIME_ID: aPurgeDate
+                                                                                                );
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        // End TT#2131-MD - JSmith - Halo Integration
     }
 
     public class XMLDocument

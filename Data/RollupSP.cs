@@ -509,7 +509,40 @@ namespace MIDRetail.Data
 			    }
 			}
 
-			public static MID_ROLLUP_ITEM_INSERT_def MID_ROLLUP_ITEM_INSERT = new MID_ROLLUP_ITEM_INSERT_def();
+            // Begin TT#2131-MD - JSmith - Halo Integration
+            public static MID_ROLLUP_ITEM_READ_PROCESSED_def MID_ROLLUP_ITEM_READ_PROCESSED = new MID_ROLLUP_ITEM_READ_PROCESSED_def();
+            public class MID_ROLLUP_ITEM_READ_PROCESSED_def : baseStoredProcedure
+            {
+                //"file:///C:\SCMVS2010\gohere.html?filepath=DatabaseDefinition\SQL_StoredProcedures\MID_ROLLUP_ITEM_READ_PROCESSED.SQL"
+
+                private intParameter PROCESS;
+                private intParameter PH_RID;
+
+                public MID_ROLLUP_ITEM_READ_PROCESSED_def()
+                {
+                    base.procedureName = "MID_ROLLUP_ITEM_READ_PROCESSED";
+                    base.procedureType = storedProcedureTypes.Read;
+                    base.tableNames.Add("ROLLUP_ITEM");
+                    PROCESS = new intParameter("@PROCESS", base.inputParameterList);
+                    PH_RID = new intParameter("@PH_RID", base.inputParameterList);
+                }
+
+                public DataTable Read(DatabaseAccess _dba,
+                                      int? PROCESS,
+                                      int? PH_RID
+                                      )
+                {
+                    lock (typeof(MID_ROLLUP_ITEM_READ_PROCESSED_def))
+                    {
+                        this.PROCESS.SetValue(PROCESS);
+                        this.PH_RID.SetValue(PH_RID);
+                        return ExecuteStoredProcedureForRead(_dba);
+                    }
+                }
+            }
+            // End TT#2131-MD - JSmith - Halo Integration
+
+            public static MID_ROLLUP_ITEM_INSERT_def MID_ROLLUP_ITEM_INSERT = new MID_ROLLUP_ITEM_INSERT_def();
 			public class MID_ROLLUP_ITEM_INSERT_def : baseStoredProcedure
 			{
 				//"file:///C:\SCMVS2010\gohere.html?filepath=DatabaseDefinition\SQL_StoredProcedures\MID_ROLLUP_ITEM_INSERT.SQL"

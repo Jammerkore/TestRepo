@@ -21,6 +21,11 @@ namespace MIDRetail.Business
 
 		private ComputationCell _currCompCell;
 		private ComputationCell _oldCompCell;
+		// Begin TT#1954-MD - JSmith - Assortment Performance
+        private ExtensionCell _currExtCell;
+        private ExtensionCell _oldExtCell;
+        private eSetCellMode _setCellMode;   // RO-4741 - JSmith - Need to scroll to variables prior to making change
+		// End TT#1954-MD - JSmith - Assortment Performance
 
 		//=============
 		// CONSTRUCTORS
@@ -36,11 +41,33 @@ namespace MIDRetail.Business
 		/// A copy of the cell being backed up.
 		/// </param>
 
-		public UndoEntry(ComputationCell aCurrCompCell, ComputationCell aOldCompCell)
+        // Begin RO-4741 - JSmith - Need to scroll to variables prior to making change
+		//public UndoEntry(ComputationCell aCurrCompCell, ComputationCell aOldCompCell)
+        public UndoEntry(ComputationCell aCurrCompCell, ComputationCell aOldCompCell, eSetCellMode aSetCellMode)
+		// End RO-4741 - JSmith - Need to scroll to variables prior to making change
 		{
 			_currCompCell = aCurrCompCell;
 			_oldCompCell = aOldCompCell;
+            // Begin TT#1954-MD - JSmith - Assortment Performance
+            _currExtCell = null;
+            _oldExtCell = null;
+            _setCellMode = aSetCellMode;   // RO-4741 - JSmith - Need to scroll to variables prior to making change
+            // End TT#1954-MD - JSmith - Assortment Performance
 		}
+
+        // Begin TT#1954-MD - JSmith - Assortment Performance
+        // Begin RO-4741 - JSmith - Need to scroll to variables prior to making change
+		//public UndoEntry(ComputationCell aCurrCompCell, ComputationCell aOldCompCell, ExtensionCell aCurrExtCell, ExtensionCell aOldExtCell)
+        public UndoEntry(ComputationCell aCurrCompCell, ComputationCell aOldCompCell, ExtensionCell aCurrExtCell, ExtensionCell aOldExtCell, eSetCellMode aSetCellMode)
+		// End RO-4741 - JSmith - Need to scroll to variables prior to making change
+		{
+			_currCompCell = aCurrCompCell;
+			_oldCompCell = aOldCompCell;
+            _currExtCell = aCurrExtCell;
+            _oldExtCell = aOldExtCell;
+            _setCellMode = aSetCellMode;   // RO-4741 - JSmith - Need to scroll to variables prior to making change
+		}
+		// End TT#1954-MD - JSmith - Assortment Performance
 
 		//===========
 		// PROPERTIES
@@ -69,6 +96,34 @@ namespace MIDRetail.Business
 				return _oldCompCell;
 			}
 		}
+
+        // Begin TT#1954-MD - JSmith - Assortment Performance
+        public ExtensionCell CurrExtCell
+        {
+            get
+            {
+                return _currExtCell;
+            }
+        }
+
+        public ExtensionCell OldExtCell
+        {
+            get
+            {
+                return _oldExtCell;
+            }
+        }
+
+        // Begin RO-4741 - JSmith - Need to scroll to variables prior to making change
+        public eSetCellMode SetCellMode
+        {
+            get
+            {
+                return _setCellMode;
+            }
+        }
+		// End RO-4741 - JSmith - Need to scroll to variables prior to making change
+		// End TT#1954-MD - JSmith - Assortment Performance
 	}
 
 	/// <summary>
@@ -142,6 +197,7 @@ namespace MIDRetail.Business
 		private int _undoSequence;
 		private Stack _undoStack;
 		private UndoList _currUndoList;
+        private UndoList _pendingUndoList;   // TT#1954-MD - JSmith - Assortment Performance
 		private bool _createNewUndoList;
 		protected bool _userChanged;
 		private Queue _lockRetotalQueue;
@@ -352,6 +408,7 @@ namespace MIDRetail.Business
 				_currUndoList = null;
 				_lockRetotalQueue = null;
 				_lockRetotalHash = null;
+                _pendingUndoList = null;   // TT#1954-MD - JSmith - Assortment Performance
 			}
 			catch (Exception exc)
 			{
@@ -455,13 +512,19 @@ namespace MIDRetail.Business
 		/// The ComputationCellReference of the ComputationCell to backup.
 		/// </param>
 
-		public void BackupCellForUndo(ComputationCell aCurrCompCell, ComputationCell aOldCompCell)
+		// Begin RO-4741 - JSmith - Need to scroll to variables prior to making change
+		//public void BackupCellForUndo(ComputationCell aCurrCompCell, ComputationCell aOldCompCell)
+		public void BackupCellForUndo(ComputationCell aCurrCompCell, ComputationCell aOldCompCell, eSetCellMode aSetCellMode)
+		// End RO-4741 - JSmith - Need to scroll to variables prior to making change
 		{
 			try
 			{
 				if (_currUndoList != null)
 				{
-					_currUndoList.Push(new UndoEntry(aCurrCompCell, aOldCompCell));
+					// Begin RO-4741 - JSmith - Need to scroll to variables prior to making change
+					//_currUndoList.Push(new UndoEntry(aCurrCompCell, aOldCompCell));
+					_currUndoList.Push(new UndoEntry(aCurrCompCell, aOldCompCell, aSetCellMode));
+					// End RO-4741 - JSmith - Need to scroll to variables prior to making change
 				}
 			}
 			catch (Exception exc)
@@ -700,6 +763,94 @@ namespace MIDRetail.Business
 				throw;
 			}
 		}
+
+        // Begin TT#1954-MD - JSmith - Assortment Performance
+        public void ClearPendingUndoList()
+        {
+            _pendingUndoList = new UndoList(0);
+        }
+		
+		/// <summary>
+        /// Backs up a cells value and lock flag.
+        /// </summary>
+        /// <param name="aCurrCompCell">
+        /// The ComputationCellReference of the ComputationCell to backup.
+        /// </param>
+
+        public void BackupCellForPendingUndo(
+            ComputationCell aCurrCompCell, 
+            ComputationCell aOldCompCell,
+            ExtensionCell aCurrExtCell,
+            ExtensionCell aOldExtCell,
+            eSetCellMode aSetCellMode   // RO-4741 - JSmith - Need to scroll to variables prior to making change
+            )
+        {
+            try
+            {
+                if (_pendingUndoList != null)
+                {
+                    // Begin RO-4741 - JSmith - Need to scroll to variables prior to making change
+					//_pendingUndoList.Push(new UndoEntry(aCurrCompCell, aOldCompCell, aCurrExtCell, aOldExtCell));
+                    _pendingUndoList.Push(new UndoEntry(aCurrCompCell, aOldCompCell, aCurrExtCell, aOldExtCell, aSetCellMode));
+					// End RO-4741 - JSmith - Need to scroll to variables prior to making change
+                }
+            }
+            catch (Exception exc)
+            {
+                string message = exc.ToString();
+                throw;
+            }
+        }
+
+        public void UndoLastPendingRecompute()
+        {
+            UndoEntry undoEntry;
+
+            try
+            {
+                if (_pendingUndoList.Count > 0)
+                {
+                    while (_pendingUndoList.Count > 0)
+                    {
+                        undoEntry = (UndoEntry)_pendingUndoList.Pop();
+                        undoEntry.CurrComputationCell.CopyFrom(undoEntry.OldComputationCell);
+
+                        // Begin RO-4741 - JSmith - Need to scroll to variables prior to making change
+                        if (undoEntry.SetCellMode == eSetCellMode.Initialize)
+                        {
+                            undoEntry.CurrComputationCell.isInitialized = false;
+                            undoEntry.CurrComputationCell.isCurrentInitialized = false;
+                        }
+                        else if (undoEntry.SetCellMode == eSetCellMode.InitializeCurrent)
+                        {
+                            undoEntry.CurrComputationCell.isCurrentInitialized = false;
+                        }
+						// End RO-4741 - JSmith - Need to scroll to variables prior to making change
+
+                        if (undoEntry.CurrExtCell != null)
+                        {
+                            undoEntry.CurrExtCell.PostInitValue = undoEntry.OldExtCell.PostInitValue;
+                            undoEntry.CurrExtCell.PreInitValue = undoEntry.OldExtCell.PreInitValue;
+                            if (undoEntry.CurrExtCell.isCompInfoAllocated)
+                            {
+                                undoEntry.CurrExtCell.GetCompInfo().isAutoTotalsProcessed = false;
+                                undoEntry.CurrExtCell.GetCompInfo().isCompChanged = false;
+                                undoEntry.CurrExtCell.GetCompInfo().isCompLocked = false;
+                                undoEntry.CurrExtCell.GetCompInfo().isExcludedFromSpread = false;
+                            }
+                        }
+                    }
+                }
+
+                _pendingUndoList = null;
+            }
+            catch (Exception exc)
+            {
+                string message = exc.ToString();
+                throw;
+            }
+        }
+		// End TT#1954-MD - JSmith - Assortment Performance
 
 		/// <summary>
 		/// This method loops through all of the Cubes in the collection and performs an undo on the last sequence.

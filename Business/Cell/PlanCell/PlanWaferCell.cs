@@ -285,6 +285,21 @@ namespace MIDRetail.Business
 			}
 		}
 
+        override public eVariableStyle VariableStyle
+        {
+            get
+            {
+                try
+                {
+                    return _waferCellDetail.VariableStyle;
+                }
+                catch (Exception exc)
+                {
+                    string message = exc.ToString();
+                    throw;
+                }
+            }
+        }
 		//========
 		// METHODS
 		//========

@@ -25,6 +25,7 @@ namespace MIDRetail.Data
 			    private intParameter IS_LIMITED;
 			    private intParameter RESULT_LIMIT;
 			    private intParameter FILTER_RID; //Declare Output Parameter
+                private datetimeParameter UPDATE_DATE;
 			
 			    public MID_FILTER_INSERT_def()
 			    {
@@ -37,6 +38,7 @@ namespace MIDRetail.Data
 			        FILTER_NAME = new stringParameter("@FILTER_NAME", base.inputParameterList);
 			        IS_LIMITED = new intParameter("@IS_LIMITED", base.inputParameterList);
 			        RESULT_LIMIT = new intParameter("@RESULT_LIMIT", base.inputParameterList);
+                    UPDATE_DATE = new datetimeParameter("@UPDATE_DATE", base.inputParameterList);
 			        FILTER_RID = new intParameter("@FILTER_RID", base.outputParameterList); //Add Output Parameter
 			    }
 			
@@ -57,6 +59,7 @@ namespace MIDRetail.Data
                         this.FILTER_NAME.SetValue(FILTER_NAME);
                         this.IS_LIMITED.SetValue(IS_LIMITED);
                         this.RESULT_LIMIT.SetValue(RESULT_LIMIT);
+                        this.UPDATE_DATE.SetValue(DateTime.Now);
                         this.FILTER_RID.SetValue(null); //Initialize Output Parameter
                         return ExecuteStoredProcedureForInsertAndReturnRID(_dba);
                     }
@@ -139,6 +142,7 @@ namespace MIDRetail.Data
 			    private intParameter SORT_BY_TYPE_INDEX;
 			    private intParameter SORT_BY_FIELD_INDEX;
 			    private intParameter LIST_VALUE_CONSTANT_INDEX;
+                private intParameter DATE_CDR_RID;   // TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
 			    private intParameter CONDITION_RID; //Declare Output Parameter
 			
 			    public MID_FILTER_CONDITION_INSERT_def()
@@ -187,6 +191,7 @@ namespace MIDRetail.Data
 			        SORT_BY_TYPE_INDEX = new intParameter("@SORT_BY_TYPE_INDEX", base.inputParameterList);
 			        SORT_BY_FIELD_INDEX = new intParameter("@SORT_BY_FIELD_INDEX", base.inputParameterList);
 			        LIST_VALUE_CONSTANT_INDEX = new intParameter("@LIST_VALUE_CONSTANT_INDEX", base.inputParameterList);
+                    DATE_CDR_RID = new intParameter("@DATE_CDR_RID", base.inputParameterList);   // TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
 			        CONDITION_RID = new intParameter("@CONDITION_RID", base.outputParameterList); //Add Output Parameter
 			    }
 			
@@ -229,7 +234,8 @@ namespace MIDRetail.Data
                                               //int? HEADER_PH_RID,
 			                                  int? SORT_BY_TYPE_INDEX,
 			                                  int? SORT_BY_FIELD_INDEX,
-			                                  int? LIST_VALUE_CONSTANT_INDEX
+			                                  int? LIST_VALUE_CONSTANT_INDEX,
+                                              int? DATE_CDR_RID   // TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
 			                                  )
 			    {
                     lock (typeof(MID_FILTER_CONDITION_INSERT_def))
@@ -275,6 +281,7 @@ namespace MIDRetail.Data
                         this.SORT_BY_TYPE_INDEX.SetValue(SORT_BY_TYPE_INDEX);
                         this.SORT_BY_FIELD_INDEX.SetValue(SORT_BY_FIELD_INDEX);
                         this.LIST_VALUE_CONSTANT_INDEX.SetValue(LIST_VALUE_CONSTANT_INDEX);
+                        this.DATE_CDR_RID.SetValue(DATE_CDR_RID);   // TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
                         this.CONDITION_RID.SetValue(null); //Initialize Output Parameter
                         return ExecuteStoredProcedureForInsertAndReturnRID(_dba);
                     }
@@ -652,6 +659,7 @@ namespace MIDRetail.Data
 			    private stringParameter FILTER_NAME;
 			    private intParameter IS_LIMITED;
 			    private intParameter RESULT_LIMIT;
+                private datetimeParameter UPDATE_DATE;
 			
 			    public MID_FILTER_UPDATE_def()
 			    {
@@ -664,6 +672,7 @@ namespace MIDRetail.Data
 			        FILTER_NAME = new stringParameter("@FILTER_NAME", base.inputParameterList);
 			        IS_LIMITED = new intParameter("@IS_LIMITED", base.inputParameterList);
 			        RESULT_LIMIT = new intParameter("@RESULT_LIMIT", base.inputParameterList);
+                    UPDATE_DATE = new datetimeParameter("@UPDATE_DATE", base.inputParameterList);
 			    }
 			
 			    public int Update(DatabaseAccess _dba, 
@@ -683,6 +692,7 @@ namespace MIDRetail.Data
                         this.FILTER_NAME.SetValue(FILTER_NAME);
                         this.IS_LIMITED.SetValue(IS_LIMITED);
                         this.RESULT_LIMIT.SetValue(RESULT_LIMIT);
+                        this.UPDATE_DATE.SetValue(DateTime.Now);
                         return ExecuteStoredProcedureForUpdate(_dba);
                     }
 			    }

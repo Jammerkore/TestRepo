@@ -8,11 +8,12 @@ using System.Text;
 using MIDRetail.Data;
 using MIDRetail.Common;
 using MIDRetail.DataCommon;
+using Logility.ROWebSharedTypes;
 
 namespace MIDRetail.Business.Allocation
 {
 	/// <summary>
-	/// Summary description for SizeNeedMethod.
+	/// Summary description for SizeCurveMethod.
 	/// </summary>  
 	public class SizeCurveMethod : AllocationSizeBaseMethod
 	{
@@ -417,6 +418,32 @@ namespace MIDRetail.Business.Allocation
 		#endregion
 
 		#region "Override Methods"
+
+        // Begin TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+        override internal bool CheckForUserData()
+        {
+            if (CheckSizeMethodForUserData())
+            {
+                return true;
+            }
+
+            if (IsStoreGroupUser(_sizeCurvesBySGRID))
+            {
+                return true;
+            }
+
+            foreach (DataRow dr in _dtMerchBasisDetail.Rows)
+            {
+                if (dr["HN_RID"] != DBNull.Value
+                    && IsHierarchyNodeUser(Convert.ToInt32(dr["HN_RID"])))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        // End TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
 
 		public override void ProcessMethod(
 			ApplicationSessionTransaction aApplicationTransaction,
@@ -832,14 +859,14 @@ namespace MIDRetail.Business.Allocation
 		/// </returns>
         override public ApplicationBaseMethod Copy(Session aSession, bool aCloneDateRanges, bool aCloneCustomOverrideModels)
 		{
-			SizeCurveMethod newSizeNeedMethod = null;
+			SizeCurveMethod newSizeCurveMethod = null;
 
 			try
 			{
-				newSizeNeedMethod = (SizeCurveMethod)this.MemberwiseClone();
+				newSizeCurveMethod = (SizeCurveMethod)this.MemberwiseClone();
 				
 
-				return newSizeNeedMethod;
+				return newSizeCurveMethod;
 			}
 			catch (Exception exc)
 			{
@@ -897,7 +924,80 @@ namespace MIDRetail.Business.Allocation
         }
         // End TT#3572 - JSmith - Security- Version set to Deny - Ran a velocity method with this version and receive a Null reference error.
 
-		private bool ProcessMerchandiseBasis(SizeCurveGroupProfile aSzCrvGrpProf, ApplicationSessionTransaction aAppTran)
+        // BEGIN RO-642 - RDewey
+        override public FunctionSecurityProfile GetFunctionSecurity()
+        {
+            if (this.GlobalUserType == eGlobalUserType.Global)
+            {
+                return SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.AllocationMethodsGlobalSizeCurve);
+            }
+            else
+            {
+                return SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.AllocationMethodsUserSizeCurve);
+            }
+
+        }
+        override public ROMethodProperties MethodGetData(bool processingApply)
+        {
+            //RO4431 Data Transport for Size Curve Method
+            //throw new NotImplementedException("MethodGetData is not implemented");
+            ROMethodSizeCurveProperties method = new ROMethodSizeCurveProperties(
+                method: GetName.GetMethod(method: this),
+                description: _methodData.Method_Description,
+                userKey: User_RID,
+                sizeGroup: GetName.GetSizeGroup(_methodData.SizeGroupRID),
+                attribute: GetName.GetAttributeName(_methodData.SizeCurvesBySGRID),
+                sizeCurvesByType: _methodData.SizeCurvesByType,
+                merchBasisEqualizeWeight: _methodData.MerchBasisEqualizeWeight,
+                sizeCurveMerchBasisSet: SizeCurveMerchBasisSet.BuildSizeCurveMerchBasisSet(_methodData.Method_RID,
+                            _methodData.Method_Type_ID, DTMerchBasisDetail, SAB),
+                tolerMinAvgPerSize: _methodData.TolerMinAvgPerSize,
+                tolerSalesTolerance: _methodData.TolerSalesTolerance,
+                tolerIndexUnitsType: _methodData.TolerIndexUnitsType,
+                tolerMinTolerancePct: _methodData.TolerMinTolerancePct,
+                tolerMaxTolerancePct: _methodData.TolerMaxTolerancePct,
+                applyMinToZeroTolerance: _methodData.ApplyMinToZeroTolerance
+            );
+
+            return method;
+        }
+
+        override public bool MethodSetData(ROMethodProperties methodProperties, bool processingApply)
+        {
+            //RO4431 Data Transport for Size Curve Method
+            ROMethodSizeCurveProperties roMethodSizeCurveProperties = (ROMethodSizeCurveProperties)methodProperties;
+
+            try
+            {
+                Method_Description = roMethodSizeCurveProperties.Description;
+                User_RID = roMethodSizeCurveProperties.UserKey;
+                SizeGroupRid = roMethodSizeCurveProperties.SizeGroup.Key;
+                SizeCurvesBySGRID = roMethodSizeCurveProperties.Attribute.Key;
+                SizeCurvesByType = roMethodSizeCurveProperties.SizeCurvesByType;
+                MerchBasisEqualizeWeight = roMethodSizeCurveProperties.MerchBasisEqualizeWeight;
+                DTMerchBasisDetail = SizeCurveMerchBasisSet.BuilddtMerchBasisDetail( roMethodSizeCurveProperties.Method.Key, 
+                            roMethodSizeCurveProperties.SizeCurveMerchBasisSet, DTMerchBasisDetail, SAB);
+                TolerMinAvgPerSize = roMethodSizeCurveProperties.TolerMinAvgPerSize;
+                TolerSalesTolerance = roMethodSizeCurveProperties.TolerSalesTolerance;
+                TolerIndexUnitsType = roMethodSizeCurveProperties.TolerIndexUnitsType;
+                TolerMinTolerancePct = roMethodSizeCurveProperties.TolerMinTolerancePct;
+                TolerMaxTolerancePct = roMethodSizeCurveProperties.TolerMaxTolerancePct;
+                ApplyMinToZeroTolerance = roMethodSizeCurveProperties.ApplyMinToZeroTolerance;
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+            //throw new NotImplementedException("MethodSaveData is not implemented");
+        }
+    
+        override public ROMethodProperties MethodCopyData()
+        {
+            throw new NotImplementedException("MethodCopyData is not implemented");
+        }
+        // END RO-642 - RDewey
+        private bool ProcessMerchandiseBasis(SizeCurveGroupProfile aSzCrvGrpProf, ApplicationSessionTransaction aAppTran)
 		{
 			MerchandiseBasisList mainBasisList;
 			ArrayList storeList;

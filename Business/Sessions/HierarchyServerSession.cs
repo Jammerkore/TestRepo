@@ -4145,7 +4145,7 @@ namespace MIDRetail.Business
 			}
 		}
 
-		public ModelProfile GetModelDataForUpdate(eModelType aModelType, int aModelRID, bool aAllowReadOnly)
+		public ModelProfile GetModelDataForUpdate(eModelType aModelType, int aModelRID, bool aAllowReadOnly, bool isWindows = true)
 		{
 			try
 			{
@@ -4153,7 +4153,7 @@ namespace MIDRetail.Business
 				{
 					try
 					{
-						return HierarchyServerSessionRemote.GetModelDataForUpdate(aModelType, aModelRID, aAllowReadOnly);
+						return HierarchyServerSessionRemote.GetModelDataForUpdate(aModelType, aModelRID, aAllowReadOnly, isWindows);
 					}
 					catch (Exception exc)
 					{
@@ -4175,6 +4175,68 @@ namespace MIDRetail.Business
 				throw;
 			}
 		}
+
+        public ModelProfile GetModelData(eModelType aModelType, int aModelRID)
+        {
+            try
+            {
+                for (int i = 0; i < ServiceRetryCount; i++)
+                {
+                    try
+                    {
+                        return HierarchyServerSessionRemote.GetModelData(aModelType, aModelRID);
+                    }
+                    catch (Exception exc)
+                    {
+                        if (isServiceRetryException(exc))
+                        {
+                            Thread.Sleep(ServiceRetryInterval);
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                }
+
+                throw new ServiceUnavailable(MIDText.GetTextOnly((int)SessionType));
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public ModelProfile GetModelData(eModelType aModelType, string modelID)
+        {
+            try
+            {
+                for (int i = 0; i < ServiceRetryCount; i++)
+                {
+                    try
+                    {
+                        return HierarchyServerSessionRemote.GetModelData(aModelType, modelID);
+                    }
+                    catch (Exception exc)
+                    {
+                        if (isServiceRetryException(exc))
+                        {
+                            Thread.Sleep(ServiceRetryInterval);
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                }
+
+                throw new ServiceUnavailable(MIDText.GetTextOnly((int)SessionType));
+            }
+            catch
+            {
+                throw;
+            }
+        }
 
 		public void DequeueModel(eModelType aModelType, int aModelRID)
 		{

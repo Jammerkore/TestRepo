@@ -103,32 +103,37 @@ namespace MIDRetail.Windows
 		{
 			// Define the MenuItem objects to display for the TextBox.
 			menuItemEdit = new MenuItem("&Edit Calendar Model");
-			menuItemNew = new MenuItem("&New Calendar Model");
-			menuItemDelete = new MenuItem("&Delete Calendar Model");
+            // BEGIN TT#5423 - AGallagher - Unhandled exception occurred during Calendar creation
+            //menuItemNew = new MenuItem("&New Calendar Model");
+			//menuItemDelete = new MenuItem("&Delete Calendar Model");
+            // END TT#5423 - AGallagher - Unhandled exception occurred during Calendar creation
 
-			// Clear all previously added MenuItems.
-			contextMenu1.MenuItems.Clear();
+            // Clear all previously added MenuItems.
+            contextMenu1.MenuItems.Clear();
 	 
 			// Add MenuItems to display for the TextBox.
 			if (FunctionSecurity.AllowUpdate)
 			{
 				contextMenu1.MenuItems.Add(menuItemEdit);
-				contextMenu1.MenuItems.Add(menuItemNew);
-			}
-			if (FunctionSecurity.AllowDelete)
-			{
-				contextMenu1.MenuItems.Add(menuItemDelete);
-			}
+				//contextMenu1.MenuItems.Add(menuItemNew);  // TT#5423 - AGallagher - Unhandled exception occurred during Calendar creation
+            }
+            // BEGIN TT#5423 - AGallagher - Unhandled exception occurred during Calendar creation
+            //if (FunctionSecurity.AllowDelete)
+			//{
+			//	contextMenu1.MenuItems.Add(menuItemDelete);
+			//}
+            // END TT#5423 - AGallagher - Unhandled exception occurred during Calendar creation
+            menuItemEdit.Click += new System.EventHandler(this.menuItemEdit_Click);
+            // BEGIN TT#5423 - AGallagher - Unhandled exception occurred during Calendar creation
+            //menuItemNew.Click += new System.EventHandler(this.menuItemNew_Click);
+			//menuItemDelete.Click += new System.EventHandler(this.menuItemDelete_Click);
+            // END TT#5423 - AGallagher - Unhandled exception occurred during Calendar creation
+        }
 
-			menuItemEdit.Click += new System.EventHandler(this.menuItemEdit_Click);
-			menuItemNew.Click += new System.EventHandler(this.menuItemNew_Click);
-			menuItemDelete.Click += new System.EventHandler(this.menuItemDelete_Click);
-		}
-	
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        protected override void Dispose( bool disposing )
 		{
 			if( disposing )
 			{

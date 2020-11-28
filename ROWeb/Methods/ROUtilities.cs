@@ -1,0 +1,1167 @@
+﻿using Logility.ROWebSharedTypes;
+using MIDRetail.Business;
+using MIDRetail.Common;
+using MIDRetail.Data;
+using MIDRetail.DataCommon;
+using MIDRetail.Windows;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Collections;
+
+namespace Logility.ROWeb
+{
+    public class MIDTextRowHandler : DBRowHandler
+    {
+        private TypedDBColumnHandler<string> _NameColumnHandler;
+
+        private string _sName;
+
+        public MIDTextRowHandler(string sDBIDColName, string sUIIDColName, string sDBNameColName, string sUINameColName)
+            : base(sDBIDColName, sUIIDColName, eMIDTextCode.Unassigned)
+        {
+            _NameColumnHandler = new TypedDBColumnHandler<string>(sDBNameColName, sUINameColName, eMIDTextCode.Unassigned, true, string.Empty);
+            _aColumnHandlers = new ColumnHandler[] { _RIDColumnHandler, _NameColumnHandler };
+        }
+
+        protected override void ParseDataRow(DataRow dr, bool bIsDBRow)
+        {
+            base.ParseDataRow(dr, bIsDBRow);
+
+            _sName = _NameColumnHandler.ParseColumn(dr, bIsDBRow);
+        }
+    }
+
+    public class MIDTextDataHandler
+    {
+        private MIDTextRowHandler rowHandler;
+        private DataTable dtUIText;
+
+        public MIDTextDataHandler(string sUITableName, string sUIIDColName, string sUINameColName)
+        {
+            rowHandler = new MIDTextRowHandler("TEXT_CODE", sUIIDColName, "TEXT_VALUE", sUINameColName);
+            dtUIText = new DataTable(sUITableName);
+            rowHandler.AddUITableColumns(dtUIText);
+        }
+
+        public DataTable GetUITextTable(eMIDTextType eTextType, eMIDTextOrderBy eOrderBy, params int[] excludedIDs)
+        {
+            DataTable dtDBText = MIDText.GetTextType(eTextType, eOrderBy, excludedIDs);
+
+            foreach (DataRow drDB in dtDBText.Rows)
+            {
+                DataRow drUI = dtUIText.NewRow();
+
+                rowHandler.TranslateDBRowToUI(drDB, drUI);
+                dtUIText.Rows.Add(drUI);
+            }
+
+            return dtUIText;
+        }
+    }
+
+    public class eNumConverter
+    {
+        private static Dictionary<int, string> ConvertEnumToDictionary<T>()
+        {
+            if (!typeof(T).IsEnum)
+            {
+                throw new ArgumentException("Type must be an enum");
+            }
+
+            return Enum.GetValues(typeof(T))
+                .Cast<T>()
+                .ToDictionary(t =>
+                   (int)Convert.ChangeType(t, t.GetType()),
+                   t => t.ToString()
+                );
+        }
+
+        public static DataTable AddEnumsToTable<T>(string sTableName)
+        {
+            DataTable dt = new DataTable(sTableName);
+
+            dt.Columns.Add("ID", typeof(int));
+            dt.Columns.Add("NAME", typeof(string));
+
+            Dictionary<int, string> dictionaryValues = ConvertEnumToDictionary<T>();
+
+            foreach (KeyValuePair<int, string> kvp in dictionaryValues)
+            {
+                DataRow dr = dt.NewRow();
+
+                dr["ID"] = kvp.Key;
+                dr["NAME"] = kvp.Value;
+
+                dt.Rows.Add(dr);
+            }
+
+            return dt;
+        }
+
+
+    }
+
+    public class WorkflowMethodUtilities
+    {
+        public static int GetWorkflowMethodFolderRID(eProfileType applicationFolderType, int folderKey, int userKey, eProfileType profileType, string uniqueID)
+        {
+            int folderRID, userRID, folderType;
+            bool folderValid = false;
+            DataTable dt;
+            FolderDataLayer dlFolder = new FolderDataLayer();
+
+
+            folderValid = isFolderValid(dlFolder: dlFolder, applicationFolderType: applicationFolderType, folderKey: folderKey, userKey: userKey, profileType: profileType);
+            //FolderDataLayer dlFolder = new FolderDataLayer();
+            //DataTable dt = dlFolder.Folder_Read(folderKey);
+            //if (dt != null
+            //    && dt.Rows.Count > 0)
+            //{
+            //    folderRID = Convert.ToInt32(dt.Rows[0]["FOLDER_RID"]);
+            //    userRID = Convert.ToInt32(dt.Rows[0]["USER_RID"]);
+            //    folderType = Convert.ToInt32(dt.Rows[0]["FOLDER_TYPE"]);
+
+            //    // Is favorites folder
+            //    if (folderType == eProfileType.WorkflowMethodMainFavoritesFolder.GetHashCode())
+            //    {
+            //        folderValid = true;
+            //    }
+            //    // Is valid application root folder
+            //    else if (userRID == userKey
+            //        && folderType == applicationFolderType.GetHashCode())
+            //    {
+            //        folderValid = true;
+            //    }
+            //    // Is valid subfolder
+            //    else
+            //    {
+            //        int subfolderType = GetSubFolderType(applicationFolderType, profileType).GetHashCode();
+            //        if (userRID == userKey
+            //            && folderType == subfolderType)
+            //        {
+            //            folderValid = true;
+            //        }
+            //    }
+
+            //}
+
+            // Get application root folder for user
+            if (!folderValid)
+            {
+                if (uniqueID != null)
+                {
+                    folderRID = GetWorkflowMethodFolderRIDFromUniqueID(dlFolder: dlFolder, applicationFolderType: applicationFolderType, userKey: userKey, profileType: profileType, uniqueID: uniqueID);
+                    if (folderRID != Include.NoRID)
+                    {
+                        return folderRID;
+                    }
+                }
+
+                // override type to actual folders
+                if (applicationFolderType == eProfileType.WorkflowMethodAllocationWorkflowsFolder
+                    || applicationFolderType == eProfileType.WorkflowMethodAllocationMethodsFolder
+                    || isAllocationMethodFolder(applicationFolderType))
+                {
+                    applicationFolderType = eProfileType.WorkflowMethodAllocationFolder;
+                }
+                else if (applicationFolderType == eProfileType.WorkflowMethodOTSForcastWorkflowsFolder
+                    || applicationFolderType == eProfileType.WorkflowMethodOTSForcastMethodsFolder
+                    || isOTSForecastMethodFolder(applicationFolderType))
+                {
+                    applicationFolderType = eProfileType.WorkflowMethodOTSForcastFolder;
+                }
+
+                dt = dlFolder.Folder_Read(userKey, applicationFolderType);
+                if (dt != null
+                && dt.Rows.Count > 0)
+                {
+                    folderRID = Convert.ToInt32(dt.Rows[0]["FOLDER_RID"]);
+                    userRID = Convert.ToInt32(dt.Rows[0]["USER_RID"]);
+                    folderType = Convert.ToInt32(dt.Rows[0]["FOLDER_TYPE"]);
+
+                    folderValid = true;
+                    folderKey = folderRID;
+                }
+                else
+                {
+                    throw new Exception("Unable to determine folder");
+                }
+            }
+
+            return folderKey;
+        }
+
+        private static bool isFolderValid(FolderDataLayer dlFolder, eProfileType applicationFolderType, int folderKey, int userKey, eProfileType profileType)
+        {
+            bool folderValid = false;
+            int folderRID, userRID, folderType;
+
+            DataTable dt = dlFolder.Folder_Read(folderKey);
+            if (dt != null
+                && dt.Rows.Count > 0)
+            {
+                folderRID = Convert.ToInt32(dt.Rows[0]["FOLDER_RID"]);
+                userRID = Convert.ToInt32(dt.Rows[0]["USER_RID"]);
+                folderType = Convert.ToInt32(dt.Rows[0]["FOLDER_TYPE"]);
+
+                // Is favorites folder
+                if (folderType == eProfileType.WorkflowMethodMainFavoritesFolder.GetHashCode())
+                {
+                    folderValid = true;
+                }
+                // Is valid application root folder
+                else if (userRID == userKey
+                    && folderType == applicationFolderType.GetHashCode())
+                {
+                    folderValid = true;
+                }
+                // Is valid subfolder
+                else
+                {
+                    int subfolderType = GetSubFolderType(applicationFolderType, profileType).GetHashCode();
+                    if (userRID == userKey
+                        && folderType == subfolderType)
+                    {
+                        folderValid = true;
+                    }
+                }
+
+            }
+
+            return folderValid;
+        }
+
+        private static int GetWorkflowMethodFolderRIDFromUniqueID(FolderDataLayer dlFolder, eProfileType applicationFolderType, int userKey, eProfileType profileType, string uniqueID)
+        {
+            int folderKey = Include.NoRID;
+
+            string[] keys = uniqueID.Split('_');
+
+            for (int i = keys.Length - 1; i >= 0; --i )
+            {
+                folderKey = Convert.ToInt32(keys[i]);
+                if (isFolderValid(dlFolder: dlFolder, applicationFolderType: applicationFolderType, folderKey: folderKey, userKey: userKey, profileType: profileType))
+                {
+                    return folderKey;
+                }
+            }
+
+            return Include.NoRID;
+        }
+
+        private static eProfileType GetSubFolderType(eProfileType applicationFolderType, eProfileType profileType)
+        {
+            switch (profileType)
+            {
+                case eProfileType.Workflow:
+                    if (applicationFolderType == eProfileType.WorkflowMethodAllocationFolder)
+                    {
+                        return eProfileType.WorkflowMethodAllocationWorkflowsSubFolder;
+                    }
+                    else
+                    {
+                        return eProfileType.WorkflowMethodOTSForcastWorkflowsSubFolder;
+                    }
+                case eProfileType.MethodOTSPlan:
+                    return eProfileType.MethodOTSPlanSubFolder;
+                case eProfileType.MethodForecastBalance:
+                    return eProfileType.MethodForecastBalanceSubFolder;
+                case eProfileType.MethodModifySales:
+                    return eProfileType.MethodModifySalesSubFolder;
+                case eProfileType.MethodForecastSpread:
+                    return eProfileType.MethodForecastSpreadSubFolder;
+                case eProfileType.MethodCopyChainForecast:
+                    return eProfileType.MethodCopyChainForecastSubFolder;
+                case eProfileType.MethodCopyStoreForecast:
+                    return eProfileType.MethodCopyStoreForecastSubFolder;
+                case eProfileType.MethodExport:
+                    return eProfileType.MethodExportSubFolder;
+                case eProfileType.MethodPlanningExtract:
+                    return eProfileType.MethodPlanningExtractSubFolder;
+                case eProfileType.MethodGlobalUnlock:
+                    return eProfileType.MethodGlobalUnlockSubFolder;
+                case eProfileType.MethodGlobalLock:
+                    return eProfileType.MethodGlobalLockSubFolder;
+                case eProfileType.MethodRollup:
+                    return eProfileType.MethodRollupSubFolder;
+                case eProfileType.MethodGeneralAllocation:
+                    return eProfileType.MethodGeneralAllocationSubFolder;
+                case eProfileType.MethodAllocationOverride:
+                    return eProfileType.MethodAllocationOverrideSubFolder;
+                case eProfileType.MethodRule:
+                    return eProfileType.MethodRuleSubFolder;
+                case eProfileType.MethodVelocity:
+                    return eProfileType.MethodVelocitySubFolder;
+                case eProfileType.MethodFillSizeHolesAllocation:
+                    return eProfileType.MethodFillSizeHolesSubFolder;
+                case eProfileType.MethodBasisSizeAllocation:
+                    return eProfileType.MethodBasisSizeSubFolder;
+                case eProfileType.MethodSizeCurve:
+                    return eProfileType.MethodSizeCurveSubFolder;
+                case eProfileType.MethodBuildPacks:
+                    return eProfileType.MethodBuildPacksSubFolder;
+                case eProfileType.MethodGroupAllocation:
+                    return eProfileType.MethodGroupAllocationSubFolder;
+                case eProfileType.MethodDCCartonRounding:
+                    return eProfileType.MethodDCCartonRoundingSubFolder;
+                case eProfileType.MethodCreateMasterHeaders:
+                    return eProfileType.MethodCreateMasterHeadersSubFolder;
+                case eProfileType.MethodDCFulfillment:
+                    return eProfileType.MethodDCFulfillmentSubFolder;
+                case eProfileType.MethodSizeNeedAllocation:
+                    return eProfileType.MethodSizeNeedSubFolder;
+                default:
+                    return eProfileType.None;
+            }
+        }
+
+        public static List<ROTreeNodeOut> BuildMethodNode(eROApplicationType applicationType, ApplicationBaseMethod abm)
+        {
+            List<ROTreeNodeOut> nodeList = new List<ROTreeNodeOut>();
+
+            nodeList.Add(new ROTreeNodeOut(
+                    key: abm.Key,
+                    text: abm.Name,
+                    ownerUserRID: abm.User_RID,
+                    treeNodeType: eTreeNodeType.ObjectNode,
+                    profileType: abm.ProfileType,
+                    isReadOnly: false,
+                    canBeDeleted: true,
+                    canCreateNewFolder: true,
+                    canCreateNewItem: true,
+                    canBeProcessed: true,
+                    canBeCopied: true,
+                    canBeCut: true,
+                    hasChildren: false,
+                    ROApplicationType: applicationType
+                    )
+                    );
+
+            return nodeList;
+        }
+
+        public static List<ROTreeNodeOut> BuildWorkflowNode(eROApplicationType applicationType, ApplicationBaseWorkFlow abw)
+        {
+            List<ROTreeNodeOut> nodeList = new List<ROTreeNodeOut>();
+            nodeList.Add(new ROTreeNodeOut(key: abw.Key, text: abw.WorkFlowName,
+                         ownerUserRID: abw.UserRID,
+                         treeNodeType: eTreeNodeType.ObjectNode,
+                         profileType: abw.ProfileType,
+                         isReadOnly: false,
+                         canBeDeleted: true,
+                         canCreateNewFolder: true,
+                         canCreateNewItem: true,
+                         canBeProcessed: true,
+                         canBeCopied: true,
+                         canBeCut: true,
+                         hasChildren: false,
+                         ROApplicationType: applicationType));
+
+            return nodeList;
+        }
+
+        /// <summary>
+		/// Use to lock a workflow or method before allowing updating
+		/// </summary>
+		/// <param name="aWorkflowMethodRID">The record ID of the workflow or method</param>
+		/// <param name="aNode">The node being updated</param>
+		public static eLockStatus LockWorkflowMethod(SessionAddressBlock SAB, eWorkflowMethodIND workflowMethodIND, eChangeType aChangeType, int Key, string Name, bool allowReadOnly, out string message)
+        {
+            eLockStatus lockStatus = eLockStatus.Undefined;
+            message = null;
+            string userLabel = MIDText.GetTextOnly(eMIDTextCode.lbl_User);
+            string methodLabel = MIDText.GetTextOnly(eMIDTextCode.lbl_Method);
+            string workflowLabel = MIDText.GetTextOnly(eMIDTextCode.lbl_Workflow);
+
+            if (workflowMethodIND == eWorkflowMethodIND.Workflows)
+            {
+                WorkflowEnqueue workflowEnqueue = new WorkflowEnqueue(
+                    Key,
+                    SAB.ClientServerSession.UserRID,
+                    SAB.ClientServerSession.ThreadID);
+
+                try
+                {
+                    workflowEnqueue.EnqueueWorkflow();
+                    lockStatus = eLockStatus.Locked;
+                }
+                catch (WorkflowConflictException)
+                {
+                    message = MIDText.GetTextOnly(eMIDTextCode.msg_WorkflowRequested) + ":" + System.Environment.NewLine;
+                    foreach (WorkflowConflict WCon in workflowEnqueue.ConflictList)
+                    {
+                        message += System.Environment.NewLine + workflowLabel + ": " + Name + ", " + userLabel + ": " + WCon.UserName;
+                    }
+                    message += System.Environment.NewLine + System.Environment.NewLine;
+                    if (aChangeType == eChangeType.update &&
+                        allowReadOnly)
+                    {
+                        message += MIDText.GetTextOnly(eMIDTextCode.msg_ReadOnlyMode);
+
+                        lockStatus = eLockStatus.ReadOnly;
+                    }
+                    else
+                        if (aChangeType == eChangeType.delete)
+                    {
+                        message += MIDText.GetTextOnly(eMIDTextCode.msg_WorkflowCannotBeDeleted);
+
+                        lockStatus = eLockStatus.Cancel;
+                    }
+                    else
+                    {
+                        message += MIDText.GetTextOnly(eMIDTextCode.msg_WorkflowCannotBeUpdated);
+
+                        lockStatus = eLockStatus.Cancel;
+                    }
+                }
+            }
+            else
+            {
+                MethodEnqueue methodEnqueue = new MethodEnqueue(
+                    Key,
+                    SAB.ClientServerSession.UserRID,
+                    SAB.ClientServerSession.ThreadID);
+
+                try
+                {
+                    methodEnqueue.EnqueueMethod();
+                    lockStatus = eLockStatus.Locked;
+                }
+                catch (MethodConflictException)
+                {
+                    message = MIDText.GetTextOnly(eMIDTextCode.msg_MethodRequested) + ":" + System.Environment.NewLine;
+                    foreach (MethodConflict MCon in methodEnqueue.ConflictList)
+                    {
+                        message += System.Environment.NewLine + methodLabel + ": " + Name + ", " + userLabel + ": " + MCon.UserName;
+                    }
+                    message += System.Environment.NewLine + System.Environment.NewLine;
+                    if (aChangeType == eChangeType.update &&
+                        allowReadOnly)
+                    {
+                        MIDEnvironment.isChangedToReadOnly = true;
+                        message += System.Environment.NewLine + MIDText.GetTextOnly(eMIDTextCode.msg_ReadOnlyMode);
+
+                        lockStatus = eLockStatus.ReadOnly;
+                    }
+                    else
+                        if (aChangeType == eChangeType.delete)
+                    {
+                        message += MIDText.GetTextOnly(eMIDTextCode.msg_MethodCannotBeDeleted);
+
+                        lockStatus = eLockStatus.Cancel;
+                    }
+                    else
+                    {
+                        message += MIDText.GetTextOnly(eMIDTextCode.msg_MethodCannotBeUpdated);
+
+                        lockStatus = eLockStatus.Cancel;
+                    }
+                }
+            }
+
+            return lockStatus;
+        }
+
+        public static eLockStatus UnlockWorkflowMethod(SessionAddressBlock SAB, eWorkflowMethodIND workflowMethodIND, int Key, out string message)
+        {
+            eLockStatus lockStatus = eLockStatus.Locked;
+            message = null;
+            if (lockStatus == eLockStatus.Locked)
+            {
+                if (workflowMethodIND == eWorkflowMethodIND.Workflows)
+                {
+                    WorkflowEnqueue workflowEnqueue = new WorkflowEnqueue(
+                        Key,
+                        SAB.ClientServerSession.UserRID,
+                        SAB.ClientServerSession.ThreadID);
+
+                    try
+                    {
+                        workflowEnqueue.DequeueWorkflow();
+                        lockStatus = eLockStatus.Undefined;
+                    }
+                    catch
+                    {
+                        throw;
+                    }
+                }
+                else
+                {
+                    MethodEnqueue methodEnqueue = new MethodEnqueue(
+                        Key,
+                        SAB.ClientServerSession.UserRID,
+                        SAB.ClientServerSession.ThreadID);
+
+                    try
+                    {
+                        methodEnqueue.DequeueMethod();
+                        lockStatus = eLockStatus.Undefined;
+                    }
+                    catch
+                    {
+                        throw;
+                    }
+                }
+            }
+
+            return lockStatus;
+        }
+
+
+
+        public static bool isMethod(eProfileType profileType)
+        {
+            if (profileType == eProfileType.MethodOTSPlan ||
+                profileType == eProfileType.MethodForecastBalance ||
+                profileType == eProfileType.MethodModifySales ||
+                profileType == eProfileType.MethodForecastSpread ||
+                profileType == eProfileType.MethodCopyChainForecast ||
+                profileType == eProfileType.MethodCopyStoreForecast ||
+                profileType == eProfileType.MethodExport ||
+                profileType == eProfileType.MethodPlanningExtract ||
+                profileType == eProfileType.MethodGlobalUnlock ||
+                profileType == eProfileType.MethodGlobalLock ||
+                profileType == eProfileType.MethodRollup ||
+                profileType == eProfileType.MethodGeneralAllocation ||
+                profileType == eProfileType.MethodAllocationOverride ||
+                profileType == eProfileType.MethodRule ||
+                profileType == eProfileType.MethodVelocity ||
+                profileType == eProfileType.MethodSizeNeedAllocation ||
+                profileType == eProfileType.MethodSizeCurve ||
+                profileType == eProfileType.MethodBuildPacks ||
+                profileType == eProfileType.MethodGroupAllocation ||
+                profileType == eProfileType.MethodDCCartonRounding ||
+                profileType == eProfileType.MethodCreateMasterHeaders ||
+                profileType == eProfileType.MethodDCFulfillment ||
+                profileType == eProfileType.MethodFillSizeHolesAllocation ||
+                profileType == eProfileType.MethodBasisSizeAllocation ||
+                profileType == eProfileType.MethodWarehouseSizeAllocation)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static bool isOTSForecastMethod(eProfileType profileType)
+        {
+            if (profileType == eProfileType.MethodOTSPlan ||
+                profileType == eProfileType.MethodForecastBalance ||
+                profileType == eProfileType.MethodModifySales ||
+                profileType == eProfileType.MethodForecastSpread ||
+                profileType == eProfileType.MethodCopyChainForecast ||
+                profileType == eProfileType.MethodCopyStoreForecast ||
+                profileType == eProfileType.MethodExport ||
+                profileType == eProfileType.MethodPlanningExtract ||
+                profileType == eProfileType.MethodGlobalUnlock ||
+                profileType == eProfileType.MethodGlobalLock ||
+                profileType == eProfileType.MethodRollup)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static bool isOTSForecastWorkflow(eProfileType profileType, eWorkflowType workflowType)
+        {
+                if (profileType == eProfileType.Workflow &&
+                    workflowType == eWorkflowType.Forecast)
+                {
+                    return true;
+                }
+                return false;
+        }
+
+        public static bool isAllocationMethod(eProfileType profileType)
+        {
+            if (profileType == eProfileType.MethodGeneralAllocation ||
+                profileType == eProfileType.MethodAllocationOverride ||
+                profileType == eProfileType.MethodRule ||
+                profileType == eProfileType.MethodVelocity ||
+                profileType == eProfileType.MethodSizeNeedAllocation ||
+                profileType == eProfileType.MethodSizeCurve ||
+                profileType == eProfileType.MethodBuildPacks ||
+                profileType == eProfileType.MethodGroupAllocation ||
+                profileType == eProfileType.MethodDCCartonRounding ||
+                profileType == eProfileType.MethodCreateMasterHeaders ||
+                profileType == eProfileType.MethodDCFulfillment ||
+                profileType == eProfileType.MethodFillSizeHolesAllocation ||
+                profileType == eProfileType.MethodBasisSizeAllocation ||
+                profileType == eProfileType.MethodWarehouseSizeAllocation)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static bool isAllocationWorkflow(eProfileType profileType, eWorkflowType workflowType)
+        {
+            if (profileType == eProfileType.Workflow &&
+                workflowType == eWorkflowType.Allocation)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static bool isSizeMethod(eProfileType profileType)
+        {
+            if (profileType == eProfileType.MethodSizeNeedAllocation ||
+                profileType == eProfileType.MethodSizeCurve ||
+                profileType == eProfileType.MethodFillSizeHolesAllocation ||
+                profileType == eProfileType.MethodBasisSizeAllocation ||
+                profileType == eProfileType.MethodWarehouseSizeAllocation)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static bool isWorkflow(eProfileType profileType)
+        {
+            if (profileType == eProfileType.Workflow)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static bool isWorkflowMethod(eProfileType profileType)
+        {
+            if (isMethod(profileType) || isWorkflow(profileType))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static bool isWorkflowFolder(eProfileType profileType)
+        {
+            if (profileType == eProfileType.WorkflowMethodAllocationWorkflowsFolder ||
+                profileType == eProfileType.WorkflowMethodOTSForcastWorkflowsFolder)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static bool isWorkflowMethodSubFolder(eProfileType profileType)
+        {
+            if (profileType == eProfileType.WorkflowMethodAllocationWorkflowsSubFolder ||
+                profileType == eProfileType.WorkflowMethodOTSForcastWorkflowsSubFolder ||
+                profileType == eProfileType.MethodOTSPlanSubFolder ||
+                profileType == eProfileType.MethodForecastBalanceSubFolder ||
+                profileType == eProfileType.MethodModifySalesSubFolder ||
+                profileType == eProfileType.MethodForecastSpreadSubFolder ||
+                profileType == eProfileType.MethodCopyChainForecastSubFolder ||
+                profileType == eProfileType.MethodCopyStoreForecastSubFolder ||
+                profileType == eProfileType.MethodExportSubFolder ||
+                profileType == eProfileType.MethodPlanningExtractSubFolder ||
+                profileType == eProfileType.MethodGlobalUnlockSubFolder ||
+                profileType == eProfileType.MethodGlobalLockSubFolder ||
+                profileType == eProfileType.MethodRollupSubFolder ||
+                profileType == eProfileType.MethodGeneralAllocationSubFolder ||
+                profileType == eProfileType.MethodAllocationOverrideSubFolder ||
+                profileType == eProfileType.MethodRuleSubFolder ||
+                profileType == eProfileType.MethodVelocitySubFolder ||
+                profileType == eProfileType.MethodFillSizeHolesSubFolder ||
+                profileType == eProfileType.MethodBasisSizeSubFolder ||
+                profileType == eProfileType.MethodSizeCurveSubFolder ||
+                profileType == eProfileType.MethodBuildPacksSubFolder ||
+                profileType == eProfileType.MethodGroupAllocationSubFolder ||
+                profileType == eProfileType.MethodDCCartonRoundingSubFolder ||
+                profileType == eProfileType.MethodCreateMasterHeadersSubFolder ||
+                profileType == eProfileType.MethodDCFulfillmentSubFolder ||
+                profileType == eProfileType.MethodSizeNeedSubFolder)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static bool isWorkflowSubFolder(eProfileType profileType)
+        {
+            if (profileType == eProfileType.WorkflowMethodAllocationWorkflowsSubFolder ||
+                profileType == eProfileType.WorkflowMethodOTSForcastWorkflowsSubFolder)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static bool isMethodFolder(eProfileType profileType)
+        {
+            if (profileType == eProfileType.MethodOTSPlanFolder ||
+                profileType == eProfileType.MethodForecastBalanceFolder ||
+                profileType == eProfileType.MethodModifySalesFolder ||
+                profileType == eProfileType.MethodForecastSpreadFolder ||
+                profileType == eProfileType.MethodCopyChainForecastFolder ||
+                profileType == eProfileType.MethodCopyStoreForecastFolder ||
+                profileType == eProfileType.MethodExportFolder ||
+                profileType == eProfileType.MethodPlanningExtractFolder ||
+                profileType == eProfileType.MethodGlobalUnlockFolder ||
+                profileType == eProfileType.MethodGlobalLockFolder ||
+                profileType == eProfileType.MethodRollupFolder ||
+                profileType == eProfileType.MethodGeneralAllocationFolder ||
+                profileType == eProfileType.MethodAllocationOverrideFolder ||
+                profileType == eProfileType.MethodRuleFolder ||
+                profileType == eProfileType.MethodVelocityFolder ||
+                profileType == eProfileType.MethodFillSizeHolesFolder ||
+                profileType == eProfileType.MethodBasisSizeFolder ||
+                profileType == eProfileType.MethodSizeCurveFolder ||
+                profileType == eProfileType.MethodBuildPacksFolder ||
+                profileType == eProfileType.MethodGroupAllocationFolder ||
+                profileType == eProfileType.MethodDCCartonRoundingFolder ||
+                profileType == eProfileType.MethodCreateMasterHeadersFolder ||
+                profileType == eProfileType.MethodDCFulfillmentFolder ||
+                profileType == eProfileType.MethodSizeNeedFolder)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static bool isMethodsFolder(eProfileType profileType)
+        {
+            if (profileType == eProfileType.WorkflowMethodOTSForcastMethodsFolder ||
+                profileType == eProfileType.WorkflowMethodAllocationMethodsFolder ||
+                profileType == eProfileType.WorkflowMethodAllocationSizeMethodsFolder)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static bool isMethodSubFolder(eProfileType profileType)
+        {
+            if (profileType == eProfileType.MethodOTSPlanSubFolder ||
+                profileType == eProfileType.MethodForecastBalanceSubFolder ||
+                profileType == eProfileType.MethodModifySalesSubFolder ||
+                profileType == eProfileType.MethodForecastSpreadSubFolder ||
+                profileType == eProfileType.MethodCopyChainForecastSubFolder ||
+                profileType == eProfileType.MethodCopyStoreForecastSubFolder ||
+                profileType == eProfileType.MethodExportSubFolder ||
+                profileType == eProfileType.MethodPlanningExtractSubFolder ||
+                profileType == eProfileType.MethodGlobalUnlockSubFolder ||
+                profileType == eProfileType.MethodGlobalLockSubFolder ||
+                profileType == eProfileType.MethodRollupSubFolder ||
+                profileType == eProfileType.MethodGeneralAllocationSubFolder ||
+                profileType == eProfileType.MethodAllocationOverrideSubFolder ||
+                profileType == eProfileType.MethodRuleSubFolder ||
+                profileType == eProfileType.MethodVelocitySubFolder ||
+                profileType == eProfileType.MethodFillSizeHolesSubFolder ||
+                profileType == eProfileType.MethodBasisSizeSubFolder ||
+                profileType == eProfileType.MethodSizeCurveSubFolder ||
+                profileType == eProfileType.MethodBuildPacksSubFolder ||
+                profileType == eProfileType.MethodGroupAllocationSubFolder ||
+                profileType == eProfileType.MethodDCCartonRoundingSubFolder ||
+                profileType == eProfileType.MethodCreateMasterHeadersSubFolder ||
+                profileType == eProfileType.MethodDCFulfillmentSubFolder ||
+                profileType == eProfileType.MethodSizeNeedSubFolder)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static bool isOTSForecastMethodFolder(eProfileType profileType)
+        {
+            if (profileType == eProfileType.MethodOTSPlanFolder ||
+                profileType == eProfileType.MethodForecastBalanceFolder ||
+                profileType == eProfileType.MethodModifySalesFolder ||
+                profileType == eProfileType.MethodForecastSpreadFolder ||
+                profileType == eProfileType.MethodCopyChainForecastFolder ||
+                profileType == eProfileType.MethodCopyStoreForecastFolder ||
+                profileType == eProfileType.MethodExportFolder ||
+                profileType == eProfileType.MethodPlanningExtractFolder ||
+                profileType == eProfileType.MethodGlobalUnlockFolder ||
+                profileType == eProfileType.MethodGlobalLockFolder ||
+                profileType == eProfileType.MethodRollupFolder)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static bool isOTSForecastMethodSubFolder(eProfileType profileType)
+        {
+            if (profileType == eProfileType.MethodOTSPlanSubFolder ||
+                profileType == eProfileType.MethodForecastBalanceSubFolder ||
+                profileType == eProfileType.MethodModifySalesSubFolder ||
+                profileType == eProfileType.MethodForecastSpreadSubFolder ||
+                profileType == eProfileType.MethodCopyChainForecastSubFolder ||
+                profileType == eProfileType.MethodCopyStoreForecastSubFolder ||
+                profileType == eProfileType.MethodExportSubFolder ||
+                profileType == eProfileType.MethodPlanningExtractSubFolder ||
+                profileType == eProfileType.MethodGlobalUnlockSubFolder ||
+                profileType == eProfileType.MethodGlobalLockSubFolder ||
+                profileType == eProfileType.MethodRollupSubFolder)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static bool isAllocationMethodFolder(eProfileType profileType)
+        {
+            if (profileType == eProfileType.MethodGeneralAllocationFolder ||
+                profileType == eProfileType.MethodAllocationOverrideFolder ||
+                profileType == eProfileType.MethodRuleFolder ||
+                profileType == eProfileType.MethodVelocityFolder ||
+                profileType == eProfileType.MethodFillSizeHolesFolder ||
+                profileType == eProfileType.MethodBasisSizeFolder ||
+                profileType == eProfileType.MethodSizeCurveFolder ||
+                profileType == eProfileType.MethodBuildPacksFolder ||
+                profileType == eProfileType.MethodGroupAllocationFolder ||
+                profileType == eProfileType.MethodDCCartonRoundingFolder ||
+                profileType == eProfileType.MethodCreateMasterHeadersFolder ||
+                profileType == eProfileType.MethodDCFulfillmentFolder ||
+                profileType == eProfileType.MethodSizeNeedFolder)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static bool isAllocationMethodSubFolder(eProfileType profileType)
+        {
+            if (profileType == eProfileType.MethodGeneralAllocationSubFolder ||
+                profileType == eProfileType.MethodAllocationOverrideSubFolder ||
+                profileType == eProfileType.MethodRuleSubFolder ||
+                profileType == eProfileType.MethodVelocitySubFolder ||
+                profileType == eProfileType.MethodFillSizeHolesSubFolder ||
+                profileType == eProfileType.MethodBasisSizeSubFolder ||
+                profileType == eProfileType.MethodSizeCurveSubFolder ||
+                profileType == eProfileType.MethodBuildPacksSubFolder ||
+                profileType == eProfileType.MethodGroupAllocationSubFolder ||
+                profileType == eProfileType.MethodDCCartonRoundingSubFolder ||
+                profileType == eProfileType.MethodCreateMasterHeadersSubFolder ||
+                profileType == eProfileType.MethodDCFulfillmentSubFolder ||
+                profileType == eProfileType.MethodSizeNeedSubFolder)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static bool isSizeMethodFolder(eProfileType profileType)
+        {
+
+            if (profileType == eProfileType.MethodFillSizeHolesFolder ||
+                profileType == eProfileType.MethodBasisSizeFolder ||
+                profileType == eProfileType.MethodSizeCurveFolder ||
+                profileType == eProfileType.MethodSizeNeedFolder)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static bool isSizeMethodSubFolder(eProfileType profileType)
+        {
+            if (profileType == eProfileType.MethodFillSizeHolesSubFolder ||
+                profileType == eProfileType.MethodBasisSizeSubFolder ||
+                profileType == eProfileType.MethodSizeCurveSubFolder ||
+                profileType == eProfileType.MethodSizeNeedSubFolder)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static bool isGroupFolder(eProfileType profileType)
+        {
+            if (profileType == eProfileType.WorkflowMethodAllocationFolder ||
+                 profileType == eProfileType.WorkflowMethodOTSForcastFolder)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static eProfileType GetFolderType(eProfileType profileType)
+        {
+            switch (profileType)
+            {
+                case eProfileType.WorkflowMethodOTSForcastWorkflowsFolder:
+                case eProfileType.WorkflowMethodOTSForcastWorkflowsSubFolder:
+                    return eProfileType.WorkflowMethodOTSForcastWorkflowsSubFolder;
+                case eProfileType.MethodOTSPlanFolder:
+                case eProfileType.MethodOTSPlanSubFolder:
+                    return eProfileType.MethodOTSPlanSubFolder;
+                case eProfileType.MethodForecastBalanceFolder:
+                case eProfileType.MethodForecastBalanceSubFolder:
+                    return eProfileType.MethodForecastBalanceSubFolder;
+                case eProfileType.MethodModifySalesFolder:
+                case eProfileType.MethodModifySalesSubFolder:
+                    return eProfileType.MethodModifySalesSubFolder;
+                case eProfileType.MethodForecastSpreadFolder:
+                case eProfileType.MethodForecastSpreadSubFolder:
+                    return eProfileType.MethodForecastSpreadSubFolder;
+                case eProfileType.MethodCopyChainForecastFolder:
+                case eProfileType.MethodCopyChainForecastSubFolder:
+                    return eProfileType.MethodCopyChainForecastSubFolder;
+                case eProfileType.MethodCopyStoreForecastFolder:
+                case eProfileType.MethodCopyStoreForecastSubFolder:
+                    return eProfileType.MethodCopyStoreForecastSubFolder;
+                case eProfileType.MethodExportFolder:
+                case eProfileType.MethodExportSubFolder:
+                    return eProfileType.MethodExportSubFolder;
+                case eProfileType.MethodPlanningExtractFolder:
+                case eProfileType.MethodPlanningExtractSubFolder:
+                    return eProfileType.MethodPlanningExtractSubFolder;
+                case eProfileType.MethodGlobalUnlockFolder:
+                case eProfileType.MethodGlobalUnlockSubFolder:
+                    return eProfileType.MethodGlobalUnlockSubFolder;
+                case eProfileType.MethodGlobalLockFolder:
+                case eProfileType.MethodGlobalLockSubFolder:
+                    return eProfileType.MethodGlobalLockSubFolder;
+                case eProfileType.MethodRollupFolder:
+                case eProfileType.MethodRollupSubFolder:
+                    return eProfileType.MethodRollupSubFolder;
+                case eProfileType.WorkflowMethodAllocationWorkflowsFolder:
+                case eProfileType.WorkflowMethodAllocationWorkflowsSubFolder:
+                    return eProfileType.WorkflowMethodAllocationWorkflowsSubFolder;
+                case eProfileType.MethodGeneralAllocationFolder:
+                case eProfileType.MethodGeneralAllocationSubFolder:
+                    return eProfileType.MethodGeneralAllocationSubFolder;
+                case eProfileType.MethodAllocationOverrideFolder:
+                case eProfileType.MethodAllocationOverrideSubFolder:
+                    return eProfileType.MethodAllocationOverrideSubFolder;
+                case eProfileType.MethodGroupAllocationFolder:
+                case eProfileType.MethodGroupAllocationSubFolder:
+                    return eProfileType.MethodGroupAllocationSubFolder;
+                case eProfileType.MethodDCCartonRoundingFolder:
+                case eProfileType.MethodDCCartonRoundingSubFolder:
+                    return eProfileType.MethodDCCartonRoundingSubFolder;
+                case eProfileType.MethodCreateMasterHeadersFolder:
+                case eProfileType.MethodCreateMasterHeadersSubFolder:
+                    return eProfileType.MethodCreateMasterHeadersSubFolder;
+                case eProfileType.MethodDCFulfillmentFolder:
+                case eProfileType.MethodDCFulfillmentSubFolder:
+                    return eProfileType.MethodDCFulfillmentSubFolder;
+
+                case eProfileType.MethodRuleFolder:
+                case eProfileType.MethodRuleSubFolder:
+                    return eProfileType.MethodRuleSubFolder;
+                case eProfileType.MethodVelocityFolder:
+                case eProfileType.MethodVelocitySubFolder:
+                    return eProfileType.MethodVelocitySubFolder;
+                case eProfileType.MethodSizeNeedFolder:
+                case eProfileType.MethodSizeNeedSubFolder:
+                    return eProfileType.MethodSizeNeedSubFolder;
+                case eProfileType.MethodSizeCurveFolder:
+                case eProfileType.MethodSizeCurveSubFolder:
+                    return eProfileType.MethodSizeCurveSubFolder;
+                case eProfileType.MethodBuildPacksFolder:
+                case eProfileType.MethodBuildPacksSubFolder:
+                    return eProfileType.MethodBuildPacksSubFolder;
+                case eProfileType.MethodFillSizeHolesFolder:
+                case eProfileType.MethodFillSizeHolesSubFolder:
+                    return eProfileType.MethodFillSizeHolesSubFolder;
+                case eProfileType.MethodBasisSizeFolder:
+                case eProfileType.MethodBasisSizeSubFolder:
+                    return eProfileType.MethodBasisSizeSubFolder;
+                default:
+                    return eProfileType.WorkflowMethodSubFolder;
+            }
+        }
+    }
+
+    public class InUse
+    {
+        /// <summary>
+        /// This method resolves the display of In Use data.
+        /// </summary>
+        /// <param name="itemProfileType">The eProfileType of the item</param>
+        /// <param name="key">The key of the item</param>
+        /// <param name="inQuiry"></param> This value is true if the call is for display.
+        public static ROInUse CheckInUse(eProfileType itemProfileType, int key, bool inQuiry)
+        {
+            var myInfo = new InUseInfo(key, itemProfileType);
+            var myfrm = new InUseDialog(myInfo);
+            bool display = false;
+            bool showDialog = false;
+            myfrm.ResolveInUseData(ref display, inQuiry, true, out showDialog);
+
+            string inUseTitle = InUseUtility.GetInUseTitleFromProfileType(itemProfileType);
+
+            if (myfrm.InUseDatatable.Rows.Count > 0)
+            {
+                inUseTitle += ": " + myfrm.InUseDatatable.Rows[0]["Header1"].ToString();
+            }
+
+            ROInUse ROInUse = new ROInUse(allowDelete: myfrm.AllowDelete, title: inUseTitle);
+
+            // Only build list of values if for display
+            if (inQuiry)
+            {
+                foreach (DataRow row in myfrm.InUseHeadings.Rows)
+                {
+                    string heading = row[0].ToString();
+                    ROInUse.ColumnLabels.Add(heading);
+                }
+
+                ROInUseEntry inUseEntry;
+                foreach (DataRow row in myfrm.InUseDatatable.Rows)
+                {
+                    inUseEntry = new ROInUseEntry();
+                    int i = 0;
+                    foreach (DataColumn dataColumn in myfrm.InUseDatatable.Columns)
+                    {
+                        string fieldValue = row[dataColumn].ToString();
+                        inUseEntry.InUseValues.Add(fieldValue);
+                        i++;
+                        if (i == ROInUse.ColumnLabels.Count)
+                        {
+                            break;
+                        }
+                    }
+                    ROInUse.InUseList.Add(inUseEntry);
+                }
+            }
+
+            return ROInUse;
+        }
+
+
+    }
+
+    public class VariableGroupings
+    {
+        /// <summary>
+        /// Builds a list of variable by grouping.
+        /// </summary>
+        /// <param name="planType">The ePlanType of the request</param>
+        /// <param name="variables">The list of RowColProfileHeader objects containing the variables</param>
+        /// <param name="groupings">The list of strings containing the group names</param> 
+        public static ROVariableGroupings BuildVariableGroupings(ePlanType planType, ArrayList variables, ArrayList groupings)
+        {
+            ROVariable variable;
+            List<ROVariable> groupVariables;
+            ROVariableGrouping grouping;
+            List<ROVariableGrouping> variableGrouping = new List<ROVariableGrouping>();
+            ROVariableGroupings variableGroupings = new ROVariableGroupings(variableGrouping);
+
+            UpdateSelectableList(planType, variables);
+
+            foreach (string groupName in groupings)
+            {
+                groupVariables = new List<ROVariable>();
+                foreach (RowColProfileHeader vp in variables)
+                {
+                    if (vp.Grouping == groupName)
+                    {
+                        variable = new ROVariable(vp.Profile.Key, vp.Name, vp.IsSelectable, vp.IsDisplayed, vp.Sequence);
+                        groupVariables.Add(variable);
+                    }
+                }
+                grouping = new ROVariableGrouping(name: groupName, variables: groupVariables);
+                variableGroupings.VariableGrouping.Add(grouping);
+            }
+
+            return variableGroupings;
+        }
+
+        private static void UpdateSelectableList(ePlanType aPlanType, ArrayList aSelectableList)
+        {
+            try
+            {
+                switch (aPlanType)
+                {
+                    case ePlanType.Chain:
+
+                        foreach (RowColProfileHeader rowHeader in aSelectableList)
+                        {
+                            if (((VariableProfile)rowHeader.Profile).VariableCategory != eVariableCategory.Both && ((VariableProfile)rowHeader.Profile).VariableCategory != eVariableCategory.Chain)
+                            {
+                                rowHeader.IsSelectable = false;
+                            }
+                            else
+                            {
+                                rowHeader.IsSelectable = true;
+                            }
+
+                            if (rowHeader.Profile.GetType() == typeof(VariableProfile))
+                            {
+                                rowHeader.Grouping = ((VariableProfile)rowHeader.Profile).Groupings;
+                            }
+                        }
+
+                        break;
+
+                    case ePlanType.Store:
+
+                        foreach (RowColProfileHeader rowHeader in aSelectableList)
+                        {
+                            if (((VariableProfile)rowHeader.Profile).VariableCategory != eVariableCategory.Both && ((VariableProfile)rowHeader.Profile).VariableCategory != eVariableCategory.Store)
+                            {
+                                rowHeader.IsSelectable = false;
+                            }
+                            else
+                            {
+                                rowHeader.IsSelectable = true;
+                            }
+                            if (rowHeader.Profile.GetType() == typeof(VariableProfile))
+                            {
+                                rowHeader.Grouping = ((VariableProfile)rowHeader.Profile).Groupings;
+                            }
+                        }
+
+                        break;
+                }
+            }
+            catch (Exception err)
+            {
+                string message = err.ToString();
+                throw;
+            }
+        }
+
+
+    }
+
+    public class WorklistUtilities
+    {
+        /// <summary>
+        /// Gets a unique name for the folder.
+        /// </summary>
+        /// <param name="aFolderName">The original name of the folder</param>
+        /// <param name="aUserRID">The owner user</param>
+        /// <param name="aParentRID">The key of the parent of the folder</param> 
+        /// <param name="aItemType"></param>
+        public static string FindNewFolderName(string aFolderName, int aUserRID, int aParentRID, eProfileType aItemType)
+        {
+            int index;
+            string newName;
+            int key;
+            FolderDataLayer dlFolder;
+
+            try
+            {
+                dlFolder = new FolderDataLayer();
+                index = 1;
+                newName = aFolderName;
+                key = dlFolder.Folder_GetKey(aUserRID, newName, aParentRID, aItemType);
+
+                while (key != -1)
+                {
+                    index++;
+                    newName = aFolderName + " (" + index + ")";
+                    key = dlFolder.Folder_GetKey(aUserRID, newName, aParentRID, aItemType);
+                }
+
+                return newName;
+            }
+            catch (Exception exc)
+            {
+                string message = exc.ToString();
+                throw;
+            }
+        }
+
+
+    }
+
+}

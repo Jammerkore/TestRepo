@@ -136,7 +136,7 @@ namespace MIDRetail.Windows
             this.tsmiCurveBasisInsertAfter = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiCurveBasisDelete = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiCurveBasisDeleteAll = new System.Windows.Forms.ToolStripMenuItem();
-            this.cachedAuditReclassReport21 = new MIDRetail.Windows.CrystalReports.CachedAuditReclassReport2();
+            //this.cachedAuditReclassReport21 = new MIDRetail.Windows.CrystalReports.CachedAuditReclassReport2();
             ((System.ComponentModel.ISupportInitialize)(this.ugRules)).BeginInit();
             this.gbGenericSizeCurve.SuspendLayout();
             this.gbSizeCurve.SuspendLayout();
@@ -926,7 +926,7 @@ namespace MIDRetail.Windows
 		private System.Windows.Forms.RadioButton rdoSizeCurvesByStore;
 		private MIDRetail.Windows.Controls.MIDAttributeComboBox cboSizeCurveBySet;
         private System.Windows.Forms.CheckBox cbxApplyMinToZeroTolerance;
-        private CrystalReports.CachedAuditReclassReport2 cachedAuditReclassReport21;
+        //private CrystalReports.CachedAuditReclassReport2 cachedAuditReclassReport21;
 
 
 	}

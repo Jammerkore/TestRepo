@@ -256,6 +256,12 @@
       <FriendlyName>Hierarchy Service</FriendlyName>
     </AvailableItem>
     <AvailableItem>
+      <Location>Services\Jobs.msi</Location>
+      <Location64>Services\Jobs64.msi</Location64>
+      <Description>This Windows service manages job processing</Description>
+      <FriendlyName>RO Web Job Service</FriendlyName>
+    </AvailableItem>
+    <AvailableItem>
       <Location>Services\Scheduler.msi</Location>
 	  <Location64>Services\Scheduler64.msi</Location64>
       <Description>This Windows service processes scheduler requests</Description>

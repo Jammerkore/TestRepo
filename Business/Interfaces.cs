@@ -196,7 +196,12 @@ namespace MIDRetail.Business
 		ProfileList GetChainWeeklySizeHistoryDatabaseVariableList();
 		ProfileList GetChainWeeklySizeForecastDatabaseVariableList();
 
-// Begin Track #4868 - JSmith - Variable Groupings
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        ProfileList GetStoreWeeklyVariableList();
+        ProfileList GetChainWeeklyVariableList();
+        // End TT#2131-MD - JSmith - Halo Integration
+
+        // Begin Track #4868 - JSmith - Variable Groupings
         ArrayList GetVariableGroupings();
 // End Track #4868
 	}
@@ -237,6 +242,11 @@ namespace MIDRetail.Business
 
 		int NumTimeTotalVariables { get; }
 		ProfileList TimeTotalVariableProfileList { get; }
+		
+		// Begin TT#2131-MD - JSmith - Halo Integration
+        ProfileList GetStoreTimeTotalVariableList();
+        ProfileList GetChainTimeTotalVariableList();
+        // End TT#2131-MD - JSmith - Halo Integration
 	}
 
 	public interface IPlanComputationQuantityVariables

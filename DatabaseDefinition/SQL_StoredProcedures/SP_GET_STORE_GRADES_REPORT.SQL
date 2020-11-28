@@ -42,7 +42,8 @@ BEGIN
 		HN_RID INT,
 		BN_ID VARCHAR(356) COLLATE Latin1_General_CS_AS,
 		BN_NAME VARCHAR(50) COLLATE Latin1_General_CS_AS,
-		BN_DESCRIPTION VARCHAR(250) COLLATE Latin1_General_CS_AS
+		BN_DESCRIPTION VARCHAR(250) COLLATE Latin1_General_CS_AS,
+		HOME_LEVEL INT
 		)
 
 	INSERT #TEMPNODE (
@@ -50,13 +51,15 @@ BEGIN
 		HN_RID,
 		BN_ID,
 		BN_NAME,
-		BN_DESCRIPTION
+		BN_DESCRIPTION,
+		HOME_LEVEL
 		)
 	EXEC SP_GET_ALL_DESCENDANTS_BY_LEVEL_REPORT @SELECTED_NODE_RID,
 		@LEVEL
 
 	CREATE TABLE #SG_TABLE (
 		HN_RID INT,
+		HOME_LEVEL INT,
 		BN_ID VARCHAR(356),  -- TT#4854 - JSmith - Reports - Node Property Overrides Errors
 		GRADE_CODE VARCHAR(20),
 		BOUNDARY INT,
@@ -83,6 +86,7 @@ BEGIN
 	INSERT INTO #SG_TABLE
 	
 	SELECT hn.HN_RID,
+	hen.HOME_LEVEL,
 	-- Begin TT#5382 - JSmith - Product descriptor not displayed when the Store Eligibility is set at the color level
 	dbo.UDF_MID_GET_NODE_DISPLAY (stg.HN_RID) AS [BN_ID],
 	--	CASE 
@@ -234,8 +238,8 @@ BEGIN
 					SET GRADE_CODE = stg.GRADE_CODE,
 						WOS_INDEX = CONVERT(INT, stg.WOS_INDEX)
 					FROM STORE_GRADES stg
-					INNER JOIN @ANCESTORS ON HN_RID = stg.HN_RID
-					WHERE HOME_LEVEL = @Loop
+					INNER JOIN @ANCESTORS a ON HN_RID = stg.HN_RID
+					WHERE a.HOME_LEVEL = @Loop
 						AND stg.BOUNDARY = #SG_TABLE.BOUNDARY
 
 					COMMIT
@@ -260,15 +264,18 @@ BEGIN
 
 	SELECT *
 	FROM #SG_TABLE
-	ORDER BY BN_ID,
+	ORDER BY HOME_LEVEL,
+		BN_ID,
 		GRADE_CODE
 
-	IF (
-			SELECT object_id('tempdb.dbo.#TEMPNODE')
-			) > 0
+	--IF (
+	--		SELECT object_id('tempdb.dbo.#TEMPNODE')
+	--		) > 0
+	IF OBJECT_ID('tempdb..#TEMPNODE') is not null
 		DROP TABLE #TEMPNODE
 
-	DROP TABLE #SG_TABLE
+	IF OBJECT_ID('tempdb..#SG_TABLE') is not null
+		DROP TABLE #SG_TABLE
 END
 GO
 

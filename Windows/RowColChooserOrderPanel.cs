@@ -233,6 +233,9 @@ namespace MIDRetail.Windows
         private int _openImageIndex = -1;
         private int _itemImageIndex = -1;
 
+        // add event to update form when changed
+        private ListChangedEventHandler onListChanged;
+
 		public RowColChooserOrderPanel()
 		{
 			_formLoading = true;
@@ -253,6 +256,19 @@ namespace MIDRetail.Windows
 			Initialize();
 		}
 
+        // Events.
+        public event ListChangedEventHandler ListChanged
+        {
+            add
+            {
+                onListChanged += value;
+            }
+            remove
+            {
+                onListChanged -= value;
+            }
+        }
+
 		override public bool isChanged
 		{
 			get
@@ -260,6 +276,11 @@ namespace MIDRetail.Windows
 				return _changed;
 			}
 		}
+
+        public int SelectedCount
+        {
+            get { return lstOrder.Items.Count; }
+        }
 
 		private void Initialize()
 		{
@@ -280,7 +301,15 @@ namespace MIDRetail.Windows
 			MessageBox.Show(exc.ToString());
 		}
 
-		private void RowColChooserOrderPanel_Load(object sender, EventArgs e)
+        protected virtual void OnListChanged(ListChangedEventArgs ev)
+        {
+            if (onListChanged != null)
+            {
+                onListChanged(this, ev);
+            }
+        }
+
+        private void RowColChooserOrderPanel_Load(object sender, EventArgs e)
 		{
 			try
 			{
@@ -303,7 +332,12 @@ namespace MIDRetail.Windows
                 {
                     SetGroupingNodes(ctn, false);
                 }
-			}
+
+                if (onListChanged != null)
+                {
+                    onListChanged(this, new ListChangedEventArgs(ListChangedType.ItemDeleted, -1));
+                }
+            }
 			catch (Exception exc)
 			{
 				HandleExceptions(exc);
@@ -317,6 +351,11 @@ namespace MIDRetail.Windows
 				foreach (ChooserTreeNode ctn in tvHeaders.Nodes)
                 {
                     SetGroupingNodes(ctn, true);
+                }
+
+                if (onListChanged != null)
+                {
+                    onListChanged(this, new ListChangedEventArgs(ListChangedType.ItemAdded, -1));
                 }
 			}
 			catch (Exception exc)
@@ -383,6 +422,11 @@ namespace MIDRetail.Windows
                     finally
                     {
                         lstOrder.EndUpdate();
+                    }
+
+                    if (onListChanged != null)
+                    {
+                        onListChanged(this, new ListChangedEventArgs(ListChangedType.ItemAdded, -1));
                     }
 
                     _changed = true;
@@ -791,7 +835,7 @@ namespace MIDRetail.Windows
                                 groupTreeNode = new ChooserTreeNode(groupings[i], null, true, false);
                                 groupTreeNode.ImageIndex = _closedImageIndex;
                                 groupTreeNode.SelectedImageIndex = groupTreeNode.ImageIndex;
-                                font = new Font(tvHeaders.Font, FontStyle.Bold);
+                                font = new Font(tvHeaders.Font, FontStyle.Regular);
                                 groupTreeNode.NodeFont = font;
                                 tvHeaders.Nodes.Add(groupTreeNode);
                             }
@@ -813,7 +857,7 @@ namespace MIDRetail.Windows
                                 groupTreeNode = new ChooserTreeNode(groupings[i], null, true, false);
                                 groupTreeNode.ImageIndex = _closedImageIndex;
                                 groupTreeNode.SelectedImageIndex = groupTreeNode.ImageIndex;
-                                font = new Font(tvHeaders.Font, FontStyle.Bold);
+                                font = new Font(tvHeaders.Font, FontStyle.Regular);
                                 groupTreeNode.NodeFont = font;
                                 parentGroupTreeNode.Nodes.Add(groupTreeNode);
                             }
@@ -1063,4 +1107,24 @@ namespace MIDRetail.Windows
             }
         }
 	}
+
+    #region RowColChooserChangeEventArgs Class
+
+    public class RowColChooserChangeEventArgs : EventArgs
+    {
+        bool _formClosing;
+
+        public RowColChooserChangeEventArgs()
+        {
+            _formClosing = false;
+        }
+
+        public bool FormClosing
+        {
+            get { return _formClosing; }
+            set { _formClosing = value; }
+        }
+    }
+
+    #endregion RowColChooserChangeEventArgs Class
 }

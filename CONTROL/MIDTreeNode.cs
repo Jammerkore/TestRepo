@@ -61,6 +61,7 @@ namespace MIDRetail.Windows.Controls
 		private bool						_bAddChildCountToText;
 		//End Track #6201 - JScott - Store Count removed from attr sets
 		private FolderDataLayer _dlFolder;
+        private string _uniqueID = null;
 
 		//=============
 		// CONSTRUCTORS
@@ -264,6 +265,18 @@ namespace MIDRetail.Windows.Controls
 		//===========
 		// PROPERTIES
 		//===========
+
+        public string UniqueID
+        {
+            get
+            {
+                return _uniqueID;
+            }
+            set
+            {
+                _uniqueID = value;
+            }
+        }
 
 		//Begin Track #6201 - JScott - Store Count removed from attr sets
 		/// <summary>
@@ -795,8 +808,15 @@ namespace MIDRetail.Windows.Controls
 		{
 			get
 			{
-				return _profile.ProfileType;
-			}
+                if (_profile != null)
+                {
+                    return _profile.ProfileType;
+                }
+                else
+                {
+                    return eProfileType.None;
+                }
+            }
 		}
 
 		/// <summary>
@@ -971,6 +991,22 @@ namespace MIDRetail.Windows.Controls
 		//========
 		// METHODS
 		//========
+
+        public void BuildUniqueID()
+        {
+            if (_uniqueID == null)
+            {
+                if (Parent != null)
+                {
+                    _uniqueID = ((MIDTreeNode)Parent).UniqueID + "_";
+                }
+
+                if (Profile != null)
+                {
+                    _uniqueID += Profile.Key.ToString();
+                }
+            }
+        }
 
 		/// <summary>
 		/// Abstract method that indicates if this MIDTreeNode can be selected

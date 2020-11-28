@@ -6,6 +6,7 @@ using System.Globalization;
 using MIDRetail.Common;
 using MIDRetail.Data;
 using MIDRetail.DataCommon;
+using Logility.ROWebSharedTypes;
 
 
 namespace MIDRetail.Business.Allocation
@@ -1259,6 +1260,23 @@ namespace MIDRetail.Business.Allocation
 		//========
 		// METHODS
 		//========
+        // Begin TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+        override internal bool CheckForUserData()
+        {
+            if (IsFilterUser(_storeFilterRID))
+            {
+                return true;
+            }
+
+            if (CheckAllocationCriteriaForUserData(_allocationCriteria))
+            {
+                return true;
+            }
+
+            return false;
+        }
+        // End TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+
 		/// <summary>
 		/// Load the tables from the data source tables.
 		/// </summary>
@@ -3389,5 +3407,577 @@ namespace MIDRetail.Business.Allocation
             return true;
         }
         // End TT#3572 - JSmith - Security- Version set to Deny - Ran a velocity method with this version and receive a Null reference error.
-	}
+
+        // BEGIN RO-642 - RDewey
+        override public FunctionSecurityProfile GetFunctionSecurity()
+        {
+            if (this.GlobalUserType == eGlobalUserType.Global)
+            {
+                return SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.AllocationMethodsGlobalAllocationOverride);
+            }
+            else
+            {
+                return SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.AllocationMethodsUserAllocationOverride);
+            }
+
+        }
+        override public ROMethodProperties MethodGetData(bool processingApply)
+        {
+            eMerchandiseType otsMerchType, otsOnHandType, ibMerchType;
+            eMinMaxType localMinMaxType;
+            if (InventoryInd == 'I')
+            {
+                localMinMaxType = eMinMaxType.Inventory;
+            }
+            else
+            {
+                localMinMaxType = eMinMaxType.Allocation;
+            }
+            ibMerchType = eMerchandiseType.Undefined;  // See JIRA 2860 - this is an open issue
+            if (MerchUnspecified)
+            {
+                otsMerchType = eMerchandiseType.Undefined;
+            }
+            else if (OTSPlanRID != Include.NoRID)
+            {
+                otsMerchType = eMerchandiseType.Node;
+            }
+            else if (OTSPlanPHL != Include.NoRID)
+            {
+                otsMerchType = eMerchandiseType.HierarchyLevel;
+            }
+            else
+            {
+                otsMerchType = eMerchandiseType.OTSPlanLevel;
+            }
+
+            if (OnHandUnspecified)
+            {
+                otsOnHandType = eMerchandiseType.Undefined;
+            }
+            else if (OTSOnHandRID != Include.NoRID)
+            {
+                otsOnHandType = eMerchandiseType.Node;
+            }
+            else if (OTSOnHandPHL != Include.NoRID)
+            {
+                otsOnHandType = eMerchandiseType.HierarchyLevel;
+            }
+            else
+            {
+                otsOnHandType = eMerchandiseType.OTSPlanLevel;
+            }
+
+            ROMethodAllocationOverrideProperties method = new ROMethodAllocationOverrideProperties(
+                method: GetName.GetMethod(method: this),
+                description: Method_Description,
+                userKey: User_RID,
+                storeGradeWeekCount: _mao.Grade_Week_Count,
+                percentNeedLimit: _mao.Percent_Need_Limit,
+                exceedMaxInd: Include.ConvertCharToBool(_mao.Exceed_Maximums_Ind),
+                reserve: _mao.Reserve,
+                percentInd: Include.ConvertCharToBool(_mao.Percent_Ind),
+                reserveAsBulk: _mao.ReserveAsBulk,
+                reserveAsPacks: _mao.ReserveAsPacks,
+                merchandise: GetName.GetLevelKeyValuePair(merchandiseType: otsMerchType, nodeRID: OTSPlanRID, merchPhRID: OTSPlanPHL, merchPhlSequence: OTSPlanPHLSeq, SAB: SAB),
+                merchandiseHierarchy: new KeyValuePair<int, int>(OTSPlanPHL, OTSPlanPHLSeq),
+                onHandMerchandise: GetName.GetLevelKeyValuePair(merchandiseType: otsOnHandType, nodeRID: OTSOnHandRID, merchPhRID: OTSOnHandPHL, merchPhlSequence: OTSOnHandPHLSeq, SAB: SAB),
+                onHandMerchandiseHierarchy: new KeyValuePair<int, int>(OTSOnHandPHL, OTSOnHandPHLSeq),
+                onHandFactor: OTSPlanFactorPercent,
+                colorMult: _mao.All_Color_Multiple,
+                sizeMult: _mao.All_Size_Multiple,
+                allColorMin: _mao.All_Color_Minimum,
+                allColorMax: _mao.All_Color_Maximum,
+                capacityAttribute: GetName.GetAttributeName(key: _mao.Store_Group_RID),
+                exceedCapacity: Include.ConvertCharToBool(_mao.Exceed_Capacity_Ind),
+                merchPlanUnspecified: _mao.Merch_Plan_Unspecified,
+                merchOnHandUnspecified: _mao.Merch_OnHand_Unspecified,
+                storeGradesAttribute: GetName.GetAttributeName(key: _mao.Tab_Store_Group_RID),
+                inventoryIndicator: localMinMaxType,
+                inventoryBasisMerchType: ibMerchType,
+                inventoryBasisMerchandise: GetName.GetLevelKeyValuePair(merchandiseType: ibMerchType, 
+                                                                      nodeRID: _mao.IB_MERCH_HN_RID,
+                                                                      merchPhRID: _mao.IB_MERCH_PH_RID,
+                                                                      merchPhlSequence: _mao.IB_MERCH_PHL_SEQ,
+                                                                      SAB: SAB),
+
+                inventoryBasisMerchandiseHierarchy: new KeyValuePair<int, int>(_mao.IB_MERCH_PH_RID, _mao.IB_MERCH_PHL_SEQ),
+                vswAttribute: GetName.GetAttributeName(key: SAB.ClientServerSession.GlobalOptions.OTSPlanStoreGroupRID),
+                doNotApplyVSW: _applyVSW,   // the panel needs the value to be flip-flopped - the db stores "applyVSW" but the panel displays "DoNotApplyVSW"
+                storeGradeValues: new System.Collections.Generic.List<ROAttributeSetStoreGrade>(),
+                capacity: new System.Collections.Generic.List<ROMethodOverrideCapacityProperties>(),
+                colorMinMax: new System.Collections.Generic.List<ROMethodOverrideColorProperties>(),
+                packRounding: new System.Collections.Generic.List<ROMethodOverridePackRoundingProperties>(),
+                vswAttributeSet: new System.Collections.Generic.List<ROMethodOverrideVSWAttributeSet>()
+                );
+
+            if (_applyVSW == false)
+            {
+                method.DoNotApplyVSW = true;
+            }
+            else
+            {
+                method.DoNotApplyVSW = false;
+            }
+
+            ROAttributeSetStoreGrade myAttributeSet = null;
+            DataTable dtStoreGrades = _dsOverRide.Tables["StoreGrades"];
+            // Insure the rows come out in the expected order
+            dtStoreGrades.DefaultView.Sort = "RowPosition ASC";
+
+            // Loop through each set
+            foreach (DataRow dr in dtStoreGrades.Rows)
+            {
+                int sglRID = Convert.ToInt32(dr["SGLRID"], CultureInfo.CurrentUICulture);
+                if (myAttributeSet == null
+                    || sglRID != myAttributeSet.AttributeSet.Key)
+                {
+                    // Create store grade instance for attribute
+                    myAttributeSet = new ROAttributeSetStoreGrade();
+                    myAttributeSet.AttributeSet = GetName.GetAttributeSetName(key: sglRID);
+                    method.StoreGradeValues.Add(myAttributeSet);
+                }
+
+                ROAllocationStoreGrade storeGrades = new ROAllocationStoreGrade();
+                storeGrades.StoreGrade = new KeyValuePair<int, string>(Convert.ToInt32(dr["Boundary"], CultureInfo.CurrentUICulture), Convert.ToString(dr["Grade"], CultureInfo.CurrentUICulture));
+
+                if (dr["Allocation Min"] != System.DBNull.Value)
+                {
+                    storeGrades.Minimum = Convert.ToInt32(dr["Allocation Min"], CultureInfo.CurrentUICulture);
+                }
+                else
+                {
+                    storeGrades.Minimum = System.Int32.MinValue;
+                }
+
+                if (dr["Allocation Max"] != System.DBNull.Value)
+                {
+                    storeGrades.Maximum = Convert.ToInt32(dr["Allocation Max"], CultureInfo.CurrentUICulture);
+                }
+                else
+                {
+                    storeGrades.Maximum = System.Int32.MaxValue;
+                }
+
+                if (dr["Min Ad"] != System.DBNull.Value)
+                {
+                    storeGrades.AdMinimum = Convert.ToInt32(dr["Min Ad"], CultureInfo.CurrentUICulture);
+                }
+                else
+                {
+                    storeGrades.AdMinimum = System.Int32.MinValue;
+                }
+
+                if (dr["Color Min"] != System.DBNull.Value)
+                {
+                    storeGrades.ColorMinimum = Convert.ToInt32(dr["Color Min"], CultureInfo.CurrentUICulture);
+                }
+                else
+                {
+                    storeGrades.ColorMinimum = System.Int32.MinValue;
+                }
+
+                if (dr["Color Max"] != System.DBNull.Value)
+                {
+                    storeGrades.ColorMaximum = Convert.ToInt32(dr["Color Max"], CultureInfo.CurrentUICulture);
+                }
+                else
+                {
+                    storeGrades.ColorMaximum = System.Int32.MaxValue;
+                }
+
+                if (dr["Ship Up To"] != System.DBNull.Value)
+                {
+                    storeGrades.ShipUpTo = Convert.ToInt32(dr["Ship Up To"], CultureInfo.CurrentUICulture);
+                }
+                else
+                {
+                    storeGrades.ShipUpTo = System.Int32.MinValue;
+                }
+
+                myAttributeSet.StoreGrades.Add(storeGrades);
+            }
+
+            bool localExceedCapacity;
+            double localExceedByPct;
+            DataTable dtCapacity = _dsOverRide.Tables["Capacity"];
+            foreach (DataRow dr in dtCapacity.Rows)
+            {
+                if (dr["ExceedChar"] != System.DBNull.Value)
+                {
+                    localExceedCapacity = Include.ConvertCharToBool(Convert.ToChar(dr["ExceedChar"], CultureInfo.CurrentUICulture));
+                }
+                else
+                {
+                    localExceedCapacity = false;
+                }
+
+                if (dr["Exceed by %"] != System.DBNull.Value)
+                {
+                    localExceedByPct = Convert.ToDouble(dr["Exceed by %"], CultureInfo.CurrentUICulture);
+                }
+                else
+                {
+                    localExceedByPct = System.Double.MinValue;
+                }
+
+                ROMethodOverrideCapacityProperties capacities = new ROMethodOverrideCapacityProperties(
+                    attributeSet: GetName.GetAttributeSetName(Convert.ToInt32(dr["SglRID"], CultureInfo.CurrentUICulture)),
+                    exceedCapacity: localExceedCapacity,
+                    exceedByPct: localExceedByPct
+                    );
+
+                method.Capacity.Add(capacities);
+            }
+
+            DataTable dtColor = _dsOverRide.Tables["Colors"];
+            foreach (DataRow dr in dtColor.Rows)
+            {
+                Int32 localColorMin, localColorMax;
+                if (dr["Minimum"] != System.DBNull.Value)
+                {
+                    localColorMin = Convert.ToInt32(dr["Minimum"], CultureInfo.CurrentUICulture);
+                }
+                else
+                {
+                    localColorMin = System.Int32.MinValue;
+                }
+                if (dr["Maximum"] != System.DBNull.Value)
+                {
+                    localColorMax = Convert.ToInt32(dr["Maximum"], CultureInfo.CurrentUICulture);
+                }
+                else
+                {
+                    localColorMax = System.Int32.MaxValue;
+                }
+
+                ROMethodOverrideColorProperties colorMinMax = new ROMethodOverrideColorProperties(
+                    colorCode: GetName.GetColor(Convert.ToInt32(dr["Color"], CultureInfo.CurrentUICulture), SAB: SAB),
+                    colorMinimum: localColorMin,
+                    colorMaximum: localColorMax
+                    );
+
+                method.ColorMinMax.Add(colorMinMax);
+            }
+
+            DataTable dtPackRounding = _dsOverRide.Tables["PackRounding"];
+            foreach (DataRow row in dtPackRounding.Rows)
+            {
+                double localFirstPack, localNthPack;
+                int localPackMultRID = Convert.ToInt32(row["PackMultiple"]);
+                if (row["FstPack"] == DBNull.Value)
+                {
+                    localFirstPack = Include.DefaultGenericPackRounding1stPackPct;
+                }
+                else
+                {
+                    localFirstPack = Convert.ToDouble(row["FstPack"]);
+                }
+                if (row["NthPack"] == DBNull.Value)
+                {
+                    localNthPack = Include.DefaultGenericPackRoundingNthPackPct;
+                }
+                else
+                {
+                    localNthPack = Convert.ToDouble(row["NthPack"]);
+                }
+
+                ROMethodOverridePackRoundingProperties roPackRounding = new ROMethodOverridePackRoundingProperties(
+                    packMultiple: localPackMultRID,
+                    firstPackPct: localFirstPack,
+                    nthPackPct: localNthPack);
+                method.PackRounding.Add(roPackRounding);
+            }
+
+            Int32 localMinShipQty, localMaxValue;
+            Double localPctPackThreshold;
+            string localReservationStore;
+            KeyValuePair<int, string> localAttributeSet, localEntry;
+            DataTable dtVSWSets = IMODataSet.Tables["Sets"];
+            ROMethodOverrideVSWAttributeSet roVSWAttributeSet;
+            DataTable dtVSWStores = IMODataSet.Tables["Stores"];
+            for (int r = 0; r < dtVSWSets.Rows.Count; r++)
+            {
+                DataRow row = dtVSWSets.Rows[r];
+                string localString = Convert.ToString(row["Min Ship Qty"]);
+                if (string.IsNullOrEmpty(localString))
+                {
+                    localMinShipQty = System.Int32.MinValue;
+                }
+                else
+                {
+                    localMinShipQty = Convert.ToInt32(localString);
+                }
+                localString = Convert.ToString(row["Pct Pack Threshold"]);
+                if (string.IsNullOrEmpty(localString))
+                {
+                    localPctPackThreshold = System.Double.MinValue;
+                }
+                else
+                {
+                    localPctPackThreshold = Convert.ToDouble(localString);
+                }
+                localString = Convert.ToString(row["Item Max"]);
+                if (string.IsNullOrEmpty(localString))
+                {
+                    localMaxValue = System.Int32.MinValue;
+                }
+                else
+                {
+                    localMaxValue = Convert.ToInt32(localString);
+                }
+                localReservationStore = Convert.ToString(row["Reservation Store"]);
+
+                localAttributeSet = GetName.GetAttributeSetName(IMOGroupLevelList[0].Key);
+                roVSWAttributeSet = new ROMethodOverrideVSWAttributeSet();
+                roVSWAttributeSet.VSWAttributeSetValues = new ROMethodOverrideVSW(
+                    updated: false,
+                    entry: GetName.GetAttributeSetName(IMOGroupLevelList[0].Key),
+                    reservationStore: localReservationStore,
+                    minimumShipQuantity: localMinShipQty,
+                    pctPackThreshold: localPctPackThreshold,
+                    itemMaximum: localMaxValue
+                    );
+
+                roVSWAttributeSet.VSWAttributeSetValues.MinimumShipQuantity = localMinShipQty;
+                roVSWAttributeSet.VSWAttributeSetValues.PctPackThreshold = localPctPackThreshold;
+                roVSWAttributeSet.VSWAttributeSetValues.ItemMaximum = localMaxValue;
+                method.VSWAttributeSet.Add(roVSWAttributeSet);
+
+                for (int s = 0; s < dtVSWStores.Rows.Count; s++)
+                {
+                    DataRow storeRow = dtVSWStores.Rows[s];
+                    localReservationStore = Convert.ToString(storeRow["Reservation Store"]);
+                    localString = Convert.ToString(storeRow["Min Ship Qty"]);
+                    if (string.IsNullOrEmpty(localString))
+                    {
+                        localMinShipQty = System.Int32.MinValue;
+                    }
+                    else
+                    {
+                        localMinShipQty = Convert.ToInt32(localString);
+                    }
+                    localString = Convert.ToString(storeRow["Pct Pack Threshold"]);
+                    if (string.IsNullOrEmpty(localString))
+                    {
+                        localPctPackThreshold = System.Double.MinValue;
+                    }
+                    else
+                    {
+                        localPctPackThreshold = Convert.ToDouble(localString);
+                    }
+                    localString = Convert.ToString(storeRow["Item Max"]);
+                    if (string.IsNullOrEmpty(localString))
+                    {
+                        localMaxValue = System.Int32.MaxValue;
+                    }
+                    else
+                    {
+                        localMaxValue = Convert.ToInt32(localString);
+                    }
+                    int storeRID = Convert.ToInt16(storeRow["Store RID"]);
+                    localEntry = GetName.GetStoreName(storeRID);
+                    bool updated = false;
+
+                    ROMethodOverrideVSW vswStore = new ROMethodOverrideVSW(
+                        updated: updated,
+                        entry: GetName.GetStoreName(localEntry.Key),
+                        reservationStore: localReservationStore,
+                        minimumShipQuantity: localMinShipQty,
+                        pctPackThreshold: localPctPackThreshold,
+                        itemMaximum: localMaxValue
+                        );
+
+                    roVSWAttributeSet.VSWStoresValues.Add(vswStore);
+                }
+            }
+
+            return method;
+        }
+
+        override public bool MethodSetData(ROMethodProperties methodProperties, bool processingApply)
+        {
+            ROMethodAllocationOverrideProperties roMethodAllocationOverrideProperties = (ROMethodAllocationOverrideProperties)methodProperties;
+            try
+            {
+                if (roMethodAllocationOverrideProperties.StoreGradeWeekCount > 0)
+                {
+                    _allocationCriteria.GradeWeekCount = roMethodAllocationOverrideProperties.StoreGradeWeekCount;
+                    _mao.UseStoreGradeDefault = false;
+                    _allocationCriteria.UseStoreGradeDefault = false;
+                }
+                else
+                {
+                    _mao.UseStoreGradeDefault = true;
+                    _allocationCriteria.UseStoreGradeDefault = true;
+                }
+
+                _allocationCriteria.ExceedMaximums = roMethodAllocationOverrideProperties.ExceedMaxInd;
+                _allocationCriteria.PercentNeedLimit = roMethodAllocationOverrideProperties.PercentNeedLimit;
+                _allocationCriteria.ReserveQty = roMethodAllocationOverrideProperties.Reserve;
+                _allocationCriteria.ReserveIsPercent = roMethodAllocationOverrideProperties.PercentInd;
+                OTSPlanRID = roMethodAllocationOverrideProperties.Merchandise.Key;
+                OTSPlanPHL = roMethodAllocationOverrideProperties.MerchandiseHierarchy.Key;
+                OTSPlanPHLSeq = roMethodAllocationOverrideProperties.MerchandiseHierarchy.Value;
+                OTSOnHandRID = roMethodAllocationOverrideProperties.OnHandMerchandise.Key;
+                OTSOnHandPHL = roMethodAllocationOverrideProperties.OnHandMerchandiseHierarchy.Key;
+                OTSOnHandPHLSeq = roMethodAllocationOverrideProperties.OnHandMerchandiseHierarchy.Value;
+                OTSPlanFactorPercent = roMethodAllocationOverrideProperties.OnHandFactor;
+                _allocationCriteria.AllColorMultiple = roMethodAllocationOverrideProperties.ColorMult;
+                _allocationCriteria.AllSizeMultiple = roMethodAllocationOverrideProperties.SizeMult;
+                AllColorMinimum = roMethodAllocationOverrideProperties.AllColorMin;
+                AllColorMaximum = roMethodAllocationOverrideProperties.AllColorMax;
+                _allocationCriteria.CapacityStoreGroupRID = roMethodAllocationOverrideProperties.CapacityAttribute.Key;
+                _allocationCriteria.GradeStoreGroupRID = roMethodAllocationOverrideProperties.StoreGradesAttribute.Key;
+                _allocationCriteria.ExceedCapacity = roMethodAllocationOverrideProperties.ExceedCapacity;
+                _applyVSW = roMethodAllocationOverrideProperties.DoNotApplyVSW;
+                
+                _allocationCriteria.MerchUnspecified = roMethodAllocationOverrideProperties.MerchPlanUnspecified;
+                _allocationCriteria.MerchUnspecified = roMethodAllocationOverrideProperties.MerchOnHandUnspecified;
+                _allocationCriteria.ReserveAsBulk = roMethodAllocationOverrideProperties.ReserveAsBulk;
+                _allocationCriteria.ReserveAsPacks = roMethodAllocationOverrideProperties.ReserveAsPacks;
+                //InventoryInd = roMethodAllocationOverrideProperties.InventoryIndicator;
+                MERCH_HN_RID = roMethodAllocationOverrideProperties.InventoryBasisMerchandise.Key;
+                MERCH_PH_RID = roMethodAllocationOverrideProperties.InventoryBasisMerchandiseHierarchy.Key;
+                MERCH_PHL_SEQ = roMethodAllocationOverrideProperties.InventoryBasisMerchandiseHierarchy.Value;
+
+                // color
+                // Building a dataTable called "Colors" to be placed in _dsOverRide
+                _dsOverRide.Tables["Colors"].Rows.Clear();
+                int i = 0;
+
+                foreach (ROMethodOverrideColorProperties colorProperty in roMethodAllocationOverrideProperties.ColorMinMax)
+                {
+                    if (colorProperty.ColorMinimum == System.Int32.MinValue && colorProperty.ColorMaximum < System.Int32.MaxValue)
+                    {
+                        _dsOverRide.Tables["Colors"].Rows.Add(new object[] { i, colorProperty.ColorCode.Key, null, colorProperty.ColorMaximum });
+                    }
+                    else if (colorProperty.ColorMinimum > System.Int32.MinValue && colorProperty.ColorMaximum == System.Int32.MaxValue)
+                    {
+                        _dsOverRide.Tables["Colors"].Rows.Add(new object[] { i, colorProperty.ColorCode.Key, colorProperty.ColorMinimum, null });
+                    }
+                    else if (colorProperty.ColorMinimum == System.Int32.MinValue && colorProperty.ColorMaximum == System.Int32.MaxValue)
+                    {
+                        _dsOverRide.Tables["Colors"].Rows.Add(new object[] { i, colorProperty.ColorCode.Key, null, null });
+                    }
+                    else
+                    {
+                        _dsOverRide.Tables["Colors"].Rows.Add(new object[] { i, colorProperty.ColorCode.Key, colorProperty.ColorMinimum, colorProperty.ColorMaximum });
+                    }
+                    i += 1;
+                }
+
+                // capacity
+                _dsOverRide.Tables["Capacity"].Rows.Clear();
+                foreach (ROMethodOverrideCapacityProperties capacityProperty in roMethodAllocationOverrideProperties.Capacity)
+                {
+                    if (capacityProperty.ExceedByPct == System.Double.MinValue)
+                    {
+                        _dsOverRide.Tables["Capacity"].Rows.Add(new object[] { capacityProperty.AttributeSet.Key, capacityProperty.AttributeSet.Value, 0, null });
+                    }
+                    else
+                    {
+                        _dsOverRide.Tables["Capacity"].Rows.Add(new object[] { capacityProperty.AttributeSet.Key, capacityProperty.AttributeSet.Value, 1, capacityProperty.ExceedByPct });
+                    }
+                }
+
+                // pack rounding
+                _dsOverRide.Tables["PackRounding"].Rows.Clear();
+                foreach (ROMethodOverridePackRoundingProperties packProperty in roMethodAllocationOverrideProperties.PackRounding)
+                {
+                    // NEED PACKTEXT FIRST AND PACK MULTIPLE LAST
+                    if (packProperty.FirstPackPct == Include.DefaultGenericPackRounding1stPackPct && packProperty.NthPackPct == Include.DefaultGenericPackRoundingNthPackPct)
+                    {
+                        _dsOverRide.Tables["PackRounding"].Rows.Add(new object[] { " ", null, null, packProperty.PackMultiple });
+                    }
+                    else if (packProperty.FirstPackPct == Include.DefaultGenericPackRounding1stPackPct)
+                    {
+                        _dsOverRide.Tables["PackRounding"].Rows.Add(new object[] { " ", null, packProperty.NthPackPct, packProperty.PackMultiple });
+                    }
+                    else if (packProperty.NthPackPct == Include.DefaultGenericPackRoundingNthPackPct)
+                    {
+                        _dsOverRide.Tables["PackRounding"].Rows.Add(new object[] { " ", packProperty.FirstPackPct, null, packProperty.PackMultiple });
+                    }
+                    else
+                    {
+                        _dsOverRide.Tables["PackRounding"].Rows.Add(new object[] { Convert.ToString(packProperty.PackMultiple), packProperty.FirstPackPct, packProperty.NthPackPct, packProperty.PackMultiple });
+
+                    }
+                }
+
+                // store grade
+                _dsOverRide.Tables["StoreGrades"].Rows.Clear();
+                i = 0;
+
+                foreach (ROAttributeSetStoreGrade storeGrade in roMethodAllocationOverrideProperties.StoreGradeValues)
+                {
+                    foreach (ROAllocationStoreGrade setStoreGrades in storeGrade.StoreGrades)
+                    {
+                        if (setStoreGrades.Minimum == System.Int32.MinValue && setStoreGrades.Maximum == System.Int32.MaxValue && setStoreGrades.AdMinimum == System.Int32.MinValue && setStoreGrades.ColorMinimum == System.Int32.MinValue && setStoreGrades.ColorMaximum == System.Int32.MaxValue)
+                        {
+                            _dsOverRide.Tables["StoreGrades"].Rows.Add(new object[] { i, storeGrade.AttributeSet.Key, setStoreGrades.StoreGrade.Key, setStoreGrades.StoreGrade.Value, null, null, null, null, null, null });
+                        }
+                        else
+                        {
+                            _dsOverRide.Tables["StoreGrades"].Rows.Add(new object[] { i, storeGrade.AttributeSet.Key, setStoreGrades.StoreGrade.Key, setStoreGrades.StoreGrade.Value,
+                                ((setStoreGrades.Minimum == int.MinValue) ? (int?) null : setStoreGrades.Minimum),
+                                ((setStoreGrades.Maximum == int.MaxValue) ? (int?) null : setStoreGrades.Maximum),
+                                ((setStoreGrades.AdMinimum == int.MinValue) ? (int?) null : setStoreGrades.AdMinimum),
+                                ((setStoreGrades.ColorMinimum == int.MinValue) ? (int?) null : setStoreGrades.ColorMinimum),
+                                ((setStoreGrades.ColorMaximum == int.MaxValue) ? (int?) null : setStoreGrades.ColorMaximum),
+                                ((setStoreGrades.ShipUpTo == int.MinValue) ? (int?) null : setStoreGrades.ShipUpTo) });  
+                        }
+                        i += 1;
+                    }
+
+                }
+
+                // vsw  
+                string localSetID = IMODataSet.Tables["Sets"].Rows[0]["SetID"].ToString();
+                IMODataSet.Tables["Stores"].Rows.Clear();
+                IMODataSet.Tables["Sets"].Rows.Clear();   
+
+                IMODataSet.Tables["Sets"].Rows.Add(new object[] { localSetID, string.Empty, string.Empty, string.Empty, string.Empty });
+
+                foreach (ROMethodOverrideVSW vswStores in roMethodAllocationOverrideProperties.VSWAttributeSet[0].VSWStoresValues)
+                {
+                    if (vswStores.MinimumShipQuantity == System.Int32.MinValue && vswStores.ItemMaximum == System.Int32.MaxValue && vswStores.PctPackThreshold == System.Double.MinValue)
+                    {
+                        IMODataSet.Tables["Stores"].Rows.Add(new object[] { localSetID, false, vswStores.Entry.Key, vswStores.Entry.Value, vswStores.ReservationStore, string.Empty, string.Empty, string.Empty });
+                    }
+                    else
+                    {
+                        IMODataSet.Tables["Stores"].Rows.Add(new object[] { localSetID, false, vswStores.Entry.Key, vswStores.Entry.Value, vswStores.ReservationStore, 
+                                ((vswStores.MinimumShipQuantity == int.MinValue) ? (int?) null : vswStores.MinimumShipQuantity),
+                                ((vswStores.PctPackThreshold == double.MinValue) ? (double?) null : vswStores.PctPackThreshold),
+                                ((vswStores.ItemMaximum == int.MaxValue) ? (int?) null : vswStores.ItemMaximum)
+                                });
+                    }
+                }
+
+                // the panel value needs to be flip-flopped - the db stores "applyVSW" but the panel displays "DoNotApplyVSW"
+                if (roMethodAllocationOverrideProperties.DoNotApplyVSW == true)
+                {
+                    _applyVSW = false;
+                }
+                else
+                {
+                    _applyVSW = true;
+                }
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+            //throw new NotImplementedException("MethodSaveData is not implemented");
+        }
+
+        override public ROMethodProperties MethodCopyData()
+        {
+            throw new NotImplementedException("MethodCopyData is not implemented");
+        }
+        // END RO-642 - RDewey
+    }
 }

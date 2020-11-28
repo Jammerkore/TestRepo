@@ -147,7 +147,14 @@ namespace MIDRetail.Business
 		//=======
 
 		private int _userRID = -1;
-		private eProcesses _process = eProcesses.unknown;
+        private string _userID = null;
+        private string _userName = string.Empty;
+        private string _userFullName = string.Empty;
+        private string _userDescription = string.Empty;
+        private bool _userIsActive = false;
+        private bool _userIsSetToBeDeleted = false;
+        private DateTime _userDateTimeWhenDeleted;
+        private eProcesses _process = eProcesses.unknown;
 //		private string _myHierarchyName = null;
 //		private string _myHierarchyColor = null;
 //		private string _myWorkflowMethods = null;
@@ -231,11 +238,95 @@ namespace MIDRetail.Business
 			}
 		}
 
-		/// <summary>
-		/// Gets and sets the process associated with the client.
-		/// </summary>
+        /// <summary>
+        /// Gets the ID of the user
+        /// </summary>
 
-		public eProcesses Process
+        public string UserID
+        {
+            get
+            { 
+                return _userID;
+            }
+        }
+
+        /// <summary>
+        /// Gets the name of the user
+        /// </summary>
+
+        public string UserName
+        {
+            get
+            {
+                return _userName;
+            }
+        }
+
+        /// <summary>
+        /// Gets the full name of the user
+        /// </summary>
+
+        public string UserFullName
+        {
+            get
+            {
+                return _userFullName;
+            }
+        }
+
+        /// <summary>
+        /// Gets the description of the user
+        /// </summary>
+
+        public string UserDescription
+        {
+            get
+            {
+                return _userDescription;
+            }
+        }
+
+        /// <summary>
+        /// Gets the flag identifying if the user is active
+        /// </summary>
+
+        public bool UserIsActive
+        {
+            get
+            {
+                return _userIsActive;
+            }
+        }
+
+        /// <summary>
+        /// Gets the flag identifying if the user is scheduled to be deleted
+        /// </summary>
+
+        public bool UserIsSetToBeDeleted
+        {
+            get
+            {
+                return _userIsSetToBeDeleted;
+            }
+        }
+
+        /// <summary>
+        /// Gets the date and time when the user was scheduled to be deleted
+        /// </summary>
+
+        public DateTime UserDateTimeWhenDeleted
+        {
+            get
+            {
+                return _userDateTimeWhenDeleted;
+            }
+        }
+
+        /// <summary>
+        /// Gets and sets the process associated with the client.
+        /// </summary>
+
+        public eProcesses Process
 		{
 			get
 			{
@@ -826,10 +917,42 @@ namespace MIDRetail.Business
                 if (retVal == eSecurityAuthenticate.UserAuthenticated)
                 {
                     _userRID = _security.UserRID;
+                    _userID = aUserName;
                     _process = aProcess;
                     //GetUserOptions(_userRID);
 
                     retVal = GetProcessingPermission(aProcess, retVal); // TT#1611-MD - stodd - Size Curve Generate abends due to no Audit Created
+
+                    MIDRetail.Data.SecurityAdmin secAdmin = new MIDRetail.Data.SecurityAdmin();
+                    System.Data.DataTable dt = secAdmin.GetUser(_userRID);
+                    if (dt.Rows.Count > 0)
+                    {
+                        if (dt.Rows[0].IsNull("USER_NAME") == false)
+                        {
+                            _userName = (string)dt.Rows[0]["USER_NAME"];
+                        }
+                        if (dt.Rows[0].IsNull("USER_FULLNAME") == false)
+                        {
+                            _userFullName = (string)dt.Rows[0]["USER_FULLNAME"];
+                        }
+                        if (dt.Rows[0].IsNull("USER_DESCRIPTION") == false)
+                        {
+                            _userDescription = (string)dt.Rows[0]["USER_DESCRIPTION"];
+                        }
+                        if (dt.Rows[0].IsNull("USER_ACTIVE_IND") == false)
+                        {
+                            _userIsActive = Include.ConvertCharToBool(Convert.ToChar(dt.Rows[0]["USER_ACTIVE_IND"]));
+                        }
+                        if (dt.Rows[0].IsNull("USER_DELETE_IND") == false)
+                        {
+                            _userIsSetToBeDeleted = Include.ConvertCharToBool(Convert.ToChar(dt.Rows[0]["USER_DELETE_IND"]));
+                        }
+                        if (dt.Rows[0].IsNull("USER_DELETE_DATETIME") == false)
+                        {
+                            _userDateTimeWhenDeleted = (DateTime)dt.Rows[0]["USER_DELETE_DATETIME"];
+                        }
+
+                    }
                 }
                 // End TT#1581-MD - stodd Header Reconcile
 
@@ -2591,7 +2714,136 @@ namespace MIDRetail.Business
 			}
 		}
 
-		public eProcesses Process
+        public string UserID
+        {
+            get
+            {
+                try
+                {
+                    return ClientServerSessionRemote.UserID;
+                }
+                catch
+                {
+                    throw;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the name of the user
+        /// </summary>
+
+        public string UserName
+        {
+            get
+            {
+                try
+                {
+                    return ClientServerSessionRemote.UserName;
+                }
+                catch
+                {
+                    throw;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the full name of the user
+        /// </summary>
+
+        public string UserFullName
+        {
+            get
+            {
+                try
+                {
+                    return ClientServerSessionRemote.UserFullName;
+                }
+                catch
+                {
+                    throw;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the description of the user
+        /// </summary>
+
+        public string UserDescription
+        {
+            get
+            {
+                try
+                {
+                    return ClientServerSessionRemote.UserDescription;
+                }
+                catch
+                {
+                    throw;
+                }
+            }
+        }
+
+    /// <summary>
+    /// Gets the flag identifying if the user is active
+    /// </summary>
+
+    public bool UserIsActive
+    {
+        get
+        {
+            try
+            {
+                return ClientServerSessionRemote.UserIsActive;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Gets the flag identifying if the user is scheduled to be deleted
+    /// </summary>
+
+    public bool UserIsSetToBeDeleted
+    {
+        get
+        {
+            try
+            {
+                return ClientServerSessionRemote.UserIsSetToBeDeleted;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Gets the date and time when the user was scheduled to be deleted
+    /// </summary>
+
+    public DateTime UserDateTimeWhenDeleted
+    {
+        get
+        {
+            try
+            {
+                return ClientServerSessionRemote.UserDateTimeWhenDeleted;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+    }
+
+    public eProcesses Process
 		{
 			get
 			{

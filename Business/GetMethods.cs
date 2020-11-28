@@ -162,6 +162,11 @@ namespace MIDRetail.Business
 							abm = GetForecastExportMethod(aMethodRID);
 							break;
 //End Modification - JScott - Export Method - Part 10
+                        // Begin TT#2131-MD - JSmith - Halo Integration
+                        case eMethodType.PlanningExtract:
+                            abm = GetForecastPlanningExtractMethod(aMethodRID);
+                            break;
+                        // End TT#2131-MD - JSmith - Halo Integration
 						case eMethodType.GeneralAllocation:
 							abm = GetAllocationGeneralMethod(aMethodRID);
 							break;
@@ -380,6 +385,21 @@ namespace MIDRetail.Business
 		}
 
 //End Modification - JScott - Export Method - Part 10
+
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        public OTSForecastPlanningExtractMethod GetForecastPlanningExtractMethod(int aMethodRID)
+        {
+            try
+            {
+                return new OTSForecastPlanningExtractMethod(_SAB, aMethodRID);
+            }
+            catch (Exception err)
+            {
+                string message = err.ToString();
+                throw;
+            }
+        }
+        // End TT#2131-MD - JSmith - Halo Integration
 
 		/// <summary>
 		/// Retrieve an allocation general method definition

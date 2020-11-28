@@ -11,6 +11,8 @@ using MIDRetail.Common;
 using MIDRetail.DataCommon;
 using MIDRetail.Data;
 
+using Logility.ROUI;
+
 namespace MIDRetail.Windows
 {
     /// <summary>

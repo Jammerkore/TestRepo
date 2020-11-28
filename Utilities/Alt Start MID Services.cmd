@@ -112,6 +112,31 @@ rem check if Store is running
 SC query MIDRetailStoreService| FIND "RUNNING" 
 IF %errorlevel%  == 1 GOTO :waitcheckstore
 
+::====================================
+:: Job Service
+::====================================
+rem net start MIDRetailJobService
+set /a loopcnt = 0
+net start MIDRetailJobService
+GOTO :checkJob
+
+:waitcheckJob
+rem waiting... 
+ping -n %waittime% 127.0.0.1 > NUL 2>&1
+rem if Job stopped, start again
+SC query MIDRetailJobService| FIND "STOPPED" 
+IF %errorlevel% ==0 (
+	IF %loopcnt% lss %maxloop% ( 
+		set /a loopcnt+=1
+		net start MIDRetailJobService
+	) ELSE GOTO :stop
+) 
+
+:checkJob
+rem check if Job is running
+SC query MIDRetailJobService| FIND "RUNNING" 
+IF %errorlevel%  == 1 GOTO :waitcheckJob
+
 :stop
 
 

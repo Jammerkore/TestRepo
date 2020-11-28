@@ -9364,7 +9364,7 @@
     <procedureName>MID_METHOD_EXPORT_INSERT</procedureName>
     <parameterName>@FILE_PATH</parameterName>
     <parameterType>VarChar</parameterType>
-    <parameterValue>C:\MIDRetail\UnitTesting\Dan</parameterValue>
+    <parameterValue>C:\Logility\RO\UnitTesting\Dan</parameterValue>
   </TestParameters>
   <TestParameters>
     <testName>TQA-MID_METHOD_EXPORT_INSERT</testName>
@@ -19829,7 +19829,7 @@
     <procedureName>MID_METHOD_EXPORT_UPDATE</procedureName>
     <parameterName>@FILE_PATH</parameterName>
     <parameterType>VarChar</parameterType>
-    <parameterValue>C:\MIDRetail\UnitTesting\Dan</parameterValue>
+    <parameterValue>C:\Logility\RO\UnitTesting\Dan</parameterValue>
   </TestParameters>
   <TestParameters>
     <testName>TQA-MID_METHOD_EXPORT_UPDATE</testName>

@@ -1323,7 +1323,17 @@ namespace MIDRetail.ForecastComputations
 
 				try
 				{
-					return Execute((PlanScheduleFormulaEntry)aSchdEntry, aGetCellMode, aSetCellMode);
+                    //return Execute((PlanScheduleFormulaEntry)aSchdEntry, aGetCellMode, aSetCellMode);
+                    eComputationFormulaReturnType returnType = Execute((PlanScheduleFormulaEntry)aSchdEntry, aGetCellMode, aSetCellMode);
+                    if (aSchdEntry.ComputationFormulaReturnType == eComputationFormulaReturnType.Pending)
+                    {
+                        ComputationCellReference lastPendingCell = aSchdEntry.LastPendingCell;
+                        schedEntry = (PlanScheduleFormulaEntry)aSchdEntry;
+                        schedEntry.LastPendingCell = lastPendingCell;
+                        return eComputationFormulaReturnType.Pending;
+                    }
+
+                    return returnType;
 				}
 				catch (CellPendingException exc)
 				{
@@ -1413,7 +1423,17 @@ namespace MIDRetail.ForecastComputations
 
 				try
 				{
-					return Execute((PlanScheduleSpreadEntry)aSchdEntry, aGetCellMode, aSetCellMode);
+                    //return Execute((PlanScheduleSpreadEntry)aSchdEntry, aGetCellMode, aSetCellMode);
+                    eComputationFormulaReturnType returnType = Execute((PlanScheduleSpreadEntry)aSchdEntry, aGetCellMode, aSetCellMode);
+                    if (aSchdEntry.ComputationFormulaReturnType == eComputationFormulaReturnType.Pending)
+                    {
+                        ComputationCellReference lastPendingCell = aSchdEntry.LastPendingCell;
+                        schedEntry = (PlanScheduleSpreadEntry)aSchdEntry;
+                        schedEntry.LastPendingCell = lastPendingCell;
+                        return eComputationFormulaReturnType.Pending;
+                    }
+
+                    return returnType;
 				}
 				catch (CellPendingException exc)
 				{

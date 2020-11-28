@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Globalization;
@@ -7,6 +8,7 @@ using System.Globalization;
 using MIDRetail.Common;
 using MIDRetail.Data;
 using MIDRetail.DataCommon;
+using Logility.ROWebSharedTypes;
 
 namespace MIDRetail.Business
 {
@@ -388,6 +390,23 @@ namespace MIDRetail.Business
 				throw;
 			}
 		}
+
+        // Begin TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+        override internal bool CheckForUserData()
+        {
+            if (IsFilterUser(_filterRID))
+            {
+                return true;
+            }
+            
+            if (IsHierarchyNodeUser(_hnRID))
+            {
+                return true;
+            }
+
+            return false;
+        }
+        // End TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
 
 		public override void ProcessMethod(
 			ApplicationSessionTransaction aApplicationTransaction,
@@ -1370,6 +1389,165 @@ namespace MIDRetail.Business
 				throw;
 			}
 		}
-		// End MID Track 4858
-	}
+        // End MID Track 4858
+
+        // BEGIN RO-642 - RDewey
+        override public FunctionSecurityProfile GetFunctionSecurity()
+        {
+            if (this.GlobalUserType == eGlobalUserType.Global)
+            {
+                return SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.ForecastMethodsGlobalOTSBalance);
+            }
+            else
+            {
+                return SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.ForecastMethodsUserOTSBalance);
+            }         
+        }
+
+        override public ROMethodProperties MethodGetData(bool processingApply)
+        {
+            // Begin RO-740 RDewey
+            ROLevelInformation lowLevelInformation = new ROLevelInformation();
+            eROLevelsType levelType;
+            string strLevelType;
+
+            lowLevelInformation.LevelType = (eROLevelsType)_lowLevelsType;
+            lowLevelInformation.LevelSequence = _lowLevelsSequence;
+            lowLevelInformation.LevelOffset = _lowLevelsOffset;
+
+
+            ROMethodMatrixBalanceProperties method = new ROMethodMatrixBalanceProperties(
+                method: GetName.GetMethod(method: this),
+                description: Method_Description,
+                userKey: User_RID,
+                filter: GetName.GetFilterName(key: _filterRID),
+                highLevelMerchandise: GetName.GetMerchandiseName(nodeRID: _hnRID, SAB: SAB),
+                highLevelVersion: GetName.GetVersion(versionRID: _highLevelVersionRID, SAB: SAB),
+                dateRange: GetName.GetCalendarDateRange(calendarDateRID: _cdrRID, SAB: SAB),
+                lowLevelVersion: GetName.GetVersion(versionRID: _lowLevelVersionRID, SAB: SAB),
+                lowLevel: lowLevelInformation,
+                ineligibleStores: _ineligibleStoresInd,
+                similarStores: _similarStoresInd,
+                variable: GetName.GetVariable(variableKey: _variableNumber, SAB: SAB),
+                iterationType: _iterationType,
+                iterationsCount: _iterationsCount,
+                balanceMode: _balanceMode,
+                computationMode: _computationMode,
+                overrideLowLevel: GetName.GetOverrideLowLevelsModel(modelRID: _overrideLowLevelRid, SAB: SAB),
+                matrixType: _matrixType,
+                model: GetName.GetForecastBalanceModel(modelRID: _modelRID, SAB: SAB),
+                matrixBasis: new System.Collections.Generic.List<ROBasisDetailProfile>()
+                );
+
+            lowLevelInformation.LevelValue = GetName.GetLevelName(lowLevelInformation.LevelType, lowLevelInformation.LevelSequence, lowLevelInformation.LevelOffset, SAB);
+
+            foreach (BasisDetailProfile basisProfile in BasisProfile.BasisDetailProfileList)
+            {
+                ROBasisDetailProfile options = new ROBasisDetailProfile(
+                    iBasisId: basisProfile.Key,
+                    iMerchandiseId: -1,
+                    sMerchandise: null,
+                    iVersionId: basisProfile.VersionProfile.Key,
+                    sVersion: null,
+                    iDaterangeId: basisProfile.DateRangeProfile.Key,
+                    sDateRange: null,
+                    sPicture: null,
+                    fWeight: basisProfile.Weight,
+                    bIsIncluded: false,
+                    sIncludeButton: null
+                    );
+
+                if (basisProfile.IncludeExclude == eBasisIncludeExclude.Include)
+                {
+                    options.IsIncluded = true;
+                }
+
+                KeyValuePair<int, string> kvpVersion, kvpDateRange;
+                kvpVersion = GetName.GetVersion(versionRID: options.VersionId, SAB: SAB);
+                options.Version = kvpVersion.Value;
+                kvpDateRange = GetName.GetCalendarDateRange(options.DateRangeId, SAB: SAB, anchorDateRID: _cdrRID);
+                options.DateRange = kvpDateRange.Value;
+
+                method.MatrixBasis.Add(options);
+            }
+
+            //for (int k = 0; k < _dsRollup.Tables[0].Rows.Count; k++)
+            //{
+            //}
+
+                return method;
+        }
+
+        override public bool MethodSetData(ROMethodProperties methodProperties, bool processingApply)
+        {
+            ROMethodMatrixBalanceProperties roMethodMatrixBalanceProperties = (ROMethodMatrixBalanceProperties)methodProperties;
+            try
+            {
+                _highLevelVersionRID = roMethodMatrixBalanceProperties.HighLevelVersion.Key;
+                _hnRID = roMethodMatrixBalanceProperties.HighLevelMerchandise.Key;
+                _filterRID = roMethodMatrixBalanceProperties.Filter.Key;
+                _cdrRID = roMethodMatrixBalanceProperties.DateRange.Key;
+                _lowLevelVersionRID = roMethodMatrixBalanceProperties.LowLevelVersion.Key;
+                _lowLevelsOffset = roMethodMatrixBalanceProperties.LowLevel.LevelOffset;
+                _lowLevelsSequence = roMethodMatrixBalanceProperties.LowLevel.LevelSequence;
+                _lowLevelsType = (eLowLevelsType)roMethodMatrixBalanceProperties.LowLevel.LevelType;
+                _similarStoresInd = roMethodMatrixBalanceProperties.SimilarStores;
+                _ineligibleStoresInd = roMethodMatrixBalanceProperties.IneligibleStores;
+                _variableNumber = roMethodMatrixBalanceProperties.Variable.Key;
+                _iterationsCount = roMethodMatrixBalanceProperties.IterationsCount;
+                _iterationType = roMethodMatrixBalanceProperties.IterationType;
+                _balanceMode = roMethodMatrixBalanceProperties.BalanceMode;
+                _computationMode = roMethodMatrixBalanceProperties.ComputationMode;
+                _matrixType = roMethodMatrixBalanceProperties.MatrixType;
+                _overrideLowLevelRid = roMethodMatrixBalanceProperties.OverrideLowLevel.Key;
+                _modelRID = roMethodMatrixBalanceProperties.Model.Key;
+
+
+                BasisProfile.BasisDetailProfileList.Clear();
+                BasisDetailProfile basisDetailProfile;
+                int i = 0;
+                foreach (ROBasisDetailProfile basisDetail in roMethodMatrixBalanceProperties.MatrixBasis)
+                {
+                    basisDetailProfile = new BasisDetailProfile(i + 1, null);
+                    //Begin Track #4457 - JSmith - Add forecast versions
+                    ForecastVersionProfileBuilder fvpb = new ForecastVersionProfileBuilder();
+                    basisDetailProfile.VersionProfile = fvpb.Build(Convert.ToInt32(basisDetail.VersionId));
+                    //End Track #4457
+                    basisDetailProfile.HierarchyNodeProfile = new HierarchyNodeProfile(basisDetail.MerchandiseId);
+                    basisDetailProfile.DateRangeProfile = new DateRangeProfile(Convert.ToInt32(basisDetail.DateRangeId, CultureInfo.CurrentUICulture));
+                    basisDetailProfile.DateRangeProfile.DisplayDate = Convert.ToString(basisDetail.DateRangeId, CultureInfo.CurrentUICulture);
+                    basisDetailProfile.Weight = Convert.ToSingle(basisDetail.Weight, CultureInfo.CurrentUICulture);
+                    basisDetailProfile.DateRangeProfile.Name = "Basis Total";
+                    if (basisDetail.IsIncluded == true)
+                    {
+                        basisDetailProfile.IncludeExclude = eBasisIncludeExclude.Include;
+                    }
+                    else
+                    {
+                        basisDetailProfile.IncludeExclude = eBasisIncludeExclude.Exclude;
+                    }
+                   
+                    BasisProfile.BasisDetailProfileList.Add(basisDetailProfile);
+                    // BEGIN MID Track #5647 - KJohnson - Matrix Forecast
+                    _useBasis = true;
+                    // END MID Track #5647
+                    i++;
+                }
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+
+                //throw new NotImplementedException("MethodSaveData is not implemented");
+        }
+
+        override public ROMethodProperties MethodCopyData()
+        {
+            throw new NotImplementedException("MethodCopyData is not implemented");
+        }
+        // END RO-642 - RDewey
+    }
 }

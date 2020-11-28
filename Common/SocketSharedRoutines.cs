@@ -89,6 +89,8 @@ namespace MIDRetail.Common
             public const string machineNameEnd = "</machineName>";
             public const string appStatusStart = "<appStatus>";
             public const string appStatusEnd = "</appStatus>";
+            public const string clientTypeStart = "<clientType>";
+            public const string clientTypeEnd = "</clientType>";
         }
 
 
@@ -187,6 +189,11 @@ namespace MIDRetail.Common
             string taginfo = Tags.clientPortStart + port.ToString() + Tags.clientPortEnd;
             return taginfo;
         }
+        public static string MakeUserNameForTagInfo(string userName)
+        {
+            string taginfo = Tags.userNameStart + userName.ToString() + Tags.userNameEnd;
+            return taginfo;
+        }
         public static string GetInfoFromTags(string taginfo, string startTag, string endTag)
         {
             int start = taginfo.IndexOf(startTag) + startTag.Length;
@@ -221,6 +228,7 @@ namespace MIDRetail.Common
             public static readonly SocketServerCommands GetClientList = new SocketServerCommands("GetClientList");  //returns a list of all connected clients and their IP
             public static readonly SocketServerCommands GetCurrentUsers = new SocketServerCommands("GetCurrentUsers");
             public static readonly SocketServerCommands TakeUserInfo = new SocketServerCommands("TakeUserInfo");
+            public static readonly SocketServerCommands SetAsJobServiceClient = new SocketServerCommands("SetAsJobServiceClient");
 
             private SocketServerCommands(string commandName)
             {

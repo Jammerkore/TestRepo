@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using MIDRetail.Common;
 using MIDRetail.DataCommon;
@@ -1390,6 +1391,7 @@ namespace MIDRetail.Business
 			bool foundProtected;
 			bool foundUnprotected;
 			int partialProtectWeekKey;
+            bool cellChanged = false;  // TT#2131-MD - JSmith - Halo Integration
 
 			try
 			{
@@ -1538,6 +1540,16 @@ namespace MIDRetail.Business
                                     if (planCellRef.PlanCube.doesCellExist(planCellRef) || aSaveAllStoreAsChain)
                                     // End TT#1869
 									{
+                                        // Begin TT#2131-MD - JSmith - Halo Integration
+                                        if (PlanCubeGroup.ROExtractEnabled
+                                            && (planCellRef.PostInitCellValue != planCellRef.CurrentCellValue
+                                                || aFromHierarchyNodeId != aToHierarchyNodeId
+                                                || aFromVersionId != aToVersionId)
+                                            )
+                                        {
+                                            cellChanged = true;
+                                        }
+                                        // End TT#2131-MD - JSmith - Halo Integration
 										if (aOnlyChanged && !aSaveAllStoreAsChain)
 										{
 											if (planCellRef.isCellChanged)
@@ -1579,7 +1591,10 @@ namespace MIDRetail.Business
 								aToVersionId,
 								valueColHash,
 								lockColHash,
-								aSaveLocks);
+								aSaveLocks,
+                                cellChanged  // TT#2131-MD - JSmith - Halo Integration
+                                );
+
 
 							writeCount += valueColHash.Count + lockColHash.Count;
 
@@ -1618,6 +1633,160 @@ namespace MIDRetail.Business
 				throw;
 			}
 		}
+
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        public void ExtractCube(ExtractOptions aExtractOptions, out bool rowsExtracted)
+        {
+            PlanCellReference planCellRef;
+            List<DateProfile> periods;
+            Dictionary<VariableProfile, double> valueCol;
+            Dictionary<VariableProfile, string> stringCol;
+            PlanWaferCell waferCell;
+            int writeCount;
+
+            try
+            {
+                rowsExtracted = false;
+                if (!PlanCubeGroup.ROExtractEnabled)
+                {
+                    return;
+                }
+
+                periods = PlanCubeGroup.BuildPeriods(
+                    includeYear: false, 
+                    includeSeason: false, 
+                    includeQuarter: false, 
+                    includeMonth: false, 
+                    includeWeeks: true,
+                    includeAllWeeks: aExtractOptions.IncludeAllWeeks,
+                    isForExtract: true,
+                    HN_RID: PlanCubeGroup.OpenParms.ChainHLPlanProfile.NodeProfile.Key,
+                    FV_RID: PlanCubeGroup.OpenParms.ChainHLPlanProfile.VersionProfile.Key,
+                    planType: ePlanType.Chain
+                    );
+
+                if (periods.Count == 0)
+                {
+                    return;
+                }
+
+                PlanCubeGroup.ROExtractData.OpenUpdateConnection();
+
+                try
+                {
+                    PlanCubeGroup.ROExtractData.Variable_Init();
+                    writeCount = 0;
+
+                    valueCol = new Dictionary<VariableProfile, double>();
+                    stringCol = new Dictionary<VariableProfile, string>();
+
+                    planCellRef = (PlanCellReference)CreateCellReference();
+                    planCellRef[eProfileType.Version] = PlanCubeGroup.OpenParms.ChainHLPlanProfile.VersionProfile.Key;
+                    planCellRef[eProfileType.HierarchyNode] = PlanCubeGroup.OpenParms.ChainHLPlanProfile.NodeProfile.Key;
+                    planCellRef[eProfileType.QuantityVariable] = CubeGroup.Transaction.PlanComputations.PlanQuantityVariables.ValueQuantity.Key;
+
+                    foreach (WeekProfile weekProf in periods)
+                    {
+                        planCellRef[eProfileType.Week] = weekProf.Key;
+
+                        valueCol.Clear();
+                        stringCol.Clear();
+
+                        foreach (VariableProfile varProf in PlanCubeGroup.Variables.GetChainWeeklyVariableList())
+                        {
+                            // skip variables not selected
+                            if (!aExtractOptions.VarProfList.Contains(varProf.Key))
+                            {
+                                continue;
+                            }
+
+                            planCellRef[eProfileType.Variable] = varProf.Key;
+
+                            if (varProf.FormatType == eValueFormatType.GenericNumeric)
+                            {
+                                if (planCellRef.CurrentCellValue != 0
+                                    || !aExtractOptions.ExcludeZeroValues
+                                    || planCellRef.isCellChanged)
+                                {
+                                    valueCol.Add(varProf, planCellRef.CurrentCellValue);
+                                }
+                            }
+                            else
+                            {
+                                waferCell = new PlanWaferCell(planCellRef, planCellRef.CurrentCellValue, "1", "1", false);
+                                if (!string.IsNullOrEmpty(waferCell.ValueAsString)
+                                    || !aExtractOptions.ExcludeZeroValues
+                                    || planCellRef.isCellChanged)
+                                {
+                                    stringCol.Add(varProf, waferCell.ValueAsString);
+                                }
+                            }
+                        }
+
+                        PlanCubeGroup.VarData.AddPlanningExtractControlValue(
+                                planCellRef[eProfileType.HierarchyNode],
+                                planCellRef[eProfileType.Week],
+                                planCellRef[eProfileType.Version],
+                                ePlanType.Chain);
+
+                        if (valueCol.Count > 0
+                            || stringCol.Count > 0)
+                        {
+						    rowsExtracted = true;
+                            PlanCubeGroup.ROExtractData.Planning_Chain_Insert(
+                                PlanCubeGroup.OpenParms.ChainHLPlanProfile.NodeProfile.NodeID,
+                                weekProf.ToString(),
+                                PlanCubeGroup.OpenParms.ChainHLPlanProfile.VersionProfile.Description,
+                                 valueCol,
+                                 stringCol);
+
+                            writeCount += (valueCol.Count + stringCol.Count);
+
+                            if (writeCount > MIDConnectionString.CommitLimit)
+                            {
+                                PlanCubeGroup.ROExtractData.Planning_Chain_Update();
+                                PlanCubeGroup.ROExtractData.CommitData();
+                                PlanCubeGroup.ROExtractData.Variable_Init();
+                                writeCount = 0;
+                            }
+                        }
+                    }
+
+                    if (writeCount > 0)
+                    {
+                        PlanCubeGroup.ROExtractData.Planning_Chain_Update();
+                    }
+
+                    PlanCubeGroup.ROExtractData.CommitData();
+
+                    PlanCubeGroup.VarData.OpenUpdateConnection();
+                    PlanCubeGroup.VarData.EXTRACT_PLANNING_CONTROL_Update(forExtract: true);
+                    PlanCubeGroup.VarData.CommitData();
+                }
+                catch (Exception exc)
+                {
+                    string message = exc.ToString();
+                    throw;
+                }
+                finally
+                {
+                    if (PlanCubeGroup.ROExtractData.ConnectionIsOpen)
+                    {
+                        PlanCubeGroup.ROExtractData.CloseUpdateConnection();
+                    }
+                    if (PlanCubeGroup.VarData.ConnectionIsOpen)
+                    {
+                        PlanCubeGroup.VarData.CloseUpdateConnection();
+                    }
+                }
+            }
+            catch (Exception exc)
+            {
+                string message = exc.ToString();
+                throw;
+            }
+        }
+        // End TT#2131-MD - JSmith - Halo Integration
 
 		//Begin Track #6061 - JScott - Incorrect values when exporting combined version with "pre-init"
 		///// <summary>

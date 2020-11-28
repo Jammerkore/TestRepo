@@ -165,6 +165,7 @@ namespace MIDRetail.Windows
                 List<storeCharInfo> charList = new List<storeCharInfo>();
                 List<int> fieldChangedList = new List<int>();
                 List<string> fieldNameList = new List<string>();  // TT#1844-MD - JSmith - Store Name when changed not changing in Store Explorer for Edit Store or Edit Fields
+                bool clearExtractDates = false;   // TT#2131-MD - JSmith - Halo Integration
 
                 foreach (DataRow dr in e.dsValuesToSave.Tables[0].Rows)
                 {
@@ -445,6 +446,7 @@ namespace MIDRetail.Windows
                     this.storeAddedRID = StoreMgmt.StoreProfile_Add(storeProfile, charList, refreshStoreGroups: refreshStoreGroups, progressbarOptions: SharedRoutines.ProgressBarOptions_Get());
                     StoreMgmt.AuditMessage_Add(StoreMgmt.AuditCodesForStoreMgmt.StoreProfile, "Added: " + storeProfile.Text);
                     this.storeAdded = true;
+                    clearExtractDates = true;   // TT#2131-MD - JSmith - Halo Integration
                 }
                 else
                 {
@@ -457,6 +459,7 @@ namespace MIDRetail.Windows
                         //Since the store results will now change for EVERY store group, refresh ALL store groups
                         StoreMgmt.StoreGroups_Refresh(SharedRoutines.ProgressBarOptions_Get());
                         doRefreshNodes = true;  //this will cause a reload of the nodes in the store group explorer
+                        clearExtractDates = true;   // TT#2131-MD - JSmith - Halo Integration
                     }
                     else
                     {
@@ -472,6 +475,26 @@ namespace MIDRetail.Windows
                         this.storeUpdated = true;
                     }
                 }
+
+                // Begin TT#2131-MD - JSmith - Halo Integration
+                if (clearExtractDates)
+                {
+                    VariablesData vd = new VariablesData(SAB.ApplicationServerSession.GlobalOptions.NumberOfStoreDataTables);
+                    try
+                    {
+                        vd.OpenUpdateConnection();
+                        vd.EXTRACT_PLANNING_CONTROL_CLEAR_EXTRACT_DATES();
+                        vd.CommitData();
+                    }
+                    finally
+                    {
+                        if (vd.ConnectionIsOpen)
+                        {
+                            vd.CloseUpdateConnection();
+                        }
+                    }
+                }
+                // End TT#2131-MD - JSmith - Halo Integration
             }
             catch (Exception ex)
             {

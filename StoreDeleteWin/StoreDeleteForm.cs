@@ -52,6 +52,7 @@ namespace MIDRetail.StoreDelete
 				_formLoaded = false;
 				MyListBox.SetListBox(this.lbAnalysis);
 				_connectionString = MIDConfigurationManager.AppSettings["ConnectionString"];
+                MIDConnectionString.ConnectionString = _connectionString;  // TT#2131-MD - JSmith - Halo Integration
 				GetConfiguration();
 				CheckAnalysisDates();
 				CheckResetButton();

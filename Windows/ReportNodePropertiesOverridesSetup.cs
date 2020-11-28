@@ -1,14 +1,15 @@
 using System;
 using System.Drawing;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Windows.Forms;
-using CrystalDecisions.CrystalReports.Engine;
-using CrystalDecisions.Shared;
-using CrystalDecisions.Windows.Forms;
-using CrystalDecisions.ReportSource;
-using CrystalDecisions.CrystalReports.ViewerObjectModel;
+//using CrystalDecisions.CrystalReports.Engine;
+//using CrystalDecisions.Shared;
+//using CrystalDecisions.Windows.Forms;
+//using CrystalDecisions.ReportSource;
+//using CrystalDecisions.CrystalReports.ViewerObjectModel;
 
 using System.IO;
 
@@ -567,9 +568,10 @@ namespace MIDRetail.Windows
 			try
 			{
                 Cursor.Current = Cursors.WaitCursor;
+                List<ReportInfo> reports = new List<ReportInfo>();
 
-				//MIDConfigurationManager.AppSettings["databaseName"]
-				int merch = 0;			
+                //MIDConfigurationManager.AppSettings["databaseName"]
+                int merch = 0;			
 				if(this.NodeRID >= 0) 
 				   merch = this.NodeRID;			  
 								
@@ -681,7 +683,7 @@ namespace MIDRetail.Windows
 				}
 
                 ReportData reportData = new ReportData();
-                Windows.CrystalReports.NodePropertiesOverrides nodePropertiesOverridesReport = new Windows.CrystalReports.NodePropertiesOverrides();
+                //Windows.CrystalReports.NodePropertiesOverrides nodePropertiesOverridesReport = new Windows.CrystalReports.NodePropertiesOverrides();
 
                 System.Data.DataSet getReportsDataSet = MIDEnvironment.CreateDataSet("GetReportsDataSet");
                 reportData.GetReports_Report(getReportsDataSet, 
@@ -707,7 +709,7 @@ namespace MIDRetail.Windows
                                             );
                                             //END TT#436-MD -jsobek -Add the new items to the Node Properties Overrides Report
                                             
-                nodePropertiesOverridesReport.SetDataSource(getReportsDataSet);
+                //nodePropertiesOverridesReport.SetDataSource(getReportsDataSet);
 
                 if (Daily == 1) // TT#277 - unrelated but adds performance
                 {
@@ -719,7 +721,15 @@ namespace MIDRetail.Windows
                         //storeGroup,        // Begin TT#265 - RMatelic - Eligibility Report not showing low level nodes and formatting problems  
                         //storeSet);   
                                                       _storeRIDTextList);     // End TT#265
-                    nodePropertiesOverridesReport.Subreports["DailyPercentages.rpt"].SetDataSource(dailyPercentagesDataSet);
+                    //nodePropertiesOverridesReport.Subreports["DailyPercentages.rpt"].SetDataSource(dailyPercentagesDataSet);
+                    reports.Add(new ReportInfo(aReportSource: dailyPercentagesDataSet,
+                                reportType: eReportType.NodePropertiesOverride_DailyPcts,
+                                reportName: "DailyPercentages",
+                                reportTitle: "Logilitity - RO - Daily Percentages",
+                                reportComment: "",
+                                reportInformation: "",
+                                displayValue: "Daily Percentages"
+                                ));
                 }
 
                 if (ForecastLevel == 1) // TT#277 - unrelated but adds performance
@@ -729,7 +739,15 @@ namespace MIDRetail.Windows
                                                    merch,
                                                    lowLevelNo,
                                                    ForecastLevel);
-                    nodePropertiesOverridesReport.Subreports["OTSForecast.rpt"].SetDataSource(forecastLevelDataSet);
+                    //nodePropertiesOverridesReport.Subreports["OTSForecast.rpt"].SetDataSource(forecastLevelDataSet);
+                    reports.Add(new ReportInfo(aReportSource: forecastLevelDataSet,
+                                reportType: eReportType.NodePropertiesOverride_ForecastLevel,
+                                reportName: "ForecastLevel",
+                                reportTitle: "Logilitity - RO - OTS Forecast Level",
+                                reportComment: "",
+                                reportInformation: "",
+                                displayValue: "OTS Forecast Level"
+                                ));
                 }
 
                 if (ForecastType == 1) // TT#277 - unrelated but adds performance
@@ -738,7 +756,15 @@ namespace MIDRetail.Windows
                     reportData.ForecastType_Report(forecastTypeDataSet,
                                                   merch,
                                                   lowLevelNo);
-                    nodePropertiesOverridesReport.Subreports["ForecasteType.rpt"].SetDataSource(forecastTypeDataSet);
+                    //nodePropertiesOverridesReport.Subreports["ForecasteType.rpt"].SetDataSource(forecastTypeDataSet);
+                    reports.Add(new ReportInfo(aReportSource: forecastTypeDataSet,
+                                reportType: eReportType.NodePropertiesOverride_ForecastType,
+                                reportName: "ForecastType",
+                                reportTitle: "Logilitity - RO - OTS Forecast Type",
+                                reportComment: "",
+                                reportInformation: "",
+                                displayValue: "OTS Forecast Type"
+                                ));
                 }
 
                 string inheritedMsg = string.Empty; // TT#351-RMatelic-Receive Enter Parameter Values dialog when requesting Node Properties Overrides Report
@@ -760,72 +786,126 @@ namespace MIDRetail.Windows
                             if (dr["PURGE_DAILY_HISTORY_WEEKS"] == System.DBNull.Value)
                             {
                                 dr["PURGE_DAILY_HISTORY_WEEKS"] = hnp.PurgeDailyHistoryAfter;
-                                dr["DAILY_INH"] = lblAsterisks;
+                                dr["DAILY_INH"] = hnp.PurgeDailyHistoryAfter.ToString() + lblAsterisks;
                                 foundInherited = true;
                             }
+                            else if (hnp.PurgeDailyHistoryAfter != -1)
+                            {
+                                dr["DAILY_INH"] = hnp.PurgeDailyHistoryAfter.ToString();
+                            }
+
                             if (dr["PURGE_WEEKLY_HISTORY_WEEKS"] == System.DBNull.Value)
                             {
                                 dr["PURGE_WEEKLY_HISTORY_WEEKS"] = hnp.PurgeWeeklyHistoryAfter;
-                                dr["WEEKLY_INH"] = lblAsterisks;
+                                dr["WEEKLY_INH"] = hnp.PurgeWeeklyHistoryAfter.ToString() + lblAsterisks;
                                 foundInherited = true;
                             }
+                            else if (hnp.PurgeWeeklyHistoryAfter != -1)
+                            {
+                                dr["WEEKLY_INH"] = hnp.PurgeWeeklyHistoryAfter.ToString();
+                            }
+
                             if (dr["PURGE_PLANS_WEEKS"] == System.DBNull.Value)
                             {
                                 dr["PURGE_PLANS_WEEKS"] = hnp.PurgeOTSPlansAfter;
-                                dr["PLANS_INH"] = lblAsterisks;
+                                dr["PLANS_INH"] = hnp.PurgeOTSPlansAfter.ToString() + lblAsterisks;
                                 foundInherited = true;
                             }
+                            else if (hnp.PurgeOTSPlansAfter != -1)
+                            {
+                                dr["PLANS_INH"] = hnp.PurgeOTSPlansAfter.ToString();
+                            }
+
                             //Begin TT#400-MD -jsobek -Add Header Purge criteria by Header Type
                             if (dr["PURGE_HEADERS_WEEKS_RECEIPT"] == System.DBNull.Value)
                             {
                                 dr["PURGE_HEADERS_WEEKS_RECEIPT"] = hnp.PurgeHtReceiptAfter;
-                                dr["HEADERS_RECEIPT_INH"] = lblAsterisks;
+                                dr["HEADERS_RECEIPT_INH"] = hnp.PurgeHtReceiptAfter.ToString() + lblAsterisks;
                                 foundInherited = true;
                             }
+                            else if (hnp.PurgeHtReceiptAfter != -1)
+                            {
+                                dr["HEADERS_RECEIPT_INH"] = hnp.PurgeHtReceiptAfter.ToString();
+                            }
+
                             if (dr["PURGE_HEADERS_WEEKS_ASN"] == System.DBNull.Value)
                             {
                                 dr["PURGE_HEADERS_WEEKS_ASN"] = hnp.PurgeHtASNAfter;
-                                dr["HEADERS_ASN_INH"] = lblAsterisks;
+                                dr["HEADERS_ASN_INH"] = hnp.PurgeHtASNAfter.ToString() + lblAsterisks;
                                 foundInherited = true;
                             }
+                            else if (hnp.PurgeHtASNAfter != -1)
+                            {
+                                dr["HEADERS_ASN_INH"] = hnp.PurgeHtASNAfter.ToString();
+                            }
+
                             if (dr["PURGE_HEADERS_WEEKS_DUMMY"] == System.DBNull.Value)
                             {
                                 dr["PURGE_HEADERS_WEEKS_DUMMY"] = hnp.PurgeHtDummyAfter;
-                                dr["HEADERS_DUMMY_INH"] = lblAsterisks;
+                                dr["HEADERS_DUMMY_INH"] = hnp.PurgeHtDummyAfter.ToString() + lblAsterisks;
                                 foundInherited = true;
                             }
+                            else if (hnp.PurgeHtDummyAfter != -1)
+                            {
+                                dr["HEADERS_DUMMY_INH"] = hnp.PurgeHtDummyAfter.ToString();
+                            }
+
                             if (dr["PURGE_HEADERS_WEEKS_DROPSHIP"] == System.DBNull.Value)
                             {
                                 dr["PURGE_HEADERS_WEEKS_DROPSHIP"] = hnp.PurgeHtDropShipAfter;
-                                dr["HEADERS_DROPSHIP_INH"] = lblAsterisks;
+                                dr["HEADERS_DROPSHIP_INH"] = hnp.PurgeHtDropShipAfter.ToString() + lblAsterisks;
                                 foundInherited = true;
                             }
+                            else if (hnp.PurgeHtDropShipAfter != -1)
+                            {
+                                dr["HEADERS_DROPSHIP_INH"] = hnp.PurgeHtDropShipAfter.ToString();
+                            }
+
                             if (dr["PURGE_HEADERS_WEEKS_RESERVE"] == System.DBNull.Value)
                             {
                                 dr["PURGE_HEADERS_WEEKS_RESERVE"] = hnp.PurgeHtReserveAfter;
-                                dr["HEADERS_RESERVE_INH"] = lblAsterisks;
+                                dr["HEADERS_RESERVE_INH"] = hnp.PurgeHtReserveAfter.ToString() + lblAsterisks;
                                 foundInherited = true;
                             }
+                            else if (hnp.PurgeHtReserveAfter != -1)
+                            {
+                                dr["HEADERS_RESERVE_INH"] = hnp.PurgeHtReserveAfter.ToString();
+                            }
+
                             if (dr["PURGE_HEADERS_WEEKS_WORKUPTOTALBUY"] == System.DBNull.Value)
                             {
                                 dr["PURGE_HEADERS_WEEKS_WORKUPTOTALBUY"] = hnp.PurgeHtWorkUpTotAfter;
-                                dr["HEADERS_WORKUPTOTALBUY_INH"] = lblAsterisks;
+                                dr["HEADERS_WORKUPTOTALBUY_INH"] = hnp.PurgeHtWorkUpTotAfter.ToString() + lblAsterisks;
                                 foundInherited = true;
                             }
+                            else if (hnp.PurgeHtWorkUpTotAfter != -1)
+                            {
+                                dr["HEADERS_WORKUPTOTALBUY_INH"] = hnp.PurgeHtWorkUpTotAfter.ToString();
+                            }
+
                             if (dr["PURGE_HEADERS_WEEKS_PO"] == System.DBNull.Value)
                             {
                                 dr["PURGE_HEADERS_WEEKS_PO"] = hnp.PurgeHtPurchaseOrderAfter;
-                                dr["HEADERS_PO_INH"] = lblAsterisks;
+                                dr["HEADERS_PO_INH"] = hnp.PurgeHtPurchaseOrderAfter.ToString() + lblAsterisks;
                                 foundInherited = true;
                             }
+                            else if (hnp.PurgeHtPurchaseOrderAfter != -1)
+                            {
+                                dr["HEADERS_PO_INH"] = hnp.PurgeHtPurchaseOrderAfter.ToString();
+                            }
+
                             if (dr["PURGE_HEADERS_WEEKS_VSW"] == System.DBNull.Value)
                             {
                                 dr["PURGE_HEADERS_WEEKS_VSW"] = hnp.PurgeHtVSWAfter;
-                                dr["HEADERS_VSW_INH"] = lblAsterisks;
+                                dr["HEADERS_VSW_INH"] = hnp.PurgeHtVSWAfter.ToString() + lblAsterisks;
                                 foundInherited = true;
                             }
+                            else if (hnp.PurgeHtVSWAfter != -1)
+                            {
+                                dr["HEADERS_VSW_INH"] = hnp.PurgeHtVSWAfter.ToString();
+                            }
                             //End TT#400-MD -jsobek -Add Header Purge criteria by Header Type
-                  
+
                             //Begin TT#400-MD - JSmith - Add Header Purge Criteria by Header Type
                             //if (dr["PURGE_HEADERS_WEEKS"] == System.DBNull.Value)
                             //{
@@ -837,7 +917,7 @@ namespace MIDRetail.Windows
                         }
                     }
                     purgeDatesDataSet.AcceptChanges();
-                    nodePropertiesOverridesReport.Subreports["PurgeCriteria.rpt"].SetDataSource(purgeDatesDataSet);
+                    //nodePropertiesOverridesReport.Subreports["PurgeCriteria.rpt"].SetDataSource(purgeDatesDataSet);
                     // Begin T#351-RMatelic-Receive Enter Parameter Values dialog when requesting Node Properties Overrides Report
                     //string inheritedMsg = string.Empty;
                     // End TT#351 
@@ -848,7 +928,15 @@ namespace MIDRetail.Windows
                         inheritedMsg = MIDText.GetTextOnly(eMIDTextCode.msg_InheritedFromHigherLevel);
                         //End TT#400-MD -jsobek -Add Header Purge criteria by Header Type
                     }
-                    nodePropertiesOverridesReport.SetParameterValue("@INHERITED_TEXT", inheritedMsg, "PurgeCriteria.rpt");
+                    //nodePropertiesOverridesReport.SetParameterValue("@INHERITED_TEXT", inheritedMsg, "PurgeCriteria.rpt");
+                    reports.Add(new ReportInfo(aReportSource: purgeDatesDataSet,
+                                reportType: eReportType.NodePropertiesOverride_PurgeCriteria,
+                                reportName: "PurgeCriteria",
+                                reportTitle: "Logilitity - RO - Purge Criteria",
+                                reportComment: inheritedMsg,
+                                reportInformation: "",
+                                displayValue: "Purge Criteria"
+                                ));
                     //End TT#274
                 }
 
@@ -862,7 +950,15 @@ namespace MIDRetail.Windows
                         //storeGroup,            // Begin TT#265 - RMatelic - Eligibility Report not showing low level nodes and formatting problems  
                         //storeSet);            
                                                    _storeRIDTextList);     // End TT#265
-                    nodePropertiesOverridesReport.Subreports["StoreCapacity.rpt"].SetDataSource(storeCapacityDataSet);
+                    //nodePropertiesOverridesReport.Subreports["StoreCapacity.rpt"].SetDataSource(storeCapacityDataSet);
+                    reports.Add(new ReportInfo(aReportSource: storeCapacityDataSet,
+                                reportType: eReportType.NodePropertiesOverride_Capacity,
+                                reportName: "StoreCapacity",
+                                reportTitle: "Logilitity - RO - Store Capacity",
+                                reportComment: "",
+                                reportInformation: "",
+                                displayValue: "Store Capacity"
+                                ));
                 }
 
                 if (Eligibility == 1 || Modifiers == 1 || SimilarStore == 1) // TT#277 - unrelated but adds performance
@@ -878,6 +974,28 @@ namespace MIDRetail.Windows
                                                       Eligibility,
                                                       Modifiers,
                                                       SimilarStore);
+                    if (Eligibility == 1)
+                    {
+                        foreach (System.Data.DataRow dr in storeEligibilityDataSet.Tables[0].Rows)
+                        {
+                            if (dr["INELIGIBLE"] != DBNull.Value)
+                            {
+                                if (Convert.ToString(dr["INELIGIBLE"]) == "1")
+                                {
+                                    dr["INELIGIBLE"] = "Yes";
+                                }
+                                else
+                                {
+                                    dr["INELIGIBLE"] = "No";
+                                }
+                            }
+                            else
+                            {
+                                dr["INELIGIBLE"] = "No";
+                            }
+                        }
+                    }
+
                     // Begin TT#278 - RMatelic - Sim Store report shows "+315Weeks" instead of date range for one of the stores listed.
                     // This occurs when the date range is Dynamic
                     if (SimilarStore == 1)
@@ -903,7 +1021,15 @@ namespace MIDRetail.Windows
                             }  
                         }
                     }
-                    nodePropertiesOverridesReport.Subreports["StoreEligibility.rpt"].SetDataSource(storeEligibilityDataSet);
+                    //nodePropertiesOverridesReport.Subreports["StoreEligibility.rpt"].SetDataSource(storeEligibilityDataSet);
+                    reports.Add(new ReportInfo(aReportSource: storeEligibilityDataSet,
+                                reportType: eReportType.NodePropertiesOverride_EligibilityModifiersSimilarStore,
+                                reportName: "Eligibility",
+                                reportTitle: "Logilitity - RO - Store Eligibility, Modifiers, Similar Store",
+                                reportComment: "",
+                                reportInformation: "",
+                                displayValue: "Store Eligibility, Modifiers, Similar Store"
+                                ));
                     // End TT#278  
                 }
 
@@ -915,7 +1041,15 @@ namespace MIDRetail.Windows
                                                  lowLevelNo,
                                                  StoreGrades,
                                                  AllocationMinMax);
-                    nodePropertiesOverridesReport.Subreports["StoreGrades.rpt"].SetDataSource(storeGradesDataSet);
+                    //nodePropertiesOverridesReport.Subreports["StoreGrades.rpt"].SetDataSource(storeGradesDataSet);
+                    reports.Add(new ReportInfo(aReportSource: storeGradesDataSet,
+                                reportType: eReportType.NodePropertiesOverride_StoreGradesAllocationMinMax,
+                                reportName: "StoreGrades",
+                                reportTitle: "Logilitity - RO - Store Grades",
+                                reportComment: "",
+                                reportInformation: "",
+                                displayValue: "Store Grades"
+                                ));
                 }
 
                 if (VelocityGrades == 1) // TT#277 - unrelated but adds performance
@@ -924,7 +1058,15 @@ namespace MIDRetail.Windows
                     reportData.VelocityGrades_Report(velocityGradesDataSet,
                                                     merch,
                                                     lowLevelNo);
-                    nodePropertiesOverridesReport.Subreports["VelocityGrades.rpt"].SetDataSource(velocityGradesDataSet);
+                    //nodePropertiesOverridesReport.Subreports["VelocityGrades.rpt"].SetDataSource(velocityGradesDataSet);
+                    reports.Add(new ReportInfo(aReportSource: velocityGradesDataSet,
+                                reportType: eReportType.NodePropertiesOverride_VelocityGrades,
+                                reportName: "Velocity Grades",
+                                reportTitle: "Logilitity - RO - Velocity Grades",
+                                reportComment: "",
+                                reportInformation: "",
+                                displayValue: "Velocity Grades"
+                                ));
                 }
 
                 if (Stock == 1) // TT#277 - unrelated but adds performance
@@ -933,7 +1075,15 @@ namespace MIDRetail.Windows
                     reportData.StockMinMax_Report(stockMinMaxDataSet,
                                                  merch,
                                                  lowLevelNo);
-                    nodePropertiesOverridesReport.Subreports["StockMinMax.rpt"].SetDataSource(stockMinMaxDataSet);
+                    //nodePropertiesOverridesReport.Subreports["StockMinMax.rpt"].SetDataSource(stockMinMaxDataSet);
+                    reports.Add(new ReportInfo(aReportSource: stockMinMaxDataSet,
+                                reportType: eReportType.NodePropertiesOverride_StockMinMax,
+                                reportName: "StockMinMax",
+                                reportTitle: "Logilitity - RO - Stock Min/Max",
+                                reportComment: "",
+                                reportInformation: "",
+                                displayValue: "Stock Min/Max"
+                                ));
                 }
 
                 //BEGIN TT#436-MD -jsobek -Add the new items to the Node Properties Overrides Report
@@ -944,7 +1094,15 @@ namespace MIDRetail.Windows
                     reportData.Characteristic_Report(characteristicsDataSet,
                                                  merch,
                                                  lowLevelNo);
-                    nodePropertiesOverridesReport.Subreports["Characteristics.rpt"].SetDataSource(characteristicsDataSet);
+                    //nodePropertiesOverridesReport.Subreports["Characteristics.rpt"].SetDataSource(characteristicsDataSet);
+                    reports.Add(new ReportInfo(aReportSource: characteristicsDataSet,
+                                reportType: eReportType.NodePropertiesOverride_Characteristics,
+                                reportName: "Characteristics",
+                                reportTitle: "Logilitity - RO - Characteristics",
+                                reportComment: "",
+                                reportInformation: "",
+                                displayValue: "Characteristics"
+                                ));
                 }
                 if (ChainSetPercent== 1)
                 {
@@ -1057,15 +1215,16 @@ namespace MIDRetail.Windows
 
                         string strCounter = iWeekCounter.ToString().PadLeft(2, '0');
 
-                        string dataColumnName = "WEEK" + strCounter + "_PERCENT";
+                        //string dataColumnName = "WEEK" + strCounter + "_PERCENT";
+                        string dataColumnName = wp.WeekInYear.ToString();
                         if (chainSetPercentDataSet.Tables[0].Columns.Contains(dataColumnName) == false)
                         {
 
                             System.Data.DataColumn dc = new System.Data.DataColumn(dataColumnName);
 
                             chainSetPercentDataSet.Tables[0].Columns.Add(dc);
-                            chainSetPercentDataSet.Tables[0].Columns.Add("WEEK" + strCounter + "_TIMEID");
-                            chainSetPercentDataSet.Tables[0].Columns.Add("WEEK" + strCounter + "_CAPTION");
+                            //chainSetPercentDataSet.Tables[0].Columns.Add("WEEK" + strCounter + "_TIMEID");
+                            //chainSetPercentDataSet.Tables[0].Columns.Add("WEEK" + strCounter + "_CAPTION");
 
                             //Set the overall weeks caption Week xx thru Week yy
                             if (iWeekCounter == 1)
@@ -1106,8 +1265,8 @@ namespace MIDRetail.Windows
                             int hnID = (int)dr["HN_RID"];
                             string storeID = (string)dr["ST_ID"];
                             int rowIndex = chainSetPercentDataSet.Tables[0].Rows.IndexOf(dr);
-                            chainSetPercentDataSet.Tables[0].Rows[rowIndex]["WEEK" + strCounter + "_TIMEID"] = yearWeek.ToString();
-                            chainSetPercentDataSet.Tables[0].Rows[rowIndex]["WEEK" + strCounter + "_CAPTION"] = yearWeek.ToString().Substring(4, 2); // stringWeek;
+                            //chainSetPercentDataSet.Tables[0].Rows[rowIndex]["WEEK" + strCounter + "_TIMEID"] = yearWeek.ToString();
+                            //chainSetPercentDataSet.Tables[0].Rows[rowIndex]["WEEK" + strCounter + "_CAPTION"] = yearWeek.ToString().Substring(4, 2); // stringWeek;
                             if (timeID.ToString() == yearWeek.ToString())
                             {
                                 string percentage = String.Empty;
@@ -1126,8 +1285,9 @@ namespace MIDRetail.Windows
                                     if (hnID2 == hnID && storeID==storeID2)
                                     {
                                         int rowIndex2 = chainSetPercentDataSet.Tables[0].Rows.IndexOf(dr2);
-                                        chainSetPercentDataSet.Tables[0].Rows[rowIndex2]["WEEK" + strCounter + "_PERCENT"] = percentage;
-                                    }
+                                            //chainSetPercentDataSet.Tables[0].Rows[rowIndex2]["WEEK" + strCounter + "_PERCENT"] = percentage;
+                                            chainSetPercentDataSet.Tables[0].Rows[rowIndex2][wp.WeekInYear.ToString()] = percentage;
+                                        }
                                 }
                                 }
                             }
@@ -1143,13 +1303,31 @@ namespace MIDRetail.Windows
 
                     }
 
+                    // Get only one row for each node and set combination
+                    DataSet chainSetPercentDataSet2 = chainSetPercentDataSet.Clone();
 
-                   
+                    List<string> SGL_RIDs = new List<string>();
+                    foreach (DataRow dr in chainSetPercentDataSet.Tables[0].Rows)
+                    {
+                        string drSglRID = Convert.ToString(dr["HN_RID"]) + ":" + Convert.ToString(dr["SGL_RID"]);
+                        if (!SGL_RIDs.Contains(drSglRID))
+                        {
+                            chainSetPercentDataSet2.Tables[0].ImportRow(dr);
+                            SGL_RIDs.Add(drSglRID);
+                        }
+                    }
 
-                       
-               
 
-                    nodePropertiesOverridesReport.Subreports["ChainSetPercentages.rpt"].SetDataSource(chainSetPercentDataSet);
+
+                    //nodePropertiesOverridesReport.Subreports["ChainSetPercentages.rpt"].SetDataSource(chainSetPercentDataSet);
+                    reports.Add(new ReportInfo(aReportSource: chainSetPercentDataSet2,
+                                reportType: eReportType.NodePropertiesOverride_ChainSetPct,
+                                reportName: "ChainSetPct",
+                                reportTitle: "Logilitity - RO - Chain Set Percentages",
+                                reportComment: "",
+                                reportInformation: selectedWeeksCaption,
+                                displayValue: "Chain Set Percentages"
+                                ));
                 }
                 if (VSW == 1)
                 {
@@ -1189,7 +1367,15 @@ namespace MIDRetail.Windows
                         }
 
                     }
-                    nodePropertiesOverridesReport.Subreports["VSW.rpt"].SetDataSource(VSWDataSet);
+                    //nodePropertiesOverridesReport.Subreports["VSW.rpt"].SetDataSource(VSWDataSet);
+                    reports.Add(new ReportInfo(aReportSource: VSWDataSet,
+                                reportType: eReportType.NodePropertiesOverride_VSW,
+                                reportName: "VSW",
+                                reportTitle: "Logilitity - RO - VSW",
+                                reportComment: "",
+                                reportInformation: "",
+                                displayValue: "VSW"
+                                ));
                 }
                 if (SizeCurveCriteria == 1)
                 {
@@ -1213,7 +1399,15 @@ namespace MIDRetail.Windows
                         sizeCurveCriteriaDataSet.Tables[0].Rows[rowIndex]["DISPLAY_DATE"] = SAB.ClientServerSession.Calendar.GetDateRange(Convert.ToInt32(dr["CDR_RID"], CultureInfo.CurrentUICulture)).DisplayDate;
                     }
 
-                    nodePropertiesOverridesReport.Subreports["SizeCurveCriteria.rpt"].SetDataSource(sizeCurveCriteriaDataSet);
+                    //nodePropertiesOverridesReport.Subreports["SizeCurveCriteria.rpt"].SetDataSource(sizeCurveCriteriaDataSet);
+                    reports.Add(new ReportInfo(aReportSource: sizeCurveCriteriaDataSet,
+                                reportType: eReportType.NodePropertiesOverride_SizeCurveCriteria,
+                                reportName: "SizeCurveCriteria",
+                                reportTitle: "Logilitity - RO - Size Curve Criteria",
+                                reportComment: "",
+                                reportInformation: "",
+                                displayValue: "Size Curve Criteria"
+                                ));
                 }
                 if (SizeCurveTolerance == 1)
                 {
@@ -1222,7 +1416,15 @@ namespace MIDRetail.Windows
                                                  merch,
                                                  lowLevelNo);
 
-                    nodePropertiesOverridesReport.Subreports["SizeCurveTolerance.rpt"].SetDataSource(sizeCurveToleranceDataSet);
+                    //nodePropertiesOverridesReport.Subreports["SizeCurveTolerance.rpt"].SetDataSource(sizeCurveToleranceDataSet);
+                    reports.Add(new ReportInfo(aReportSource: sizeCurveToleranceDataSet,
+                                reportType: eReportType.NodePropertiesOverride_SizeCurveTolerance,
+                                reportName: "SizeCurveTolerance",
+                                reportTitle: "Logilitity - RO - Size Curve Tolerance",
+                                reportComment: "",
+                                reportInformation: "",
+                                displayValue: "Size Curve Tolerance"
+                                ));
                 }
                 if (SizeCurveSimilarStores == 1)
                 {
@@ -1250,37 +1452,50 @@ namespace MIDRetail.Windows
                        
                     }
 
-                    nodePropertiesOverridesReport.Subreports["SizeCurveSimilarStores.rpt"].SetDataSource(sizeCurveSimilarStoresDataSet);
+                    //nodePropertiesOverridesReport.Subreports["SizeCurveSimilarStores.rpt"].SetDataSource(sizeCurveSimilarStoresDataSet);
+                    reports.Add(new ReportInfo(aReportSource: sizeCurveSimilarStoresDataSet,
+                                reportType: eReportType.NodePropertiesOverride_SizeCurveSimilarStore,
+                                reportName: "SizeCurveSimilarStore",
+                                reportTitle: "Logilitity - RO - Size Curve Similar Store",
+                                reportComment: "",
+                                reportInformation: "",
+                                displayValue: "Size Curve Similar Store"
+                                ));
                 }
-                nodePropertiesOverridesReport.SetParameterValue("SELECTED_WEEKS_CAPTION", selectedWeeksCaption, "ChainSetPercentages.rpt");
-            
-                //END TT#436-MD -jsobek -Add the new items to the Node Properties Overrides Report
+                //nodePropertiesOverridesReport.SetParameterValue("SELECTED_WEEKS_CAPTION", selectedWeeksCaption, "ChainSetPercentages.rpt");
 
-                nodePropertiesOverridesReport.SetParameterValue("@SELECTED_NODE_RID", merch);
-                nodePropertiesOverridesReport.SetParameterValue("@LOWER_LEVEL", lowLevelNo);
-                nodePropertiesOverridesReport.SetParameterValue("@STORE_ID", Store);
-                // Begin TT#265 - RMatelic - Eligibility Report not showing low level nodes and formatting problems - changed parm name
-                //nodePropertiesOverridesReport.SetParameterValue("@STORE_CHAR_GROUP", storeGroup);
-                //nodePropertiesOverridesReport.SetParameterValue("@STORE_CHAR", storeSet);
-                nodePropertiesOverridesReport.SetParameterValue("@STORE_RID_LIST", _storeRIDTextList);
-                // End TT#265
+                ////END TT#436-MD -jsobek -Add the new items to the Node Properties Overrides Report
 
-                // Begin TT#277 - RMatelic - Report titles should show the override items selected
-                nodePropertiesOverridesReport.SetParameterValue("@ELIGIBILITY_TITLE", SetEligibilityTitle(Eligibility,Modifiers,SimilarStore));
-                nodePropertiesOverridesReport.SetParameterValue("@STOREGRADES_TITLE", SetStoreGradesTitle(StoreGrades, AllocationMinMax));
-                // End TT#277
-                // Begin TT#351-RMatelic-Receive Enter Parameter Values dialog when requesting Node Properties Overrides Report
-                // unsure as to why the next line is necessary, but it prevents the parameter request dialog from needlessly displaying 
-                nodePropertiesOverridesReport.SetParameterValue("@INHERITED_TEXT", inheritedMsg);
+                //nodePropertiesOverridesReport.SetParameterValue("@SELECTED_NODE_RID", merch);
+                //nodePropertiesOverridesReport.SetParameterValue("@LOWER_LEVEL", lowLevelNo);
+                //nodePropertiesOverridesReport.SetParameterValue("@STORE_ID", Store);
+                //// Begin TT#265 - RMatelic - Eligibility Report not showing low level nodes and formatting problems - changed parm name
+                ////nodePropertiesOverridesReport.SetParameterValue("@STORE_CHAR_GROUP", storeGroup);
+                ////nodePropertiesOverridesReport.SetParameterValue("@STORE_CHAR", storeSet);
+                //nodePropertiesOverridesReport.SetParameterValue("@STORE_RID_LIST", _storeRIDTextList);
+                //// End TT#265
+
+                //// Begin TT#277 - RMatelic - Report titles should show the override items selected
+                //nodePropertiesOverridesReport.SetParameterValue("@ELIGIBILITY_TITLE", SetEligibilityTitle(Eligibility,Modifiers,SimilarStore));
+                //nodePropertiesOverridesReport.SetParameterValue("@STOREGRADES_TITLE", SetStoreGradesTitle(StoreGrades, AllocationMinMax));
+                //// End TT#277
+                //// Begin TT#351-RMatelic-Receive Enter Parameter Values dialog when requesting Node Properties Overrides Report
+                //// unsure as to why the next line is necessary, but it prevents the parameter request dialog from needlessly displaying 
+                //nodePropertiesOverridesReport.SetParameterValue("@INHERITED_TEXT", inheritedMsg);
                 // End TT#351 
-                frmReportViewer viewer = new frmReportViewer(_SAB);
+                //frmReportViewer viewer = new frmReportViewer(_SAB, eReportType.NodePropertiesOverrideSetup);
+                //frmReportViewer viewer = new frmReportViewer(aSAB: _SAB, reportType: eReportType.NodePropertiesOverrideSetup, reportName: "NodePropertiesOverride", reportTitle: "Node Properties Override");
+                
+               
+                frmReportViewer viewer = new frmReportViewer(aSAB: _SAB, reports: reports);
                 //BEGIN TT#436-MD -jsobek -Add the new items to the Node Properties Overrides Report
                 // Might as well show the correct name of the report on the viewer
+                //viewer.ReportSource = storeEligibilityDataSet.Tables[0];
                 viewer.Text = "Node Properties Overrides Report"; //MIDText.GetTextOnly(eMIDTextCode.lbl_AllocationAudit);
                 //END TT#436-MD -jsobek -Add the new items to the Node Properties Overrides Report
                 viewer.MdiParent = this.ParentForm;
                 viewer.Anchor = AnchorStyles.Left | AnchorStyles.Top;
-                viewer.ReportSource = nodePropertiesOverridesReport;
+                //viewer.ReportSource = sizeCurveCriteriaDataSet;
                 viewer.Show();
                 viewer.BringToFront();
 			}

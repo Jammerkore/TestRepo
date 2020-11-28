@@ -11,7 +11,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyConfiguration("Base")]
 [assembly: AssemblyCompany("MIDRetail, Inc.")]
 [assembly: AssemblyProduct("MIDRetail")]
-[assembly: AssemblyCopyright("Copyright © MIDRetail, Inc. 2014")]
+[assembly: AssemblyCopyright("Copyright © Logility, Inc. 2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]		
 
@@ -26,7 +26,7 @@ using System.Runtime.CompilerServices;
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 
-[assembly: AssemblyVersion("17.04.*")]
+[assembly: AssemblyVersion("19.04.*")]
 
 
 //

@@ -215,6 +215,21 @@ namespace MIDRetail.Business
 			}
 		}
 
+        // Begin TT#1954-MD - JSmith - Assortment Performance
+        public ComputationInfo GetCompInfo()
+        {
+            try
+            {
+                return _compInfo;
+            }
+            catch (Exception exc)
+            {
+                string message = exc.ToString();
+                throw;
+            }
+        }
+		// End TT#1954-MD - JSmith - Assortment Performance
+
 		/// <summary>
 		/// Sets the ComputationInfo object.
 		/// </summary>

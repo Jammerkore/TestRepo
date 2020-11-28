@@ -41,6 +41,7 @@ namespace MIDRetail.Business
         public static readonly filterValueTypes Dollar = new filterValueTypes(3);
         public static readonly filterValueTypes List = new filterValueTypes(5);
         public static readonly filterValueTypes Boolean = new filterValueTypes(6);
+        public static readonly filterValueTypes Calendar = new filterValueTypes(7);   // TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
 
 
         private filterValueTypes(int dbIndex)
@@ -196,6 +197,9 @@ namespace MIDRetail.Business
         public static readonly filterListValueTypes AuditCompletionStatus = new filterListValueTypes(15);
         public static readonly filterListValueTypes AuditMessageLevel = new filterListValueTypes(16);
         public static readonly filterListValueTypes Users = new filterListValueTypes(17);
+        public static readonly filterListValueTypes AssortmentField = new filterListValueTypes(18);  // TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+        public static readonly filterListValueTypes AssortmentTypes = new filterListValueTypes(19);  // TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+        public static readonly filterListValueTypes AssortmentStatus = new filterListValueTypes(20);  // TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
 
         private filterListValueTypes(int Index)
         {
@@ -528,6 +532,75 @@ namespace MIDRetail.Business
             return dt;
         }
     }
+
+    // Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+	public sealed class filterCalendarDateOperatorTypes
+    {
+        public static List<filterCalendarDateOperatorTypes> opList = new List<filterCalendarDateOperatorTypes>();
+        public static readonly filterCalendarDateOperatorTypes Unrestricted = new filterCalendarDateOperatorTypes(0, "Unrestricted", "Unrestricted");
+        public static readonly filterCalendarDateOperatorTypes Last1Week = new filterCalendarDateOperatorTypes(1, "last1week", "Last 1 Week");
+        public static readonly filterCalendarDateOperatorTypes Next1Week = new filterCalendarDateOperatorTypes(2, "next1week", "Next 1 Week");
+        public static readonly filterCalendarDateOperatorTypes Next4Weeks = new filterCalendarDateOperatorTypes(3, "next4weeks", "Next 4 Weeks");
+        public static readonly filterCalendarDateOperatorTypes Between = new filterCalendarDateOperatorTypes(4, "bt", "between");
+        public static readonly filterCalendarDateOperatorTypes Specify = new filterCalendarDateOperatorTypes(5, "s", "Specify a date range");
+
+        private filterCalendarDateOperatorTypes(int dbIndex, string symbol, string description)
+        {
+            this.dbIndex = dbIndex;
+            this.symbol = symbol;
+            this.description = description;
+
+            opList.Add(this);
+        }
+        public int dbIndex { get; private set; }
+        public string symbol { get; private set; }
+        public string description { get; private set; }
+
+        public static implicit operator int(filterCalendarDateOperatorTypes op) { return op.dbIndex; }
+
+
+        public static filterCalendarDateOperatorTypes FromIndex(int dbIndex)
+        {
+            filterCalendarDateOperatorTypes result = opList.Find(
+               delegate(filterCalendarDateOperatorTypes ft)
+               {
+                   return ft.dbIndex == dbIndex;
+               }
+               );
+
+            return result;
+        }
+        public static filterCalendarDateOperatorTypes FromSymbol(string symbol)
+        {
+            filterCalendarDateOperatorTypes result = opList.Find(
+              delegate(filterCalendarDateOperatorTypes ft)
+              {
+                  return ft.symbol == symbol;
+              }
+              );
+
+            return result;
+        }
+        public static DataTable ToDataTable()
+        {
+            DataTable dt = new DataTable("operators");
+            dt.Columns.Add("OPERATOR_SYMBOL");
+            dt.Columns.Add("OPERATOR_DESCRIPTION");
+            dt.Columns.Add("OPERATOR_INDEX", typeof(int));
+
+
+            foreach (filterCalendarDateOperatorTypes opType in opList)
+            {
+                DataRow dr = dt.NewRow();
+                dr["OPERATOR_INDEX"] = opType.dbIndex;
+                dr["OPERATOR_SYMBOL"] = opType.symbol;
+                dr["OPERATOR_DESCRIPTION"] = opType.description;
+                dt.Rows.Add(dr);
+            }
+            return dt;
+        }
+    }
+	// End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
 
     public sealed class filterStringOperatorTypes
     {

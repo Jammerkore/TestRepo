@@ -1020,7 +1020,15 @@ namespace MIDRetail.Windows
 						addAction = true;
 					}
 
-					if (addAction)
+                    // Begin TT#2131-MD - JSmith - Halo Integration
+                    if (methodType == eForecastMethodType.PlanningExtract
+                        && !SAB.ROExtractEnabled)
+                    {
+                        addAction = false;
+                    }
+                    // End TT#2131-MD - JSmith - Halo Integration
+
+                    if (addAction)
 					{
 						ugMethods.DisplayLayout.ValueLists["Action"].ValueListItems.Add(Convert.ToInt32(dr["TEXT_CODE"], CultureInfo.CurrentUICulture), dr["TEXT_VALUE"].ToString());
 					}

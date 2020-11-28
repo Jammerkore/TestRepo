@@ -3647,7 +3647,14 @@ namespace MIDRetail.Windows
 			}
 			else
 			{
-				MessageBox.Show(ex.ToString(), "MIDFormBase.cs - " + moduleName);
+                if (MIDEnvironment.isWindows)
+                {
+                    MessageBox.Show(ex.ToString(), "MIDFormBase.cs - " + moduleName);
+                }
+                else
+                {
+                    rethrow = true;
+                }
 			}
 			this._exceptionCaught = true;
 			if (rethrow)
@@ -3700,8 +3707,15 @@ namespace MIDRetail.Windows
 				Title = errLevel;
 				Msg = MIDexc.Message;
 			}
-			MessageBox.Show(this, Msg, Title,
-				buttons, icon );
+            if (MIDEnvironment.isWindows)
+            {
+                MessageBox.Show(this, Msg, Title,
+                buttons, icon);
+            }
+            else
+            {
+                throw MIDexc;
+            }
 		}
 		#endregion Exception Handling
 

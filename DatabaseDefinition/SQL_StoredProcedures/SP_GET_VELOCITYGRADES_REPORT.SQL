@@ -28,7 +28,8 @@ BEGIN
 		HN_RID INT,
 		BN_ID CHAR(356) COLLATE Latin1_General_CS_AS,
 		BN_NAME CHAR(50) COLLATE Latin1_General_CS_AS,
-		BN_DESCRIPTION CHAR(250) COLLATE Latin1_General_CS_AS
+		BN_DESCRIPTION CHAR(250) COLLATE Latin1_General_CS_AS,
+		HOME_LEVEL INT
 		)
 
 	INSERT #TEMP (
@@ -36,13 +37,15 @@ BEGIN
 		HN_RID,
 		BN_ID,
 		BN_NAME,
-		BN_DESCRIPTION
+		BN_DESCRIPTION,
+		HOME_LEVEL
 		)
 	EXEC SP_GET_ALL_DESCENDANTS_BY_LEVEL_REPORT @SELECTED_NODE_RID,
 		@LEVEL
 
     -- Begin TT#5382 - JSmith - Product descriptor not displayed when the Store Eligibility is set at the color level
 	SELECT dbo.UDF_MID_GET_NODE_DISPLAY (vg.HN_RID) AS [DISPLAY_TEXT],
+	hen.HOME_LEVEL,
 	--SELECT CASE 
 	--		WHEN phl.PHL_DISPLAY_OPTION_ID = 800701
 	--			THEN RTRIM(hn.BN_ID)
@@ -151,13 +154,16 @@ BEGIN
 			BN_DESCRIPTION
 		FROM #TEMP
 		) hn ON hn.HN_RID = vg.HN_RID
-	ORDER BY hn.PARENT_HN_RID,
+	ORDER BY hen.HOME_LEVEL,
+	        hn.PARENT_HN_RID,
 		hn.BN_ID,
+		BOUNDARY desc,
 		GRADE_CODE
 
-	IF (
-			SELECT object_id('tempdb.dbo.#TEMP')
-			) > 0
+	--IF (
+	--		SELECT object_id('tempdb.dbo.#TEMP')
+	--		) > 0
+	IF OBJECT_ID('tempdb..#TEMP') is not null
 		DROP TABLE #TEMP
 END
 GO

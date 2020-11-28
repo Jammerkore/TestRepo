@@ -72,6 +72,15 @@ namespace MIDRetail.Business
       
         //End TT#1414-MD -jsobek -Attribute Set Filter
 
+        // Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only 
+        public static readonly filterDictionary AssortmentTypes = new filterDictionary(46, typeof(entryAssortmentTypes), filterNavigationTypes.Condition, filterToolbarImages.HeaderType, "Type", "Adds an Assortment Type condition to the filter.", costToRunEstimate: 10);
+        public static readonly filterDictionary AssortmentStatus = new filterDictionary(47, typeof(entryAssortmentStatus), filterNavigationTypes.Condition, filterToolbarImages.Status, "Status", "Adds an Assortment Status condition to the filter.", costToRunEstimate: 10);
+        public static readonly filterDictionary AssortmentFields = new filterDictionary(48, typeof(entryAssortmentFields), filterNavigationTypes.Condition, filterToolbarImages.Field, "Field", "Adds an Assortment Field condition to the filter.", costToRunEstimate: 10);
+        public static readonly filterDictionary AssortmentMerchandise = new filterDictionary(49, typeof(entryAssortmentMerchandise), filterNavigationTypes.Condition, filterToolbarImages.HeaderMerchandise, "Apply To", "Adds an Apply To condition to the filter.", costToRunEstimate: 10);
+        public static readonly filterDictionary AssortmentDate = new filterDictionary(50, typeof(entryAssortmentDate), filterNavigationTypes.Condition, filterToolbarImages.Date1, "Date", "Adds an Assortment Date condition to the filter.", costToRunEstimate: 10);
+        public static readonly filterDictionary AssortmentSortBy = new filterDictionary(51, typeof(entryAssortmentSortBy), filterNavigationTypes.SortBy, filterToolbarImages.SortBy, "Sort", "Adds a Sort By entry to the filter.", costToRunEstimate: 0); 
+        // End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only 
+
         private filterDictionary(int dbIndex, Type entryType, filterNavigationTypes navigationType, filterToolbarImages buttonImage, string buttonText, string buttonToolTip, int costToRunEstimate)
         {
             this.dbIndex = dbIndex;

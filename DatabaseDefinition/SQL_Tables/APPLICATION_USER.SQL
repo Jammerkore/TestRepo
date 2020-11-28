@@ -4,7 +4,7 @@
 --dv History: 
 --dv ============================================= 
 create table [dbo].[APPLICATION_USER] ( 
-	"USER_NAME" varchar(30) not null,
+	"USER_NAME" varchar(256) not null,
 	"USER_PASSWORD" varchar(250) null,
 	"USER_FULLNAME" varchar(250) null,
 	"USER_DESCRIPTION" varchar(250) null,

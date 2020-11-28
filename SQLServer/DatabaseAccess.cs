@@ -29,6 +29,7 @@ namespace MIDRetail.Data
 		private SqlTransaction _sqlTrans = null;
 		private SqlCommand _sqlCommand = null;
         private DatabaseExceptionHandler _databaseExceptionHandler = new DatabaseExceptionHandler();  // TT#3056 - JSmith - Header VIRTUAL_LOCK issue
+        private string _DBConnectionString = null;  // TT#2131-MD - JSmith - Halo Integration
 //		private static string _sConnection  = "";
 //		private string _lastCommand  = string.Empty;
 
@@ -96,19 +97,19 @@ namespace MIDRetail.Data
 		public void Initialize(string aConnectionString)
 		{
 			string lastCommand = string.Empty;
-			ConnectionString = aConnectionString;
-			if (ConnectionString == null)
+            _DBConnectionString = aConnectionString;  // TT#2131-MD - JSmith - Halo Integration
+			if (_DBConnectionString == null)  // TT#2131-MD - JSmith - Halo Integration
 			{
 				throw new Exception(Include.ErrorBadConfigFile + Include.GetConfigFilename());
 			}
 			try
 			{
 				_sqlCommand = new SqlCommand();
-				lastCommand = "CreateConnection with " + ConnectionString;
-				_sqlCommand.Connection = CreateConnection(ConnectionString);
+				lastCommand = "CreateConnection with " + _DBConnectionString;  // TT#2131-MD - JSmith - Halo Integration
+				_sqlCommand.Connection = CreateConnection(_DBConnectionString);  // TT#2131-MD - JSmith - Halo Integration
 				OpenConnection(_sqlCommand);
 
-				lastCommand = "CreateConnection with " + ConnectionString;
+				lastCommand = "CreateConnection with " + _DBConnectionString;  // TT#2131-MD - JSmith - Halo Integration
 				_sqlTrans = _sqlCommand.Connection.BeginTransaction();
 				_sqlCommand.Transaction = _sqlTrans;
 			}
@@ -188,7 +189,7 @@ namespace MIDRetail.Data
 			string lastCommand = string.Empty;
 			try
 			{
-				lastCommand = "DBUpdateConnection CreateConnection with " + ConnectionString;
+				lastCommand = "DBUpdateConnection CreateConnection with " + _DBConnectionString;  // TT#2131-MD - JSmith - Halo Integration
 				return new SqlConnection(aConnectionString );
 			}
 			catch ( SqlException sql_error )
@@ -438,6 +439,8 @@ namespace MIDRetail.Data
 //		private string _lastCommand  = string.Empty;
         private DatabaseExceptionHandler _databaseExceptionHandler = new DatabaseExceptionHandler();  // TT#3056 - JSmith - Header VIRTUAL_LOCK issue
 
+        private string _altConnectionString = null;  // TT#2131-MD - JSmith - Halo Integration
+
 		/// <summary>
 		/// Creates an instance of DatabaseAccess
 		/// </summary>
@@ -474,6 +477,7 @@ namespace MIDRetail.Data
 		{
 			try
 			{
+                _altConnectionString = aConnectionString;  // TT#2131-MD - JSmith - Halo Integration
 				Initialize(aConnectionString);
 			}
 			catch (Exception error)
@@ -526,6 +530,23 @@ namespace MIDRetail.Data
 		}
         // End TT#1243
 
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        public string DBConnectionString
+        {
+            get
+            {
+                if (_altConnectionString != null)
+                {
+                    return _altConnectionString;
+                }
+                else
+                {
+                    return ConnectionString;
+                }
+            }
+        }
+        // End TT#2131-MD - JSmith - Halo Integration
+
 		/// <summary>
 		/// Initialize the new instance
 		/// </summary>
@@ -537,7 +558,13 @@ namespace MIDRetail.Data
 			try
 			{
 				string aConnectionString = Convert.ToString(aArgs[0], CultureInfo.CurrentCulture);
-				ConnectionString = aConnectionString;
+                // Begin TT#2131-MD - JSmith - Halo Integration
+                //ConnectionString = aConnectionString;
+                if (aConnectionString != ConnectionString)
+                {
+                    _altConnectionString = aConnectionString;
+                }
+                // End TT#2131-MD - JSmith - Halo Integration
 				if (!EventLog.SourceExists("MIDRetail"))
 				{
                     EventLog.CreateEventSource("MIDRetail", null);
@@ -654,7 +681,7 @@ namespace MIDRetail.Data
 		{
 			try
 			{
-				_updateConnection = new DBUpdateConnection(ConnectionString);
+				_updateConnection = new DBUpdateConnection(DBConnectionString);  // TT#2131-MD - JSmith - Halo Integration
 				if (_commandTimeout != _updateConnection.SQLCommand.CommandTimeout)
 				{
 					_updateConnection.SQLCommand.CommandTimeout = _commandTimeout;
@@ -867,7 +894,7 @@ namespace MIDRetail.Data
             SqlCommand command = null;
 			try
 			{
-				lastCommand = "CreateConnection with " + ConnectionString;
+				lastCommand = "CreateConnection with " + DBConnectionString;  // TT#2131-MD - JSmith - Halo Integration
 				SqlConnection sc = new SqlConnection(aConnectionString );
 				sc.Open();
 
@@ -1020,8 +1047,8 @@ namespace MIDRetail.Data
 				SqlDataReader myReader;
 				cd = new SqlCommand("select @@SERVERNAME as ServerName");
 	
-				lastCommand = "CreateConnection with " + ConnectionString;
-				cd.Connection = CreateConnection(ConnectionString);
+				lastCommand = "CreateConnection with " + DBConnectionString;  // TT#2131-MD - JSmith - Halo Integration
+				cd.Connection = CreateConnection(DBConnectionString);  // TT#2131-MD - JSmith - Halo Integration
 				OpenConnection(cd);
 
 				lastCommand = "DatabaseAccess GetDBName";
@@ -1757,8 +1784,8 @@ namespace MIDRetail.Data
 					cd = new SqlCommand(SQLCommand);
                     SQLMonitorList.SQLMonitorEntry se = null;
                     SQLMonitorList.BeforeExecution(ref se, SQLCommand);
-					lastCommand = "CreateConnection with " + ConnectionString;
-					cd.Connection = CreateConnection(ConnectionString );
+					lastCommand = "CreateConnection with " + DBConnectionString;  // TT#2131-MD - JSmith - Halo Integration
+					cd.Connection = CreateConnection(DBConnectionString);  // TT#2131-MD - JSmith - Halo Integration
 					
 					lastCommand = SQLCommand;
 					cd.CommandType = CommandType.Text;
@@ -1823,7 +1850,7 @@ namespace MIDRetail.Data
 					//cd = new SqlCommand(SQLCommand);
                     SQLMonitorList.SQLMonitorEntry se = null;
                     SQLMonitorList.BeforeExecution(ref se, SQLStatement);
-					lastCommand = "CreateConnection with " + ConnectionString;
+					lastCommand = "CreateConnection with " + DBConnectionString;  // TT#2131-MD - JSmith - Halo Integration
 					//cd.Connection = CreateConnection(ConnectionString );
 
                     lastCommand = SQLStatement;
@@ -1923,8 +1950,8 @@ namespace MIDRetail.Data
                     cd = new SqlCommand(SQLCommand);
                     SQLMonitorList.SQLMonitorEntry se = null;
                     SQLMonitorList.BeforeExecution(ref se, SQLCommand);
-                    lastCommand = "CreateConnection with " + ConnectionString;
-                    cd.Connection = CreateConnection(ConnectionString);
+                    lastCommand = "CreateConnection with " + DBConnectionString;  // TT#2131-MD - JSmith - Halo Integration
+                    cd.Connection = CreateConnection(DBConnectionString);  // TT#2131-MD - JSmith - Halo Integration
 
                     lastCommand = SQLCommand;
                     cd.CommandType = CommandType.Text;
@@ -2150,8 +2177,8 @@ namespace MIDRetail.Data
 
                     AddInputParametersToSQLCommand(InputParameters, ref cd);
 			
-					lastCommand = "CreateConnection with " + ConnectionString;
-					cd.Connection = CreateConnection(ConnectionString );
+					lastCommand = "CreateConnection with " + DBConnectionString;  // TT#2131-MD - JSmith - Halo Integration
+					cd.Connection = CreateConnection(DBConnectionString);  // TT#2131-MD - JSmith - Halo Integration
 					
 					lastCommand = ProcedureName;
 					cd.CommandType = CommandType.StoredProcedure;
@@ -3113,7 +3140,7 @@ namespace MIDRetail.Data
                     AddOutputParametersToSQLCommand(OutputParameters, ref cd);
 
                     //lastCommand = "CreateConnection with " + ConnectionString;
-                    cd.Connection = CreateConnection(ConnectionString);
+                    cd.Connection = CreateConnection(DBConnectionString);  // TT#2131-MD - JSmith - Halo Integration
 
                     lastCommand = ProcedureName;
                     cd.CommandType = CommandType.StoredProcedure;
@@ -3214,7 +3241,7 @@ namespace MIDRetail.Data
                     AddOutputParametersToSQLCommand(OutputParameters, ref cd);
 
                     //lastCommand = "CreateConnection with " + ConnectionString;
-                    cd.Connection = CreateConnection(ConnectionString);
+                    cd.Connection = CreateConnection(DBConnectionString);  // TT#2131-MD - JSmith - Halo Integration
 
                     lastCommand = ProcedureName;
                     cd.CommandType = CommandType.StoredProcedure;
@@ -3950,8 +3977,8 @@ namespace MIDRetail.Data
                     SQLMonitorList.SQLMonitorEntry se = null;
                     SQLMonitorList.BeforeExecution(ref se, SQLCommand, InputParameters);
 
-                    lastCommand = "CreateConnection with " + ConnectionString;
-                    cd.Connection = CreateConnection(ConnectionString);
+                    lastCommand = "CreateConnection with " + DBConnectionString;  // TT#2131-MD - JSmith - Halo Integration
+                    cd.Connection = CreateConnection(DBConnectionString);  // TT#2131-MD - JSmith - Halo Integration
                     OpenConnection(cd);
 
                     lastCommand = SQLCommand;
@@ -4048,8 +4075,8 @@ namespace MIDRetail.Data
 
                     AddInputParametersToSQLCommand(InputParameters, ref cd);
 
-                    lastCommand = "CreateConnection with " + ConnectionString;
-                    cd.Connection = CreateConnection(ConnectionString);
+                    lastCommand = "CreateConnection with " + DBConnectionString;  // TT#2131-MD - JSmith - Halo Integration
+                    cd.Connection = CreateConnection(DBConnectionString);  // TT#2131-MD - JSmith - Halo Integration
 
 
                     SQLMonitorList.SQLMonitorEntry se = null;
@@ -5524,7 +5551,7 @@ namespace MIDRetail.Data
 			{
 				string tableName = Convert.ToString(aArgs[0], CultureInfo.CurrentCulture);
 				DBAdapter ad;
-				SqlConnection cn = new SqlConnection(ConnectionString);
+				SqlConnection cn = new SqlConnection(DBConnectionString);  // TT#2131-MD - JSmith - Halo Integration
 				//cn.Open();
 
 				ad = new DBAdapter(tableName, cn, _commandTimeout);	// Issue 5018 stodd 12.24.2007

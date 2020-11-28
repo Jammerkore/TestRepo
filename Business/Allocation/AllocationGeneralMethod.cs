@@ -2,6 +2,7 @@ using System;
 using MIDRetail.Data;
 using MIDRetail.Common;
 using MIDRetail.DataCommon;
+using Logility.ROWebSharedTypes;
 
 namespace MIDRetail.Business.Allocation
 {
@@ -28,19 +29,19 @@ namespace MIDRetail.Business.Allocation
 		// BEGIN TT#667 - Stodd - Pre-allocate Reserve
 		private double _reserveAsBulk;
 		private double _reserveAsPacks;
-		// END TT#667 - Stodd - Pre-allocate Reserve
+        // END TT#667 - Stodd - Pre-allocate Reserve
 
-		//=============
-		// CONSTRUCTORS
-		//=============
-		/// <summary>
-		/// Creates an instance of the Business Allocation General Method.
-		/// </summary>
-		/// <param name="SAB">Session Address Block.</param>
-		/// <param name="aMethodRID">RID that identifies this method.</param>
-		//Begin TT#523 - JScott - Duplicate folder when new folder added
-		//public AllocationGeneralMethod(SessionAddressBlock SAB, int aMethodRID): base (SAB, aMethodRID, eMethodType.GeneralAllocation)
-		public AllocationGeneralMethod(SessionAddressBlock SAB, int aMethodRID): base (SAB, aMethodRID, eMethodType.GeneralAllocation, eProfileType.MethodGeneralAllocation)
+        //=============
+        // CONSTRUCTORS
+        //=============
+        /// <summary>
+        /// Creates an instance of the Business Allocation General Method.
+        /// </summary>
+        /// <param name="SAB">Session Address Block.</param>
+        /// <param name="aMethodRID">RID that identifies this method.</param>
+        //Begin TT#523 - JScott - Duplicate folder when new folder added
+        //public AllocationGeneralMethod(SessionAddressBlock SAB, int aMethodRID): base (SAB, aMethodRID, eMethodType.GeneralAllocation)
+        public AllocationGeneralMethod(SessionAddressBlock SAB, int aMethodRID): base (SAB, aMethodRID, eMethodType.GeneralAllocation, eProfileType.MethodGeneralAllocation)
 		//End TT#523 - JScott - Duplicate folder when new folder added
 		{
 			if (base.Filled)
@@ -202,11 +203,25 @@ namespace MIDRetail.Business.Allocation
 			get { return _reserveAsPacks; }
 			set { _reserveAsPacks = value; }
 		}
-		// END TT#667 - Stodd - Pre-allocate Reserve
+        // END TT#667 - Stodd - Pre-allocate Reserve
 
-		//========
-		// METHODS
-		//========
+
+        //========
+        // METHODS
+        //========
+
+        // Begin TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+        override internal bool CheckForUserData()
+        {
+            if (IsHierarchyNodeUser(_Merch_HN_RID))
+            {
+                return true;
+            }
+
+            return false;
+        }
+        // End TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+
 		public override void ProcessMethod(
 			ApplicationSessionTransaction aApplicationTransaction,
 			int aStoreFilter, Profile methodProfile)
@@ -732,6 +747,71 @@ namespace MIDRetail.Business.Allocation
         }
         // End TT#3572 - JSmith - Security- Version set to Deny - Ran a velocity method with this version and receive a Null reference error.
 
-	}
+        // Begin RO-642 - RDewey - Data transport for General Allocation Method - ROWeb project
+        override public FunctionSecurityProfile GetFunctionSecurity()
+        {
+            if (this.GlobalUserType == eGlobalUserType.Global)
+            {
+                return SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.AllocationMethodsGlobalGeneralAllocation);
+            }
+            else
+            {
+                return SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.AllocationMethodsUserGeneralAllocation);
+            }
+
+        }
+        override public ROMethodProperties MethodGetData(bool processingApply)
+        {  
+            ROMethodGeneralAllocationProperties method = new ROMethodGeneralAllocationProperties(
+                method: GetName.GetMethod(method: this),
+                description: Method_Description,
+                userKey: User_RID,
+                begin_CDR: GetName.GetCalendarDateRange(calendarDateRID: Begin_CDR_RID, SAB: SAB),
+                shipTo_CDR: GetName.GetCalendarDateRange(calendarDateRID: Ship_To_CDR_RID, SAB: SAB),
+                percentInd: Percent_Ind,
+                reserve: Reserve,
+                merch_HN: GetName.GetMerchandiseName(nodeRID: Merch_HN_RID, SAB: SAB),
+                merch_PH_RID: Merch_PH_RID,
+                merch_PHL_SEQ: Merch_PHL_Sequence,
+                merchandiseType: MerchandiseType,
+                genAlloc_HDR: GetName.GetHeader(headerRID: Gen_Alloc_HDR_RID, SAB: SAB),
+                reserveAsBulk: ReserveAsBulk,
+                reserveAsPacks: ReserveAsPacks);
+            return method;
+        }
+
+        override public bool MethodSetData(ROMethodProperties methodProperties, bool processingApply)
+        {
+            ROMethodGeneralAllocationProperties roMethodGeneralAllocationProperties = (ROMethodGeneralAllocationProperties)methodProperties;
+
+            try
+            {
+                _Ship_To_CDR_RID = roMethodGeneralAllocationProperties.ShipTo_CDR.Key;
+                _Begin_CDR_RID = roMethodGeneralAllocationProperties.Begin_CDR.Key;
+                _Percent_Ind = roMethodGeneralAllocationProperties.PercentInd;
+                _Reserve = roMethodGeneralAllocationProperties.Reserve;
+                _Merch_HN_RID = roMethodGeneralAllocationProperties.Merch_HN.Key;
+                _Merch_PH_RID = roMethodGeneralAllocationProperties.Merch_PH.Key;
+                _Merch_PHL_Sequence = roMethodGeneralAllocationProperties.Merch_PH.Value;
+                _merchandiseType = roMethodGeneralAllocationProperties.MerchandiseType;
+                _Gen_Alloc_HDR_RID = roMethodGeneralAllocationProperties.GenAlloc_HDR.Key;
+                _reserveAsBulk = roMethodGeneralAllocationProperties.ReserveAsBulk;
+                _reserveAsPacks = roMethodGeneralAllocationProperties.ReserveAsPacks;
+                return true;
+            }
+            catch
+            {
+                return false;    
+            }
+
+            //throw new NotImplementedException("MethodSaveData is not implemented");
+        }
+
+        override public ROMethodProperties MethodCopyData()
+        {
+            throw new NotImplementedException("MethodCopyData is not implemented");
+        }
+        // End RO-642 - RDewey - Data transport for General Allocation Method - ROWeb project
+    }
 }
 

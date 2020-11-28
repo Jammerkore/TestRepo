@@ -214,6 +214,25 @@ namespace MIDRetail.Windows.Controls
                 }     
                 index++;
             }
+			// Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+            else if (dataType.valueType == filterValueTypes.Calendar)
+            {
+                //add calendar date operator
+                elementBase b = new elementBase(eb.manager, filterElementMap.OperatorCalendarDate, "Operator:");
+                b.isOperatorCalendarDate = true;
+                b.dataType = dataType;
+
+                fieldElementList.Add(b);
+
+                string key = "nbco" + index.ToString(); //nb=>new base element
+                if (makeElementInGroupDelegate != null)
+                {
+                    makeElementInGroupDelegate(key, b, false, -1);
+                    keyListToRemove.Add(key);
+                }
+                index++;
+            }
+			// End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
             else if (dataType.valueType == filterValueTypes.List)
             {
                 //add list operator

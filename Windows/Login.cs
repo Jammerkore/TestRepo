@@ -114,7 +114,7 @@ namespace MIDRetail.Windows
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtUser.BackColor = System.Drawing.Color.WhiteSmoke;
             this.txtUser.Location = new System.Drawing.Point(188, 531);
-            this.txtUser.MaxLength = 30;
+            this.txtUser.MaxLength = 256;
             this.txtUser.Name = "txtUser";
             this.txtUser.Size = new System.Drawing.Size(258, 20);
             this.txtUser.TabIndex = 1;
@@ -316,7 +316,7 @@ namespace MIDRetail.Windows
                 string assemblyName = Path.GetDirectoryName(Application.ExecutablePath) + @"\" + "MIDRetail.Windows.dll";
 				System.Diagnostics.FileVersionInfo fvi = System.Diagnostics.FileVersionInfo.GetVersionInfo(assemblyName);
 
-                label2.Text = "Copyright © Logility 2017";
+                label2.Text = "Copyright © Logility, Inc. 2018";
 				lblVersion.Text = "Version " + fvi.FileVersion;	
 			}
 			catch( Exception exception )

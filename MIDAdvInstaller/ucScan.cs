@@ -44,6 +44,7 @@ namespace MIDRetailInstaller
         List<string> controlServFiles = new List<string>();
         List<string> storeServFiles = new List<string>();
         List<string> merchServFiles = new List<string>();
+        List<string> jobServFiles = new List<string>();
         List<string> schedServFiles = new List<string>();
         List<string> appServFiles = new List<string>();
         List<string> apiFiles = new List<string>();
@@ -53,6 +54,7 @@ namespace MIDRetailInstaller
         Hashtable htControlServiceNames;
         Hashtable htStoreServiceNames;
         Hashtable htMerchandiseServiceNames;
+        Hashtable htJobServiceNames;
         Hashtable htSchedulerServiceNames;
         Hashtable htApplicationServiceNames;
         Hashtable htConfigurationFileNames;
@@ -80,6 +82,7 @@ namespace MIDRetailInstaller
             htControlServiceNames = GetApplicationNames("ControlServiceNames");
             htStoreServiceNames = GetApplicationNames("StoreServiceNames");
             htMerchandiseServiceNames = GetApplicationNames("MerchandiseServiceNames");
+            htJobServiceNames = GetApplicationNames("JobServiceNames");
             htSchedulerServiceNames = GetApplicationNames("SchedulerServiceNames");
             htApplicationServiceNames = GetApplicationNames("ApplicationServiceNames");
             htConfigurationFileNames = GetApplicationNames("ConfigurationFileName");
@@ -276,6 +279,11 @@ namespace MIDRetailInstaller
                         merchServFiles.Add(file);
                     }
 
+                    if (htJobServiceNames.Contains(moduleName) == true)
+                    {
+                        jobServFiles.Add(file);
+                    }
+
                     if (htSchedulerServiceNames.Contains(moduleName) == true)
                     {
                         schedServFiles.Add(file);
@@ -374,7 +382,7 @@ namespace MIDRetailInstaller
                 //scan the registry for windows installer installed components
 				// Begin TT#1668 - JSmith - Install Log
 				//frame.lblStatus.Text = "Scanning registry for installed components";
-                frame.SetStatusMessage("Scanning registry for installed components");
+                frame.SetStatusMessage("Scanning for installed components");
 				// End TT#1668
                 Application.DoEvents();
                 frame.dtWindowsInstalled = GetWindowsInstalledList();
@@ -448,6 +456,13 @@ namespace MIDRetailInstaller
                         tnServices.Nodes.Add(tnMerchServFiles_Node);
                     }
 
+                    foreach (string jobServFile in jobServFiles)
+                    {
+                        TreeNode tnJobServFiles_Node = new TreeNode(jobServFile);
+                        tnJobServFiles_Node.Checked = true;
+                        tnServices.Nodes.Add(tnJobServFiles_Node);
+                    }
+
                     foreach (string schedServFile in schedServFiles)
                     {
                         TreeNode tnSchedServFiles_Node = new TreeNode(schedServFile);
@@ -469,7 +484,7 @@ namespace MIDRetailInstaller
                 if (apiFiles.Count > 0)
                 {
                     //add the API nodes to the tree view
-                    TreeNode tnAPI = new TreeNode("Installed MIDRetail APIs");
+                    TreeNode tnAPI = new TreeNode("Installed Logility RO APIs");
                     tnAPI.Checked = true;
 
                     foreach (string apiFile in apiFiles)
@@ -486,7 +501,7 @@ namespace MIDRetailInstaller
                 if (configFiles.Count > 0)
                 {
                     //add the API nodes to the tree view
-                    TreeNode tnConfig = new TreeNode("Installed MIDRetail Configuration Files");
+                    TreeNode tnConfig = new TreeNode("Installed Logility RO Configuration Files");
                     tnConfig.Checked = true;
 
                     foreach (string configFile in configFiles)

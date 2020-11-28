@@ -22,6 +22,7 @@ create table [dbo].[STORE_ELIGIBILITY] (
 	"FWOSMOD_RID" int null,
 	"FWOSMOD_PCT" float null,
 	"PRESENTATION_PLUS_SALES_IND" char(1) null,
-	"STOCK_LEAD_WEEKS" int null)
+	"STOCK_LEAD_WEEKS" int null,
+	"UPDATE_DATE" datetime null)
 
 go

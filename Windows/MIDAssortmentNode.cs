@@ -1378,14 +1378,15 @@ namespace MIDRetail.Windows
 				{
 					index++;
 
-					if (index > 1)
-					{
-						newName = "Copy (" + index + ") of " + aAssortmentName;
-					}
-					else
-					{
-						newName = "Copy of " + aAssortmentName;
-					}
+                    //if (index > 1)
+                    //{
+                    //	newName = "Copy (" + index + ") of " + aAssortmentName;
+                    //}
+                    //else
+                    //{
+                    //	newName = "Copy of " + aAssortmentName;
+                    //}
+                    newName = Include.GetNewName(name: aAssortmentName, index: index);
 
 					key = _dlAssortment.HeaderAssortment_GetKey(newName);
 				}
@@ -1665,7 +1666,7 @@ namespace MIDRetail.Windows
 			try
 			{
 				//objEnqueue = new GenericEnqueue(eLockType.Assortment, aAssortmentProf.Key, SAB.ClientServerSession.UserRID, SAB.ClientServerSession.ThreadID);
-				objEnqueue = new GenericEnqueue(eLockType.Assortment, ahp.Key, SAB.ClientServerSession.UserRID, SAB.ClientServerSession.ThreadID);
+				objEnqueue = new GenericEnqueue(eLockType.Header, ahp.Key, SAB.ClientServerSession.UserRID, SAB.ClientServerSession.ThreadID);
 
 				try
 				{

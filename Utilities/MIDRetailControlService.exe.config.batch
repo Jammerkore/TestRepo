@@ -4,7 +4,7 @@
 		<customErrors mode="off"/>
 	</system.runtime.remoting>
 
-	<appSettings file="C:\MIDRetail\MIDSettings.config">
+	<appSettings file="C:\Logility\RO\MIDSettings.config">
 		<!-- ================ -->
 		<!-- ================ -->
 		<!-- STARTUP SETTINGS -->

@@ -1,0 +1,235 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{3263B657-0F7D-422E-96FB-B28DF207DA3B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Logility.ROWeb</RootNamespace>
+    <AssemblyName>ROWeb</AssemblyName>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <WcfConfigValidationEnabled>True</WcfConfigValidationEnabled>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\midretailinccert.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="C1.Win.C1FlexGrid.2, Version=2.6.20142.835, Culture=neutral, PublicKeyToken=79882d576c6336da, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Program Files (x86)\ComponentOne\Studio for WinForms\bin\v2\C1.Win.C1FlexGrid.2.dll</HintPath>
+    </Reference>
+    <Reference Include="Infragistics4.Shared.v14.1, Version=14.1.20141.2082, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Program Files (x86)\Infragistics\2014.1\Windows Forms\CLR4.0\Bin\Infragistics4.Shared.v14.1.dll</HintPath>
+    </Reference>
+    <Reference Include="Infragistics4.Win.UltraWinGrid.v14.1, Version=14.1.20141.2082, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Program Files (x86)\Infragistics\2014.1\Windows Forms\CLR4.0\Bin\Infragistics4.Win.UltraWinGrid.v14.1.dll</HintPath>
+    </Reference>
+    <Reference Include="Infragistics4.Win.v14.1, Version=14.1.20141.2082, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Program Files (x86)\Infragistics\2014.1\Windows Forms\CLR4.0\Bin\Infragistics4.Win.v14.1.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\UnregisteredDlls\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\UnregisteredDlls\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Methods\Administration\Administration.cs" />
+    <Compile Include="Methods\Administration\Models\ModelBase.cs" />
+    <Compile Include="Methods\Administration\Models\ModelEligibility.cs" />
+    <Compile Include="Methods\Administration\Models\ModelMaintenance.cs" />
+    <Compile Include="Methods\Administration\Models\ModelOverrideLowLevel.cs" />
+    <Compile Include="Methods\Administration\Models\ModelFWOSModifier.cs" />
+    <Compile Include="Methods\Administration\Models\ModelFWOSMax.cs" />
+    <Compile Include="Methods\Administration\Models\ModelSizeGroup.cs" />
+    <Compile Include="Methods\Administration\Models\ModelSizeCurveGroup.cs" />
+    <Compile Include="Methods\Administration\Models\ModelSizeConstraint.cs" />
+    <Compile Include="Methods\Administration\Models\ModelSizeAlternate.cs" />
+    <Compile Include="Methods\Administration\Models\ModelStockModifier.cs" />
+    <Compile Include="Methods\Administration\Models\ModelSalesModifier.cs" />
+    <Compile Include="Methods\Administration\Characteristics\CharacteristicProduct.cs" />
+    <Compile Include="Methods\Administration\Characteristics\CharacteristicStore.cs" />
+    <Compile Include="Methods\Administration\Characteristics\CharacteristicHeader.cs" />
+    <Compile Include="Methods\Administration\Characteristics\CharacteristicBase.cs" />
+    <Compile Include="Methods\Administration\Characteristics\CharacteristicMaintenance.cs" />
+    <Compile Include="Methods\Administration\Global Options\ROGlobalOptions.cs" />
+    <Compile Include="Methods\Administration\Global Options\BasisLabels.cs" />
+    <Compile Include="Methods\Administration\Global Options\CompanyInformation.cs" />
+    <Compile Include="Methods\Administration\Global Options\DisplayOptions.cs" />
+    <Compile Include="Methods\Administration\Global Options\Headers.cs" />
+    <Compile Include="Methods\Administration\Global Options\OTSDefaults.cs" />
+    <Compile Include="Methods\Administration\Global Options\OTSPlanVersions.cs" />
+    <Compile Include="Methods\Administration\Global Options\System.cs" />
+    <Compile Include="Methods\Administration\User\UserMaintenance.cs" />
+    <Compile Include="Methods\Allocation\Worklist\AllocationMaintenance.cs" />
+    <Compile Include="Methods\Assortment\Review\AssortmentMaintenance.cs" />
+    <Compile Include="Methods\Hierarchy\HierarchyBase.cs" />
+    <Compile Include="Methods\Hierarchy\Node Properties\NodePropertiesBase.cs" />
+    <Compile Include="Methods\Hierarchy\Node Properties\NodePropertiesCharacteristics.cs" />
+    <Compile Include="Methods\Hierarchy\Node Properties\NodePropertiesVelocityGrades.cs" />
+    <Compile Include="Methods\Hierarchy\Node Properties\NodePropertiesStoreGrades.cs" />
+    <Compile Include="Methods\Hierarchy\Node Properties\NodePropertiesStockMinMax.cs" />
+    <Compile Include="Methods\Hierarchy\Node Properties\NodePropertiesStoreCapacity.cs" />
+    <Compile Include="Methods\Hierarchy\Node Properties\NodePropertiesDailyPercentages.cs" />
+    <Compile Include="Methods\Hierarchy\Node Properties\NodePropertiesPurgeCriteria.cs" />
+    <Compile Include="Methods\Hierarchy\Node Properties\NodePropertiesSizeCurves.cs" />
+    <Compile Include="Methods\Hierarchy\Node Properties\NodePropertiesChainSetPercent.cs" />
+    <Compile Include="Methods\Hierarchy\Node Properties\NodePropertiesVSW.cs" />
+    <Compile Include="Methods\Hierarchy\Node Properties\NodePropertiesProfile.cs" />
+    <Compile Include="Methods\Hierarchy\Node Properties\NodePropertiesEligibility.cs" />
+    <Compile Include="Methods\Hierarchy\Node Properties\NodePropertiesMaintenance.cs" />
+    <Compile Include="Methods\Hierarchy\HierarchyPropertiesMaintenance.cs" />
+    <Compile Include="Methods\Hierarchy\HierarchyPropertiesBase.cs" />
+    <Compile Include="Methods\Hierarchy\HierarchyPropertiesProfile.cs" />
+    <Compile Include="Methods\WorkUltraGrid.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Methods\ROWorkflowMethodManager.cs" />
+    <Compile Include="Methods\Allocation\Allocation.cs" />
+    <Compile Include="Methods\Allocation\Common\AllocationCommon.cs" />
+    <Compile Include="Methods\Allocation\Review\AllocationReview.cs" />
+    <Compile Include="Methods\Allocation\Review\SizeReview.cs" />
+    <Compile Include="Methods\Allocation\Review\SummaryReview.cs" />
+    <Compile Include="Methods\Allocation\Review\StyleReview.cs" />
+    <Compile Include="Methods\Allocation\Workflow\AllocationWorkflow.cs" />
+    <Compile Include="Methods\Allocation\Worklist\AllocationWorklist.cs" />
+    <Compile Include="Methods\Assortment\Assortment.cs" />
+    <Compile Include="Methods\Assortment\Common\AssortmentCommon.cs" />
+    <Compile Include="Methods\Assortment\Review\AssortmentActionProcess.cs" />
+    <Compile Include="Methods\Assortment\Review\AssortmentContent.cs" />
+    <Compile Include="Methods\Assortment\Review\AssortmentCharacteristics.cs" />
+    <Compile Include="Methods\Assortment\Review\AssortmentMatrix.cs" />
+    <Compile Include="Methods\Assortment\Worklist\AssortmentWorklist.cs" />
+    <Compile Include="Methods\Common\ApplicationUtilities.cs" />
+    <Compile Include="Methods\Common\ROCalendar.cs" />
+    <Compile Include="Methods\Common\ApplicationCommon.cs" />
+    <Compile Include="Methods\Explorer\AssortmentFilterExplorer.cs" />
+    <Compile Include="Methods\Explorer\BaseExplorer.cs" />
+    <Compile Include="Methods\Explorer\HeaderFilterExplorer.cs" />
+    <Compile Include="Methods\Explorer\StoreFilterExplorer.cs" />
+    <Compile Include="Methods\Explorer\StoreGroupExplorer.cs" />
+    <Compile Include="Methods\Explorer\MerchandiseExplorer.cs" />
+    <Compile Include="Methods\Explorer\WorkflowMethodExplorer.cs" />
+    <Compile Include="Methods\Hierarchy\ROHierarchy.cs" />
+    <Compile Include="Methods\Planning\Common\PlanningCommon.cs" />
+    <Compile Include="Methods\Planning\Planning.cs" />
+    <Compile Include="Methods\Planning\ROChainMultiLevelFunction.cs" />
+    <Compile Include="Methods\Planning\ROStoreMultiLevelFunction.cs" />
+    <Compile Include="Methods\Planning\ROStoreSingleLevelFunction.cs" />
+    <Compile Include="Methods\Planning\ROStoreFunction.cs" />
+    <Compile Include="Methods\Planning\ROChainFunction.cs" />
+    <Compile Include="Methods\Planning\ROChainSingleLevelFunction.cs" />
+    <Compile Include="Methods\Planning\Workflow\PlanningWorkflow.cs" />
+    <Compile Include="Methods\ROUtilities.cs" />
+    <Compile Include="Methods\Store\ROStore.cs" />
+    <Compile Include="Methods\Common\CommunicationManagement.cs" />
+    <Compile Include="Methods\Common\CubeCoordinatesMap.cs" />
+    <Compile Include="Methods\Common\CubeUtilities.cs" />
+    <Compile Include="Methods\Hierarchy\ROHierarchyProperties.cs" />
+    <Compile Include="Methods\Planning\ROChainLadderFunction.cs" />
+    <Compile Include="Methods\Planning\ROWebPlanningFunction.cs" />
+    <Compile Include="Methods\ROWebFunction.cs" />
+    <Compile Include="ROWeb.cs" />
+    <Compile Include="Interfaces\IROWebConsoleService.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Methods\ROWebConsoleService.cs" />
+    <Compile Include="ROWebManager.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Business\Business.csproj">
+      <Project>{934f0067-9bd4-4283-9580-f0b024c2d29d}</Project>
+      <Name>Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{bc3abad0-6c39-4385-8229-850e87dd22d0}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CONTROL\Windows.Controls.csproj">
+      <Project>{c589f61c-b85c-4e2f-bbb6-9b250ad08124}</Project>
+      <Name>Windows.Controls</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DataCommon\DataCommon.csproj">
+      <Project>{f33fc337-30fc-409c-898d-df39a2016b6b}</Project>
+      <Name>DataCommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Data\Data.csproj">
+      <Project>{90d34e6e-6872-4531-8283-f9a7450c4baf}</Project>
+      <Name>Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ForecastComputations\ForecastComputations.csproj">
+      <Project>{f638a41b-346d-461e-a92e-f3945ca97e69}</Project>
+      <Name>ForecastComputations</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ROUI\ROUI.csproj">
+      <Project>{938466d3-7f2c-4c44-9433-2bc59ee91efa}</Project>
+      <Name>ROUI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ROWebCommon\ROWebCommon.csproj">
+      <Project>{86d7fe6b-6c39-4d29-9e6f-bc19d48b6d81}</Project>
+      <Name>ROWebCommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ROWebSharedTypes\ROWebSharedTypes.csproj">
+      <Project>{e1cf2528-f7a3-4ad1-b5a0-03869fd4a02b}</Project>
+      <Name>ROWebSharedTypes</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Service.Jobs.Interfaces\Service.Jobs.Interfaces.csproj">
+      <Project>{d5bb0027-0f45-4624-8dde-ec137e33fed9}</Project>
+      <Name>Service.Jobs.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Windows\Windows.csproj">
+      <Project>{77cc9e63-af51-4736-9a26-43c12b66491b}</Project>
+      <Name>Windows</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

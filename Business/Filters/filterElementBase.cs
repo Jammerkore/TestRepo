@@ -28,6 +28,17 @@ namespace MIDRetail.Business
         public bool loadFromVariable2 = false;
         public bool loadFromHeaderMerchandise = false;
         public bool useDynamicOperator = false;
+		// Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+		public bool isOperatorCalendarDate;
+		public bool loadFromCalendarDate = false;
+        public bool RestrictToSingleDate = true;
+        public bool RestrictToOnlyWeeks = false;
+        public bool AllowDynamic = true;
+        public bool AllowDynamicToPlan = true;
+        public bool AllowDynamicToStoreOpen = true;
+        public bool AllowTimeSensitiveDateCheck = true;
+        public bool SpecifyWeeks = false;
+		// End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
         public filterDataTypes dataType;
         public List<eProfileType> dragDropTypesAllowed = new List<eProfileType>();
 

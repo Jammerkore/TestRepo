@@ -1745,17 +1745,54 @@ namespace MIDRetail.ForecastComputations
 			}
 			return profList;
 		}
-	}
 
-	/// <summary>
-	/// The TimeTotalVariables class is where the Time Total Variable profiles are defined.
-	/// </summary>
-	/// <remarks>
-	/// This class is where the Time Total Variable profiles are defined.  A ProfileList of all the Variables and a hash table for the Variables'
-	/// name are built during contruction.
-	/// </remarks>
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        /// <summary>
+		/// This method returns a ProfileList containing variables for store weekly forecast.  IComputations requirement.  DO NOT REMOVE.
+		/// </summary>
+		public ProfileList GetStoreWeeklyVariableList()
+        {
+            ProfileList profList = new ProfileList(eProfileType.Variable);
+            foreach (VariableProfile vp in _profileList)
+            {
+                if (vp.VariableCategory == eVariableCategory.Store
+                    || vp.VariableCategory == eVariableCategory.Both)
+                {
+                    profList.Add(vp);
+                }
+            }
+            return profList;
+        }
 
-	[Serializable]
+        /// <summary>
+		/// This method returns a ProfileList containing variables for store weekly forecast.  IComputations requirement.  DO NOT REMOVE.
+		/// </summary>
+		public ProfileList GetChainWeeklyVariableList()
+        {
+            ProfileList profList = new ProfileList(eProfileType.Variable);
+            foreach (VariableProfile vp in _profileList)
+            {
+                if (vp.VariableCategory == eVariableCategory.Chain
+                    || vp.VariableCategory == eVariableCategory.Both)
+                {
+                    profList.Add(vp);
+                }
+            }
+            return profList;
+        }
+
+        // End TT#2131-MD - JSmith - Halo Integration
+    }
+
+    /// <summary>
+    /// The TimeTotalVariables class is where the Time Total Variable profiles are defined.
+    /// </summary>
+    /// <remarks>
+    /// This class is where the Time Total Variable profiles are defined.  A ProfileList of all the Variables and a hash table for the Variables'
+    /// name are built during contruction.
+    /// </remarks>
+
+    [Serializable]
 	abstract public class BasePlanTimeTotalVariables : IPlanComputationTimeTotalVariables
 	{
 		//=======
@@ -2682,17 +2719,54 @@ namespace MIDRetail.ForecastComputations
 				throw;
 			}
 		}
-	}
 
-	/// <summary>
-	/// The QuantityVariables class is where the Time Total Variable profiles are defined.
-	/// </summary>
-	/// <remarks>
-	/// This class is where the Time Total Variable profiles are defined.  A ProfileList of all the Variables and a hash table for the Variables'
-	/// name are built during contruction.
-	/// </remarks>
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        /// <summary>
+		/// This method returns a ProfileList containing variables for store weekly forecast.  IComputations requirement.  DO NOT REMOVE.
+		/// </summary>
+		public ProfileList GetStoreTimeTotalVariableList()
+        {
+            ProfileList profList = new ProfileList(eProfileType.Variable);
+            foreach (TimeTotalVariableProfile vp in _profileList)
+            {
+                if (vp.VariableCategory == eVariableCategory.Store
+                    || vp.VariableCategory == eVariableCategory.Both)
+                {
+                    profList.Add(vp);
+                }
+            }
+            return profList;
+        }
 
-	[Serializable]
+        /// <summary>
+		/// This method returns a ProfileList containing variables for store weekly forecast.  IComputations requirement.  DO NOT REMOVE.
+		/// </summary>
+		public ProfileList GetChainTimeTotalVariableList()
+        {
+            ProfileList profList = new ProfileList(eProfileType.Variable);
+            foreach (TimeTotalVariableProfile vp in _profileList)
+            {
+                if (vp.VariableCategory == eVariableCategory.Chain
+                    || vp.VariableCategory == eVariableCategory.Both)
+                {
+                    profList.Add(vp);
+                }
+            }
+            return profList;
+        }
+
+        // End TT#2131-MD - JSmith - Halo Integration
+    }
+
+    /// <summary>
+    /// The QuantityVariables class is where the Time Total Variable profiles are defined.
+    /// </summary>
+    /// <remarks>
+    /// This class is where the Time Total Variable profiles are defined.  A ProfileList of all the Variables and a hash table for the Variables'
+    /// name are built during contruction.
+    /// </remarks>
+
+    [Serializable]
 	abstract public class BasePlanQuantityVariables : IPlanComputationQuantityVariables
 	{
 		//=======

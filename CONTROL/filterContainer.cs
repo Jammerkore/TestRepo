@@ -141,6 +141,12 @@ namespace MIDRetail.Windows.Controls
             if (eb.elementMap == filterElementMap.ValueToCompareDateBetween)
             {
                 o = Activator.CreateInstance(typeof(filterElementValueToCompareDateBetween));
+				// Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+                if (!eb.AllowTimeSensitiveDateCheck)
+                {
+                    ((filterElementValueToCompareDateBetween)o).AdjustDateBetweenFields(eb.AllowTimeSensitiveDateCheck, eb.SpecifyWeeks);
+                }
+				// End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
             }
             if (eb.elementMap == filterElementMap.ValueToCompareDateSpecify)
             {
@@ -166,6 +172,12 @@ namespace MIDRetail.Windows.Controls
             {
                 o = Activator.CreateInstance(typeof(filterElementList));
             }
+			// Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+            if (eb.elementMap == filterElementMap.OperatorCalendarDate)
+            {
+                o = Activator.CreateInstance(typeof(filterElementOperatorCalendarDate));
+            }
+			// End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
 
             //get the interface from the element
             eb.elementInterface = (IFilterElement)o;
@@ -211,6 +223,14 @@ namespace MIDRetail.Windows.Controls
                 fe.removeDynamicElementsForFieldDelegate = new FilterRemoveDynamicElementsForFieldDelegate(RemoveDynamicElementsForField);
             }
             //End TT#1345-MD -jsobek -Store Filters - Hold operator and value when switching variables
+            // Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+			if (eb.isOperatorCalendarDate)
+            {
+                filterElementOperatorCalendarDate fe = (filterElementOperatorCalendarDate)uiControl;
+                fe.makeElementInGroupDelegate = new FilterMakeElementInGroupDelegate(MakeElementInGroup);
+                fe.removeDynamicElementsForFieldDelegate = new FilterRemoveDynamicElementsForFieldDelegate(RemoveDynamicElementsForField);
+            }
+            // End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
 
             eb.elementInterface.SetElementBase(eb, eg.groupSettings);
       
@@ -255,6 +275,14 @@ namespace MIDRetail.Windows.Controls
                 fe.SetDefault();
             }
             //End TT#1345-MD -jsobek -Store Filters - Hold operator and value when switching variables
+			// Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+            if (eb.isOperatorCalendarDate)
+            {
+                filterElementOperatorCalendarDate fe = (filterElementOperatorCalendarDate)uiControl;
+                fe.SetDefault();
+            }
+			// End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+            
             if (eb.isList)
             {
                 ResizeListContainer();

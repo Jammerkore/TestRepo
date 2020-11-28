@@ -106,7 +106,7 @@ namespace MIDRetail.Windows
             //string assemblyName = "MIDAllocation.exe";
             //string productName = "MID Advanced Allocation"; 
             //string productVersion = "unavailable";
-            //string legalCopyright = "Copyright © MID, Inc. 2009";
+            //string legalCopyright = "Copyright © Logility, Inc. 2018";
             //string companyName = "Management Information Disciplines, Inc.";
             //string lastUpdate = "unavailable";
             //string systemVersion = "unavailable";
@@ -701,6 +701,7 @@ namespace MIDRetail.Windows
                 listBoxAddOn.Items.Add(EnvironmentBusinessInfo.GetPlanningInstalledInfo(_SAB));
                 listBoxAddOn.Items.Add(EnvironmentBusinessInfo.GetAssortmentInstalledInfo(_SAB)); // TT#862 - MD - stodd - Assortment Upgrade Issues
                 listBoxAddOn.Items.Add(EnvironmentBusinessInfo.GetGroupAllocationInstalledInfo(_SAB));   // TT#1247-MD - stodd - Add Group Allocation as a License Key option -
+                listBoxAddOn.Items.Add(EnvironmentBusinessInfo.GetAnalyticsInstalledInfo(_SAB));  // TT#2131-MD - JSmith - Halo Integration
                 //AddAddOn(eMIDTextCode.lbl_Allocation, _SAB.ClientServerSession.GlobalOptions.AppConfig.AllocationInstalled, 
                 //    _SAB.ClientServerSession.GlobalOptions.AppConfig.AllocationTempLicense, _SAB.ClientServerSession.GlobalOptions.AppConfig.AllocationExpirationDays);
                 //AddAddOn(eMIDTextCode.lbl_Size, _SAB.ClientServerSession.GlobalOptions.AppConfig.SizeInstalled, 

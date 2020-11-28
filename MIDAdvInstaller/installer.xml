@@ -12,6 +12,10 @@
   <install_file application = "Control Service" folder = "Control Service" name = "ControlService_64.zip" platform = "64-bit"/>
   <install_file application = "Hierarchy Service" folder = "Hierarchy Service" name = "HierarchyService.zip" platform = "32-bit"/>
   <install_file application = "Hierarchy Service" folder = "Hierarchy Service" name = "HierarchyService_64.zip" platform = "64-bit"/>
+  <install_file application = "RO Web Job Service" folder = "Job Service" name = "JobService.zip" platform = "32-bit"/>
+  <install_file application = "RO Web Job Service" folder = "Job Service" name = "JobService_64.zip" platform = "64-bit"/>
+  <install_file application = "RO Web Service" folder = "RO Web Service" name = "ROWebService.zip" platform = "32-bit"/>
+  <install_file application = "RO Web Service" folder = "RO Web Service" name = "ROWebService_64.zip" platform = "64-bit"/>
   <install_file application = "Scheduler Service" folder = "Scheduler Service" name = "SchedulerService.zip" platform = "32-bit"/>
   <install_file application = "Scheduler Service" folder = "Scheduler Service" name = "SchedulerService_64.zip" platform = "64-bit"/>
   <install_file application = "Store Service" folder = "Store Service" name = "StoreService.zip" platform = "32-bit"/>
@@ -28,6 +32,10 @@
   <upgrade_file application = "Control Service" folder = "Control Service" name = "ControlService_64.zip" platform = "64-bit"/>
   <upgrade_file application = "Hierarchy Service" folder = "Hierarchy Service" name = "HierarchyService.zip" platform = "32-bit"/>
   <upgrade_file application = "Hierarchy Service" folder = "Hierarchy Service" name = "HierarchyService_64.zip" platform = "64-bit"/>
+  <upgrade_file application = "RO Web Job Service" folder = "Job Service" name = "JobService.zip" platform = "32-bit"/>
+  <upgrade_file application = "RO Web Job Service" folder = "Job Service" name = "JobService_64.zip" platform = "64-bit"/>
+  <upgrade_file application = "RO Web Service" folder = "RO Web Service" name = "ROWebService.zip" platform = "32-bit"/>
+  <upgrade_file application = "RO Web Service" folder = "RO Web Service" name = "ROWebService_64.zip" platform = "64-bit"/>
   <upgrade_file application = "Scheduler Service" folder = "Scheduler Service" name = "SchedulerService.zip" platform = "32-bit"/>
   <upgrade_file application = "Scheduler Service" folder = "Scheduler Service" name = "SchedulerService_64.zip" platform = "64-bit"/>
   <upgrade_file application = "Store Service" folder = "Store Service" name = "StoreService.zip" platform = "32-bit"/>
@@ -35,424 +43,447 @@
   <upgrade_file application = "MIDConfig" folder = "ConfigFile" name = "MIDConfig.zip" platform = "32-bit"/>
   <upgrade_file application = "MIDConfig" folder = "ConfigFile" name = "MIDConfig.zip" platform = "64-bit"/>
   
-  <configuration config_file = "MIDSettings.config" setting = "MIDEnvironment" type = "text" id = "MIDEnvironment"/>
-  <configuration config_file = "MIDSettings.config" setting = "ControlServer" type = "text" id = "ControlServer"/>
-  <configuration config_file = "MIDSettings.config" setting = "LocalHierarchyServer" type = "boolean" id = "LocalServer"/>
-  <configuration config_file = "MIDSettings.config" setting = "LocalStoreServer" type = "boolean" id = "LocalServer"/>
-  <configuration config_file = "MIDSettings.config" setting = "LocalApplicationServer" type = "boolean" id = "LocalServer"/>
-  <configuration config_file = "MIDSettings.config" setting = "HeaderReleaseFilePath" type = "directory" id = "HeaderReleaseFilePath"/>
-  <configuration config_file = "MIDSettings.config" setting = "ReleaseFileTriggerExtension" type = "text" id = "ReleaseFileTriggerExtension"/>
-  <configuration config_file = "MIDSettings.config" setting = "AutoUpgradeClient" type = "boolean" id = "AutoUpgradeClient"/>
-  <configuration config_file = "MIDSettings.config" setting = "AutoUpgradePath" type = "directory" id = "AutoUpgradePath"/>
-  <configuration config_file = "MIDSettings.config" setting = "User" type = "text" id = "User"/>
-  <configuration config_file = "MIDSettings.config" setting = "Password" type = "password" id = "password"/>
-  <configuration config_file = "MIDSettings.config" setting = "Delimiter" type = "text" id = "Delimiter"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "MIDEnvironment" lookupType = "child"  type = "text" id = "MIDEnvironment"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "ControlServer" lookupType = "child"  type = "text" id = "ControlServer"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "LocalHierarchyServer" lookupType = "child"  type = "boolean" id = "LocalServer"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "LocalStoreServer" lookupType = "child"  type = "boolean" id = "LocalServer"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "LocalApplicationServer" lookupType = "child"  type = "boolean" id = "LocalServer"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "HeaderReleaseFilePath" lookupType = "child"  type = "directory" id = "HeaderReleaseFilePath"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "ReleaseFileTriggerExtension" lookupType = "child"  type = "text" id = "ReleaseFileTriggerExtension"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "AutoUpgradeClient" lookupType = "child"  type = "boolean" id = "AutoUpgradeClient"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "AutoUpgradePath" lookupType = "child"  type = "directory" id = "AutoUpgradePath"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "User" lookupType = "child"  type = "text" id = "User"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "Password" lookupType = "child"  type = "password" id = "password"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "Delimiter" lookupType = "child"  type = "text" id = "Delimiter"/>
   <!-- BEGIN TT#1966-MD - JSmith - DC Fulfillment -->
-  <configuration config_file = "MIDSettings.config" setting = "HeaderProcessingKeysFile" type = "open_file" id = "HeaderProcessingKeysFile"/>
-  <configuration config_file = "MIDSettings.config" setting = "HeaderIdSequenceLength" type = "numeric" id = "HeaderIdSequenceLength"/>
-  <configuration config_file = "MIDSettings.config" setting = "HeaderIdDelimiter" type = "text" id = "HeaderIdDelimiter"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "HeaderProcessingKeysFile" lookupType = "child"  type = "open_file" id = "HeaderProcessingKeysFile"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "HeaderIdSequenceLength" lookupType = "child"  type = "numeric" id = "HeaderIdSequenceLength"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "HeaderIdDelimiter" lookupType = "child"  type = "text" id = "HeaderIdDelimiter"/>
   <!-- END TT#1966-MD - JSmith - DC Fulfillment -->
-  <configuration config_file = "MIDSettings.config" setting = "ReaderLockTimeOut" type = "thousands" id = "ReaderLockTimeOut"/>
-  <configuration config_file = "MIDSettings.config" setting = "WriterLockTimeOut" type = "thousands" id = "WriterLockTimeOut"/>
-  <configuration config_file = "MIDSettings.config" setting = "Export_FileFormat" type = "text" id = "Export_FileFormat"/>
-  <configuration config_file = "MIDSettings.config" setting = "Export_CSVDelimeter" type = "text" id = "Export_CSVDelimeter"/>
-  <configuration config_file = "MIDSettings.config" setting = "Export_CSVFileSuffix" type = "text" id = "Export_CSVFileSuffix"/>
-  <configuration config_file = "MIDSettings.config" setting = "Export_DateType" type = "text" id = "Export_DateType"/>
-  <configuration config_file = "MIDSettings.config" setting = "Export_PreinitValues" type = "boolean" id = "Export_PreinitValues"/>
-  <configuration config_file = "MIDSettings.config" setting = "Export_ExcludeZeroValues" type = "boolean" id = "Export_ExcludeZeroValues"/>
-  <configuration config_file = "MIDSettings.config" setting = "Export_FilePath" type = "directory" id = "Export_FilePath"/>
-  <configuration config_file = "MIDSettings.config" setting = "Export_AddDateStampToFileName" type = "boolean" id = "Export_AddDateStampToFileName"/>
-  <configuration config_file = "MIDSettings.config" setting = "Export_AddTimeStampToFileName" type = "boolean" id = "Export_AddTimeStampToFileName"/>
-  <configuration config_file = "MIDSettings.config" setting = "Export_SplitFiles" type = "text" id = "Export_SplitFiles"/>
-  <configuration config_file = "MIDSettings.config" setting = "Export_SplitNumberOfEntries" type = "thousands" id = "Export_SplitNumberOfEntries"/>
-  <configuration config_file = "MIDSettings.config" setting = "Export_ConcurrentProcesses" type = "tens" id = "Export_ConcurrentProcesses"/>
-  <configuration config_file = "MIDSettings.config" setting = "Export_CreateFlagFile" type = "boolean" id = "Export_CreateFlagFile"/>
-  <configuration config_file = "MIDSettings.config" setting = "Export_FlagFileSuffix" type = "text" id = "Export_FlagFileSuffix"/>
-  <configuration config_file = "MIDSettings.config" setting = "Export_CreateEndFile" type = "boolean" id = "Export_CreateEndFile"/>
-  <configuration config_file = "MIDSettings.config" setting = "Export_EndFileSuffix" type = "text" id = "Export_EndFileSuffix"/>
-  <configuration config_file = "MIDSettings.config" setting = "ConnectionString" type = "sql_connect" id = "ConnectionString"/>
-  <configuration config_file = "MIDSettings.config" setting = "IncludeEnvironmentOnStatus" type = "boolean" id = "IncludeEnvironmentOnStatus"/>
-  <configuration config_file = "MIDSettings.config" setting = "RemoteOptions_ServerName" type = "text" id = "RemoteOptions_ServerName"/>
-  <configuration config_file = "MIDSettings.config" setting = "RemoteOptions_ServerPort" type = "text" id = "RemoteOptions_ServerPort"/>
-  <configuration config_file = "MIDSettings.config" setting = "RemoteOptions_ClientInterval" type = "thousands" id = "RemoteOptions_ClientInterval"/>
-  <configuration config_file = "MIDSettings.config" setting = "RemoteOptions_ServerInterval" type = "thousands" id = "RemoteOptions_ServerInterval"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "ReaderLockTimeOut" lookupType = "child"  type = "thousands" id = "ReaderLockTimeOut"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "WriterLockTimeOut" lookupType = "child"  type = "thousands" id = "WriterLockTimeOut"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "Export_FileFormat" lookupType = "child"  type = "text" id = "Export_FileFormat"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "Export_CSVDelimeter" lookupType = "child"  type = "text" id = "Export_CSVDelimeter"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "Export_CSVFileSuffix" lookupType = "child"  type = "text" id = "Export_CSVFileSuffix"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "Export_DateType" lookupType = "child"  type = "text" id = "Export_DateType"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "Export_PreinitValues" lookupType = "child"  type = "boolean" id = "Export_PreinitValues"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "Export_ExcludeZeroValues" lookupType = "child"  type = "boolean" id = "Export_ExcludeZeroValues"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "Export_FilePath" lookupType = "child"  type = "directory" id = "Export_FilePath"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "Export_AddDateStampToFileName" lookupType = "child"  type = "boolean" id = "Export_AddDateStampToFileName"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "Export_AddTimeStampToFileName" lookupType = "child"  type = "boolean" id = "Export_AddTimeStampToFileName"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "Export_SplitFiles" lookupType = "child"  type = "text" id = "Export_SplitFiles"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "Export_SplitNumberOfEntries" lookupType = "child"  type = "thousands" id = "Export_SplitNumberOfEntries"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "Export_ConcurrentProcesses" lookupType = "child"  type = "tens" id = "Export_ConcurrentProcesses"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "Export_CreateFlagFile" lookupType = "child"  type = "boolean" id = "Export_CreateFlagFile"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "Export_FlagFileSuffix" lookupType = "child"  type = "text" id = "Export_FlagFileSuffix"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "Export_CreateEndFile" lookupType = "child"  type = "boolean" id = "Export_CreateEndFile"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "Export_EndFileSuffix" lookupType = "child"  type = "text" id = "Export_EndFileSuffix"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "ConnectionString" lookupType = "child"  type = "sql_connect" id = "ConnectionString"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "ROExtractConnectionString" lookupType = "child" type = "sql_connect" id = "ROExtractConnectionString"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "IncludeEnvironmentOnStatus" lookupType = "child"  type = "boolean" id = "IncludeEnvironmentOnStatus"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "RemoteOptions_ServerName" lookupType = "child"  type = "text" id = "RemoteOptions_ServerName"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "RemoteOptions_ServerPort" lookupType = "child"  type = "text" id = "RemoteOptions_ServerPort"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "RemoteOptions_ClientInterval" lookupType = "child"  type = "thousands" id = "RemoteOptions_ClientInterval"/>
+  <configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "RemoteOptions_ServerInterval" lookupType = "child"  type = "thousands" id = "RemoteOptions_ServerInterval"/>
   <!-- BEGIN TT#1766 - stodd - FIFO file processing -->
   <!--Begin TT#581-MD - JSmith - Remove unwanted settings -->
-  <!--<configuration config_file = "MIDSettings.config" setting = "APIFileProcessingDirection" type = "list" id = "APIFileProcessingDirection"/> -->
+  <!--<configuration config_file = "MIDSettings.config" parent = "appSettings" setting = "APIFileProcessingDirection" lookupType = "child"  type = "list" id = "APIFileProcessingDirection"/> -->
   <!--End TT#581-MD - JSmith - Remove unwanted settings -->
   <!-- END TT#1766 - stodd - FIFO file processing -->
 
 
-  <configuration config_file = "AllocationScheduler.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
-  <configuration config_file = "AllocationScheduler.exe.config" setting = "MonitorForecast" type = "boolean" id = "MonitorForecast"/>
-  <configuration config_file = "AllocationScheduler.exe.config" setting = "MonitorForecastFilePath" type = "directory" id = "MonitorForecastFilePath"/>
+  <configuration config_file = "AllocationScheduler.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "AllocationScheduler.exe.config" parent = "appSettings" setting = "MonitorForecast" lookupType = "child"  type = "boolean" id = "MonitorForecast"/>
+  <configuration config_file = "AllocationScheduler.exe.config" parent = "appSettings" setting = "MonitorForecastFilePath" lookupType = "child"  type = "directory" id = "MonitorForecastFilePath"/>
   <!-- BEGIN TT#1966-MD - JSmith - DC Fulfillment -->
-  <configuration config_file = "AllocationScheduler.exe.config" setting = "MonitorDCFulfillment" type = "boolean" id = "MonitorDCFulfillment"/>
-  <configuration config_file = "AllocationScheduler.exe.config" setting = "MonitorDCFulfillmentFilePath" type = "directory" id = "MonitorDCFulfillmentFilePath"/>
+  <configuration config_file = "AllocationScheduler.exe.config" parent = "appSettings" setting = "MonitorDCFulfillment" lookupType = "child"  type = "boolean" id = "MonitorDCFulfillment"/>
+  <configuration config_file = "AllocationScheduler.exe.config" parent = "appSettings" setting = "MonitorDCFulfillmentFilePath" lookupType = "child"  type = "directory" id = "MonitorDCFulfillmentFilePath"/>
   <!-- END TT#1966-MD - JSmith - DC Fulfillment -->
 
   <!-- BEGIN TT#1631-MD - stodd - Batch Comp -->
-  <configuration config_file = "BatchComp.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "BatchComp.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
   <!-- BEGIN TT#1631-MD - stodd - Batch Comp -->
   
-  <configuration config_file = "BuildPackCriteriaLoad.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
-  <configuration config_file = "BuildPackCriteriaLoad.exe.config" setting = "InputFile" type = "open_file" id = "InputFile"/>
+  <configuration config_file = "BuildPackCriteriaLoad.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "BuildPackCriteriaLoad.exe.config" parent = "appSettings" setting = "InputFile" lookupType = "child"  type = "open_file" id = "InputFile"/>
 
-  <configuration config_file = "ChainForecasting.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
-  <configuration config_file = "ChainForecasting.exe.config" setting = "ConcurrentProcesses" type = "numeric" id = "ConcurrentProcesses"/>
+  <configuration config_file = "ChainForecasting.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "ChainForecasting.exe.config" parent = "appSettings" setting = "ConcurrentProcesses" lookupType = "child"  type = "numeric" id = "ConcurrentProcesses"/>
 
-  <configuration config_file = "ChainSetPercentages.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
-  <configuration config_file = "ChainSetPercentages.exe.config" setting = "InputFile" type = "open_file" id = "InputFile"/>
-  <configuration config_file = "ChainSetPercentages.exe.config" setting = "Delimiter" type = "text" id = "Delimiter"/>
+  <configuration config_file = "ChainSetPercentages.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "ChainSetPercentages.exe.config" parent = "appSettings" setting = "InputFile" lookupType = "child"  type = "open_file" id = "InputFile"/>
+  <configuration config_file = "ChainSetPercentages.exe.config" parent = "appSettings" setting = "Delimiter" lookupType = "child"  type = "text" id = "Delimiter"/>
 
   <!--BEGIN TT#844 -MD-DOConnell-The Installer does not have the options to update the new API’s conf -->
-  <configuration config_file = "StoreEligibilityLoad.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
-  <configuration config_file = "StoreEligibilityLoad.exe.config" setting = "InputFile" type = "open_file" id = "InputFile"/>
-  <configuration config_file = "StoreEligibilityLoad.exe.config" setting = "Delimiter" type = "text" id = "Delimiter"/>
+  <configuration config_file = "StoreEligibilityLoad.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "StoreEligibilityLoad.exe.config" parent = "appSettings" setting = "InputFile" lookupType = "child"  type = "open_file" id = "InputFile"/>
+  <configuration config_file = "StoreEligibilityLoad.exe.config" parent = "appSettings" setting = "Delimiter" lookupType = "child"  type = "text" id = "Delimiter"/>
 
-  <configuration config_file = "VSWLoad.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
-  <configuration config_file = "VSWLoad.exe.config" setting = "InputFile" type = "open_file" id = "InputFile"/>
-  <configuration config_file = "VSWLoad.exe.config" setting = "Delimiter" type = "text" id = "Delimiter"/>
+  <configuration config_file = "VSWLoad.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "VSWLoad.exe.config" parent = "appSettings" setting = "InputFile" lookupType = "child"  type = "open_file" id = "InputFile"/>
+  <configuration config_file = "VSWLoad.exe.config" parent = "appSettings" setting = "Delimiter" lookupType = "child"  type = "text" id = "Delimiter"/>
   <!--END TT#844 -MD-DOConnell-The Installer does not have the options to update the new API’s conf -->
   
-  <configuration config_file = "ColorCodesLoad.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
-  <configuration config_file = "ColorCodesLoad.exe.config" setting = "InputFile" type = "open_file" id = "InputFile"/>
-  <configuration config_file = "ColorCodesLoad.exe.config" setting = "Delimiter" type = "text" id = "Delimiter"/>
+  <configuration config_file = "ColorCodesLoad.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "ColorCodesLoad.exe.config" parent = "appSettings" setting = "InputFile" lookupType = "child"  type = "open_file" id = "InputFile"/>
+  <configuration config_file = "ColorCodesLoad.exe.config" parent = "appSettings" setting = "Delimiter" lookupType = "child"  type = "text" id = "Delimiter"/>
 
-  <configuration config_file = "ConvertFilters.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "ConvertFilters.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
   
-  <configuration config_file = "DailyPercentages.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
-  <configuration config_file = "DailyPercentages.exe.config" setting = "InputFile" type = "open_file" id = "InputFile"/>
-  <configuration config_file = "DailyPercentages.exe.config" setting = "Delimiter" type = "text" id = "Delimiter"/>
+  <configuration config_file = "DailyPercentages.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "DailyPercentages.exe.config" parent = "appSettings" setting = "InputFile" lookupType = "child"  type = "open_file" id = "InputFile"/>
+  <configuration config_file = "DailyPercentages.exe.config" parent = "appSettings" setting = "Delimiter" lookupType = "child"  type = "text" id = "Delimiter"/>
 
-  <configuration config_file = "DetermineHierarchyActivity.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
-  <configuration config_file = "DetermineHierarchyActivity.exe.config" setting = "FromOffset" type = "numeric" id = "FromOffset"/>
-  <configuration config_file = "DetermineHierarchyActivity.exe.config" setting = "ToOffset" type = "numeric" id = "ToOffset"/>
-  <configuration config_file = "DetermineHierarchyActivity.exe.config" setting = "ForecastOffset" type = "numeric" id = "ForecastOffset"/>
-  <configuration config_file = "DetermineHierarchyActivity.exe.config" setting = "IntransitOffset" type = "numeric" id = "IntransitOffset"/>
+  <configuration config_file = "DetermineHierarchyActivity.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "DetermineHierarchyActivity.exe.config" parent = "appSettings" setting = "FromOffset" lookupType = "child"  type = "numeric" id = "FromOffset"/>
+  <configuration config_file = "DetermineHierarchyActivity.exe.config" parent = "appSettings" setting = "ToOffset" lookupType = "child"  type = "numeric" id = "ToOffset"/>
+  <configuration config_file = "DetermineHierarchyActivity.exe.config" parent = "appSettings" setting = "ForecastOffset" lookupType = "child"  type = "numeric" id = "ForecastOffset"/>
+  <configuration config_file = "DetermineHierarchyActivity.exe.config" parent = "appSettings" setting = "IntransitOffset" lookupType = "child"  type = "numeric" id = "IntransitOffset"/>
   <!-- BEGIN TT#632-MD - JSmith - Add Concurrent Processes to Determine Hierarchy Activity -->
-  <configuration config_file = "DetermineHierarchyActivity.exe.config" setting = "ConcurrentProcesses" type = "numeric" id = "ConcurrentProcesses"/>
+  <configuration config_file = "DetermineHierarchyActivity.exe.config" parent = "appSettings" setting = "ConcurrentProcesses" lookupType = "child"  type = "numeric" id = "ConcurrentProcesses"/>
   <!-- END TT#632-MD - JSmith - Add Concurrent Processes to Determine Hierarchy Activity -->
   
-  <configuration config_file = "HeaderAllocationLoad.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
-  <configuration config_file = "HeaderAllocationLoad.exe.config" setting = "CustomBulkTableName" type = "text" id = "CustomBulkTableName"/>
-  <configuration config_file = "HeaderAllocationLoad.exe.config" setting = "CustomPackTableName" type = "text" id = "CustomPackTableName"/>
-  <configuration config_file = "HeaderAllocationLoad.exe.config" setting = "HeaderReleaseFilePath" type = "directory" id = "HeaderReleaseFilePath"/>
+  <configuration config_file = "HeaderAllocationLoad.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "HeaderAllocationLoad.exe.config" parent = "appSettings" setting = "CustomBulkTableName" lookupType = "child"  type = "text" id = "CustomBulkTableName"/>
+  <configuration config_file = "HeaderAllocationLoad.exe.config" parent = "appSettings" setting = "CustomPackTableName" lookupType = "child"  type = "text" id = "CustomPackTableName"/>
+  <configuration config_file = "HeaderAllocationLoad.exe.config" parent = "appSettings" setting = "HeaderReleaseFilePath" lookupType = "child"  type = "directory" id = "HeaderReleaseFilePath"/>
+  <configuration config_file = "HeaderAllocationLoad.exe.config" parent = "configuration/log4net/logger/level" setting = "Log File Level" lookupType = "parent"  type = "list" id = "log4netLevel"/>
+  <configuration config_file = "HeaderAllocationLoad.exe.config" parent = "configuration/log4net/appender/file" setting = "Log File Name" lookupType = "parent"  type = "open_file" id = "log4netFile"/>
   
-  <configuration config_file = "HeaderLoad.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
-  <configuration config_file = "HeaderLoad.exe.config" setting = "InputFile" type = "open_file" id = "InputFile"/>
-  <configuration config_file = "HeaderLoad.exe.config" setting = "UpdateStyleDescription" type = "boolean" id = "UpdateStyleDescription"/>
-  <configuration config_file = "HeaderLoad.exe.config" setting = "CreateOnModify" type = "boolean" id = "CreateOnModify"/>
-  <configuration config_file = "HeaderLoad.exe.config" setting = "EndSuffix" type = "text" id = "EndSuffix"/>
-  <configuration config_file = "HeaderLoad.exe.config" setting = "AutoAddCharacteristics" type = "boolean" id = "AutoAddCharacteristics"/>
-  <configuration config_file = "HeaderLoad.exe.config" setting = "HeaderReleaseFilePath" type = "directory" id = "HeaderReleaseFilePath"/>
+  <configuration config_file = "HeaderLoad.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "HeaderLoad.exe.config" parent = "appSettings" setting = "InputFile" lookupType = "child"  type = "open_file" id = "InputFile"/>
+  <configuration config_file = "HeaderLoad.exe.config" parent = "appSettings" setting = "UpdateStyleDescription" lookupType = "child"  type = "boolean" id = "UpdateStyleDescription"/>
+  <configuration config_file = "HeaderLoad.exe.config" parent = "appSettings" setting = "CreateOnModify" lookupType = "child"  type = "boolean" id = "CreateOnModify"/>
+  <configuration config_file = "HeaderLoad.exe.config" parent = "appSettings" setting = "EndSuffix" lookupType = "child"  type = "text" id = "EndSuffix"/>
+  <configuration config_file = "HeaderLoad.exe.config" parent = "appSettings" setting = "AutoAddCharacteristics" lookupType = "child"  type = "boolean" id = "AutoAddCharacteristics"/>
+  <configuration config_file = "HeaderLoad.exe.config" parent = "appSettings" setting = "HeaderReleaseFilePath" lookupType = "child"  type = "directory" id = "HeaderReleaseFilePath"/>
   <!-- BEGIN TT#1766 - stodd - FIFO file processing -->
-  <configuration config_file = "HeaderLoad.exe.config" setting = "APIFileProcessingDirection" type = "list" id = "APIFileProcessingDirection"/>
+  <configuration config_file = "HeaderLoad.exe.config" parent = "appSettings" setting = "APIFileProcessingDirection" lookupType = "child"  type = "list" id = "APIFileProcessingDirection"/>
   <!-- END TT#1766 - stodd - FIFO file processing -->
   <!-- BEGIN TT#1581-MD - stodd - Header Reconcile -->
-  <configuration config_file = "HeaderLoad.exe.config" setting = "GenerateHeaderID" type = "boolean" id = "GenerateHeaderID"/>
-  <configuration config_file = "HeaderLoad.exe.config" setting = "HeaderIdSequenceLength" type = "numeric" id = "HeaderIdSequenceLength"/>
-  <configuration config_file = "HeaderLoad.exe.config" setting = "HeaderIdDelimiter" type = "text" id = "HeaderIdDelimiter"/>
+  <configuration config_file = "HeaderLoad.exe.config" parent = "appSettings" setting = "GenerateHeaderID" lookupType = "child"  type = "boolean" id = "GenerateHeaderID"/>
+  <configuration config_file = "HeaderLoad.exe.config" parent = "appSettings" setting = "HeaderIdSequenceLength" lookupType = "child"  type = "numeric" id = "HeaderIdSequenceLength"/>
+  <configuration config_file = "HeaderLoad.exe.config" parent = "appSettings" setting = "HeaderIdDelimiter" lookupType = "child"  type = "text" id = "HeaderIdDelimiter"/>
   <!-- BEGIN TT#1966-MD - JSmith - DC Fulfillment -->
-  <!--<configuration config_file = "HeaderLoad.exe.config" setting = "HeaderProcessingKeysFile" type = "open_file" id = "HeaderProcessingKeysFile"/>-->
+  <!--<configuration config_file = "HeaderLoad.exe.config" parent = "appSettings" setting = "HeaderProcessingKeysFile" lookupType = "child"  type = "open_file" id = "HeaderProcessingKeysFile"/>-->
   <!-- END TT#1966-MD - JSmith - DC Fulfillment -->
   <!-- END TT#1581-MD - stodd - Header Reconcile -->
 
   <!-- BEGIN TT#1581-MD - stodd - Header Reconcile -->
-  <configuration config_file = "HeaderReconcile.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
-  <configuration config_file = "HeaderReconcile.exe.config" setting = "InputDirectory" type = "directory" id = "InputDirectory"/>
-  <configuration config_file = "HeaderReconcile.exe.config" setting = "OutputDirectory" type = "directory" id = "OutputDirectory"/>
-  <configuration config_file = "HeaderReconcile.exe.config" setting = "TriggerSuffix" type = "text" id = "TriggerSuffix"/>
-  <configuration config_file = "HeaderReconcile.exe.config" setting = "HeaderTypes" type = "text" id = "HeaderTypes"/>
+  <configuration config_file = "HeaderReconcile.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "HeaderReconcile.exe.config" parent = "appSettings" setting = "InputDirectory" lookupType = "child"  type = "directory" id = "InputDirectory"/>
+  <configuration config_file = "HeaderReconcile.exe.config" parent = "appSettings" setting = "OutputDirectory" lookupType = "child"  type = "directory" id = "OutputDirectory"/>
+  <configuration config_file = "HeaderReconcile.exe.config" parent = "appSettings" setting = "TriggerSuffix" lookupType = "child"  type = "text" id = "TriggerSuffix"/>
+  <configuration config_file = "HeaderReconcile.exe.config" parent = "appSettings" setting = "HeaderTypes" lookupType = "child"  type = "text" id = "HeaderTypes"/>
   <!-- BEGIN TT#1966-MD - JSmith - DC Fulfillment -->
-  <!--<configuration config_file = "HeaderReconcile.exe.config" setting = "HeaderProcessingKeysFile" type = "open_file" id = "HeaderProcessingKeysFile"/>-->
+  <!--<configuration config_file = "HeaderReconcile.exe.config" parent = "appSettings" setting = "HeaderProcessingKeysFile" lookupType = "child"  type = "open_file" id = "HeaderProcessingKeysFile"/>-->
   <!-- END TT#1966-MD - JSmith - DC Fulfillment -->
-  <configuration config_file = "HeaderReconcile.exe.config" setting = "RemoveTransactionsFileName" type = "text" id = "RemoveTransactionsFileName"/>
-  <configuration config_file = "HeaderReconcile.exe.config" setting = "RemoveTransactionsTriggerSuffix" type = "text" id = "RemoveTransactionsTriggerSuffix"/>
+  <configuration config_file = "HeaderReconcile.exe.config" parent = "appSettings" setting = "RemoveTransactionsFileName" lookupType = "child"  type = "text" id = "RemoveTransactionsFileName"/>
+  <configuration config_file = "HeaderReconcile.exe.config" parent = "appSettings" setting = "RemoveTransactionsTriggerSuffix" lookupType = "child"  type = "text" id = "RemoveTransactionsTriggerSuffix"/>
   <!-- END TT#1581-MD - stodd - Header Reconcile -->
 
   <!-- Begin TT#1646-MD - jsmith - Add or Remove Hierarchy Levels -->
-  <configuration config_file = "HierarchyLevelMaintenance.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
-  <configuration config_file = "HierarchyLevelMaintenance.exe.config" setting = "InputFile" type = "open_file" id = "InputFile"/>
-  <configuration config_file = "HierarchyLevelMaintenance.exe.config" setting = "Delimiter" type = "text" id = "Delimiter"/>
+  <configuration config_file = "HierarchyLevelMaintenance.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "HierarchyLevelMaintenance.exe.config" parent = "appSettings" setting = "InputFile" lookupType = "child"  type = "open_file" id = "InputFile"/>
+  <configuration config_file = "HierarchyLevelMaintenance.exe.config" parent = "appSettings" setting = "Delimiter" lookupType = "child"  type = "text" id = "Delimiter"/>
   <!-- End TT#1646-MD - jsmith - Add or Remove Hierarchy Levels -->
+  <configuration config_file = "HierarchyLevelMaintenance.exe.config" parent = "configuration/log4net/logger/level" setting = "Log File Level" lookupType = "parent"  type = "list" id = "log4netLevel"/>
+  <configuration config_file = "HierarchyLevelMaintenance.exe.config" parent = "configuration/log4net/appender/file" setting = "Log File Name" lookupType = "parent"  type = "open_file" id = "log4netFile"/>
 
-  <configuration config_file = "HierarchyLoad.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
-  <configuration config_file = "HierarchyLoad.exe.config" setting = "InputFile" type = "open_file" id = "InputFile"/>
-  <configuration config_file = "HierarchyLoad.exe.config" setting = "Delimiter" type = "text" id = "Delimiter"/>
-  <configuration config_file = "HierarchyLoad.exe.config" setting = "AutoAddCharacteristics" type = "boolean" id = "AutoAddCharacteristics"/>
+  <configuration config_file = "HierarchyLoad.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "HierarchyLoad.exe.config" parent = "appSettings" setting = "InputFile" lookupType = "child"  type = "open_file" id = "InputFile"/>
+  <configuration config_file = "HierarchyLoad.exe.config" parent = "appSettings" setting = "Delimiter" lookupType = "child"  type = "text" id = "Delimiter"/>
+  <configuration config_file = "HierarchyLoad.exe.config" parent = "appSettings" setting = "AutoAddCharacteristics" lookupType = "child"  type = "boolean" id = "AutoAddCharacteristics"/>
   <!--begin TT#2010 - JSmith - Split merchandise characteristics to separate delimited transaction layout -->
-  <configuration config_file = "HierarchyLoad.exe.config" setting = "UseCharacteristicTransaction" type = "boolean" id = "UseCharacteristicTransaction"/>
+  <configuration config_file = "HierarchyLoad.exe.config" parent = "appSettings" setting = "UseCharacteristicTransaction" lookupType = "child"  type = "boolean" id = "UseCharacteristicTransaction"/>
   <!--Ends TT#2010 -->
   
-  <configuration config_file = "HistoryPlanLoad.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
-  <configuration config_file = "HistoryPlanLoad.exe.config" setting = "InputFile" type = "open_file" id = "InputFile"/>
-  <configuration config_file = "HistoryPlanLoad.exe.config" setting = "RollStockForward" type = "boolean" id = "RollStockForward"/>
-  <configuration config_file = "HistoryPlanLoad.exe.config" setting = "SerializeXMLFile" type = "boolean" id = "SerializeXMLFile"/>
-  <configuration config_file = "HistoryPlanLoad.exe.config" setting = "AllowAutoAdds" type = "boolean" id = "AllowAutoAdds"/>
-  <configuration config_file = "HistoryPlanLoad.exe.config" setting = "RollStoreDailyToWeekly" type = "boolean" id = "RollStoreDailyToWeekly"/>
-  <configuration config_file = "HistoryPlanLoad.exe.config" setting = "RollStoreDailyUpHierarchy" type = "boolean" id = "RollStoreDailyUpHierarchy"/>
-  <configuration config_file = "HistoryPlanLoad.exe.config" setting = "RollStoreWeeklyUpHierarchy" type = "boolean" id = "RollStoreWeeklyUpHierarchy"/>
-  <configuration config_file = "HistoryPlanLoad.exe.config" setting = "RollStoreToChain" type = "boolean" id = "RollStoreToChain"/>
-  <configuration config_file = "HistoryPlanLoad.exe.config" setting = "RollChainUpHierarchy" type = "boolean" id = "RollChainUpHierarchy"/>
-  <configuration config_file = "HistoryPlanLoad.exe.config" setting = "RollIntransit" type = "boolean" id = "RollIntransit"/>
-  <configuration config_file = "HistoryPlanLoad.exe.config" setting = "Delimiter" type = "text" id = "Delimiter"/>
-  <configuration config_file = "HistoryPlanLoad.exe.config" setting = "ComputationModel" type = "text" id = "ComputationModel"/>
+  <configuration config_file = "HistoryPlanLoad.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "HistoryPlanLoad.exe.config" parent = "appSettings" setting = "InputFile" lookupType = "child"  type = "open_file" id = "InputFile"/>
+  <configuration config_file = "HistoryPlanLoad.exe.config" parent = "appSettings" setting = "RollStockForward" lookupType = "child"  type = "boolean" id = "RollStockForward"/>
+  <configuration config_file = "HistoryPlanLoad.exe.config" parent = "appSettings" setting = "SerializeXMLFile" lookupType = "child"  type = "boolean" id = "SerializeXMLFile"/>
+  <configuration config_file = "HistoryPlanLoad.exe.config" parent = "appSettings" setting = "AllowAutoAdds" lookupType = "child"  type = "boolean" id = "AllowAutoAdds"/>
+  <configuration config_file = "HistoryPlanLoad.exe.config" parent = "appSettings" setting = "RollStoreDailyToWeekly" lookupType = "child"  type = "boolean" id = "RollStoreDailyToWeekly"/>
+  <configuration config_file = "HistoryPlanLoad.exe.config" parent = "appSettings" setting = "RollStoreDailyUpHierarchy" lookupType = "child"  type = "boolean" id = "RollStoreDailyUpHierarchy"/>
+  <configuration config_file = "HistoryPlanLoad.exe.config" parent = "appSettings" setting = "RollStoreWeeklyUpHierarchy" lookupType = "child"  type = "boolean" id = "RollStoreWeeklyUpHierarchy"/>
+  <configuration config_file = "HistoryPlanLoad.exe.config" parent = "appSettings" setting = "RollStoreToChain" lookupType = "child"  type = "boolean" id = "RollStoreToChain"/>
+  <configuration config_file = "HistoryPlanLoad.exe.config" parent = "appSettings" setting = "RollChainUpHierarchy" lookupType = "child"  type = "boolean" id = "RollChainUpHierarchy"/>
+  <configuration config_file = "HistoryPlanLoad.exe.config" parent = "appSettings" setting = "RollIntransit" lookupType = "child"  type = "boolean" id = "RollIntransit"/>
+  <configuration config_file = "HistoryPlanLoad.exe.config" parent = "appSettings" setting = "Delimiter" lookupType = "child"  type = "text" id = "Delimiter"/>
+  <configuration config_file = "HistoryPlanLoad.exe.config" parent = "appSettings" setting = "ComputationModel" lookupType = "child"  type = "text" id = "ComputationModel"/>
 
-  <configuration config_file = "HierarchyReclass.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
-  <configuration config_file = "HierarchyReclass.exe.config" setting = "InputDirectory" type = "directory" id = "InputDirectory"/>
-  <configuration config_file = "HierarchyReclass.exe.config" setting = "OutputDirectory" type = "directory" id = "OutputDirectory"/>
-  <configuration config_file = "HierarchyReclass.exe.config" setting = "Delimiter" type = "text" id = "Delimiter"/>
-  <configuration config_file = "HierarchyReclass.exe.config" setting = "TriggerSuffix" type = "text" id = "TriggerSuffix"/>
-  <configuration config_file = "HierarchyReclass.exe.config" setting = "ReclassMoveTriggerSuffix" type = "text" id = "ReclassMoveTriggerSuffix"/>
-  <configuration config_file = "HierarchyReclass.exe.config" setting = "ReclassDeleteTriggerSuffix" type = "text" id = "ReclassDeleteTriggerSuffix"/>
-  <configuration config_file = "HierarchyReclass.exe.config" setting = "MaximumRecordsPerOutputFile" type = "hundreds" id = "MaximumRecordsPerOutputFile"/>
-  <configuration config_file = "HierarchyReclass.exe.config" setting = "AllowDeletes" type = "boolean" id = "AllowDeletes"/>
+  <configuration config_file = "HierarchyReclass.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "HierarchyReclass.exe.config" parent = "appSettings" setting = "InputDirectory" lookupType = "child"  type = "directory" id = "InputDirectory"/>
+  <configuration config_file = "HierarchyReclass.exe.config" parent = "appSettings" setting = "OutputDirectory" lookupType = "child"  type = "directory" id = "OutputDirectory"/>
+  <configuration config_file = "HierarchyReclass.exe.config" parent = "appSettings" setting = "Delimiter" lookupType = "child"  type = "text" id = "Delimiter"/>
+  <configuration config_file = "HierarchyReclass.exe.config" parent = "appSettings" setting = "TriggerSuffix" lookupType = "child"  type = "text" id = "TriggerSuffix"/>
+  <configuration config_file = "HierarchyReclass.exe.config" parent = "appSettings" setting = "ReclassMoveTriggerSuffix" lookupType = "child"  type = "text" id = "ReclassMoveTriggerSuffix"/>
+  <configuration config_file = "HierarchyReclass.exe.config" parent = "appSettings" setting = "ReclassDeleteTriggerSuffix" lookupType = "child"  type = "text" id = "ReclassDeleteTriggerSuffix"/>
+  <configuration config_file = "HierarchyReclass.exe.config" parent = "appSettings" setting = "MaximumRecordsPerOutputFile" lookupType = "child"  type = "hundreds" id = "MaximumRecordsPerOutputFile"/>
+  <configuration config_file = "HierarchyReclass.exe.config" parent = "appSettings" setting = "AllowDeletes" lookupType = "child"  type = "boolean" id = "AllowDeletes"/>
   <!-- Begin TT#223 MD - JSmith - Add file order processsing (FIFO, LIFO) -->
-  <configuration config_file = "HierarchyReclass.exe.config" setting = "APIFileProcessingDirection" type = "list" id = "APIFileProcessingDirectionFIFO"/>
+  <configuration config_file = "HierarchyReclass.exe.config" parent = "appSettings" setting = "APIFileProcessingDirection" lookupType = "child"  type = "list" id = "APIFileProcessingDirectionFIFO"/>
   <!-- End TT#2186 -->
   
-  <configuration config_file = "PlanForecasting.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
-  <configuration config_file = "PlanForecasting.exe.config" setting = "MonitorForecast" type = "boolean" id = "MonitorForecast"/>
-  <configuration config_file = "PlanForecasting.exe.config" setting = "MonitorForecastFilePath" type = "directory" id = "MonitorForecastFilePath"/>
+  <configuration config_file = "PlanForecasting.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "PlanForecasting.exe.config" parent = "appSettings" setting = "MonitorForecast" lookupType = "child"  type = "boolean" id = "MonitorForecast"/>
+  <configuration config_file = "PlanForecasting.exe.config" parent = "appSettings" setting = "MonitorForecastFilePath" lookupType = "child"  type = "directory" id = "MonitorForecastFilePath"/>
   
-  <configuration config_file = "Purge.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
-  <configuration config_file = "Purge.exe.config" setting = "DaysToKeepAudit" type = "numeric" id = "DaysToKeepAudit"/>
-  <configuration config_file = "Purge.exe.config" setting = "DaysToKeepCompletedSchedules" type = "tens" id = "DaysToKeepCompletedSchedules"/>
-  <!-- <configuration config_file = "Purge.exe.config" setting = "DaysToKeepCompletedSchedules" type = "tens" id = "DaysToKeepCompletedSchedules"/>  TT#847-MD - JSmith - Purge option displays twice in the installer -->
-  <configuration config_file = "Purge.exe.config" setting = "DeleteUsers" type = "boolean" id = "DeleteUsers"/>
-  <configuration config_file = "Purge.exe.config" setting = "DaysToKeepDeletedUsers" type = "numeric" id = "DaysToKeepDeletedUsers"/>
-  <configuration config_file = "Purge.exe.config" setting = "DeleteGroups" type = "boolean" id = "DeleteGroups"/>
-  <configuration config_file = "Purge.exe.config" setting = "DaysToKeepDeletedGroups" type = "numeric" id = "DaysToKeepDeletedGroups"/>
-  <configuration config_file = "Purge.exe.config" setting = "PurgeRowsWithAllZeros" type = "boolean" id = "PurgeRowsWithAllZeros"/>
-  <configuration config_file = "Purge.exe.config" setting = "PurgeRowsWithAllUnlocked" type = "boolean" id = "PurgeRowsWithAllUnlocked"/>
-  <configuration config_file = "Purge.exe.config" setting = "ConcurrentProcesses" type = "numeric" id = "ConcurrentProcesses"/>
+  <configuration config_file = "Purge.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "Purge.exe.config" parent = "appSettings" setting = "DaysToKeepAudit" lookupType = "child"  type = "numeric" id = "DaysToKeepAudit"/>
+  <configuration config_file = "Purge.exe.config" parent = "appSettings" setting = "DaysToKeepCompletedSchedules" lookupType = "child"  type = "tens" id = "DaysToKeepCompletedSchedules"/>
+  <!-- <configuration config_file = "Purge.exe.config" parent = "appSettings" setting = "DaysToKeepCompletedSchedules" lookupType = "child"  type = "tens" id = "DaysToKeepCompletedSchedules"/>  TT#847-MD - JSmith - Purge option displays twice in the installer -->
+  <configuration config_file = "Purge.exe.config" parent = "appSettings" setting = "DeleteUsers" lookupType = "child"  type = "boolean" id = "DeleteUsers"/>
+  <configuration config_file = "Purge.exe.config" parent = "appSettings" setting = "DaysToKeepDeletedUsers" lookupType = "child"  type = "numeric" id = "DaysToKeepDeletedUsers"/>
+  <configuration config_file = "Purge.exe.config" parent = "appSettings" setting = "DeleteGroups" lookupType = "child"  type = "boolean" id = "DeleteGroups"/>
+  <configuration config_file = "Purge.exe.config" parent = "appSettings" setting = "DaysToKeepDeletedGroups" lookupType = "child"  type = "numeric" id = "DaysToKeepDeletedGroups"/>
+  <configuration config_file = "Purge.exe.config" parent = "appSettings" setting = "PurgeRowsWithAllZeros" lookupType = "child"  type = "boolean" id = "PurgeRowsWithAllZeros"/>
+  <configuration config_file = "Purge.exe.config" parent = "appSettings" setting = "PurgeRowsWithAllUnlocked" lookupType = "child"  type = "boolean" id = "PurgeRowsWithAllUnlocked"/>
+  <configuration config_file = "Purge.exe.config" parent = "appSettings" setting = "ConcurrentProcesses" lookupType = "child"  type = "numeric" id = "ConcurrentProcesses"/>
   <!-- BEGIN TT#739-MD - STodd - delete stores -->
-  <!-- <configuration config_file = "Purge.exe.config" setting = "DeleteEmptyStoreSets" type = "boolean" id = "DeleteEmptyStoreSets"/> -->
+  <!-- <configuration config_file = "Purge.exe.config" parent = "appSettings" setting = "DeleteEmptyStoreSets" lookupType = "child"  type = "boolean" id = "DeleteEmptyStoreSets"/> -->
   <!-- END TT#739-MD - STodd - delete stores -->
   <!-- Begin TT#3822 - JSmith - Add Stop Time to Purge -->
-  <configuration config_file = "Purge.exe.config" setting = "PurgeCutoffTime" type = "text" id = "PurgeCutoffTime"/>
+  <configuration config_file = "Purge.exe.config" parent = "appSettings" setting = "PurgeCutoffTime" lookupType = "child"  type = "text" id = "PurgeCutoffTime"/>
   <!-- End TT#3822 - JSmith - Add Stop Time to Purge -->
   
-  <configuration config_file = "PushToBackStock.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "PushToBackStock.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
   
-  <configuration config_file = "RelieveHeaders.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
-  <configuration config_file = "RelieveHeaders.exe.config" setting = "HeaderSQL" type = "open_file" id = "HeaderSQL"/>
-  <configuration config_file = "RelieveHeaders.exe.config" setting = "RelieveIntransitFilePath" type = "directory" id = "RelieveIntransitFilePath"/>
-  <configuration config_file = "RelieveHeaders.exe.config" setting = "RelieveIntransitFile" type = "text" id = "RelieveIntransitFile"/>
-  <configuration config_file = "RelieveHeaders.exe.config" setting = "HeadersPerFile" type = "hundreds" id = "HeadersPerFile"/>
-  <configuration config_file = "RelieveHeaders.exe.config" setting = "FlagFileSuffix" type = "text" id = "FlagFileSuffix"/>
+  <configuration config_file = "RelieveHeaders.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "RelieveHeaders.exe.config" parent = "appSettings" setting = "HeaderSQL" lookupType = "child"  type = "open_file" id = "HeaderSQL"/>
+  <configuration config_file = "RelieveHeaders.exe.config" parent = "appSettings" setting = "RelieveIntransitFilePath" lookupType = "child"  type = "directory" id = "RelieveIntransitFilePath"/>
+  <configuration config_file = "RelieveHeaders.exe.config" parent = "appSettings" setting = "RelieveIntransitFile" lookupType = "child"  type = "text" id = "RelieveIntransitFile"/>
+  <configuration config_file = "RelieveHeaders.exe.config" parent = "appSettings" setting = "HeadersPerFile" lookupType = "child"  type = "hundreds" id = "HeadersPerFile"/>
+  <configuration config_file = "RelieveHeaders.exe.config" parent = "appSettings" setting = "FlagFileSuffix" lookupType = "child"  type = "text" id = "FlagFileSuffix"/>
     
-  <configuration config_file = "RelieveIntransit.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
-  <configuration config_file = "RelieveIntransit.exe.config" setting = "InputFile" type = "open_file" id = "InputFile"/>
-  <configuration config_file = "RelieveIntransit.exe.config" setting = "SerializeXMLFile" type = "boolean" id = "SerializeXMLFile"/>
-  <configuration config_file = "RelieveIntransit.exe.config" setting = "HeaderIDsPresent" type = "boolean" id = "HeaderIDsPresent"/>
-  <configuration config_file = "RelieveIntransit.exe.config" setting = "Delimiter" type = "text" id = "Delimiter"/>
-  <configuration config_file = "RelieveIntransit.exe.config" setting = "RelieveAllStores" type = "boolean" id = "RelieveAllStores"/>
+  <configuration config_file = "RelieveIntransit.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "RelieveIntransit.exe.config" parent = "appSettings" setting = "InputFile" lookupType = "child"  type = "open_file" id = "InputFile"/>
+  <configuration config_file = "RelieveIntransit.exe.config" parent = "appSettings" setting = "SerializeXMLFile" lookupType = "child"  type = "boolean" id = "SerializeXMLFile"/>
+  <configuration config_file = "RelieveIntransit.exe.config" parent = "appSettings" setting = "HeaderIDsPresent" lookupType = "child"  type = "boolean" id = "HeaderIDsPresent"/>
+  <configuration config_file = "RelieveIntransit.exe.config" parent = "appSettings" setting = "Delimiter" lookupType = "child"  type = "text" id = "Delimiter"/>
+  <configuration config_file = "RelieveIntransit.exe.config" parent = "appSettings" setting = "RelieveAllStores" lookupType = "child"  type = "boolean" id = "RelieveAllStores"/>
   
-  <configuration config_file = "Rollup.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
-  <configuration config_file = "Rollup.exe.config" setting = "InputFile" type = "open_file" id = "InputFile"/>
-  <configuration config_file = "Rollup.exe.config" setting = "BatchSize" type = "hundreds" id = "BatchSize"/>
-  <configuration config_file = "Rollup.exe.config" setting = "ConcurrentProcesses" type = "numeric" id = "ConcurrentProcesses"/>
-  <configuration config_file = "Rollup.exe.config" setting = "IncludeZeroInAverage" type = "boolean" id = "IncludeZeroInAverage"/>
+  <configuration config_file = "Rollup.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "Rollup.exe.config" parent = "appSettings" setting = "InputFile" lookupType = "child"  type = "open_file" id = "InputFile"/>
+  <configuration config_file = "Rollup.exe.config" parent = "appSettings" setting = "BatchSize" lookupType = "child"  type = "hundreds" id = "BatchSize"/>
+  <configuration config_file = "Rollup.exe.config" parent = "appSettings" setting = "ConcurrentProcesses" lookupType = "child"  type = "numeric" id = "ConcurrentProcesses"/>
+  <configuration config_file = "Rollup.exe.config" parent = "appSettings" setting = "IncludeZeroInAverage" lookupType = "child"  type = "boolean" id = "IncludeZeroInAverage"/>
   
-  <configuration config_file = "ScheduleInterface.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
-  <configuration config_file = "ScheduleInterface.exe.config" setting = "User" type = "text" id = "User"/>
-  <configuration config_file = "ScheduleInterface.exe.config" setting = "Password" type = "password" id = "Password"/>
-  <configuration config_file = "ScheduleInterface.exe.config" setting = "ScheduleScanInterval" type = "thousands" id = "ScheduleScanInterval"/>
-  <configuration config_file = "ScheduleInterface.exe.config" setting = "CheckForTerminateInterval" type = "thousands" id = "CheckForTerminateInterval"/>
-  <configuration config_file = "ScheduleInterface.exe.config" setting = "StartedProcessWindowStyle" type = "window_style" id = "StartedProcessWindowStyle"/>
-  <configuration config_file = "ScheduleInterface.exe.config" setting = "ForecastExecutablePath" type = "open_file" id = "ForecastExecutablePath"/>
-  <configuration config_file = "ScheduleInterface.exe.config" setting = "AllocateExecutablePath" type = "open_file" id = "AllocateExecutablePath"/>
-  <configuration config_file = "ScheduleInterface.exe.config" setting = "RollupExecutablePath" type = "open_file" id = "RollupExecutablePath"/>
-  <configuration config_file = "ScheduleInterface.exe.config" setting = "PurgeExecutablePath" type = "open_file" id = "PurgeExecutablePath"/>
+  <configuration config_file = "ROWebHost.exe.config" parent = "appSettings" setting = "GraphicsDirectory" lookupType = "child"  type = "directory" id = "GraphicsDirectory"/>
+  <configuration config_file = "ROWebHost.exe.config" parent = "configuration/log4net/root/level" setting = "Log File Level" lookupType = "parent"  type = "list" id = "log4netLevel"/>
+  <configuration config_file = "ROWebHost.exe.config" parent = "configuration/log4net/appender/file" setting = "Log File Name" lookupType = "parent"  type = "open_file" id = "log4netFile"/>
+  
+  <configuration config_file = "ScheduleInterface.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "ScheduleInterface.exe.config" parent = "appSettings" setting = "User" lookupType = "child"  type = "text" id = "User"/>
+  <configuration config_file = "ScheduleInterface.exe.config" parent = "appSettings" setting = "Password" lookupType = "child"  type = "password" id = "Password"/>
+  <configuration config_file = "ScheduleInterface.exe.config" parent = "appSettings" setting = "ScheduleScanInterval" lookupType = "child"  type = "thousands" id = "ScheduleScanInterval"/>
+  <configuration config_file = "ScheduleInterface.exe.config" parent = "appSettings" setting = "CheckForTerminateInterval" lookupType = "child"  type = "thousands" id = "CheckForTerminateInterval"/>
+  <configuration config_file = "ScheduleInterface.exe.config" parent = "appSettings" setting = "StartedProcessWindowStyle" lookupType = "child"  type = "window_style" id = "StartedProcessWindowStyle"/>
+  <configuration config_file = "ScheduleInterface.exe.config" parent = "appSettings" setting = "ForecastExecutablePath" lookupType = "child"  type = "open_file" id = "ForecastExecutablePath"/>
+  <configuration config_file = "ScheduleInterface.exe.config" parent = "appSettings" setting = "AllocateExecutablePath" lookupType = "child"  type = "open_file" id = "AllocateExecutablePath"/>
+  <configuration config_file = "ScheduleInterface.exe.config" parent = "appSettings" setting = "RollupExecutablePath" lookupType = "child"  type = "open_file" id = "RollupExecutablePath"/>
+  <configuration config_file = "ScheduleInterface.exe.config" parent = "appSettings" setting = "PurgeExecutablePath" lookupType = "child"  type = "open_file" id = "PurgeExecutablePath"/>
   <!-- BEGIN TT#1401 - AGallagher - VSW -->
-  <configuration config_file = "ScheduleInterface.exe.config" setting = "PushToBackStockLoadExecutablePath" type = "open_file" id = "PushToBackStockLoadExecutablePath"/>
+  <configuration config_file = "ScheduleInterface.exe.config" parent = "appSettings" setting = "PushToBackStockLoadExecutablePath" lookupType = "child"  type = "open_file" id = "PushToBackStockLoadExecutablePath"/>
   <!-- END TT#1401 -->
-  <configuration config_file = "ScheduleInterface.exe.config" setting = "RelieveIntransitExecutablePath" type = "open_file" id = "RelieveIntransitExecutablePath"/>
-  <configuration config_file = "ScheduleInterface.exe.config" setting = "ColorCodesLoadExecutablePath" type = "open_file" id = "ColorCodesLoadExecutablePath"/>
-  <configuration config_file = "ScheduleInterface.exe.config" setting = "HeaderReconcileExecutablePath" type = "open_file" id = "HeaderReconcileExecutablePath"/>
-  <configuration config_file = "ScheduleInterface.exe.config" setting = "HeaderLoadExecutablePath" type = "open_file" id = "HeaderLoadExecutablePath"/>
-  <configuration config_file = "ScheduleInterface.exe.config" setting = "HierarchyLoadExecutablePath" type = "open_file" id = "HierarchyLoadExecutablePath"/>
-  <configuration config_file = "ScheduleInterface.exe.config" setting = "HistoryPlanLoadExecutablePath" type = "open_file" id = "HistoryPlanLoadExecutablePath"/>
-  <configuration config_file = "ScheduleInterface.exe.config" setting = "SizeCodesLoadExecutablePath" type = "open_file" id = "SizeCodesLoadExecutablePath"/>
-  <configuration config_file = "ScheduleInterface.exe.config" setting = "SizeCurveLoadExecutablePath" type = "open_file" id = "SizeCurveLoadExecutablePath"/>
-  <configuration config_file = "ScheduleInterface.exe.config" setting = "SizeCurveGenerateExecutablePath" type = "open_file" id = "SizeCurveGenerateExecutablePath"/>  
-  <configuration config_file = "ScheduleInterface.exe.config" setting = "StoreLoadExecutablePath" type = "open_file" id = "StoreLoadExecutablePath"/>
-  <configuration config_file = "ScheduleInterface.exe.config" setting = "SizeConstraintsLoadExecutablePath" type = "open_file" id = "SizeConstraintsLoadExecutablePath"/>
+  <configuration config_file = "ScheduleInterface.exe.config" parent = "appSettings" setting = "RelieveIntransitExecutablePath" lookupType = "child"  type = "open_file" id = "RelieveIntransitExecutablePath"/>
+  <configuration config_file = "ScheduleInterface.exe.config" parent = "appSettings" setting = "ColorCodesLoadExecutablePath" lookupType = "child"  type = "open_file" id = "ColorCodesLoadExecutablePath"/>
+  <configuration config_file = "ScheduleInterface.exe.config" parent = "appSettings" setting = "HeaderReconcileExecutablePath" lookupType = "child"  type = "open_file" id = "HeaderReconcileExecutablePath"/>
+  <configuration config_file = "ScheduleInterface.exe.config" parent = "appSettings" setting = "HeaderLoadExecutablePath" lookupType = "child"  type = "open_file" id = "HeaderLoadExecutablePath"/>
+  <configuration config_file = "ScheduleInterface.exe.config" parent = "appSettings" setting = "HierarchyLoadExecutablePath" lookupType = "child"  type = "open_file" id = "HierarchyLoadExecutablePath"/>
+  <configuration config_file = "ScheduleInterface.exe.config" parent = "appSettings" setting = "HistoryPlanLoadExecutablePath" lookupType = "child"  type = "open_file" id = "HistoryPlanLoadExecutablePath"/>
+  <configuration config_file = "ScheduleInterface.exe.config" parent = "appSettings" setting = "SizeCodesLoadExecutablePath" lookupType = "child"  type = "open_file" id = "SizeCodesLoadExecutablePath"/>
+  <configuration config_file = "ScheduleInterface.exe.config" parent = "appSettings" setting = "SizeCurveLoadExecutablePath" lookupType = "child"  type = "open_file" id = "SizeCurveLoadExecutablePath"/>
+  <configuration config_file = "ScheduleInterface.exe.config" parent = "appSettings" setting = "SizeCurveGenerateExecutablePath" lookupType = "child"  type = "open_file" id = "SizeCurveGenerateExecutablePath"/>  
+  <configuration config_file = "ScheduleInterface.exe.config" parent = "appSettings" setting = "StoreLoadExecutablePath" lookupType = "child"  type = "open_file" id = "StoreLoadExecutablePath"/>
+  <configuration config_file = "ScheduleInterface.exe.config" parent = "appSettings" setting = "SizeConstraintsLoadExecutablePath" lookupType = "child"  type = "open_file" id = "SizeConstraintsLoadExecutablePath"/>
   <!--begin TT#1077 - Installer fixes... updates to Installer.xml file and protect files search - apicchetti - 1/17/2011 -->
-  <configuration config_file = "ScheduleInterface.exe.config" setting = "ComputationDriverExecutablePath" type = "open_file" id = "ComputationDriverExecutablePath"/>
-  <configuration config_file = "ScheduleInterface.exe.config" setting = "BuildPackCriteriaLoadExecutablePath" type = "open_file" id = "BuildPackCriteriaLoadExecutablePath"/>
-  <configuration config_file = "ScheduleInterface.exe.config" setting = "SizeDayToWeekSummaryExecutablePath " type = "open_file" id = "SizeDayToWeekSummaryExecutablePath"/>
+  <configuration config_file = "ScheduleInterface.exe.config" parent = "appSettings" setting = "ComputationDriverExecutablePath" lookupType = "child"  type = "open_file" id = "ComputationDriverExecutablePath"/>
+  <configuration config_file = "ScheduleInterface.exe.config" parent = "appSettings" setting = "BuildPackCriteriaLoadExecutablePath" lookupType = "child"  type = "open_file" id = "BuildPackCriteriaLoadExecutablePath"/>
+  <configuration config_file = "ScheduleInterface.exe.config" parent = "appSettings" setting = "SizeDayToWeekSummaryExecutablePath " lookupType = "child"  type = "open_file" id = "SizeDayToWeekSummaryExecutablePath"/>
   <!--end TT#1077 - Installer fixes... updates to Installer.xml file and protect files search - apicchetti - 1/17/2011 -->
   <!--Begin TT#1067 - JSmith - Add option to allow return codes be consistent with other processes -->
-  <configuration config_file = "ScheduleInterface.exe.config" setting = "ReturnMIDMessageLevel" type = "boolean" id = "ReturnMIDMessageLevel"/>
+  <configuration config_file = "ScheduleInterface.exe.config" parent = "appSettings" setting = "ReturnMIDMessageLevel" lookupType = "child"  type = "boolean" id = "ReturnMIDMessageLevel"/>
   <!--End TT#1067 -->
   <!-- BEGIN TT#1766 - stodd - FIFO file processing -->
-  <configuration config_file = "ScheduleInterface.exe.config" setting = "APIFileProcessingDirection" type = "list" id = "APIFileProcessingDirection"/>
+  <configuration config_file = "ScheduleInterface.exe.config" parent = "appSettings" setting = "APIFileProcessingDirection" lookupType = "child"  type = "list" id = "APIFileProcessingDirection"/>
   <!-- END TT#1766 - stodd - FIFO file processing -->
   <!-- BEGIN TT#1631-MD - stodd - FIFO file processing -->
-  <configuration config_file = "ScheduleInterface.exe.config" setting = "BatchCompExecutablePath" type = "open_file" id = "BatchCompExecutablePath"/>
+  <configuration config_file = "ScheduleInterface.exe.config" parent = "appSettings" setting = "BatchCompExecutablePath" lookupType = "child"  type = "open_file" id = "BatchCompExecutablePath"/>
   <!-- End TT#1631-MD - stodd - Batch Comp -->
 
 
 
-  <configuration config_file = "SizeCodesLoad.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
-  <configuration config_file = "SizeCodesLoad.exe.config" setting = "InputFile" type = "open_file" id = "InputFile"/>
-  <configuration config_file = "SizeCodesLoad.exe.config" setting = "Delimiter" type = "text" id = "Delimiter"/>
+  <configuration config_file = "SizeCodesLoad.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "SizeCodesLoad.exe.config" parent = "appSettings" setting = "InputFile" lookupType = "child"  type = "open_file" id = "InputFile"/>
+  <configuration config_file = "SizeCodesLoad.exe.config" parent = "appSettings" setting = "Delimiter" lookupType = "child"  type = "text" id = "Delimiter"/>
   
-  <configuration config_file = "SizeConstraintsLoad.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
-  <configuration config_file = "SizeConstraintsLoad.exe.config" setting = "SizeConstraintsTransFile" type = "open_file" id = "SizeConstraintsTransFile"/>
-  <configuration config_file = "SizeConstraintsLoad.exe.config" setting = "Delimiter" type = "text" id = "Delimiter"/>
+  <configuration config_file = "SizeConstraintsLoad.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "SizeConstraintsLoad.exe.config" parent = "appSettings" setting = "SizeConstraintsTransFile" lookupType = "child"  type = "open_file" id = "SizeConstraintsTransFile"/>
+  <configuration config_file = "SizeConstraintsLoad.exe.config" parent = "appSettings" setting = "Delimiter" lookupType = "child"  type = "text" id = "Delimiter"/>
 
-  <configuration config_file = "SizeCurveGenerate.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
-  <configuration config_file = "SizeCurveGenerate.exe.config" setting = "ReaderLockTimeOut" type = "thousands" id = "ReaderLockTimeOut"/>
-  <configuration config_file = "SizeCurveGenerate.exe.config" setting = "WriterLockTimeOut" type = "thousands" id = "WriterLockTimeOut"/>
-  <configuration config_file = "SizeCurveGenerate.exe.config" setting = "ConcurrentProcesses" type = "numeric" id = "ConcurrentProcesses"/>
+  <configuration config_file = "SizeCurveGenerate.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "SizeCurveGenerate.exe.config" parent = "appSettings" setting = "ReaderLockTimeOut" lookupType = "child"  type = "thousands" id = "ReaderLockTimeOut"/>
+  <configuration config_file = "SizeCurveGenerate.exe.config" parent = "appSettings" setting = "WriterLockTimeOut" lookupType = "child"  type = "thousands" id = "WriterLockTimeOut"/>
+  <configuration config_file = "SizeCurveGenerate.exe.config" parent = "appSettings" setting = "ConcurrentProcesses" lookupType = "child"  type = "numeric" id = "ConcurrentProcesses"/>
   
-  <configuration config_file = "SizeCurveLoad.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
-  <configuration config_file = "SizeCurveLoad.exe.config" setting = "CodesPresent" type = "boolean" id = "CodesPresent"/>
-  <configuration config_file = "SizeCurveLoad.exe.config" setting = "CurveTransFile" type = "open_file" id = "CurveTransFile"/>
-  <configuration config_file = "SizeCurveLoad.exe.config" setting = "CurveGroupTransFile" type = "open_file" id = "CurveGroupTransFile"/>
-  <configuration config_file = "SizeCurveLoad.exe.config" setting = "CreateOnModify" type = "boolean" id = "CreateOnModify"/>
-  <configuration config_file = "SizeCurveLoad.exe.config" setting = "Delimiter" type = "text" id = "Delimiter"/>
+  <configuration config_file = "SizeCurveLoad.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "SizeCurveLoad.exe.config" parent = "appSettings" setting = "CodesPresent" lookupType = "child"  type = "boolean" id = "CodesPresent"/>
+  <configuration config_file = "SizeCurveLoad.exe.config" parent = "appSettings" setting = "CurveTransFile" lookupType = "child"  type = "open_file" id = "CurveTransFile"/>
+  <configuration config_file = "SizeCurveLoad.exe.config" parent = "appSettings" setting = "CurveGroupTransFile" lookupType = "child"  type = "open_file" id = "CurveGroupTransFile"/>
+  <configuration config_file = "SizeCurveLoad.exe.config" parent = "appSettings" setting = "CreateOnModify" lookupType = "child"  type = "boolean" id = "CreateOnModify"/>
+  <configuration config_file = "SizeCurveLoad.exe.config" parent = "appSettings" setting = "Delimiter" lookupType = "child"  type = "text" id = "Delimiter"/>
 
-  <configuration config_file = "SizeDayToWeekSummary.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
-  <configuration config_file = "SizeDayToWeekSummary.exe.config" setting = "SizeDayToWeekSummaryLog" type = "boolean" id = "SizeDayToWeekSummaryLog"/>
-  <configuration config_file = "SizeDayToWeekSummary.exe.config" setting = "SizeDayToWeekSummaryLogFilePath" type = "open_file" id = "SizeDayToWeekSummaryLogFilePath"/>
-  <configuration config_file = "SizeDayToWeekSummary.exe.config" setting = "ConcurrentProcesses" type = "numeric" id = "ConcurrentProcesses"/>
+  <configuration config_file = "SizeDayToWeekSummary.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "SizeDayToWeekSummary.exe.config" parent = "appSettings" setting = "SizeDayToWeekSummaryLog" lookupType = "child"  type = "boolean" id = "SizeDayToWeekSummaryLog"/>
+  <configuration config_file = "SizeDayToWeekSummary.exe.config" parent = "appSettings" setting = "SizeDayToWeekSummaryLogFilePath" lookupType = "child"  type = "open_file" id = "SizeDayToWeekSummaryLogFilePath"/>
+  <configuration config_file = "SizeDayToWeekSummary.exe.config" parent = "appSettings" setting = "ConcurrentProcesses" lookupType = "child"  type = "numeric" id = "ConcurrentProcesses"/>
   
-  <configuration config_file = "SpecialRequest.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
-  <configuration config_file = "SpecialRequest.exe.config" setting = "ScheduleScanInterval" type = "thousands" id = "ScheduleScanInterval"/>
-  <configuration config_file = "SpecialRequest.exe.config" setting = "CheckForTerminateInterval" type = "thousands" id = "CheckForTerminateInterval"/>
-  <configuration config_file = "SpecialRequest.exe.config" setting = "StartedProcessWindowStyle" type = "text" id = "StartedProcessWindowStyle"/>
-  <configuration config_file = "SpecialRequest.exe.config" setting = "ForecastExecutablePath" type = "open_file" id = "ForecastExecutablePath"/>
-  <configuration config_file = "SpecialRequest.exe.config" setting = "AllocateExecutablePath" type = "open_file" id = "AllocateExecutablePath"/>
-  <configuration config_file = "SpecialRequest.exe.config" setting = "RollupExecutablePath" type = "open_file" id = "RollupExecutablePath"/>
-  <configuration config_file = "SpecialRequest.exe.config" setting = "PurgeExecutablePath" type = "open_file" id = "PurgeExecutablePath"/>
-  <configuration config_file = "SpecialRequest.exe.config" setting = "RelieveIntransitExecutablePath" type = "open_file" id = "RelieveIntransitExecutablePath"/>
-  <configuration config_file = "SpecialRequest.exe.config" setting = "ColorCodesLoadExecutablePath" type = "open_file" id = "ColorCodesLoadExecutablePath"/>
-  <configuration config_file = "SpecialRequest.exe.config" setting = "HeaderReconcileExecutablePath" type = "open_file" id = "HeaderReconcileExecutablePath"/>
-  <configuration config_file = "SpecialRequest.exe.config" setting = "HeaderLoadExecutablePath" type = "open_file" id = "HeaderLoadExecutablePath"/>
-  <configuration config_file = "SpecialRequest.exe.config" setting = "HierarchyLoadExecutablePath" type = "open_file" id = "HierarchyLoadExecutablePath"/>
-  <configuration config_file = "SpecialRequest.exe.config" setting = "HistoryPlanLoadExecutablePath" type = "open_file" id = "HistoryPlanLoadExecutablePath"/>
-  <configuration config_file = "SpecialRequest.exe.config" setting = "SizeCodesLoadExecutablePath" type = "open_file" id = "SizeCodesLoadExecutablePath"/>
-  <configuration config_file = "SpecialRequest.exe.config" setting = "SizeCurveLoadExecutablePath" type = "open_file" id = "SizeCurveLoadExecutablePath"/>
-  <configuration config_file = "SpecialRequest.exe.config" setting = "StoreLoadExecutablePath" type = "open_file" id = "StoreLoadExecutablePath"/>
-  <configuration config_file = "SpecialRequest.exe.config" setting = "SizeConstraintsLoadExecutablePath" type = "open_file" id = "SizeConstraintsLoadExecutablePath"/>
-  <configuration config_file = "SpecialRequest.exe.config" setting = "ComputationDriverExecutablePath" type = "open_file" id = "ComputationDriverExecutablePath"/>
+  <configuration config_file = "SpecialRequest.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "SpecialRequest.exe.config" parent = "appSettings" setting = "ScheduleScanInterval" lookupType = "child"  type = "thousands" id = "ScheduleScanInterval"/>
+  <configuration config_file = "SpecialRequest.exe.config" parent = "appSettings" setting = "CheckForTerminateInterval" lookupType = "child"  type = "thousands" id = "CheckForTerminateInterval"/>
+  <configuration config_file = "SpecialRequest.exe.config" parent = "appSettings" setting = "StartedProcessWindowStyle" lookupType = "child"  type = "text" id = "StartedProcessWindowStyle"/>
+  <configuration config_file = "SpecialRequest.exe.config" parent = "appSettings" setting = "ForecastExecutablePath" lookupType = "child"  type = "open_file" id = "ForecastExecutablePath"/>
+  <configuration config_file = "SpecialRequest.exe.config" parent = "appSettings" setting = "AllocateExecutablePath" lookupType = "child"  type = "open_file" id = "AllocateExecutablePath"/>
+  <configuration config_file = "SpecialRequest.exe.config" parent = "appSettings" setting = "RollupExecutablePath" lookupType = "child"  type = "open_file" id = "RollupExecutablePath"/>
+  <configuration config_file = "SpecialRequest.exe.config" parent = "appSettings" setting = "PurgeExecutablePath" lookupType = "child"  type = "open_file" id = "PurgeExecutablePath"/>
+  <configuration config_file = "SpecialRequest.exe.config" parent = "appSettings" setting = "RelieveIntransitExecutablePath" lookupType = "child"  type = "open_file" id = "RelieveIntransitExecutablePath"/>
+  <configuration config_file = "SpecialRequest.exe.config" parent = "appSettings" setting = "ColorCodesLoadExecutablePath" lookupType = "child"  type = "open_file" id = "ColorCodesLoadExecutablePath"/>
+  <configuration config_file = "SpecialRequest.exe.config" parent = "appSettings" setting = "HeaderReconcileExecutablePath" lookupType = "child"  type = "open_file" id = "HeaderReconcileExecutablePath"/>
+  <configuration config_file = "SpecialRequest.exe.config" parent = "appSettings" setting = "HeaderLoadExecutablePath" lookupType = "child"  type = "open_file" id = "HeaderLoadExecutablePath"/>
+  <configuration config_file = "SpecialRequest.exe.config" parent = "appSettings" setting = "HierarchyLoadExecutablePath" lookupType = "child"  type = "open_file" id = "HierarchyLoadExecutablePath"/>
+  <configuration config_file = "SpecialRequest.exe.config" parent = "appSettings" setting = "HistoryPlanLoadExecutablePath" lookupType = "child"  type = "open_file" id = "HistoryPlanLoadExecutablePath"/>
+  <configuration config_file = "SpecialRequest.exe.config" parent = "appSettings" setting = "SizeCodesLoadExecutablePath" lookupType = "child"  type = "open_file" id = "SizeCodesLoadExecutablePath"/>
+  <configuration config_file = "SpecialRequest.exe.config" parent = "appSettings" setting = "SizeCurveLoadExecutablePath" lookupType = "child"  type = "open_file" id = "SizeCurveLoadExecutablePath"/>
+  <configuration config_file = "SpecialRequest.exe.config" parent = "appSettings" setting = "StoreLoadExecutablePath" lookupType = "child"  type = "open_file" id = "StoreLoadExecutablePath"/>
+  <configuration config_file = "SpecialRequest.exe.config" parent = "appSettings" setting = "SizeConstraintsLoadExecutablePath" lookupType = "child"  type = "open_file" id = "SizeConstraintsLoadExecutablePath"/>
+  <configuration config_file = "SpecialRequest.exe.config" parent = "appSettings" setting = "ComputationDriverExecutablePath" lookupType = "child"  type = "open_file" id = "ComputationDriverExecutablePath"/>
   <!--begin TT#1077 - Installer fixes... updates to Installer.xml file and protect files search - apicchetti - 1/17/2011 -->
-  <configuration config_file = "SpecialRequest.exe.config" setting = "SizeCurveGenerateExecutablePath" type = "open_file" id = "SizeCurveGenerateExecutablePath"/>
-  <configuration config_file = "SpecialRequest.exe.config" setting = "BuildPackCriteriaLoadExecutablePath" type = "open_file" id = "BuildPackCriteriaLoadExecutablePath"/>
-  <configuration config_file = "SpecialRequest.exe.config" setting = "SizeDayToWeekSummaryExecutablePath " type = "open_file" id = "SizeDayToWeekSummaryExecutablePath"/>
+  <configuration config_file = "SpecialRequest.exe.config" parent = "appSettings" setting = "SizeCurveGenerateExecutablePath" lookupType = "child"  type = "open_file" id = "SizeCurveGenerateExecutablePath"/>
+  <configuration config_file = "SpecialRequest.exe.config" parent = "appSettings" setting = "BuildPackCriteriaLoadExecutablePath" lookupType = "child"  type = "open_file" id = "BuildPackCriteriaLoadExecutablePath"/>
+  <configuration config_file = "SpecialRequest.exe.config" parent = "appSettings" setting = "SizeDayToWeekSummaryExecutablePath " lookupType = "child"  type = "open_file" id = "SizeDayToWeekSummaryExecutablePath"/>
   <!--end TT#1077 - Installer fixes... updates to Installer.xml file and protect files search - apicchetti - 1/17/2011 -->
   
-  <configuration config_file = "StoreLoad.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
-  <configuration config_file = "StoreLoad.exe.config" setting = "InputFile" type = "open_file" id = "InputFile"/>
-  <configuration config_file = "StoreLoad.exe.config" setting = "Delimiter" type = "text" id = "Delimiter"/>
-  <configuration config_file = "StoreLoad.exe.config" setting = "AutoAddCharacteristics" type = "boolean" id = "AutoAddCharacteristics"/>
+  <configuration config_file = "StoreLoad.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "StoreLoad.exe.config" parent = "appSettings" setting = "InputFile" lookupType = "child"  type = "open_file" id = "InputFile"/>
+  <configuration config_file = "StoreLoad.exe.config" parent = "appSettings" setting = "Delimiter" lookupType = "child"  type = "text" id = "Delimiter"/>
+  <configuration config_file = "StoreLoad.exe.config" parent = "appSettings" setting = "AutoAddCharacteristics" lookupType = "child"  type = "boolean" id = "AutoAddCharacteristics"/>
   <!--begin TT#1401 - stodd - added transaction types -->
-  <configuration config_file = "StoreLoad.exe.config" setting = "UseCharacteristicTransaction" type = "boolean" id = "UseCharacteristicTransaction"/>
+  <configuration config_file = "StoreLoad.exe.config" parent = "appSettings" setting = "UseCharacteristicTransaction" lookupType = "child"  type = "boolean" id = "UseCharacteristicTransaction"/>
   <!--Ends TT#1401 -->
 
-  <configuration config_file = "MIDRetailApplicationService.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
-  <configuration config_file = "MIDRetailApplicationService.exe.config" setting = "MyPort" type = "text" id = "MyPort"/>
-  <configuration config_file = "MIDRetailApplicationService.exe.config" setting = "ReaderLockTimeOut" type = "thousands" id = "ReaderLockTimeOut"/>
-  <configuration config_file = "MIDRetailApplicationService.exe.config" setting = "WriterLockTimeOut" type = "thousands" id = "WriterLockTimeOut"/>
-  <configuration config_file = "MIDRetailApplicationService.exe.config" setting = "MonitorForecastFilePath" type = "directory" id = "MonitorForecastFilePath"/>
-  <configuration config_file = "MIDRetailApplicationService.exe.config" setting = "GCCollectWaitSeconds" type = "numeric" id = "GCCollectWaitSeconds"/>
-  <configuration config_file = "MIDRetailApplicationService.exe.config" setting = "HeaderReleaseFilePath" type = "directory" id = "HeaderReleaseFilePath"/>
+  <configuration config_file = "MIDRetailApplicationService.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "MIDRetailApplicationService.exe.config" parent = "appSettings" setting = "MyPort" lookupType = "child"  type = "text" id = "MyPort"/>
+  <configuration config_file = "MIDRetailApplicationService.exe.config" parent = "appSettings" setting = "ReaderLockTimeOut" lookupType = "child"  type = "thousands" id = "ReaderLockTimeOut"/>
+  <configuration config_file = "MIDRetailApplicationService.exe.config" parent = "appSettings" setting = "WriterLockTimeOut" lookupType = "child"  type = "thousands" id = "WriterLockTimeOut"/>
+  <configuration config_file = "MIDRetailApplicationService.exe.config" parent = "appSettings" setting = "MonitorForecastFilePath" lookupType = "child"  type = "directory" id = "MonitorForecastFilePath"/>
+  <configuration config_file = "MIDRetailApplicationService.exe.config" parent = "appSettings" setting = "GCCollectWaitSeconds" lookupType = "child"  type = "numeric" id = "GCCollectWaitSeconds"/>
+  <configuration config_file = "MIDRetailApplicationService.exe.config" parent = "appSettings" setting = "HeaderReleaseFilePath" lookupType = "child"  type = "directory" id = "HeaderReleaseFilePath"/>
   
-  <configuration config_file = "MIDRetailControlService.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
-  <configuration config_file = "MIDRetailControlService.exe.config" setting = "MyPort" type = "text" id = "MyPort"/>
-  <configuration config_file = "MIDRetailControlService.exe.config" setting = "ReaderLockTimeOut" type = "thousands" id = "ReaderLockTimeOut"/>
-  <configuration config_file = "MIDRetailControlService.exe.config" setting = "WriterLockTimeOut" type = "thousands" id = "WriterLockTimeOut"/>
-  <configuration config_file = "MIDRetailControlService.exe.config" setting = "StoreServers" type = "text" id = "StoreServers"/>
-  <configuration config_file = "MIDRetailControlService.exe.config" setting = "HierarchyServers" type = "text" id = "HierarchyServers"/>
-  <configuration config_file = "MIDRetailControlService.exe.config" setting = "ApplicationServers" type = "text" id = "ApplicationServers"/>
-  <configuration config_file = "MIDRetailControlService.exe.config" setting = "SchedulerServer" type = "text" id = "SchedulerServer"/>
+  <configuration config_file = "MIDRetailControlService.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "MIDRetailControlService.exe.config" parent = "appSettings" setting = "MyPort" lookupType = "child"  type = "text" id = "MyPort"/>
+  <configuration config_file = "MIDRetailControlService.exe.config" parent = "appSettings" setting = "ReaderLockTimeOut" lookupType = "child"  type = "thousands" id = "ReaderLockTimeOut"/>
+  <configuration config_file = "MIDRetailControlService.exe.config" parent = "appSettings" setting = "WriterLockTimeOut" lookupType = "child"  type = "thousands" id = "WriterLockTimeOut"/>
+  <configuration config_file = "MIDRetailControlService.exe.config" parent = "appSettings" setting = "StoreServers" lookupType = "child"  type = "text" id = "StoreServers"/>
+  <configuration config_file = "MIDRetailControlService.exe.config" parent = "appSettings" setting = "HierarchyServers" lookupType = "child"  type = "text" id = "HierarchyServers"/>
+  <configuration config_file = "MIDRetailControlService.exe.config" parent = "appSettings" setting = "ApplicationServers" lookupType = "child"  type = "text" id = "ApplicationServers"/>
+  <configuration config_file = "MIDRetailControlService.exe.config" parent = "appSettings" setting = "SchedulerServer" lookupType = "child"  type = "text" id = "SchedulerServer"/>
   <!--Begin TT#581-MD - JSmith - Remove unwanted settings -->
-  <!--<configuration config_file = "MIDRetailControlService.exe.config" setting = "ConnectionString" type = "sql_connect" id = "ConnectionString"/> -->
+  <!--<configuration config_file = "MIDRetailControlService.exe.config" parent = "appSettings" setting = "ConnectionString" lookupType = "child"  type = "sql_connect" id = "ConnectionString"/> -->
   <!--ENd TT#581-MD - JSmith - Remove unwanted settings -->
     
-  <configuration config_file = "MIDRetailHierarchyService.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
-  <configuration config_file = "MIDRetailHierarchyService.exe.config" setting = "MyPort" type = "text" id = "MyPort"/>
-  <configuration config_file = "MIDRetailHierarchyService.exe.config" setting = "ReaderLockTimeOut" type = "thousands" id = "ReaderLockTimeOut"/>
-  <configuration config_file = "MIDRetailHierarchyService.exe.config" setting = "WriterLockTimeOut" type = "thousands" id = "WriterLockTimeOut"/>
-  <configuration config_file = "MIDRetailHierarchyService.exe.config" setting = "GCCollectWaitSeconds" type = "numeric" id = "GCCollectWaitSeconds"/>
-  <configuration config_file = "MIDRetailHierarchyService.exe.config" setting = "CacheSize" type = "thousands" id = "CacheSize"/>
-  <configuration config_file = "MIDRetailHierarchyService.exe.config" setting = "ColorSizeIDCacheSize" type = "thousands" id = "ColorSizeIDCacheSize"/>
-  <configuration config_file = "MIDRetailHierarchyService.exe.config" setting = "CacheGroupSize" type = "thousands" id = "CacheGroupSize"/>
-  <configuration config_file = "MIDRetailHierarchyService.exe.config" setting = "RebuildIDs" type = "boolean" id = "RebuildIDs"/>
+  <configuration config_file = "MIDRetailHierarchyService.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "MIDRetailHierarchyService.exe.config" parent = "appSettings" setting = "MyPort" lookupType = "child"  type = "text" id = "MyPort"/>
+  <configuration config_file = "MIDRetailHierarchyService.exe.config" parent = "appSettings" setting = "ReaderLockTimeOut" lookupType = "child"  type = "thousands" id = "ReaderLockTimeOut"/>
+  <configuration config_file = "MIDRetailHierarchyService.exe.config" parent = "appSettings" setting = "WriterLockTimeOut" lookupType = "child"  type = "thousands" id = "WriterLockTimeOut"/>
+  <configuration config_file = "MIDRetailHierarchyService.exe.config" parent = "appSettings" setting = "GCCollectWaitSeconds" lookupType = "child"  type = "numeric" id = "GCCollectWaitSeconds"/>
+  <configuration config_file = "MIDRetailHierarchyService.exe.config" parent = "appSettings" setting = "CacheSize" lookupType = "child"  type = "thousands" id = "CacheSize"/>
+  <configuration config_file = "MIDRetailHierarchyService.exe.config" parent = "appSettings" setting = "ColorSizeIDCacheSize" lookupType = "child"  type = "thousands" id = "ColorSizeIDCacheSize"/>
+  <configuration config_file = "MIDRetailHierarchyService.exe.config" parent = "appSettings" setting = "CacheGroupSize" lookupType = "child"  type = "thousands" id = "CacheGroupSize"/>
+  <configuration config_file = "MIDRetailHierarchyService.exe.config" parent = "appSettings" setting = "RebuildIDs" lookupType = "child"  type = "boolean" id = "RebuildIDs"/>
+
+  <configuration config_file = "MIDRetailJobService.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "MIDRetailJobService.exe.config" parent = "appSettings" setting = "ROServerType" lookupType = "child"  type = "list" id = "ROServerType"/>
+  <configuration config_file = "MIDRetailJobService.exe.config" parent = "appSettings" setting = "SecondaryServers" lookupType = "child"  type = "text" id = "SecondaryServers"/>
+  <configuration config_file = "MIDRetailJobService.exe.config" parent = "appSettings" setting = "Port" lookupType = "child"  type = "text" id = "Port"/>
+  <configuration config_file = "MIDRetailJobService.exe.config" parent = "appSettings" setting = "StaleConnectionTimeoutSeconds" lookupType = "child"  type = "hundreds" id = "StaleConnectionTimeoutSeconds"/>
+  <configuration config_file = "MIDRetailJobService.exe.config" parent = "appSettings" setting = "ROWebService" lookupType = "child"  type = "open_file" id = "ROWebService"/>
+  <configuration config_file = "MIDRetailJobService.exe.config" parent = "configuration/system.serviceModel/services/service/host/baseAddresses" setting = "baseAddress" lookupType = "child"  type = "text" id = "baseAddress"/>
+  <!--<configuration config_file = "MIDRetailJobService.exe.config" parent = "configuration/log4net/logger" setting = "name" lookupType = "parent"  type = "text" id = "log4netName"/>-->
+  <configuration config_file = "MIDRetailJobService.exe.config" parent = "configuration/log4net/root/level" setting = "Log File Level" lookupType = "parent"  type = "list" id = "log4netLevel"/>
+  <configuration config_file = "MIDRetailJobService.exe.config" parent = "configuration/log4net/appender/file" setting = "Log File Name" lookupType = "parent"  type = "open_file" id = "log4netFile"/>
+  <!--<configuration config_file = "MIDRetailJobService.exe.config" parent = "configuration/log4net/root/level" setting = "Log File Default Level" lookupType = "parent"  type = "list" id = "log4netRootLevel"/>-->
+
+  <configuration config_file = "ROWebHost.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
   
-  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
-  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "MyPort" type = "text" id = "MyPort"/>
-  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "ReaderLockTimeOut" type = "thousands" id = "ReaderLockTimeOut"/>
-  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "WriterLockTimeOut" type = "thousands" id = "WriterLockTimeOut"/>
-  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "ScheduleScanInterval" type = "thousands" id = "ScheduleScanInterval"/>
-  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "CheckForTerminateInterval" type = "thousands" id = "CheckForTerminateInterval"/>
-  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "StartedProcessWindowStyle" type = "window_style" id = "StartedProcessWindowStyle"/>
-  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "ForecastExecutablePath" type = "open_file" id = "ForecastExecutablePath"/>
-  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "AllocateExecutablePath" type = "open_file" id = "AllocateExecutablePath"/>
-  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "RollupExecutablePath" type = "open_file" id = "RollupExecutablePath"/>
-  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "PurgeExecutablePath" type = "open_file" id = "PurgeExecutablePath"/>
-  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "RelieveIntransitExecutablePath" type = "open_file" id = "RelieveIntransitExecutablePath"/>
-  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "ColorCodesLoadExecutablePath" type = "open_file" id = "ColorCodesLoadExecutablePath"/>
-  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "HeaderReconcileExecutablePath" type = "open_file" id = "HeaderReconcileExecutablePath"/>
-  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "HeaderLoadExecutablePath" type = "open_file" id = "HeaderLoadExecutablePath"/>
-  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "HierarchyLoadExecutablePath" type = "open_file" id = "HierarchyLoadExecutablePath"/>
-  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "HistoryPlanLoadExecutablePath" type = "open_file" id = "HistoryPlanLoadExecutablePath"/>
-  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "SizeCodesLoadExecutablePath" type = "open_file" id = "SizeCodesLoadExecutablePath"/>
-  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "SizeCurveLoadExecutablePath" type = "open_file" id = "SizeCurveLoadExecutablePath"/>
-  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "StoreLoadExecutablePath" type = "open_file" id = "StoreLoadExecutablePath"/>
-  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "SizeConstraintsLoadExecutablePath" type = "open_file" id = "SizeConstraintsLoadExecutablePath"/>
-  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "ComputationDriverExecutablePath" type = "open_file" id = "ComputationDriverExecutablePath"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" parent = "appSettings" setting = "MyPort" lookupType = "child"  type = "text" id = "MyPort"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" parent = "appSettings" setting = "ReaderLockTimeOut" lookupType = "child"  type = "thousands" id = "ReaderLockTimeOut"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" parent = "appSettings" setting = "WriterLockTimeOut" lookupType = "child"  type = "thousands" id = "WriterLockTimeOut"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" parent = "appSettings" setting = "ScheduleScanInterval" lookupType = "child"  type = "thousands" id = "ScheduleScanInterval"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" parent = "appSettings" setting = "CheckForTerminateInterval" lookupType = "child"  type = "thousands" id = "CheckForTerminateInterval"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" parent = "appSettings" setting = "StartedProcessWindowStyle" lookupType = "child"  type = "window_style" id = "StartedProcessWindowStyle"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" parent = "appSettings" setting = "ForecastExecutablePath" lookupType = "child"  type = "open_file" id = "ForecastExecutablePath"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" parent = "appSettings" setting = "AllocateExecutablePath" lookupType = "child"  type = "open_file" id = "AllocateExecutablePath"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" parent = "appSettings" setting = "RollupExecutablePath" lookupType = "child"  type = "open_file" id = "RollupExecutablePath"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" parent = "appSettings" setting = "PurgeExecutablePath" lookupType = "child"  type = "open_file" id = "PurgeExecutablePath"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" parent = "appSettings" setting = "RelieveIntransitExecutablePath" lookupType = "child"  type = "open_file" id = "RelieveIntransitExecutablePath"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" parent = "appSettings" setting = "ColorCodesLoadExecutablePath" lookupType = "child"  type = "open_file" id = "ColorCodesLoadExecutablePath"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" parent = "appSettings" setting = "HeaderReconcileExecutablePath" lookupType = "child"  type = "open_file" id = "HeaderReconcileExecutablePath"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" parent = "appSettings" setting = "HeaderLoadExecutablePath" lookupType = "child"  type = "open_file" id = "HeaderLoadExecutablePath"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" parent = "appSettings" setting = "HierarchyLoadExecutablePath" lookupType = "child"  type = "open_file" id = "HierarchyLoadExecutablePath"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" parent = "appSettings" setting = "HistoryPlanLoadExecutablePath" lookupType = "child"  type = "open_file" id = "HistoryPlanLoadExecutablePath"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" parent = "appSettings" setting = "SizeCodesLoadExecutablePath" lookupType = "child"  type = "open_file" id = "SizeCodesLoadExecutablePath"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" parent = "appSettings" setting = "SizeCurveLoadExecutablePath" lookupType = "child"  type = "open_file" id = "SizeCurveLoadExecutablePath"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" parent = "appSettings" setting = "StoreLoadExecutablePath" lookupType = "child"  type = "open_file" id = "StoreLoadExecutablePath"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" parent = "appSettings" setting = "SizeConstraintsLoadExecutablePath" lookupType = "child"  type = "open_file" id = "SizeConstraintsLoadExecutablePath"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" parent = "appSettings" setting = "ComputationDriverExecutablePath" lookupType = "child"  type = "open_file" id = "ComputationDriverExecutablePath"/>
   <!--begin TT#1077 - Installer fixes... updates to Installer.xml file and protect files search - apicchetti - 1/17/2011 -->
-  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "SizeCurveGenerateExecutablePath" type = "open_file" id = "SizeCurveGenerateExecutablePath"/>
-  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "BuildPackCriteriaLoadExecutablePath" type = "open_file" id = "BuildPackCriteriaLoadExecutablePath"/>
-  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "SizeDayToWeekSummaryExecutablePath " type = "open_file" id = "SizeDayToWeekSummaryExecutablePath"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" parent = "appSettings" setting = "SizeCurveGenerateExecutablePath" lookupType = "child"  type = "open_file" id = "SizeCurveGenerateExecutablePath"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" parent = "appSettings" setting = "BuildPackCriteriaLoadExecutablePath" lookupType = "child"  type = "open_file" id = "BuildPackCriteriaLoadExecutablePath"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" parent = "appSettings" setting = "SizeDayToWeekSummaryExecutablePath " lookupType = "child"  type = "open_file" id = "SizeDayToWeekSummaryExecutablePath"/>
   <!--end TT#1077 - Installer fixes... updates to Installer.xml file and protect files search - apicchetti - 1/17/2011 -->
   <!-- BEGIN TT#1766 - stodd - FIFO file processing -->
-  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "APIFileProcessingDirection" type = "list" id = "APIFileProcessingDirection"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" parent = "appSettings" setting = "APIFileProcessingDirection" lookupType = "child"  type = "list" id = "APIFileProcessingDirection"/>
   <!-- END TT#1766 - stodd - Batch Comp -->
   <!-- BEGIN TT#1631-MD - stodd - FIFO file processing -->
-  <configuration config_file = "MIDRetailSchedulerService.exe.config" setting = "BatchCompExecutablePath" type = "open_file" id = "BatchCompExecutablePath"/>
+  <configuration config_file = "MIDRetailSchedulerService.exe.config" parent = "appSettings" setting = "BatchCompExecutablePath" lookupType = "child"  type = "open_file" id = "BatchCompExecutablePath"/>
   <!-- End TT#1631-MD - stodd - Batch Comp -->
   
   <!-- BEGIN TT#1401 - AGallagher - VSW -->
-  <configuration config_file = "PushToBackStock.exe.config" setting = "DateComparisonCharacteristic" type = "text" id = "DateComparisonCharacteristic"/>
-  <configuration config_file = "PushToBackStock.exe.config" setting = "ForceToBackStockCharacteristic" type = "text" id = "ForceToBackStockCharacteristic"/>
+  <configuration config_file = "PushToBackStock.exe.config" parent = "appSettings" setting = "DateComparisonCharacteristic" lookupType = "child"  type = "text" id = "DateComparisonCharacteristic"/>
+  <configuration config_file = "PushToBackStock.exe.config" parent = "appSettings" setting = "ForceToBackStockCharacteristic" lookupType = "child"  type = "text" id = "ForceToBackStockCharacteristic"/>
   <!-- END TT#1401 -->
   <!-- BEGIN TT#1401 - STodd - VSW -->
-  <configuration config_file = "PushToBackStock.exe.config" setting = "ForceToBackStockValue" type = "text" id = "ForceToBackStockValue"/>
+  <configuration config_file = "PushToBackStock.exe.config" parent = "appSettings" setting = "ForceToBackStockValue" lookupType = "child"  type = "text" id = "ForceToBackStockValue"/>
   <!-- END TT#1401 -->
   
-  <configuration config_file = "MIDRetailStoreService.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
-  <configuration config_file = "MIDRetailStoreService.exe.config" setting = "MyPort" type = "text" id = "MyPort"/>
-  <configuration config_file = "MIDRetailStoreService.exe.config" setting = "ReaderLockTimeOut" type = "thousands" id = "ReaderLockTimeOut"/>
-  <configuration config_file = "MIDRetailStoreService.exe.config" setting = "WriterLockTimeOut" type = "thousands" id = "WriterLockTimeOut"/>
-  <configuration config_file = "MIDRetailStoreService.exe.config" setting = "GCCollectWaitSeconds" type = "numeric" id = "GCCollectWaitSeconds"/>
-  <configuration config_file = "MIDRetailStoreService.exe.config" setting = "SkipGroupLevelCleanUp" type = "boolean" id = "SkipGroupLevelCleanUp"/>
+  <configuration config_file = "MIDRetailStoreService.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "MIDRetailStoreService.exe.config" parent = "appSettings" setting = "MyPort" lookupType = "child"  type = "text" id = "MyPort"/>
+  <configuration config_file = "MIDRetailStoreService.exe.config" parent = "appSettings" setting = "ReaderLockTimeOut" lookupType = "child"  type = "thousands" id = "ReaderLockTimeOut"/>
+  <configuration config_file = "MIDRetailStoreService.exe.config" parent = "appSettings" setting = "WriterLockTimeOut" lookupType = "child"  type = "thousands" id = "WriterLockTimeOut"/>
+  <configuration config_file = "MIDRetailStoreService.exe.config" parent = "appSettings" setting = "GCCollectWaitSeconds" lookupType = "child"  type = "numeric" id = "GCCollectWaitSeconds"/>
+  <configuration config_file = "MIDRetailStoreService.exe.config" parent = "appSettings" setting = "SkipGroupLevelCleanUp" lookupType = "child"  type = "boolean" id = "SkipGroupLevelCleanUp"/>
 
-  <configuration config_file = "MIDRetail.exe.config" setting = "file" type = "open_file" id = "MIDSettings"/>
-  <configuration config_file = "MIDRetail.exe.config" setting = "MonitorForecast" type = "boolean" id = "MonitorForecast"/>
-  <configuration config_file = "MIDRetail.exe.config" setting = "AutoUpgradeLog" type = "open_file" id = "AutoUpgradeLog"/>
-  <configuration config_file = "MIDRetail.exe.config" setting = "MonitorForecastFilePath" type = "directory" id = "MonitorForecastFilePath"/>
-  <configuration config_file = "MIDRetail.exe.config" setting = "SupressMissingSchedulerServiceMessage" type = "boolean" id = "SupressMissingSchedulerServiceMessage"/>
-  <configuration config_file = "MIDRetail.exe.config" setting = "HeaderReleaseFilePath" type = "directory" id = "HeaderReleaseFilePath"/>
+  <configuration config_file = "MIDRetail.exe.config" parent = "appSettings" setting = "file" lookupType = "child"  type = "open_file" id = "MIDSettings"/>
+  <configuration config_file = "MIDRetail.exe.config" parent = "appSettings" setting = "MonitorForecast" lookupType = "child"  type = "boolean" id = "MonitorForecast"/>
+  <configuration config_file = "MIDRetail.exe.config" parent = "appSettings" setting = "AutoUpgradeLog" lookupType = "child"  type = "open_file" id = "AutoUpgradeLog"/>
+  <configuration config_file = "MIDRetail.exe.config" parent = "appSettings" setting = "MonitorForecastFilePath" lookupType = "child"  type = "directory" id = "MonitorForecastFilePath"/>
+  <configuration config_file = "MIDRetail.exe.config" parent = "appSettings" setting = "SupressMissingSchedulerServiceMessage" lookupType = "child"  type = "boolean" id = "SupressMissingSchedulerServiceMessage"/>
+  <configuration config_file = "MIDRetail.exe.config" parent = "appSettings" setting = "HeaderReleaseFilePath" lookupType = "child"  type = "directory" id = "HeaderReleaseFilePath"/>
 
   <!-- BEGIN TT#1966-MD - JSmith - DC Fulfillment -->
-  <configuration config_file = "MIDRetail.exe.config" setting = "MonitorDCFulfillment" type = "boolean" id = "MonitorDCFulfillment"/>
-  <configuration config_file = "MIDRetail.exe.config" setting = "MonitorDCFulfillmentFilePath" type = "directory" id = "MonitorDCFulfillmentFilePath"/>
+  <configuration config_file = "MIDRetail.exe.config" parent = "appSettings" setting = "MonitorDCFulfillment" lookupType = "child"  type = "boolean" id = "MonitorDCFulfillment"/>
+  <configuration config_file = "MIDRetail.exe.config" parent = "appSettings" setting = "MonitorDCFulfillmentFilePath" lookupType = "child"  type = "directory" id = "MonitorDCFulfillmentFilePath"/>
   <!-- END TT#1966-MD - JSmith - DC Fulfillment -->
   
-  <configuration config_file = "ALL" setting = "AuditLoggingLevel" type = "list" id = "AuditLoggingLevel"/>
-  <configuration config_file = "ALL" setting = "CommitLimit" type = "text" id = "CommitLimit"/>
-  <configuration config_file = "ALL" setting = "DatabaseCommandTimeOut" type = "tens" id = "DatabaseCommandTimeOut"/>
-  <configuration config_file = "ALL" setting = "DatabaseRetryCount" type = "numeric" id = "DatabaseRetryCount"/>
-  <configuration config_file = "ALL" setting = "DatabaseRetryInterval" type = "thousands" id = "DatabaseRetryInterval"/>
-  <configuration config_file = "ALL" setting = "AuditCommitLimit" type = "numeric" id = "AuditCommitLimit"/>
-  <configuration config_file = "ALL" setting = "AuditConnectionTimeOut" type = "numeric" id = "AuditConnectionTimeOut"/>
+  <configuration config_file = "ALL" parent = "appSettings" setting = "AuditLoggingLevel" lookupType = "child"  type = "list" id = "AuditLoggingLevel"/>
+  <configuration config_file = "ALL" parent = "appSettings" setting = "CommitLimit" lookupType = "child"  type = "text" id = "CommitLimit"/>
+  <configuration config_file = "ALL" parent = "appSettings" setting = "DatabaseCommandTimeOut" lookupType = "child"  type = "tens" id = "DatabaseCommandTimeOut"/>
+  <configuration config_file = "ALL" parent = "appSettings" setting = "DatabaseRetryCount" lookupType = "child"  type = "numeric" id = "DatabaseRetryCount"/>
+  <configuration config_file = "ALL" parent = "appSettings" setting = "DatabaseRetryInterval" lookupType = "child"  type = "thousands" id = "DatabaseRetryInterval"/>
+  <configuration config_file = "ALL" parent = "appSettings" setting = "AuditCommitLimit" lookupType = "child"  type = "numeric" id = "AuditCommitLimit"/>
+  <configuration config_file = "ALL" parent = "appSettings" setting = "AuditConnectionTimeOut" lookupType = "child"  type = "numeric" id = "AuditConnectionTimeOut"/>
   
   <boolean setting = "True"/>
   <boolean setting = "False"/>
@@ -486,7 +517,7 @@
   <description id = "ReleaseFileTriggerExtension"  text = "This is the trigger file's extension that will be created for a Header Release.  Do not specify '.'.  If not specified, trigger file will not be created." defaultValue = ""/>
   <description id = "AutoUpgradeClient"  text = "Identifies if the client to be automatically upgraded if a different version if found at the AutoUpgradePath." defaultValue = "False"/>
   <description id = "AutoUpgradePath"  text = "Identifies the network path to locate the client to be used for the upgrade. The Windows user will need at least read authority to this location." defaultValue = ""/>
-  <description id = "AutoUpgradeLog"  text = "Identifies the path and name for the client upgrade log. The default is C:\MIDRetail\upgrade.log." defaultValue = "[Install Location]\upgrade.log"/>
+  <description id = "AutoUpgradeLog"  text = "Identifies the path and name for the client upgrade log. The default is C:\Logility\RO\upgrade.log." defaultValue = "[Install Location]\upgrade.log"/>
   <description id = "Delimiter"  text = "Indicates the character to use to separate non-XML input transactions." defaultValue = "~"/>
   <description id = "Export_FileFormat"  text = "Identifies the format of the output file.  The options are XML or CSV. If CSV is selected, then the delimiter character (comma, tilde, etc.) and the file suffix must be specified. The file suffix for and XML file is '.xml'. The default is 'CSV'." defaultValue = "CSV"/>
   <description id = "Export_CSVDelimeter"  text = "Identifies the delimiter to use in the CSV format to separate the fields. The default is ','." defaultValue = ","/>
@@ -494,7 +525,7 @@
   <description id = "Export_DateType"  text = "Identifies the format of dates that are exported.  The options are Calendar and Fiscal.  The default is Fiscal." defaultValue = "Fiscal"/>
   <description id = "Export_PreinitValues"  text = "Identifies if values are to be exported prior to being initialized with the forecast computations.  The default is False." defaultValue = "False"/>
   <description id = "Export_ExcludeZeroValues"  text = "Identifies if values are to be excluded from being exporteddue to zero values.  The default is False." defaultValue = "False"/>
-  <description id = "Export_FilePath"  text = "Identifies the location of the output files.  The default is C:\MIDRetail\MID Advanced Allocation for SQL Server\ExportOutput." defaultValue = "[Install Location]\Client\ExportOutput"/>
+  <description id = "Export_FilePath"  text = "Identifies the location of the output files.  The default is C:\Logility\RO\MID Advanced Allocation for SQL Server\ExportOutput." defaultValue = "[Install Location]\Client\ExportOutput"/>
   <description id = "Export_AddDateStampToFileName"  text = "Identifies if a date stamp is to be added to the file name.  The default is False." defaultValue = "False"/>
   <description id = "Export_AddTimeStampToFileName"  text = "Identifies if a time stamp is to be added to the file name.  The default is False." defaultValue = "False"/>
   <description id = "Export_SplitFiles"  text = "Identifies if the data is to be split by specific data criteria.  The options are None, Merchandise, and NumberOfEntries.  The default is None." defaultValue = "None"/>
@@ -558,6 +589,7 @@
   <!-- END TT#1966-MD - JSmith - DC Fulfillment -->
   <description id = "SupressMissingSchedulerServiceMessage"  text = "'True' indicates the message indicating the scheduler service was not found should not be shown.  'False' indicates the message should be displayed." defaultValue = ""/>
   <description id = "ConnectionString"  text = "The database connection string." defaultValue = ""/>
+  <description id = "ROExtractConnectionString"  text = "The RO Export database connection string." defaultValue = ""/>
   <description id = "EndSuffix"  text = "The file suffix used to terminate the process." defaultValue = ""/>
   <description id = "AutoAddCharacteristics"  text = "Indicates if characteristics that do not already exist should be added to the system." defaultValue = "False"/>
   <!--begin TT#1401 - stodd - added transaction types -->
@@ -633,6 +665,14 @@
   <description id = "RemoteOptions_ServerPort"  text = "The Remote System Options port to use on the control server, must be different than the control server port." defaultValue = "8090"/>
   <description id = "RemoteOptions_ClientInterval"  text = "The time (in milliseconds) to wait between receiving commands from the control server, required for Remote System Options." defaultValue = "3000"/>
   <description id = "RemoteOptions_ServerInterval"  text = "The time (in milliseconds) to wait between receiving commands from the client apps, required for Remote System Options." defaultValue = "3000"/>
+  <!-- Job Service Settings -->
+  <description id = "ROServerType"  text = "Indicates the purpose of the RO Web Job Service." defaultValue = "Single" list = "Single|Primary|Secondary"/>
+  <description id = "SecondaryServers"  text = "Identifies the machine names and ports (machine:port) of secondary servers separated by semicolon (;)" defaultValue = " "/>
+  <description id = "Port"  text = "The list of TCP ports separated by semicolon (;) to be used for RO Web Client communication." defaultValue = "9100-9150"/>
+  <description id = "StaleConnectionTimeoutSeconds"  text = "The time (in seconds) before an RO Web Client is considered inactive and shut down." defaultValue = "180"/>
+  <description id = "ROWebService"  text = "The location of the RO Web Client executable." defaultValue = "C:\Logility\RO\RO Web Service\ROWebHost.exe"/>
+  <description id = "baseAddress"  text = "The address of the service host for commumication." defaultValue = ""/>
+  
   <!-- BEGIN TT#1581-MD - stodd - Header Reconcile -->
   <description id = "RemoveTransactionsFileName"  text = "Identifies the file name for the remove transactions generated by the header reconcile process." defaultValue = "HeaderReconcileRemoveTransactions"/>
   <description id = "HeaderTypes"  text = "Header types to be processed by Header Reconcile. Valid values are 'All' or Any combination of: Receipt, PO, ASN, Dummy, Dropship, Reserve, WorkupTotalBuy, VSW delimited by a comma." defaultValue = "All"/>
@@ -646,6 +686,13 @@
   <!-- Begin TT#3822 - JSmith - Add Stop Time to Purge -->
   <description id = "PurgeCutoffTime"  text = "Identifies the time to begin stopping Purge.  Format HH:MM AM/PM." defaultValue = ""/>
   <!-- End TT#3822 - JSmith - Add Stop Time to Purge -->
+  
+  <description id = "GraphicsDirectory"  text = "Indicates the folder where graphics files are found." defaultValue = ""/>
+  
+  <description id = "log4netName"  text = "The name of the log file." defaultValue = ""/>
+  <description id = "log4netLevel"  text = "Indicates the minimum level of messages that are to be written to the log file." defaultValue = "INFO" list = "ALL|DEBUG|INFO|WARN|ERROR|FATAL|Off"/>
+  <description id = "log4netFile"  text = "Indicates the folder and name of the log file." defaultValue = "" />
+  <description id = "log4netRootLevel"  text = "Indicates the minimum level of messages that are to be written to all log files." defaultValue = "INFO" list = "ALL|DEBUG|INFO|WARN|ERROR|FATAL|Off"/>
 
   <!--Begin TT#74 MD - JSmith - One-button Upgrade -->
   <install_text id = "SelectUpgradeAll"  text = "Upgrade all Logility-RO components"/>
@@ -667,7 +714,7 @@
   <install_text id = "SelectConfigureByMachine"  text = "User selected to configure by machine name."/>
   <install_text id = "SelectConfigureByIP"  text = "User selected to configure by IP Address."/>
   <install_text id = "UtilitiesEventSources"  text = "Adds the necessary Windows Event Sources"/>
-  <install_text id = "UtilitiesCrystalReports"  text = "Installs Crystal Reports Viewer"/>
+  <!--<install_text id = "UtilitiesCrystalReports"  text = "Installs Crystal Reports Viewer"/>-->
 
   <!--Begin TT#74 MD - JSmith - One-button Upgrade -->
   <install_text id = "rdoUpgradeAll"  text = "One-Click Upgrade"/>
@@ -689,7 +736,7 @@
   <install_text id = "rdoStopServices"  text = "Stop Services"/>
   <install_text id = "rdoRescan"  text = "Rescan for previously installed components"/>
   <install_text id = "rdoEventSource"  text = "Add Event Viewer Sources"/>
-  <install_text id = "rdoCrystalReports"  text = "Install Crystal Reports"/>
+  <!--<install_text id = "rdoCrystalReports"  text = "Install Crystal Reports"/>-->
 
   <install_text id = "btnChangeDirectory"  text = "Change Directory"/>
   <install_text id = "lblTasks"  text = "Task:"/>
@@ -798,10 +845,14 @@ A complete backup of the above database is required for safety in case of any up
   <install_text id="MIDRetailHierarchyServiceName" text="MID Retail Hierarchy Service" />
   <install_text id="MIDRetailSchedulerServiceName" text="MID Retail Scheduler Service" />
   <install_text id="MIDRetailStoreServiceName" text="MID Retail Store Service" />
+  <install_text id="MIDRetailJobServiceName" text="MID Retail Job Service" />
+  <install_text id="MIDRetailROWebServiceName" text="MID Retail RO Web Service" />
   <install_text id="MIDRetailControlServiceDesc" text="Manages connections to Logility-RO services" />
   <install_text id="MIDRetailHierarchyServiceDesc" text="Manages hierarchy information" />
   <install_text id="MIDRetailSchedulerServiceDesc" text="Processes Logility-RO scheduled jobs" />
   <install_text id="MIDRetailStoreServiceDesc" text="Manages store information" />
+  <install_text id="MIDRetailJobServiceDesc" text="RO Web Job Service" />
+  <install_text id="MIDRetailROWebServiceDesc" text="RO Web Service" />
   <!-- End TT#330-MD - JSmith - Add description to MIDRetail client and all services so displays in Task Manager and Services. -->
   <!-- Begin TT#1164 - JSmith - Database compatibility issue when installing -->
   <install_text id="SQLServerSpecifications" text="SQL Server Server Specifications" />
@@ -901,11 +952,11 @@ Show Details will display installation message details."/>
   <tooltip_text id = "util_stopservices"  text = "Stop all application services"/>
   <tooltip_text id = "util_rescan"  text = "Rescan the computer to detect Logilit-RO software"/>
   <tooltip_text id = "util_eventSources"  text = "Add all necessary Windows Event sources"/>
-  <tooltip_text id = "util_crystalReports"  text = "Install Crystal Reports Viewer"/>
+  <!--<tooltip_text id = "util_crystalReports"  text = "Install Crystal Reports Viewer"/>-->
   
-  <tooltip_text id = "scan_scan"  text = "Rescan the computer to detect MIDRetail software"/>
+  <tooltip_text id = "scan_scan"  text = "Rescan the computer to detect Logility RO software"/>
   
-  <substitution old = "C:\MIDRetail\Client\logs"  new = "C:\MIDRetailData\logs"/>
+  <substitution old = "C:\Logility\RO\Client\logs"  new = "C:\Logility\ROData\logs"/>
   <substitution old = "localhost"  new = "%machine%"/>
   <substitution old = "C:\Program Files\MID, Inc\MID Advanced Allocation for SQL Server\MID Advanced Allocation"  new = "%installdir%\MIDRetail_Client\Client"/>
   <substitution old = "C:\Program Files\MID, Inc\MID Advanced Allocation for SQL Server"  new = "%installdir%\MIDRetail_Client"/>
@@ -914,29 +965,31 @@ Show Details will display installation message details."/>
   <substitution old = "C:\Program Files\MID Inc\MID Advanced Allocation for SQL Server"  new = "%installdir%\MIDRetail_Client"/>
   <substitution old = "C:\Program Files\MID Inc"  new = "%installdir%"/>
   <substitution old = "C:\Program Files\MIDRetail\Batch" new = "%installdir%\Batch"/>
-  <substitution old = "C:\MIDRetail\MIDSettings.config" new= "%installdir%\MIDSettings.config"/>
-  <substitution old = "C:\MIDRetail\Batch" new = "%installdir%\Batch"/>
-  <substitution old = "C:\MIDRetail\Release"  new = "\\%machine%\MIDRetailDataRelease"/>
-  <substitution old = "C:\MIDRetailRelease"  new = "\\%machine%\MIDRetailDataRelease"/>
-  <substitution old = "C:\MIDRetail\Client\ExportOutput"  new = "\\%machine%\MIDRetailDataExport"/>
-  <substitution old = "C:\MIDRetail\Reports"  new = "%unc_installdir%\Reports"/>
-  <substitution old = "C:\MIDRetail\Client\ExportOutput"  new = "%unc_installdir%\Client\ExportOutput"/>
-  <substitution old = "C:\MIDRetail\Client"  new = "%installdir%"/>
-  <substitution old = "C:\MIDRetail\upgrade.log"  new = "%installdir%\Client\upgrade.log"/>
+  <substitution old = "C:\Logility\RO\MIDSettings.config" new= "%installdir%\MIDSettings.config"/>
+  <substitution old = "C:\Logility\RO\Batch" new = "%installdir%\Batch"/>
+  <substitution old = "C:\Logility\RO\Release"  new = "\\%machine%\LogilityRODataRelease"/>
+  <substitution old = "C:\Logility\RORelease"  new = "\\%machine%\LogilityRODataRelease"/>
+  <substitution old = "C:\Logility\RO\Client\ExportOutput"  new = "\\%machine%\LogilityRODataExport"/>
+  <substitution old = "C:\Logility\RO\Reports"  new = "%unc_installdir%\Reports"/>
+  <substitution old = "C:\Logility\RO\Client\ExportOutput"  new = "%unc_installdir%\Client\ExportOutput"/>
+  <substitution old = "C:\Logility\RO\Client\Graphics"  new = "\\%machine%\LogilityROClient\Client\AutoUpgrade\Client\Graphics"/>
+  <substitution old = "C:\Logility\RO\Client"  new = "%installdir%"/>
+  <substitution old = "C:\Logility\RO\upgrade.log"  new = "%installdir%\Client\upgrade.log"/>
   <substitution old = "C:\"  new = "%drive%"/>
   
   <rebrand old = "MIDAllocation.exe.config"  new = "MIDRetail.exe.config"/>
   <rebrand old = "MIDAdvancedAllocationControlService.exe.config"  new = "MIDRetailControlService.exe.config"/>
   <rebrand old = "MIDAdvancedAllocationStoreService.exe.config"  new = "MIDRetailStoreService.exe.config"/>
   <rebrand old = "MIDAdvancedAllocationHierarchyService.exe.config"  new = "MIDRetailHierarchyService.exe.config"/>
+  <rebrand old = "MIDAdvancedAllocationJobService.exe.config"  new = "MIDRetailJobService.exe.config"/>
   <rebrand old = "MIDAdvancedAllocationSchedulerService.exe.config"  new = "MIDRetailSchedulerService.exe.config"/>
   <rebrand old = "MIDAdvancedAllocationApplicationService.exe.config"  new = "MIDRetailApplicationService.exe.config"/>
 
   <!--Begin TT#581-MD - JSmith - Remove unwanted settings -->
-  <remove config_file = "MIDSettings.config" setting = "APIFileProcessingDirection"/>
-  <remove config_file = "ScheduleInterface.exe.config" setting = "ConnectionString"/>
-  <remove config_file = "ScheduleInterface.exe.config" setting = "User"/>
-  <remove config_file = "ScheduleInterface.exe.config" setting = "Password"/>
+  <remove config_file = "MIDSettings.config" parent = "appSettings" setting = "APIFileProcessingDirection"/>
+  <remove config_file = "ScheduleInterface.exe.config" parent = "appSettings" setting = "ConnectionString"/>
+  <remove config_file = "ScheduleInterface.exe.config" parent = "appSettings" setting = "User"/>
+  <remove config_file = "ScheduleInterface.exe.config" parent = "appSettings" setting = "Password"/>
   <!--End TT#581-MD - JSmith - Remove unwanted settings -->
 
 </installer>

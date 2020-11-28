@@ -13,6 +13,8 @@ namespace MIDRetailInstaller
     {
         ToolTip tt = new ToolTip();
         InstallerFrame frame = null;
+        public string Parent;
+        public string LookupType;
 
         public InstallerControl()
         {

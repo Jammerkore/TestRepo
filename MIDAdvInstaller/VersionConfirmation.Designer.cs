@@ -53,7 +53,7 @@
             this.lblWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblWarning.Location = new System.Drawing.Point(51, 12);
             this.lblWarning.Name = "lblWarning";
-            this.lblWarning.Size = new System.Drawing.Size(146, 31);
+            this.lblWarning.Size = new System.Drawing.Size(183, 39);
             this.lblWarning.TabIndex = 0;
             this.lblWarning.Text = "WARNING";
             // 
@@ -69,7 +69,7 @@
             // 
             this.btnContinue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnContinue.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnContinue.Location = new System.Drawing.Point(76, 179);
+            this.btnContinue.Location = new System.Drawing.Point(76, 193);
             this.btnContinue.Name = "btnContinue";
             this.btnContinue.Size = new System.Drawing.Size(96, 45);
             this.btnContinue.TabIndex = 3;
@@ -80,7 +80,7 @@
             // 
             this.btnTerminate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnTerminate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnTerminate.Location = new System.Drawing.Point(214, 179);
+            this.btnTerminate.Location = new System.Drawing.Point(214, 193);
             this.btnTerminate.Name = "btnTerminate";
             this.btnTerminate.Size = new System.Drawing.Size(96, 45);
             this.btnTerminate.TabIndex = 1;
@@ -93,15 +93,13 @@
             this.cbConfirm.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbConfirm.Location = new System.Drawing.Point(35, 139);
             this.cbConfirm.Name = "cbConfirm";
-            this.cbConfirm.Size = new System.Drawing.Size(15, 14);
+            this.cbConfirm.Size = new System.Drawing.Size(18, 17);
             this.cbConfirm.TabIndex = 2;
             this.cbConfirm.UseVisualStyleBackColor = true;
             this.cbConfirm.CheckedChanged += new System.EventHandler(this.cbConfirm_CheckedChanged);
             // 
             // VersionConfirmation
             // 
-            //this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            //this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
             this.ClientSize = new System.Drawing.Size(386, 246);
             this.ControlBox = false;

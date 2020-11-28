@@ -82,17 +82,17 @@ namespace MIDRetailInstaller
             }
         }
 
-        private void SetFileNotReadOnly(string FileName)
-        {
-            try
-            {
-                System.IO.File.SetAttributes(FileName, System.IO.File.GetAttributes(FileName) & ~(FileAttributes.ReadOnly));
-            }
-            catch
-            {
+        //private void SetFileNotReadOnly(string FileName)
+        //{
+        //    try
+        //    {
+        //        System.IO.File.SetAttributes(FileName, System.IO.File.GetAttributes(FileName) & ~(FileAttributes.ReadOnly));
+        //    }
+        //    catch
+        //    {
                 
-            }
-        }
+        //    }
+        //}
     }
 
     

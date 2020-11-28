@@ -422,6 +422,36 @@ namespace MIDRetail.Business
 			}
 		}
 
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        override public void ExtractCubeGroup(ExtractOptions aExtractOptions)
+        {
+            ChainPlanWeekDetail chainCube;
+            ChainPlanPeriodDetail chainPeriodDetailCube;
+            ChainPlanDateTotal chainDataTotalCube;
+            bool rowsExtracted = false;
+
+            try
+            {
+                chainCube = (ChainPlanWeekDetail)GetCube(eCubeType.ChainPlanWeekDetail);
+                chainCube.ExtractCube(aExtractOptions, out rowsExtracted);
+
+                if (rowsExtracted)
+                {
+                    chainPeriodDetailCube = (ChainPlanPeriodDetail)GetCube(eCubeType.ChainPlanPeriodDetail);
+                    chainPeriodDetailCube.ExtractCube(aExtractOptions);
+
+                    chainDataTotalCube = (ChainPlanDateTotal)GetCube(eCubeType.ChainPlanDateTotal);
+                    chainDataTotalCube.ExtractCube(aExtractOptions);
+                }
+            }
+            catch (Exception exc)
+            {
+                string message = exc.ToString();
+                throw;
+            }
+        }
+        // End TT#2131-MD - JSmith - Halo Integration
+
 		/// <summary>
 		/// Closes this PlanCubeGroup.
 		/// </summary>

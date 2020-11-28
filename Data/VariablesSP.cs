@@ -4730,7 +4730,322 @@ namespace MIDRetail.Data
 			    }
 			}
 
-			//INSERT NEW STORED PROCEDURES ABOVE HERE
+            // Begin TT#2131-MD - JSmith - Halo Integration
+            public static MID_EXTRACT_PLANNING_CONTROL_READ_def MID_EXTRACT_PLANNING_CONTROL_READ = new MID_EXTRACT_PLANNING_CONTROL_READ_def();
+            public class MID_EXTRACT_PLANNING_CONTROL_READ_def : baseStoredProcedure
+            {
+                //"file:///C:\SCMVS2010\gohere.html?filepath=DatabaseDefinition\SQL_StoredProcedures\MID_EXTRACT_PLANNING_CONTROL_READ.SQL"
+
+                private intParameter HN_RID;
+                private intParameter FV_RID;
+                private intParameter PLAN_TYPE;
+
+                public MID_EXTRACT_PLANNING_CONTROL_READ_def()
+                {
+                    base.procedureName = "MID_EXTRACT_PLANNING_CONTROL_READ";
+                    base.procedureType = storedProcedureTypes.Read;
+                    base.tableNames.Add("EXTRACT_PLANNING_CONTROL");
+                    HN_RID = new intParameter("@HN_RID", base.inputParameterList);
+                    FV_RID = new intParameter("@FV_RID", base.inputParameterList);
+                    PLAN_TYPE = new intParameter("@PLAN_TYPE", base.inputParameterList);
+                }
+
+                public DataTable Read(DatabaseAccess _dba,
+                                      int? HN_RID,
+                                      int? FV_RID,
+                                      int? PLAN_TYPE
+                                      )
+                {
+                    lock (typeof(MID_EXTRACT_PLANNING_CONTROL_READ_def))
+                    {
+                        this.HN_RID.SetValue(HN_RID);
+                        this.FV_RID.SetValue(FV_RID);
+                        this.PLAN_TYPE.SetValue(PLAN_TYPE);
+                        return ExecuteStoredProcedureForRead(_dba);
+                    }
+                }
+            }
+
+            public static MID_EXTRACT_PLANNING_CONTROL_WRITE_def MID_EXTRACT_PLANNING_CONTROL_WRITE = new MID_EXTRACT_PLANNING_CONTROL_WRITE_def();
+            public class MID_EXTRACT_PLANNING_CONTROL_WRITE_def : baseStoredProcedure
+            {
+                //"file:///C:\SCMVS2010\gohere.html?filepath=DatabaseDefinition\SQL_StoredProcedures\MID_EXTRACT_PLANNING_CONTROL_WRITE.SQL"
+
+                private tableParameter dt;
+
+                public MID_EXTRACT_PLANNING_CONTROL_WRITE_def()
+                {
+                    base.procedureName = "MID_EXTRACT_PLANNING_CONTROL_WRITE";
+                    base.procedureType = storedProcedureTypes.Insert;
+                    base.tableNames.Add("MID_EXTRACT_PLANNING_CONTROL_WRITE");
+                    dt = new tableParameter("@dt", "EXTRACT_PLANNING_CONTROL_TYPE", base.inputParameterList);
+                }
+
+                [UnitTestMethodAttribute(BypassValidation = true)]
+                public int Insert(DatabaseAccess _dba,
+                                  DataTable dt
+                                  )
+                {
+                    lock (typeof(MID_EXTRACT_PLANNING_CONTROL_WRITE_def))
+                    {
+                        this.dt.SetValue(dt);
+                        return ExecuteStoredProcedureForInsert(_dba);
+                    }
+                }
+            }
+
+            public static MID_EXTRACT_PLANNING_CONTROL_CLEAR_EXTRACT_DATES_def MID_EXTRACT_PLANNING_CONTROL_CLEAR_EXTRACT_DATES = new MID_EXTRACT_PLANNING_CONTROL_CLEAR_EXTRACT_DATES_def();
+            public class MID_EXTRACT_PLANNING_CONTROL_CLEAR_EXTRACT_DATES_def : baseStoredProcedure
+            {
+                //"file:///C:\SCMVS2010\gohere.html?filepath=DatabaseDefinition\SQL_StoredProcedures\MID_EXTRACT_PLANNING_CONTROL_CLEAR_EXTRACT_DATES.SQL"
+
+                private tableParameter dt;
+
+                public MID_EXTRACT_PLANNING_CONTROL_CLEAR_EXTRACT_DATES_def()
+                {
+                    base.procedureName = "MID_EXTRACT_PLANNING_CONTROL_CLEAR_EXTRACT_DATES";
+                    base.procedureType = storedProcedureTypes.Update;
+                    base.tableNames.Add("MID_EXTRACT_PLANNING_CONTROL_CLEAR_EXTRACT_DATES");
+                    //dt = new tableParameter("@dt", "EXTRACT_PLANNING_CONTROL_TYPE", base.inputParameterList);
+                }
+
+                [UnitTestMethodAttribute(BypassValidation = true)]
+                public int Update(DatabaseAccess _dba)
+                {
+                    lock (typeof(MID_EXTRACT_PLANNING_CONTROL_CLEAR_EXTRACT_DATES_def))
+                    {
+                        return ExecuteStoredProcedureForUpdate(_dba);
+                    }
+                }
+            }
+
+            public static MID_EXTRACT_PLANNING_CONTROL_CHAIN_FORECAST_DELETE_FOR_PURGE_def MID_EXTRACT_PLANNING_CONTROL_CHAIN_FORECAST_DELETE_FOR_PURGE = new MID_EXTRACT_PLANNING_CONTROL_CHAIN_FORECAST_DELETE_FOR_PURGE_def();
+            public class MID_EXTRACT_PLANNING_CONTROL_CHAIN_FORECAST_DELETE_FOR_PURGE_def : baseStoredProcedure
+            {
+                //"file:///C:\SCMVS2010\gohere.html?filepath=DatabaseDefinition\SQL_StoredProcedures\MID_EXTRACT_PLANNING_CONTROL_CHAIN_FORECAST_DELETE_FOR_PURGE.SQL"
+
+                private intParameter COMMIT_LIMIT;
+
+                public MID_EXTRACT_PLANNING_CONTROL_CHAIN_FORECAST_DELETE_FOR_PURGE_def()
+                {
+                    base.procedureName = "MID_EXTRACT_PLANNING_CONTROL_CHAIN_FORECAST_DELETE_FOR_PURGE";
+                    base.procedureType = storedProcedureTypes.Delete;
+                    base.tableNames.Add("EXTRACT_PLANNING_CONTROL");
+                    COMMIT_LIMIT = new intParameter("@COMMIT_LIMIT", base.inputParameterList);
+                }
+
+                public int Delete(DatabaseAccess _dba, int? COMMIT_LIMIT)
+                {
+                    lock (typeof(MID_EXTRACT_PLANNING_CONTROL_CHAIN_FORECAST_DELETE_FOR_PURGE_def))
+                    {
+                        this.COMMIT_LIMIT.SetValue(COMMIT_LIMIT);
+                        return ExecuteStoredProcedureForDelete(_dba);
+                    }
+                }
+            }
+
+            public static MID_EXTRACT_PLANNING_CONTROL_CHAIN_FORECAST_DELETE_FOR_PURGE_FOR_DATE_def MID_EXTRACT_PLANNING_CONTROL_CHAIN_FORECAST_DELETE_FOR_PURGE_FOR_DATE = new MID_EXTRACT_PLANNING_CONTROL_CHAIN_FORECAST_DELETE_FOR_PURGE_FOR_DATE_def();
+            public class MID_EXTRACT_PLANNING_CONTROL_CHAIN_FORECAST_DELETE_FOR_PURGE_FOR_DATE_def : baseStoredProcedure
+            {
+                //"file:///C:\SCMVS2010\gohere.html?filepath=DatabaseDefinition\SQL_StoredProcedures\MID_EXTRACT_PLANNING_CONTROL_CHAIN_FORECAST_DELETE_FOR_PURGE_FOR_DATE.SQL"
+
+                private intParameter COMMIT_LIMIT;
+                private intParameter TIME_ID;
+
+                public MID_EXTRACT_PLANNING_CONTROL_CHAIN_FORECAST_DELETE_FOR_PURGE_FOR_DATE_def()
+                {
+                    base.procedureName = "MID_EXTRACT_PLANNING_CONTROL_CHAIN_FORECAST_DELETE_FOR_PURGE_FOR_DATE";
+                    base.procedureType = storedProcedureTypes.Delete;
+                    base.tableNames.Add("EXTRACT_PLANNING_CONTROL");
+                    COMMIT_LIMIT = new intParameter("@COMMIT_LIMIT", base.inputParameterList);
+                    TIME_ID = new intParameter("@TIME_ID", base.inputParameterList);
+                }
+
+                public int Delete(DatabaseAccess _dba,
+                                  int? COMMIT_LIMIT,
+                                  int? TIME_ID
+                                  )
+                {
+                    lock (typeof(MID_EXTRACT_PLANNING_CONTROL_CHAIN_FORECAST_DELETE_FOR_PURGE_FOR_DATE_def))
+                    {
+                        this.COMMIT_LIMIT.SetValue(COMMIT_LIMIT);
+                        this.TIME_ID.SetValue(TIME_ID);
+                        return ExecuteStoredProcedureForDelete(_dba);
+                    }
+                }
+            }
+
+            public static MID_EXTRACT_PLANNING_CONTROL_CHAIN_HISTORY_DELETE_FOR_PURGE_def MID_EXTRACT_PLANNING_CONTROL_CHAIN_HISTORY_DELETE_FOR_PURGE = new MID_EXTRACT_PLANNING_CONTROL_CHAIN_HISTORY_DELETE_FOR_PURGE_def();
+            public class MID_EXTRACT_PLANNING_CONTROL_CHAIN_HISTORY_DELETE_FOR_PURGE_def : baseStoredProcedure
+            {
+                //"file:///C:\SCMVS2010\gohere.html?filepath=DatabaseDefinition\SQL_StoredProcedures\MID_EXTRACT_PLANNING_CONTROL_CHAIN_HISTORY_DELETE_FOR_PURGE.SQL"
+
+                private intParameter COMMIT_LIMIT;
+
+                public MID_EXTRACT_PLANNING_CONTROL_CHAIN_HISTORY_DELETE_FOR_PURGE_def()
+                {
+                    base.procedureName = "MID_EXTRACT_PLANNING_CONTROL_CHAIN_HISTORY_DELETE_FOR_PURGE";
+                    base.procedureType = storedProcedureTypes.Delete;
+                    base.tableNames.Add("EXTRACT_PLANNING_CONTROL");
+                    COMMIT_LIMIT = new intParameter("@COMMIT_LIMIT", base.inputParameterList);
+                }
+
+                public int Delete(DatabaseAccess _dba, int? COMMIT_LIMIT)
+                {
+                    lock (typeof(MID_EXTRACT_PLANNING_CONTROL_CHAIN_HISTORY_DELETE_FOR_PURGE_def))
+                    {
+                        this.COMMIT_LIMIT.SetValue(COMMIT_LIMIT);
+                        return ExecuteStoredProcedureForDelete(_dba);
+                    }
+                }
+            }
+
+            public static MID_EXTRACT_PLANNING_CONTROL_CHAIN_HISTORY_DELETE_FOR_PURGE_FOR_DATE_def MID_EXTRACT_PLANNING_CONTROL_CHAIN_HISTORY_DELETE_FOR_PURGE_FOR_DATE = new MID_EXTRACT_PLANNING_CONTROL_CHAIN_HISTORY_DELETE_FOR_PURGE_FOR_DATE_def();
+            public class MID_EXTRACT_PLANNING_CONTROL_CHAIN_HISTORY_DELETE_FOR_PURGE_FOR_DATE_def : baseStoredProcedure
+            {
+                //"file:///C:\SCMVS2010\gohere.html?filepath=DatabaseDefinition\SQL_StoredProcedures\MID_EXTRACT_PLANNING_CONTROL_CHAIN_HISTORY_DELETE_FOR_PURGE_FOR_DATE.SQL"
+
+                private intParameter COMMIT_LIMIT;
+                private intParameter TIME_ID;
+
+                public MID_EXTRACT_PLANNING_CONTROL_CHAIN_HISTORY_DELETE_FOR_PURGE_FOR_DATE_def()
+                {
+                    base.procedureName = "MID_EXTRACT_PLANNING_CONTROL_CHAIN_HISTORY_DELETE_FOR_PURGE_FOR_DATE";
+                    base.procedureType = storedProcedureTypes.Delete;
+                    base.tableNames.Add("EXTRACT_PLANNING_CONTROL");
+                    COMMIT_LIMIT = new intParameter("@COMMIT_LIMIT", base.inputParameterList);
+                    TIME_ID = new intParameter("@TIME_ID", base.inputParameterList);
+                }
+
+                public int Delete(DatabaseAccess _dba,
+                                  int? COMMIT_LIMIT,
+                                  int? TIME_ID
+                                  )
+                {
+                    lock (typeof(MID_EXTRACT_PLANNING_CONTROL_CHAIN_HISTORY_DELETE_FOR_PURGE_FOR_DATE_def))
+                    {
+                        this.COMMIT_LIMIT.SetValue(COMMIT_LIMIT);
+                        this.TIME_ID.SetValue(TIME_ID);
+                        return ExecuteStoredProcedureForDelete(_dba);
+                    }
+                }
+            }
+
+            public static MID_EXTRACT_PLANNING_CONTROL_STORE_FORECAST_DELETE_FOR_PURGE_def MID_EXTRACT_PLANNING_CONTROL_STORE_FORECAST_DELETE_FOR_PURGE = new MID_EXTRACT_PLANNING_CONTROL_STORE_FORECAST_DELETE_FOR_PURGE_def();
+            public class MID_EXTRACT_PLANNING_CONTROL_STORE_FORECAST_DELETE_FOR_PURGE_def : baseStoredProcedure
+            {
+                //"file:///C:\SCMVS2010\gohere.html?filepath=DatabaseDefinition\SQL_StoredProcedures\MID_EXTRACT_PLANNING_CONTROL_STORE_FORECAST_DELETE_FOR_PURGE.SQL"
+
+                private intParameter COMMIT_LIMIT;
+
+                public MID_EXTRACT_PLANNING_CONTROL_STORE_FORECAST_DELETE_FOR_PURGE_def()
+                {
+                    base.procedureName = "MID_EXTRACT_PLANNING_CONTROL_STORE_FORECAST_DELETE_FOR_PURGE";
+                    base.procedureType = storedProcedureTypes.Delete;
+                    base.tableNames.Add("EXTRACT_PLANNING_CONTROL");
+                    COMMIT_LIMIT = new intParameter("@COMMIT_LIMIT", base.inputParameterList);
+                }
+
+                public int Delete(DatabaseAccess _dba, int? COMMIT_LIMIT)
+                {
+                    lock (typeof(MID_EXTRACT_PLANNING_CONTROL_STORE_FORECAST_DELETE_FOR_PURGE_def))
+                    {
+                        this.COMMIT_LIMIT.SetValue(COMMIT_LIMIT);
+                        return ExecuteStoredProcedureForDelete(_dba);
+                    }
+                }
+            }
+
+            public static MID_EXTRACT_PLANNING_CONTROL_STORE_FORECAST_DELETE_FOR_PURGE_FOR_DATE_def MID_EXTRACT_PLANNING_CONTROL_STORE_FORECAST_DELETE_FOR_PURGE_FOR_DATE = new MID_EXTRACT_PLANNING_CONTROL_STORE_FORECAST_DELETE_FOR_PURGE_FOR_DATE_def();
+            public class MID_EXTRACT_PLANNING_CONTROL_STORE_FORECAST_DELETE_FOR_PURGE_FOR_DATE_def : baseStoredProcedure
+            {
+                //"file:///C:\SCMVS2010\gohere.html?filepath=DatabaseDefinition\SQL_StoredProcedures\MID_EXTRACT_PLANNING_CONTROL_STORE_FORECAST_DELETE_FOR_PURGE_FOR_DATE.SQL"
+
+                private intParameter COMMIT_LIMIT;
+                private intParameter TIME_ID;
+
+                public MID_EXTRACT_PLANNING_CONTROL_STORE_FORECAST_DELETE_FOR_PURGE_FOR_DATE_def()
+                {
+                    base.procedureName = "MID_EXTRACT_PLANNING_CONTROL_STORE_FORECAST_DELETE_FOR_PURGE_FOR_DATE";
+                    base.procedureType = storedProcedureTypes.Delete;
+                    base.tableNames.Add("EXTRACT_PLANNING_CONTROL");
+                    COMMIT_LIMIT = new intParameter("@COMMIT_LIMIT", base.inputParameterList);
+                    TIME_ID = new intParameter("@TIME_ID", base.inputParameterList);
+                }
+
+                public int Delete(DatabaseAccess _dba,
+                                  int? COMMIT_LIMIT,
+                                  int? TIME_ID
+                                  )
+                {
+                    lock (typeof(MID_EXTRACT_PLANNING_CONTROL_STORE_FORECAST_DELETE_FOR_PURGE_FOR_DATE_def))
+                    {
+                        this.COMMIT_LIMIT.SetValue(COMMIT_LIMIT);
+                        this.TIME_ID.SetValue(TIME_ID);
+                        return ExecuteStoredProcedureForDelete(_dba);
+                    }
+                }
+            }
+
+            public static MID_EXTRACT_PLANNING_CONTROL_STORE_HISTORY_DELETE_FOR_PURGE_def MID_EXTRACT_PLANNING_CONTROL_STORE_HISTORY_DELETE_FOR_PURGE = new MID_EXTRACT_PLANNING_CONTROL_STORE_HISTORY_DELETE_FOR_PURGE_def();
+            public class MID_EXTRACT_PLANNING_CONTROL_STORE_HISTORY_DELETE_FOR_PURGE_def : baseStoredProcedure
+            {
+                //"file:///C:\SCMVS2010\gohere.html?filepath=DatabaseDefinition\SQL_StoredProcedures\MID_EXTRACT_PLANNING_CONTROL_STORE_HISTORY_DELETE_FOR_PURGE.SQL"
+
+                private intParameter COMMIT_LIMIT;
+
+                public MID_EXTRACT_PLANNING_CONTROL_STORE_HISTORY_DELETE_FOR_PURGE_def()
+                {
+                    base.procedureName = "MID_EXTRACT_PLANNING_CONTROL_STORE_HISTORY_DELETE_FOR_PURGE";
+                    base.procedureType = storedProcedureTypes.Delete;
+                    base.tableNames.Add("EXTRACT_PLANNING_CONTROL");
+                    COMMIT_LIMIT = new intParameter("@COMMIT_LIMIT", base.inputParameterList);
+                }
+
+                public int Delete(DatabaseAccess _dba, int? COMMIT_LIMIT)
+                {
+                    lock (typeof(MID_EXTRACT_PLANNING_CONTROL_STORE_HISTORY_DELETE_FOR_PURGE_def))
+                    {
+                        this.COMMIT_LIMIT.SetValue(COMMIT_LIMIT);
+                        return ExecuteStoredProcedureForDelete(_dba);
+                    }
+                }
+            }
+
+            public static MID_EXTRACT_PLANNING_CONTROL_STORE_HISTORY_DELETE_FOR_PURGE_FOR_DATE_def MID_EXTRACT_PLANNING_CONTROL_STORE_HISTORY_DELETE_FOR_PURGE_FOR_DATE = new MID_EXTRACT_PLANNING_CONTROL_STORE_HISTORY_DELETE_FOR_PURGE_FOR_DATE_def();
+            public class MID_EXTRACT_PLANNING_CONTROL_STORE_HISTORY_DELETE_FOR_PURGE_FOR_DATE_def : baseStoredProcedure
+            {
+                //"file:///C:\SCMVS2010\gohere.html?filepath=DatabaseDefinition\SQL_StoredProcedures\MID_EXTRACT_PLANNING_CONTROL_STORE_HISTORY_DELETE_FOR_PURGE_FOR_DATE.SQL"
+
+                private intParameter COMMIT_LIMIT;
+                private intParameter TIME_ID;
+
+                public MID_EXTRACT_PLANNING_CONTROL_STORE_HISTORY_DELETE_FOR_PURGE_FOR_DATE_def()
+                {
+                    base.procedureName = "MID_EXTRACT_PLANNING_CONTROL_STORE_HISTORY_DELETE_FOR_PURGE_FOR_DATE";
+                    base.procedureType = storedProcedureTypes.Delete;
+                    base.tableNames.Add("EXTRACT_PLANNING_CONTROL");
+                    COMMIT_LIMIT = new intParameter("@COMMIT_LIMIT", base.inputParameterList);
+                    TIME_ID = new intParameter("@TIME_ID", base.inputParameterList);
+                }
+
+                public int Delete(DatabaseAccess _dba,
+                                  int? COMMIT_LIMIT,
+                                  int? TIME_ID
+                                  )
+                {
+                    lock (typeof(MID_EXTRACT_PLANNING_CONTROL_STORE_HISTORY_DELETE_FOR_PURGE_FOR_DATE_def))
+                    {
+                        this.COMMIT_LIMIT.SetValue(COMMIT_LIMIT);
+                        this.TIME_ID.SetValue(TIME_ID);
+                        return ExecuteStoredProcedureForDelete(_dba);
+                    }
+                }
+            }
+
+            // End TT#2131-MD - JSmith - Halo Integration
+
+            //INSERT NEW STORED PROCEDURES ABOVE HERE
         }
     }  
 }

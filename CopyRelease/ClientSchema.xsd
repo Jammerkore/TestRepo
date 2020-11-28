@@ -26,6 +26,7 @@
                 <xs:attribute name="GroupAllocationInstalled" type="xs:boolean" use="optional" default="false"/>
                 <xs:attribute name="MasterInstalled" type="xs:boolean" use="optional" default="false"/>
                 <xs:attribute name="ShipAsISO" type="xs:boolean" use="optional" default="true"/>
+                <xs:attribute name="AnalyticsInstalled" type="xs:boolean" use="optional" default="false"/>
                 <xs:attribute name="Notdaa" type="xs:boolean" use="optional" default="false"/>
 							</xs:extension>
 						</xs:simpleContent>

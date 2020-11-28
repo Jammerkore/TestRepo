@@ -32,7 +32,9 @@
 		     <xs:element name="configuration">
            <xs:complexType>
 			        <xs:attribute name="config_file" type="xs:string" />
+			        <xs:attribute name="parent" type="xs:string" default="appSettings" />
 			        <xs:attribute name="setting" type="xs:string" />
+			        <xs:attribute name="lookupType" type="xs:string" default="child" />
 			        <xs:attribute name="type" type="xs:string" />
 			        <xs:attribute name="id" type="xs:string" />
 			        <xs:attribute name="isRequired" type="xs:boolean" use="optional" default="false" />
@@ -86,6 +88,7 @@
          <xs:element name="remove">
            <xs:complexType>
              <xs:attribute name="config_file" type="xs:string" />
+             <xs:attribute name="parent" type="xs:string" default="appSettings" />
              <xs:attribute name="setting" type="xs:string" />
            </xs:complexType>
          </xs:element>

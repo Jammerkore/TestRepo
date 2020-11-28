@@ -129,6 +129,7 @@ namespace MIDRetail.Windows
         private string _lblAllStores;
         private string _lblSet;
         private int _prevSetValue;
+        private int _prevSetValueTest;  // TT#5792 - AGallagher - Velocity Method with Total Matrix and Average Mode not giving expected results
         private int _prevAttributeValue;
         //		private int _prevMerchIndex;
         private int _prevCompIndex;
@@ -5284,6 +5285,25 @@ namespace MIDRetail.Windows
         {
             if (FormLoaded)
             {
+                // BEGIN TT#5792 - AGallagher - Velocity Method with Total Matrix and Average Mode not giving expected results
+                _prevSetValueTest = Convert.ToInt32(cbxAttributeSet.SelectedValue, CultureInfo.CurrentUICulture);
+                gbxMatrixMode.Enabled = true;
+                if (_prevSetValueTest == 0)
+                {
+                    //DisableAverageRuleUI();
+                    cboMatrixModeAvgRule.Enabled = false;
+                    txtMatrixModeAvgRule.Enabled = false;
+                    gbxSpreadOption.Enabled = false;
+
+                    //rdoSpreadOptionSmooth.Checked = true;
+                    txtMatrixModeAvgRule.Text = string.Empty;
+                    cboMatrixModeAvgRule.Text = string.Empty;
+                    cboMatrixModeAvgRule.Text = null;
+                    txtMatrixModeAvgRule.Text = null;
+                    gbxMatrixMode.Enabled = false;
+                    //rdoMatrixModeNormal.Checked = true;
+                }
+                // END TT#5792 - AGallagher - Velocity Method with Total Matrix and Average Mode not giving expected results
                 _attributeSetChanged = true;
                 if (_setReset)
                 {

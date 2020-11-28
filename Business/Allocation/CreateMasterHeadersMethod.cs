@@ -8,6 +8,7 @@ using System.Globalization;
 using MIDRetail.Data;
 using MIDRetail.Common;
 using MIDRetail.DataCommon;
+using Logility.ROWebSharedTypes;
 
 namespace MIDRetail.Business.Allocation
 {
@@ -87,6 +88,29 @@ namespace MIDRetail.Business.Allocation
         //========
         // METHODS
         //========
+
+        // Begin TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+        override internal bool CheckForUserData()
+        {
+            foreach (DataRow dr in _dtMerchandise.Rows)
+            {
+                if (dr["FILTER_RID"] != DBNull.Value 
+                    && IsFilterUser(Convert.ToInt32(dr["FILTER_RID"])))
+                {
+                    return true;
+                }
+
+                if (dr["HN_RID"] != DBNull.Value
+                    && IsHierarchyNodeUser(Convert.ToInt32(dr["HN_RID"])))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        // End TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+
         public override void ProcessMethod(
             ApplicationSessionTransaction aApplicationTransaction,
             int aStoreFilter, Profile methodProfile)
@@ -748,15 +772,98 @@ namespace MIDRetail.Business.Allocation
         {
             return true;
         }
+
+        // BEGIN RO-642 - RDewey
+        override public FunctionSecurityProfile GetFunctionSecurity()
+        {
+            if (this.GlobalUserType == eGlobalUserType.Global)
+            {
+                return SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.AllocationMethodsGlobalCreateMasterHeaders);
+            }
+            else
+            {
+                return SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.AllocationMethodsUserCreateMasterHeaders);
+            }
+
+        }
+        override public ROMethodProperties MethodGetData(bool processingApply)
+        {
+            ROMethodCreateMasterHeadersProperties method = new ROMethodCreateMasterHeadersProperties(
+               method: GetName.GetMethod(method: this),
+               description: Method_Description,
+               userKey: User_RID,
+               useSelectedHeaders: _methodData.UseSelectedHeaders,
+               listMerchandise: new System.Collections.Generic.List<ROMethodCreateMasterHeadersMerchandise>()
+               );
+
+            // Loop through each set
+            ROMethodCreateMasterHeadersMerchandise myMerchandise = null;
+            int seq = 0;
+            foreach (DataRow dr in _methodData.dtMerchandise.Rows)
+            {
+                int merchandiseRID = Convert.ToInt32(dr["HN_RID"], CultureInfo.CurrentUICulture);
+                int filterRID = Convert.ToInt32(dr["FILTER_RID"], CultureInfo.CurrentUICulture);
+                seq += 1;
+                myMerchandise = new ROMethodCreateMasterHeadersMerchandise(
+                    sequence: seq,
+                    merchandise: GetName.GetMerchandiseName(merchandiseRID, SAB),
+                    filter: GetName.GetFilterName(filterRID)
+                    );
+                //myMerchandise.Merchandise = GetName.GetMerchandiseName(merchandiseRID, SAB);
+                //myMerchandise.Filter = GetName.GetFilterName(filterRID);
+                //myMerchandise.Sequence = seq;
+                method.ListMerchandise.Add(myMerchandise);
+            }
+
+            return method;
+        }
+
+        override public bool MethodSetData(ROMethodProperties methodProperties, bool processingApply)
+        {
+            ROMethodCreateMasterHeadersProperties roMethodCreateMasterHeadersProperties = (ROMethodCreateMasterHeadersProperties)methodProperties;
+            try
+            {
+                _methodData.UseSelectedHeaders = roMethodCreateMasterHeadersProperties.UseSelectedHeaders;
+                UseSelectedHeaders = roMethodCreateMasterHeadersProperties.UseSelectedHeaders;
+                _methodData.Method_Name = roMethodCreateMasterHeadersProperties.Method.Value;
+
+                // Building the dtMerchandise dataTable 
+                _methodData.dtMerchandise.Rows.Clear();
+                int i = 0;
+
+                foreach (ROMethodCreateMasterHeadersMerchandise listMerchandise in roMethodCreateMasterHeadersProperties.ListMerchandise)
+                {
+                    i += 1;
+                    // The dtMerchandise Data Table has Filter RID in columns 4 and 5
+                    _methodData.dtMerchandise.Rows.Add(new object[] { roMethodCreateMasterHeadersProperties.Method.Key, i, listMerchandise.Merchandise.Value, listMerchandise.Merchandise.Key, listMerchandise.Filter.Key, listMerchandise.Filter.Key });
+                }
+
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+            //    throw new NotImplementedException("MethodSaveData is not implemented");
+        }
+
+        override public ROMethodProperties MethodCopyData()
+        {
+            throw new NotImplementedException("MethodCopyData is not implemented");
+        }
+        // END RO-642 - RDewey
     }
 
     // Begin TT#2084-MD - JSmith - Header with incompatible components are combining to the same master header
-	public enum eHeaderComponentType
+    public enum eHeaderComponentType
     {
         Total,
         NoSize,
         DetailType
     }
 	// End TT#2084-MD - JSmith - Header with incompatible components are combining to the same master header
+
+
 }
 

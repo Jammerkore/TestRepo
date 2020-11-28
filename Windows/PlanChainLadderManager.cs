@@ -480,6 +480,14 @@ namespace MIDRetail.Windows
            return this.ladderViewData.ReconstructCubeCoordinatesAndDataset();
         }
 
+		// BEGIN TT#1156-MD CTeegarden make cube functionality generic
+        public int iAddedColumnsCount { get { return ladderViewData._extraColumns; } }
+
+        public void IncrementAddedColumnsCount(uint iColumnsAdded)
+        {
+            ladderViewData._extraColumns += (int) iColumnsAdded;
+        }
+		// END TT#1156-MD CTeegarden make cube functionality generic
 
         public void PeriodChanged(bool selectYear, bool selectSeason, bool selectQuarter, bool selectMonth, bool selectWeek)
         {
@@ -773,7 +781,7 @@ namespace MIDRetail.Windows
         #region "Scaling"
         public DataTable ScalingDollar_GetDataTable()
         {
-            DataTable dtDollarScaling = new DataTable();
+            DataTable dtDollarScaling = new DataTable("Dollar Scaling");
             dtDollarScaling.Columns.Add("TEXT_CODE", typeof(int));
             dtDollarScaling.Columns.Add("TEXT_VALUE", typeof(string));
 
@@ -806,7 +814,7 @@ namespace MIDRetail.Windows
 
         public DataTable ScalingUnits_GetDataTable()
         {
-            DataTable dtUnitsScaling = new DataTable();
+            DataTable dtUnitsScaling = new DataTable("Unit Scaling");
             dtUnitsScaling.Columns.Add("TEXT_CODE", typeof(int));
             dtUnitsScaling.Columns.Add("TEXT_VALUE", typeof(string));
 

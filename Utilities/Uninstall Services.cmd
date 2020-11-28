@@ -1,4 +1,0 @@
-"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\installutil" /u "C:\MIDRetail\Control Service\MIDRetailControlService.exe"
-"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\installutil" /u "C:\MIDRetail\Scheduler Service\MIDRetailSchedulerService.exe"
-"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\installutil" /u "C:\MIDRetail\Store Service\MIDRetailStoreService.exe"
-"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\installutil" /u "C:\MIDRetail\Hierarchy Service\MIDRetailHierarchyService.exe"

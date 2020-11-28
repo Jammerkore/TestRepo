@@ -47,17 +47,20 @@ namespace MIDRetail.Data
 
                 try
                 {
-                    UserGridView_Delete(aUserRID, (int)aLayoutID);
-                    if (aViewRID != Include.NoRID)
+                    if (_dba.UpdateConnectionOpen)
                     {
-                        GridViewData gvd = new GridViewData();
-                        DataRow row = gvd.GridView_Read(aViewRID); // View may have been deleted
-                        if (row != null)
+                        UserGridView_Delete(aUserRID, (int)aLayoutID);
+                        if (aViewRID != Include.NoRID)
                         {
-                            UserGridView_Insert(aUserRID, (int)aLayoutID, aViewRID);
+                            GridViewData gvd = new GridViewData();
+                            DataRow row = gvd.GridView_Read(aViewRID); // View may have been deleted
+                            if (row != null)
+                            {
+                                UserGridView_Insert(aUserRID, (int)aLayoutID, aViewRID);
+                            }
                         }
+                        _dba.CommitData();
                     }
-                    _dba.CommitData();
                 }
                 catch (Exception exc)
                 {
@@ -67,7 +70,10 @@ namespace MIDRetail.Data
                 }
                 finally
                 {
-                    _dba.CloseUpdateConnection();
+                    if (_dba.UpdateConnectionOpen)
+                    {
+                        _dba.CloseUpdateConnection();
+                    }
                 }
 
                 return;

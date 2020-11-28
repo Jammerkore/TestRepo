@@ -354,6 +354,14 @@ namespace MIDRetail.Windows
                             row.Hidden = false;
                         }
                     }
+
+                    if (_titleStringOnFirstRow != string.Empty && addedTitle == false)
+                    {
+                        addedTitle = true;
+                        Infragistics.Documents.Excel.WorksheetRow row = e.CurrentWorksheet.Rows[0];
+                        row.SetCellValue(0, _titleStringOnFirstRow);
+                        e.CurrentRowIndex++;
+                    }
                 }
 
                 private void ultraGridExcelExporter1_ExportEnding(object sender, Infragistics.Win.UltraWinGrid.ExcelExport.ExportEndingEventArgs e)

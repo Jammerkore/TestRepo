@@ -125,7 +125,54 @@ namespace MIDRetail.Data
             }
 			// End TT#1581-MD - stodd - API Header Reconcile
 
-			//INSERT NEW STORED PROCEDURES ABOVE HERE
+            public static MID_API_PROCESS_CONTROL_RULES_UPDATE_def MID_API_PROCESS_CONTROL_RULES_UPDATE = new MID_API_PROCESS_CONTROL_RULES_UPDATE_def();
+            public class MID_API_PROCESS_CONTROL_RULES_UPDATE_def : baseStoredProcedure
+            {
+                //"file:///C:\SCMVS2010\gohere.html?filepath=DatabaseDefinition\SQL_StoredProcedures\MID_API_PROCESS_CONTROL_RULES_UPDATE.SQL"
+
+                private intParameter API_ID;
+                private charParameter PROCESS_CANNOT_BE_RUNNING_IND;
+                private charParameter PROCESS_MUST_BE_RUNNING_IND;
+                private intParameter PROCESS_ID;
+                private datetimeParameter LAST_MODIFIED_DATETIME;
+                private stringParameter LAST_MODIFIED_BY;
+
+                public MID_API_PROCESS_CONTROL_RULES_UPDATE_def()
+                {
+                    base.procedureName = "MID_API_PROCESS_CONTROL_RULES_UPDATE";
+                    base.procedureType = storedProcedureTypes.Update;
+                    base.tableNames.Add("API_PROCESS_CONTROL_RULES");
+                    API_ID = new intParameter("@API_ID", base.inputParameterList);
+                    PROCESS_CANNOT_BE_RUNNING_IND = new charParameter("@PROCESS_CANNOT_BE_RUNNING_IND", base.inputParameterList);
+                    PROCESS_MUST_BE_RUNNING_IND = new charParameter("@PROCESS_MUST_BE_RUNNING_IND", base.inputParameterList);
+                    PROCESS_ID = new intParameter("@PROCESS_ID", base.inputParameterList);
+                    LAST_MODIFIED_DATETIME = new datetimeParameter("@LAST_MODIFIED_DATETIME", base.inputParameterList);
+                    LAST_MODIFIED_BY = new stringParameter("@LAST_MODIFIED_BY", base.inputParameterList);
+                }
+
+                public int Update(DatabaseAccess _dba,
+                                  int? API_ID,
+                                  char? PROCESS_CANNOT_BE_RUNNING_IND,
+                                  char? PROCESS_MUST_BE_RUNNING_IND,
+                                  int? PROCESS_ID,
+                                  DateTime? LAST_MODIFIED_DATETIME,
+                                  string LAST_MODIFIED_BY
+                                  )
+                {
+                    lock (typeof(MID_API_PROCESS_CONTROL_RULES_UPDATE_def))
+                    {
+                        this.API_ID.SetValue(API_ID);
+                        this.PROCESS_CANNOT_BE_RUNNING_IND.SetValue(PROCESS_CANNOT_BE_RUNNING_IND);
+                        this.PROCESS_MUST_BE_RUNNING_IND.SetValue(PROCESS_MUST_BE_RUNNING_IND);
+                        this.PROCESS_ID.SetValue(PROCESS_ID);
+                        this.LAST_MODIFIED_DATETIME.SetValue(LAST_MODIFIED_DATETIME);
+                        this.LAST_MODIFIED_BY.SetValue(LAST_MODIFIED_BY);
+                        return ExecuteStoredProcedureForUpdate(_dba);
+                    }
+                }
+            }
+
+            //INSERT NEW STORED PROCEDURES ABOVE HERE
         }
     }  
 }

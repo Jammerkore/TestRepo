@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data;
 
+using MIDRetail.Common;
 using MIDRetail.Data;
 using MIDRetail.DataCommon;
 
@@ -19,6 +20,7 @@ namespace MIDRetail.Business
     {
         private static string htab1 = "\t";
         private static int tabLevel = 2;
+        private static MRSCalendar _cal;   // TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
 
         private static string GetTab()
         {
@@ -29,6 +31,17 @@ namespace MIDRetail.Business
             }
             return htab;
         }
+
+        // Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+		private static DateRangeProfile GetDateRange(int CDR_RID)
+        {
+            if (_cal == null)
+            {
+                _cal = new MRSCalendar();
+            }
+            return _cal.GetDateRange(CDR_RID);
+        }
+		// End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
 
         public static void CreateOrUpdateSqlForFilter(filter f)
         {
@@ -73,6 +86,13 @@ namespace MIDRetail.Business
                 sSQL += htab1 + "DECLARE @eHeaderType_MultiHeader INT = 800734;" + System.Environment.NewLine; //Multi header parent
                 sSQL += htab1 + "DECLARE @eHeaderType_Assortment INT = 800739;" + System.Environment.NewLine;
                 sSQL += htab1 + "DECLARE @eHeaderType_Placeholder INT = 800740;" + System.Environment.NewLine;
+                // Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+                if (f.filterType == filterTypes.AssortmentFilter) // Assortment Workspace 
+                {
+                    sSQL += htab1 + "DECLARE @eAssortmentType_Buy INT = 1;" + System.Environment.NewLine;
+                    sSQL += htab1 + "DECLARE @eAssortmentType_PostReceipt INT = 2;" + System.Environment.NewLine;
+                }
+                // End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
                 sSQL += htab1 + "DECLARE @eAssortmentType_GroupAllocation INT = 3;" + System.Environment.NewLine;
                 sSQL += htab1 + "DECLARE @eHeaderAllocationStatus_Released INT = 802709;" + System.Environment.NewLine;
                 sSQL += htab1 + "DECLARE @eHeaderAllocationStatus_ReleasedApproved INT = 802710;" + System.Environment.NewLine;
@@ -151,6 +171,13 @@ namespace MIDRetail.Business
                     sSQL += htab1 + "LEFT OUTER JOIN [dbo].[MASTER_HEADER] sh WITH (NOLOCK) on sh.SUBORD_HDR_RID = h.HDR_RID" + System.Environment.NewLine;
                     sSQL += htab1 + "LEFT OUTER JOIN [dbo].[HEADER] s WITH (NOLOCK) on s.HDR_RID = sh.MASTER_HDR_RID" + System.Environment.NewLine;
                 }
+				// Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+                else if (f.filterType == filterTypes.AssortmentFilter) //Assortment Filter for Assortment Workspace (SWS)
+                {
+                    sSQL += htab1 + "LEFT OUTER JOIN [dbo].[ASSORTMENT_PROPERTIES] ap WITH (NOLOCK) on ap.HDR_RID = h.HDR_RID" + System.Environment.NewLine;
+                    sSQL += htab1 + "LEFT OUTER JOIN [dbo].[CALENDAR_DATE_RANGE] cdr WITH (NOLOCK) on cdr.CDR_RID = ap.CDR_RID" + System.Environment.NewLine;
+                }
+				// End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
                 sSQL += htab1 + "WHERE h.HDR_RID <> 1" + System.Environment.NewLine;
                 // End TT#1966-MD - JSmith - DC Fulfillment
                 if (f.filterType == filterTypes.HeaderFilter) //Allocation Workspace (AWS) and allocate tasks
@@ -338,6 +365,21 @@ namespace MIDRetail.Business
 
                 
             }
+            // Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+            else if (sortByType == filterSortByTypes.AssortmentDate)
+            {
+                sSQL += "h.HDR_DAY";
+            }
+            else if (sortByType == filterSortByTypes.AssortmentStatus)
+            {
+                sSQL += "(SELECT at.TEXT_VALUE FROM APPLICATION_TEXT at WITH (NOLOCK) WHERE at.TEXT_CODE= h.DISPLAY_STATUS)";
+            }
+            else if (sortByType == filterSortByTypes.AssortmentFields)
+            {
+                filterAssortmentFieldTypes sortByField = filterAssortmentFieldTypes.FromIndex(cnSort.condition.sortByFieldIndex);
+                MakeSQLForSortByAssortmentFields(sortByField, ref sSQL);
+            }
+            // End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
 
             filterSortByDirectionTypes sortByDirection = filterSortByDirectionTypes.FromIndex(cnSort.condition.operatorIndex);
             if (sortByDirection == filterSortByDirectionTypes.Descending)
@@ -471,6 +513,38 @@ namespace MIDRetail.Business
 
         //End TT#1468-MD -jsobek -Header Filter Sort Options
 
+        // Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+        private static void MakeSQLForSortByAssortmentFields(filterAssortmentFieldTypes fieldType, ref string sSQL)
+        {
+
+            if (fieldType == filterAssortmentFieldTypes.AssortmentID)
+            {
+                sSQL += "h.HDR_ID";
+            }
+            else if (fieldType == filterAssortmentFieldTypes.Description) 
+            {
+                sSQL += "h.HDR_DESC";
+            }
+            else if (fieldType == filterAssortmentFieldTypes.Quantity)
+            {
+                sSQL += "h.UNITS_RECEIVED";
+            }
+            else if (fieldType == filterAssortmentFieldTypes.AllocatedUnits)
+            {
+                sSQL += "h.ALLOCATED_UNITS";
+            }
+            else if (fieldType == filterAssortmentFieldTypes.OriginalAllocatedUnits)
+            {
+                sSQL += "h.ORIG_ALLOCATED_UNITS";
+            }
+            else if (fieldType == filterAssortmentFieldTypes.ReserveAllocatedUnits)
+            {
+                sSQL += "h.RSV_ALLOCATED_UNITS";
+            }
+            
+        }
+        // End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+
         private static void MakeSQLForConditions(ConditionNode cn, ref string sSQL)
         {
             if (cn.ConditionNodes.Count > 0)
@@ -526,6 +600,28 @@ namespace MIDRetail.Business
             {
                 BuildSqlForHeaderMerchandise(cn.condition, ref sSQL);
             }
+            // Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+            else if (et == filterDictionary.AssortmentFields)
+            {
+                BuildSqlForAssortmentFields(cn.condition, ref sSQL);
+            }
+            else if (et == filterDictionary.AssortmentMerchandise)
+            {
+                BuildSqlForHeaderMerchandise(cn.condition, ref sSQL);
+            }
+            else if (et == filterDictionary.AssortmentStatus)
+            {
+                BuildSqlForAssortmentStatus(cn.condition, ref sSQL);
+            }
+            else if (et == filterDictionary.AssortmentDate)
+            {
+                BuildSqlForHeaderDate(cn.condition, ref sSQL);
+            }
+            else if (et == filterDictionary.AssortmentTypes)
+            {
+                BuildSqlForAssortmentTypes(cn.condition, ref sSQL);
+            }
+            // End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
         }
 
 
@@ -576,6 +672,16 @@ namespace MIDRetail.Business
                       BuildSqlDateVariablesForSmallDate(fc, ref sSQL, ref firstDynamicDate);
                   }
             }
+            // Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+            else if (et == filterDictionary.AssortmentDate) //date only
+            {
+                BuildSqlDateVariablesForSmallDate(fc, ref sSQL, ref firstDynamicDate);
+            }
+            else if (et == filterDictionary.AssortmentFields)
+            {
+                BuildSqlCalendarDateVariablesForSmallDate(fc, ref sSQL, ref firstDynamicDate);
+            }
+            // End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
     
         }
 
@@ -619,6 +725,19 @@ namespace MIDRetail.Business
                 }
                 sSQL += htab1 + "INSERT INTO @HDR_RIDS_FROM_HIERARCHY_" + GetConditionUID(fc) + " SELECT * FROM UDF_HIERARCHY_GET_HEADERS_FROM_NODE (" + fc.headerMerchandise_HN_RID.ToString() + ", @PH_RID_" + GetConditionUID(fc) + ", " + organizationalPhRID.ToString() + ")" + System.Environment.NewLine;
             }
+			// Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+			else if (et == filterDictionary.AssortmentMerchandise) 
+            {
+                sSQL += htab1 + "DECLARE @PH_RID_" + GetConditionUID(fc) + " INT = (SELECT HOME_PH_RID FROM HIERARCHY_NODE hn WITH (NOLOCK) WHERE hn.HN_RID=" + cn.condition.headerMerchandise_HN_RID.ToString() + ");" + System.Environment.NewLine;
+                sSQL += htab1 + "DECLARE @HDR_RIDS_FROM_HIERARCHY_" + GetConditionUID(fc) + " AS HDR_RID_TYPE;" + System.Environment.NewLine;
+                if (organizationalPhRID == null)
+                {
+                    MerchandiseHierarchyData mData = new MerchandiseHierarchyData();
+                    organizationalPhRID = mData.Hierarchy_Read_Organizational_RID();
+                }
+                sSQL += htab1 + "INSERT INTO @HDR_RIDS_FROM_HIERARCHY_" + GetConditionUID(fc) + " SELECT * FROM UDF_HIERARCHY_GET_HEADERS_FROM_NODE (" + fc.headerMerchandise_HN_RID.ToString() + ", @PH_RID_" + GetConditionUID(fc) + ", " + organizationalPhRID.ToString() + ")" + System.Environment.NewLine;
+            }
+			// End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
       
 
         }
@@ -1132,6 +1251,43 @@ namespace MIDRetail.Business
             // ENd TT#1966-MD - JSmith - DC Fulfillment
           
         }
+
+        // Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+        private static void BuildSqlForAssortmentFields(filterCondition fc, ref string sSQL)
+        {
+            filterAssortmentFieldTypes fieldType = filterAssortmentFieldTypes.FromIndex(fc.fieldIndex);
+            if (fieldType == filterAssortmentFieldTypes.AssortmentID)
+            {
+                BuildSqlForStringComparison("h.HDR_ID", fc, ref sSQL);
+            }
+            else if (fieldType == filterAssortmentFieldTypes.Delivery)
+            {
+                BuildSqlForCalendarDateRangeComparison("cdr.CDR_START", fc, ref sSQL);
+            }
+            else if (fieldType == filterAssortmentFieldTypes.Description)
+            {
+                BuildSqlForStringComparison("h.HDR_DESC", fc, ref sSQL);
+            }
+            else if (fieldType == filterAssortmentFieldTypes.Quantity)
+            {
+                BuildSqlForIntComparison("h.UNITS_RECEIVED", fc, ref sSQL);
+            }
+            else if (fieldType == filterAssortmentFieldTypes.AllocatedUnits)
+            {
+                BuildSqlForIntComparison("h.ALLOCATED_UNITS", fc, ref sSQL);
+            }
+            else if (fieldType == filterAssortmentFieldTypes.OriginalAllocatedUnits)
+            {
+                BuildSqlForIntComparison("h.ORIG_ALLOCATED_UNITS", fc, ref sSQL);
+            }
+            else if (fieldType == filterAssortmentFieldTypes.ReserveAllocatedUnits)
+            {
+                BuildSqlForIntComparison("h.RSV_ALLOCATED_UNITS", fc, ref sSQL);
+            }
+
+        }
+        // End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+
         private static void BuildSqlForHeaderCharacteristics(filterCondition fc, ref string sSQL)
         {
            
@@ -1530,6 +1686,154 @@ namespace MIDRetail.Business
             }
         }
 
+        // Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+        private static void BuildSqlForAssortmentStatus(filterCondition fc, ref string sSQL)
+        {
+            filterListConstantTypes listType = fc.listConstantType;
+            filterListOperatorTypes listOp = filterListOperatorTypes.FromIndex(fc.operatorIndex);
+            if (listType == filterListConstantTypes.All)
+            {
+                if (listOp == filterListOperatorTypes.Excludes)
+                {
+                    sSQL += "1=2 --No Assortment Statuses";
+                }
+                else
+                {
+                    sSQL += "1=1 --All Assortment Statuses";
+                }
+            }
+            else
+            {
+                if (listType == filterListConstantTypes.None)
+                {
+                    if (listOp == filterListOperatorTypes.Excludes)
+                    {
+                        sSQL += "1=1 --All Assortment Statuses";
+                    }
+                    else
+                    {
+                        sSQL += "1=2 --No Assortment Statuses";
+                    }
+                }
+                else
+                {
+                    sSQL += "h.DISPLAY_STATUS ";
+                    if (listOp == filterListOperatorTypes.Excludes)
+                    {
+                        sSQL += "NOT IN ";
+                    }
+                    else
+                    {
+                        sSQL += "IN ";
+                    }
+
+                    sSQL += "(";
+                    tabLevel++;
+
+                    DataRow[] listValues = fc.GetListValues(filterListValueTypes.AssortmentStatus);
+                    bool firstStatus = true;
+                    foreach (DataRow dr in listValues)
+                    {
+                        int listValueIndex = (int)dr["LIST_VALUE_INDEX"];
+
+                        if (firstStatus == false)
+                        {
+                            sSQL += ",";
+                        }
+                        else
+                        {
+                            firstStatus = false;
+                        }
+                        sSQL += listValueIndex.ToString();
+                    }
+
+                    tabLevel--;
+                    sSQL += GetTab() + ") " + System.Environment.NewLine;
+                }
+            }
+        }
+
+        private static void BuildSqlForAssortmentTypes(filterCondition fc, ref string sSQL)
+        {
+            filterListConstantTypes listType = fc.listConstantType;
+            filterListOperatorTypes listOp = filterListOperatorTypes.FromIndex(fc.operatorIndex);
+            if (listType == filterListConstantTypes.All)
+            {
+                if (listOp == filterListOperatorTypes.Excludes)
+                {
+                    sSQL += "1=2 --No Assortment Types";
+                }
+                else
+                {
+                    sSQL += "1=1 --All Assortment Types";
+                }
+            }
+            else
+            {
+                if (listType == filterListConstantTypes.None)
+                {
+                    if (listOp == filterListOperatorTypes.Excludes)
+                    {
+                        sSQL += "1=1 --All Assortment Types";
+                    }
+                    else
+                    {
+                        sSQL += "1=2 --No Assortment Types";
+                    }
+                }
+                else
+                {
+                    // Determine types so will know how to construct SQL
+                    DataRow[] listValues = fc.GetListValues(filterListValueTypes.AssortmentTypes);
+                    sSQL += "h.ASRT_TYPE ";
+                    if (listOp == filterListOperatorTypes.Excludes)
+                    {
+                        sSQL += "NOT IN ";
+                    }
+                    else
+                    {
+                        sSQL += "IN ";
+                    }
+
+                    sSQL += "(";
+                    tabLevel++;
+
+                    bool firstStatus = true;
+                    foreach (DataRow dr in listValues)
+                    {
+                        int listValueIndex = (int)dr["LIST_VALUE_INDEX"];
+
+                        if (firstStatus == false)
+                        {
+                            sSQL += ",";
+                        }
+                        else
+                        {
+                            firstStatus = false;
+                        }
+
+                        eAssortmentDisplayType assortmentType = (eAssortmentDisplayType)listValueIndex;
+                        if (assortmentType == eAssortmentDisplayType.Buy)
+                        {
+                            sSQL += Convert.ToInt32(eAssortmentType.PreReceipt).ToString();
+                        }
+                        else if (assortmentType == eAssortmentDisplayType.PostReceipt)
+                        {
+                            sSQL += Convert.ToInt32(eAssortmentType.PostReceipt).ToString();
+                        }
+
+                    }
+
+                    tabLevel--;
+                    sSQL += GetTab() + ") ";
+
+                    sSQL += System.Environment.NewLine;
+                    // End TT#1966-MD - JSmith - DC Fulfillment
+                }
+            }
+        }
+        // End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+
         private static int? organizationalPhRID = null;
         private static void BuildSqlForHeaderMerchandise(filterCondition fc, ref string sSQL)
         {
@@ -1895,7 +2199,86 @@ namespace MIDRetail.Business
             }
         }
 
+        // Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+		private static void BuildSqlCalendarDateVariablesForSmallDate(filterCondition fc, ref string sSQL, ref bool firstDynamicDate)
+        {
+            if (filterCalendarDateOperatorTypes.FromIndex(fc.operatorIndex) == filterCalendarDateOperatorTypes.Last1Week)
+            {
+                if (firstDynamicDate == false)
+                {
+                    firstDynamicDate = true;
+                    MakeDateDynamicSQL(ref sSQL);
+                }
+                sSQL += htab1 + "DECLARE @SDT_LAST_1_WEEK_" + GetConditionUID(fc) + " SMALLDATETIME = CONVERT(SMALLDATETIME, DATEADD(week, -1, @SDT_NOW), 112);" + System.Environment.NewLine;
+            }
+            else if (filterCalendarDateOperatorTypes.FromIndex(fc.operatorIndex) == filterCalendarDateOperatorTypes.Next1Week)
+            {
+                if (firstDynamicDate == false)
+                {
+                    firstDynamicDate = true;
+                    MakeDateDynamicSQL(ref sSQL);
+                }
 
+                //go from midnight to midnight
+                sSQL += htab1 + "DECLARE @SDT_NEXT_1_WEEK_" + GetConditionUID(fc) + " SMALLDATETIME = CONVERT(SMALLDATETIME, DATEADD(week, 1, @SDT_NOW), 112);" + System.Environment.NewLine;
+            }
+            else if (filterCalendarDateOperatorTypes.FromIndex(fc.operatorIndex) == filterCalendarDateOperatorTypes.Next4Weeks)
+            {
+                if (firstDynamicDate == false)
+                {
+                    firstDynamicDate = true;
+                    MakeDateDynamicSQL(ref sSQL);
+                }
+
+                //go from midnight to midnight
+                sSQL += htab1 + "DECLARE @SDT_NEXT_4_WEEKS_" + GetConditionUID(fc) + " SMALLDATETIME = CONVERT(SMALLDATETIME, DATEADD(week, 4, @SDT_NOW), 112);" + System.Environment.NewLine;
+            }
+            else if (filterCalendarDateOperatorTypes.FromIndex(fc.operatorIndex) == filterCalendarDateOperatorTypes.Between)
+            {
+                if (firstDynamicDate == false)
+                {
+                    firstDynamicDate = true;
+                    MakeDateDynamicSQL(ref sSQL);
+                }
+                int weeksFrom = fc.valueToCompareDateBetweenFromDays;
+                int weeksTo = fc.valueToCompareDateBetweenToDays;
+
+                sSQL += htab1 + "DECLARE @SDT_BTWN_FROM_" + GetConditionUID(fc) + " SMALLDATETIME = CONVERT(SMALLDATETIME, DATEADD(week, " + weeksFrom.ToString() + ", @SDT_NOW), 112);" + System.Environment.NewLine;
+                sSQL += htab1 + "DECLARE @SDT_BTWN_TO_" + GetConditionUID(fc) + " SMALLDATETIME = CONVERT(SMALLDATETIME, DATEADD(week, " + weeksTo.ToString() + ", @SDT_NOW), 112);" + System.Environment.NewLine;
+            }
+         
+        }
+        private static void BuildSqlForCalendarDateRangeComparison(string val1, filterCondition fc, ref string sSQL)
+        {
+            DateRangeProfile drp = GetDateRange((int)fc.date_CDR_RID);
+            filterCalendarDateOperatorTypes calendarDateOp = filterCalendarDateOperatorTypes.FromIndex(fc.operatorIndex);
+            
+            if (calendarDateOp == filterCalendarDateOperatorTypes.Unrestricted)
+            {
+                sSQL += " 1 = 1 ";
+            }
+            else if (calendarDateOp == filterCalendarDateOperatorTypes.Last1Week)
+            {
+                sSQL += "(" + val1 + " >= [dbo].[UDF_MID_GET_TIMEID_FROM_DATE](@SDT_NOW, 0) AND " + val1 + " <= [dbo].[UDF_MID_GET_TIMEID_FROM_DATE](@SDT_LAST_1_WEEK_" + GetConditionUID(fc) + " , 0)) ";
+            }
+            else if (calendarDateOp == filterCalendarDateOperatorTypes.Next1Week)
+            {
+                sSQL += "(" + val1 + " >= [dbo].[UDF_MID_GET_TIMEID_FROM_DATE](@SDT_NOW, 0) AND " + val1 + " <= [dbo].[UDF_MID_GET_TIMEID_FROM_DATE](@SDT_NEXT_1_WEEK_" + GetConditionUID(fc) + " , 0)) ";
+            }
+            else if (calendarDateOp == filterCalendarDateOperatorTypes.Next4Weeks)
+            {
+                sSQL += "(" + val1 + " >= [dbo].[UDF_MID_GET_TIMEID_FROM_DATE](@SDT_NOW, 0) AND " + val1 + " <= [dbo].[UDF_MID_GET_TIMEID_FROM_DATE](@SDT_NEXT_4_WEEKS_" + GetConditionUID(fc) + " , 0)) ";
+            }
+            else if (calendarDateOp == filterCalendarDateOperatorTypes.Between)
+            {
+                sSQL += "(" + val1 + " >= [dbo].[UDF_MID_GET_TIMEID_FROM_DATE](@SDT_BTWN_FROM_" + GetConditionUID(fc) + ", 0) AND " + val1 + " <= [dbo].[UDF_MID_GET_TIMEID_FROM_DATE](@SDT_BTWN_TO_" + GetConditionUID(fc) + " , 0))";
+            }
+            else if (calendarDateOp == filterCalendarDateOperatorTypes.Specify)
+            {
+                sSQL += "(" + val1 + " >= " + drp.StartDateKey.ToString() + " AND " + val1 + " <= " + drp.EndDateKey.ToString() + ") ";
+            }
+        }
+		// End TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
         
 
         /// <summary>

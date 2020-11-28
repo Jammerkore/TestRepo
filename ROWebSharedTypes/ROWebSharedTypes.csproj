@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{E1CF2528-F7A3-4AD1-B5A0-03869FD4A02B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ROWebSharedTypes</RootNamespace>
+    <AssemblyName>ROWebSharedTypes</AssemblyName>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\midretailinccert.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Bidirectional Parameter Classes\ROHierarchy.cs" />
+    <Compile Include="Bidirectional Parameter Classes\ROAllocation.cs" />
+    <Compile Include="Bidirectional Parameter Classes\ROAssortment.cs" />
+    <Compile Include="Bidirectional Parameter Classes\ROAdministration.cs" />
+    <Compile Include="Bidirectional Parameter Classes\ROCube.cs" />
+    <Compile Include="Bidirectional Parameter Classes\ROCommon.cs" />
+    <Compile Include="Bidirectional Parameter Classes\ROGeneral.cs" />
+    <Compile Include="Bidirectional Parameter Classes\ROBase.cs" />
+    <Compile Include="Bidirectional Parameter Classes\ROPlanning.cs" />
+    <Compile Include="Input Parameter Classes\ROAllocationParms.cs" />
+    <Compile Include="Input Parameter Classes\ROAssortmentParms.cs" />
+    <Compile Include="Input Parameter Classes\ROAdministrationParms.cs" />
+    <Compile Include="Input Parameter Classes\ROCommonParms.cs" />
+    <Compile Include="Input Parameter Classes\ROCalendarParms.cs" />
+    <Compile Include="Input Parameter Classes\ROCubeParms.cs" />
+    <Compile Include="Input Parameter Classes\ROGeneralParms.cs" />
+    <Compile Include="Input Parameter Classes\ROGlobalOptions.cs" />
+    <Compile Include="Input Parameter Classes\ROHierarchyParms.cs" />
+    <Compile Include="Output Parameter Classes\ROHierarchyOut.cs" />
+    <Compile Include="Output Parameter Classes\ROAdministration.cs" />
+    <Compile Include="Output Parameter Classes\ROCommonOut.cs" />
+    <Compile Include="Output Parameter Classes\ROPlanningOut.cs" />
+    <Compile Include="Output Parameter Classes\ROAllocationOut.cs" />
+    <Compile Include="Output Parameter Classes\ROAssortmentOut.cs" />
+    <Compile Include="Output Parameter Classes\ROCubeOut.cs" />
+    <Compile Include="Output Parameter Classes\ROGeneralOut.cs" />
+    <Compile Include="Output Parameter Classes\ROOutBase.cs" />
+    <Compile Include="Input Parameter Classes\ROPlanningParms.cs" />
+    <Compile Include="Input Parameter Classes\ROStoreParms.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Output Parameter Classes\ROCalendarOut.cs" />
+    <Compile Include="ROEnums.cs" />
+    <Compile Include="Input Parameter Classes\ROParmsBase.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DataCommon\DataCommon.csproj">
+      <Project>{f33fc337-30fc-409c-898d-df39a2016b6b}</Project>
+      <Name>DataCommon</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

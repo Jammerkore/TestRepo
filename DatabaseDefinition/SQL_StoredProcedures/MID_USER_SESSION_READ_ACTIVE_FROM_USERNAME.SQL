@@ -3,7 +3,7 @@
 --dv Description: Reads user sessions based on user and status
 --dv =============================================
 CREATE PROCEDURE [dbo].[MID_USER_SESSION_READ_ACTIVE_FROM_USERNAME]
-	@USER_NAME varchar(30)
+	@USER_NAME varchar(256)
 AS
 BEGIN
 	SET NOCOUNT ON;

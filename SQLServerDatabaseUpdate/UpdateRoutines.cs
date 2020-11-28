@@ -38,7 +38,9 @@ namespace MIDRetail.DatabaseUpdate
         private static SetMessageToInstallerLog installerLogDelegate = null;
         public delegate void SetMessageToInstallerLog(string msg);
         private static IPlanComputationVariables variables;
+        private static IPlanComputationTimeTotalVariables totalVariables;  // TT#2131-MD - JSmith - Halo Integration
         private static bool aNewDatabase;
+        private static bool isROExtractDatabase = false;  // TT#2131-MD - JSmith - Halo Integration
 
         private static string folderForWindowsDLL = string.Empty;
         private static string folderForDatabaseFiles = string.Empty;
@@ -48,7 +50,10 @@ namespace MIDRetail.DatabaseUpdate
         /// <summary>
         /// Main entry point for either installing a new database or upgrading a database.
         /// </summary>
-        public static void ProcessDatabase(Queue aMessageQueue, Queue aProcessedQueue, bool isNewDatabase, bool doUpgradeDatabase, bool doValidateConfiguration, bool IsOneClickUpgrade, bool doLoadLicenseKey, string aConnectionString, string strDatabase, SetMessageDelegate setMessageDelegate, SetMessageToInstallerLog setMessageToInstaller, out bool keepProcessing, out bool bValidConfiguration)
+        // Begin TT#2131-MD - JSmith - Halo Integration
+		//public static void ProcessDatabase(Queue aMessageQueue, Queue aProcessedQueue, bool isNewDatabase, bool doUpgradeDatabase, bool doValidateConfiguration, bool IsOneClickUpgrade, bool doLoadLicenseKey, string aConnectionString, string strDatabase, SetMessageDelegate setMessageDelegate, SetMessageToInstallerLog setMessageToInstaller, out bool keepProcessing, out bool bValidConfiguration)
+		public static void ProcessDatabase(Queue aMessageQueue, Queue aProcessedQueue, bool isNewDatabase, bool isNewROExtractDatabase, bool doUpgradeDatabase, bool doValidateConfiguration, bool IsOneClickUpgrade, bool doLoadLicenseKey, string aConnectionString, string strDatabase, SetMessageDelegate setMessageDelegate, SetMessageToInstallerLog setMessageToInstaller, out bool keepProcessing, out bool bValidConfiguration)
+		// End TT#2131-MD - JSmith - Halo Integration
         {
             keepProcessing = true;
 
@@ -62,6 +67,18 @@ namespace MIDRetail.DatabaseUpdate
 
             try
             {
+                // Begin TT#2131-MD - JSmith - Halo Integration
+				if (isNewROExtractDatabase)
+                {
+                    isROExtractDatabase = true;
+					isNewDatabase = true;
+                }
+                else if (upgradingDatabase)
+                {
+                    isROExtractDatabase = IsROExtractDatabase(messageQueue, aConnectionString);
+                }
+				// End TT#2131-MD - JSmith - Halo Integration
+
                 SetFoldersForProcessing();
                 SetRecoveryModelSimple(aMessageQueue, aConnectionString, strDatabase);
                 DisableTextConstraints(aMessageQueue, aConnectionString);
@@ -290,7 +307,10 @@ namespace MIDRetail.DatabaseUpdate
 
 
 
-                if (keepProcessing && upgradingDatabase)
+                // Begin TT#2131-MD - JSmith - Halo Integration
+				//if (keepProcessing && upgradingDatabase)
+				if (keepProcessing && upgradingDatabase && !isROExtractDatabase)
+				// End TT#2131-MD - JSmith - Halo Integration
                 {
                     //            SetStatusMessage("Loading Computations");
                     if (!LoadRoutines.LoadComputations(messageQueue, sqlConnectionString))
@@ -508,6 +528,8 @@ namespace MIDRetail.DatabaseUpdate
 
                 PlanComputationsCollection compCollections = new PlanComputationsCollection();
                 variables = compCollections.GetDefaultComputations().PlanVariables;
+
+                totalVariables = compCollections.GetDefaultComputations().PlanTimeTotalVariables;  // TT#2131-MD - JSmith - Halo Integration
 
                 keepProcessing = true;
                 processedQueue.Enqueue("Loaded calcs and variables.");
@@ -770,12 +792,24 @@ namespace MIDRetail.DatabaseUpdate
                 folderForWindowsDLL = Directory.GetParent(appStartupPath).ToString().Trim() + @"\Installer\Install Files\Client\MIDRetail.Windows.dll";
             #endif
 
-
-            #if (DEBUG)
+            // Begin TT#2131-MD - JSmith - Halo Integration
+			if (isROExtractDatabase)
+            {
+#if (DEBUG)
+                folderForDatabaseFiles = Directory.GetParent(Directory.GetParent(Directory.GetParent(appStartupPath).ToString().Trim()).ToString().Trim()) + @"\DatabaseDefinitionROExtract";
+#else
+                folderForDatabaseFiles = Directory.GetParent(appStartupPath).ToString().Trim() + @"\DatabaseROExtract";
+#endif
+            }
+            else
+            {
+#if (DEBUG)
                 folderForDatabaseFiles = Directory.GetParent(Directory.GetParent(Directory.GetParent(appStartupPath).ToString().Trim()).ToString().Trim()) + @"\DatabaseDefinition";
-            #else
+#else
                 folderForDatabaseFiles = Directory.GetParent(appStartupPath).ToString().Trim() + @"\Database";
-            #endif
+#endif
+             }
+			 // End TT#2131-MD - JSmith - Halo Integration
 
             
         }
@@ -1337,7 +1371,7 @@ namespace MIDRetail.DatabaseUpdate
         private static void UpdateVariableTables(out bool keepProcessing)
         {
             keepProcessing = true;
-            if (!LoadRoutines.UpdateTables(messageQueue, sqlConnectionString))
+            if (!LoadRoutines.UpdateTables(isROExtractDatabase, messageQueue, sqlConnectionString))
             {
                 keepProcessing = false;
                 string msg = "ERROR: Update variable tables failed.";
@@ -1406,12 +1440,15 @@ namespace MIDRetail.DatabaseUpdate
             sda = new SqlDataAdapter(sqlCommand);
             sda.Fill(dt);
 
-            dr = dt.Rows[dt.Rows.Count - 1];
-            majorVersion = Convert.ToInt32(dr["MAJOR_VERSION"], CultureInfo.CurrentUICulture);
-            minorVersion = Convert.ToInt32(dr["MINOR_VERSION"], CultureInfo.CurrentUICulture);
-            revision = Convert.ToInt32(dr["REVISION"], CultureInfo.CurrentUICulture);
-            modification = Convert.ToInt32(dr["MODIFICATION"], CultureInfo.CurrentUICulture);
-            dbDate = Convert.ToDateTime(dr["WHEN_RUN"], CultureInfo.CurrentUICulture);
+            if (dt.Rows.Count > 0)
+            {
+                dr = dt.Rows[dt.Rows.Count - 1];
+                majorVersion = Convert.ToInt32(dr["MAJOR_VERSION"], CultureInfo.CurrentUICulture);
+                minorVersion = Convert.ToInt32(dr["MINOR_VERSION"], CultureInfo.CurrentUICulture);
+                revision = Convert.ToInt32(dr["REVISION"], CultureInfo.CurrentUICulture);
+                modification = Convert.ToInt32(dr["MODIFICATION"], CultureInfo.CurrentUICulture);
+                dbDate = Convert.ToDateTime(dr["WHEN_RUN"], CultureInfo.CurrentUICulture);
+            }
 
             string currentVersion = "Current version=" + majorVersion.ToString() + "."
                 + minorVersion.ToString() + "." + revision.ToString() + "."
@@ -2328,6 +2365,8 @@ namespace MIDRetail.DatabaseUpdate
             SQL2008 = 100,
             SQL2012 = 110,
             SQL2014 = 120,   // TT#1795-MD - JSmith - Support 2014
+            SQL2016 = 130,   // TT#2130-MD - AGallagher - Support 2016
+            SQL2017 = 140    // TT#1952-MD - AGallagher - Support 2017
         }
         // End TT#3497 - JSmith - Add Database Compatibility Level Check in Upgrade Process
         // Begin TT#3497 - JSmith - Add Database Compatibility Level Check in Upgrade Process
@@ -2466,6 +2505,79 @@ namespace MIDRetail.DatabaseUpdate
                 }
             }
         }
+
+        // Begin TT#2131-MD - JSmith - Halo Integration
+		static public bool IsROExtractDatabase(Queue aMessageQueue, string aConnString)
+        {
+            bool connectionOpen = false;
+            DataTable dt;
+            SqlDataAdapter sda;
+            SqlCommand sqlCommand = null;
+
+            try
+            {
+                // open connection
+
+                try
+                {
+                    string connectionString = aConnString;
+
+
+                    sqlCommand = new SqlCommand();
+                    sqlCommand.Connection = new SqlConnection(connectionString);
+                    sqlCommand.Connection.Open();
+                    connectionOpen = true;
+                }
+                catch (SqlException sqlex)
+                {
+                    string message = sqlex.ToString();
+                    aMessageQueue.Enqueue("UNEXPECTED EXCEPTION: Error encountered during open of database");
+                    aMessageQueue.Enqueue(message);
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    string message = ex.ToString();
+                    aMessageQueue.Enqueue("UNEXPECTED EXCEPTION: " + message);
+                    return false;
+                }
+
+                sqlCommand.CommandType = CommandType.Text;
+                sqlCommand.CommandText = "select * from INFORMATION_SCHEMA.TABLES "
+                    + " where TABLE_TYPE = 'BASE TABLE'"
+                    + " and TABLE_NAME = 'Hierarchy_Data'";
+                dt = MIDEnvironment.CreateDataTable("SYSTEM_OPTIONS");
+                sda = new SqlDataAdapter(sqlCommand);
+                sda.Fill(dt);
+
+                if (dt.Rows.Count == 0)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            catch (SqlException sqlex)
+            {
+                aMessageQueue.Enqueue("UNEXPECTED SQL EXCEPTION: " + sqlex.ToString());
+                return false;
+            }
+            catch (Exception ex)
+            {
+                aMessageQueue.Enqueue("UNEXPECTED EXCEPTION: " + ex.ToString());
+                return false;
+            }
+            finally
+            {
+                if (connectionOpen)
+                {
+                    sqlCommand.Connection.Close();
+                }
+            }
+        }
+		// End TT#2131-MD - JSmith - Halo Integration
 
         static public eDatabaseType GetDatabaseType(Queue aMessageQueue, string aConnString)
         {
@@ -3415,6 +3527,25 @@ namespace MIDRetail.DatabaseUpdate
         private static void MakeGeneratedTableObjectList()
         {
             genTableList = new List<genBase>();
+			// Begin TT#2131-MD - JSmith - Halo Integration
+            if (isROExtractDatabase)
+            {
+                genTableList.Add(new genBase { table = Include.DBROExtractPlanningChainTable, tableType = genTableTypes.Table, allowNull = true, genDlg = new genDelegate(Generate_Planning_Chain_Table) });
+                genTableList.Add(new genBase { table = Include.DBROExtractPlanningChainTable, tableType = genTableTypes.TableKey, suffix = "_PK", isLockTable = true, genDlg = new genDelegate(Generate_Planning_Chain_Key) });
+                genTableList.Add(new genBase { table = Include.DBROExtractPlanningChainTotalTable, tableType = genTableTypes.Table, allowNull = true, genDlg = new genDelegate(Generate_Planning_Chain_Total_Table) });
+                genTableList.Add(new genBase { table = Include.DBROExtractPlanningChainTotalTable, tableType = genTableTypes.TableKey, suffix = "_PK", isLockTable = true, genDlg = new genDelegate(Generate_Planning_Chain_Total_Key) });
+                genTableList.Add(new genBase { table = Include.DBROExtractPlanningAttributesTable, tableType = genTableTypes.Table, allowNull = true, genDlg = new genDelegate(Generate_Planning_Attributes_Table) });
+                genTableList.Add(new genBase { table = Include.DBROExtractPlanningAttributesTable, tableType = genTableTypes.TableKey, suffix = "_PK", isLockTable = true, genDlg = new genDelegate(Generate_Planning_Attributes_Key) });
+                genTableList.Add(new genBase { table = Include.DBROExtractPlanningAttributesTotalTable, tableType = genTableTypes.Table, allowNull = true, genDlg = new genDelegate(Generate_Planning_Attributes_Total_Table) });
+                genTableList.Add(new genBase { table = Include.DBROExtractPlanningAttributesTotalTable, tableType = genTableTypes.TableKey, suffix = "_PK", isLockTable = true, genDlg = new genDelegate(Generate_Planning_Attributes_Total_Key) });
+                genTableList.Add(new genBase { table = Include.DBROExtractPlanningStoresTable, tableType = genTableTypes.Table, allowNull = true, genDlg = new genDelegate(Generate_Planning_Stores_Table) });
+                genTableList.Add(new genBase { table = Include.DBROExtractPlanningStoresTable, tableType = genTableTypes.TableKey, suffix = "_PK", isLockTable = true, genDlg = new genDelegate(Generate_Planning_Stores_Key) });
+                genTableList.Add(new genBase { table = Include.DBROExtractPlanningStoresTotalTable, tableType = genTableTypes.Table, allowNull = true, genDlg = new genDelegate(Generate_Planning_Stores_Total_Table) });
+                genTableList.Add(new genBase { table = Include.DBROExtractPlanningStoresTotalTable, tableType = genTableTypes.TableKey, suffix = "_PK", isLockTable = true, genDlg = new genDelegate(Generate_Planning_Stores_Total_Key) });
+                return;
+            }
+			// End TT#2131-MD - JSmith - Halo Integration
+
             int tableCount = 10;
             if (doGenerateStoreWeeklyForecast())
             {
@@ -4055,6 +4186,651 @@ namespace MIDRetail.DatabaseUpdate
             }
 
         }
+
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        private static void Generate_Planning_Chain_Table(genOptions options)
+        {
+            string aTableName = options.table;
+            bool aAllowNull = options.allowNull;
+            StreamWriter aWriter = options.writer;
+
+            try
+            {
+                ProfileList aVariables = variables.GetChainWeeklyVariableList();
+                if (aVariables == null ||
+                    aVariables.Count == 0)
+                {
+                    return;
+                }
+
+                aWriter.WriteLine("create table " + aTableName + " ( ");
+                aWriter.WriteLine(_indent5 + "[Merchandise] [nvarchar] (100) NOT NULL,");
+                aWriter.WriteLine(_indent5 + "[Version] [nvarchar] (50) NOT NULL,");
+                aWriter.WriteLine(_indent5 + "[TimePeriod] [nvarchar] (50) NOT NULL,");
+
+                int count = 0;
+                foreach (VariableProfile vp in aVariables)
+                {
+                    ++count;
+                    string line = AddExtractVariable(vp, aAllowNull, eVariableCategory.Chain);
+                    if (count < aVariables.Count)
+                    {
+                        line += ",";
+                    }
+                    else
+                    {
+                        line += ")";
+                    }
+                    aWriter.WriteLine(_indent5 + line);
+                }
+
+                aWriter.WriteLine(System.Environment.NewLine);
+                aWriter.WriteLine("GO");
+                aWriter.WriteLine(System.Environment.NewLine);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private static void Generate_Planning_Chain_Key(genOptions options)
+        {
+            string aTableName = options.table;
+            StreamWriter aWriter = options.writer;
+            string keyName = options.name;
+            try
+            {
+                aWriter.WriteLine("alter table " + aTableName);
+                aWriter.WriteLine(_indent5 + "add constraint " + keyName + " primary key clustered (Merchandise, Version, TimePeriod)   ");
+
+                aWriter.WriteLine(System.Environment.NewLine);
+                aWriter.WriteLine("GO");
+                aWriter.WriteLine(System.Environment.NewLine);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private static void Generate_Planning_Chain_Total_Table(genOptions options)
+        {
+            string aTableName = options.table;
+            bool aAllowNull = options.allowNull;
+            StreamWriter aWriter = options.writer;
+
+            try
+            {
+                ProfileList aVariables = RemoveDuplicateTimeTotalNames(totalVariables.GetChainTimeTotalVariableList());
+                if (aVariables == null ||
+                    aVariables.Count == 0)
+                {
+                    return;
+                }
+
+                aWriter.WriteLine("create table " + aTableName + " ( ");
+                aWriter.WriteLine(_indent5 + "[Merchandise] [nvarchar] (100) NOT NULL,");
+                aWriter.WriteLine(_indent5 + "[Version] [nvarchar] (50) NOT NULL,");
+                aWriter.WriteLine(_indent5 + "[TimePeriod] [nvarchar] (50) NOT NULL,");
+                int count = 0;
+                foreach (TimeTotalVariableProfile vp in aVariables)
+                {
+                    ++count;
+                    string line = AddExtractTimeTotalVariable(vp, aAllowNull, eVariableCategory.Chain);
+                    if (count < aVariables.Count)
+                    {
+                        line += ",";
+                    }
+                    else
+                    {
+                        line += ")";
+                    }
+                    aWriter.WriteLine(_indent5 + line);
+                }
+
+                aWriter.WriteLine(System.Environment.NewLine);
+                aWriter.WriteLine("GO");
+                aWriter.WriteLine(System.Environment.NewLine);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private static void Generate_Planning_Chain_Total_Key(genOptions options)
+        {
+            string aTableName = options.table;
+            StreamWriter aWriter = options.writer;
+            string keyName = options.name;
+            try
+            {
+                aWriter.WriteLine("alter table " + aTableName);
+                aWriter.WriteLine(_indent5 + "add constraint " + keyName + " primary key clustered (Merchandise, Version, TimePeriod)   ");
+
+                aWriter.WriteLine(System.Environment.NewLine);
+                aWriter.WriteLine("GO");
+                aWriter.WriteLine(System.Environment.NewLine);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private static void Generate_Planning_Attributes_Table(genOptions options)
+        {
+            string aTableName = options.table;
+            bool aAllowNull = options.allowNull;
+            StreamWriter aWriter = options.writer;
+
+            try
+            {
+                ProfileList aVariables = variables.GetStoreWeeklyVariableList();
+                if (aVariables == null ||
+                    aVariables.Count == 0)
+                {
+                    return;
+                }
+
+                aWriter.WriteLine("create table " + aTableName + " ( ");
+                aWriter.WriteLine(_indent5 + "[Merchandise] [nvarchar] (100) NOT NULL,");
+                aWriter.WriteLine(_indent5 + "[Version] [nvarchar] (50) NOT NULL,");
+                aWriter.WriteLine(_indent5 + "[Attribute] [nvarchar] (50) NOT NULL,");
+                aWriter.WriteLine(_indent5 + "[AttributeSet] [nvarchar] (50) NOT NULL,");
+                aWriter.WriteLine(_indent5 + "[TimePeriod] [nvarchar] (50) NOT NULL,");
+                aWriter.WriteLine(_indent5 + "[Filter] [nvarchar] (50) NOT NULL,");
+                int count = 0;
+                foreach (VariableProfile vp in aVariables)
+                {
+                    ++count;
+                    string line = AddExtractVariable(vp, aAllowNull, eVariableCategory.Store);
+                    if (count < aVariables.Count)
+                    {
+                        line += ",";
+                    }
+                    else
+                    {
+                        line += ")";
+                    }
+                    aWriter.WriteLine(_indent5 + line);
+                }
+
+                aWriter.WriteLine(System.Environment.NewLine);
+                aWriter.WriteLine("GO");
+                aWriter.WriteLine(System.Environment.NewLine);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private static void Generate_Planning_Attributes_Key(genOptions options)
+        {
+            string aTableName = options.table;
+            StreamWriter aWriter = options.writer;
+            string keyName = options.name;
+            try
+            {
+                aWriter.WriteLine("alter table " + aTableName);
+                aWriter.WriteLine(_indent5 + "add constraint " + keyName + " primary key clustered (Merchandise, Version, Attribute, AttributeSet, TimePeriod, Filter)   ");
+
+                aWriter.WriteLine(System.Environment.NewLine);
+                aWriter.WriteLine("GO");
+                aWriter.WriteLine(System.Environment.NewLine);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private static void Generate_Planning_Attributes_Total_Table(genOptions options)
+        {
+            string aTableName = options.table;
+            bool aAllowNull = options.allowNull;
+            StreamWriter aWriter = options.writer;
+
+            try
+            {
+                ProfileList aVariables = RemoveDuplicateTimeTotalNames(totalVariables.GetStoreTimeTotalVariableList());
+                if (aVariables == null ||
+                    aVariables.Count == 0)
+                {
+                    return;
+                }
+
+                aWriter.WriteLine("create table " + aTableName + " ( ");
+                aWriter.WriteLine(_indent5 + "[Merchandise] [nvarchar] (100) NOT NULL,");
+                aWriter.WriteLine(_indent5 + "[Version] [nvarchar] (50) NOT NULL,");
+                aWriter.WriteLine(_indent5 + "[Attribute] [nvarchar] (50) NOT NULL,");
+                aWriter.WriteLine(_indent5 + "[AttributeSet] [nvarchar] (50) NOT NULL,");
+                aWriter.WriteLine(_indent5 + "[TimePeriod] [nvarchar] (50) NOT NULL,");
+                aWriter.WriteLine(_indent5 + "[Filter] [nvarchar] (50) NOT NULL,");
+                int count = 0;
+                foreach (TimeTotalVariableProfile vp in aVariables)
+                {
+                    ++count;
+                    string line = AddExtractTimeTotalVariable(vp, aAllowNull, eVariableCategory.Store);
+                    if (count < aVariables.Count)
+                    {
+                        line += ",";
+                    }
+                    else
+                    {
+                        line += ")";
+                    }
+                    aWriter.WriteLine(_indent5 + line);
+                }
+
+                aWriter.WriteLine(System.Environment.NewLine);
+                aWriter.WriteLine("GO");
+                aWriter.WriteLine(System.Environment.NewLine);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private static void Generate_Planning_Attributes_Total_Key(genOptions options)
+        {
+            string aTableName = options.table;
+            StreamWriter aWriter = options.writer;
+            string keyName = options.name;
+            try
+            {
+                aWriter.WriteLine("alter table " + aTableName);
+                aWriter.WriteLine(_indent5 + "add constraint " + keyName + " primary key clustered (Merchandise, Version, Attribute, AttributeSet, TimePeriod, Filter)   ");
+
+                aWriter.WriteLine(System.Environment.NewLine);
+                aWriter.WriteLine("GO");
+                aWriter.WriteLine(System.Environment.NewLine);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private static void Generate_Planning_Stores_Table(genOptions options)
+        {
+            string aTableName = options.table;
+            bool aAllowNull = options.allowNull;
+            StreamWriter aWriter = options.writer;
+
+            try
+            {
+                ProfileList aVariables = variables.GetStoreWeeklyVariableList();
+                if (aVariables == null ||
+                    aVariables.Count == 0)
+                {
+                    return;
+                }
+
+                aWriter.WriteLine("create table " + aTableName + " ( ");
+                aWriter.WriteLine(_indent5 + "[Merchandise] [nvarchar] (100) NOT NULL,");
+                aWriter.WriteLine(_indent5 + "[Version] [nvarchar] (50) NOT NULL,");
+                aWriter.WriteLine(_indent5 + "[Store] [nvarchar] (50) NOT NULL,");
+                aWriter.WriteLine(_indent5 + "[TimePeriod] [nvarchar] (50) NOT NULL,");
+                aWriter.WriteLine(_indent5 + "[Attribute] [nvarchar] (50) NOT NULL,");
+                aWriter.WriteLine(_indent5 + "[AttributeSet] [nvarchar] (50) NOT NULL,");
+                aWriter.WriteLine(_indent5 + "[Filter] [nvarchar] (50) NOT NULL,");
+                int count = 0;
+                foreach (VariableProfile vp in aVariables)
+                {
+                    ++count;
+                    string line = AddExtractVariable(vp, aAllowNull, eVariableCategory.Store);
+                    if (count < aVariables.Count)
+                    {
+                        line += ",";
+                    }
+                    else
+                    {
+                        line += ")";
+                    }
+                    aWriter.WriteLine(_indent5 + line);
+                }
+
+                aWriter.WriteLine(System.Environment.NewLine);
+                aWriter.WriteLine("GO");
+                aWriter.WriteLine(System.Environment.NewLine);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private static void Generate_Planning_Stores_Key(genOptions options)
+        {
+            string aTableName = options.table;
+            StreamWriter aWriter = options.writer;
+            string keyName = options.name;
+            try
+            {
+                aWriter.WriteLine("alter table " + aTableName);
+                aWriter.WriteLine(_indent5 + "add constraint " + keyName + " primary key clustered (Merchandise, Version, Store, TimePeriod, Attribute, AttributeSet, Filter)   ");
+
+                aWriter.WriteLine(System.Environment.NewLine);
+                aWriter.WriteLine("GO");
+                aWriter.WriteLine(System.Environment.NewLine);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private static void Generate_Planning_Stores_Total_Table(genOptions options)
+        {
+            string aTableName = options.table;
+            bool aAllowNull = options.allowNull;
+            StreamWriter aWriter = options.writer;
+
+            try
+            {
+                ProfileList aVariables = RemoveDuplicateTimeTotalNames(totalVariables.GetStoreTimeTotalVariableList());
+                if (aVariables == null ||
+                    aVariables.Count == 0)
+                {
+                    return;
+                }
+
+                aWriter.WriteLine("create table " + aTableName + " ( ");
+                aWriter.WriteLine(_indent5 + "[Merchandise] [nvarchar] (100) NOT NULL,");
+                aWriter.WriteLine(_indent5 + "[Version] [nvarchar] (50) NOT NULL,");
+                aWriter.WriteLine(_indent5 + "[Store] [nvarchar] (50) NOT NULL,");
+                aWriter.WriteLine(_indent5 + "[TimePeriod] [nvarchar] (50) NOT NULL,");
+                aWriter.WriteLine(_indent5 + "[Attribute] [nvarchar] (50) NOT NULL,");
+                aWriter.WriteLine(_indent5 + "[AttributeSet] [nvarchar] (50) NOT NULL,");
+                aWriter.WriteLine(_indent5 + "[Filter] [nvarchar] (50) NOT NULL,");
+                int count = 0;
+                foreach (TimeTotalVariableProfile vp in aVariables)
+                {
+                    ++count;
+                    string line = AddExtractTimeTotalVariable(vp, aAllowNull, eVariableCategory.Store);
+                    if (count < aVariables.Count)
+                    {
+                        line += ",";
+                    }
+                    else
+                    {
+                        line += ")";
+                    }
+                    aWriter.WriteLine(_indent5 + line);
+                }
+
+                aWriter.WriteLine(System.Environment.NewLine);
+                aWriter.WriteLine("GO");
+                aWriter.WriteLine(System.Environment.NewLine);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private static void Generate_Planning_Stores_Total_Key(genOptions options)
+        {
+            string aTableName = options.table;
+            StreamWriter aWriter = options.writer;
+            string keyName = options.name;
+            try
+            {
+                aWriter.WriteLine("alter table " + aTableName);
+                aWriter.WriteLine(_indent5 + "add constraint " + keyName + " primary key clustered (Merchandise, Version, Store, TimePeriod, Attribute, AttributeSet, Filter)   ");
+
+                aWriter.WriteLine(System.Environment.NewLine);
+                aWriter.WriteLine("GO");
+                aWriter.WriteLine(System.Environment.NewLine);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private static ProfileList RemoveDuplicateTimeTotalNames(ProfileList aVariables)
+        {
+            ProfileList variables = new ProfileList(eProfileType.Variable);
+            Hashtable variableNames = new Hashtable();
+
+            foreach (TimeTotalVariableProfile vp in aVariables)
+            {
+                if (variableNames.Contains(vp.VariableName))
+                {
+                    continue;
+                }
+                variableNames.Add(vp.VariableName, null);
+                variables.Add(vp);
+            }
+
+            return variables;
+        }
+
+        private static string AddExtractVariable(VariableProfile aVariableProfile, bool aAllowNull, eVariableCategory aVariableCategory)
+        {
+            try
+            {
+                eVariableDatabaseType databaseVariableType;
+                switch (aVariableCategory)
+                {
+                    case eVariableCategory.Chain:
+                        databaseVariableType = aVariableProfile.ChainDatabaseVariableType;
+                        break;
+                    case eVariableCategory.Store:
+                        databaseVariableType = aVariableProfile.StoreDatabaseVariableType;
+                        break;
+                    default:
+                        databaseVariableType = eVariableDatabaseType.None;
+                        break;
+                }
+                if (databaseVariableType == eVariableDatabaseType.None)
+                {
+                    switch (aVariableProfile.FormatType)
+                    {
+                        case eValueFormatType.GenericNumeric:
+                            databaseVariableType = eVariableDatabaseType.Real;
+                            break;
+                        default:
+                            databaseVariableType = eVariableDatabaseType.String;
+                            break;
+                    }
+                }
+                string command = null;
+                switch (databaseVariableType)
+                {
+                    case eVariableDatabaseType.Integer:
+                        if (aAllowNull)
+                        {
+                            command = "[" + aVariableProfile.VariableName + "]" + " int null";
+                        }
+                        else
+                        {
+                            command = "[" + aVariableProfile.VariableName + "]" + " int not null";
+                        }
+                        break;
+                    case eVariableDatabaseType.Real:
+                        if (aAllowNull)
+                        {
+                            command = "[" + aVariableProfile.VariableName + "]" + " real null";
+                        }
+                        else
+                        {
+                            command = "[" + aVariableProfile.VariableName + "]" + " real not null";
+                        }
+                        break;
+                    case eVariableDatabaseType.DateTime:
+                        if (aAllowNull)
+                        {
+                            command = "[" + aVariableProfile.VariableName + "]" + " datetime null";
+                        }
+                        else
+                        {
+                            command = "[" + aVariableProfile.VariableName + "]" + " datetime not null";
+                        }
+                        break;
+                    case eVariableDatabaseType.String:
+                        if (aAllowNull)
+                        {
+                            command = "[" + aVariableProfile.VariableName + "]" + " varchar(50) null";
+                        }
+                        else
+                        {
+                            command = "[" + aVariableProfile.VariableName + "]" + " varchar(50) not null";
+                        }
+                        break;
+                    case eVariableDatabaseType.Char:
+                        if (aAllowNull)
+                        {
+                            command = "[" + aVariableProfile.VariableName + "]" + " char(1) null";
+                        }
+                        else
+                        {
+                            command = "[" + aVariableProfile.VariableName + "]" + " char(1) not null";
+                        }
+                        break;
+                    case eVariableDatabaseType.Float:
+                        if (aAllowNull)
+                        {
+                            command = "[" + aVariableProfile.VariableName + "]" + " float null";
+                        }
+                        else
+                        {
+                            command = "[" + aVariableProfile.VariableName + "]" + " float not null";
+                        }
+                        break;
+                    case eVariableDatabaseType.BigInteger:
+                        if (aAllowNull)
+                        {
+                            command = "[" + aVariableProfile.VariableName + "]" + " bigint null";
+                        }
+                        else
+                        {
+                            command = "[" + aVariableProfile.VariableName + "]" + " bigint not null";
+                        }
+                        break;
+                    default:
+                        if (aAllowNull)
+                        {
+                            command = "[" + aVariableProfile.VariableName + "]" + " real null";
+                        }
+                        else
+                        {
+                            command = "[" + aVariableProfile.VariableName + "]" + " real not null";
+                        }
+                        break;
+                }
+                return command;
+            }
+            catch
+            {
+                throw;
+            }
+
+        }
+
+        private static string AddExtractTimeTotalVariable(TimeTotalVariableProfile aVariableProfile, bool aAllowNull, eVariableCategory aVariableCategory)
+        {
+            try
+            {
+                eVariableDatabaseType databaseVariableType;
+                
+                switch (aVariableProfile.FormatType)
+                {
+                    case eValueFormatType.GenericNumeric:
+                        databaseVariableType = eVariableDatabaseType.Real;
+                        break;
+                    default:
+                        databaseVariableType = eVariableDatabaseType.String;
+                        break;
+                }
+                string command = null;
+                switch (databaseVariableType)
+                {
+                    case eVariableDatabaseType.Integer:
+                        if (aAllowNull)
+                        {
+                            command = "[" + aVariableProfile.VariableName + "]" + " int null";
+                        }
+                        else
+                        {
+                            command = "[" + aVariableProfile.VariableName + "]" + " int not null";
+                        }
+                        break;
+                    case eVariableDatabaseType.Real:
+                        if (aAllowNull)
+                        {
+                            command = "[" + aVariableProfile.VariableName + "]" + " real null";
+                        }
+                        else
+                        {
+                            command = "[" + aVariableProfile.VariableName + "]" + " real not null";
+                        }
+                        break;
+                    case eVariableDatabaseType.DateTime:
+                        if (aAllowNull)
+                        {
+                            command = "[" + aVariableProfile.VariableName + "]" + " datetime null";
+                        }
+                        else
+                        {
+                            command = "[" + aVariableProfile.VariableName + "]" + " datetime not null";
+                        }
+                        break;
+                    case eVariableDatabaseType.String:
+                        if (aAllowNull)
+                        {
+                            command = "[" + aVariableProfile.VariableName + "]" + " varchar(50) null";
+                        }
+                        else
+                        {
+                            command = "[" + aVariableProfile.VariableName + "]" + " varchar(50) not null";
+                        }
+                        break;
+                    case eVariableDatabaseType.Char:
+                        if (aAllowNull)
+                        {
+                            command = "[" + aVariableProfile.VariableName + "]" + " char(1) null";
+                        }
+                        else
+                        {
+                            command = "[" + aVariableProfile.VariableName + "]" + " char(1) not null";
+                        }
+                        break;
+                    case eVariableDatabaseType.Float:
+                        if (aAllowNull)
+                        {
+                            command = "[" + aVariableProfile.VariableName + "]" + " float null";
+                        }
+                        else
+                        {
+                            command = "[" + aVariableProfile.VariableName + "]" + " float not null";
+                        }
+                        break;
+                    case eVariableDatabaseType.BigInteger:
+                        if (aAllowNull)
+                        {
+                            command = "[" + aVariableProfile.VariableName + "]" + " bigint null";
+                        }
+                        else
+                        {
+                            command = "[" + aVariableProfile.VariableName + "]" + " bigint not null";
+                        }
+                        break;
+                }
+                return command;
+            }
+            catch
+            {
+                throw;
+            }
+
+        }
+        // End TT#2131-MD - JSmith - Halo Integration
         #endregion
 
         #region "Generate Non Table Objects"
@@ -4106,12 +4882,41 @@ namespace MIDRetail.DatabaseUpdate
         private static void MakeGeneratedNonTableObjectList()
         {
             genNonTableList = new List<genBase>();
+
+            // Begin TT#2131-MD - JSmith - Halo Integration
+            if (isROExtractDatabase)
+            {
+                // Drop stored procedures so can rebuild types
+                genNonTableList.Add(new genBase { table = Include.DBROExtractPlanningChainSP, name = Include.DBROExtractPlanningChainSP + "_DROP", genType = genNonTableTypes.Drop, genDlg = new genDelegate(Generate_Drop_Procedure) });
+                genNonTableList.Add(new genBase { table = Include.DBROExtractPlanningChainTotalSP, name = Include.DBROExtractPlanningChainTotalSP + "_DROP", genType = genNonTableTypes.Drop, genDlg = new genDelegate(Generate_Drop_Procedure) });
+                genNonTableList.Add(new genBase { table = Include.DBROExtractPlanningStoresSP, name = Include.DBROExtractPlanningStoresSP + "_DROP", genType = genNonTableTypes.Drop, genDlg = new genDelegate(Generate_Drop_Procedure) });
+                genNonTableList.Add(new genBase { table = Include.DBROExtractPlanningStoresTotalSP, name = Include.DBROExtractPlanningStoresTotalSP + "_DROP", genType = genNonTableTypes.Drop, genDlg = new genDelegate(Generate_Drop_Procedure) });
+                genNonTableList.Add(new genBase { table = Include.DBROExtractPlanningAttributesSP, name = Include.DBROExtractPlanningAttributesSP + "_DROP", genType = genNonTableTypes.Drop, genDlg = new genDelegate(Generate_Drop_Procedure) });
+                genNonTableList.Add(new genBase { table = Include.DBROExtractPlanningAttributesTotalSP, name = Include.DBROExtractPlanningAttributesTotalSP + "_DROP", genType = genNonTableTypes.Drop, genDlg = new genDelegate(Generate_Drop_Procedure) });
+
+                genNonTableList.Add(new genBase { name = Include.DBROExtractPlanningChainType, genType = genNonTableTypes.Type, genDlg = new genDelegate(Generate_Planning_Chain_Type) });
+                genNonTableList.Add(new genBase { name = Include.DBROExtractPlanningChainTotalType, genType = genNonTableTypes.Type, genDlg = new genDelegate(Generate_Planning_Chain_Total_Type) });
+                genNonTableList.Add(new genBase { name = Include.DBROExtractPlanningStoresType, genType = genNonTableTypes.Type, genDlg = new genDelegate(Generate_Planning_Stores_Type) });
+                genNonTableList.Add(new genBase { name = Include.DBROExtractPlanningStoresTotalType, genType = genNonTableTypes.Type, genDlg = new genDelegate(Generate_Planning_Stores_Total_Type) });
+                genNonTableList.Add(new genBase { name = Include.DBROExtractPlanningAttributesType, genType = genNonTableTypes.Type, genDlg = new genDelegate(Generate_Planning_Attributes_Type) });
+                genNonTableList.Add(new genBase { name = Include.DBROExtractPlanningAttributesTotalType, genType = genNonTableTypes.Type, genDlg = new genDelegate(Generate_Planning_Attributes_Total_Type) });
+
+                genNonTableList.Add(new genBase { table = Include.DBROExtractPlanningChainTable, name = Include.DBROExtractPlanningChainSP, genType = genNonTableTypes.StoredProcedure, genDlg = new genDelegate(Generate_RO_Planning_Chain_Write) });
+                genNonTableList.Add(new genBase { table = Include.DBROExtractPlanningChainTotalTable, name = Include.DBROExtractPlanningChainTotalSP, genType = genNonTableTypes.StoredProcedure, genDlg = new genDelegate(Generate_RO_Planning_Chain_Total_Write) });
+                genNonTableList.Add(new genBase { table = Include.DBROExtractPlanningStoresTable, name = Include.DBROExtractPlanningStoresSP, genType = genNonTableTypes.StoredProcedure, genDlg = new genDelegate(Generate_RO_Planning_Stores_Write) });
+                genNonTableList.Add(new genBase { table = Include.DBROExtractPlanningStoresTotalTable, name = Include.DBROExtractPlanningStoresTotalSP, genType = genNonTableTypes.StoredProcedure, genDlg = new genDelegate(Generate_RO_Planning_Stores_Total_Write) });
+                genNonTableList.Add(new genBase { table = Include.DBROExtractPlanningAttributesTable, name = Include.DBROExtractPlanningAttributesSP, genType = genNonTableTypes.StoredProcedure, genDlg = new genDelegate(Generate_RO_Planning_Attributes_Write) });
+                genNonTableList.Add(new genBase { table = Include.DBROExtractPlanningAttributesTotalTable, name = Include.DBROExtractPlanningAttributesTotalSP, genType = genNonTableTypes.StoredProcedure, genDlg = new genDelegate(Generate_RO_Planning_Attributes_Total_Write) });
+
+                return;
+            }
+            // End TT#2131-MD - JSmith - Halo Integration
+
             int tableCount = 10;
-
-
 
             string tableName;
             string dropName;
+
             for (int i = 0; i < tableCount; i++)
             {
                 tableName = Include.DBStoreDailyHistoryWriteSP.Replace(Include.DBTableCountReplaceString, i.ToString());
@@ -4605,11 +5410,509 @@ namespace MIDRetail.DatabaseUpdate
                 throw;
             }
         }
+
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        private static void Generate_Planning_Chain_Type(genOptions options)
+        {
+            ProfileList aDatabaseVariables = variables.GetChainWeeklyVariableList();
+            StreamWriter aWriter = options.writer;
+            eVariableDatabaseType databaseVariableType;
+
+            int count = 0;
+            string line;
+            try
+            {
+                AddTypeDrop(options.name, aWriter);
+
+                aWriter.WriteLine("CREATE TYPE [dbo].[" + options.name + "] AS TABLE(");
+                aWriter.WriteLine("  [Merchandise] [nvarchar] (100),");
+                aWriter.WriteLine("  [Version] [nvarchar] (50),");
+                aWriter.WriteLine("  [TimePeriod] [nvarchar] (50),");
+                foreach (VariableProfile vp in aDatabaseVariables)
+                {
+                    databaseVariableType = vp.ChainDatabaseVariableType;
+                    if (databaseVariableType == eVariableDatabaseType.None)
+                    {
+                        switch (vp.FormatType)
+                        {
+                            case eValueFormatType.GenericNumeric:
+                                databaseVariableType = eVariableDatabaseType.Real;
+                                break;
+                            default:
+                                databaseVariableType = eVariableDatabaseType.String;
+                                break;
+                        }
+                    }
+
+                    ++count;
+                    line = "  [" + vp.VariableName + "] [";
+                    switch (databaseVariableType)
+                    {
+                        case eVariableDatabaseType.Integer:
+                            line += "int]";
+                            break;
+                        case eVariableDatabaseType.Float:
+                            line += "float]";
+                            break;
+                        case eVariableDatabaseType.DateTime:
+                            line += "datetime]";
+                            break;
+                        case eVariableDatabaseType.Real:
+                            line += "real]";
+                            break;
+                        case eVariableDatabaseType.BigInteger:
+                            line += "bigint]";
+                            break;
+                        case eVariableDatabaseType.String:
+                            line += "varchar] (50)";
+                            break;
+                        case eVariableDatabaseType.Char:
+                            line += "char] (1)";
+                            break;
+                        default:
+                            line += "real]";
+                            break;
+                    }
+                    if (count < aDatabaseVariables.Count)
+                    {
+                        line += ", ";
+                    }
+
+                    aWriter.WriteLine(line);
+                }
+                aWriter.WriteLine("PRIMARY KEY (Merchandise, Version, TimePeriod)");
+                aWriter.WriteLine(")");
+
+                aWriter.WriteLine(System.Environment.NewLine);
+                aWriter.WriteLine("GO");
+                aWriter.WriteLine(System.Environment.NewLine);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private static void Generate_Planning_Chain_Total_Type(genOptions options)
+        {
+            ProfileList aDatabaseVariables = RemoveDuplicateTimeTotalNames(totalVariables.GetChainTimeTotalVariableList());
+            StreamWriter aWriter = options.writer;
+            eVariableDatabaseType databaseVariableType;
+
+            int count = 0;
+            string line;
+            try
+            {
+                AddTypeDrop(options.name, aWriter);
+
+                aWriter.WriteLine("CREATE TYPE [dbo].[" + options.name + "] AS TABLE(");
+                aWriter.WriteLine("  [Merchandise] [nvarchar] (100),");
+                aWriter.WriteLine("  [Version] [nvarchar] (50),");
+                aWriter.WriteLine("  [TimePeriod] [nvarchar] (50),");
+                foreach (TimeTotalVariableProfile vp in aDatabaseVariables)
+                {
+                    switch (vp.FormatType)
+                    {
+                        case eValueFormatType.GenericNumeric:
+                            databaseVariableType = eVariableDatabaseType.Real;
+                            break;
+                        default:
+                            databaseVariableType = eVariableDatabaseType.String;
+                            break;
+                    }
+
+                    ++count;
+                    line = "  [" + vp.VariableName + "] [";
+                    switch (databaseVariableType)
+                    {
+                        case eVariableDatabaseType.Integer:
+                            line += "int]";
+                            break;
+                        case eVariableDatabaseType.Float:
+                            line += "float]";
+                            break;
+                        case eVariableDatabaseType.DateTime:
+                            line += "datetime]";
+                            break;
+                        case eVariableDatabaseType.Real:
+                            line += "real]";
+                            break;
+                        case eVariableDatabaseType.BigInteger:
+                            line += "bigint]";
+                            break;
+                        case eVariableDatabaseType.String:
+                            line += "varchar] (50)";
+                            break;
+                        case eVariableDatabaseType.Char:
+                            line += "char] (1)";
+                            break;
+                        default:
+                            line += "real]";
+                            break;
+                    }
+                    if (count < aDatabaseVariables.Count)
+                    {
+                        line += ", ";
+                    }
+
+                    aWriter.WriteLine(line);
+                }
+                aWriter.WriteLine("PRIMARY KEY (Merchandise, Version, TimePeriod)");
+                aWriter.WriteLine(")");
+
+                aWriter.WriteLine(System.Environment.NewLine);
+                aWriter.WriteLine("GO");
+                aWriter.WriteLine(System.Environment.NewLine);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private static void Generate_Planning_Stores_Type(genOptions options)
+        {
+            ProfileList aDatabaseVariables = variables.GetStoreWeeklyVariableList();
+            StreamWriter aWriter = options.writer;
+            eVariableDatabaseType databaseVariableType;
+
+            int count = 0;
+            string line;
+            try
+            {
+                AddTypeDrop(options.name, aWriter);
+
+                aWriter.WriteLine("CREATE TYPE [dbo].[" + options.name + "] AS TABLE(");
+                aWriter.WriteLine("  [Merchandise] [nvarchar] (100),");
+                aWriter.WriteLine("  [Version] [nvarchar] (50),");
+                aWriter.WriteLine("  [Store] [nvarchar] (50),");
+                aWriter.WriteLine("  [TimePeriod] [nvarchar] (50),");
+                aWriter.WriteLine("  [Attribute] [nvarchar] (50),");
+				aWriter.WriteLine("  [AttributeSet] [nvarchar] (50),");
+                aWriter.WriteLine("  [Filter] [nvarchar] (50),");
+                foreach (VariableProfile vp in aDatabaseVariables)
+                {
+                    databaseVariableType = vp.StoreDatabaseVariableType;
+                    if (databaseVariableType == eVariableDatabaseType.None)
+                    {
+                        switch (vp.FormatType)
+                        {
+                            case eValueFormatType.GenericNumeric:
+                                databaseVariableType = eVariableDatabaseType.Real;
+                                break;
+                            default:
+                                databaseVariableType = eVariableDatabaseType.String;
+                                break;
+                        }
+                    }
+
+                    ++count;
+                    line = "  [" + vp.VariableName + "] [";
+                    switch (databaseVariableType)
+                    {
+                        case eVariableDatabaseType.Integer:
+                            line += "int]";
+                            break;
+                        case eVariableDatabaseType.Float:
+                            line += "float]";
+                            break;
+                        case eVariableDatabaseType.DateTime:
+                            line += "datetime]";
+                            break;
+                        case eVariableDatabaseType.Real:
+                            line += "real]";
+                            break;
+                        case eVariableDatabaseType.BigInteger:
+                            line += "bigint]";
+                            break;
+                        case eVariableDatabaseType.String:
+                            line += "varchar] (50)";
+                            break;
+                        case eVariableDatabaseType.Char:
+                            line += "char] (1)";
+                            break;
+                        default:
+                            line += "real]";
+                            break;
+                    }
+                    if (count < aDatabaseVariables.Count)
+                    {
+                        line += ", ";
+                    }
+
+                    aWriter.WriteLine(line);
+                }
+                aWriter.WriteLine("PRIMARY KEY (Merchandise, Version, Store, TimePeriod, Attribute, AttributeSet, Filter)");
+                aWriter.WriteLine(")");
+
+                aWriter.WriteLine(System.Environment.NewLine);
+                aWriter.WriteLine("GO");
+                aWriter.WriteLine(System.Environment.NewLine);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private static void Generate_Planning_Stores_Total_Type(genOptions options)
+        {
+            ProfileList aDatabaseVariables = RemoveDuplicateTimeTotalNames(totalVariables.GetStoreTimeTotalVariableList());
+            StreamWriter aWriter = options.writer;
+            eVariableDatabaseType databaseVariableType;
+
+            int count = 0;
+            string line;
+            try
+            {
+                AddTypeDrop(options.name, aWriter);
+
+                aWriter.WriteLine("CREATE TYPE [dbo].[" + options.name + "] AS TABLE(");
+                aWriter.WriteLine("  [Merchandise] [nvarchar] (100),");
+                aWriter.WriteLine("  [Version] [nvarchar] (50),");
+                aWriter.WriteLine("  [Store] [nvarchar] (50),");
+                aWriter.WriteLine("  [TimePeriod] [nvarchar] (50),");
+                aWriter.WriteLine("  [Attribute] [nvarchar] (50),");
+				aWriter.WriteLine("  [AttributeSet] [nvarchar] (50),");
+                aWriter.WriteLine("  [Filter] [nvarchar] (50),");
+                foreach (TimeTotalVariableProfile vp in aDatabaseVariables)
+                {
+                    switch (vp.FormatType)
+                    {
+                        case eValueFormatType.GenericNumeric:
+                            databaseVariableType = eVariableDatabaseType.Real;
+                            break;
+                        default:
+                            databaseVariableType = eVariableDatabaseType.String;
+                            break;
+                    }
+
+                    ++count;
+                    line = "  [" + vp.VariableName + "] [";
+                    switch (databaseVariableType)
+                    {
+                        case eVariableDatabaseType.Integer:
+                            line += "int]";
+                            break;
+                        case eVariableDatabaseType.Float:
+                            line += "float]";
+                            break;
+                        case eVariableDatabaseType.DateTime:
+                            line += "datetime]";
+                            break;
+                        case eVariableDatabaseType.Real:
+                            line += "real]";
+                            break;
+                        case eVariableDatabaseType.BigInteger:
+                            line += "bigint]";
+                            break;
+                        case eVariableDatabaseType.String:
+                            line += "varchar] (50)";
+                            break;
+                        case eVariableDatabaseType.Char:
+                            line += "char] (1)";
+                            break;
+                        default:
+                            line += "real]";
+                            break;
+                    }
+                    if (count < aDatabaseVariables.Count)
+                    {
+                        line += ", ";
+                    }
+
+                    aWriter.WriteLine(line);
+                }
+                aWriter.WriteLine("PRIMARY KEY (Merchandise, Version, Store, TimePeriod, Attribute, AttributeSet, Filter)");
+                aWriter.WriteLine(")");
+
+                aWriter.WriteLine(System.Environment.NewLine);
+                aWriter.WriteLine("GO");
+                aWriter.WriteLine(System.Environment.NewLine);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private static void Generate_Planning_Attributes_Type(genOptions options)
+        {
+            ProfileList aDatabaseVariables = variables.GetStoreWeeklyVariableList();
+            StreamWriter aWriter = options.writer;
+            eVariableDatabaseType databaseVariableType;
+
+            int count = 0;
+            string line;
+            try
+            {
+                AddTypeDrop(options.name, aWriter);
+
+                aWriter.WriteLine("CREATE TYPE [dbo].[" + options.name + "] AS TABLE(");
+                aWriter.WriteLine("  [Merchandise] [nvarchar] (100),");
+                aWriter.WriteLine("  [Version] [nvarchar] (50),");
+                aWriter.WriteLine("  [Attribute] [nvarchar] (50),");
+                aWriter.WriteLine("  [AttributeSet] [nvarchar] (50),");
+                aWriter.WriteLine("  [TimePeriod] [nvarchar] (50),");
+                aWriter.WriteLine("  [Filter] [nvarchar] (50),");
+                foreach (VariableProfile vp in aDatabaseVariables)
+                {
+                    databaseVariableType = vp.StoreDatabaseVariableType;
+                    if (databaseVariableType == eVariableDatabaseType.None)
+                    {
+                        switch (vp.FormatType)
+                        {
+                            case eValueFormatType.GenericNumeric:
+                                databaseVariableType = eVariableDatabaseType.Real;
+                                break;
+                            default:
+                                databaseVariableType = eVariableDatabaseType.String;
+                                break;
+                        }
+                    }
+
+                    ++count;
+                    line = "  [" + vp.VariableName + "] [";
+                    switch (databaseVariableType)
+                    {
+                        case eVariableDatabaseType.Integer:
+                            line += "int]";
+                            break;
+                        case eVariableDatabaseType.Float:
+                            line += "float]";
+                            break;
+                        case eVariableDatabaseType.DateTime:
+                            line += "datetime]";
+                            break;
+                        case eVariableDatabaseType.Real:
+                            line += "real]";
+                            break;
+                        case eVariableDatabaseType.BigInteger:
+                            line += "bigint]";
+                            break;
+                        case eVariableDatabaseType.String:
+                            line += "varchar] (50)";
+                            break;
+                        case eVariableDatabaseType.Char:
+                            line += "char] (1)";
+                            break;
+                        default:
+                            line += "real]";
+                            break;
+                    }
+                    if (count < aDatabaseVariables.Count)
+                    {
+                        line += ", ";
+                    }
+
+                    aWriter.WriteLine(line);
+                }
+                aWriter.WriteLine("PRIMARY KEY (Merchandise, Version, Attribute, AttributeSet, TimePeriod, Filter)");
+                aWriter.WriteLine(")");
+
+                aWriter.WriteLine(System.Environment.NewLine);
+                aWriter.WriteLine("GO");
+                aWriter.WriteLine(System.Environment.NewLine);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private static void Generate_Planning_Attributes_Total_Type(genOptions options)
+        {
+            ProfileList aDatabaseVariables = RemoveDuplicateTimeTotalNames(totalVariables.GetStoreTimeTotalVariableList());
+            StreamWriter aWriter = options.writer;
+            eVariableDatabaseType databaseVariableType;
+
+            int count = 0;
+            string line;
+            try
+            {
+                AddTypeDrop(options.name, aWriter);
+
+                aWriter.WriteLine("CREATE TYPE [dbo].[" + options.name + "] AS TABLE(");
+                aWriter.WriteLine("  [Merchandise] [nvarchar] (100),");
+                aWriter.WriteLine("  [Version] [nvarchar] (50),");
+                aWriter.WriteLine("  [Attribute] [nvarchar] (50),");
+                aWriter.WriteLine("  [AttributeSet] [nvarchar] (50),");
+                aWriter.WriteLine("  [TimePeriod] [nvarchar] (50),");
+                aWriter.WriteLine("  [Filter] [nvarchar] (50),");
+                foreach (TimeTotalVariableProfile vp in aDatabaseVariables)
+                {
+                    switch (vp.FormatType)
+                    {
+                        case eValueFormatType.GenericNumeric:
+                            databaseVariableType = eVariableDatabaseType.Real;
+                            break;
+                        default:
+                            databaseVariableType = eVariableDatabaseType.String;
+                            break;
+                    }
+
+                    ++count;
+                    line = "  [" + vp.VariableName + "] [";
+                    switch (databaseVariableType)
+                    {
+                        case eVariableDatabaseType.Integer:
+                            line += "int]";
+                            break;
+                        case eVariableDatabaseType.Float:
+                            line += "float]";
+                            break;
+                        case eVariableDatabaseType.DateTime:
+                            line += "datetime]";
+                            break;
+                        case eVariableDatabaseType.Real:
+                            line += "real]";
+                            break;
+                        case eVariableDatabaseType.BigInteger:
+                            line += "bigint]";
+                            break;
+                        case eVariableDatabaseType.String:
+                            line += "varchar] (50)";
+                            break;
+                        case eVariableDatabaseType.Char:
+                            line += "char] (1)";
+                            break;
+                        default:
+                            line += "real]";
+                            break;
+                    }
+                    if (count < aDatabaseVariables.Count)
+                    {
+                        line += ", ";
+                    }
+
+                    aWriter.WriteLine(line);
+                }
+                aWriter.WriteLine("PRIMARY KEY (Merchandise, Version, Attribute, AttributeSet, TimePeriod, Filter)");
+                aWriter.WriteLine(")");
+
+                aWriter.WriteLine(System.Environment.NewLine);
+                aWriter.WriteLine("GO");
+                aWriter.WriteLine(System.Environment.NewLine);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+        // End TT#2131-MD - JSmith - Halo Integration
+
         private static void Generate_TYPE_DROPS(genOptions options)
         {
             StreamWriter aWriter = options.writer;
             try
             {
+                // Begin TT#2131-MD - JSmith - Halo Integration
+                if (isROExtractDatabase)
+                {
+                    return;
+                }
+                // End TT#2131-MD - JSmith - Halo Integration
+
                 AddTypeDrop("MID_CHN_FOR_WK_READ_LOCK_TYPE", aWriter);
                 AddTypeDrop("MID_CHN_FOR_WK_READ_TYPE", aWriter);
                 AddTypeDrop("MID_CHN_HIS_WK_READ_TYPE", aWriter);
@@ -8596,6 +9899,699 @@ namespace MIDRetail.DatabaseUpdate
                 throw;
             }
         }
+
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        private static void Generate_RO_Planning_Chain_Write(genOptions options)
+        {
+            string line;
+            int count = 0;
+            try
+            {
+                string aProcedureName = options.name;
+                string aTableName = options.table;
+                ProfileList aDatabaseVariables = variables.GetChainWeeklyVariableList();
+                StreamWriter aWriter = options.writer;
+
+                if (aDatabaseVariables == null ||
+                    aDatabaseVariables.Count == 0)
+                {
+                    return;
+                }
+
+                aWriter.WriteLine("CREATE PROCEDURE [dbo].[" + aProcedureName + "]");
+                aWriter.WriteLine(" ");
+                aWriter.WriteLine("@dt " + Include.DBROExtractPlanningChainType + " READONLY");
+                aWriter.WriteLine("AS");
+                aWriter.WriteLine(" ");
+                aWriter.WriteLine("-- lock table to single thread writes ");
+                aWriter.WriteLine("declare @rc int = 0-- return code");
+                aWriter.WriteLine("Exec @rc = sp_getapplock @Resource = 'Planning_Chain'-- the resource to be locked");
+                aWriter.WriteLine(", @LockMode = 'Exclusive'-- Type of lock");
+                aWriter.WriteLine(", @LockOwner = 'Transaction'-- Transaction or Session");
+                aWriter.WriteLine(", @LockTimeout = 45000-- timeout in milliseconds, 45 seconds");
+                aWriter.WriteLine(" ");
+                aWriter.WriteLine("SET NOCOUNT ON");
+                aWriter.WriteLine("MERGE INTO " + aTableName + " with (ROWLOCK) AS TARGET");
+                aWriter.WriteLine("USING @dt AS SOURCE");
+                aWriter.WriteLine("on (SOURCE.[Merchandise] = TARGET.[Merchandise] and SOURCE.[Version] = TARGET.[Version] and SOURCE.[TimePeriod] = TARGET.[TimePeriod])");
+                aWriter.WriteLine("WHEN MATCHED THEN");
+                aWriter.WriteLine("UPDATE ");
+                count = 0;
+                line = _blankLine;
+                foreach (VariableProfile vp in aDatabaseVariables)
+                {
+                    ++count;
+                    if (count == 1)
+                    {
+                        line = line.Insert(9, "SET");
+                    }
+                    line = line.Insert(13, "TARGET.[" + vp.VariableName + "] ");
+                    line = line.TrimEnd();
+                    line += " = COALESCE(SOURCE.[" + vp.VariableName + "], ";
+                    line += "TARGET.[" + vp.VariableName + "])";
+                    if (count < aDatabaseVariables.Count)
+                    {
+                        line += ",";
+                    }
+                    aWriter.WriteLine(line);
+                    line = _blankLine;
+                }
+
+                aWriter.WriteLine("WHEN NOT MATCHED BY TARGET THEN");
+                line = "INSERT ([Merchandise], [Version], [TimePeriod], ";
+                count = 0;
+                foreach (VariableProfile vp in aDatabaseVariables)
+                {
+                    ++count;
+                    line += "[" + vp.VariableName + "]";
+                    if (count < aDatabaseVariables.Count)
+                    {
+                        line += ", ";
+                    }
+                    if (line.Length > 150)
+                    {
+                        aWriter.WriteLine(line);
+                        line = _indent5;
+
+                    }
+                }
+                line += ")";
+                aWriter.WriteLine(line);
+
+                count = 0;
+                line = "VALUES ( SOURCE.[Merchandise], SOURCE.[Version], SOURCE.[TimePeriod],";
+                foreach (VariableProfile vp in aDatabaseVariables)
+                {
+                    ++count;
+                    line += " SOURCE.[" + vp.VariableName + "]";
+                    if (count < aDatabaseVariables.Count)
+                    {
+                        line += ",";
+                    }
+                    if (line.Length > 110)
+                    {
+                        aWriter.WriteLine(line);
+                        line = _indent5;
+
+                    }
+                }
+                line += ");";
+                if (line.Length > 0)
+                {
+                    aWriter.WriteLine(line);
+                }
+
+                //aWriter.WriteLine(" ");
+                //aWriter.WriteLine("-- unlock table ");
+                //aWriter.WriteLine("Exec @rc = sp_releaseapplock @Resource='Planning_Chain', @LockOwner='Transaction'");
+                //aWriter.WriteLine(" ");
+
+                aWriter.WriteLine(System.Environment.NewLine);
+                aWriter.WriteLine("GO");
+                aWriter.WriteLine(System.Environment.NewLine);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private static void Generate_RO_Planning_Chain_Total_Write(genOptions options)
+        {
+            string line;
+            int count = 0;
+            try
+            {
+                string aProcedureName = options.name;
+                string aTableName = options.table;
+                ProfileList aDatabaseVariables = RemoveDuplicateTimeTotalNames(totalVariables.GetChainTimeTotalVariableList());
+                StreamWriter aWriter = options.writer;
+
+                if (aDatabaseVariables == null ||
+                    aDatabaseVariables.Count == 0)
+                {
+                    return;
+                }
+
+                aWriter.WriteLine("CREATE PROCEDURE [dbo].[" + aProcedureName + "]");
+                aWriter.WriteLine(" ");
+                aWriter.WriteLine("@dt " + Include.DBROExtractPlanningChainTotalType + " READONLY");
+                aWriter.WriteLine("AS");
+                aWriter.WriteLine(" ");
+                aWriter.WriteLine("-- lock table to single thread writes ");
+                aWriter.WriteLine("declare @rc int = 0-- return code");
+                aWriter.WriteLine("Exec @rc = sp_getapplock @Resource = 'Planning_Chain_Total'-- the resource to be locked");
+                aWriter.WriteLine(", @LockMode = 'Exclusive'-- Type of lock");
+                aWriter.WriteLine(", @LockOwner = 'Transaction'-- Transaction or Session");
+                aWriter.WriteLine(", @LockTimeout = 45000-- timeout in milliseconds, 45 seconds");
+                aWriter.WriteLine(" ");
+                aWriter.WriteLine("SET NOCOUNT ON");
+                aWriter.WriteLine("MERGE INTO " + aTableName + " with (ROWLOCK) AS TARGET");
+                aWriter.WriteLine("USING @dt AS SOURCE");
+                aWriter.WriteLine("on (SOURCE.[Merchandise] = TARGET.[Merchandise] and SOURCE.[Version] = TARGET.[Version] and SOURCE.[TimePeriod] = TARGET.[TimePeriod])");
+                aWriter.WriteLine("WHEN MATCHED THEN");
+                aWriter.WriteLine("UPDATE ");
+                count = 0;
+                line = _blankLine;
+                foreach (TimeTotalVariableProfile vp in aDatabaseVariables)
+                {
+                    ++count;
+                    if (count == 1)
+                    {
+                        line = line.Insert(9, "SET");
+                    }
+                    line = line.Insert(13, "TARGET.[" + vp.VariableName + "] ");
+                    line = line.TrimEnd();
+                    line += " = COALESCE(SOURCE.[" + vp.VariableName + "], ";
+                    line += "TARGET.[" + vp.VariableName + "])";
+                    if (count < aDatabaseVariables.Count)
+                    {
+                        line += ",";
+                    }
+                    aWriter.WriteLine(line);
+                    line = _blankLine;
+                }
+
+                aWriter.WriteLine("WHEN NOT MATCHED BY TARGET THEN");
+                line = "INSERT ([Merchandise], [Version], [TimePeriod], ";
+                count = 0;
+                foreach (TimeTotalVariableProfile vp in aDatabaseVariables)
+                {
+                    ++count;
+                    line += "[" + vp.VariableName + "]";
+                    if (count < aDatabaseVariables.Count)
+                    {
+                        line += ", ";
+                    }
+                    if (line.Length > 150)
+                    {
+                        aWriter.WriteLine(line);
+                        line = _indent5;
+
+                    }
+                }
+                line += ")";
+                aWriter.WriteLine(line);
+
+                count = 0;
+                line = "VALUES ( SOURCE.[Merchandise], SOURCE.[Version], SOURCE.[TimePeriod],";
+                foreach (TimeTotalVariableProfile vp in aDatabaseVariables)
+                {
+                    ++count;
+                    line += " SOURCE.[" + vp.VariableName + "]";
+                    if (count < aDatabaseVariables.Count)
+                    {
+                        line += ",";
+                    }
+                    if (line.Length > 110)
+                    {
+                        aWriter.WriteLine(line);
+                        line = _indent5;
+
+                    }
+                }
+                line += ");";
+                if (line.Length > 0)
+                {
+                    aWriter.WriteLine(line);
+                }
+
+                //aWriter.WriteLine(" ");
+                //aWriter.WriteLine("-- unlock table ");
+                //aWriter.WriteLine("Exec @rc = sp_releaseapplock @Resource='Planning_Chain_Total', @LockOwner='Transaction'");
+                //aWriter.WriteLine(" ");
+
+                aWriter.WriteLine(System.Environment.NewLine);
+                aWriter.WriteLine("GO");
+                aWriter.WriteLine(System.Environment.NewLine);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private static void Generate_RO_Planning_Stores_Write(genOptions options)
+        {
+            string line;
+            int count = 0;
+            try
+            {
+                string aProcedureName = options.name;
+                string aTableName = options.table;
+                ProfileList aDatabaseVariables = variables.GetStoreWeeklyVariableList();
+                StreamWriter aWriter = options.writer;
+
+                if (aDatabaseVariables == null ||
+                    aDatabaseVariables.Count == 0)
+                {
+                    return;
+                }
+
+                aWriter.WriteLine("CREATE PROCEDURE [dbo].[" + aProcedureName + "]");
+                aWriter.WriteLine(" ");
+                aWriter.WriteLine("@dt " + Include.DBROExtractPlanningStoresType + " READONLY");
+                aWriter.WriteLine("AS");
+                aWriter.WriteLine(" ");
+                aWriter.WriteLine("-- lock table to single thread writes ");
+                aWriter.WriteLine("declare @rc int = 0-- return code");
+                aWriter.WriteLine("Exec @rc = sp_getapplock @Resource = 'Planning_Stores'-- the resource to be locked");
+                aWriter.WriteLine(", @LockMode = 'Exclusive'-- Type of lock");
+                aWriter.WriteLine(", @LockOwner = 'Transaction'-- Transaction or Session");
+                aWriter.WriteLine(", @LockTimeout = 45000-- timeout in milliseconds, 45 seconds");
+                aWriter.WriteLine(" ");
+                aWriter.WriteLine("SET NOCOUNT ON");
+                aWriter.WriteLine("MERGE INTO " + aTableName + " with (ROWLOCK) AS TARGET");
+                aWriter.WriteLine("USING @dt AS SOURCE");
+                aWriter.WriteLine("on (SOURCE.[Merchandise] = TARGET.[Merchandise] and SOURCE.[Version] = TARGET.[Version] and SOURCE.[Store] = TARGET.[Store] and SOURCE.[TimePeriod] = TARGET.[TimePeriod] and SOURCE.[Attribute] = TARGET.[Attribute] and SOURCE.[AttributeSet] = TARGET.[AttributeSet] and SOURCE.[Filter] = TARGET.[Filter])");
+                aWriter.WriteLine("WHEN MATCHED THEN");
+                aWriter.WriteLine("UPDATE ");
+                count = 0;
+                line = _blankLine;
+                foreach (VariableProfile vp in aDatabaseVariables)
+                {
+                    ++count;
+                    if (count == 1)
+                    {
+                        line = line.Insert(9, "SET");
+                    }
+                    line = line.Insert(13, "TARGET.[" + vp.VariableName + "] ");
+                    line = line.TrimEnd();
+                    line += " = COALESCE(SOURCE.[" + vp.VariableName + "], ";
+                    line += "TARGET.[" + vp.VariableName + "])";
+                    if (count < aDatabaseVariables.Count)
+                    {
+                        line += ",";
+                    }
+                    aWriter.WriteLine(line);
+                    line = _blankLine;
+                }
+
+                aWriter.WriteLine("WHEN NOT MATCHED BY TARGET THEN");
+                line = "INSERT ([Merchandise], [Version], [Store], [TimePeriod], [Attribute], [AttributeSet], [Filter], ";
+                count = 0;
+                foreach (VariableProfile vp in aDatabaseVariables)
+                {
+                    ++count;
+                    line += "[" + vp.VariableName + "]";
+                    if (count < aDatabaseVariables.Count)
+                    {
+                        line += ", ";
+                    }
+                    if (line.Length > 150)
+                    {
+                        aWriter.WriteLine(line);
+                        line = _indent5;
+
+                    }
+                }
+                line += ")";
+                aWriter.WriteLine(line);
+
+                count = 0;
+                line = "VALUES ( SOURCE.[Merchandise], SOURCE.[Version], SOURCE.[Store], SOURCE.[TimePeriod], SOURCE.[Attribute], SOURCE.[AttributeSet], SOURCE.[Filter],";
+                foreach (VariableProfile vp in aDatabaseVariables)
+                {
+                    ++count;
+                    line += " SOURCE.[" + vp.VariableName + "]";
+                    if (count < aDatabaseVariables.Count)
+                    {
+                        line += ",";
+                    }
+                    if (line.Length > 110)
+                    {
+                        aWriter.WriteLine(line);
+                        line = _indent5;
+
+                    }
+                }
+                line += ");";
+                if (line.Length > 0)
+                {
+                    aWriter.WriteLine(line);
+                }
+
+                //aWriter.WriteLine(" ");
+                //aWriter.WriteLine("-- unlock table ");
+                //aWriter.WriteLine("Exec @rc = sp_releaseapplock @Resource='Planning_Stores', @LockOwner='Transaction'");
+                //aWriter.WriteLine(" ");
+
+                aWriter.WriteLine(System.Environment.NewLine);
+                aWriter.WriteLine("GO");
+                aWriter.WriteLine(System.Environment.NewLine);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private static void Generate_RO_Planning_Stores_Total_Write(genOptions options)
+        {
+            string line;
+            int count = 0;
+            try
+            {
+                string aProcedureName = options.name;
+                string aTableName = options.table;
+                ProfileList aDatabaseVariables = RemoveDuplicateTimeTotalNames(totalVariables.GetStoreTimeTotalVariableList());
+                StreamWriter aWriter = options.writer;
+
+                if (aDatabaseVariables == null ||
+                    aDatabaseVariables.Count == 0)
+                {
+                    return;
+                }
+
+                aWriter.WriteLine("CREATE PROCEDURE [dbo].[" + aProcedureName + "]");
+                aWriter.WriteLine(" ");
+                aWriter.WriteLine("@dt " + Include.DBROExtractPlanningStoresTotalType + " READONLY");
+                aWriter.WriteLine("AS");
+                aWriter.WriteLine(" ");
+                aWriter.WriteLine("-- lock table to single thread writes ");
+                aWriter.WriteLine("declare @rc int = 0-- return code");
+                aWriter.WriteLine("Exec @rc = sp_getapplock @Resource = 'Planning_Stores_Total'-- the resource to be locked");
+                aWriter.WriteLine(", @LockMode = 'Exclusive'-- Type of lock");
+                aWriter.WriteLine(", @LockOwner = 'Transaction'-- Transaction or Session");
+                aWriter.WriteLine(", @LockTimeout = 45000-- timeout in milliseconds, 45 seconds");
+                aWriter.WriteLine(" ");
+                aWriter.WriteLine("SET NOCOUNT ON");
+                aWriter.WriteLine("MERGE INTO " + aTableName + " with (ROWLOCK) AS TARGET");
+                aWriter.WriteLine("USING @dt AS SOURCE");
+                aWriter.WriteLine("on (SOURCE.[Merchandise] = TARGET.[Merchandise] and SOURCE.[Version] = TARGET.[Version] and SOURCE.[Store] = TARGET.[Store] and SOURCE.[TimePeriod] = TARGET.[TimePeriod] and SOURCE.[Attribute] = TARGET.[Attribute]  and SOURCE.[AttributeSet] = TARGET.[AttributeSet] and SOURCE.[Filter] = TARGET.[Filter])");
+                aWriter.WriteLine("WHEN MATCHED THEN");
+                aWriter.WriteLine("UPDATE ");
+                count = 0;
+                line = _blankLine;
+                foreach (TimeTotalVariableProfile vp in aDatabaseVariables)
+                {
+                    ++count;
+                    if (count == 1)
+                    {
+                        line = line.Insert(9, "SET");
+                    }
+                    line = line.Insert(13, "TARGET.[" + vp.VariableName + "] ");
+                    line = line.TrimEnd();
+                    line += " = COALESCE(SOURCE.[" + vp.VariableName + "], ";
+                    line += "TARGET.[" + vp.VariableName + "])";
+                    if (count < aDatabaseVariables.Count)
+                    {
+                        line += ",";
+                    }
+                    aWriter.WriteLine(line);
+                    line = _blankLine;
+                }
+
+                aWriter.WriteLine("WHEN NOT MATCHED BY TARGET THEN");
+                line = "INSERT ([Merchandise], [Version], [Store], [TimePeriod], [Attribute], [AttributeSet], [Filter], ";
+                count = 0;
+                foreach (TimeTotalVariableProfile vp in aDatabaseVariables)
+                {
+                    ++count;
+                    line += "[" + vp.VariableName + "]";
+                    if (count < aDatabaseVariables.Count)
+                    {
+                        line += ", ";
+                    }
+                    if (line.Length > 150)
+                    {
+                        aWriter.WriteLine(line);
+                        line = _indent5;
+
+                    }
+                }
+                line += ")";
+                aWriter.WriteLine(line);
+
+                count = 0;
+                line = "VALUES ( SOURCE.[Merchandise], SOURCE.[Version], SOURCE.[Store], SOURCE.[TimePeriod], SOURCE.[Attribute], SOURCE.[AttributeSet], SOURCE.[Filter],";
+                foreach (TimeTotalVariableProfile vp in aDatabaseVariables)
+                {
+                    ++count;
+                    line += " SOURCE.[" + vp.VariableName + "]";
+                    if (count < aDatabaseVariables.Count)
+                    {
+                        line += ",";
+                    }
+                    if (line.Length > 110)
+                    {
+                        aWriter.WriteLine(line);
+                        line = _indent5;
+
+                    }
+                }
+                line += ");";
+                if (line.Length > 0)
+                {
+                    aWriter.WriteLine(line);
+                }
+
+                //aWriter.WriteLine(" ");
+                //aWriter.WriteLine("-- unlock table ");
+                //aWriter.WriteLine("Exec @rc = sp_releaseapplock @Resource='Planning_Stores_Total', @LockOwner='Transaction'");
+                //aWriter.WriteLine(" ");
+
+                aWriter.WriteLine(System.Environment.NewLine);
+                aWriter.WriteLine("GO");
+                aWriter.WriteLine(System.Environment.NewLine);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private static void Generate_RO_Planning_Attributes_Write(genOptions options)
+        {
+            string line;
+            int count = 0;
+            try
+            {
+                string aProcedureName = options.name;
+                string aTableName = options.table;
+                ProfileList aDatabaseVariables = variables.GetStoreWeeklyVariableList();
+                StreamWriter aWriter = options.writer;
+
+                if (aDatabaseVariables == null ||
+                    aDatabaseVariables.Count == 0)
+                {
+                    return;
+                }
+
+                aWriter.WriteLine("CREATE PROCEDURE [dbo].[" + aProcedureName + "]");
+                aWriter.WriteLine(" ");
+                aWriter.WriteLine("@dt " + Include.DBROExtractPlanningAttributesType + " READONLY");
+                aWriter.WriteLine("AS");
+                aWriter.WriteLine(" ");
+                aWriter.WriteLine("-- lock table to single thread writes ");
+                aWriter.WriteLine("declare @rc int = 0-- return code");
+                aWriter.WriteLine("Exec @rc = sp_getapplock @Resource = 'Planning_Attributes'-- the resource to be locked");
+                aWriter.WriteLine(", @LockMode = 'Exclusive'-- Type of lock");
+                aWriter.WriteLine(", @LockOwner = 'Transaction'-- Transaction or Session");
+                aWriter.WriteLine(", @LockTimeout = 45000-- timeout in milliseconds, 45 seconds");
+                aWriter.WriteLine(" ");
+                aWriter.WriteLine("SET NOCOUNT ON");
+                aWriter.WriteLine("MERGE INTO " + aTableName + " with (ROWLOCK) AS TARGET");
+                aWriter.WriteLine("USING @dt AS SOURCE");
+                aWriter.WriteLine("on (SOURCE.[Merchandise] = TARGET.[Merchandise] and SOURCE.[Version] = TARGET.[Version] and SOURCE.[Attribute] = TARGET.[Attribute] and SOURCE.[AttributeSet] = TARGET.[AttributeSet] and SOURCE.[TimePeriod] = TARGET.[TimePeriod] and SOURCE.[Filter] = TARGET.[Filter])");
+                aWriter.WriteLine("WHEN MATCHED THEN");
+                aWriter.WriteLine("UPDATE ");
+                count = 0;
+                line = _blankLine;
+                foreach (VariableProfile vp in aDatabaseVariables)
+                {
+                    ++count;
+                    if (count == 1)
+                    {
+                        line = line.Insert(9, "SET");
+                    }
+                    line = line.Insert(13, "TARGET.[" + vp.VariableName + "] ");
+                    line = line.TrimEnd();
+                    line += " = COALESCE(SOURCE.[" + vp.VariableName + "], ";
+                    line += "TARGET.[" + vp.VariableName + "])";
+                    if (count < aDatabaseVariables.Count)
+                    {
+                        line += ",";
+                    }
+                    aWriter.WriteLine(line);
+                    line = _blankLine;
+                }
+
+                aWriter.WriteLine("WHEN NOT MATCHED BY TARGET THEN");
+                line = "INSERT ([Merchandise], [Version], [Attribute], [AttributeSet], [TimePeriod], [Filter], ";
+                count = 0;
+                foreach (VariableProfile vp in aDatabaseVariables)
+                {
+                    ++count;
+                    line += "[" + vp.VariableName + "]";
+                    if (count < aDatabaseVariables.Count)
+                    {
+                        line += ", ";
+                    }
+                    if (line.Length > 150)
+                    {
+                        aWriter.WriteLine(line);
+                        line = _indent5;
+
+                    }
+                }
+                line += ")";
+                aWriter.WriteLine(line);
+
+                count = 0;
+                line = "VALUES ( SOURCE.[Merchandise], SOURCE.[Version], SOURCE.[Attribute], SOURCE.[AttributeSet], SOURCE.[TimePeriod], SOURCE.[Filter],";
+                foreach (VariableProfile vp in aDatabaseVariables)
+                {
+                    ++count;
+                    line += " SOURCE.[" + vp.VariableName + "]";
+                    if (count < aDatabaseVariables.Count)
+                    {
+                        line += ",";
+                    }
+                    if (line.Length > 110)
+                    {
+                        aWriter.WriteLine(line);
+                        line = _indent5;
+
+                    }
+                }
+                line += ");";
+                if (line.Length > 0)
+                {
+                    aWriter.WriteLine(line);
+                }
+
+                //aWriter.WriteLine(" ");
+                //aWriter.WriteLine("-- unlock table ");
+                //aWriter.WriteLine("Exec @rc = sp_releaseapplock @Resource='Planning_Attributes', @LockOwner='Transaction'");
+                //aWriter.WriteLine(" ");
+
+                aWriter.WriteLine(System.Environment.NewLine);
+                aWriter.WriteLine("GO");
+                aWriter.WriteLine(System.Environment.NewLine);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private static void Generate_RO_Planning_Attributes_Total_Write(genOptions options)
+        {
+            string line;
+            int count = 0;
+            try
+            {
+                string aProcedureName = options.name;
+                string aTableName = options.table;
+                ProfileList aDatabaseVariables = RemoveDuplicateTimeTotalNames(totalVariables.GetStoreTimeTotalVariableList());
+                StreamWriter aWriter = options.writer;
+
+                if (aDatabaseVariables == null ||
+                    aDatabaseVariables.Count == 0)
+                {
+                    return;
+                }
+
+                aWriter.WriteLine("CREATE PROCEDURE [dbo].[" + aProcedureName + "]");
+                aWriter.WriteLine(" ");
+                aWriter.WriteLine("@dt " + Include.DBROExtractPlanningAttributesTotalType + " READONLY");
+                aWriter.WriteLine("AS");
+                aWriter.WriteLine(" ");
+                aWriter.WriteLine("-- lock table to single thread writes ");
+                aWriter.WriteLine("declare @rc int = 0-- return code");
+                aWriter.WriteLine("Exec @rc = sp_getapplock @Resource = 'Planning_Attributes_Total'-- the resource to be locked");
+                aWriter.WriteLine(", @LockMode = 'Exclusive'-- Type of lock");
+                aWriter.WriteLine(", @LockOwner = 'Transaction'-- Transaction or Session");
+                aWriter.WriteLine(", @LockTimeout = 45000-- timeout in milliseconds, 45 seconds");
+                aWriter.WriteLine(" ");
+                aWriter.WriteLine("SET NOCOUNT ON");
+                aWriter.WriteLine("MERGE INTO " + aTableName + " with (ROWLOCK) AS TARGET");
+                aWriter.WriteLine("USING @dt AS SOURCE");
+                aWriter.WriteLine("on (SOURCE.[Merchandise] = TARGET.[Merchandise] and SOURCE.[Version] = TARGET.[Version] and SOURCE.[Attribute] = TARGET.[Attribute] and SOURCE.[AttributeSet] = TARGET.[AttributeSet] and SOURCE.[TimePeriod] = TARGET.[TimePeriod] and SOURCE.[Filter] = TARGET.[Filter])");
+                aWriter.WriteLine("WHEN MATCHED THEN");
+                aWriter.WriteLine("UPDATE ");
+                count = 0;
+                line = _blankLine;
+                foreach (TimeTotalVariableProfile vp in aDatabaseVariables)
+                {
+                    ++count;
+                    if (count == 1)
+                    {
+                        line = line.Insert(9, "SET");
+                    }
+                    line = line.Insert(13, "TARGET.[" + vp.VariableName + "] ");
+                    line = line.TrimEnd();
+                    line += " = COALESCE(SOURCE.[" + vp.VariableName + "], ";
+                    line += "TARGET.[" + vp.VariableName + "])";
+                    if (count < aDatabaseVariables.Count)
+                    {
+                        line += ",";
+                    }
+                    aWriter.WriteLine(line);
+                    line = _blankLine;
+                }
+
+                aWriter.WriteLine("WHEN NOT MATCHED BY TARGET THEN");
+                line = "INSERT ([Merchandise], [Version], [Attribute], [AttributeSet], [TimePeriod], [Filter], ";
+                count = 0;
+                foreach (TimeTotalVariableProfile vp in aDatabaseVariables)
+                {
+                    ++count;
+                    line += "[" + vp.VariableName + "]";
+                    if (count < aDatabaseVariables.Count)
+                    {
+                        line += ", ";
+                    }
+                    if (line.Length > 150)
+                    {
+                        aWriter.WriteLine(line);
+                        line = _indent5;
+
+                    }
+                }
+                line += ")";
+                aWriter.WriteLine(line);
+
+                count = 0;
+                line = "VALUES ( SOURCE.[Merchandise], SOURCE.[Version], SOURCE.[Attribute], SOURCE.[AttributeSet], SOURCE.[TimePeriod], SOURCE.[Filter],";
+                foreach (TimeTotalVariableProfile vp in aDatabaseVariables)
+                {
+                    ++count;
+                    line += " SOURCE.[" + vp.VariableName + "]";
+                    if (count < aDatabaseVariables.Count)
+                    {
+                        line += ",";
+                    }
+                    if (line.Length > 110)
+                    {
+                        aWriter.WriteLine(line);
+                        line = _indent5;
+
+                    }
+                }
+                line += ");";
+                if (line.Length > 0)
+                {
+                    aWriter.WriteLine(line);
+                }
+
+                //aWriter.WriteLine(" ");
+                //aWriter.WriteLine("-- unlock table ");
+                //aWriter.WriteLine("Exec @rc = sp_releaseapplock @Resource='Planning_Attributes_Total', @LockOwner='Transaction'");
+                //aWriter.WriteLine(" ");
+
+                aWriter.WriteLine(System.Environment.NewLine);
+                aWriter.WriteLine("GO");
+                aWriter.WriteLine(System.Environment.NewLine);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+        // End TT#2131-MD - JSmith - Halo Integration
+
         #endregion
 
         #region "Older Code"
@@ -8612,16 +10608,16 @@ namespace MIDRetail.DatabaseUpdate
 
 
         //static private int _processCount;
-            //public enum FileProcessType
-    //{
-    //    VersioningUpdates = 0,
-    //    ReleaseUpdates = 1,
-    //    //Begin TT#808 - JScott - Create separate upgrade script for Stored Procedure
-    //    //NewInstall = 2
-    //    NewInstall = 2,
-    //    ProcedureReload = 3,
-    //    //End TT#808 - JScott - Create separate upgrade script for Stored Procedure
-    //}
+        //public enum FileProcessType
+        //{
+        //    VersioningUpdates = 0,
+        //    ReleaseUpdates = 1,
+        //    //Begin TT#808 - JScott - Create separate upgrade script for Stored Procedure
+        //    //NewInstall = 2
+        //    NewInstall = 2,
+        //    ProcedureReload = 3,
+        //    //End TT#808 - JScott - Create separate upgrade script for Stored Procedure
+        //}
 
         //static public bool ProcessScripts(string aFileName, string aFileKey, Queue aMessageQueue,
         //    Queue aProcessedQueue, bool aUpgradeProcess, bool aProcedureReloadProcess,
@@ -8900,1383 +10896,1383 @@ namespace MIDRetail.DatabaseUpdate
         //}
 
         //        private static void DeleteSQLFunctionsScalar(SqlCommand aSqlCommand, Queue aMessageQueue)
-//        {
-//            try
-//            {
-//                string sPath;
-//#if (DEBUG)
-//                sPath = Directory.GetParent(Directory.GetParent(Directory.GetParent(Application.StartupPath).ToString().Trim()).ToString().Trim()) + @"\DatabaseDefinition\SQL_Functions_Scalar\";
-//#else
-//                sPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\SQL_Functions_Scalar\";
-//#endif
-//                if (System.IO.Directory.Exists(sPath) == true)
-//                {
-//                    DirectoryInfo di = new DirectoryInfo(sPath);
-//                    foreach (FileInfo fi in di.GetFiles("*.SQL"))
-//                    {
-//                        string functionName = fi.Name.Replace(".SQL", string.Empty);
-//                        aSqlCommand.CommandText = "IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'[dbo].[" + functionName + "]') AND OBJECTPROPERTY(id, N'IsScalarFunction') = 1) ";
-//                        aSqlCommand.CommandText += "DROP FUNCTION [dbo].[" + functionName + "] ";
-//                        //aSqlCommand.CommandText += Environment.NewLine + "GO";
+        //        {
+        //            try
+        //            {
+        //                string sPath;
+        //#if (DEBUG)
+        //                sPath = Directory.GetParent(Directory.GetParent(Directory.GetParent(Application.StartupPath).ToString().Trim()).ToString().Trim()) + @"\DatabaseDefinition\SQL_Functions_Scalar\";
+        //#else
+        //                sPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\SQL_Functions_Scalar\";
+        //#endif
+        //                if (System.IO.Directory.Exists(sPath) == true)
+        //                {
+        //                    DirectoryInfo di = new DirectoryInfo(sPath);
+        //                    foreach (FileInfo fi in di.GetFiles("*.SQL"))
+        //                    {
+        //                        string functionName = fi.Name.Replace(".SQL", string.Empty);
+        //                        aSqlCommand.CommandText = "IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'[dbo].[" + functionName + "]') AND OBJECTPROPERTY(id, N'IsScalarFunction') = 1) ";
+        //                        aSqlCommand.CommandText += "DROP FUNCTION [dbo].[" + functionName + "] ";
+        //                        //aSqlCommand.CommandText += Environment.NewLine + "GO";
 
-//                        aSqlCommand.ExecuteNonQuery();
-//                    }
-//                }
-//            }
-//            catch (Exception ex)
-//            {
-//                aMessageQueue.Enqueue("UNEXPECTED EXCEPTION: " + ex.ToString());
-//                throw;
-//            }
-//        }
-//        private static void DeleteSQLFunctionsTable(SqlCommand aSqlCommand, Queue aMessageQueue)
-//        {
-//            try
-//            {
-//                string sPath;
-//#if (DEBUG)
-//                sPath = Directory.GetParent(Directory.GetParent(Directory.GetParent(Application.StartupPath).ToString().Trim()).ToString().Trim()) + @"\DatabaseDefinition\SQL_Functions_Table\";
-//#else
-//                sPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\SQL_Functions_Table\";
-//#endif
-//                if (System.IO.Directory.Exists(sPath) == true)
-//                {
-//                    DirectoryInfo di = new DirectoryInfo(sPath);
-//                    foreach (FileInfo fi in di.GetFiles("*.SQL"))
-//                    {
-//                        string functionName = fi.Name.Replace(".SQL", string.Empty);
-//                        aSqlCommand.CommandText = "IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'[dbo].[" + functionName + "]') AND OBJECTPROPERTY(id, N'IsTableFunction') = 1) ";
-//                        aSqlCommand.CommandText += "DROP FUNCTION [dbo].[" + functionName + "] ";
-//                        //aSqlCommand.CommandText += Environment.NewLine + "GO";
+        //                        aSqlCommand.ExecuteNonQuery();
+        //                    }
+        //                }
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                aMessageQueue.Enqueue("UNEXPECTED EXCEPTION: " + ex.ToString());
+        //                throw;
+        //            }
+        //        }
+        //        private static void DeleteSQLFunctionsTable(SqlCommand aSqlCommand, Queue aMessageQueue)
+        //        {
+        //            try
+        //            {
+        //                string sPath;
+        //#if (DEBUG)
+        //                sPath = Directory.GetParent(Directory.GetParent(Directory.GetParent(Application.StartupPath).ToString().Trim()).ToString().Trim()) + @"\DatabaseDefinition\SQL_Functions_Table\";
+        //#else
+        //                sPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\SQL_Functions_Table\";
+        //#endif
+        //                if (System.IO.Directory.Exists(sPath) == true)
+        //                {
+        //                    DirectoryInfo di = new DirectoryInfo(sPath);
+        //                    foreach (FileInfo fi in di.GetFiles("*.SQL"))
+        //                    {
+        //                        string functionName = fi.Name.Replace(".SQL", string.Empty);
+        //                        aSqlCommand.CommandText = "IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'[dbo].[" + functionName + "]') AND OBJECTPROPERTY(id, N'IsTableFunction') = 1) ";
+        //                        aSqlCommand.CommandText += "DROP FUNCTION [dbo].[" + functionName + "] ";
+        //                        //aSqlCommand.CommandText += Environment.NewLine + "GO";
 
-//                        aSqlCommand.ExecuteNonQuery();
-//                    }
-//                }
-//            }
-//            catch (Exception ex)
-//            {
-//                aMessageQueue.Enqueue("UNEXPECTED EXCEPTION: " + ex.ToString());
-//                throw;
-//            }
-//        }
-//        private static void DeleteSQLTypes(SqlCommand aSqlCommand, Queue aMessageQueue)
-//        {
-//            try
-//            {
-//                string sPath;
-//#if (DEBUG)
-//                sPath = Directory.GetParent(Directory.GetParent(Directory.GetParent(Application.StartupPath).ToString().Trim()).ToString().Trim()) + @"\DatabaseDefinition\SQL_Types\";
-//#else
-//                sPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\SQL_Types\";
-//#endif
-//                if (System.IO.Directory.Exists(sPath) == true)
-//                {
-//                    DirectoryInfo di = new DirectoryInfo(sPath);
-//                    foreach (FileInfo fi in di.GetFiles("*.SQL"))
-//                    {
-//                        string sqlTypeName = fi.Name.Replace(".SQL", string.Empty);
-//                        aSqlCommand.CommandText = "IF EXISTS (SELECT * FROM sys.types WHERE is_table_type = 1 AND name = '" + sqlTypeName + "') DROP TYPE " + sqlTypeName + " ";
-//                        //aSqlCommand.CommandText += Environment.NewLine + "GO";
+        //                        aSqlCommand.ExecuteNonQuery();
+        //                    }
+        //                }
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                aMessageQueue.Enqueue("UNEXPECTED EXCEPTION: " + ex.ToString());
+        //                throw;
+        //            }
+        //        }
+        //        private static void DeleteSQLTypes(SqlCommand aSqlCommand, Queue aMessageQueue)
+        //        {
+        //            try
+        //            {
+        //                string sPath;
+        //#if (DEBUG)
+        //                sPath = Directory.GetParent(Directory.GetParent(Directory.GetParent(Application.StartupPath).ToString().Trim()).ToString().Trim()) + @"\DatabaseDefinition\SQL_Types\";
+        //#else
+        //                sPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\SQL_Types\";
+        //#endif
+        //                if (System.IO.Directory.Exists(sPath) == true)
+        //                {
+        //                    DirectoryInfo di = new DirectoryInfo(sPath);
+        //                    foreach (FileInfo fi in di.GetFiles("*.SQL"))
+        //                    {
+        //                        string sqlTypeName = fi.Name.Replace(".SQL", string.Empty);
+        //                        aSqlCommand.CommandText = "IF EXISTS (SELECT * FROM sys.types WHERE is_table_type = 1 AND name = '" + sqlTypeName + "') DROP TYPE " + sqlTypeName + " ";
+        //                        //aSqlCommand.CommandText += Environment.NewLine + "GO";
 
-//                        aSqlCommand.ExecuteNonQuery();
-//                    }
-//                }
-//            }
-//            catch (Exception ex)
-//            {
-//                aMessageQueue.Enqueue("UNEXPECTED EXCEPTION: " + ex.ToString());
-//                throw;
-//            }
-//        }
+        //                        aSqlCommand.ExecuteNonQuery();
+        //                    }
+        //                }
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                aMessageQueue.Enqueue("UNEXPECTED EXCEPTION: " + ex.ToString());
+        //                throw;
+        //            }
+        //        }
 
-   
-       
+
+
 
         //        private static void DeleteSQLViews(SqlCommand aSqlCommand, Queue aMessageQueue)
-//        {
-//            try
-//            {
-//                string sPath;
-//#if (DEBUG)
-//                sPath = Directory.GetParent(Directory.GetParent(Directory.GetParent(Application.StartupPath).ToString().Trim()).ToString().Trim()) + @"\DatabaseDefinition\SQL_Views\";
-//#else
-//                sPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\SQL_Views\";
-//#endif
-//                if (System.IO.Directory.Exists(sPath) == true)
-//                {
-//                    DirectoryInfo di = new DirectoryInfo(sPath);
-//                    foreach (FileInfo fi in di.GetFiles("*.SQL"))
-//                    {
-//                        string sqlViewName = fi.Name.Replace(".SQL", string.Empty);
-//                        aSqlCommand.CommandText = "IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'[dbo].[" + sqlViewName + "]') AND OBJECTPROPERTY(id, N'IsView') = 1) ";
-//                        aSqlCommand.CommandText += "DROP VIEW [dbo].[" + sqlViewName + "] ";
-//                        //aSqlCommand.CommandText += Environment.NewLine + "GO";
-
-//                        aSqlCommand.ExecuteNonQuery();
-//                    }
-//                }
-//            }
-//            catch (Exception ex)
-//            {
-//                aMessageQueue.Enqueue("UNEXPECTED EXCEPTION: " + ex.ToString());
-//                throw;
-//            }
-//        }
-//        private static void DeleteSQLTriggers(SqlCommand aSqlCommand, Queue aMessageQueue)
-//        {
-//            try
-//            {
-//                string sPath;
-//#if (DEBUG)
-//                sPath = Directory.GetParent(Directory.GetParent(Directory.GetParent(Application.StartupPath).ToString().Trim()).ToString().Trim()) + @"\DatabaseDefinition\SQL_Triggers\";
-//#else
-//                sPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\SQL_Triggers\";
-//#endif
-//                if (System.IO.Directory.Exists(sPath) == true)
-//                {
-//                    DirectoryInfo di = new DirectoryInfo(sPath);
-//                    foreach (FileInfo fi in di.GetFiles("*.SQL"))
-//                    {
-//                        string sqlTriggerName = fi.Name.Replace(".SQL", string.Empty);
-//                        aSqlCommand.CommandText = "IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'[dbo].[" + sqlTriggerName + "]') AND OBJECTPROPERTY(id, N'IsTrigger') = 1) ";
-//                        aSqlCommand.CommandText += "DROP TRIGGER [dbo].[" + sqlTriggerName + "] ";
-//                        //aSqlCommand.CommandText += Environment.NewLine + "GO";
-
-//                        aSqlCommand.ExecuteNonQuery();
-//                    }
-//                }
-//            }
-//            catch (Exception ex)
-//            {
-//                aMessageQueue.Enqueue("UNEXPECTED EXCEPTION: " + ex.ToString());
-//                throw;
-//            }
-//        }
-//        private static void CreateSQLFunctionsScalar(SqlCommand aSqlCommand, Queue aMessageQueue, Queue aProcessedQueue, bool aUpgradeProcess,
-//            string aConnectionString, eDatabaseType aDatabaseType,
-//            int majorVersion, int minorVersion, int revision, int modification, DateTime dbDate,
-//            bool aIgnoreErrors, int aNoDataTables, string aAllocationFileGroup,
-//            string aForecastFileGroup, string aHistoryFileGroup, int aNoHistoryFileGroup,
-//            string aDailyHistoryFileGroup, int aNoDailyHistoryFileGroup, string aAuditFileGroup,
-//            string aWeekArchiveFileGroup, string aDayArchiveFileGroup,
-//            DatabaseObjects aDatabaseObjects, DatabaseObjectsSQLObjectPhase aPhase)
-//        {
-//            try
-//            {
-//                string sPath;
-//#if (DEBUG)
-//                sPath = Directory.GetParent(Directory.GetParent(Directory.GetParent(Application.StartupPath).ToString().Trim()).ToString().Trim()) + @"\DatabaseDefinition\SQL_Functions_Scalar\";
-//#else
-//                sPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\SQL_Functions_Scalar\";
-//#endif
-//                if (System.IO.Directory.Exists(sPath) == true)
-//                {
-//                    if (aDatabaseObjects.SQLObject != null)
-//                    {
-//                        foreach (DatabaseObjectsSQLObject so in aDatabaseObjects.SQLObject)
-//                        {
-//                            if (so.Type == DatabaseObjectsSQLObjectType.FunctionScalar &&
-//                                so.Phase == aPhase)
-//                            {
-//                                //if (aUpgradeProcess && isScalarFunctionFound(aSqlCommand, so.Name))
-//                                //{
-//                                //    continue;
-//                                //}
-
-//                                string prerequisite;
-//                                if (so.Prerequisite != null &&
-//                                    !VerifyPrerequisites(aSqlCommand, so, out prerequisite))
-//                                {
-//                                    aMessageQueue.Enqueue("Prerequisite " + prerequisite + " not found for " + so.Name);
-//                                    throw new Exception("Prerequisite not found error");
-//                                }
-
-//                                ProcessUpgradeFile(
-//                                FileProcessType.NewInstall,
-//                                aSqlCommand,
-//                                sPath + so.Name + ".SQL",
-//                                "InstallFile",
-//                                aMessageQueue,
-//                                aProcessedQueue,
-//                                false,
-//                                aIgnoreErrors,
-//                                majorVersion,
-//                                minorVersion,
-//                                revision,
-//                                modification,
-//                                dbDate,
-//                                aDatabaseType,
-//                                aNoDataTables,
-//                                aAllocationFileGroup,
-//                                aForecastFileGroup,
-//                                aHistoryFileGroup,
-//                                aNoHistoryFileGroup,
-//                                aDailyHistoryFileGroup,
-//                                aNoDailyHistoryFileGroup,
-//                                aAuditFileGroup,
-//                                aWeekArchiveFileGroup,
-//                                aDayArchiveFileGroup,
-//                                false);
-
-//                                _htProcessed.Add(so.Name, null);
-//                            }
-//                        }
-//                    }
-
-//                    if (aPhase == DatabaseObjectsSQLObjectPhase.PreGenerate)
-//                    {
-//                        DirectoryInfo di = new DirectoryInfo(sPath);
-//                        foreach (FileInfo fi in di.GetFiles("*.SQL"))
-//                        {
-//                            string functionName = fi.Name.Replace(".SQL", string.Empty);
-
-//                            if (_htProcessed.ContainsKey(functionName) ||
-//                                (aUpgradeProcess && isScalarFunctionFound(aSqlCommand, functionName)))
-//                            {
-//                                continue;
-//                            }
-
-//                            ProcessUpgradeFile(
-//                                FileProcessType.NewInstall,
-//                                aSqlCommand,
-//                                fi.FullName,
-//                                "InstallFile",
-//                                aMessageQueue,
-//                                aProcessedQueue,
-//                                false,
-//                                aIgnoreErrors,
-//                                majorVersion,
-//                                minorVersion,
-//                                revision,
-//                                modification,
-//                                dbDate,
-//                                aDatabaseType,
-//                                aNoDataTables,
-//                                aAllocationFileGroup,
-//                                aForecastFileGroup,
-//                                aHistoryFileGroup,
-//                                aNoHistoryFileGroup,
-//                                aDailyHistoryFileGroup,
-//                                aNoDailyHistoryFileGroup,
-//                                aAuditFileGroup,
-//                                aWeekArchiveFileGroup,
-//                                aDayArchiveFileGroup,
-//                                false);
-//                        }
-//                    }
-//                }
-//            }
-//            catch (Exception ex)
-//            {
-//                aMessageQueue.Enqueue("UNEXPECTED EXCEPTION: " + ex.ToString());
-//                throw;
-//            }
-//        }
-//        private static void CreateSQLFunctionsTable(SqlCommand aSqlCommand, Queue aMessageQueue, Queue aProcessedQueue, bool aUpgradeProcess,
-//            string aConnectionString, eDatabaseType aDatabaseType,
-//            int majorVersion, int minorVersion, int revision, int modification, DateTime dbDate,
-//            bool aIgnoreErrors, int aNoDataTables, string aAllocationFileGroup,
-//            string aForecastFileGroup, string aHistoryFileGroup, int aNoHistoryFileGroup,
-//            string aDailyHistoryFileGroup, int aNoDailyHistoryFileGroup, string aAuditFileGroup,
-//            string aWeekArchiveFileGroup, string aDayArchiveFileGroup,
-//            DatabaseObjects aDatabaseObjects, DatabaseObjectsSQLObjectPhase aPhase)
-//        {
-//            try
-//            {
-//                string sPath;
-//#if (DEBUG)
-//                sPath = Directory.GetParent(Directory.GetParent(Directory.GetParent(Application.StartupPath).ToString().Trim()).ToString().Trim()) + @"\DatabaseDefinition\SQL_Functions_Table\";
-//#else
-//                sPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\SQL_Functions_Table\";
-//#endif
-//                if (System.IO.Directory.Exists(sPath) == true)
-//                {
-//                    if (aDatabaseObjects.SQLObject != null)
-//                    {
-//                        foreach (DatabaseObjectsSQLObject so in aDatabaseObjects.SQLObject)
-//                        {
-//                            if (so.Type == DatabaseObjectsSQLObjectType.FunctionTable &&
-//                                so.Phase == aPhase)
-//                            {
-//                                //if (aUpgradeProcess && isTableFunctionFound(aSqlCommand, so.Name))
-//                                //{
-//                                //    continue;
-//                                //}
-
-//                                string prerequisite;
-//                                if (so.Prerequisite != null &&
-//                                    !VerifyPrerequisites(aSqlCommand, so, out prerequisite))
-//                                {
-//                                    aMessageQueue.Enqueue("Prerequisite " + prerequisite + " not found for " + so.Name);
-//                                    throw new Exception("Prerequisite not found error");
-//                                }
-
-//                                ProcessUpgradeFile(
-//                                FileProcessType.NewInstall,
-//                                aSqlCommand,
-//                                sPath + so.Name + ".SQL",
-//                                "InstallFile",
-//                                aMessageQueue,
-//                                aProcessedQueue,
-//                                false,
-//                                aIgnoreErrors,
-//                                majorVersion,
-//                                minorVersion,
-//                                revision,
-//                                modification,
-//                                dbDate,
-//                                aDatabaseType,
-//                                aNoDataTables,
-//                                aAllocationFileGroup,
-//                                aForecastFileGroup,
-//                                aHistoryFileGroup,
-//                                aNoHistoryFileGroup,
-//                                aDailyHistoryFileGroup,
-//                                aNoDailyHistoryFileGroup,
-//                                aAuditFileGroup,
-//                                aWeekArchiveFileGroup,
-//                                aDayArchiveFileGroup,
-//                                false);
-
-//                                _htProcessed.Add(so.Name, null);
-//                            }
-//                        }
-//                    }
-
-//                    if (aPhase == DatabaseObjectsSQLObjectPhase.PreGenerate)
-//                    {
-//                        DirectoryInfo di = new DirectoryInfo(sPath);
-//                        foreach (FileInfo fi in di.GetFiles("*.SQL"))
-//                        {
-//                            string functionName = fi.Name.Replace(".SQL", string.Empty);
-
-//                            if (_htProcessed.ContainsKey(functionName) ||
-//                                (aUpgradeProcess && isTableFunctionFound(aSqlCommand, functionName)))
-//                            {
-//                                continue;
-//                            }
-
-//                            ProcessUpgradeFile(
-//                                FileProcessType.NewInstall,
-//                                aSqlCommand,
-//                                fi.FullName,
-//                                "InstallFile",
-//                                aMessageQueue,
-//                                aProcessedQueue,
-//                                false,
-//                                aIgnoreErrors,
-//                                majorVersion,
-//                                minorVersion,
-//                                revision,
-//                                modification,
-//                                dbDate,
-//                                aDatabaseType,
-//                                aNoDataTables,
-//                                aAllocationFileGroup,
-//                                aForecastFileGroup,
-//                                aHistoryFileGroup,
-//                                aNoHistoryFileGroup,
-//                                aDailyHistoryFileGroup,
-//                                aNoDailyHistoryFileGroup,
-//                                aAuditFileGroup,
-//                                aWeekArchiveFileGroup,
-//                                aDayArchiveFileGroup,
-//                                false);
-//                        }
-//                    }
-//                }
-//            }
-//            catch (Exception ex)
-//            {
-//                aMessageQueue.Enqueue("UNEXPECTED EXCEPTION: " + ex.ToString());
-//                throw;
-//            }
-//        }
-//        private static void CreateSQLTypes(SqlCommand aSqlCommand, Queue aMessageQueue, Queue aProcessedQueue, bool aUpgradeProcess,
-//            string aConnectionString, eDatabaseType aDatabaseType,
-//            int majorVersion, int minorVersion, int revision, int modification, DateTime dbDate,
-//            bool aIgnoreErrors, int aNoDataTables, string aAllocationFileGroup,
-//            string aForecastFileGroup, string aHistoryFileGroup, int aNoHistoryFileGroup,
-//            string aDailyHistoryFileGroup, int aNoDailyHistoryFileGroup, string aAuditFileGroup,
-//            string aWeekArchiveFileGroup, string aDayArchiveFileGroup,
-//            DatabaseObjects aDatabaseObjects, DatabaseObjectsSQLObjectPhase aPhase)
-//        {
-//            try
-//            {
-//                string sPath;
-//#if (DEBUG)
-//                sPath = Directory.GetParent(Directory.GetParent(Directory.GetParent(Application.StartupPath).ToString().Trim()).ToString().Trim()) + @"\DatabaseDefinition\SQL_Types\";
-//#else
-//                sPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\SQL_Types\";
-//#endif
-//                if (System.IO.Directory.Exists(sPath) == true)
-//                {
-//                    if (aDatabaseObjects.SQLObject != null)
-//                    {
-//                        foreach (DatabaseObjectsSQLObject so in aDatabaseObjects.SQLObject)
-//                        {
-//                            if (so.Type == DatabaseObjectsSQLObjectType.Type &&
-//                                so.Phase == aPhase)
-//                            {
-//                                //if (aUpgradeProcess && isTypeFound(aSqlCommand, so.Name))
-//                                //{
-//                                //    continue;
-//                                //}
-
-//                                string prerequisite;
-//                                if (so.Prerequisite != null &&
-//                                    !VerifyPrerequisites(aSqlCommand, so, out prerequisite))
-//                                {
-//                                    aMessageQueue.Enqueue("Prerequisite " + prerequisite + " not found for " + so.Name);
-//                                    throw new Exception("Prerequisite not found error");
-//                                }
-
-//                                ProcessUpgradeFile(
-//                                FileProcessType.NewInstall,
-//                                aSqlCommand,
-//                                sPath + so.Name + ".SQL",
-//                                "InstallFile",
-//                                aMessageQueue,
-//                                aProcessedQueue,
-//                                false,
-//                                aIgnoreErrors,
-//                                majorVersion,
-//                                minorVersion,
-//                                revision,
-//                                modification,
-//                                dbDate,
-//                                aDatabaseType,
-//                                aNoDataTables,
-//                                aAllocationFileGroup,
-//                                aForecastFileGroup,
-//                                aHistoryFileGroup,
-//                                aNoHistoryFileGroup,
-//                                aDailyHistoryFileGroup,
-//                                aNoDailyHistoryFileGroup,
-//                                aAuditFileGroup,
-//                                aWeekArchiveFileGroup,
-//                                aDayArchiveFileGroup,
-//                                false);
-
-//                                _htProcessed.Add(so.Name, null);
-//                            }
-//                        }
-//                    }
-
-//                    if (aPhase == DatabaseObjectsSQLObjectPhase.PreGenerate)
-//                    {
-//                        DirectoryInfo di = new DirectoryInfo(sPath);
-//                        foreach (FileInfo fi in di.GetFiles("*.SQL"))
-//                        {
-//                            string sqlTypeName = fi.Name.Replace(".SQL", string.Empty);
-
-//                            if (_htProcessed.ContainsKey(sqlTypeName) ||
-//                                (aUpgradeProcess && isTypeFound(aSqlCommand, sqlTypeName)))
-//                            {
-//                                continue;
-//                            }
-
-//                            ProcessUpgradeFile(
-//                                //FileProcessType.NewInstall,
-//                                FileProcessType.NewInstall,
-//                                aSqlCommand,
-//                                fi.FullName,
-//                                "InstallFile",
-//                                aMessageQueue,
-//                                aProcessedQueue,
-//                                false,
-//                                aIgnoreErrors,
-//                                majorVersion,
-//                                minorVersion,
-//                                revision,
-//                                modification,
-//                                dbDate,
-//                                aDatabaseType,
-//                                aNoDataTables,
-//                                aAllocationFileGroup,
-//                                aForecastFileGroup,
-//                                aHistoryFileGroup,
-//                                aNoHistoryFileGroup,
-//                                aDailyHistoryFileGroup,
-//                                aNoDailyHistoryFileGroup,
-//                                aAuditFileGroup,
-//                                aWeekArchiveFileGroup,
-//                                aDayArchiveFileGroup,
-//                                false);
-//                        }
-//                    }
-//                }
-//            }
-//            catch (Exception ex)
-//            {
-//                aMessageQueue.Enqueue("UNEXPECTED EXCEPTION: " + ex.ToString());
-//                throw;
-//            }
-//        }
-//        private static void CreateSQLStoredProcedures(SqlCommand aSqlCommand, Queue aMessageQueue, Queue aProcessedQueue, bool aUpgradeProcess,
-//            string aConnectionString, eDatabaseType aDatabaseType,
-//            int majorVersion, int minorVersion, int revision, int modification, DateTime dbDate,
-//            bool aIgnoreErrors, int aNoDataTables, string aAllocationFileGroup,
-//            string aForecastFileGroup, string aHistoryFileGroup, int aNoHistoryFileGroup,
-//            string aDailyHistoryFileGroup, int aNoDailyHistoryFileGroup, string aAuditFileGroup,
-//            string aWeekArchiveFileGroup, string aDayArchiveFileGroup,
-//            DatabaseObjects aDatabaseObjects, DatabaseObjectsSQLObjectPhase aPhase)
-//        {
-//            try
-//            {
-//                string sPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\SQL_StoredProcedures\";
-//#if (DEBUG)
-//                sPath = Directory.GetParent(Directory.GetParent(Directory.GetParent(Application.StartupPath).ToString().Trim()).ToString().Trim()) + @"\DatabaseDefinition\SQL_StoredProcedures\";
-//#else
-//                sPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\SQL_StoredProcedures\";
-//#endif
-//                if (System.IO.Directory.Exists(sPath) == true)
-//                {
-//                    if (aDatabaseObjects.SQLObject != null)
-//                    {
-//                        foreach (DatabaseObjectsSQLObject so in aDatabaseObjects.SQLObject)
-//                        {
-//                            if (so.Type == DatabaseObjectsSQLObjectType.StoredProcedure &&
-//                                so.Phase == aPhase)
-//                            {
-//                                //if (aUpgradeProcess && isStoredProcedureFound(aSqlCommand, so.Name))
-//                                //{
-//                                //    continue;
-//                                //}
-
-//                                string prerequisite;
-//                                if (so.Prerequisite != null &&
-//                                    !VerifyPrerequisites(aSqlCommand, so, out prerequisite))
-//                                {
-//                                    aMessageQueue.Enqueue("Prerequisite " + prerequisite + " not found for " + so.Name);
-//                                    throw new Exception("Prerequisite not found error");
-//                                }
-
-//                                ProcessUpgradeFile(
-//                                FileProcessType.NewInstall,
-//                                aSqlCommand,
-//                                sPath + so.Name + ".SQL",
-//                                "InstallFile",
-//                                aMessageQueue,
-//                                aProcessedQueue,
-//                                false,
-//                                aIgnoreErrors,
-//                                majorVersion,
-//                                minorVersion,
-//                                revision,
-//                                modification,
-//                                dbDate,
-//                                aDatabaseType,
-//                                aNoDataTables,
-//                                aAllocationFileGroup,
-//                                aForecastFileGroup,
-//                                aHistoryFileGroup,
-//                                aNoHistoryFileGroup,
-//                                aDailyHistoryFileGroup,
-//                                aNoDailyHistoryFileGroup,
-//                                aAuditFileGroup,
-//                                aWeekArchiveFileGroup,
-//                                aDayArchiveFileGroup,
-//                                false);
-
-//                                _htProcessed.Add(so.Name, null);
-//                            }
-//                        }
-//                    }
-
-//                    if (aPhase == DatabaseObjectsSQLObjectPhase.PreGenerate)
-//                    {
-//                        DirectoryInfo di = new DirectoryInfo(sPath);
-//                        foreach (FileInfo fi in di.GetFiles("*.SQL"))
-//                        {
-//                            string procedureName = fi.Name.Replace(".SQL", string.Empty);
-
-//                            if (_htProcessed.ContainsKey(procedureName) ||
-//                                (aUpgradeProcess && isStoredProcedureFound(aSqlCommand, procedureName)))
-//                            {
-//                                continue;
-//                            }
-
-//                            ProcessUpgradeFile(
-//                                FileProcessType.NewInstall,
-//                                aSqlCommand,
-//                                fi.FullName,
-//                                "InstallFile",
-//                                aMessageQueue,
-//                                aProcessedQueue,
-//                                false,
-//                                aIgnoreErrors,
-//                                majorVersion,
-//                                minorVersion,
-//                                revision,
-//                                modification,
-//                                dbDate,
-//                                aDatabaseType,
-//                                aNoDataTables,
-//                                aAllocationFileGroup,
-//                                aForecastFileGroup,
-//                                aHistoryFileGroup,
-//                                aNoHistoryFileGroup,
-//                                aDailyHistoryFileGroup,
-//                                aNoDailyHistoryFileGroup,
-//                                aAuditFileGroup,
-//                                aWeekArchiveFileGroup,
-//                                aDayArchiveFileGroup,
-//                                false);
-//                        }
-//                    }
-//                }
-//            }
-//            catch (Exception ex)
-//            {
-//                aMessageQueue.Enqueue("UNEXPECTED EXCEPTION: " + ex.ToString());
-//                throw;
-//            }
-//        }
-//        private static void CreateSQLViews(SqlCommand aSqlCommand, Queue aMessageQueue, Queue aProcessedQueue, bool aUpgradeProcess,
-//            string aConnectionString, eDatabaseType aDatabaseType,
-//            int majorVersion, int minorVersion, int revision, int modification, DateTime dbDate,
-//            bool aIgnoreErrors, int aNoDataTables, string aAllocationFileGroup,
-//            string aForecastFileGroup, string aHistoryFileGroup, int aNoHistoryFileGroup,
-//            string aDailyHistoryFileGroup, int aNoDailyHistoryFileGroup, string aAuditFileGroup,
-//            string aWeekArchiveFileGroup, string aDayArchiveFileGroup,
-//            DatabaseObjects aDatabaseObjects, DatabaseObjectsSQLObjectPhase aPhase)
-//        {
-//            try
-//            {
-//                string sPath;
-//#if (DEBUG)
-//                sPath = Directory.GetParent(Directory.GetParent(Directory.GetParent(Application.StartupPath).ToString().Trim()).ToString().Trim()) + @"\DatabaseDefinition\SQL_Views\";
-//#else
-//                sPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\SQL_Views\";
-//#endif
-//                if (System.IO.Directory.Exists(sPath) == true)
-//                {
-//                    if (aDatabaseObjects.SQLObject != null)
-//                    {
-//                        foreach (DatabaseObjectsSQLObject so in aDatabaseObjects.SQLObject)
-//                        {
-//                            if (so.Type == DatabaseObjectsSQLObjectType.View &&
-//                                so.Phase == aPhase)
-//                            {
-//                                //if (aUpgradeProcess && isViewFound(aSqlCommand, so.Name))
-//                                //{
-//                                //    continue;
-//                                //}
-
-//                                string prerequisite;
-//                                if (so.Prerequisite != null &&
-//                                    !VerifyPrerequisites(aSqlCommand, so, out prerequisite))
-//                                {
-//                                    aMessageQueue.Enqueue("Prerequisite " + prerequisite + " not found for " + so.Name);
-//                                    throw new Exception("Prerequisite not found error");
-//                                }
-
-//                                ProcessUpgradeFile(
-//                                FileProcessType.NewInstall,
-//                                aSqlCommand,
-//                                sPath + so.Name + ".SQL",
-//                                "InstallFile",
-//                                aMessageQueue,
-//                                aProcessedQueue,
-//                                false,
-//                                aIgnoreErrors,
-//                                majorVersion,
-//                                minorVersion,
-//                                revision,
-//                                modification,
-//                                dbDate,
-//                                aDatabaseType,
-//                                aNoDataTables,
-//                                aAllocationFileGroup,
-//                                aForecastFileGroup,
-//                                aHistoryFileGroup,
-//                                aNoHistoryFileGroup,
-//                                aDailyHistoryFileGroup,
-//                                aNoDailyHistoryFileGroup,
-//                                aAuditFileGroup,
-//                                aWeekArchiveFileGroup,
-//                                aDayArchiveFileGroup,
-//                                false);
-
-//                                _htProcessed.Add(so.Name, null);
-//                            }
-//                        }
-//                    }
-
-//                    if (aPhase == DatabaseObjectsSQLObjectPhase.PreGenerate)
-//                    {
-//                        DirectoryInfo di = new DirectoryInfo(sPath);
-//                        foreach (FileInfo fi in di.GetFiles("*.SQL"))
-//                        {
-//                            string viewName = fi.Name.Replace(".SQL", string.Empty);
-
-//                            if (_htProcessed.ContainsKey(viewName) ||
-//                                (aUpgradeProcess && isViewFound(aSqlCommand, viewName)))
-//                            {
-//                                continue;
-//                            }
-
-//                            ProcessUpgradeFile(
-//                                FileProcessType.NewInstall,
-//                                aSqlCommand,
-//                                fi.FullName,
-//                                "InstallFile",
-//                                aMessageQueue,
-//                                aProcessedQueue,
-//                                false,
-//                                aIgnoreErrors,
-//                                majorVersion,
-//                                minorVersion,
-//                                revision,
-//                                modification,
-//                                dbDate,
-//                                aDatabaseType,
-//                                aNoDataTables,
-//                                aAllocationFileGroup,
-//                                aForecastFileGroup,
-//                                aHistoryFileGroup,
-//                                aNoHistoryFileGroup,
-//                                aDailyHistoryFileGroup,
-//                                aNoDailyHistoryFileGroup,
-//                                aAuditFileGroup,
-//                                aWeekArchiveFileGroup,
-//                                aDayArchiveFileGroup,
-//                                false);
-//                        }
-//                    }
-//                }
-//            }
-//            catch (Exception ex)
-//            {
-//                aMessageQueue.Enqueue("UNEXPECTED EXCEPTION: " + ex.ToString());
-//                throw;
-//            }
-//        }
-//        private static void CreateSQLTriggers(SqlCommand aSqlCommand, Queue aMessageQueue, Queue aProcessedQueue, bool aUpgradeProcess,
-//            string aConnectionString, eDatabaseType aDatabaseType,
-//            int majorVersion, int minorVersion, int revision, int modification, DateTime dbDate,
-//            bool aIgnoreErrors, int aNoDataTables, string aAllocationFileGroup,
-//            string aForecastFileGroup, string aHistoryFileGroup, int aNoHistoryFileGroup,
-//            string aDailyHistoryFileGroup, int aNoDailyHistoryFileGroup, string aAuditFileGroup,
-//            string aWeekArchiveFileGroup, string aDayArchiveFileGroup,
-//            DatabaseObjects aDatabaseObjects, DatabaseObjectsSQLObjectPhase aPhase)
-//        {
-//            try
-//            {
-//                string sPath;
-//#if (DEBUG)
-//                sPath = Directory.GetParent(Directory.GetParent(Directory.GetParent(Application.StartupPath).ToString().Trim()).ToString().Trim()) + @"\DatabaseDefinition\SQL_Triggers\";
-//#else
-//                sPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\SQL_Triggers\";
-//#endif
-//                if (System.IO.Directory.Exists(sPath) == true)
-//                {
-
-//                    if (aDatabaseObjects.SQLObject != null)
-//                    {
-//                        foreach (DatabaseObjectsSQLObject so in aDatabaseObjects.SQLObject)
-//                        {
-//                            if (so.Type == DatabaseObjectsSQLObjectType.Trigger &&
-//                                so.Phase == aPhase)
-//                            {
-//                                //if (aUpgradeProcess && isTriggerFound(aSqlCommand, so.Name))
-//                                //{
-//                                //    continue;
-//                                //}
-
-//                                string prerequisite;
-//                                if (so.Prerequisite != null &&
-//                                    !VerifyPrerequisites(aSqlCommand, so, out prerequisite))
-//                                {
-//                                    aMessageQueue.Enqueue("Prerequisite " + prerequisite + " not found for " + so.Name);
-//                                    throw new Exception("Prerequisite not found error");
-//                                }
-
-//                                ProcessUpgradeFile(
-//                                FileProcessType.NewInstall,
-//                                aSqlCommand,
-//                                sPath + so.Name + ".SQL",
-//                                "InstallFile",
-//                                aMessageQueue,
-//                                aProcessedQueue,
-//                                false,
-//                                aIgnoreErrors,
-//                                majorVersion,
-//                                minorVersion,
-//                                revision,
-//                                modification,
-//                                dbDate,
-//                                aDatabaseType,
-//                                aNoDataTables,
-//                                aAllocationFileGroup,
-//                                aForecastFileGroup,
-//                                aHistoryFileGroup,
-//                                aNoHistoryFileGroup,
-//                                aDailyHistoryFileGroup,
-//                                aNoDailyHistoryFileGroup,
-//                                aAuditFileGroup,
-//                                aWeekArchiveFileGroup,
-//                                aDayArchiveFileGroup,
-//                                false);
-
-//                                _htProcessed.Add(so.Name, null);
-//                            }
-//                        }
-//                    }
-
-//                    if (aPhase == DatabaseObjectsSQLObjectPhase.PreGenerate)
-//                    {
-//                        DirectoryInfo di = new DirectoryInfo(sPath);
-//                        foreach (FileInfo fi in di.GetFiles("*.SQL"))
-//                        {
-//                            string triggerName = fi.Name.Replace(".SQL", string.Empty);
-
-//                            if (_htProcessed.ContainsKey(triggerName) ||
-//                                (aUpgradeProcess && isTriggerFound(aSqlCommand, triggerName)))
-//                            {
-//                                continue;
-//                            }
-
-//                            ProcessUpgradeFile(
-//                                FileProcessType.NewInstall,
-//                                aSqlCommand,
-//                                fi.FullName,
-//                                "InstallFile",
-//                                aMessageQueue,
-//                                aProcessedQueue,
-//                                false,
-//                                aIgnoreErrors,
-//                                majorVersion,
-//                                minorVersion,
-//                                revision,
-//                                modification,
-//                                dbDate,
-//                                aDatabaseType,
-//                                aNoDataTables,
-//                                aAllocationFileGroup,
-//                                aForecastFileGroup,
-//                                aHistoryFileGroup,
-//                                aNoHistoryFileGroup,
-//                                aDailyHistoryFileGroup,
-//                                aNoDailyHistoryFileGroup,
-//                                aAuditFileGroup,
-//                                aWeekArchiveFileGroup,
-//                                aDayArchiveFileGroup,
-//                                false);
-//                        }
-//                    }
-//                }
-//            }
-//            catch (Exception ex)
-//            {
-//                aMessageQueue.Enqueue("UNEXPECTED EXCEPTION: " + ex.ToString());
-//                throw;
-//            }
-//        }
-
-//        private static void CreateSQLTables(SqlCommand aSqlCommand, Queue aMessageQueue, Queue aProcessedQueue, bool aUpgradeProcess,
-//            string aConnectionString, eDatabaseType aDatabaseType,
-//            int majorVersion, int minorVersion, int revision, int modification, DateTime dbDate,
-//            bool aIgnoreErrors, int aNoDataTables, string aAllocationFileGroup,
-//            string aForecastFileGroup, string aHistoryFileGroup, int aNoHistoryFileGroup,
-//            string aDailyHistoryFileGroup, int aNoDailyHistoryFileGroup, string aAuditFileGroup,
-//            string aWeekArchiveFileGroup, string aDayArchiveFileGroup,
-//           DatabaseObjects aDatabaseObjects, DatabaseObjectsSQLObjectPhase aPhase)
-//        {
-//            try
-//            {
-//                string sPath;
-//#if (DEBUG)
-//                sPath = Directory.GetParent(Directory.GetParent(Directory.GetParent(Application.StartupPath).ToString().Trim()).ToString().Trim()) + @"\DatabaseDefinition\SQL_Tables\";
-//#else
-//                sPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\SQL_Tables\";
-//#endif
-//                if (System.IO.Directory.Exists(sPath) == true)
-//                {
-
-//                    if (aDatabaseObjects.SQLObject != null)
-//                    {
-//                        foreach (DatabaseObjectsSQLObject so in aDatabaseObjects.SQLObject)
-//                        {
-//                            if (so.Type == DatabaseObjectsSQLObjectType.Table &&
-//                                so.Phase == aPhase)
-//                            {
-//                                string prerequisite;
-//                                if (so.Prerequisite != null &&
-//                                    !VerifyPrerequisites(aSqlCommand, so, out prerequisite))
-//                                {
-//                                    aMessageQueue.Enqueue("Prerequisite " + prerequisite + " not found for " + so.Name);
-//                                    throw new Exception("Prerequisite not found error");
-//                                }
-
-//                                if (aUpgradeProcess && isTableFound(aSqlCommand, so.Name))
-//                                {
-//                                    UpdateTable(aSqlCommand, aMessageQueue, so.Name, sPath + so.Name + ".SQL");
-//                                }
-//                                else
-//                                {
-//                                    ProcessUpgradeFile(
-//                                    FileProcessType.NewInstall,
-//                                    aSqlCommand,
-//                                    sPath + so.Name + ".SQL",
-//                                    "InstallFile",
-//                                    aMessageQueue,
-//                                    aProcessedQueue,
-//                                    false,
-//                                    aIgnoreErrors,
-//                                    majorVersion,
-//                                    minorVersion,
-//                                    revision,
-//                                    modification,
-//                                    dbDate,
-//                                    aDatabaseType,
-//                                    aNoDataTables,
-//                                    aAllocationFileGroup,
-//                                    aForecastFileGroup,
-//                                    aHistoryFileGroup,
-//                                    aNoHistoryFileGroup,
-//                                    aDailyHistoryFileGroup,
-//                                    aNoDailyHistoryFileGroup,
-//                                    aAuditFileGroup,
-//                                    aWeekArchiveFileGroup,
-//                                    aDayArchiveFileGroup,
-//                                    false);
-
-//                                    _htProcessed.Add(so.Name, null);
-//                                }
-//                            }
-//                        }
-//                    }
-
-//                    if (aPhase == DatabaseObjectsSQLObjectPhase.PreGenerate)
-//                    {
-//                        DirectoryInfo di = new DirectoryInfo(sPath);
-//                        foreach (FileInfo fi in di.GetFiles("*.SQL"))
-//                        {
-//                            string tableName = fi.Name.Replace(".SQL", string.Empty);
-
-//                            if (_htProcessed.ContainsKey(tableName))
-//                            {
-//                                continue;
-//                            }
-
-//                            if (aUpgradeProcess && isTableFound(aSqlCommand, tableName))
-//                            {
-//                                UpdateTable(aSqlCommand, aMessageQueue, tableName, fi.FullName);
-//                            }
-//                            else
-//                            {
-//                                ProcessUpgradeFile(
-//                                    FileProcessType.NewInstall,
-//                                    aSqlCommand,
-//                                    fi.FullName,
-//                                    "InstallFile",
-//                                    aMessageQueue,
-//                                    aProcessedQueue,
-//                                    false,
-//                                    aIgnoreErrors,
-//                                    majorVersion,
-//                                    minorVersion,
-//                                    revision,
-//                                    modification,
-//                                    dbDate,
-//                                    aDatabaseType,
-//                                    aNoDataTables,
-//                                    aAllocationFileGroup,
-//                                    aForecastFileGroup,
-//                                    aHistoryFileGroup,
-//                                    aNoHistoryFileGroup,
-//                                    aDailyHistoryFileGroup,
-//                                    aNoDailyHistoryFileGroup,
-//                                    aAuditFileGroup,
-//                                    aWeekArchiveFileGroup,
-//                                    aDayArchiveFileGroup,
-//                                    false);
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//            catch (Exception ex)
-//            {
-//                aMessageQueue.Enqueue("UNEXPECTED EXCEPTION: " + ex.ToString());
-//                throw;
-//            }
-//        }
-
-//        private static void CreateSQLTableKeys(SqlCommand aSqlCommand, Queue aMessageQueue, Queue aProcessedQueue, bool aUpgradeProcess,
-//            string aConnectionString, eDatabaseType aDatabaseType,
-//            int majorVersion, int minorVersion, int revision, int modification, DateTime dbDate,
-//            bool aIgnoreErrors, int aNoDataTables, string aAllocationFileGroup,
-//            string aForecastFileGroup, string aHistoryFileGroup, int aNoHistoryFileGroup,
-//            string aDailyHistoryFileGroup, int aNoDailyHistoryFileGroup, string aAuditFileGroup,
-//            string aWeekArchiveFileGroup, string aDayArchiveFileGroup,
-//           DatabaseObjects aDatabaseObjects, DatabaseObjectsSQLObjectPhase aPhase)
-//        {
-//            try
-//            {
-
-
-//                string sPath;
-//#if (DEBUG)
-//                sPath = Directory.GetParent(Directory.GetParent(Directory.GetParent(Application.StartupPath).ToString().Trim()).ToString().Trim()) + @"\DatabaseDefinition\SQL_Constraints\";
-//#else
-//                sPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\SQL_Constraints\";
-//#endif
-//                if (System.IO.Directory.Exists(sPath) == true)
-//                {
-
-//                    if (aDatabaseObjects.SQLObject != null)
-//                    {
-//                        foreach (DatabaseObjectsSQLObject so in aDatabaseObjects.SQLObject)
-//                        {
-//                            if (so.Type == DatabaseObjectsSQLObjectType.Constraint &&
-//                                so.Phase == aPhase)
-//                            {
-//                                if (aUpgradeProcess && isConstraintFound(aSqlCommand, so.Name))
-//                                {
-//                                    continue;
-//                                }
-
-//                                string prerequisite;
-//                                if (so.Prerequisite != null &&
-//                                    !VerifyPrerequisites(aSqlCommand, so, out prerequisite))
-//                                {
-//                                    aMessageQueue.Enqueue("Prerequisite " + prerequisite + " not found for " + so.Name);
-//                                    throw new Exception("Prerequisite not found error");
-//                                }
-
-//                                ProcessUpgradeFile(
-//                                FileProcessType.NewInstall,
-//                                aSqlCommand,
-//                                sPath + so.Name + ".SQL",
-//                                "InstallFile",
-//                                aMessageQueue,
-//                                aProcessedQueue,
-//                                false,
-//                                aIgnoreErrors,
-//                                majorVersion,
-//                                minorVersion,
-//                                revision,
-//                                modification,
-//                                dbDate,
-//                                aDatabaseType,
-//                                aNoDataTables,
-//                                aAllocationFileGroup,
-//                                aForecastFileGroup,
-//                                aHistoryFileGroup,
-//                                aNoHistoryFileGroup,
-//                                aDailyHistoryFileGroup,
-//                                aNoDailyHistoryFileGroup,
-//                                aAuditFileGroup,
-//                                aWeekArchiveFileGroup,
-//                                aDayArchiveFileGroup,
-//                                false);
-
-//                                _htProcessed.Add(so.Name, null);
-//                            }
-//                        }
-//                    }
-
-//                    if (aPhase == DatabaseObjectsSQLObjectPhase.PreGenerate)
-//                    {
-//                        DirectoryInfo di = new DirectoryInfo(sPath);
-//                        foreach (FileInfo fi in di.GetFiles("*_PK.SQL"))
-//                        {
-//                            string constraintName = fi.Name.Replace(".SQL", string.Empty);
-
-//                            if (_htProcessed.ContainsKey(constraintName) ||
-//                                (aUpgradeProcess && isPrimaryKeyFound(aSqlCommand, constraintName, fi.FullName)))
-//                            {
-//                                continue;
-//                            }
-
-//                            ProcessUpgradeFile(
-//                                FileProcessType.NewInstall,
-//                                aSqlCommand,
-//                                fi.FullName,
-//                                "InstallFile",
-//                                aMessageQueue,
-//                                aProcessedQueue,
-//                                false,
-//                                aIgnoreErrors,
-//                                majorVersion,
-//                                minorVersion,
-//                                revision,
-//                                modification,
-//                                dbDate,
-//                                aDatabaseType,
-//                                aNoDataTables,
-//                                aAllocationFileGroup,
-//                                aForecastFileGroup,
-//                                aHistoryFileGroup,
-//                                aNoHistoryFileGroup,
-//                                aDailyHistoryFileGroup,
-//                                aNoDailyHistoryFileGroup,
-//                                aAuditFileGroup,
-//                                aWeekArchiveFileGroup,
-//                                aDayArchiveFileGroup,
-//                                false);
-//                        }
-//                    }
-//                }
-//            }
-//            catch (Exception ex)
-//            {
-//                aMessageQueue.Enqueue("UNEXPECTED EXCEPTION: " + ex.ToString());
-//                throw;
-//            }
-//        }
-
-//        private static void CreateSQLIndexes(SqlCommand aSqlCommand, Queue aMessageQueue, Queue aProcessedQueue, bool aUpgradeProcess,
-//            string aConnectionString, eDatabaseType aDatabaseType,
-//            int majorVersion, int minorVersion, int revision, int modification, DateTime dbDate,
-//            bool aIgnoreErrors, int aNoDataTables, string aAllocationFileGroup,
-//            string aForecastFileGroup, string aHistoryFileGroup, int aNoHistoryFileGroup,
-//            string aDailyHistoryFileGroup, int aNoDailyHistoryFileGroup, string aAuditFileGroup,
-//            string aWeekArchiveFileGroup, string aDayArchiveFileGroup,
-//            DatabaseObjects aDatabaseObjects, DatabaseObjectsSQLObjectPhase aPhase)
-//        {
-//            try
-//            {
-//                string sPath;
-//#if (DEBUG)
-//                sPath = Directory.GetParent(Directory.GetParent(Directory.GetParent(Application.StartupPath).ToString().Trim()).ToString().Trim()) + @"\DatabaseDefinition\SQL_Indexes\";
-//#else
-//                sPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\SQL_Indexes\";
-//#endif
-//                if (System.IO.Directory.Exists(sPath) == true)
-//                {
-
-//                    if (aDatabaseObjects.SQLObject != null)
-//                    {
-//                        foreach (DatabaseObjectsSQLObject so in aDatabaseObjects.SQLObject)
-//                        {
-//                            if (so.Type == DatabaseObjectsSQLObjectType.Index &&
-//                                so.Phase == aPhase)
-//                            {
-//                                if (aUpgradeProcess && isIndexFound(aSqlCommand, so.Name))
-//                                {
-//                                    continue;
-//                                }
-
-//                                string prerequisite;
-//                                if (so.Prerequisite != null &&
-//                                    !VerifyPrerequisites(aSqlCommand, so, out prerequisite))
-//                                {
-//                                    aMessageQueue.Enqueue("Prerequisite " + prerequisite + " not found for " + so.Name);
-//                                    throw new Exception("Prerequisite not found error");
-//                                }
-
-//                                ProcessUpgradeFile(
-//                                FileProcessType.NewInstall,
-//                                aSqlCommand,
-//                                sPath + so.Name + ".SQL",
-//                                "InstallFile",
-//                                aMessageQueue,
-//                                aProcessedQueue,
-//                                false,
-//                                aIgnoreErrors,
-//                                majorVersion,
-//                                minorVersion,
-//                                revision,
-//                                modification,
-//                                dbDate,
-//                                aDatabaseType,
-//                                aNoDataTables,
-//                                aAllocationFileGroup,
-//                                aForecastFileGroup,
-//                                aHistoryFileGroup,
-//                                aNoHistoryFileGroup,
-//                                aDailyHistoryFileGroup,
-//                                aNoDailyHistoryFileGroup,
-//                                aAuditFileGroup,
-//                                aWeekArchiveFileGroup,
-//                                aDayArchiveFileGroup,
-//                                false);
-
-//                                _htProcessed.Add(so.Name, null);
-//                            }
-//                        }
-//                    }
-
-//                    if (aPhase == DatabaseObjectsSQLObjectPhase.PreGenerate)
-//                    {
-//                        DirectoryInfo di = new DirectoryInfo(sPath);
-//                        foreach (FileInfo fi in di.GetFiles("*.SQL"))
-//                        {
-//                            string indexName = fi.Name.Replace(".SQL", string.Empty);
-
-//                            if (_htProcessed.ContainsKey(indexName) ||
-//                                (aUpgradeProcess && isIndexFound(aSqlCommand, indexName)))
-//                            {
-//                                continue;
-//                            }
-
-//                            ProcessUpgradeFile(
-//                                FileProcessType.NewInstall,
-//                                aSqlCommand,
-//                                fi.FullName,
-//                                "InstallFile",
-//                                aMessageQueue,
-//                                aProcessedQueue,
-//                                false,
-//                                aIgnoreErrors,
-//                                majorVersion,
-//                                minorVersion,
-//                                revision,
-//                                modification,
-//                                dbDate,
-//                                aDatabaseType,
-//                                aNoDataTables,
-//                                aAllocationFileGroup,
-//                                aForecastFileGroup,
-//                                aHistoryFileGroup,
-//                                aNoHistoryFileGroup,
-//                                aDailyHistoryFileGroup,
-//                                aNoDailyHistoryFileGroup,
-//                                aAuditFileGroup,
-//                                aWeekArchiveFileGroup,
-//                                aDayArchiveFileGroup,
-//                                false);
-//                        }
-//                    }
-//                }
-//            }
-//            catch (Exception ex)
-//            {
-//                aMessageQueue.Enqueue("UNEXPECTED EXCEPTION: " + ex.ToString());
-//                throw;
-//            }
-//        }
-//        private static void CreateSQLConstraints(SqlCommand aSqlCommand, Queue aMessageQueue, Queue aProcessedQueue, bool aUpgradeProcess,
-//            string aConnectionString, eDatabaseType aDatabaseType,
-//            int majorVersion, int minorVersion, int revision, int modification, DateTime dbDate,
-//            bool aIgnoreErrors, int aNoDataTables, string aAllocationFileGroup,
-//            string aForecastFileGroup, string aHistoryFileGroup, int aNoHistoryFileGroup,
-//            string aDailyHistoryFileGroup, int aNoDailyHistoryFileGroup, string aAuditFileGroup,
-//            string aWeekArchiveFileGroup, string aDayArchiveFileGroup,
-//            DatabaseObjects aDatabaseObjects, DatabaseObjectsSQLObjectPhase aPhase)
-//        {
-//            try
-//            {
-//                string sPath;
-//#if (DEBUG)
-//                sPath = Directory.GetParent(Directory.GetParent(Directory.GetParent(Application.StartupPath).ToString().Trim()).ToString().Trim()) + @"\DatabaseDefinition\SQL_Constraints\";
-//#else
-//                sPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\SQL_Constraints\";
-//#endif
-//                if (System.IO.Directory.Exists(sPath) == true)
-//                {
-//                    if (aDatabaseObjects.SQLObject != null)
-//                    {
-//                        foreach (DatabaseObjectsSQLObject so in aDatabaseObjects.SQLObject)
-//                        {
-//                            if (so.Type == DatabaseObjectsSQLObjectType.Constraint &&
-//                                so.Phase == aPhase)
-//                            {
-//                                if (aUpgradeProcess && isConstraintFound(aSqlCommand, so.Name))
-//                                {
-//                                    continue;
-//                                }
-
-//                                string prerequisite;
-//                                if (so.Prerequisite != null &&
-//                                    !VerifyPrerequisites(aSqlCommand, so, out prerequisite))
-//                                {
-//                                    aMessageQueue.Enqueue("Prerequisite " + prerequisite + " not found for " + so.Name);
-//                                    throw new Exception("Prerequisite not found error");
-//                                }
-
-//                                ProcessUpgradeFile(
-//                                FileProcessType.NewInstall,
-//                                aSqlCommand,
-//                                sPath + so.Name + ".SQL",
-//                                "InstallFile",
-//                                aMessageQueue,
-//                                aProcessedQueue,
-//                                false,
-//                                aIgnoreErrors,
-//                                majorVersion,
-//                                minorVersion,
-//                                revision,
-//                                modification,
-//                                dbDate,
-//                                aDatabaseType,
-//                                aNoDataTables,
-//                                aAllocationFileGroup,
-//                                aForecastFileGroup,
-//                                aHistoryFileGroup,
-//                                aNoHistoryFileGroup,
-//                                aDailyHistoryFileGroup,
-//                                aNoDailyHistoryFileGroup,
-//                                aAuditFileGroup,
-//                                aWeekArchiveFileGroup,
-//                                aDayArchiveFileGroup,
-//                                false);
-
-//                                _htProcessed.Add(so.Name, null);
-//                            }
-//                        }
-//                    }
-
-//                    if (aPhase == DatabaseObjectsSQLObjectPhase.PreGenerate)
-//                    {
-//                        DirectoryInfo di = new DirectoryInfo(sPath);
-//                        foreach (FileInfo fi in di.GetFiles("*.SQL"))
-//                        {
-//                            // skip primary keys
-//                            if (fi.Name.Contains("_PK.SQL"))
-//                            {
-//                                continue;
-//                            }
-//                            string constraintName = fi.Name.Replace(".SQL", string.Empty);
-
-//                            if (_htProcessed.ContainsKey(constraintName) ||
-//                                (aUpgradeProcess && isConstraintFound(aSqlCommand, constraintName)))
-//                            {
-//                                continue;
-//                            }
-
-//                            ProcessUpgradeFile(
-//                                FileProcessType.NewInstall,
-//                                aSqlCommand,
-//                                fi.FullName,
-//                                "InstallFile",
-//                                aMessageQueue,
-//                                aProcessedQueue,
-//                                false,
-//                                aIgnoreErrors,
-//                                majorVersion,
-//                                minorVersion,
-//                                revision,
-//                                modification,
-//                                dbDate,
-//                                aDatabaseType,
-//                                aNoDataTables,
-//                                aAllocationFileGroup,
-//                                aForecastFileGroup,
-//                                aHistoryFileGroup,
-//                                aNoHistoryFileGroup,
-//                                aDailyHistoryFileGroup,
-//                                aNoDailyHistoryFileGroup,
-//                                aAuditFileGroup,
-//                                aWeekArchiveFileGroup,
-//                                aDayArchiveFileGroup,
-//                                false);
-//                        }
-//                    }
-//                }
-//            }
-//            catch (Exception ex)
-//            {
-//                aMessageQueue.Enqueue("UNEXPECTED EXCEPTION: " + ex.ToString());
-//                throw;
-//            }
-//        }
-
-         //static private bool VerifyPrerequisites(SqlCommand aSqlCommand, DatabaseObjectsSQLObject so, out string aPrerequisite)
+        //        {
+        //            try
+        //            {
+        //                string sPath;
+        //#if (DEBUG)
+        //                sPath = Directory.GetParent(Directory.GetParent(Directory.GetParent(Application.StartupPath).ToString().Trim()).ToString().Trim()) + @"\DatabaseDefinition\SQL_Views\";
+        //#else
+        //                sPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\SQL_Views\";
+        //#endif
+        //                if (System.IO.Directory.Exists(sPath) == true)
+        //                {
+        //                    DirectoryInfo di = new DirectoryInfo(sPath);
+        //                    foreach (FileInfo fi in di.GetFiles("*.SQL"))
+        //                    {
+        //                        string sqlViewName = fi.Name.Replace(".SQL", string.Empty);
+        //                        aSqlCommand.CommandText = "IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'[dbo].[" + sqlViewName + "]') AND OBJECTPROPERTY(id, N'IsView') = 1) ";
+        //                        aSqlCommand.CommandText += "DROP VIEW [dbo].[" + sqlViewName + "] ";
+        //                        //aSqlCommand.CommandText += Environment.NewLine + "GO";
+
+        //                        aSqlCommand.ExecuteNonQuery();
+        //                    }
+        //                }
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                aMessageQueue.Enqueue("UNEXPECTED EXCEPTION: " + ex.ToString());
+        //                throw;
+        //            }
+        //        }
+        //        private static void DeleteSQLTriggers(SqlCommand aSqlCommand, Queue aMessageQueue)
+        //        {
+        //            try
+        //            {
+        //                string sPath;
+        //#if (DEBUG)
+        //                sPath = Directory.GetParent(Directory.GetParent(Directory.GetParent(Application.StartupPath).ToString().Trim()).ToString().Trim()) + @"\DatabaseDefinition\SQL_Triggers\";
+        //#else
+        //                sPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\SQL_Triggers\";
+        //#endif
+        //                if (System.IO.Directory.Exists(sPath) == true)
+        //                {
+        //                    DirectoryInfo di = new DirectoryInfo(sPath);
+        //                    foreach (FileInfo fi in di.GetFiles("*.SQL"))
+        //                    {
+        //                        string sqlTriggerName = fi.Name.Replace(".SQL", string.Empty);
+        //                        aSqlCommand.CommandText = "IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = object_id(N'[dbo].[" + sqlTriggerName + "]') AND OBJECTPROPERTY(id, N'IsTrigger') = 1) ";
+        //                        aSqlCommand.CommandText += "DROP TRIGGER [dbo].[" + sqlTriggerName + "] ";
+        //                        //aSqlCommand.CommandText += Environment.NewLine + "GO";
+
+        //                        aSqlCommand.ExecuteNonQuery();
+        //                    }
+        //                }
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                aMessageQueue.Enqueue("UNEXPECTED EXCEPTION: " + ex.ToString());
+        //                throw;
+        //            }
+        //        }
+        //        private static void CreateSQLFunctionsScalar(SqlCommand aSqlCommand, Queue aMessageQueue, Queue aProcessedQueue, bool aUpgradeProcess,
+        //            string aConnectionString, eDatabaseType aDatabaseType,
+        //            int majorVersion, int minorVersion, int revision, int modification, DateTime dbDate,
+        //            bool aIgnoreErrors, int aNoDataTables, string aAllocationFileGroup,
+        //            string aForecastFileGroup, string aHistoryFileGroup, int aNoHistoryFileGroup,
+        //            string aDailyHistoryFileGroup, int aNoDailyHistoryFileGroup, string aAuditFileGroup,
+        //            string aWeekArchiveFileGroup, string aDayArchiveFileGroup,
+        //            DatabaseObjects aDatabaseObjects, DatabaseObjectsSQLObjectPhase aPhase)
+        //        {
+        //            try
+        //            {
+        //                string sPath;
+        //#if (DEBUG)
+        //                sPath = Directory.GetParent(Directory.GetParent(Directory.GetParent(Application.StartupPath).ToString().Trim()).ToString().Trim()) + @"\DatabaseDefinition\SQL_Functions_Scalar\";
+        //#else
+        //                sPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\SQL_Functions_Scalar\";
+        //#endif
+        //                if (System.IO.Directory.Exists(sPath) == true)
+        //                {
+        //                    if (aDatabaseObjects.SQLObject != null)
+        //                    {
+        //                        foreach (DatabaseObjectsSQLObject so in aDatabaseObjects.SQLObject)
+        //                        {
+        //                            if (so.Type == DatabaseObjectsSQLObjectType.FunctionScalar &&
+        //                                so.Phase == aPhase)
+        //                            {
+        //                                //if (aUpgradeProcess && isScalarFunctionFound(aSqlCommand, so.Name))
+        //                                //{
+        //                                //    continue;
+        //                                //}
+
+        //                                string prerequisite;
+        //                                if (so.Prerequisite != null &&
+        //                                    !VerifyPrerequisites(aSqlCommand, so, out prerequisite))
+        //                                {
+        //                                    aMessageQueue.Enqueue("Prerequisite " + prerequisite + " not found for " + so.Name);
+        //                                    throw new Exception("Prerequisite not found error");
+        //                                }
+
+        //                                ProcessUpgradeFile(
+        //                                FileProcessType.NewInstall,
+        //                                aSqlCommand,
+        //                                sPath + so.Name + ".SQL",
+        //                                "InstallFile",
+        //                                aMessageQueue,
+        //                                aProcessedQueue,
+        //                                false,
+        //                                aIgnoreErrors,
+        //                                majorVersion,
+        //                                minorVersion,
+        //                                revision,
+        //                                modification,
+        //                                dbDate,
+        //                                aDatabaseType,
+        //                                aNoDataTables,
+        //                                aAllocationFileGroup,
+        //                                aForecastFileGroup,
+        //                                aHistoryFileGroup,
+        //                                aNoHistoryFileGroup,
+        //                                aDailyHistoryFileGroup,
+        //                                aNoDailyHistoryFileGroup,
+        //                                aAuditFileGroup,
+        //                                aWeekArchiveFileGroup,
+        //                                aDayArchiveFileGroup,
+        //                                false);
+
+        //                                _htProcessed.Add(so.Name, null);
+        //                            }
+        //                        }
+        //                    }
+
+        //                    if (aPhase == DatabaseObjectsSQLObjectPhase.PreGenerate)
+        //                    {
+        //                        DirectoryInfo di = new DirectoryInfo(sPath);
+        //                        foreach (FileInfo fi in di.GetFiles("*.SQL"))
+        //                        {
+        //                            string functionName = fi.Name.Replace(".SQL", string.Empty);
+
+        //                            if (_htProcessed.ContainsKey(functionName) ||
+        //                                (aUpgradeProcess && isScalarFunctionFound(aSqlCommand, functionName)))
+        //                            {
+        //                                continue;
+        //                            }
+
+        //                            ProcessUpgradeFile(
+        //                                FileProcessType.NewInstall,
+        //                                aSqlCommand,
+        //                                fi.FullName,
+        //                                "InstallFile",
+        //                                aMessageQueue,
+        //                                aProcessedQueue,
+        //                                false,
+        //                                aIgnoreErrors,
+        //                                majorVersion,
+        //                                minorVersion,
+        //                                revision,
+        //                                modification,
+        //                                dbDate,
+        //                                aDatabaseType,
+        //                                aNoDataTables,
+        //                                aAllocationFileGroup,
+        //                                aForecastFileGroup,
+        //                                aHistoryFileGroup,
+        //                                aNoHistoryFileGroup,
+        //                                aDailyHistoryFileGroup,
+        //                                aNoDailyHistoryFileGroup,
+        //                                aAuditFileGroup,
+        //                                aWeekArchiveFileGroup,
+        //                                aDayArchiveFileGroup,
+        //                                false);
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                aMessageQueue.Enqueue("UNEXPECTED EXCEPTION: " + ex.ToString());
+        //                throw;
+        //            }
+        //        }
+        //        private static void CreateSQLFunctionsTable(SqlCommand aSqlCommand, Queue aMessageQueue, Queue aProcessedQueue, bool aUpgradeProcess,
+        //            string aConnectionString, eDatabaseType aDatabaseType,
+        //            int majorVersion, int minorVersion, int revision, int modification, DateTime dbDate,
+        //            bool aIgnoreErrors, int aNoDataTables, string aAllocationFileGroup,
+        //            string aForecastFileGroup, string aHistoryFileGroup, int aNoHistoryFileGroup,
+        //            string aDailyHistoryFileGroup, int aNoDailyHistoryFileGroup, string aAuditFileGroup,
+        //            string aWeekArchiveFileGroup, string aDayArchiveFileGroup,
+        //            DatabaseObjects aDatabaseObjects, DatabaseObjectsSQLObjectPhase aPhase)
+        //        {
+        //            try
+        //            {
+        //                string sPath;
+        //#if (DEBUG)
+        //                sPath = Directory.GetParent(Directory.GetParent(Directory.GetParent(Application.StartupPath).ToString().Trim()).ToString().Trim()) + @"\DatabaseDefinition\SQL_Functions_Table\";
+        //#else
+        //                sPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\SQL_Functions_Table\";
+        //#endif
+        //                if (System.IO.Directory.Exists(sPath) == true)
+        //                {
+        //                    if (aDatabaseObjects.SQLObject != null)
+        //                    {
+        //                        foreach (DatabaseObjectsSQLObject so in aDatabaseObjects.SQLObject)
+        //                        {
+        //                            if (so.Type == DatabaseObjectsSQLObjectType.FunctionTable &&
+        //                                so.Phase == aPhase)
+        //                            {
+        //                                //if (aUpgradeProcess && isTableFunctionFound(aSqlCommand, so.Name))
+        //                                //{
+        //                                //    continue;
+        //                                //}
+
+        //                                string prerequisite;
+        //                                if (so.Prerequisite != null &&
+        //                                    !VerifyPrerequisites(aSqlCommand, so, out prerequisite))
+        //                                {
+        //                                    aMessageQueue.Enqueue("Prerequisite " + prerequisite + " not found for " + so.Name);
+        //                                    throw new Exception("Prerequisite not found error");
+        //                                }
+
+        //                                ProcessUpgradeFile(
+        //                                FileProcessType.NewInstall,
+        //                                aSqlCommand,
+        //                                sPath + so.Name + ".SQL",
+        //                                "InstallFile",
+        //                                aMessageQueue,
+        //                                aProcessedQueue,
+        //                                false,
+        //                                aIgnoreErrors,
+        //                                majorVersion,
+        //                                minorVersion,
+        //                                revision,
+        //                                modification,
+        //                                dbDate,
+        //                                aDatabaseType,
+        //                                aNoDataTables,
+        //                                aAllocationFileGroup,
+        //                                aForecastFileGroup,
+        //                                aHistoryFileGroup,
+        //                                aNoHistoryFileGroup,
+        //                                aDailyHistoryFileGroup,
+        //                                aNoDailyHistoryFileGroup,
+        //                                aAuditFileGroup,
+        //                                aWeekArchiveFileGroup,
+        //                                aDayArchiveFileGroup,
+        //                                false);
+
+        //                                _htProcessed.Add(so.Name, null);
+        //                            }
+        //                        }
+        //                    }
+
+        //                    if (aPhase == DatabaseObjectsSQLObjectPhase.PreGenerate)
+        //                    {
+        //                        DirectoryInfo di = new DirectoryInfo(sPath);
+        //                        foreach (FileInfo fi in di.GetFiles("*.SQL"))
+        //                        {
+        //                            string functionName = fi.Name.Replace(".SQL", string.Empty);
+
+        //                            if (_htProcessed.ContainsKey(functionName) ||
+        //                                (aUpgradeProcess && isTableFunctionFound(aSqlCommand, functionName)))
+        //                            {
+        //                                continue;
+        //                            }
+
+        //                            ProcessUpgradeFile(
+        //                                FileProcessType.NewInstall,
+        //                                aSqlCommand,
+        //                                fi.FullName,
+        //                                "InstallFile",
+        //                                aMessageQueue,
+        //                                aProcessedQueue,
+        //                                false,
+        //                                aIgnoreErrors,
+        //                                majorVersion,
+        //                                minorVersion,
+        //                                revision,
+        //                                modification,
+        //                                dbDate,
+        //                                aDatabaseType,
+        //                                aNoDataTables,
+        //                                aAllocationFileGroup,
+        //                                aForecastFileGroup,
+        //                                aHistoryFileGroup,
+        //                                aNoHistoryFileGroup,
+        //                                aDailyHistoryFileGroup,
+        //                                aNoDailyHistoryFileGroup,
+        //                                aAuditFileGroup,
+        //                                aWeekArchiveFileGroup,
+        //                                aDayArchiveFileGroup,
+        //                                false);
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                aMessageQueue.Enqueue("UNEXPECTED EXCEPTION: " + ex.ToString());
+        //                throw;
+        //            }
+        //        }
+        //        private static void CreateSQLTypes(SqlCommand aSqlCommand, Queue aMessageQueue, Queue aProcessedQueue, bool aUpgradeProcess,
+        //            string aConnectionString, eDatabaseType aDatabaseType,
+        //            int majorVersion, int minorVersion, int revision, int modification, DateTime dbDate,
+        //            bool aIgnoreErrors, int aNoDataTables, string aAllocationFileGroup,
+        //            string aForecastFileGroup, string aHistoryFileGroup, int aNoHistoryFileGroup,
+        //            string aDailyHistoryFileGroup, int aNoDailyHistoryFileGroup, string aAuditFileGroup,
+        //            string aWeekArchiveFileGroup, string aDayArchiveFileGroup,
+        //            DatabaseObjects aDatabaseObjects, DatabaseObjectsSQLObjectPhase aPhase)
+        //        {
+        //            try
+        //            {
+        //                string sPath;
+        //#if (DEBUG)
+        //                sPath = Directory.GetParent(Directory.GetParent(Directory.GetParent(Application.StartupPath).ToString().Trim()).ToString().Trim()) + @"\DatabaseDefinition\SQL_Types\";
+        //#else
+        //                sPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\SQL_Types\";
+        //#endif
+        //                if (System.IO.Directory.Exists(sPath) == true)
+        //                {
+        //                    if (aDatabaseObjects.SQLObject != null)
+        //                    {
+        //                        foreach (DatabaseObjectsSQLObject so in aDatabaseObjects.SQLObject)
+        //                        {
+        //                            if (so.Type == DatabaseObjectsSQLObjectType.Type &&
+        //                                so.Phase == aPhase)
+        //                            {
+        //                                //if (aUpgradeProcess && isTypeFound(aSqlCommand, so.Name))
+        //                                //{
+        //                                //    continue;
+        //                                //}
+
+        //                                string prerequisite;
+        //                                if (so.Prerequisite != null &&
+        //                                    !VerifyPrerequisites(aSqlCommand, so, out prerequisite))
+        //                                {
+        //                                    aMessageQueue.Enqueue("Prerequisite " + prerequisite + " not found for " + so.Name);
+        //                                    throw new Exception("Prerequisite not found error");
+        //                                }
+
+        //                                ProcessUpgradeFile(
+        //                                FileProcessType.NewInstall,
+        //                                aSqlCommand,
+        //                                sPath + so.Name + ".SQL",
+        //                                "InstallFile",
+        //                                aMessageQueue,
+        //                                aProcessedQueue,
+        //                                false,
+        //                                aIgnoreErrors,
+        //                                majorVersion,
+        //                                minorVersion,
+        //                                revision,
+        //                                modification,
+        //                                dbDate,
+        //                                aDatabaseType,
+        //                                aNoDataTables,
+        //                                aAllocationFileGroup,
+        //                                aForecastFileGroup,
+        //                                aHistoryFileGroup,
+        //                                aNoHistoryFileGroup,
+        //                                aDailyHistoryFileGroup,
+        //                                aNoDailyHistoryFileGroup,
+        //                                aAuditFileGroup,
+        //                                aWeekArchiveFileGroup,
+        //                                aDayArchiveFileGroup,
+        //                                false);
+
+        //                                _htProcessed.Add(so.Name, null);
+        //                            }
+        //                        }
+        //                    }
+
+        //                    if (aPhase == DatabaseObjectsSQLObjectPhase.PreGenerate)
+        //                    {
+        //                        DirectoryInfo di = new DirectoryInfo(sPath);
+        //                        foreach (FileInfo fi in di.GetFiles("*.SQL"))
+        //                        {
+        //                            string sqlTypeName = fi.Name.Replace(".SQL", string.Empty);
+
+        //                            if (_htProcessed.ContainsKey(sqlTypeName) ||
+        //                                (aUpgradeProcess && isTypeFound(aSqlCommand, sqlTypeName)))
+        //                            {
+        //                                continue;
+        //                            }
+
+        //                            ProcessUpgradeFile(
+        //                                //FileProcessType.NewInstall,
+        //                                FileProcessType.NewInstall,
+        //                                aSqlCommand,
+        //                                fi.FullName,
+        //                                "InstallFile",
+        //                                aMessageQueue,
+        //                                aProcessedQueue,
+        //                                false,
+        //                                aIgnoreErrors,
+        //                                majorVersion,
+        //                                minorVersion,
+        //                                revision,
+        //                                modification,
+        //                                dbDate,
+        //                                aDatabaseType,
+        //                                aNoDataTables,
+        //                                aAllocationFileGroup,
+        //                                aForecastFileGroup,
+        //                                aHistoryFileGroup,
+        //                                aNoHistoryFileGroup,
+        //                                aDailyHistoryFileGroup,
+        //                                aNoDailyHistoryFileGroup,
+        //                                aAuditFileGroup,
+        //                                aWeekArchiveFileGroup,
+        //                                aDayArchiveFileGroup,
+        //                                false);
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                aMessageQueue.Enqueue("UNEXPECTED EXCEPTION: " + ex.ToString());
+        //                throw;
+        //            }
+        //        }
+        //        private static void CreateSQLStoredProcedures(SqlCommand aSqlCommand, Queue aMessageQueue, Queue aProcessedQueue, bool aUpgradeProcess,
+        //            string aConnectionString, eDatabaseType aDatabaseType,
+        //            int majorVersion, int minorVersion, int revision, int modification, DateTime dbDate,
+        //            bool aIgnoreErrors, int aNoDataTables, string aAllocationFileGroup,
+        //            string aForecastFileGroup, string aHistoryFileGroup, int aNoHistoryFileGroup,
+        //            string aDailyHistoryFileGroup, int aNoDailyHistoryFileGroup, string aAuditFileGroup,
+        //            string aWeekArchiveFileGroup, string aDayArchiveFileGroup,
+        //            DatabaseObjects aDatabaseObjects, DatabaseObjectsSQLObjectPhase aPhase)
+        //        {
+        //            try
+        //            {
+        //                string sPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\SQL_StoredProcedures\";
+        //#if (DEBUG)
+        //                sPath = Directory.GetParent(Directory.GetParent(Directory.GetParent(Application.StartupPath).ToString().Trim()).ToString().Trim()) + @"\DatabaseDefinition\SQL_StoredProcedures\";
+        //#else
+        //                sPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\SQL_StoredProcedures\";
+        //#endif
+        //                if (System.IO.Directory.Exists(sPath) == true)
+        //                {
+        //                    if (aDatabaseObjects.SQLObject != null)
+        //                    {
+        //                        foreach (DatabaseObjectsSQLObject so in aDatabaseObjects.SQLObject)
+        //                        {
+        //                            if (so.Type == DatabaseObjectsSQLObjectType.StoredProcedure &&
+        //                                so.Phase == aPhase)
+        //                            {
+        //                                //if (aUpgradeProcess && isStoredProcedureFound(aSqlCommand, so.Name))
+        //                                //{
+        //                                //    continue;
+        //                                //}
+
+        //                                string prerequisite;
+        //                                if (so.Prerequisite != null &&
+        //                                    !VerifyPrerequisites(aSqlCommand, so, out prerequisite))
+        //                                {
+        //                                    aMessageQueue.Enqueue("Prerequisite " + prerequisite + " not found for " + so.Name);
+        //                                    throw new Exception("Prerequisite not found error");
+        //                                }
+
+        //                                ProcessUpgradeFile(
+        //                                FileProcessType.NewInstall,
+        //                                aSqlCommand,
+        //                                sPath + so.Name + ".SQL",
+        //                                "InstallFile",
+        //                                aMessageQueue,
+        //                                aProcessedQueue,
+        //                                false,
+        //                                aIgnoreErrors,
+        //                                majorVersion,
+        //                                minorVersion,
+        //                                revision,
+        //                                modification,
+        //                                dbDate,
+        //                                aDatabaseType,
+        //                                aNoDataTables,
+        //                                aAllocationFileGroup,
+        //                                aForecastFileGroup,
+        //                                aHistoryFileGroup,
+        //                                aNoHistoryFileGroup,
+        //                                aDailyHistoryFileGroup,
+        //                                aNoDailyHistoryFileGroup,
+        //                                aAuditFileGroup,
+        //                                aWeekArchiveFileGroup,
+        //                                aDayArchiveFileGroup,
+        //                                false);
+
+        //                                _htProcessed.Add(so.Name, null);
+        //                            }
+        //                        }
+        //                    }
+
+        //                    if (aPhase == DatabaseObjectsSQLObjectPhase.PreGenerate)
+        //                    {
+        //                        DirectoryInfo di = new DirectoryInfo(sPath);
+        //                        foreach (FileInfo fi in di.GetFiles("*.SQL"))
+        //                        {
+        //                            string procedureName = fi.Name.Replace(".SQL", string.Empty);
+
+        //                            if (_htProcessed.ContainsKey(procedureName) ||
+        //                                (aUpgradeProcess && isStoredProcedureFound(aSqlCommand, procedureName)))
+        //                            {
+        //                                continue;
+        //                            }
+
+        //                            ProcessUpgradeFile(
+        //                                FileProcessType.NewInstall,
+        //                                aSqlCommand,
+        //                                fi.FullName,
+        //                                "InstallFile",
+        //                                aMessageQueue,
+        //                                aProcessedQueue,
+        //                                false,
+        //                                aIgnoreErrors,
+        //                                majorVersion,
+        //                                minorVersion,
+        //                                revision,
+        //                                modification,
+        //                                dbDate,
+        //                                aDatabaseType,
+        //                                aNoDataTables,
+        //                                aAllocationFileGroup,
+        //                                aForecastFileGroup,
+        //                                aHistoryFileGroup,
+        //                                aNoHistoryFileGroup,
+        //                                aDailyHistoryFileGroup,
+        //                                aNoDailyHistoryFileGroup,
+        //                                aAuditFileGroup,
+        //                                aWeekArchiveFileGroup,
+        //                                aDayArchiveFileGroup,
+        //                                false);
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                aMessageQueue.Enqueue("UNEXPECTED EXCEPTION: " + ex.ToString());
+        //                throw;
+        //            }
+        //        }
+        //        private static void CreateSQLViews(SqlCommand aSqlCommand, Queue aMessageQueue, Queue aProcessedQueue, bool aUpgradeProcess,
+        //            string aConnectionString, eDatabaseType aDatabaseType,
+        //            int majorVersion, int minorVersion, int revision, int modification, DateTime dbDate,
+        //            bool aIgnoreErrors, int aNoDataTables, string aAllocationFileGroup,
+        //            string aForecastFileGroup, string aHistoryFileGroup, int aNoHistoryFileGroup,
+        //            string aDailyHistoryFileGroup, int aNoDailyHistoryFileGroup, string aAuditFileGroup,
+        //            string aWeekArchiveFileGroup, string aDayArchiveFileGroup,
+        //            DatabaseObjects aDatabaseObjects, DatabaseObjectsSQLObjectPhase aPhase)
+        //        {
+        //            try
+        //            {
+        //                string sPath;
+        //#if (DEBUG)
+        //                sPath = Directory.GetParent(Directory.GetParent(Directory.GetParent(Application.StartupPath).ToString().Trim()).ToString().Trim()) + @"\DatabaseDefinition\SQL_Views\";
+        //#else
+        //                sPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\SQL_Views\";
+        //#endif
+        //                if (System.IO.Directory.Exists(sPath) == true)
+        //                {
+        //                    if (aDatabaseObjects.SQLObject != null)
+        //                    {
+        //                        foreach (DatabaseObjectsSQLObject so in aDatabaseObjects.SQLObject)
+        //                        {
+        //                            if (so.Type == DatabaseObjectsSQLObjectType.View &&
+        //                                so.Phase == aPhase)
+        //                            {
+        //                                //if (aUpgradeProcess && isViewFound(aSqlCommand, so.Name))
+        //                                //{
+        //                                //    continue;
+        //                                //}
+
+        //                                string prerequisite;
+        //                                if (so.Prerequisite != null &&
+        //                                    !VerifyPrerequisites(aSqlCommand, so, out prerequisite))
+        //                                {
+        //                                    aMessageQueue.Enqueue("Prerequisite " + prerequisite + " not found for " + so.Name);
+        //                                    throw new Exception("Prerequisite not found error");
+        //                                }
+
+        //                                ProcessUpgradeFile(
+        //                                FileProcessType.NewInstall,
+        //                                aSqlCommand,
+        //                                sPath + so.Name + ".SQL",
+        //                                "InstallFile",
+        //                                aMessageQueue,
+        //                                aProcessedQueue,
+        //                                false,
+        //                                aIgnoreErrors,
+        //                                majorVersion,
+        //                                minorVersion,
+        //                                revision,
+        //                                modification,
+        //                                dbDate,
+        //                                aDatabaseType,
+        //                                aNoDataTables,
+        //                                aAllocationFileGroup,
+        //                                aForecastFileGroup,
+        //                                aHistoryFileGroup,
+        //                                aNoHistoryFileGroup,
+        //                                aDailyHistoryFileGroup,
+        //                                aNoDailyHistoryFileGroup,
+        //                                aAuditFileGroup,
+        //                                aWeekArchiveFileGroup,
+        //                                aDayArchiveFileGroup,
+        //                                false);
+
+        //                                _htProcessed.Add(so.Name, null);
+        //                            }
+        //                        }
+        //                    }
+
+        //                    if (aPhase == DatabaseObjectsSQLObjectPhase.PreGenerate)
+        //                    {
+        //                        DirectoryInfo di = new DirectoryInfo(sPath);
+        //                        foreach (FileInfo fi in di.GetFiles("*.SQL"))
+        //                        {
+        //                            string viewName = fi.Name.Replace(".SQL", string.Empty);
+
+        //                            if (_htProcessed.ContainsKey(viewName) ||
+        //                                (aUpgradeProcess && isViewFound(aSqlCommand, viewName)))
+        //                            {
+        //                                continue;
+        //                            }
+
+        //                            ProcessUpgradeFile(
+        //                                FileProcessType.NewInstall,
+        //                                aSqlCommand,
+        //                                fi.FullName,
+        //                                "InstallFile",
+        //                                aMessageQueue,
+        //                                aProcessedQueue,
+        //                                false,
+        //                                aIgnoreErrors,
+        //                                majorVersion,
+        //                                minorVersion,
+        //                                revision,
+        //                                modification,
+        //                                dbDate,
+        //                                aDatabaseType,
+        //                                aNoDataTables,
+        //                                aAllocationFileGroup,
+        //                                aForecastFileGroup,
+        //                                aHistoryFileGroup,
+        //                                aNoHistoryFileGroup,
+        //                                aDailyHistoryFileGroup,
+        //                                aNoDailyHistoryFileGroup,
+        //                                aAuditFileGroup,
+        //                                aWeekArchiveFileGroup,
+        //                                aDayArchiveFileGroup,
+        //                                false);
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                aMessageQueue.Enqueue("UNEXPECTED EXCEPTION: " + ex.ToString());
+        //                throw;
+        //            }
+        //        }
+        //        private static void CreateSQLTriggers(SqlCommand aSqlCommand, Queue aMessageQueue, Queue aProcessedQueue, bool aUpgradeProcess,
+        //            string aConnectionString, eDatabaseType aDatabaseType,
+        //            int majorVersion, int minorVersion, int revision, int modification, DateTime dbDate,
+        //            bool aIgnoreErrors, int aNoDataTables, string aAllocationFileGroup,
+        //            string aForecastFileGroup, string aHistoryFileGroup, int aNoHistoryFileGroup,
+        //            string aDailyHistoryFileGroup, int aNoDailyHistoryFileGroup, string aAuditFileGroup,
+        //            string aWeekArchiveFileGroup, string aDayArchiveFileGroup,
+        //            DatabaseObjects aDatabaseObjects, DatabaseObjectsSQLObjectPhase aPhase)
+        //        {
+        //            try
+        //            {
+        //                string sPath;
+        //#if (DEBUG)
+        //                sPath = Directory.GetParent(Directory.GetParent(Directory.GetParent(Application.StartupPath).ToString().Trim()).ToString().Trim()) + @"\DatabaseDefinition\SQL_Triggers\";
+        //#else
+        //                sPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\SQL_Triggers\";
+        //#endif
+        //                if (System.IO.Directory.Exists(sPath) == true)
+        //                {
+
+        //                    if (aDatabaseObjects.SQLObject != null)
+        //                    {
+        //                        foreach (DatabaseObjectsSQLObject so in aDatabaseObjects.SQLObject)
+        //                        {
+        //                            if (so.Type == DatabaseObjectsSQLObjectType.Trigger &&
+        //                                so.Phase == aPhase)
+        //                            {
+        //                                //if (aUpgradeProcess && isTriggerFound(aSqlCommand, so.Name))
+        //                                //{
+        //                                //    continue;
+        //                                //}
+
+        //                                string prerequisite;
+        //                                if (so.Prerequisite != null &&
+        //                                    !VerifyPrerequisites(aSqlCommand, so, out prerequisite))
+        //                                {
+        //                                    aMessageQueue.Enqueue("Prerequisite " + prerequisite + " not found for " + so.Name);
+        //                                    throw new Exception("Prerequisite not found error");
+        //                                }
+
+        //                                ProcessUpgradeFile(
+        //                                FileProcessType.NewInstall,
+        //                                aSqlCommand,
+        //                                sPath + so.Name + ".SQL",
+        //                                "InstallFile",
+        //                                aMessageQueue,
+        //                                aProcessedQueue,
+        //                                false,
+        //                                aIgnoreErrors,
+        //                                majorVersion,
+        //                                minorVersion,
+        //                                revision,
+        //                                modification,
+        //                                dbDate,
+        //                                aDatabaseType,
+        //                                aNoDataTables,
+        //                                aAllocationFileGroup,
+        //                                aForecastFileGroup,
+        //                                aHistoryFileGroup,
+        //                                aNoHistoryFileGroup,
+        //                                aDailyHistoryFileGroup,
+        //                                aNoDailyHistoryFileGroup,
+        //                                aAuditFileGroup,
+        //                                aWeekArchiveFileGroup,
+        //                                aDayArchiveFileGroup,
+        //                                false);
+
+        //                                _htProcessed.Add(so.Name, null);
+        //                            }
+        //                        }
+        //                    }
+
+        //                    if (aPhase == DatabaseObjectsSQLObjectPhase.PreGenerate)
+        //                    {
+        //                        DirectoryInfo di = new DirectoryInfo(sPath);
+        //                        foreach (FileInfo fi in di.GetFiles("*.SQL"))
+        //                        {
+        //                            string triggerName = fi.Name.Replace(".SQL", string.Empty);
+
+        //                            if (_htProcessed.ContainsKey(triggerName) ||
+        //                                (aUpgradeProcess && isTriggerFound(aSqlCommand, triggerName)))
+        //                            {
+        //                                continue;
+        //                            }
+
+        //                            ProcessUpgradeFile(
+        //                                FileProcessType.NewInstall,
+        //                                aSqlCommand,
+        //                                fi.FullName,
+        //                                "InstallFile",
+        //                                aMessageQueue,
+        //                                aProcessedQueue,
+        //                                false,
+        //                                aIgnoreErrors,
+        //                                majorVersion,
+        //                                minorVersion,
+        //                                revision,
+        //                                modification,
+        //                                dbDate,
+        //                                aDatabaseType,
+        //                                aNoDataTables,
+        //                                aAllocationFileGroup,
+        //                                aForecastFileGroup,
+        //                                aHistoryFileGroup,
+        //                                aNoHistoryFileGroup,
+        //                                aDailyHistoryFileGroup,
+        //                                aNoDailyHistoryFileGroup,
+        //                                aAuditFileGroup,
+        //                                aWeekArchiveFileGroup,
+        //                                aDayArchiveFileGroup,
+        //                                false);
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                aMessageQueue.Enqueue("UNEXPECTED EXCEPTION: " + ex.ToString());
+        //                throw;
+        //            }
+        //        }
+
+        //        private static void CreateSQLTables(SqlCommand aSqlCommand, Queue aMessageQueue, Queue aProcessedQueue, bool aUpgradeProcess,
+        //            string aConnectionString, eDatabaseType aDatabaseType,
+        //            int majorVersion, int minorVersion, int revision, int modification, DateTime dbDate,
+        //            bool aIgnoreErrors, int aNoDataTables, string aAllocationFileGroup,
+        //            string aForecastFileGroup, string aHistoryFileGroup, int aNoHistoryFileGroup,
+        //            string aDailyHistoryFileGroup, int aNoDailyHistoryFileGroup, string aAuditFileGroup,
+        //            string aWeekArchiveFileGroup, string aDayArchiveFileGroup,
+        //           DatabaseObjects aDatabaseObjects, DatabaseObjectsSQLObjectPhase aPhase)
+        //        {
+        //            try
+        //            {
+        //                string sPath;
+        //#if (DEBUG)
+        //                sPath = Directory.GetParent(Directory.GetParent(Directory.GetParent(Application.StartupPath).ToString().Trim()).ToString().Trim()) + @"\DatabaseDefinition\SQL_Tables\";
+        //#else
+        //                sPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\SQL_Tables\";
+        //#endif
+        //                if (System.IO.Directory.Exists(sPath) == true)
+        //                {
+
+        //                    if (aDatabaseObjects.SQLObject != null)
+        //                    {
+        //                        foreach (DatabaseObjectsSQLObject so in aDatabaseObjects.SQLObject)
+        //                        {
+        //                            if (so.Type == DatabaseObjectsSQLObjectType.Table &&
+        //                                so.Phase == aPhase)
+        //                            {
+        //                                string prerequisite;
+        //                                if (so.Prerequisite != null &&
+        //                                    !VerifyPrerequisites(aSqlCommand, so, out prerequisite))
+        //                                {
+        //                                    aMessageQueue.Enqueue("Prerequisite " + prerequisite + " not found for " + so.Name);
+        //                                    throw new Exception("Prerequisite not found error");
+        //                                }
+
+        //                                if (aUpgradeProcess && isTableFound(aSqlCommand, so.Name))
+        //                                {
+        //                                    UpdateTable(aSqlCommand, aMessageQueue, so.Name, sPath + so.Name + ".SQL");
+        //                                }
+        //                                else
+        //                                {
+        //                                    ProcessUpgradeFile(
+        //                                    FileProcessType.NewInstall,
+        //                                    aSqlCommand,
+        //                                    sPath + so.Name + ".SQL",
+        //                                    "InstallFile",
+        //                                    aMessageQueue,
+        //                                    aProcessedQueue,
+        //                                    false,
+        //                                    aIgnoreErrors,
+        //                                    majorVersion,
+        //                                    minorVersion,
+        //                                    revision,
+        //                                    modification,
+        //                                    dbDate,
+        //                                    aDatabaseType,
+        //                                    aNoDataTables,
+        //                                    aAllocationFileGroup,
+        //                                    aForecastFileGroup,
+        //                                    aHistoryFileGroup,
+        //                                    aNoHistoryFileGroup,
+        //                                    aDailyHistoryFileGroup,
+        //                                    aNoDailyHistoryFileGroup,
+        //                                    aAuditFileGroup,
+        //                                    aWeekArchiveFileGroup,
+        //                                    aDayArchiveFileGroup,
+        //                                    false);
+
+        //                                    _htProcessed.Add(so.Name, null);
+        //                                }
+        //                            }
+        //                        }
+        //                    }
+
+        //                    if (aPhase == DatabaseObjectsSQLObjectPhase.PreGenerate)
+        //                    {
+        //                        DirectoryInfo di = new DirectoryInfo(sPath);
+        //                        foreach (FileInfo fi in di.GetFiles("*.SQL"))
+        //                        {
+        //                            string tableName = fi.Name.Replace(".SQL", string.Empty);
+
+        //                            if (_htProcessed.ContainsKey(tableName))
+        //                            {
+        //                                continue;
+        //                            }
+
+        //                            if (aUpgradeProcess && isTableFound(aSqlCommand, tableName))
+        //                            {
+        //                                UpdateTable(aSqlCommand, aMessageQueue, tableName, fi.FullName);
+        //                            }
+        //                            else
+        //                            {
+        //                                ProcessUpgradeFile(
+        //                                    FileProcessType.NewInstall,
+        //                                    aSqlCommand,
+        //                                    fi.FullName,
+        //                                    "InstallFile",
+        //                                    aMessageQueue,
+        //                                    aProcessedQueue,
+        //                                    false,
+        //                                    aIgnoreErrors,
+        //                                    majorVersion,
+        //                                    minorVersion,
+        //                                    revision,
+        //                                    modification,
+        //                                    dbDate,
+        //                                    aDatabaseType,
+        //                                    aNoDataTables,
+        //                                    aAllocationFileGroup,
+        //                                    aForecastFileGroup,
+        //                                    aHistoryFileGroup,
+        //                                    aNoHistoryFileGroup,
+        //                                    aDailyHistoryFileGroup,
+        //                                    aNoDailyHistoryFileGroup,
+        //                                    aAuditFileGroup,
+        //                                    aWeekArchiveFileGroup,
+        //                                    aDayArchiveFileGroup,
+        //                                    false);
+        //                            }
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                aMessageQueue.Enqueue("UNEXPECTED EXCEPTION: " + ex.ToString());
+        //                throw;
+        //            }
+        //        }
+
+        //        private static void CreateSQLTableKeys(SqlCommand aSqlCommand, Queue aMessageQueue, Queue aProcessedQueue, bool aUpgradeProcess,
+        //            string aConnectionString, eDatabaseType aDatabaseType,
+        //            int majorVersion, int minorVersion, int revision, int modification, DateTime dbDate,
+        //            bool aIgnoreErrors, int aNoDataTables, string aAllocationFileGroup,
+        //            string aForecastFileGroup, string aHistoryFileGroup, int aNoHistoryFileGroup,
+        //            string aDailyHistoryFileGroup, int aNoDailyHistoryFileGroup, string aAuditFileGroup,
+        //            string aWeekArchiveFileGroup, string aDayArchiveFileGroup,
+        //           DatabaseObjects aDatabaseObjects, DatabaseObjectsSQLObjectPhase aPhase)
+        //        {
+        //            try
+        //            {
+
+
+        //                string sPath;
+        //#if (DEBUG)
+        //                sPath = Directory.GetParent(Directory.GetParent(Directory.GetParent(Application.StartupPath).ToString().Trim()).ToString().Trim()) + @"\DatabaseDefinition\SQL_Constraints\";
+        //#else
+        //                sPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\SQL_Constraints\";
+        //#endif
+        //                if (System.IO.Directory.Exists(sPath) == true)
+        //                {
+
+        //                    if (aDatabaseObjects.SQLObject != null)
+        //                    {
+        //                        foreach (DatabaseObjectsSQLObject so in aDatabaseObjects.SQLObject)
+        //                        {
+        //                            if (so.Type == DatabaseObjectsSQLObjectType.Constraint &&
+        //                                so.Phase == aPhase)
+        //                            {
+        //                                if (aUpgradeProcess && isConstraintFound(aSqlCommand, so.Name))
+        //                                {
+        //                                    continue;
+        //                                }
+
+        //                                string prerequisite;
+        //                                if (so.Prerequisite != null &&
+        //                                    !VerifyPrerequisites(aSqlCommand, so, out prerequisite))
+        //                                {
+        //                                    aMessageQueue.Enqueue("Prerequisite " + prerequisite + " not found for " + so.Name);
+        //                                    throw new Exception("Prerequisite not found error");
+        //                                }
+
+        //                                ProcessUpgradeFile(
+        //                                FileProcessType.NewInstall,
+        //                                aSqlCommand,
+        //                                sPath + so.Name + ".SQL",
+        //                                "InstallFile",
+        //                                aMessageQueue,
+        //                                aProcessedQueue,
+        //                                false,
+        //                                aIgnoreErrors,
+        //                                majorVersion,
+        //                                minorVersion,
+        //                                revision,
+        //                                modification,
+        //                                dbDate,
+        //                                aDatabaseType,
+        //                                aNoDataTables,
+        //                                aAllocationFileGroup,
+        //                                aForecastFileGroup,
+        //                                aHistoryFileGroup,
+        //                                aNoHistoryFileGroup,
+        //                                aDailyHistoryFileGroup,
+        //                                aNoDailyHistoryFileGroup,
+        //                                aAuditFileGroup,
+        //                                aWeekArchiveFileGroup,
+        //                                aDayArchiveFileGroup,
+        //                                false);
+
+        //                                _htProcessed.Add(so.Name, null);
+        //                            }
+        //                        }
+        //                    }
+
+        //                    if (aPhase == DatabaseObjectsSQLObjectPhase.PreGenerate)
+        //                    {
+        //                        DirectoryInfo di = new DirectoryInfo(sPath);
+        //                        foreach (FileInfo fi in di.GetFiles("*_PK.SQL"))
+        //                        {
+        //                            string constraintName = fi.Name.Replace(".SQL", string.Empty);
+
+        //                            if (_htProcessed.ContainsKey(constraintName) ||
+        //                                (aUpgradeProcess && isPrimaryKeyFound(aSqlCommand, constraintName, fi.FullName)))
+        //                            {
+        //                                continue;
+        //                            }
+
+        //                            ProcessUpgradeFile(
+        //                                FileProcessType.NewInstall,
+        //                                aSqlCommand,
+        //                                fi.FullName,
+        //                                "InstallFile",
+        //                                aMessageQueue,
+        //                                aProcessedQueue,
+        //                                false,
+        //                                aIgnoreErrors,
+        //                                majorVersion,
+        //                                minorVersion,
+        //                                revision,
+        //                                modification,
+        //                                dbDate,
+        //                                aDatabaseType,
+        //                                aNoDataTables,
+        //                                aAllocationFileGroup,
+        //                                aForecastFileGroup,
+        //                                aHistoryFileGroup,
+        //                                aNoHistoryFileGroup,
+        //                                aDailyHistoryFileGroup,
+        //                                aNoDailyHistoryFileGroup,
+        //                                aAuditFileGroup,
+        //                                aWeekArchiveFileGroup,
+        //                                aDayArchiveFileGroup,
+        //                                false);
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                aMessageQueue.Enqueue("UNEXPECTED EXCEPTION: " + ex.ToString());
+        //                throw;
+        //            }
+        //        }
+
+        //        private static void CreateSQLIndexes(SqlCommand aSqlCommand, Queue aMessageQueue, Queue aProcessedQueue, bool aUpgradeProcess,
+        //            string aConnectionString, eDatabaseType aDatabaseType,
+        //            int majorVersion, int minorVersion, int revision, int modification, DateTime dbDate,
+        //            bool aIgnoreErrors, int aNoDataTables, string aAllocationFileGroup,
+        //            string aForecastFileGroup, string aHistoryFileGroup, int aNoHistoryFileGroup,
+        //            string aDailyHistoryFileGroup, int aNoDailyHistoryFileGroup, string aAuditFileGroup,
+        //            string aWeekArchiveFileGroup, string aDayArchiveFileGroup,
+        //            DatabaseObjects aDatabaseObjects, DatabaseObjectsSQLObjectPhase aPhase)
+        //        {
+        //            try
+        //            {
+        //                string sPath;
+        //#if (DEBUG)
+        //                sPath = Directory.GetParent(Directory.GetParent(Directory.GetParent(Application.StartupPath).ToString().Trim()).ToString().Trim()) + @"\DatabaseDefinition\SQL_Indexes\";
+        //#else
+        //                sPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\SQL_Indexes\";
+        //#endif
+        //                if (System.IO.Directory.Exists(sPath) == true)
+        //                {
+
+        //                    if (aDatabaseObjects.SQLObject != null)
+        //                    {
+        //                        foreach (DatabaseObjectsSQLObject so in aDatabaseObjects.SQLObject)
+        //                        {
+        //                            if (so.Type == DatabaseObjectsSQLObjectType.Index &&
+        //                                so.Phase == aPhase)
+        //                            {
+        //                                if (aUpgradeProcess && isIndexFound(aSqlCommand, so.Name))
+        //                                {
+        //                                    continue;
+        //                                }
+
+        //                                string prerequisite;
+        //                                if (so.Prerequisite != null &&
+        //                                    !VerifyPrerequisites(aSqlCommand, so, out prerequisite))
+        //                                {
+        //                                    aMessageQueue.Enqueue("Prerequisite " + prerequisite + " not found for " + so.Name);
+        //                                    throw new Exception("Prerequisite not found error");
+        //                                }
+
+        //                                ProcessUpgradeFile(
+        //                                FileProcessType.NewInstall,
+        //                                aSqlCommand,
+        //                                sPath + so.Name + ".SQL",
+        //                                "InstallFile",
+        //                                aMessageQueue,
+        //                                aProcessedQueue,
+        //                                false,
+        //                                aIgnoreErrors,
+        //                                majorVersion,
+        //                                minorVersion,
+        //                                revision,
+        //                                modification,
+        //                                dbDate,
+        //                                aDatabaseType,
+        //                                aNoDataTables,
+        //                                aAllocationFileGroup,
+        //                                aForecastFileGroup,
+        //                                aHistoryFileGroup,
+        //                                aNoHistoryFileGroup,
+        //                                aDailyHistoryFileGroup,
+        //                                aNoDailyHistoryFileGroup,
+        //                                aAuditFileGroup,
+        //                                aWeekArchiveFileGroup,
+        //                                aDayArchiveFileGroup,
+        //                                false);
+
+        //                                _htProcessed.Add(so.Name, null);
+        //                            }
+        //                        }
+        //                    }
+
+        //                    if (aPhase == DatabaseObjectsSQLObjectPhase.PreGenerate)
+        //                    {
+        //                        DirectoryInfo di = new DirectoryInfo(sPath);
+        //                        foreach (FileInfo fi in di.GetFiles("*.SQL"))
+        //                        {
+        //                            string indexName = fi.Name.Replace(".SQL", string.Empty);
+
+        //                            if (_htProcessed.ContainsKey(indexName) ||
+        //                                (aUpgradeProcess && isIndexFound(aSqlCommand, indexName)))
+        //                            {
+        //                                continue;
+        //                            }
+
+        //                            ProcessUpgradeFile(
+        //                                FileProcessType.NewInstall,
+        //                                aSqlCommand,
+        //                                fi.FullName,
+        //                                "InstallFile",
+        //                                aMessageQueue,
+        //                                aProcessedQueue,
+        //                                false,
+        //                                aIgnoreErrors,
+        //                                majorVersion,
+        //                                minorVersion,
+        //                                revision,
+        //                                modification,
+        //                                dbDate,
+        //                                aDatabaseType,
+        //                                aNoDataTables,
+        //                                aAllocationFileGroup,
+        //                                aForecastFileGroup,
+        //                                aHistoryFileGroup,
+        //                                aNoHistoryFileGroup,
+        //                                aDailyHistoryFileGroup,
+        //                                aNoDailyHistoryFileGroup,
+        //                                aAuditFileGroup,
+        //                                aWeekArchiveFileGroup,
+        //                                aDayArchiveFileGroup,
+        //                                false);
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                aMessageQueue.Enqueue("UNEXPECTED EXCEPTION: " + ex.ToString());
+        //                throw;
+        //            }
+        //        }
+        //        private static void CreateSQLConstraints(SqlCommand aSqlCommand, Queue aMessageQueue, Queue aProcessedQueue, bool aUpgradeProcess,
+        //            string aConnectionString, eDatabaseType aDatabaseType,
+        //            int majorVersion, int minorVersion, int revision, int modification, DateTime dbDate,
+        //            bool aIgnoreErrors, int aNoDataTables, string aAllocationFileGroup,
+        //            string aForecastFileGroup, string aHistoryFileGroup, int aNoHistoryFileGroup,
+        //            string aDailyHistoryFileGroup, int aNoDailyHistoryFileGroup, string aAuditFileGroup,
+        //            string aWeekArchiveFileGroup, string aDayArchiveFileGroup,
+        //            DatabaseObjects aDatabaseObjects, DatabaseObjectsSQLObjectPhase aPhase)
+        //        {
+        //            try
+        //            {
+        //                string sPath;
+        //#if (DEBUG)
+        //                sPath = Directory.GetParent(Directory.GetParent(Directory.GetParent(Application.StartupPath).ToString().Trim()).ToString().Trim()) + @"\DatabaseDefinition\SQL_Constraints\";
+        //#else
+        //                sPath = Path.GetDirectoryName(Application.ExecutablePath) + @"\SQL_Constraints\";
+        //#endif
+        //                if (System.IO.Directory.Exists(sPath) == true)
+        //                {
+        //                    if (aDatabaseObjects.SQLObject != null)
+        //                    {
+        //                        foreach (DatabaseObjectsSQLObject so in aDatabaseObjects.SQLObject)
+        //                        {
+        //                            if (so.Type == DatabaseObjectsSQLObjectType.Constraint &&
+        //                                so.Phase == aPhase)
+        //                            {
+        //                                if (aUpgradeProcess && isConstraintFound(aSqlCommand, so.Name))
+        //                                {
+        //                                    continue;
+        //                                }
+
+        //                                string prerequisite;
+        //                                if (so.Prerequisite != null &&
+        //                                    !VerifyPrerequisites(aSqlCommand, so, out prerequisite))
+        //                                {
+        //                                    aMessageQueue.Enqueue("Prerequisite " + prerequisite + " not found for " + so.Name);
+        //                                    throw new Exception("Prerequisite not found error");
+        //                                }
+
+        //                                ProcessUpgradeFile(
+        //                                FileProcessType.NewInstall,
+        //                                aSqlCommand,
+        //                                sPath + so.Name + ".SQL",
+        //                                "InstallFile",
+        //                                aMessageQueue,
+        //                                aProcessedQueue,
+        //                                false,
+        //                                aIgnoreErrors,
+        //                                majorVersion,
+        //                                minorVersion,
+        //                                revision,
+        //                                modification,
+        //                                dbDate,
+        //                                aDatabaseType,
+        //                                aNoDataTables,
+        //                                aAllocationFileGroup,
+        //                                aForecastFileGroup,
+        //                                aHistoryFileGroup,
+        //                                aNoHistoryFileGroup,
+        //                                aDailyHistoryFileGroup,
+        //                                aNoDailyHistoryFileGroup,
+        //                                aAuditFileGroup,
+        //                                aWeekArchiveFileGroup,
+        //                                aDayArchiveFileGroup,
+        //                                false);
+
+        //                                _htProcessed.Add(so.Name, null);
+        //                            }
+        //                        }
+        //                    }
+
+        //                    if (aPhase == DatabaseObjectsSQLObjectPhase.PreGenerate)
+        //                    {
+        //                        DirectoryInfo di = new DirectoryInfo(sPath);
+        //                        foreach (FileInfo fi in di.GetFiles("*.SQL"))
+        //                        {
+        //                            // skip primary keys
+        //                            if (fi.Name.Contains("_PK.SQL"))
+        //                            {
+        //                                continue;
+        //                            }
+        //                            string constraintName = fi.Name.Replace(".SQL", string.Empty);
+
+        //                            if (_htProcessed.ContainsKey(constraintName) ||
+        //                                (aUpgradeProcess && isConstraintFound(aSqlCommand, constraintName)))
+        //                            {
+        //                                continue;
+        //                            }
+
+        //                            ProcessUpgradeFile(
+        //                                FileProcessType.NewInstall,
+        //                                aSqlCommand,
+        //                                fi.FullName,
+        //                                "InstallFile",
+        //                                aMessageQueue,
+        //                                aProcessedQueue,
+        //                                false,
+        //                                aIgnoreErrors,
+        //                                majorVersion,
+        //                                minorVersion,
+        //                                revision,
+        //                                modification,
+        //                                dbDate,
+        //                                aDatabaseType,
+        //                                aNoDataTables,
+        //                                aAllocationFileGroup,
+        //                                aForecastFileGroup,
+        //                                aHistoryFileGroup,
+        //                                aNoHistoryFileGroup,
+        //                                aDailyHistoryFileGroup,
+        //                                aNoDailyHistoryFileGroup,
+        //                                aAuditFileGroup,
+        //                                aWeekArchiveFileGroup,
+        //                                aDayArchiveFileGroup,
+        //                                false);
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                aMessageQueue.Enqueue("UNEXPECTED EXCEPTION: " + ex.ToString());
+        //                throw;
+        //            }
+        //        }
+
+        //static private bool VerifyPrerequisites(SqlCommand aSqlCommand, DatabaseObjectsSQLObject so, out string aPrerequisite)
         //{
         //    bool prerequisiteFound = true;
         //    aPrerequisite = string.Empty;
@@ -10359,7 +12355,7 @@ namespace MIDRetail.DatabaseUpdate
         //    return prerequisiteFound;
         //}
 
-         //static private void ProcessCommand(Queue aMessageQueue, Queue aProcessedQueue, ref string aCurrentHeader, string aFileName, int aLineCount, SqlCommand aSqlCommand, string aCommand,
+        //static private void ProcessCommand(Queue aMessageQueue, Queue aProcessedQueue, ref string aCurrentHeader, string aFileName, int aLineCount, SqlCommand aSqlCommand, string aCommand,
         //    int aMajorVersion, int aMinorVersion, int aRevision, int aModification, bool aSettingNewInstallVersionNumbers, bool aFinalize, bool aIgnoreErrors)
         //{
         //    try
@@ -10431,7 +12427,7 @@ namespace MIDRetail.DatabaseUpdate
         //    }
         //}
 
-            //static private void ProcessUpgradeFile(
+        //static private void ProcessUpgradeFile(
         //    FileProcessType aProcessType,
         //    SqlCommand aSqlCommand,
         //    string aFileName,
@@ -10532,7 +12528,7 @@ namespace MIDRetail.DatabaseUpdate
         //        lineCount = 0;
 
         //        string lineWithWhitespace; //TT#730-MD -jsobek -Preserve horizontal tabs and whitespace during database upgrade
-					
+
         //        // process script
         //        while ((line = reader.ReadLine()) != null)
         //        {
@@ -10550,7 +12546,7 @@ namespace MIDRetail.DatabaseUpdate
         //            //Remove sql developer comments unless we are upgrading the database in debug mode
         //            //sql developer comments should begin with --DV
         //            #if (DEBUG)
-                        
+
         //            #else
         //                if (line.Trim().ToUpper().StartsWith("--DV") == true)
         //                {
@@ -10570,7 +12566,7 @@ namespace MIDRetail.DatabaseUpdate
         //            else if (line.ToUpper().StartsWith("/*RELEASE *.*.*") ||
         //                line.ToUpper().StartsWith("/*RELEASE *.*.*.*"))
         //            {
-                        
+
         //                // process prior command
         //                if (processCommand)
         //                {
@@ -10581,7 +12577,7 @@ namespace MIDRetail.DatabaseUpdate
         //                    else
         //                    {
         //                        msgDelegate.Invoke("Processing:" + currentHeader);
-                               
+
         //                        ProcessCommand(aMessageQueue, aProcessedQueue, ref currentHeader, aFileName, lineCount, aSqlCommand, command, sqlMajorVersion, sqlMinorVersion, sqlRevision, sqlModification, SettingNewInstallVersionNumbers, true, aIgnoreErrors);
         //                        ProgressBarIncrementValue(1);
         //                    }
@@ -10630,7 +12626,7 @@ namespace MIDRetail.DatabaseUpdate
         //                    !bGettingProcessCount)
         //                {
         //                    ProcessCommand(aMessageQueue, aProcessedQueue, ref currentHeader, aFileName, lineCount, aSqlCommand, command, sqlMajorVersion, sqlMinorVersion, sqlRevision, sqlModification, SettingNewInstallVersionNumbers, true, aIgnoreErrors);
-                            
+
         //                    fields = line.Split(' ');
 
         //                    if (fields.Length == 3)
@@ -10868,7 +12864,7 @@ namespace MIDRetail.DatabaseUpdate
         //                command += lineWithWhitespace + System.Environment.NewLine;
         //            }
         //        }
-				
+
         //        // process command if anything in buffer
         //        if (processCommand &&
         //                    !bGettingProcessCount)
@@ -10903,26 +12899,26 @@ namespace MIDRetail.DatabaseUpdate
         //    }
         //}
 
-//        static private bool ProcessModule(string aModule, string aArguments)
-//        {
-//            Process process = new Process();
+        //        static private bool ProcessModule(string aModule, string aArguments)
+        //        {
+        //            Process process = new Process();
 
-//#if (DEBUG)
-//            process.StartInfo.FileName = Directory.GetParent(Application.StartupPath).ToString().Trim() + @"\Database\" + aModule;
-//#else
-//            process.StartInfo.FileName = Directory.GetParent(Application.StartupPath).ToString().Trim() + @"\Database\" + aModule;
-//#endif
-//            process.StartInfo.Arguments = aArguments;
-//            process.StartInfo.CreateNoWindow = true;
-//            process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-//            process.Start();
-//            process.WaitForExit();
-//            if (process.ExitCode > 0)
-//            {
-//                return false;
-//            }
-//            return true;
-//        }
+        //#if (DEBUG)
+        //            process.StartInfo.FileName = Directory.GetParent(Application.StartupPath).ToString().Trim() + @"\Database\" + aModule;
+        //#else
+        //            process.StartInfo.FileName = Directory.GetParent(Application.StartupPath).ToString().Trim() + @"\Database\" + aModule;
+        //#endif
+        //            process.StartInfo.Arguments = aArguments;
+        //            process.StartInfo.CreateNoWindow = true;
+        //            process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+        //            process.Start();
+        //            process.WaitForExit();
+        //            if (process.ExitCode > 0)
+        //            {
+        //                return false;
+        //            }
+        //            return true;
+        //        }
         // End TT#449-MD - JSmith - Modify upgrade process to be able to call external program
 
         //static private bool ParseVersion(
@@ -10967,7 +12963,7 @@ namespace MIDRetail.DatabaseUpdate
         //            aMessageQueue.Enqueue("Line " + aLineCount + ": Major version " + nodes[0] + " is not valid");
         //            return true;
         //        }
-	
+
         //        if (nodes.Length > 1)
         //        {
         //            try
@@ -11062,5 +13058,5 @@ namespace MIDRetail.DatabaseUpdate
         //}
         #endregion
 
-	}
+    }
 }

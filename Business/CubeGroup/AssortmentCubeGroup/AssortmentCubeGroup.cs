@@ -1893,7 +1893,10 @@ namespace MIDRetail.Business
 
 					foreach (AssortmentComponentVariableProfile varProf in AssortmentComponentVariables.VariableProfileList)
 					{
-						varRIDList.Add(Convert.ToInt32(row[varProf.RIDColumnName]));
+                        if (row[varProf.RIDColumnName] != DBNull.Value)
+                        {
+                            varRIDList.Add(Convert.ToInt32(row[varProf.RIDColumnName]));
+                        }
 					}
 
 					plcColorDtlCompXRef.AddXRefIdEntry((int[])varRIDList.ToArray(typeof(int)));
@@ -1912,7 +1915,10 @@ namespace MIDRetail.Business
 
 					foreach (AssortmentComponentVariableProfile varProf in AssortmentComponentVariables.VariableProfileList)
 					{
-						varRIDList.Add(Convert.ToInt32(row[varProf.RIDColumnName]));
+                        if (row[varProf.RIDColumnName] != DBNull.Value)
+                        {
+                            varRIDList.Add(Convert.ToInt32(row[varProf.RIDColumnName]));
+                        }
 					}
 
 					hdrColorDtlCompXRef.AddXRefIdEntry((int[])varRIDList.ToArray(typeof(int)));

@@ -29,7 +29,8 @@ BEGIN
 		HN_RID INT,
 		BN_ID VARCHAR(356) COLLATE Latin1_General_CS_AS,
 		BN_NAME VARCHAR(50) COLLATE Latin1_General_CS_AS,
-		BN_DESCRIPTION VARCHAR(250) COLLATE Latin1_General_CS_AS
+		BN_DESCRIPTION VARCHAR(250) COLLATE Latin1_General_CS_AS,
+		HOME_LEVEL INT
 		)
 
 	INSERT #TEMP (
@@ -37,14 +38,16 @@ BEGIN
 		HN_RID,
 		BN_ID,
 		BN_NAME,
-		BN_DESCRIPTION
+		BN_DESCRIPTION,
+		HOME_LEVEL
 		)
 	EXEC SP_GET_ALL_DESCENDANTS_BY_LEVEL_REPORT @SELECTED_NODE_RID,
 		@LEVEL
 
-	SELECT 'PageHeader',
+	SELECT 'PageHeader' as [Column1],
 	    -- Begin TT#5382 - JSmith - Product descriptor not displayed when the Store Eligibility is set at the color level
 		[dbo].[UDF_MID_GET_NODE_DISPLAY](sm.HN_RID) AS [BN_ID],
+		hen.HOME_LEVEL,
 		--CASE 
 		--	WHEN phl.PHL_DISPLAY_OPTION_ID = 800701
 		--		THEN RTRIM(hn.BN_ID)
@@ -77,6 +80,7 @@ BEGIN
 			END AS [DateRange],
 		sm.MIN_STOCK,
 		sm.MAX_STOCK
+	INTO #t
 	FROM NODE_STOCK_MIN_MAX sm
 	INNER JOIN HIERARCHY_NODE hen ON hen.HN_RID = sm.HN_RID
 	LEFT OUTER JOIN PRODUCT_HIERARCHY_LEVELS phl ON phl.PHL_SEQUENCE = hen.HOME_LEVEL
@@ -106,12 +110,20 @@ BEGIN
 		) hn ON hn.HN_RID = sm.HN_RID
 	ORDER BY hn.PARENT_HN_RID,
 		hn.HN_RID,
+		sg.BOUNDARY desc,
 		sg.GRADE_CODE
 
-	IF (
-			SELECT object_id('tempdb.dbo.#TEMP')
-			) > 0
+	SELECT DISTINCT * FROM #t
+
+	--IF (
+	--		SELECT object_id('tempdb.dbo.#TEMP')
+	--		) > 0
+	IF OBJECT_ID('tempdb..#TEMP') is not null
 		DROP TABLE #TEMP
+
+
+	IF OBJECT_ID('tempdb..#t') is not null
+		DROP TABLE #t
 END
 GO
 

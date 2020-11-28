@@ -775,7 +775,13 @@ namespace MIDRetail.Business
 		{
 		}
 
-		public void GetReadOnlyFlags(out bool aStoreReadOnly, out bool aChainReadOnly)
+        // Begin TT#2131-MD - JSmith - Halo Integration
+        override public void ExtractCubeGroup(ExtractOptions aExtractOptions)
+        {
+        }
+        // End TT#2131-MD - JSmith - Halo Integration
+
+        public void GetReadOnlyFlags(out bool aStoreReadOnly, out bool aChainReadOnly)
 		{
 			aStoreReadOnly = true;
 			aChainReadOnly = true;

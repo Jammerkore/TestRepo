@@ -51,6 +51,48 @@ namespace MIDRetail.Business.Allocation
 					MIDText.GetText(eMIDTextCode.msg_UnknownMethodInWorkFlow));
 			}
 		}
+
+        // Begin TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+		internal bool CheckAllocationCriteriaForUserData(AllocationCriteria allocationCriteria)
+        {
+            if (IsStoreGroupUser(SG_RID))
+            {
+                return true;
+            }
+
+            if (IsStoreGroupUser(allocationCriteria.GradeStoreGroupRID))
+            {
+                return true;
+            }
+
+            if (IsStoreGroupUser(allocationCriteria.CapacityStoreGroupRID))
+            {
+                return true;
+            }
+
+            if (IsHierarchyNodeUser(allocationCriteria.HdrInventory_MERCH_HN_RID))
+            {
+                return true;
+            }
+
+            if (IsHierarchyNodeUser(allocationCriteria.Inventory_MERCH_HN_RID))
+            {
+                return true;
+            }
+            
+            if (IsHierarchyNodeUser(allocationCriteria.OTSPlanRID))
+            {
+                return true;
+            }
+
+            if (IsHierarchyNodeUser(allocationCriteria.OTSOnHandRID))
+            {
+                return true;
+            }
+
+            return false;
+        }
+		// End TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
 	}
 
 }

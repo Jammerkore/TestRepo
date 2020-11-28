@@ -3279,14 +3279,15 @@ namespace MIDRetail.Windows
 				{
 					index++;
 
-					if (index > 1)
-					{
-						newName = "Copy (" + index + ") of " + aTaskListName;
-					}
-					else
-					{
-						newName = "Copy of " + aTaskListName;
-					}
+					//if (index > 1)
+					//{
+					//	newName = "Copy (" + index + ") of " + aTaskListName;
+					//}
+					//else
+					//{
+					//	newName = "Copy of " + aTaskListName;
+					//}
+                    newName = Include.GetNewName(name: aTaskListName, index: index);
 
 					key = _dlSchedule.TaskList_GetKey(newName, aUserRID);
 				}
@@ -3316,14 +3317,15 @@ namespace MIDRetail.Windows
 				{
 					index++;
 
-					if (index > 1)
-					{
-						newName = "Copy (" + index + ") of " + aJobName;
-					}
-					else
-					{
-						newName = "Copy of " + aJobName;
-					}
+                    //if (index > 1)
+                    //{
+                    //	newName = "Copy (" + index + ") of " + aJobName;
+                    //}
+                    //else
+                    //{
+                    //	newName = "Copy of " + aJobName;
+                    //}
+                    newName = Include.GetNewName(name: aJobName, index: index);
 
 					key = _dlSchedule.Job_GetKey(newName);
 				}
@@ -3353,14 +3355,15 @@ namespace MIDRetail.Windows
 				{
 					index++;
 
-					if (index > 1)
-					{
-						newName = "Copy (" + index + ") of " + aSpecialRequestName;
-					}
-					else
-					{
-						newName = "Copy of " + aSpecialRequestName;
-					}
+					//if (index > 1)
+					//{
+					//	newName = "Copy (" + index + ") of " + aSpecialRequestName;
+					//}
+					//else
+					//{
+					//	newName = "Copy of " + aSpecialRequestName;
+					//}
+                    newName = Include.GetNewName(name: aSpecialRequestName, index: index);
 
 					key = _dlSchedule.SpecialRequest_GetKey(newName);
 				}

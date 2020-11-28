@@ -1153,6 +1153,8 @@ namespace MIDRetail.Business
         public int? lastVariable2_CDR_RID = null;
         //End TT#1345-MD -jsobek -Store Filters - Hold operator and value when switching variables
 
+        public int? lastdate_CDR_RID = Include.UndefinedCalendarDateRange;   // TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
+
         public int variable1_Index = -1;
         public int variable1_VersionIndex = -1;
         public int variable1_HN_RID = -1;
@@ -1170,6 +1172,8 @@ namespace MIDRetail.Business
         public int variable2_VariableValueTypeIndex = -1;
         public int variable2_TimeTypeIndex = -1;
         //public int variable2_IsTimeTotal = 0;
+
+        public int date_CDR_RID = Include.UndefinedCalendarDateRange;   // TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
 
         public int headerMerchandise_HN_RID = -1;
         //public int headerMerchandise_PH_RID = -1;
@@ -1252,7 +1256,7 @@ namespace MIDRetail.Business
             //dtConditions.Columns.Add("LIST_VALUES");   
             dtConditions.Columns.Add("LIST_VALUE_CONSTANT_INDEX", typeof(int));
 
-
+            dtConditions.Columns.Add("DATE_CDR_RID", typeof(int));   // TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
 
             return dtConditions;
         }
@@ -1317,6 +1321,8 @@ namespace MIDRetail.Business
                 listConstantTypeIndex = 0;
             }
             this.listConstantType = filterListConstantTypes.FromIndex(listConstantTypeIndex);
+
+            this.date_CDR_RID = GetDateIntFieldFromDataRow(drCondition, "DATE_CDR_RID");   // TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
 
             this.dtListValues = GetListValuesDataTable();
         }
@@ -1446,6 +1452,8 @@ namespace MIDRetail.Business
             {
                 drCondition["LIST_VALUE_CONSTANT_INDEX"] = this.listConstantType.dbIndex;
             }
+
+            SaveIntFieldToDataRow(drCondition, "DATE_CDR_RID", this.date_CDR_RID);   // TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
         }
         public static DataTable GetListValuesDataTable()
         {

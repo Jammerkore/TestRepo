@@ -41,7 +41,8 @@ namespace MIDRetail.AutoUpgrade
         private static extern int SHChangeNotify(int eventId, int flags, IntPtr item1, IntPtr item2);
         // End TT#1336-MD - JSmith - Rebrand to Logility Retail Optimization
 
-        const string CRRuntimeVersion = "13.0.12";
+        //const string CRRuntimeVersion = "13.0.12";
+		//const string CRRuntimeVersion = "13.0.21";
         static void Main(string[] args)
         {
             string fileName = null;
@@ -208,10 +209,10 @@ namespace MIDRetail.AutoUpgrade
                 }
 
                 // Begin TT#1305-MD - JSmith - Change Auto Upgrade
-                if (!IsCrystalReportsInstalled(logFile))
-                {
-                    InstallCrystalReports(true, logFile);
-                }
+                //if (!IsCrystalReportsInstalled(logFile))
+                //{
+                //    InstallCrystalReports(true, logFile);
+                //}
 
                 RemoveOldFiles(aFileName, logFile, false);
 				// End TT#1305-MD - JSmith - Change Auto Upgrade
@@ -506,90 +507,92 @@ namespace MIDRetail.AutoUpgrade
             mc.RemoveOldFiles(toDirectory, isPreDelete);
         }
 
-        private static bool IsCrystalReportsInstalled(StreamWriter aLogFile)
-        {
-            try
-            {
-                Dictionary<string, object> keyValuePairs;
-                using (var settingsRegKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\SAP BusinessObjects\\Crystal Reports for .NET Framework 4.0\\Crystal Reports"))
-                {
-                    if (settingsRegKey != null)
-                    {
-                        var valueNames = settingsRegKey.GetValueNames();
-                        keyValuePairs = valueNames.ToDictionary(name => name, settingsRegKey.GetValue);
-                        foreach (KeyValuePair<string, object> entry in keyValuePairs)
-                        {
-                            if (entry.Key.Contains("CRRuntime"))
-                            {
-                                if (Convert.ToString(entry.Value).Contains(CRRuntimeVersion))
-                                {
-                                    return true;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                aLogFile.WriteLine("Determining if Crystal Reports is installed failed. " + ex.Message);
-                MessageBox.Show("Unable to determine the version of Crystal Reports." + Environment.NewLine + "Application requires version " + CRRuntimeVersion + " to run properly.");
-                return true;
-            }
-            return false;
-        }
+        //private static bool IsCrystalReportsInstalled(StreamWriter aLogFile)
+        //{
+        //    try
+        //    {
+        //        Dictionary<string, object> keyValuePairs;
+        //        using (var settingsRegKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\SAP BusinessObjects\\Crystal Reports for .NET Framework 4.0\\Crystal Reports"))
+        //        {
+        //            if (settingsRegKey != null)
+        //            {
+        //                var valueNames = settingsRegKey.GetValueNames();
+        //                keyValuePairs = valueNames.ToDictionary(name => name, settingsRegKey.GetValue);
+        //                foreach (KeyValuePair<string, object> entry in keyValuePairs)
+        //                {
+        //                    if (entry.Key.Contains("CRRuntime"))
+        //                    {
+        //                        if (Convert.ToString(entry.Value).Contains(CRRuntimeVersion))
+        //                        {
+        //                            return true;
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        aLogFile.WriteLine("Determining if Crystal Reports is installed failed. " + ex.Message);
+        //        MessageBox.Show("Unable to determine the version of Crystal Reports." + Environment.NewLine + "Application requires version " + CRRuntimeVersion + " to run properly.");
+        //        return true;
+        //    }
+        //    return false;
+        //}
 
-        private static bool InstallCrystalReports(bool bHideWindow, StreamWriter aLogFile)
-        {
-            bool bSuccessful = true;
-            bool b64Bit = false;
-            try
-            {
-                if (IntPtr.Size == 8)
-                {
-                    b64Bit = true;
-                }
+     //   private static bool InstallCrystalReports(bool bHideWindow, StreamWriter aLogFile)
+     //   {
+     //       bool bSuccessful = true;
+     //       bool b64Bit = false;
+     //       try
+     //       {
+     //           if (IntPtr.Size == 8)
+     //           {
+     //               b64Bit = true;
+     //           }
 
-                aLogFile.WriteLine("User has requested to install Crystal Reports");
-                Process servStart = new Process();
+     //           aLogFile.WriteLine("User has requested to install Crystal Reports");
+     //           Process servStart = new Process();
 
-                if (b64Bit)
-                {
-                    servStart.StartInfo.FileName = Application.StartupPath + @"\" + "CRRuntime_64bit_13_0_12.msi";
-                }
-                else
-                {
-                    servStart.StartInfo.FileName = Application.StartupPath + @"\" + "CRRuntime_32bit_13_0_12.msi";
-                }
+     //           if (b64Bit)
+     //           {
+     //               //servStart.StartInfo.FileName = Application.StartupPath + @"\" + "CRRuntime_64bit_13_0_12.msi";
+					//servStart.StartInfo.FileName = Application.StartupPath + @"\" + "CRRuntime_64bit_13_0_21.msi";
+     //           }
+     //           else
+     //           {
+     //               //servStart.StartInfo.FileName = Application.StartupPath + @"\" + "CRRuntime_32bit_13_0_12.msi";
+					//servStart.StartInfo.FileName = Application.StartupPath + @"\" + "CRRuntime_32bit_13_0_21.msi";
+     //           }
 
-                servStart.StartInfo.Arguments = "";
-                if (bHideWindow)
-                {
-                    servStart.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                }
-                else
-                {
-                    servStart.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
-                }
-                servStart.Start();
-                servStart.WaitForExit();
-                if (servStart.ExitCode > 0)
-                {
-                    aLogFile.WriteLine("Error occurred while installing Crystal Reports.");
-                    bSuccessful = false;
-                }
-                else
-                {
-                    aLogFile.WriteLine("User has completed installing Crystal Reports.");
-                }
-                servStart.Close();
-            }
-            catch (Exception ex)
-            {
-                aLogFile.WriteLine("Installing Crystal Reports failed. " + ex.Message);
-            }
-            return bSuccessful;
-        }
+     //           servStart.StartInfo.Arguments = "";
+     //           if (bHideWindow)
+     //           {
+     //               servStart.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+     //           }
+     //           else
+     //           {
+     //               servStart.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
+     //           }
+     //           servStart.Start();
+     //           servStart.WaitForExit();
+     //           if (servStart.ExitCode > 0)
+     //           {
+     //               aLogFile.WriteLine("Error occurred while installing Crystal Reports.");
+     //               bSuccessful = false;
+     //           }
+     //           else
+     //           {
+     //               aLogFile.WriteLine("User has completed installing Crystal Reports.");
+     //           }
+     //           servStart.Close();
+     //       }
+     //       catch (Exception ex)
+     //       {
+     //           aLogFile.WriteLine("Installing Crystal Reports failed. " + ex.Message);
+     //       }
+     //       return bSuccessful;
+     //   }
 		// End TT#1305-MD - JSmith - Change Auto Upgrade
 
         // Begin TT#1336-MD - JSmith - Rebrand to Logility Retail Optimization

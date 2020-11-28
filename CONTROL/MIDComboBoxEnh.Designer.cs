@@ -2,6 +2,8 @@
 using System.Windows.Forms;
 using System.Drawing;
 
+using MIDRetail.DataCommon;
+
 namespace MIDRetail.Windows.Controls
 {
     partial class MIDComboBoxEnh
@@ -68,8 +70,11 @@ namespace MIDRetail.Windows.Controls
             // 
             // comboBox1
             // 
-            this.comboBox1.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
-            this.comboBox1.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            if (MIDEnvironment.isWindows)
+            {
+                this.comboBox1.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+                this.comboBox1.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            }
             this.comboBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox1.IntegralHeight = false;

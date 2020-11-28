@@ -1208,6 +1208,17 @@ namespace MIDRetail.Data
             return (string)StoredProcedures.MID_APPLICATION_USER_READ_NAME_FROM_RID.ReadValue(_dba, USER_RID: userRID);
         }
 
+        public int GetUserRIDFromName(string userName)
+        {
+            int userRID = Include.NoRID;
+            DataTable dt = StoredProcedures.MID_APPLICATION_USER_READ_FROM_NAME.Read(_dba, USER_NAME: userName);
+            if (dt.Rows.Count > 0)
+            {
+                userRID = Convert.ToInt32(dt.Rows[0]["USER_RID"]);
+            }
+            return userRID;
+        }
+
 
 		public DataTable GetUser(int userRID)
 		{
