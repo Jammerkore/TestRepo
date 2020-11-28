@@ -3457,7 +3457,8 @@ namespace MIDRetail.Windows
             var myInfo = new InUseInfo(userRids, myEnum, itemTitle);
             var myfrm = new InUseDialog(myInfo);
             myfrm.ResolveInUseData(ref display, inQuiry);
-            if (display == true)
+            if (display == true
+                && MIDEnvironment.isWindows)
             { myfrm.ShowDialog(); }
         }
 
@@ -3470,7 +3471,8 @@ namespace MIDRetail.Windows
             bool showDialog = false;
             myfrm.ResolveInUseData(ref display, inQuiry, true, out showDialog);
             dialogShown = showDialog;
-            if (showDialog == true)
+            if (showDialog == true
+                && MIDEnvironment.isWindows)
             { myfrm.ShowDialog(); }
         }
         //END TT#110-MD-VStuart - In Use Tool

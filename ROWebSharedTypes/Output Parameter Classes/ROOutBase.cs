@@ -31,6 +31,9 @@ namespace Logility.ROWebSharedTypes
     [KnownType(typeof(eVelocityRuleType))]
     [KnownType(typeof(eVelocityCalculateAverageUsing))]
     [KnownType(typeof(eVelocityDetermineShipQtyUsing))]
+    [KnownType(typeof(eVelocityAction))]
+    [KnownType(typeof(ePurgeDataType))]
+
     [KnownType(typeof(ROMerchandiseListEntry))]
 
     [KnownType(typeof(ROActiveClass))]
@@ -257,14 +260,45 @@ namespace Logility.ROWebSharedTypes
     [KnownType(typeof(RONodePropertiesEligibility))]
 
     [KnownType(typeof(RONodePropertiesVelocityGrades))]
+    [KnownType(typeof(RONodePropertiesVelocityGrade))]
     [KnownType(typeof(RONodePropertiesStoreGrades))]
+    [KnownType(typeof(RONodePropertiesStoreGrade))]
+
     [KnownType(typeof(RONodePropertiesStockMinMax))]
+    [KnownType(typeof(RONodePropertiesStockMinMaxAttributeSet))]
+    [KnownType(typeof(RONodePropertiesStockMinMaxStoreGrade))]
+    [KnownType(typeof(RONodePropertiesStockMinMaxStoreGradeEntry))]
+
     [KnownType(typeof(RONodePropertiesStoreCapacity))]
+    [KnownType(typeof(RONodePropertiesStoreCapacityAttributeSet))]
+    [KnownType(typeof(RONodePropertiesStoreCapacityStore))]
+    [KnownType(typeof(RONodePropertiesStoreCapacityValues))]
+
+    [KnownType(typeof(RONodePropertiesDailyPercentagesValues))]
+    [KnownType(typeof(RONodePropertiesDailyPercentagesStore))]
+    [KnownType(typeof(RONodePropertiesDailyPercentagesAttributeSet))]
     [KnownType(typeof(RONodePropertiesDailyPercentages))]
+
+    [KnownType(typeof(RONodePropertiesPurgeCriteriaSettings))]
     [KnownType(typeof(RONodePropertiesPurgeCriteria))]
+
+    [KnownType(typeof(RONodePropertiesSizeCurveCriteria))]
+    [KnownType(typeof(RONodePropertiesSizeCurvesSimilarStoreValues))]
+    [KnownType(typeof(RONodePropertiesSizeCurvesSimilarStoresAttributeSet))]
+    [KnownType(typeof(RONodePropertiesSizeCurvesSimilarStore))]
     [KnownType(typeof(RONodePropertiesSizeCurves))]
+
+    [KnownType(typeof(RONodePropertiesChainSetPercentWeek))]
+    [KnownType(typeof(RONodePropertiesChainSetPercentAttributeSet))]
     [KnownType(typeof(RONodePropertiesChainSetPercent))]
+
+    [KnownType(typeof(RONodePropertiesVSWValues))]
+    [KnownType(typeof(RONodePropertiesVSWStore))]
+    [KnownType(typeof(RONodePropertiesVSWAttributeSet))]
     [KnownType(typeof(RONodePropertiesVSW))]
+
+    [KnownType(typeof(RONodePropertiesCharacteristicsValue))]
+    [KnownType(typeof(RONodePropertiesCharacteristics))]
 
     public abstract class ROOut
     {

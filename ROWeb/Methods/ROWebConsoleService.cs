@@ -373,6 +373,7 @@ namespace Logility.ROWeb
                     else
                     {
                         ROWebFunction webFunction = GetFunction(Parms);
+                        webFunction.RequestList.Add(Parms.RORequest);
                         return VerifyOutput(Parms, webFunction.ProcessRequest(Parms));
                     }
                 }

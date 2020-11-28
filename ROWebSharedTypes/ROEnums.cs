@@ -238,6 +238,8 @@
         AllocationWorklistView,
         SetAllocationSelectedFilterHeaders,
         AllocationStyleReviewViews,
+        AllocationStyleReviewVelocityViews,
+        AllocationStyleReviewVelocityRules,
         UpdateStyleReviewChanges,
         UpdateSizeReviewChanges,
         UpdateSummaryReviewChanges,
@@ -492,5 +494,28 @@
         None,
         Index,
         Smooth
+    }
+
+    public enum eVelocityAction
+    {
+        None,
+        ProcessInteractive,
+        ClearMatrix
+    }
+
+    public enum ePurgeDataType
+    {
+        None,
+        DailyHistory,
+        WeeklyHistory,
+        ForecastPlans,
+        HeaderASN,
+        HeaderDropShip,
+        HeaderDummy,
+        HeaderReceipt,
+        HeaderPurchaseOrder,
+        HeaderReserve,
+        HeaderVSW,
+        HeaderWorkUpBuy
     }
 }

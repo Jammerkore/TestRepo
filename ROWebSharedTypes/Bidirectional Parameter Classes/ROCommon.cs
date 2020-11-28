@@ -72,6 +72,17 @@ namespace Logility.ROWebSharedTypes
             get { return _method; }
             set { _method = value; }
         }
+
+        public bool AddingMethod
+        {
+            get { return Method.Key == Include.NoRID; }
+        }
+
+        public bool UpdatingMethod
+        {
+            get { return Method.Key != Include.NoRID; }
+        }
+
         public string Description
         {
             get { return _description; }
@@ -928,7 +939,7 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eMerchandiseType), value))
                 {
-                    _merchandiseType = eMerchandiseType.Node;
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {

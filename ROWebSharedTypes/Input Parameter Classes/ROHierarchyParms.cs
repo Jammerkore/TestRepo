@@ -137,14 +137,14 @@ namespace Logility.ROWebSharedTypes
 
     }
 
-    [DataContract(Name = "RONodePropertyEligibilityKeyParms", Namespace = "http://Logility.ROWeb/")]
-    public class RONodePropertyEligibilityKeyParms : RONodePropertyKeyParms
+    [DataContract(Name = "RONodePropertyAttributeKeyParms", Namespace = "http://Logility.ROWeb/")]
+    public class RONodePropertyAttributeKeyParms : RONodePropertyKeyParms
     {
         [DataMember(IsRequired = true)]
         private int _attributeKey;
 
 
-        public RONodePropertyEligibilityKeyParms(string sROUserID, string sROSessionID, eROClass ROClass, eRORequest RORequest, long ROInstanceID,
+        public RONodePropertyAttributeKeyParms(string sROUserID, string sROSessionID, eROClass ROClass, eRORequest RORequest, long ROInstanceID,
                                         eProfileType profileType, int key = Include.Undefined, bool readOnly = false,
                                         int parentNodeKey = Include.NoRID, int attributeKey = Include.NoRID)
             : base(sROUserID, sROSessionID, ROClass, RORequest, ROInstanceID, profileType, key, readOnly, parentNodeKey)
@@ -155,4 +155,24 @@ namespace Logility.ROWebSharedTypes
         public int AttributeKey { get { return _attributeKey; } }
 
     }
+
+    [DataContract(Name = "RONodePropertyAttributeDateKeyParms", Namespace = "http://Logility.ROWeb/")]
+    public class RONodePropertyAttributeDateKeyParms : RONodePropertyAttributeKeyParms
+    {
+        [DataMember(IsRequired = true)]
+        private int _dateKey;
+
+
+        public RONodePropertyAttributeDateKeyParms(string sROUserID, string sROSessionID, eROClass ROClass, eRORequest RORequest, long ROInstanceID,
+                                        eProfileType profileType, int key = Include.Undefined, bool readOnly = false,
+                                        int parentNodeKey = Include.NoRID, int attributeKey = Include.NoRID, int dateKey = Include.NoRID)
+            : base(sROUserID, sROSessionID, ROClass, RORequest, ROInstanceID, profileType, key, readOnly, parentNodeKey, attributeKey)
+        {
+            _dateKey = dateKey;
+        }
+
+        public int DateKey { get { return _dateKey; } }
+
+    }
+
 }

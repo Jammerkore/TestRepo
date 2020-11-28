@@ -5922,8 +5922,10 @@ namespace MIDRetail.Business
         }
 
 
-        override public ROMethodProperties MethodGetData(bool processingApply)
+        override public ROMethodProperties MethodGetData(out bool successful, ref string message, bool processingApply = false)
         {
+            successful = true;
+
             KeyValuePair<int, string> thisMethod = GetName.GetMethod(method: this);
 
             ROLevelInformation lowLevel = new ROLevelInformation();
@@ -6265,7 +6267,7 @@ namespace MIDRetail.Business
 
             return groupBasisList;
         }
-        override public bool MethodSetData(ROMethodProperties methodProperties, bool processingApply)
+        override public bool MethodSetData(ROMethodProperties methodProperties, ref string message, bool processingApply)
         {
             ProfileList glfProfileList = new ProfileList(eProfileType.GroupLevelFunction);
             ROPlanningForecastMethodProperties properties = (ROPlanningForecastMethodProperties)methodProperties;

@@ -113,39 +113,8 @@ namespace Logility.ROWeb
             FolderDataLayer dlFolder = new FolderDataLayer();
 
 
-            folderValid = isFolderValid(dlFolder: dlFolder, applicationFolderType: applicationFolderType, folderKey: folderKey, userKey: userKey, profileType: profileType);
-            //FolderDataLayer dlFolder = new FolderDataLayer();
-            //DataTable dt = dlFolder.Folder_Read(folderKey);
-            //if (dt != null
-            //    && dt.Rows.Count > 0)
-            //{
-            //    folderRID = Convert.ToInt32(dt.Rows[0]["FOLDER_RID"]);
-            //    userRID = Convert.ToInt32(dt.Rows[0]["USER_RID"]);
-            //    folderType = Convert.ToInt32(dt.Rows[0]["FOLDER_TYPE"]);
-
-            //    // Is favorites folder
-            //    if (folderType == eProfileType.WorkflowMethodMainFavoritesFolder.GetHashCode())
-            //    {
-            //        folderValid = true;
-            //    }
-            //    // Is valid application root folder
-            //    else if (userRID == userKey
-            //        && folderType == applicationFolderType.GetHashCode())
-            //    {
-            //        folderValid = true;
-            //    }
-            //    // Is valid subfolder
-            //    else
-            //    {
-            //        int subfolderType = GetSubFolderType(applicationFolderType, profileType).GetHashCode();
-            //        if (userRID == userKey
-            //            && folderType == subfolderType)
-            //        {
-            //            folderValid = true;
-            //        }
-            //    }
-
-            //}
+            folderValid = isFolderValid(dlFolder: dlFolder, applicationFolderType: applicationFolderType, folderKey: folderKey, userKey: userKey, profileType: profileType, folderType: out folderType);
+            
 
             // Get application root folder for user
             if (!folderValid)
@@ -153,6 +122,15 @@ namespace Logility.ROWeb
                 if (uniqueID != null)
                 {
                     folderRID = GetWorkflowMethodFolderRIDFromUniqueID(dlFolder: dlFolder, applicationFolderType: applicationFolderType, userKey: userKey, profileType: profileType, uniqueID: uniqueID);
+                    if (folderRID != Include.NoRID)
+                    {
+                        return folderRID;
+                    }
+                }
+
+                if (folderType == eProfileType.WorkflowMethodSubFolder.GetHashCode())
+                {
+                    folderRID = GetWorkflowMethodFolderRIDFromGrouping(dlFolder: dlFolder, applicationFolderType: applicationFolderType, userKey: userKey, profileType: profileType, folderKey: folderKey);
                     if (folderRID != Include.NoRID)
                     {
                         return folderRID;
@@ -193,10 +171,12 @@ namespace Logility.ROWeb
             return folderKey;
         }
 
-        private static bool isFolderValid(FolderDataLayer dlFolder, eProfileType applicationFolderType, int folderKey, int userKey, eProfileType profileType)
+        private static bool isFolderValid(FolderDataLayer dlFolder, eProfileType applicationFolderType, int folderKey, int userKey, eProfileType profileType, out int folderType)
         {
             bool folderValid = false;
-            int folderRID, userRID, folderType;
+            int folderRID, userRID;
+
+            folderType = Include.Undefined;
 
             DataTable dt = dlFolder.Folder_Read(folderKey);
             if (dt != null
@@ -236,15 +216,53 @@ namespace Logility.ROWeb
         private static int GetWorkflowMethodFolderRIDFromUniqueID(FolderDataLayer dlFolder, eProfileType applicationFolderType, int userKey, eProfileType profileType, string uniqueID)
         {
             int folderKey = Include.NoRID;
+            int folderType;
 
             string[] keys = uniqueID.Split('_');
 
             for (int i = keys.Length - 1; i >= 0; --i )
             {
                 folderKey = Convert.ToInt32(keys[i]);
-                if (isFolderValid(dlFolder: dlFolder, applicationFolderType: applicationFolderType, folderKey: folderKey, userKey: userKey, profileType: profileType))
+                if (isFolderValid(dlFolder: dlFolder, applicationFolderType: applicationFolderType, folderKey: folderKey, userKey: userKey, profileType: profileType, folderType: out folderType))
                 {
                     return folderKey;
+                }
+
+                if (folderType == eProfileType.WorkflowMethodSubFolder.GetHashCode())
+                {
+                    folderKey = GetWorkflowMethodFolderRIDFromGrouping(dlFolder: dlFolder, applicationFolderType: applicationFolderType, userKey: userKey, profileType: profileType, folderKey: folderKey);
+                    if (folderKey != Include.NoRID)
+                    {
+                        return folderKey;
+                    }
+                }
+            }
+
+            return Include.NoRID;
+        }
+
+        private static int GetWorkflowMethodFolderRIDFromGrouping(FolderDataLayer dlFolder, eProfileType applicationFolderType, int userKey, eProfileType profileType, int folderKey)
+        {
+            DataTable dt;
+            int userRID, folderType;
+
+            dt = dlFolder.Folder_Children_Read(aUserRID: userKey, aFolderRID: folderKey);
+            if (dt != null
+            && dt.Rows.Count > 0)
+            {
+                foreach (DataRow dr in dt.Rows)
+                {
+                    folderKey = Convert.ToInt32(dr["CHILD_ITEM_RID"]);
+                    userRID = Convert.ToInt32(dr["USER_RID"]);
+                    folderType = Convert.ToInt32(dr["CHILD_ITEM_TYPE"]);
+                    if (folderType == eProfileType.WorkflowMethodSubFolder.GetHashCode())
+                    {
+                        return GetWorkflowMethodFolderRIDFromGrouping(dlFolder: dlFolder, applicationFolderType: applicationFolderType, userKey: userKey, profileType: profileType, folderKey: folderKey);
+                    }
+                    else if (isFolderValid(dlFolder: dlFolder, applicationFolderType: applicationFolderType, folderKey: folderKey, userKey: userKey, profileType: profileType, folderType: out folderType))
+                    {
+                        return folderKey;
+                    }
                 }
             }
 

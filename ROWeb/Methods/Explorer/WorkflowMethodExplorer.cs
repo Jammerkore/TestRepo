@@ -9,6 +9,7 @@ using MIDRetail.Windows;
 using MIDRetail.Windows.Controls;
 
 using System;
+using System.Collections;
 using System.Data;
 using System.Windows.Forms;
 
@@ -62,6 +63,8 @@ namespace Logility.ROWeb
                     return DeleteShortCut((RODataExplorerShortcutParms)Parms);
                 case eRORequest.SaveAs:
                     return GetWorkflowMethodManager((ROBaseUpdateParms)Parms).SaveAs((RODataExplorerSaveAsParms)Parms);
+                case eRORequest.Delete:
+                    return DeleteExplorerData(Parms: (ROTreeNodeParms)Parms);
             }
 
             return new RONoDataOut(eROReturnCode.Failure, "Invalid Request", ROInstanceID);
@@ -107,7 +110,7 @@ namespace Logility.ROWeb
                     _ROWorkflowMethodManager.CleanUp();
                     _ROWorkflowMethodManager = null;
                 }
-                _ROWorkflowMethodManager = new ROAllocationWorkflowMethodManager(SAB: SAB, ROWebTools: ROWebTools, ROInstanceID: ROInstanceID);
+                _ROWorkflowMethodManager = new ROAllocationWorkflowMethodManager(SAB: SAB, applicationSessionTransaction: null, ROWebTools: ROWebTools, ROInstanceID: ROInstanceID);
             }
             else if (applicationType == eROApplicationType.Forecast
                 && (_ROWorkflowMethodManager == null || _ROWorkflowMethodManager.ApplicationType != eROApplicationType.Forecast || _ROWorkflowMethodManager.Key != updateParms.Key))
@@ -117,7 +120,7 @@ namespace Logility.ROWeb
                     _ROWorkflowMethodManager.CleanUp();
                     _ROWorkflowMethodManager = null;
                 }
-                _ROWorkflowMethodManager = new ROPlanningWorkflowMethodManager(SAB: SAB, ROWebTools: ROWebTools, ROInstanceID: ROInstanceID);
+                _ROWorkflowMethodManager = new ROPlanningWorkflowMethodManager(SAB: SAB, applicationSessionTransaction: null, ROWebTools: ROWebTools, ROInstanceID: ROInstanceID);
             }
             else
             {
@@ -147,11 +150,64 @@ namespace Logility.ROWeb
 
         override protected void RefreshTreeView(TreeNode node)
         {
-            FolderDataLayer DlFolder;
+            FolderDataLayer DlFolder = new FolderDataLayer();
             try
             {
                 MIDWorkflowMethodTreeNode groupNode = ((MIDWorkflowMethodTreeNode)node).GetGroupNode();
-                _treeView.ReloadCache(groupNode.UserId, groupNode.Profile.Key);
+
+                if (groupNode.Profile.ProfileType != eProfileType.WorkflowMethodAllocationFolder
+                    && groupNode.Profile.ProfileType != eProfileType.WorkflowMethodOTSForcastFolder)
+                {
+                    ArrayList lookupNode = new ArrayList();
+                    lookupNode.Add(node);
+                    ArrayList folders = _treeView.GetFolderNodes(lookupNode);
+                    foreach (MIDWorkflowMethodTreeNode wmNode in folders)
+                    {
+                        if (wmNode.Profile.ProfileType == eProfileType.WorkflowMethodAllocationFolder
+                            || wmNode.Profile.ProfileType == eProfileType.WorkflowMethodOTSForcastFolder)
+                        {
+                            RebuildBranch(DlFolder, wmNode, wmNode);
+                        }
+                    }
+                }
+                else
+                {
+                    RebuildBranch(DlFolder, node, groupNode);
+                }
+
+                //_treeView.ReloadCache(groupNode.UserId, groupNode.Profile.Key);
+
+                //node.Nodes.Clear();
+                //MIDWorkflowMethodTreeNode midTreeNode = (MIDWorkflowMethodTreeNode)node;
+                //if (midTreeNode.Profile.ProfileType == eProfileType.WorkflowMethodAllocationFolder)
+                //{
+                //    DlFolder = new FolderDataLayer();
+                //    DataTable children = DlFolder.Folder_Children_Read(midTreeNode.UserId, midTreeNode.Key);
+                //    ((WorkflowMethodTreeView)midTreeNode.TreeView).BuildAllocationGroupChildren(groupNode, groupNode.Key, groupNode.UserId, groupNode.OwnerUserRID, children, false);
+                //}
+                //else if (midTreeNode.Profile.ProfileType == eProfileType.WorkflowMethodOTSForcastFolder)
+                //{
+                //    DlFolder = new FolderDataLayer();
+                //    DataTable children = DlFolder.Folder_Children_Read(midTreeNode.UserId, midTreeNode.Key);
+                //    ((WorkflowMethodTreeView)midTreeNode.TreeView).BuildOTSForecastGroupChildren(groupNode, groupNode.Key, groupNode.UserId, groupNode.OwnerUserRID, children, false);
+                //}
+                //else
+                //{
+                //    ((MIDTreeNode)node).ChildrenLoaded = false;
+                //    _treeView.ExpandNode(node);
+                //}
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private void RebuildBranch(FolderDataLayer DlFolder, TreeNode node, MIDWorkflowMethodTreeNode groupNode)
+        {
+            try
+            {
+                 _treeView.ReloadCache(groupNode.UserId, groupNode.Profile.Key);
 
                 node.Nodes.Clear();
                 MIDWorkflowMethodTreeNode midTreeNode = (MIDWorkflowMethodTreeNode)node;

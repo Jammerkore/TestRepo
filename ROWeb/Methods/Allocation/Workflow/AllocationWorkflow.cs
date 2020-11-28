@@ -33,6 +33,7 @@ namespace Logility.ROWeb
         {
             bool isFromExplorer = false;
             int aWorkflowRID = 0;
+            bool successful = true;
 
             if (rOIntParms.ROInt != 0)
             {
@@ -40,9 +41,10 @@ namespace Logility.ROWeb
                 aWorkflowRID = rOIntParms.ROInt;
             }
 
-            var rOAllocationHeaderSummaries = ProcessWorkflow(isFromExplorer, aWorkflowRID);
+            var rOAllocationHeaderSummaries = ProcessWorkflow(isFromExplorer, out successful, aWorkflowRID);
 
-            if (rOAllocationHeaderSummaries.Count > 0)
+            if (rOAllocationHeaderSummaries.Count > 0
+                && successful)
             {
                 return new ROIListOut(eROReturnCode.Successful, _workflowActionStatus, ROInstanceID, rOAllocationHeaderSummaries);
             }
@@ -50,7 +52,7 @@ namespace Logility.ROWeb
             return new ROIListOut(eROReturnCode.Failure, _workflowActionStatus, ROInstanceID, rOAllocationHeaderSummaries);
         }
 
-        internal List<ROAllocationHeaderSummary> ProcessWorkflow(bool isFromExplorer, int aWorkflowRID = 0)
+        internal List<ROAllocationHeaderSummary> ProcessWorkflow(bool isFromExplorer, out bool successful, int aWorkflowRID = 0)
         {
             try
             {
@@ -58,12 +60,12 @@ namespace Logility.ROWeb
                 {
                     //Call method which is used to Process the Action from Explorer
                     _allocationWorkflow = new AllocationWorkFlow(SAB, aWorkflowRID, SAB.ClientServerSession.UserRID, false);
-                    return ProcessWorkflowMethod(true);
+                    return ProcessWorkflowMethod(true, out successful);
                 }
                 else
                 {
                     //Call method which is used to Process the Action from Process Button Click
-                    return ProcessWorkflowMethod(false);
+                    return ProcessWorkflowMethod(false, out successful);
                 }
             }
             catch (Exception ex)
@@ -77,8 +79,10 @@ namespace Logility.ROWeb
 
         }
 
-        internal List<ROAllocationHeaderSummary> ProcessWorkflowMethod(bool isFromExplorer)
+        internal List<ROAllocationHeaderSummary> ProcessWorkflowMethod(bool isFromExplorer, out bool successful)
         {
+            successful = true;
+
             List<ROAllocationHeaderSummary> headerDetails = new List<ROAllocationHeaderSummary>();
 
             bool processedAlocWorkflow = false;
@@ -126,6 +130,14 @@ namespace Logility.ROWeb
                         {
                             //CloseForms();
                         }
+                        if (actionStatus == eAllocationActionStatus.ActionCompletedSuccessfully)
+                        {
+                            successful = true;
+                        }
+                        else
+                        {
+                            successful = false;
+                        }
                     }
                     else
                     {
@@ -146,6 +158,14 @@ namespace Logility.ROWeb
                                 {
                                     //CloseForms();
                                 }
+                                if (actionStatus == eAllocationActionStatus.ActionCompletedSuccessfully)
+                                {
+                                    successful = true;
+                                }
+                                else
+                                {
+                                    successful = false;
+                                }
                             }
                             else
                             {
@@ -161,6 +181,14 @@ namespace Logility.ROWeb
                     _applicationSessionTransaction.ProcessOTSPlanWorkflow(ABW.Key, true, true, 1);
                     eOTSPlanActionStatus actionStatus = _applicationSessionTransaction.OTSPlanActionStatus;
                     string message = MIDText.GetTextOnly((int)actionStatus);
+                    if (actionStatus == eOTSPlanActionStatus.ActionCompletedSuccessfully)
+                    {
+                        successful = true;
+                    }
+                    else
+                    {
+                        successful = false;
+                    }
                 }
 
                 processedAlocWorkflow = true;

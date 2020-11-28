@@ -2540,8 +2540,10 @@ namespace MIDRetail.Business.Allocation
             }
 
         }
-        override public ROMethodProperties MethodGetData(bool processingApply)
+        override public ROMethodProperties MethodGetData(out bool successful, ref string message, bool processingApply = false)
         {
+            successful = true;
+
             ROMethodBuildPacksProperties method = new ROMethodBuildPacksProperties(
                 method: GetName.GetMethod(method: this),
                 description: Method_Description,
@@ -2569,7 +2571,7 @@ namespace MIDRetail.Business.Allocation
 
         }
 
-        override public bool MethodSetData(ROMethodProperties methodProperties, bool processingApply)
+        override public bool MethodSetData(ROMethodProperties methodProperties, ref string message, bool processingApply)
         {
             MIDException aStatusReason;
             ROMethodBuildPacksProperties rOMethodBuildPacksProperties = (ROMethodBuildPacksProperties)methodProperties;

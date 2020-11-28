@@ -1267,6 +1267,9 @@ namespace Logility.ROWeb
                 _sROMessage = MIDText.GetTextOnly((int)actionStatus);
 
                 if (actionStatus == eAllocationActionStatus.HeaderEnqueueFailed
+                    || actionStatus == eAllocationActionStatus.ActionFailed
+                    || actionStatus == eAllocationActionStatus.NoActionPerformed
+                    || actionStatus == eAllocationActionStatus.NotAllLinkedHeadersRlseApproved
                     || actionStatus == eAllocationActionStatus.NoHeaderResourceLocks)
                 {
                     _returnCode = eROReturnCode.Failure;

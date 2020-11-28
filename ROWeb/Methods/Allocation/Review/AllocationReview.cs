@@ -21,6 +21,7 @@ namespace Logility.ROWeb
         private Dictionary<string, Dictionary<string, Tuple<string, bool, int>>> _viewColumnsTuple = new Dictionary<string, Dictionary<string, Tuple<string, bool, int>>>();
 
         AllocationWaferGroup _wafers;
+        private bool _wafersBuilt = false;
         internal ROData allocationReviewData;
         internal SelectedHeaderList _selectedHeaderList;
         private int _currentViewRID = Include.NoRID;
@@ -173,7 +174,8 @@ namespace Logility.ROWeb
 
                 _applicationSessionTransaction.AllocationStoreAttributeID = Convert.ToInt32(reviewOptionsParms.StoreAttribute.Key, CultureInfo.CurrentUICulture);
 
-                if (eAllocationSelectionViewType.Style == selectionViewType)
+                if (eAllocationSelectionViewType.Style == selectionViewType
+                    || eAllocationSelectionViewType.Velocity == selectionViewType)
                 {
                     if (_applicationSessionTransaction.AllocationViewType == eAllocationSelectionViewType.Velocity)
                     {
@@ -249,12 +251,31 @@ namespace Logility.ROWeb
             eLayoutID layoutID = eLayoutID.NotDefined;
             if (selectionViewType == eAllocationSelectionViewType.Style)
             { layoutID = eLayoutID.styleReviewGrid; }
+            else if (selectionViewType == eAllocationSelectionViewType.Velocity)
+            { layoutID = eLayoutID.velocityStoreDetailGrid; }
             else if (selectionViewType == eAllocationSelectionViewType.Size)
             { layoutID = eLayoutID.sizeReviewGrid; }
             else if (selectionViewType == eAllocationSelectionViewType.Summary)
             { layoutID = eLayoutID.sizeReviewGrid; }
 
             int viewRID = _userGridView.UserGridView_Read(SAB.ClientServerSession.UserRID, layoutID);
+
+            if (viewRID == Include.NoRID)
+            {
+                if (selectionViewType == eAllocationSelectionViewType.Velocity)
+                {
+                    viewRID = Include.DefaultVelocityDetailViewRID;
+                }
+                else if (selectionViewType == eAllocationSelectionViewType.Style)
+                {
+                    viewRID = Include.DefaultStyleViewRID;
+                }
+                else if (selectionViewType == eAllocationSelectionViewType.Size)
+                {
+                    viewRID = Include.DefaultSizeViewRID;
+                }
+            }
+
             return viewRID;
         }
 
@@ -300,11 +321,18 @@ namespace Logility.ROWeb
                 _userGridView = new UserGridView();
 
                 ArrayList selectedAssortmentList = new ArrayList();
-                if (!_fromAssortment)
+                if (!_fromAssortment
+                    && !_applicationSessionTransaction.AllocationCriteriaExists)
                 {
                     _applicationSessionTransaction.CreateAllocationViewSelectionCriteria();
                     _applicationSessionTransaction.NewCriteriaHeaderList();
                 }
+
+                if (reviewOptionsParms.IsVelocity)
+                {
+                    _applicationSessionTransaction.AllocationStoreAttributeID = _applicationSessionTransaction.VelocityStoreGroupRID;
+                }
+
                 _applicationSessionTransaction.AllocationViewType = selectionViewType;
                 _applicationSessionTransaction.AllocationNeedAnalysisPeriodBeginRID = Include.NoRID;
                 _applicationSessionTransaction.AllocationNeedAnalysisPeriodEndRID = Include.NoRID;
@@ -312,7 +340,14 @@ namespace Logility.ROWeb
 
                 if (reviewOptionsParms.View.Key == 0)
                 {
-                    reviewOptionsParms.View = new KeyValuePair<int, string>(_userGridView.UserGridView_Read(SAB.ClientServerSession.UserRID, eLayoutID.styleReviewGrid), "From DB");
+                    if (reviewOptionsParms.IsVelocity)
+                    {
+                        reviewOptionsParms.View = new KeyValuePair<int, string>(_userGridView.UserGridView_Read(SAB.ClientServerSession.UserRID, eLayoutID.velocityStoreDetailGrid), "From DB");
+                    }
+                    else
+                    {
+                        reviewOptionsParms.View = new KeyValuePair<int, string>(_userGridView.UserGridView_Read(SAB.ClientServerSession.UserRID, eLayoutID.styleReviewGrid), "From DB");
+                    }
                 }
 
                 _allocationHeaderProfileList = (AllocationHeaderProfileList)_applicationSessionTransaction.GetMasterProfileList(eProfileType.AllocationHeader);
@@ -325,8 +360,11 @@ namespace Logility.ROWeb
 
                 if (!_headersLocked)
                 {
-                    CheckSecurityEnqueue(selectionViewType);
-                    _applicationSessionTransaction.SetCriteriaHeaderList(_allocationHeaderProfileList);
+                    if (!_applicationSessionTransaction.VelocityCriteriaExists)
+                    {
+                        CheckSecurityEnqueue(selectionViewType);
+                        _applicationSessionTransaction.SetCriteriaHeaderList(_allocationHeaderProfileList);
+                    }
                     _headersLocked = true;
                 }
 
@@ -365,9 +403,19 @@ namespace Logility.ROWeb
                 if (viewRID != _currentViewRID)
                 {
                     _applicationSessionTransaction.BuildWaferColumns.Clear();
-                    foreach (int variable in Enum.GetValues(typeof(eAllocationStyleViewVariableDefault)))
+                    if (reviewOptionsParms.IsVelocity)
                     {
-                        CheckVariableBuiltArrayList(variable, builtVariables);
+                        foreach (int variable in Enum.GetValues(typeof(eAllocationVelocityViewVariableDefault)))
+                        {
+                            CheckVariableBuiltArrayList(variable, builtVariables);
+                        }
+                    }
+                    else
+                    {
+                        foreach (int variable in Enum.GetValues(typeof(eAllocationStyleViewVariableDefault)))
+                        {
+                            CheckVariableBuiltArrayList(variable, builtVariables);
+                        }
                     }
 
                     AddViewColumns(viewRID, builtVariables);
@@ -387,21 +435,27 @@ namespace Logility.ROWeb
                     _applicationSessionTransaction.AllocationFilterTable = _dtFilter.Copy();
                 }
 
-                if (rebuildWafers)
+                if (rebuildWafers
+                    && _wafersBuilt)
                 {
                     _applicationSessionTransaction.RebuildWafers();
                     _wafers = _applicationSessionTransaction.AllocationWafers;
                 }
                 else
                 {
-                    if (_wafers == null) { _wafers = _applicationSessionTransaction.AllocationWafers; }
+                    if (_wafers == null)
+                    {
+                        _wafers = _applicationSessionTransaction.AllocationWafers;
+                        _wafersBuilt = true;
+                    }
                 }
 
                 if (eAllocationSelectionViewType.Size == selectionViewType)
                 {
                     return FormatGridsWithApplyView(_wafers, reviewOptionsParms, selectionViewType, true, reviewOptionsParms.View.Key);
                 }
-                else if (eAllocationSelectionViewType.Style == selectionViewType)
+                else if (eAllocationSelectionViewType.Style == selectionViewType
+                    || eAllocationSelectionViewType.Velocity == selectionViewType)
                 {
                     return FormatGridsWithApplyView(_wafers, reviewOptionsParms, selectionViewType, false, reviewOptionsParms.View.Key);
                 }
@@ -487,7 +541,8 @@ namespace Logility.ROWeb
 
         private void SetAllocationGroupBy(ROAllocationReviewOptionsParms reviewOptionsParms, eAllocationSelectionViewType selectionViewType)
         {
-            if (selectionViewType == eAllocationSelectionViewType.Style)
+            if (selectionViewType == eAllocationSelectionViewType.Style
+                || selectionViewType == eAllocationSelectionViewType.Velocity)
             {
                 if (Enum.IsDefined(typeof(eAllocationStyleViewGroupBy), reviewOptionsParms.GroupBy))
                 { _applicationSessionTransaction.AllocationGroupBy = Convert.ToInt32(reviewOptionsParms.GroupBy); }

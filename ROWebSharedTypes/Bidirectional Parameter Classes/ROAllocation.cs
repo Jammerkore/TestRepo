@@ -112,7 +112,7 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eAllocationSelectionViewType), value))
                 {
-                    _viewType = eAllocationSelectionViewType.None;
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {
@@ -144,7 +144,7 @@ namespace Logility.ROWebSharedTypes
             _sizeCurveValue = sizeCurveValue;
             if (!Enum.IsDefined(typeof(eAllocationSelectionViewType), viewType))
             {
-                _viewType = eAllocationSelectionViewType.None;
+                throw new Exception("Value " + viewType.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
             }
             else
             {
@@ -220,7 +220,7 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eMerchandiseType), value))
                 {
-                    _merchandiseType = eMerchandiseType.Undefined;
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {
@@ -261,7 +261,7 @@ namespace Logility.ROWebSharedTypes
             _merch_PH = new KeyValuePair<int, int>(merch_PH_RID, merch_PHL_SEQ);
             if (!Enum.IsDefined(typeof(eMerchandiseType), merchandiseType))
             {
-                _merchandiseType = eMerchandiseType.Undefined;
+                throw new Exception("Value " + merchandiseType.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
             }
             else
             {
@@ -364,7 +364,7 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eMerchandiseType), value))
                 {
-                    _merchandiseType = eMerchandiseType.Undefined;
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {
@@ -392,7 +392,7 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eFillSizesToType), value))
                 {
-                    _fillSizesToType = eFillSizesToType.Holes;
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {
@@ -435,7 +435,7 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eVSWSizeConstraints), value))
                 {
-                    _vSWSizeConstraints = eVSWSizeConstraints.None;
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {
@@ -504,7 +504,7 @@ namespace Logility.ROWebSharedTypes
             _merch_PH = new KeyValuePair<int, int>(merch_PH_RID, merch_PHL_SEQ);
             if (!Enum.IsDefined(typeof(eMerchandiseType), merchandiseType))
             {
-                _merchandiseType = eMerchandiseType.Undefined;
+                throw new Exception("Value " + merchandiseType.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
             }
             else
             {
@@ -514,7 +514,7 @@ namespace Logility.ROWebSharedTypes
             _normalizeSizeCurves = normalizeSizeCurves;
             if (!Enum.IsDefined(typeof(eFillSizesToType), fillSizesToType))
             {
-                _fillSizesToType = eFillSizesToType.Holes;
+                throw new Exception("Value " + fillSizesToType.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
             }
             else
             {
@@ -527,7 +527,7 @@ namespace Logility.ROWebSharedTypes
             _overrideVSWSizeConstraints = overrideVSWSizeConstraints;
             if (!Enum.IsDefined(typeof(eVSWSizeConstraints), vSWSizeConstraints))
             {
-                _vSWSizeConstraints = eVSWSizeConstraints.None;
+                throw new Exception("Value " + vSWSizeConstraints.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
             }
             else
             {
@@ -607,7 +607,7 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eMerchandiseType), value))
                 {
-                    _merchandiseType = eMerchandiseType.Undefined;
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {
@@ -661,7 +661,7 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eVSWSizeConstraints), value))
                 {
-                    _vSWSizeConstraints = eVSWSizeConstraints.None;
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {
@@ -727,7 +727,7 @@ namespace Logility.ROWebSharedTypes
             _merch_PH = new KeyValuePair<int, int>(merch_PH_RID, merch_PHL_SEQ);
             if (!Enum.IsDefined(typeof(eMerchandiseType), merchandiseType))
             {
-                _merchandiseType = eMerchandiseType.Undefined;
+                throw new Exception("Value " + merchandiseType.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
             }
             else
             {
@@ -742,7 +742,7 @@ namespace Logility.ROWebSharedTypes
             _overrideVSWSizeConstraints = overrideVSWSizeConstraints;
             if (!Enum.IsDefined(typeof(eVSWSizeConstraints), vSWSizeConstraints))
             {
-                _vSWSizeConstraints = eVSWSizeConstraints.None;
+                throw new Exception("Value " + vSWSizeConstraints.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
             }
             else
             {
@@ -963,7 +963,7 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eEquateOverrideSizeType), value))
                 {
-                    _overrideSizeType = eEquateOverrideSizeType.DimensionSize;
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {
@@ -983,7 +983,7 @@ namespace Logility.ROWebSharedTypes
             _substitue = substitue;
             if (!Enum.IsDefined(typeof(eEquateOverrideSizeType), overrideSizeType))
             {
-                _overrideSizeType = eEquateOverrideSizeType.DimensionSize;
+                throw new Exception("Value " + overrideSizeType.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
             }
             else
             {
@@ -1038,7 +1038,7 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eSizeCurvesByType), value))
                 {
-                    _sizeCurvesByType = eSizeCurvesByType.Store; //default from SizeCurveMethod.cs
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {
@@ -1076,7 +1076,7 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eNodeChainSalesType), value))
                 {
-                    _tolerIndexUnitsType = eNodeChainSalesType.None; //default from SizeCurveMethod.cs
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {
@@ -1114,7 +1114,7 @@ namespace Logility.ROWebSharedTypes
             _attribute = attribute;
             if (!Enum.IsDefined(typeof(eSizeCurvesByType), sizeCurvesByType))
             {
-                _sizeCurvesByType = eSizeCurvesByType.Store; //default from SizeCurveMethod.cs
+                throw new Exception("Value " + sizeCurvesByType.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
             }
             else
             {
@@ -1126,7 +1126,7 @@ namespace Logility.ROWebSharedTypes
             _tolerSalesTolerance = tolerSalesTolerance;
             if (!Enum.IsDefined(typeof(eNodeChainSalesType), tolerIndexUnitsType))
             {
-                _tolerIndexUnitsType = eNodeChainSalesType.None; // default from SizeCurveMethod.cs
+                throw new Exception("Value " + tolerIndexUnitsType.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
             }
             else
             {
@@ -1227,7 +1227,7 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eMerchandiseType), value))
                 {
-                    _merchType = eMerchandiseType.Undefined;
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {
@@ -1266,7 +1266,7 @@ namespace Logility.ROWebSharedTypes
             _cdr = cdr;
             if (!Enum.IsDefined(typeof(eMerchandiseType), merchType))
             {
-                _merchType = eMerchandiseType.Undefined;
+                throw new Exception("Value " + merchType.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
             }
             else
             {
@@ -1311,7 +1311,7 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eDCFulfillmentSplitOption), value))
                 {
-                    _dCFulfillmentSplitOption = eDCFulfillmentSplitOption.DCFulfillment; // default DCFulfillment from MethodDCFulfillment.cs
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {
@@ -1337,7 +1337,7 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eDCFulfillmentHeadersOrder), value))
                 {
-                    _headersOrder = eDCFulfillmentHeadersOrder.Ascending; // default Ascending from MethodDCFulfillment.cs
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {
@@ -1352,7 +1352,7 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eDCFulfillmentSplitByOption), value))
                 {
-                    _split_By_Option = eDCFulfillmentSplitByOption.SplitByDC; // default SplitbyDC from MethodDCFulfillment.cs
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {
@@ -1367,7 +1367,7 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eDCFulfillmentWithinDC), value))
                 {
-                    _within_Dc = eDCFulfillmentWithinDC.Proportional; // default Proportional from MethodDCFulfillment.cs
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {
@@ -1382,7 +1382,7 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eDCFulfillmentReserve), value))
                 {
-                    _split_By_Reserve = eDCFulfillmentReserve.ReservePreSplit; // default ReservePreSplit from MethodDCFulfillment.cs
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {
@@ -1397,7 +1397,7 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eDCFulfillmentStoresOrder), value))
                 {
-                    _storesOrder = eDCFulfillmentStoresOrder.Ascending; // default Ascending from MethodDCFulfillment.cs
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {
@@ -1735,7 +1735,7 @@ namespace Logility.ROWebSharedTypes
             _genCurvePhlSequence = genCurvePhlSequence;
             if (!Enum.IsDefined(typeof(eMerchandiseType), genCurveMerchType))
             {
-                _genCurveMerchType = eMerchandiseType.Undefined;
+                throw new Exception("Value " + genCurveMerchType.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
             }
             else
             {
@@ -1761,7 +1761,7 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eMerchandiseType), value))
                 {
-                    _genCurveMerchType = eMerchandiseType.Undefined;
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {
@@ -1840,7 +1840,7 @@ namespace Logility.ROWebSharedTypes
             _inventoryBasisMerchPhlSequence = inventoryBasisMerchPhlSequence;
             if (!Enum.IsDefined(typeof(eMerchandiseType), inventoryBasisMerchType))
             {
-                _inventoryBasisMerchType = eMerchandiseType.Undefined;
+                throw new Exception("Value " + inventoryBasisMerchType.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
             }
             else
             {
@@ -1853,7 +1853,7 @@ namespace Logility.ROWebSharedTypes
             _genConstraintPhlSequence = genConstraintPhlSequence;
             if (!Enum.IsDefined(typeof(eMerchandiseType), genConstraintMerchType))
             {
-                _genConstraintMerchType = eMerchandiseType.Undefined;
+                throw new Exception("Value " + genConstraintMerchType.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
             }
             else
             {
@@ -1875,7 +1875,7 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eMerchandiseType), value))
                 {
-                    _inventoryBasisMerchType = eMerchandiseType.Undefined;
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {
@@ -1895,7 +1895,7 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eMerchandiseType), value))
                 {
-                    _genConstraintMerchType = eMerchandiseType.Undefined;
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {
@@ -2024,7 +2024,7 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eSizeMethodRowType), value))
                 {
-                    _rowTypeID = eSizeMethodRowType.Default;
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {
@@ -2056,7 +2056,7 @@ namespace Logility.ROWebSharedTypes
             _sizeQuantity = sizeQuantity;
             if (!Enum.IsDefined(typeof(eSizeMethodRowType), rowTypeID))
             {
-                _rowTypeID = eSizeMethodRowType.Default;
+                throw new Exception("Value " + rowTypeID.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
             }
             else
             {
@@ -2126,7 +2126,7 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eSortDirection), value))
                 {
-                    _sortDirection = eSortDirection.Descending; //this is the default taken in RuleMethod.cs
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {
@@ -2148,7 +2148,7 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eComponentType), value))
                 {
-                    _componentType = eComponentType.Total; //this is the default taken in RuleMethod.cs
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {
@@ -2176,7 +2176,7 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eRuleMethod), value))
                 {
-                    _includeRuleMethod = eRuleMethod.None; //this is the default taken in RuleMethod.cs
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {
@@ -2198,7 +2198,7 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eRuleMethod), value))
                 {
-                    _excludeRuleMethod = eRuleMethod.None; //this is the default taken in RuleMethod.cs
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {
@@ -2238,7 +2238,7 @@ namespace Logility.ROWebSharedTypes
             _isHeaderMaster = isHeaderMaster;
             if (!Enum.IsDefined(typeof(eSortDirection), sortDirection))
             {
-                _sortDirection = eSortDirection.Descending; //this is the default taken in RuleMethod.cs
+                throw new Exception("Value " + sortDirection.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
             }
             else
             {
@@ -2247,7 +2247,7 @@ namespace Logility.ROWebSharedTypes
             _includeReserveInd = includeReserveInd;
             if (!Enum.IsDefined(typeof(eComponentType), componentType))
             {
-                _componentType = eComponentType.Total; //this is the default taken in RuleMethod.cs
+                throw new Exception("Value " + componentType.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
             }
             else
             {
@@ -2257,7 +2257,7 @@ namespace Logility.ROWebSharedTypes
             _color = color;
             if (!Enum.IsDefined(typeof(eRuleMethod), includeRuleMethod))
             {
-                _includeRuleMethod = eRuleMethod.None; //this is the default taken in RuleMethod.cs
+                throw new Exception("Value " + includeRuleMethod.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
             }
             else
             {
@@ -2266,7 +2266,7 @@ namespace Logility.ROWebSharedTypes
             _includeQuantity = includeQuantity;
             if (!Enum.IsDefined(typeof(eRuleMethod), excludeRuleMethod))
             {
-                _excludeRuleMethod = eRuleMethod.None; //this is the default taken in RuleMethod.cs
+                throw new Exception("Value " + excludeRuleMethod.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
             }
             else
             {
@@ -2507,7 +2507,7 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eMinMaxType), value))
                 {
-                    _inventoryIndicator = eMinMaxType.Allocation; //defaulted to Allocation in AllocationOverrideMethod.cs and AllocationStructures.cs to set InventoryInd to 'A'.
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {
@@ -2523,7 +2523,7 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eMerchandiseType), value))
                 {
-                    _inventoryBasisMerchType = eMerchandiseType.Undefined;
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {
@@ -2620,7 +2620,7 @@ namespace Logility.ROWebSharedTypes
             _storeGradesAttribute = storeGradesAttribute;
             if (!Enum.IsDefined(typeof(eMinMaxType), inventoryIndicator))
             {
-                _inventoryIndicator = eMinMaxType.Allocation; //defaulted to Allocation in AllocationOverrideMethod.cs and AllocationStructures.cs to set InventoryInd to 'A'.
+                throw new Exception("Value " + inventoryIndicator.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
             }
             else
             {
@@ -2628,7 +2628,7 @@ namespace Logility.ROWebSharedTypes
             }
             if (!Enum.IsDefined(typeof(eMerchandiseType), inventoryBasisMerchType))
             {
-                _inventoryBasisMerchType = eMerchandiseType.Undefined;
+                throw new Exception("Value " + inventoryBasisMerchType.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
             }
             else
             {
@@ -2980,7 +2980,7 @@ namespace Logility.ROWebSharedTypes
     [DataContract(Name = "ROMethodAllocationVelocityProperties", Namespace = "http://Logility.ROWeb/")]
     public class ROMethodAllocationVelocityProperties : ROMethodProperties
     {
-        // fields specific to Allocation Velocify method
+        // fields specific to Allocation Velocity method
         [DataMember(IsRequired = true)]
         private eVelocityCalculateAverageUsing _calculateAverageUsing;
         [DataMember(IsRequired = true)]
@@ -3024,11 +3024,9 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         private KeyValuePair<int, string> _attributeSet;
         [DataMember(IsRequired = true)]
+        private List<KeyValuePair<int, string>> _attributeSetList;
+        [DataMember(IsRequired = true)]
         private List<KeyValuePair<int, string>> _noOnHandRuleList;
-        [DataMember(IsRequired = true)]
-        private int? _noOnHandSelectedRuleKey;
-        [DataMember(IsRequired = true)]
-        private double? _noOnHandSelectedRuleValue;
         [DataMember(IsRequired = true)]
         private List<KeyValuePair<int, string>> _onHandRuleList;
         [DataMember(IsRequired = true)]
@@ -3041,6 +3039,14 @@ namespace Logility.ROWebSharedTypes
         private KeyValuePair<int, string> _matrixSelectedView;
         [DataMember(IsRequired = true)]
         private List<KeyValuePair<string, bool>> _matrixViewColumns;
+        [DataMember(IsRequired = true)]
+        private bool _interactive;
+        [DataMember(IsRequired = true)]
+        private eVelocityAction _velocityAction;
+        [DataMember(IsRequired = true)]
+        private List<KeyValuePair<int, string>> _components;
+        [DataMember(IsRequired = true)]
+        private KeyValuePair<int, string> _selectedComponent;
 
         #region Public Properties
         /// <summary>
@@ -3053,7 +3059,7 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eVelocityCalculateAverageUsing), value))
                 {
-                    _calculateAverageUsing = eVelocityCalculateAverageUsing.AllStores;
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {
@@ -3072,7 +3078,7 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eVelocityDetermineShipQtyUsing), value))
                 {
-                    _determineShipQtyUsing = eVelocityDetermineShipQtyUsing.Basis;
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {
@@ -3091,7 +3097,7 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eVelocityApplyMinMaxType), value))
                 {
-                    _applyMinMaxType = eVelocityApplyMinMaxType.None;
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {
@@ -3110,7 +3116,7 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eVelocityMethodGradeVariableType), value))
                 {
-                    _gradeVariableType = eVelocityMethodGradeVariableType.Stock;
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {
@@ -3180,7 +3186,7 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eMinMaxType), value))
                 {
-                    _inventoryIndicator = eMinMaxType.Allocation; 
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {
@@ -3196,7 +3202,7 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eMerchandiseType), value))
                 {
-                    _inventoryMinMaxMerchType = eMerchandiseType.Undefined;
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {
@@ -3253,43 +3259,19 @@ namespace Logility.ROWebSharedTypes
         }
 
         /// <summary>
+        /// Gets the list of attribute sets
+        /// </summary>
+        public List<KeyValuePair<int, string>> AttributeSetList
+        {
+            get { return _attributeSetList; }
+        }
+
+        /// <summary>
         /// Gets the list of rules for stores with no on hand values
         /// </summary>
         public List<KeyValuePair<int, string>> NoOnHandRuleList
         {
             get { return _noOnHandRuleList; }
-        }
-
-        /// <summary>
-        /// Gets or sets the key of the rule selected for stores with no onhand values
-        /// </summary
-        public int? NoOnHandSelectedRuleKey
-        {
-            get { return _noOnHandSelectedRuleKey; }
-            set { _noOnHandSelectedRuleKey = value; }
-        }
-        /// <summary>
-        /// Gets a flag to identify if the key of the rule selected for stores with no onhand is set
-        /// </summary
-        public bool NoOnHandSelectedRuleKeyIsSet
-        {
-            get { return _noOnHandSelectedRuleKey != null; }
-        }
-
-        /// <summary>
-        /// Gets or sets the value of the rule selected for stores with no onhand
-        /// </summary
-        public double? NoOnHandSelectedRuleValue
-        {
-            get { return _noOnHandSelectedRuleValue; }
-            set { _noOnHandSelectedRuleValue = value; }
-        }
-        /// <summary>
-        /// Gets a flag to identify if the value of the rule selected for stores with no onhand is set
-        /// </summary
-        public bool NoOnHandSelectedRuleValueIsSet
-        {
-            get { return _noOnHandSelectedRuleValue != null; }
         }
 
         /// <summary>
@@ -3299,8 +3281,6 @@ namespace Logility.ROWebSharedTypes
         {
             get { return _onHandRuleList; }
         }
-
-        
 
         /// <summary>
         /// Gets the list of matrix mode rule values
@@ -3352,6 +3332,52 @@ namespace Logility.ROWebSharedTypes
             get { return _matrixViewColumns; }
         }
 
+        /// <summary>
+        /// Gets or sets the Interactive flag
+        /// </summary>
+        public bool Interactive
+        {
+            get { return _interactive; }
+            set { _interactive = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the velocity action to perform
+        /// </summary>
+        public eVelocityAction VelocityAction
+        {
+            get { return _velocityAction; }
+            set { _velocityAction = value; }
+        }
+
+        
+
+        /// <summary>
+        /// Gets or sets the list of components
+        /// </summary>
+        public List<KeyValuePair<int, string>> Components
+        {
+            get { return _components; }
+            set { _components = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the selected component
+        /// </summary>
+        public KeyValuePair<int, string> SelectedComponent
+        {
+            get { return _selectedComponent; }
+            set { _selectedComponent = value; }
+        }
+
+        /// <summary>
+		/// Gets a flag identifying if the selected component is set.
+		/// </summary>
+		public bool SelectedComponentIsSet
+        {
+            get { return !SelectedComponent.Equals(default(KeyValuePair<int, string>)); }
+        }
+
         #endregion
         public ROMethodAllocationVelocityProperties(KeyValuePair<int, string> method, string description, int userKey,
             eVelocityCalculateAverageUsing calculateAverageUsing,
@@ -3396,15 +3422,18 @@ namespace Logility.ROWebSharedTypes
 
             _attribute = attribute;
             _attributeSet = attributeSet;
+            _attributeSetList = new List<KeyValuePair<int, string>>();
             _noOnHandRuleList = new List<KeyValuePair<int, string>>();
-            _noOnHandSelectedRuleKey = null;
-            _noOnHandSelectedRuleValue = null;
             _onHandRuleList = new List<KeyValuePair<int, string>>();
             _matrixModeRuleList = new List<KeyValuePair<int, string>>();
             _matrixAttributeSetValues = new Dictionary<int, ROMethodAllocationVelocityAttributeSet>();
             _matrixViews = new List<KeyValuePair<int, string>>();
             _matrixSelectedView = default(KeyValuePair<int, string>);
             _matrixViewColumns = new List<KeyValuePair<string, bool>>();
+            _interactive = false;
+            _velocityAction = eVelocityAction.None;
+            _components = new List<KeyValuePair<int, string>>();
+            _selectedComponent = default(KeyValuePair<int, string>);
         }
 
     }
@@ -3433,7 +3462,15 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         private eVelocitySpreadOption _spreadOption;
         [DataMember(IsRequired = true)]
-        private Dictionary<int, ROMethodAllocationVelocityMatrixVelocityGrade> _matrixGradeValues;
+        private double? _allStoresAverageWOS;
+        [DataMember(IsRequired = true)]
+        private double? _allStoresSellThruPercent;
+        [DataMember(IsRequired = true)]
+        private double? _averageWOS;
+        [DataMember(IsRequired = true)]
+        private double? _sellThruPercent;
+        [DataMember(IsRequired = true)]
+        private List<ROMethodAllocationVelocityMatrixVelocityGrade> _matrixGradeValues;
 
         #region Public Properties
 
@@ -3456,7 +3493,7 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eVelocityMatrixMode), value))
                 {
-                    _matrixMode = eVelocityMatrixMode.None;
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {
@@ -3475,7 +3512,7 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eVelocityRuleType), value))
                 {
-                    _noOnHandRule = eVelocityRuleType.None;
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {
@@ -3549,20 +3586,13 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eVelocityRuleRequiresQuantity), value))
                 {
-                    _matrixModeAverageRule = eVelocityRuleRequiresQuantity.AbsoluteQuantity;
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {
                     _matrixModeAverageRule = value;
                 }
             }
-        }
-        /// <summary>
-        /// Gets a flag to identify if the key of the rule selected for matrix mode is set
-        /// </summary
-        public bool MatrixModeSelectedRuleKeyIsSet
-        {
-            get { return _matrixMode == eVelocityMatrixMode.Average; }
         }
 
         /// <summary>
@@ -3572,13 +3602,6 @@ namespace Logility.ROWebSharedTypes
         {
             get { return _matrixModeAverageRuleValue; }
             set { _matrixModeAverageRuleValue = value; }
-        }
-        /// <summary>
-        /// Gets a flag to identify if the value of the rule selected for matrix mode is set
-        /// </summary
-        public bool MatrixModeSelectedRuleValueIsSet
-        {
-            get { return _matrixModeAverageRuleValue != null; }
         }
 
         /// <summary>
@@ -3591,7 +3614,7 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eVelocitySpreadOption), value))
                 {
-                    _spreadOption = eVelocitySpreadOption.None;
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {
@@ -3600,7 +3623,75 @@ namespace Logility.ROWebSharedTypes
             }
         }
 
-        public Dictionary<int, ROMethodAllocationVelocityMatrixVelocityGrade> MatrixGradeValues
+        /// <summary>
+		/// Gets or sets the average WOS for the all stores when calculated interactively
+		/// </summary>
+		public double? AllStoresAverageWOS
+        {
+            get { return _allStoresAverageWOS; }
+            set { _allStoresAverageWOS = value; }
+        }
+
+        /// <summary>
+        /// Gets a flag to identify if the all stores average weeks of supply for all stores is set
+        /// </summary
+        public bool AllStoresAverageWOSIsSet
+        {
+            get { return _allStoresAverageWOS != null; }
+        }
+
+        /// <summary>
+		/// Gets or sets the sell thru percent for the all stores when calculated interactively
+		/// </summary>
+		public double? AllStoresSellThruPercent
+        {
+            get { return _allStoresSellThruPercent; }
+            set { _allStoresSellThruPercent = value; }
+        }
+
+        /// <summary>
+        /// Gets a flag to identify if the sell thru percent for all stores is set
+        /// </summary
+        public bool AllStoresSellThruPercentIsSet
+        {
+            get { return _allStoresSellThruPercent != null; }
+        }
+
+        /// <summary>
+		/// Gets or sets the average WOS for the set when calculated interactively
+		/// </summary>
+		public double? AverageWOS
+        {
+            get { return _averageWOS; }
+            set { _averageWOS = value; }
+        }
+
+        /// <summary>
+        /// Gets a flag to identify if the average weeks of supply for set is set
+        /// </summary
+        public bool AverageWOSIsSet
+        {
+            get { return _averageWOS != null; }
+        }
+
+        /// <summary>
+		/// Gets or sets the sell thru percent for the set when calculated interactively
+		/// </summary>
+		public double? SellThruPercent
+        {
+            get { return _sellThruPercent; }
+            set { _sellThruPercent = value; }
+        }
+
+        /// <summary>
+        /// Gets a flag to identify if the sell thru percent for set is set
+        /// </summary
+        public bool SellThruPercentIsSet
+        {
+            get { return _sellThruPercent != null; }
+        }
+
+        public List<ROMethodAllocationVelocityMatrixVelocityGrade> MatrixGradeValues
         {
             get { return _matrixGradeValues; }
         }
@@ -3612,7 +3703,11 @@ namespace Logility.ROWebSharedTypes
             eVelocityMatrixMode matrixMode,
             eVelocityRuleRequiresQuantity matrixModeAverageRule,
             double? matrixModeAverageRuleValue,
-            eVelocitySpreadOption spreadOption
+            eVelocitySpreadOption spreadOption,
+            double? allStoresAverageWOS,
+            double? allStoresSellThruPercent,
+            double? averageWOS,
+            double? sellThruPercent
             )
         {
             // fields specific to Allocation Velocity attribute set
@@ -3626,8 +3721,12 @@ namespace Logility.ROWebSharedTypes
             MatrixModeAverageRule = matrixModeAverageRule;
             MatrixModeAverageRuleValue = matrixModeAverageRuleValue;
             SpreadOption = spreadOption;
+            _allStoresAverageWOS = allStoresAverageWOS;
+            _allStoresSellThruPercent = allStoresSellThruPercent;
+            _averageWOS = averageWOS;
+            _sellThruPercent = sellThruPercent;
 
-            _matrixGradeValues = new Dictionary<int, ROMethodAllocationVelocityMatrixVelocityGrade>();
+            _matrixGradeValues = new List<ROMethodAllocationVelocityMatrixVelocityGrade>();
 
         }
 
@@ -3847,9 +3946,9 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         private double? _ruleValue;
         [DataMember(IsRequired = true)]
-        private int _numberOfStores;
+        private int? _numberOfStores;
         [DataMember(IsRequired = true)]
-        private double _averageWOS;
+        private double? _averageWOS;
 
         #region Public Properties
 
@@ -3881,7 +3980,7 @@ namespace Logility.ROWebSharedTypes
             {
                 if (!Enum.IsDefined(typeof(eVelocityRuleType), value))
                 {
-                    _ruleType = eVelocityRuleType.None;
+                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
                 else
                 {
@@ -3916,7 +4015,7 @@ namespace Logility.ROWebSharedTypes
         /// <summary>
         /// Gets or sets the number of stores for the cell of the for the velocity grade
         /// </summary
-        public int NumberOfStores
+        public int? NumberOfStores
         {
             get { return _numberOfStores; }
             set { _numberOfStores = value; }
@@ -3925,7 +4024,7 @@ namespace Logility.ROWebSharedTypes
         /// <summary>
         /// Gets or sets the average weeks of supply for the cell of the for the velocity grade
         /// </summary
-        public double AverageWOS
+        public double? AverageWOS
         {
             get { return _averageWOS; }
             set { _averageWOS = value; }
@@ -3936,8 +4035,8 @@ namespace Logility.ROWebSharedTypes
             int sellThruIndex,
             eVelocityRuleType ruleType,
             double? ruleValue,
-            int numberOfStores,
-            double averageWOS
+            int? numberOfStores,
+            double? averageWOS
             )
         {
             // fields specific to Allocation Velocity matrix grade values

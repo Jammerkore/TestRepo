@@ -3221,7 +3221,8 @@ namespace MIDRetail.Windows
             var myfrm = new InUseDialog(myInfo);
             myfrm.PersonalHierarchy = myHierarchyList;  // TT#3630 - JSmith - Delete My Hierarchy
             myfrm.ResolveInUseData(ref display, inQuiry);
-            if (display == true)
+            if (display == true
+                && MIDEnvironment.isWindows)
             { myfrm.ShowDialog(); }
         }
 
@@ -3235,7 +3236,8 @@ namespace MIDRetail.Windows
             myfrm.PersonalHierarchy = myHierarchyList;  // TT#3630 - JSmith - Delete My Hierarchy
             myfrm.ResolveInUseData(ref display, inQuiry, true, out showDialog);
             deleting = showDialog;
-            if (showDialog == true)
+            if (showDialog == true
+                && MIDEnvironment.isWindows)
             { myfrm.ShowDialog(); }
         }
         //END TT#110-MD-VStuart - In Use Tool

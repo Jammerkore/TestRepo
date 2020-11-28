@@ -2019,8 +2019,10 @@ namespace MIDRetail.Business.Allocation
             }
 
         }
-        override public ROMethodProperties MethodGetData(bool processingApply)
+        override public ROMethodProperties MethodGetData(out bool successful, ref string message, bool processingApply = false)
         {
+            successful = true;
+
             //RO-3884 Data Transport for Fill Size Method
             //throw new NotImplementedException("MethodGetData is not implemented");
             KeyValuePair<int, string> keyValuePair = new KeyValuePair<int, string>();
@@ -2035,10 +2037,10 @@ namespace MIDRetail.Business.Allocation
                 merch_HN: GetName.GetLevelKeyValuePair(_methodData.MerchandiseType, nodeRID: _methodData.MerchHnRid, merchPhRID: _methodData.MerchPhRid, merchPhlSequence: _methodData.MerchPhlSequence, SAB: SAB),
                 merch_PH_RID: _methodData.MerchPhRid,
                 merch_PHL_SEQ: _methodData.MerchPhlSequence,
-                merchandiseType: _methodData.MerchandiseType,
+                merchandiseType: EnumTools.VerifyEnumValue(_methodData.MerchandiseType),
                 normalizeSizeCurvesDefaultIsOverridden: _methodData.NormalizeSizeCurvesDefaultIsOverridden,
                 normalizeSizeCurves: _methodData.NormalizeSizeCurves,
-                fillSizesToType: _methodData.FillSizesToType,
+                fillSizesToType: EnumTools.VerifyEnumValue(_methodData.FillSizesToType),
                 sizeGroup: GetName.GetSizeGroup(_methodData.SizeGroupRid),
                 sizeAlternateModel: GetName.GetSizeAlternateModel(_methodData.SizeAlternateRid),
                 rOSizeCurveProperties: SizeCurveProperties.BuildSizeCurveProperties(_methodData.SizeCurveGroupRid, _methodData.GenCurveNsccdRID, _methodData.GenCurveHcgRID,
@@ -2048,7 +2050,7 @@ namespace MIDRetail.Business.Allocation
                     _methodData.SizeConstraintRid, _methodData.GenConstraintHcgRID, _methodData.GenConstraintHnRID, _methodData.GenConstraintPhRID, _methodData.GenConstraintPhlSequence, _methodData.GenConstraintMerchType,
                     _methodData.GenConstraintColorInd, keyValuePair, keyValuePair, keyValuePair, keyValuePair, SAB),
                 overrideVSWSizeConstraints: _methodData.OverrideVSWSizeConstraints,
-                vSWSizeConstraints: _methodData.VSWSizeConstraints,
+                vSWSizeConstraints: EnumTools.VerifyEnumValue(_methodData.VSWSizeConstraints),
                 overrideAvgPackDevTolerance: _methodData.OverrideAvgPackDevTolerance,
                 avgPackDeviationTolerance: _methodData.AvgPackDeviationTolerance,
                 overrideMaxPackNeedTolerance: _methodData.OverrideMaxPackNeedTolerance,
@@ -2062,7 +2064,7 @@ namespace MIDRetail.Business.Allocation
             return method;
         }
 
-        override public bool MethodSetData(ROMethodProperties methodProperties, bool processingApply)
+        override public bool MethodSetData(ROMethodProperties methodProperties, ref string message, bool processingApply)
         {
             //RO-3884 Data Transport for Fill Size Method
             ROMethodFillSizeHolesProperties roMethodFillSizeAllocationProperties = (ROMethodFillSizeHolesProperties)methodProperties;

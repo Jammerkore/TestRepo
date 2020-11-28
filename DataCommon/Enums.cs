@@ -7645,6 +7645,7 @@ namespace MIDRetail.DataCommon
         msg_al_ColorAlreadyContainsSizes = 080842, // RO-3907 - JSmith - RO Web Messaging
         msg_al_PlaceholderCountGreaterThanZero = 080843, // RO-3907 - JSmith - RO Web Messaging
         msg_al_PlaceholderColorCountGreaterThanZero = 080844, // RO-3907 - JSmith - RO Web Messaging
+        msg_CloseStyleReviewForInteractive = 080845, // RO-3907 - JSmith - RO Web Messaging
 
         //Assortment Messages 085000-089999
         msg_as_InvalidVariable = 085000,
@@ -10673,7 +10674,7 @@ namespace MIDRetail.DataCommon
         StoreLoadRunning = 50, //TT#1517-MD -jsobek -Store Service Optimization
                                //Begin TT#1312 - JScott - Alternate Hierarchy Reclass
         OverrideLowLevelModel = 51,
-		StoreEligibility = 52,
+        StoreEligibility = 52,
         AlternateHierarchyReclass = 9000,
         //End TT#1312 - JScott - Alternate Hierarchy Reclass
     }

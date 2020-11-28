@@ -26,6 +26,10 @@ namespace Logility.ROWeb
         protected HierarchyNodeSecurityProfile _nodeSecurity = null;
         protected HierarchyNodeProfile _hierarchyNodeProfile = null;
         private HierarchyNodeProfile _securityNodeProfile = null;
+        private HierarchyProfile _hierarchyProfile = null;
+        private HierarchyProfile _mainHierProf = null;
+        private Dictionary<int, HierarchyNodeProfile> _hnpDict = new Dictionary<int, HierarchyNodeProfile>();
+        private Dictionary<int, DateRangeProfile> _dateRangeDict = new Dictionary<int, DateRangeProfile>();
 
         //=============
         // CONSTRUCTORS
@@ -57,6 +61,18 @@ namespace Logility.ROWeb
             get
             {
                 return _hierarchyNodeProfile;
+            }
+        }
+
+        public HierarchyProfile HierarchyProfile
+        {
+            get
+            {
+                return _hierarchyProfile;
+            }
+            set
+            {
+                _hierarchyProfile = value;
             }
         }
 
@@ -97,6 +113,18 @@ namespace Logility.ROWeb
             get
             {
                 return _functionSecurity.AllowApplyToLowerLevels && _nodeSecurity.AllowDelete;
+            }
+        }
+
+        protected HierarchyProfile MainHierProf
+        {
+            get
+            {
+                if (_mainHierProf == null)
+                {
+                    _mainHierProf = SAB.HierarchyServerSession.GetMainHierarchyData();
+                }
+                return _mainHierProf;
             }
         }
 
@@ -174,7 +202,7 @@ namespace Logility.ROWeb
             if (_securityNodeProfile == null
                 || _securityNodeProfile.Key != securityKey)
             {
-                _securityNodeProfile = SAB.HierarchyServerSession.GetNodeData(nodeRID: securityKey, chaseHierarchy: false);
+                _securityNodeProfile = GetHierarchyNodeProfile(key: securityKey, chaseHierarchy: false);
             }
 
             if (_nodeSecurity == null
@@ -209,11 +237,13 @@ namespace Logility.ROWeb
                 else if (setReadOnly
                     || !_nodeSecurity.AllowUpdate)
                 {
-                    _hierarchyNodeProfile = SAB.HierarchyServerSession.GetNodeData(nodeRID: key, chaseHierarchy: true);
+                    _hierarchyNodeProfile = GetHierarchyNodeProfile(key: key, chaseHierarchy: true);
+                    _hierarchyProfile = SAB.HierarchyServerSession.GetHierarchyData(_hierarchyNodeProfile.HomeHierarchyRID);
                 }
                 else
                 {
                     _hierarchyNodeProfile = SAB.HierarchyServerSession.GetNodeDataForUpdate(aNodeRID: key, aAllowReadOnly: true);
+                    _hierarchyProfile = SAB.HierarchyServerSession.GetHierarchyData(_hierarchyNodeProfile.HomeHierarchyRID);
                 }
 
                 if (_securityNodeProfile.HomeHierarchyOwner != Include.GlobalUserRID)
@@ -350,6 +380,49 @@ namespace Logility.ROWeb
             {
                 throw;
             }
+        }
+
+        protected HierarchyNodeProfile GetHierarchyNodeProfile(int key, bool chaseHierarchy = false, bool buildQualifiedID = false)
+        {
+            HierarchyNodeProfile hnp = null;
+            if (chaseHierarchy
+                || buildQualifiedID)
+            {
+                hnp = SAB.HierarchyServerSession.GetNodeData(aNodeRID: key, aChaseHierarchy: chaseHierarchy, aBuildQualifiedID: buildQualifiedID);
+            }
+            else if (!_hnpDict.TryGetValue(key, out hnp))
+            {
+                hnp = SAB.HierarchyServerSession.GetNodeData(nodeRID: key, chaseHierarchy: chaseHierarchy);
+                _hnpDict.Add(key, hnp);
+            }
+            return hnp;
+        }
+
+        protected HierarchyNodeProfile GetHierarchyNodeProfile(string ID, bool chaseHierarchy = false, bool buildQualifiedID = false)
+        {
+            HierarchyNodeProfile hnp = null;
+            if (chaseHierarchy
+                || buildQualifiedID)
+            {
+                hnp = SAB.HierarchyServerSession.GetNodeData(aNodeID: ID, aChaseHierarchy: chaseHierarchy, aBuildQualifiedID: buildQualifiedID);
+            }
+            else 
+            {
+                hnp = SAB.HierarchyServerSession.GetNodeData(aNodeID: ID, aChaseHierarchy: chaseHierarchy, aBuildQualifiedID: buildQualifiedID);
+                _hnpDict.Add(hnp.Key, hnp);
+            }
+            return hnp;
+        }
+
+        protected DateRangeProfile GetDateRangeProfile(int key)
+        {
+            DateRangeProfile dateRange = null;
+            if (!_dateRangeDict.TryGetValue(key, out dateRange))
+            {
+                dateRange = SAB.ClientServerSession.Calendar.GetDateRange(key);
+                _dateRangeDict.Add(dateRange.Key, dateRange);
+            }
+            return dateRange;
         }
 
     }

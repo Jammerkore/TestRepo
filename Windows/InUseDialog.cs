@@ -413,6 +413,9 @@ namespace MIDRetail.Windows
                         // If we get here we don't want to allow a delete.
                         //allowDeleteAll = false;
                         showDialog = true;
+
+                        MIDEnvironment.Message = ((int)eMIDTextCode.msg_DeleteInUseWarning).ToString(CultureInfo.CurrentUICulture) + ":" + MIDText.GetText(textCode: eMIDTextCode.msg_DeleteInUseWarning);
+                        MIDEnvironment.requestFailed = true;
                     }
                     DataTable dtinUseDataTable = dt.Clone();
 
@@ -512,6 +515,9 @@ namespace MIDRetail.Windows
                         // If we get here we don't want to allow a delete.
                         //allowDeleteAll = false;
                         showDialog = true;
+
+                        MIDEnvironment.Message = ((int)eMIDTextCode.msg_DeleteInUseWarning).ToString(CultureInfo.CurrentUICulture) + ":" + MIDText.GetText(textCode: eMIDTextCode.msg_DeleteInUseWarning);
+                        MIDEnvironment.requestFailed = true;
                     }
                     DataTable dtinUseDataTable = dt.Clone();
 

@@ -130,6 +130,7 @@ namespace MIDRetail.Business.Allocation
         ////tt#153 - velocity matrix variables - apicchetti
         // end TT#533 Velocity variables calculated incorrectly 
         private bool _basisChangesMade;	// TT#4522 - stodd - velocity matrix wrong
+        private bool _dataLoaded = false;
 
 
 		// ===========
@@ -10514,6 +10515,13 @@ namespace MIDRetail.Business.Allocation
         private System.Data.DataTable _merchandiseDataTable;
         private HierarchyProfile _hp = null;
         private int _currentAttributeSet = 0;
+        private DataTable _compDataTable = null;
+        private bool _needToLockHeaders = false;
+        private bool _statisticsCalculated = false;
+        private bool _updateFromStoreDetail = false;
+        private bool _clearMatrix = false;
+        private bool _matrixProcessed = false;
+        private bool _matrixEverProcessed = false;
 
         private HierarchyProfile HP
         {
@@ -10539,8 +10547,15 @@ namespace MIDRetail.Business.Allocation
             }
 
         }
-        override public ROMethodProperties MethodGetData(bool processingApply)
+        override public ROMethodProperties MethodGetData(out bool successful, ref string message, bool processingApply = false)
         {
+            successful = true;
+            if (!_dataLoaded)
+            {
+                _basisChangesMade = true;
+                _dataLoaded = true;
+            }
+
             eVelocityCalculateAverageUsing calculateAverageUsing;
             if (_CalculateAverageUsingChain)
             {
@@ -10617,27 +10632,27 @@ namespace MIDRetail.Business.Allocation
                 }
             }
 
-            ProfileList pl = StoreMgmt.StoreGroup_GetLevelListViewList(SG_RID);
+            ProfileList setList = StoreMgmt.StoreGroup_GetLevelListViewList(SG_RID);
             if (_currentAttributeSet == 0)
             {
-                _currentAttributeSet = ((StoreGroupLevelListViewProfile)pl.ArrayList[0]).Key;
+                _currentAttributeSet = ((StoreGroupLevelListViewProfile)setList.ArrayList[0]).Key;
             }
 
             ROMethodAllocationVelocityProperties method = new ROMethodAllocationVelocityProperties(
                 method: GetName.GetMethod(method: this),
                 description: Method_Description,
                 userKey: User_RID,
-                calculateAverageUsing: calculateAverageUsing,
-                determineShipQtyUsing: determineShipQtyUsing,
-                applyMinMaxType: applyMinMaxType,
-                gradeVariableType: _gradeVariableType,
+                calculateAverageUsing: EnumTools.VerifyEnumValue(calculateAverageUsing),
+                determineShipQtyUsing: EnumTools.VerifyEnumValue(determineShipQtyUsing),
+                applyMinMaxType: EnumTools.VerifyEnumValue(applyMinMaxType),
+                gradeVariableType: EnumTools.VerifyEnumValue(_gradeVariableType),
                 useSimilarStoreHistory: _UseSimilarStoreHistory,
                 balance: _balance,
                 balanceToHeader: balanceToHeader,
                 reconcile: _reconcile,
                 inventoryIndicator: minMaxType,
                 inventoryMinMaxMerchType: merchandiseType,
-                inventoryMinMaxMerchandise: GetName.GetLevelKeyValuePair(merchandiseType: merchandiseType,
+                inventoryMinMaxMerchandise: GetName.GetLevelKeyValuePair(merchandiseType: EnumTools.VerifyEnumValue(merchandiseType),
                                                                       nodeRID: MERCH_HN_RID,
                                                                       merchPhRID: MERCH_PH_RID,
                                                                       merchPhlSequence: MERCH_PHL_SEQ,
@@ -10647,6 +10662,11 @@ namespace MIDRetail.Business.Allocation
                 attribute: GetName.GetAttributeName(key: SG_RID),
                 attributeSet: GetName.GetAttributeSetName(key: _currentAttributeSet)
                 );
+
+            foreach (StoreGroupLevelListViewProfile attrSet in setList)
+            {
+                method.AttributeSetList.Add(new KeyValuePair<int, string>(attrSet.Key, attrSet.Name));
+            }
 
             BuildDataTables();
             AddBasis(method: method);
@@ -10659,97 +10679,21 @@ namespace MIDRetail.Business.Allocation
             AddMatrixAttributeSets(method: method);
             GetMatrixViews(method: method);
             GetMatrixViewColumns(method: method);
+            
+            if (IsInteractive)
+            {
+                if (!SetupInteractive(method: method, message: ref message))
+                {
+                    successful = false;
+                }
+            }
+            method.Interactive = IsInteractive;
+
+            AST.VelocityStyleReviewLastDisplayed = false;
 
             return method;
         }
-        private void GetMatrixViews(ROMethodAllocationVelocityProperties method)
-        {
-            DataTable dtViews = new DataTable();
-            ArrayList userRIDList = new ArrayList();
-            GridViewData gridViewData = new GridViewData();
-            UserGridView userGridView = new UserGridView();
-
-            try
-            {
-                FunctionSecurityProfile globalViewSecurity;
-                FunctionSecurityProfile userViewSecurity;
-                eLayoutID layoutID;
-
-                globalViewSecurity = SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.AllocationViewsGlobalVelocity);
-                userViewSecurity = SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.AllocationViewsUserVelocity);
-                layoutID = eLayoutID.sizeReviewGrid;
-
-                if (globalViewSecurity.AllowView)
-                {
-                    userRIDList.Add(Include.GlobalUserRID);
-                }
-                if (userViewSecurity.AllowView)
-                {
-                    userRIDList.Add(SAB.ClientServerSession.UserRID);
-                }
-
-                if (userRIDList.Count > 0)
-                {
-                    dtViews = gridViewData.GridView_Read((int)eLayoutID.velocityMatrixGrid, userRIDList, true);
-
-                    dtViews.Rows.Add(new object[] { Include.NoRID, SAB.ClientServerSession.UserRID, layoutID, string.Empty });
-                    dtViews.PrimaryKey = new DataColumn[] { dtViews.Columns["VIEW_RID"] };
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
-            method.MatrixViews = DataTableToKeyValues(dtViews, "VIEW_RID", "VIEW_ID");
-            if (method.MatrixViews.Count > 0)
-            {
-                userGridView = new UserGridView(); 
-
-                int viewRID = userGridView.UserGridView_Read(SAB.ClientServerSession.UserRID, eLayoutID.velocityMatrixGrid);
-                if (viewRID != Include.NoRID)
-                {
-                    method.MatrixSelectedView = method.MatrixViews.Find(kvp => kvp.Key == viewRID);
-                }
-                if (!method.MatrixSelectedViewIsSet)
-                {
-                    method.MatrixSelectedView = new KeyValuePair<int, string>(method.MatrixViews[0].Key, method.MatrixViews[0].Value);
-                }
-            }
-
-        }
-
-        private void GetMatrixViewColumns(ROMethodAllocationVelocityProperties method)
-        {
-            string  colKey, errMessage;
-            bool isHidden;
-
-            GridViewData gridViewData = new GridViewData();
-
-            if (!method.MatrixSelectedViewIsSet)
-            {
-                method.MatrixViewColumns.Add(new KeyValuePair<string, bool>("Grade", true));
-                method.MatrixViewColumns.Add(new KeyValuePair<string, bool>("Boundary", true));
-                return;
-            }
-
-            DataTable dtGridViewDetail = gridViewData.GridViewDetail_Read(method.MatrixSelectedView.Key);
-
-            if (dtGridViewDetail == null || dtGridViewDetail.Rows.Count == 0)
-            {
-                errMessage = SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_as_GridViewDoesNotExist);
-                 return;
-            }
-
-            dtGridViewDetail.DefaultView.Sort = "VISIBLE_POSITION";
-
-            foreach (DataRowView row in dtGridViewDetail.DefaultView)
-            {
-                colKey = Convert.ToString(row["COLUMN_KEY"], CultureInfo.CurrentUICulture);
-                isHidden = Include.ConvertCharToBool(Convert.ToChar(row["IS_HIDDEN"], CultureInfo.CurrentUICulture));
-                method.MatrixViewColumns.Add(new KeyValuePair<string, bool>(colKey, !isHidden));
-            }
-        }
+        
 
         private void AddBasis (ROMethodAllocationVelocityProperties method)
         {
@@ -10845,7 +10789,7 @@ namespace MIDRetail.Business.Allocation
                     fWeight: fWeight, 
                     bIsIncluded: true, 
                     sIncludeButton: string.Empty,
-                    merchandiseType: merchandiseType,
+                    merchandiseType: EnumTools.VerifyEnumValue(merchandiseType),
                     iMerchPhRId: merchandisePhRid,
                     iMerchPhlSequence: merchPhlSequence,
                     iMerchOffset: merchOffset
@@ -11069,13 +11013,25 @@ namespace MIDRetail.Business.Allocation
         private void AddSellThruValues(ROMethodAllocationVelocityProperties method)
         {
             ROSellThruList sellThru;
+            int sellThruIndex;
+            string columnHeading;
+
+            Dictionary<int, string> sellThruColumnHeadings = BuildSellThruColumnHeadings();
+
             DataTable sellThruPctsDataTable = _dsVelocity.Tables["SellThru"];
             sellThruPctsDataTable.DefaultView.Sort = "SellThruIndex DESC";
 
             foreach (DataRowView row in sellThruPctsDataTable.DefaultView)
             {
+                sellThruIndex = Convert.ToInt32(row["SellThruIndex"]);
+                if (!sellThruColumnHeadings.TryGetValue(sellThruIndex, out columnHeading))
+                {
+                    columnHeading = string.Empty;
+                }
+
                 sellThru = new ROSellThruList(
-                    sellThru: Convert.ToInt32(row["SellThruIndex"])
+                    sellThru: sellThruIndex,
+                    sellThruHeading: columnHeading
                     );
 
                 method.SellThruList.Add(sellThru);
@@ -11124,6 +11080,10 @@ namespace MIDRetail.Business.Allocation
             KeyValuePair<int, string> attributeSetKVP;
             double? noOnHandRuleValue;
             double? matrixModeAverageRuleValue;
+            double? allStoresAverageWOS;
+            double? allStoresSellThruPercent;
+            double? averageWOS;
+            double? sellThruPercent;
 
             foreach (GroupLvlMatrix glm in _groupLvlMtrxData.Values)
             {
@@ -11167,14 +11127,34 @@ namespace MIDRetail.Business.Allocation
                     noOnHandRuleValue = glm.NoOnHandRuleQty;
                 }
 
+                allStoresAverageWOS = null;
+                averageWOS = null;
+                if (_statisticsCalculated)
+                {
+                    allStoresAverageWOS = _applicationTransaction.VelocityGetMatrixChainAvgWOS(glm.SglRID);
+                    averageWOS = _applicationTransaction.VelocityGetMatrixGroupAvgWOS(glm.SglRID);
+                }
+
+                allStoresSellThruPercent = null;
+                sellThruPercent = null;
+                if (_statisticsCalculated)
+                {
+                    allStoresSellThruPercent = _applicationTransaction.VelocityGetMatrixChainPctSellThru(glm.SglRID);
+                    sellThruPercent = _applicationTransaction.VelocityGetMatrixGroupPctSellThru(glm.SglRID);
+                }
+
                 attributeSet = new ROMethodAllocationVelocityAttributeSet(
                     attributeSet: attributeSetKVP,
-                    noOnHandRule: glm.NoOnHandRuleType,
+                    noOnHandRule: EnumTools.VerifyEnumValue(glm.NoOnHandRuleType),
                     noOnHandRuleValue: noOnHandRuleValue,
-                    matrixMode: matrixMode,
-                    matrixModeAverageRule: glm.AverageRule,
+                    matrixMode: EnumTools.VerifyEnumValue(matrixMode),
+                    matrixModeAverageRule: EnumTools.VerifyEnumValue(glm.AverageRule),
                     matrixModeAverageRuleValue: matrixModeAverageRuleValue,
-                    spreadOption: spreadOption
+                    spreadOption: EnumTools.VerifyEnumValue(spreadOption),
+                    allStoresAverageWOS: allStoresAverageWOS,
+                    allStoresSellThruPercent: allStoresSellThruPercent,
+                    averageWOS: averageWOS,
+                    sellThruPercent: sellThruPercent
                 );
 
                 AddVelocityGradeValues(method: method, attributeSet: attributeSet, glm: glm);
@@ -11183,10 +11163,45 @@ namespace MIDRetail.Business.Allocation
             }            
         }
 
+        private Dictionary<int, string> BuildSellThruColumnHeadings()
+        {
+            Dictionary<int, string> sellThruColumnHeadings = new Dictionary<int, string>();
+            string colCaption = string.Empty;
+            int index = 0, prevIndex = 0;
+
+            DataTable sellThruPctsDataTable = _dsVelocity.Tables["SellThru"];
+            sellThruPctsDataTable.DefaultView.Sort = "SellThruIndex DESC";
+
+            for (int i = 0; i < sellThruPctsDataTable.DefaultView.Count; i++)
+            {
+                DataRowView dr = sellThruPctsDataTable.DefaultView[i];
+                index = (int)dr["SellThruIndex"];
+                if (i == 0)
+                {
+                    colCaption = ">" + Convert.ToString(index, CultureInfo.CurrentUICulture);
+                }
+                else if (i == sellThruPctsDataTable.DefaultView.Count - 1)
+                {
+                    colCaption = Convert.ToString(index, CultureInfo.CurrentUICulture) + "-"
+                        + Convert.ToString(prevIndex, CultureInfo.CurrentUICulture);
+                }
+                else
+                {
+                    colCaption = Convert.ToString(index + 1, CultureInfo.CurrentUICulture) + "-"
+                        + Convert.ToString(prevIndex, CultureInfo.CurrentUICulture);
+                }
+
+                prevIndex = index;
+
+                sellThruColumnHeadings.Add(index, colCaption);
+            }
+
+            return sellThruColumnHeadings;
+        }
+
         private void AddVelocityGradeValues(ROMethodAllocationVelocityProperties method, 
             ROMethodAllocationVelocityAttributeSet attributeSet,
-            GroupLvlMatrix glm, 
-            bool statisticsCalculated = false)
+            GroupLvlMatrix glm)
         {
             ROMethodAllocationVelocityMatrixVelocityGrade matrixVelocityGrade;
             int setValue, boundary;
@@ -11211,14 +11226,14 @@ namespace MIDRetail.Business.Allocation
                 matrixCells.Add(key, matrixCells_HT[key]);
             }
 
-            int boundaryCount = matrixCells.Count / method.VelocityGradeList.Count;
+            int sellThruIndexCount = matrixCells.Count / method.VelocityGradeList.Count;
 
             foreach (ROAllocationVelocityGrade velocityGrade in method.VelocityGradeList)
             {
                 grade = velocityGrade.StoreGrade.Value;
                 boundary = velocityGrade.StoreGrade.Key;
 
-                if (statisticsCalculated)
+                if (_statisticsCalculated)
                 {
                     totalSales = _applicationTransaction.VelocityGetMatrixGradeTotBasisSales(setValue, grade);
                     avgSales = _applicationTransaction.VelocityGetMatrixGradeAvgBasisSales(setValue, grade);
@@ -11252,52 +11267,103 @@ namespace MIDRetail.Business.Allocation
                     allocationPercentOfTotal: allocationPercentOfTotal
                     );
 
-                AddVelocityGradeCells(matrixVelocityGrade: matrixVelocityGrade,
+                AddVelocityGradeSellThruIndexCells(matrixVelocityGrade: matrixVelocityGrade,
                     matrixCells: matrixCells,
                     currentVelocityGrade: velocityGradeCount,
                     setValue: setValue,
-                    boundaryCount: boundaryCount);
+                    sellThruIndexCount: sellThruIndexCount);
 
-                attributeSet.MatrixGradeValues.Add(velocityGrade.StoreGrade.Key, matrixVelocityGrade);
+                attributeSet.MatrixGradeValues.Add(matrixVelocityGrade);
 
                 ++velocityGradeCount;
             }
+
+            //Add Total line
+            if (_matrixProcessed)
+            {
+                KeyValuePair<int, string> totals = new KeyValuePair<int, string>(int.MaxValue, "Total:");
+
+                if (_applicationTransaction != null
+                    && _applicationTransaction.VelocityCriteriaExists == true)
+                {
+                    totalSales = _applicationTransaction.VelocityGetMatrixGradeTotBasisSales(setValue, null);
+                    avgSales = _applicationTransaction.VelocityGetMatrixGradeAvgBasisSales(setValue, null);
+                    pctTotalSales = _applicationTransaction.VelocityGetMatrixGradeAvgBasisSalesPctTot(setValue, null);
+                    avgSalesIdx = _applicationTransaction.VelocityGetMatrixGradeAvgBasisSalesIdx(setValue, null);
+                    totalNumStores = _applicationTransaction.VelocityGetMatrixGradeTotalNumberOfStores(setValue, null);
+                    avgStock = _applicationTransaction.VelocityGetMatrixGradeAvgStock(setValue, null);
+                    stockPercentOfTotal = _applicationTransaction.VelocityGetMatrixGradeStockPercentOfTotal(setValue, null);
+                    allocationPercentOfTotal = _applicationTransaction.Velocity.GetSetAllocatedPctOfTotal(method.Attribute.Key, setValue, null);
+                }
+                else
+                {
+                    totalSales = null;
+                    avgSales = null;
+                    pctTotalSales = null;
+                    avgSalesIdx = null;
+                    totalNumStores = null;
+                    avgStock = null;
+                    stockPercentOfTotal = null;
+                    allocationPercentOfTotal = null;
+                }
+
+                matrixVelocityGrade = new ROMethodAllocationVelocityMatrixVelocityGrade(velocityGrade: totals,
+                    totalSales: totalSales,
+                    avgSales: avgSales,
+                    pctTotalSales: pctTotalSales,
+                    avgSalesIdx: avgSalesIdx,
+                    totalNumStores: totalNumStores,
+                    avgStock: avgStock,
+                    stockPercentOfTotal: stockPercentOfTotal,
+                    allocationPercentOfTotal: allocationPercentOfTotal
+                );
+
+                AddVelocityTotalSellThruIndexCells(matrixVelocityGrade: matrixVelocityGrade,
+                    setValue: setValue);
+
+                attributeSet.MatrixGradeValues.Add(matrixVelocityGrade);
+            }
         }
 
-        private void AddVelocityGradeCells(ROMethodAllocationVelocityMatrixVelocityGrade matrixVelocityGrade,
+        private void AddVelocityGradeSellThruIndexCells(ROMethodAllocationVelocityMatrixVelocityGrade matrixVelocityGrade,
             SortedList matrixCells,
             int currentVelocityGrade,
-            int boundaryCount,
-            int setValue,
-            bool statisticsCalculated = false
+            int sellThruIndexCount,
+            int setValue
             )
         {
             ROMethodAllocationVelocityMatrixCell matrixCell;
             GroupLvlCell glc;
             string cellKey;
-            int numberOfStores;
-            double averageWOS;
+            int? numberOfStores;
+            double? averageWOS;
+            eVelocityRuleType cellRule;
+            double? cellRuleValue;
 
-            for (int i = 0; i < boundaryCount; i++)
+            for (int i = 0; i < sellThruIndexCount; i++)
             {
                 cellKey = currentVelocityGrade.ToString() + "," + i.ToString();
                 glc = (GroupLvlCell)matrixCells[cellKey];
 
-                if (statisticsCalculated)
+                if (_statisticsCalculated)
                 {
                     numberOfStores = _applicationTransaction.VelocityGetMatrixCellStores(setValue, glc.Boundary, glc.SellThruIndex);
                     averageWOS = _applicationTransaction.VelocityGetMatrixCellAvgWOS(setValue, glc.Boundary, glc.SellThruIndex);
+                    cellRule = glc.CellRuleType;
+                    cellRuleValue = glc.CellRuleQty;
                 }
                 else
                 {
                     numberOfStores = glc.CellGrpStores;
                     averageWOS = glc.CellGrpAvgWOS;
+                    cellRule = glc.CellRuleType;
+                    cellRuleValue = glc.CellRuleQty;
                 }
 
                 matrixCell = new ROMethodAllocationVelocityMatrixCell(boundary: glc.Boundary,
                     sellThruIndex: glc.SellThruIndex,
-                    ruleType: glc.CellRuleType,
-                    ruleValue: glc.CellRuleQty,
+                    ruleType: EnumTools.VerifyEnumValue(cellRule),
+                    ruleValue: cellRuleValue,
                     numberOfStores: numberOfStores,
                     averageWOS: averageWOS
                     );
@@ -11306,7 +11372,475 @@ namespace MIDRetail.Business.Allocation
             }
         }
 
-        override public bool MethodSetData(ROMethodProperties methodProperties, bool processingApply)
+        private void AddVelocityTotalSellThruIndexCells(ROMethodAllocationVelocityMatrixVelocityGrade matrixVelocityGrade,
+            int setValue
+            )
+        {
+            DataTable sellThruPctsDataTable = _dsVelocity.Tables["SellThru"];
+            int sellThruIdx;
+            ROMethodAllocationVelocityMatrixCell matrixCell;
+            int? numberOfStores;
+            double? averageWOS;
+            eVelocityRuleType cellRule;
+            double? cellRuleValue;
+
+            for (int sellThruRow = 0; sellThruRow < sellThruPctsDataTable.Rows.Count; sellThruRow++)
+            {
+                if (_applicationTransaction != null
+                    && _applicationTransaction.VelocityCriteriaExists == true)
+                {
+                    sellThruIdx = Convert.ToInt32(sellThruPctsDataTable.Rows[sellThruRow]["SellThruIndex"]);
+                    numberOfStores = _applicationTransaction.VelocityGetSellThruTotalStores(setValue, sellThruIdx);
+                    averageWOS = _applicationTransaction.VelocityGetSellThruAvgWOS(setValue, sellThruIdx);
+                    cellRule = eVelocityRuleType.None;
+                    cellRuleValue = null;
+                }
+                else
+                {
+                    sellThruIdx = Convert.ToInt32(sellThruPctsDataTable.Rows[sellThruRow]["SellThruIndex"]);
+                    numberOfStores = 0;
+                    averageWOS = 0;
+                    cellRule = eVelocityRuleType.None;
+                    cellRuleValue = null;
+                }
+
+                matrixCell = new ROMethodAllocationVelocityMatrixCell(boundary: int.MaxValue,
+                    sellThruIndex: sellThruIdx,
+                    ruleType: EnumTools.VerifyEnumValue(cellRule),
+                    ruleValue: cellRuleValue,
+                    numberOfStores: numberOfStores,
+                    averageWOS: averageWOS
+                    );
+
+                matrixVelocityGrade.MatrixGradeCells.Add(matrixCell);
+            }
+        }
+
+        private void GetMatrixViews(ROMethodAllocationVelocityProperties method)
+        {
+            DataTable dtViews = new DataTable();
+            ArrayList userRIDList = new ArrayList();
+            GridViewData gridViewData = new GridViewData();
+            UserGridView userGridView = new UserGridView();
+
+            try
+            {
+                FunctionSecurityProfile globalViewSecurity;
+                FunctionSecurityProfile userViewSecurity;
+                eLayoutID layoutID;
+
+                globalViewSecurity = SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.AllocationViewsGlobalVelocity);
+                userViewSecurity = SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.AllocationViewsUserVelocity);
+                layoutID = eLayoutID.sizeReviewGrid;
+
+                if (globalViewSecurity.AllowView)
+                {
+                    userRIDList.Add(Include.GlobalUserRID);
+                }
+                if (userViewSecurity.AllowView)
+                {
+                    userRIDList.Add(SAB.ClientServerSession.UserRID);
+                }
+
+                if (userRIDList.Count > 0)
+                {
+                    dtViews = gridViewData.GridView_Read((int)eLayoutID.velocityMatrixGrid, userRIDList, true);
+
+                    dtViews.Rows.Add(new object[] { Include.NoRID, SAB.ClientServerSession.UserRID, layoutID, string.Empty });
+                    dtViews.PrimaryKey = new DataColumn[] { dtViews.Columns["VIEW_RID"] };
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            method.MatrixViews = DataTableToKeyValues(dtViews, "VIEW_RID", "VIEW_ID");
+            if (method.MatrixViews.Count > 0)
+            {
+                userGridView = new UserGridView();
+
+                int viewRID = userGridView.UserGridView_Read(SAB.ClientServerSession.UserRID, eLayoutID.velocityMatrixGrid);
+                if (viewRID != Include.NoRID)
+                {
+                    method.MatrixSelectedView = method.MatrixViews.Find(kvp => kvp.Key == viewRID);
+                }
+                if (!method.MatrixSelectedViewIsSet)
+                {
+                    method.MatrixSelectedView = new KeyValuePair<int, string>(method.MatrixViews[0].Key, method.MatrixViews[0].Value);
+                }
+            }
+
+        }
+
+        private void GetMatrixViewColumns(ROMethodAllocationVelocityProperties method)
+        {
+            string colKey, errMessage;
+            bool isHidden;
+
+            GridViewData gridViewData = new GridViewData();
+
+            if (!method.MatrixSelectedViewIsSet)
+            {
+                method.MatrixViewColumns.Add(new KeyValuePair<string, bool>("Grade", true));
+                method.MatrixViewColumns.Add(new KeyValuePair<string, bool>("Boundary", true));
+                return;
+            }
+
+            DataTable dtGridViewDetail = gridViewData.GridViewDetail_Read(method.MatrixSelectedView.Key);
+
+            if (dtGridViewDetail == null || dtGridViewDetail.Rows.Count == 0)
+            {
+                errMessage = SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_as_GridViewDoesNotExist);
+                return;
+            }
+
+            dtGridViewDetail.DefaultView.Sort = "VISIBLE_POSITION";
+
+            foreach (DataRowView row in dtGridViewDetail.DefaultView)
+            {
+                colKey = Convert.ToString(row["COLUMN_KEY"], CultureInfo.CurrentUICulture);
+                isHidden = Include.ConvertCharToBool(Convert.ToChar(row["IS_HIDDEN"], CultureInfo.CurrentUICulture));
+                method.MatrixViewColumns.Add(new KeyValuePair<string, bool>(colKey, !isHidden));
+            }
+        }
+
+        private bool SetupInteractive(ROMethodAllocationVelocityProperties method, ref string message)
+        {
+            bool successful = true;
+
+            if (_applicationTransaction != null && _applicationTransaction.StyleView != null)
+            {
+                message = SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_CloseStyleReviewForInteractive);
+                return false;
+            }
+
+            if (!GetComponents(method: method, message: ref message))
+            {
+                return false;
+            }
+
+            if (_needToLockHeaders)
+            {
+                if (!LockHeaders(ref message))
+                {
+                    return false;
+                }
+                else
+                {
+                    _needToLockHeaders = false;
+                }
+            }
+
+            return successful;
+        }
+
+        private bool InInteractiveMode()
+        {
+            return (_applicationTransaction != null && _applicationTransaction.AllocationCriteriaExists && _applicationTransaction.StyleView != null) ? true : false;
+        }
+
+        private bool GetComponents(ROMethodAllocationVelocityProperties method, ref string message)
+        {
+            SelectedHeaderList selectedHeaderList = (SelectedHeaderList)SAB.ClientServerSession.GetSelectedHeaderList();
+
+            if (selectedHeaderList.Count == 0)
+            {
+                message = SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_NoHeaderSelectedOnWorkspace);
+                method.Interactive = false;
+                return false;
+            }
+
+            _compDataTable = MIDText.GetLabels((int)eVelocityMethodComponentType.Total, (int)eVelocityMethodComponentType.Bulk);
+            for (int i = _compDataTable.Columns.Count - 1; i >= 0; i--)
+            {
+                DataColumn dc = _compDataTable.Columns[i];
+                if (dc.ColumnName != "TEXT_CODE" && dc.ColumnName != "TEXT_VALUE")
+                {
+                    _compDataTable.Columns.Remove(dc);
+                }
+            }
+            foreach (DataRow dr in _compDataTable.Rows)
+            {
+                eVelocityMethodComponentType vmct = (eVelocityMethodComponentType)(Convert.ToInt32(dr["TEXT_CODE"], CultureInfo.CurrentUICulture));
+                if (!Enum.IsDefined(typeof(eVelocityMethodComponentType), vmct))
+                {
+                    dr.Delete();
+                }
+            }
+
+            _compDataTable.AcceptChanges();
+
+            DataColumn col = new DataColumn();
+            col.DataType = System.Type.GetType("System.Int32");
+            col.ColumnName = "CompType";
+            _compDataTable.Columns.Add(col);
+            foreach (DataRow dr in _compDataTable.Rows)
+            {
+                dr["CompType"] = dr["TEXT_CODE"];
+            }
+
+            DataColumn[] PrimaryKeyColumn = new DataColumn[1];
+            PrimaryKeyColumn[0] = _compDataTable.Columns["TEXT_CODE"];
+            _compDataTable.PrimaryKey = PrimaryKeyColumn;
+
+            GetPacksAndColors(selectedHeaderList: selectedHeaderList);
+
+            method.Components = DataTableToKeyValues(_compDataTable, "TEXT_CODE", "TEXT_VALUE");
+
+            return true;
+        }
+
+        private void GetPacksAndColors(SelectedHeaderList selectedHeaderList)
+        {
+            Header header;
+            try
+            {
+                bool colorsExist = false;
+                bool packFound;
+
+                foreach (SelectedHeaderProfile shp in selectedHeaderList)
+                {
+                    header = new Header();
+                    DataTable dtPacks = header.GetPacks(shp.Key);
+                    DataTable dtBulkColors = header.GetBulkColors(shp.Key);
+                    if (dtPacks.Rows.Count > 0)
+                    {
+                        foreach (DataRow pRow in dtPacks.Rows)
+                        {
+                            packFound = false;
+                            string dtPackName = pRow["HDR_PACK_NAME"].ToString();
+
+                            foreach (DataRow compRow in _compDataTable.Rows)
+                            {
+                                string compPackName = compRow["TEXT_VALUE"].ToString();
+                                eComponentType compType = (eComponentType)compRow["CompType"];
+                                if (compPackName == dtPackName && compType == eComponentType.SpecificPack)
+                                {
+                                    packFound = true;
+                                    break;
+                                }
+                            }
+                            if (!packFound)
+                                _compDataTable.Rows.Add(new object[] { (int) pRow["HDR_PACK_RID"], pRow["HDR_PACK_NAME"],
+                                                                      (int) eComponentType.SpecificPack});
+                        }
+                    }
+                    if (dtBulkColors.Rows.Count > 0)
+                    {
+                        colorsExist = true;
+                        foreach (DataRow cRow in dtBulkColors.Rows)
+                        {
+                            int colorKey = Convert.ToInt32(cRow["COLOR_CODE_RID"], CultureInfo.CurrentUICulture);
+                            if (!_compDataTable.Rows.Contains(colorKey))
+                            {
+                                ColorCodeProfile ccp = SAB.HierarchyServerSession.GetColorCodeProfile(colorKey);
+                                _compDataTable.Rows.Add(new object[] {colorKey, ccp.ColorCodeName,
+                                                                          (int) eComponentType.SpecificColor});
+                            }
+                        }
+                    }
+                }
+                if (!colorsExist)
+                {
+                    RemoveBulk();
+                }
+
+                _compDataTable.AcceptChanges();
+
+            }
+            catch (Exception)
+            {
+               throw;
+            }
+
+        }
+
+        private void RemoveBulk()
+        {
+            try
+            {
+                foreach (DataRow dr in _compDataTable.Rows)
+                {
+                    eVelocityMethodComponentType vmct = (eVelocityMethodComponentType)(Convert.ToInt32(dr["TEXT_CODE"], CultureInfo.CurrentUICulture));
+                    if (vmct == eVelocityMethodComponentType.Bulk)
+                    {
+                        dr.Delete();
+                        break;
+                    }
+                }
+                _compDataTable.AcceptChanges();
+            }
+
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        private bool LockHeaders(ref string message)
+        {
+            string enqMessage = string.Empty;
+            if (!_applicationTransaction.EnqueueSelectedHeaders(out enqMessage))
+            {
+                if (message.Length > 0)
+                {
+                    message += Environment.NewLine + enqMessage;
+                }
+                else
+                {
+                    message = enqMessage;
+                }
+
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool ProcessInteractive(ref string message)  
+        {
+            bool ErrorFound = false;
+            try
+            {
+                if (!_updateFromStoreDetail)
+                {
+
+                    if (Key == Include.NoRID)
+                    {
+                        Key = Include.UndefinedVelocityMethodRID;
+                    }
+
+                }
+                else
+                {
+                    _applicationTransaction.ResetVelocityMethod();
+                }
+
+                //int assrtRid = AssortmentActiveProcessToolbarHelper.ActiveProcess.screenID;
+                int assrtRid = Include.NoRID;
+                if (assrtRid != Include.NoRID)
+                {
+                    _applicationTransaction = SAB.AssortmentTransactionEvent.GetAssortmentTransaction(this, assrtRid);
+
+                    if (_applicationTransaction.DataState == eDataState.ReadOnly)
+                    {
+                        throw new GroupAllocationAssortmentReadOnlyException(MIDText.GetText(eMIDTextCode.msg_as_NoProcessingMethodReadOnly),
+                            AssortmentActiveProcessToolbarHelper.ActiveProcess.screenType,
+                            AssortmentActiveProcessToolbarHelper.ActiveProcess.screenTitle);
+                    }
+                }
+                else
+                {
+                    if (_applicationTransaction == null)
+                    {
+                        _applicationTransaction = SAB.ApplicationServerSession.CreateTransaction();
+                    }
+                    SelectedHeaderList selectedHeaderList = (SelectedHeaderList)_applicationTransaction.GetProfileList(eProfileType.SelectedHeader);
+                    _applicationTransaction.LoadHeadersInTransaction(selectedHeaderList);
+
+                }
+
+                //=======================================================================================
+                // This only needs to be checked if headers are selected from the allocation workspace.
+                // You can tell that is true if the assrtRid == Include.NoRID.
+                //=======================================================================================
+                if (assrtRid == Include.NoRID)
+                {
+                    ArrayList headerInGAList = new ArrayList();
+                    if (_applicationTransaction.ContainsGroupAllocationHeaders(ref headerInGAList))
+                    {
+                        throw new HeaderInGroupAllocationException(MIDText.GetText(eMIDTextCode.msg_al_HeaderBelongsToGroupAllocation), headerInGAList);
+                    }
+                }
+                _applicationTransaction.CreateVelocityMethod(SAB, Key);
+                UpdateTransData();
+                _applicationTransaction.VelocityLoadDataArrays();
+                _applicationTransaction.Velocity.BasisChangesMade = _basisChangesMade;
+                _applicationTransaction.ProcessInteractiveVelocity();
+
+                eAllocationActionStatus actionStatus = _applicationTransaction.AllocationActionAllHeaderStatus;
+                if (actionStatus != eAllocationActionStatus.ActionCompletedSuccessfully)
+                {
+                    message = MIDText.GetTextOnly((int)actionStatus);
+                    return false;
+                }
+
+                if (!ErrorFound)
+                {
+                    _statisticsCalculated = true;
+                    _matrixProcessed = true;
+                    _matrixEverProcessed = true; 
+                    _basisChangesMade = false;
+                    _groupLvlMtrxData = _applicationTransaction.Velocity.GroupLvlMtrxData;
+                }
+
+                return true; 
+            }
+
+            catch (HeaderInGroupAllocationException err)
+            {
+                string headerListMsg = string.Empty;
+                foreach (string headerId in err.HeaderList)
+                {
+                    if (headerListMsg.Length > 0)
+                        headerListMsg += ", " + headerId;
+                    else
+                        headerListMsg = " " + headerId;
+                }
+               message = err.Message + headerListMsg;
+                return false;
+            }
+            catch (GroupAllocationAssortmentReadOnlyException err)
+            {
+                string errorMessage = err.Message;
+                errorMessage = errorMessage.Replace("{0}", err.GroupType);
+                errorMessage = errorMessage.Replace("{1}", err.GroupName);
+
+                message = errorMessage;
+                return false;
+            }
+
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return false;
+            }
+         }
+
+        private void UpdateTransData()
+        {
+            _applicationTransaction.VelocityStoreGroupRID = StoreGroupRID;
+            _applicationTransaction.VelocityOTSPlanHNRID = OTSPlanHNRID;
+            _applicationTransaction.VelocityOTSPlanPHRID = OTSPlanPHRID;
+            _applicationTransaction.VelocityOTSPlanPHLSeq = OTSPlanPHLSeq;
+            _applicationTransaction.VelocityOTS_Begin_CDR_RID = OTS_Begin_CDR_RID;
+            _applicationTransaction.VelocityOTS_Ship_To_CDR_RID = OTS_Ship_To_CDR_RID;
+            _applicationTransaction.VelocityUseSimilarStoreHistory = UseSimilarStoreHistory;
+            _applicationTransaction.VelocityCalculateAverageUsingChain = CalculateAverageUsingChain;
+            _applicationTransaction.VelocityCalculateGradeVariableType = GradeVariableType; 
+            _applicationTransaction.VelocityBalanceToHeaderInd = BalanceToHeaderInd; 
+            _applicationTransaction.VelocityDetermineShipQtyUsingBasis = DetermineShipQtyUsingBasis;
+            _applicationTransaction.VelocityTrendPctContribution = TrendPctContribution;
+            _applicationTransaction.VelocityApplyMinMaxInd = ApplyMinMaxInd;
+            _applicationTransaction.VelocityInventoryInd = InventoryInd;
+            _applicationTransaction.Velocity.MERCH_PHL_SEQ = MERCH_PHL_SEQ;
+            _applicationTransaction.Velocity.MERCH_PH_RID = MERCH_PH_RID;
+            _applicationTransaction.Velocity.MERCH_HN_RID = MERCH_HN_RID;
+            _applicationTransaction.VelocityDSVelocity = DSVelocity;
+            _applicationTransaction.Velocity.Component = Component;  
+            _applicationTransaction.Velocity.Balance = Balance; 
+            _applicationTransaction.Velocity.Reconcile = Reconcile;  
+                                                               
+            if (BasisChangesMade)
+            {
+                _applicationTransaction.ClearAllocationCubeGroup();
+            }
+
+            _applicationTransaction.VelocityIsInteractive = true;
+        }
+
+        override public bool MethodSetData(ROMethodProperties methodProperties, ref string message, bool processingApply)
         {
             ROMethodAllocationVelocityProperties method = (ROMethodAllocationVelocityProperties)methodProperties;
             
@@ -11375,6 +11909,12 @@ namespace MIDRetail.Business.Allocation
             OTSPlanPHLSeq = 0;
             OTS_Begin_CDR_RID = Include.UndefinedCalendarDateRange;
             OTS_Ship_To_CDR_RID = Include.UndefinedCalendarDateRange;
+            if (SG_RID != method.Attribute.Key
+                && !method.AddingMethod)
+            {
+                _matrixProcessed = false;
+                method.VelocityAction = eVelocityAction.ClearMatrix;
+            }
 
             SG_RID = method.Attribute.Key;
             _currentAttributeSet = method.AttributeSet.Key;
@@ -11386,21 +11926,142 @@ namespace MIDRetail.Business.Allocation
 
             ProfileList attributeSetList = StoreMgmt.StoreGroup_GetLevelListViewList(method.Attribute.Key);
 
+            SetComponent(method: method);
             SetBasis(method: method);
-            SetVelocityGrades(method: method);
+            bool velocityGradesChanged = SetVelocityGrades(method: method);
+            if (velocityGradesChanged
+                && !method.AddingMethod)
+            {
+                _matrixProcessed = false;
+                method.VelocityAction = eVelocityAction.ClearMatrix;
+            }
             SetSellThruValues(method: method);
             SetAttributeSet(method: method, setList: attributeSetList.ArrayList);
             SetVelocityMatrix(method: method, setList: attributeSetList.ArrayList);
 
+            if (method.Interactive
+                && !IsInteractive)
+            {
+                _needToLockHeaders = true;
+            }
+            IsInteractive = method.Interactive;
+
             LoadDataArrays();
 
-            return false;
+            if (method.VelocityAction == eVelocityAction.ClearMatrix)
+            {
+                _matrixProcessed = false;
+                _statisticsCalculated = false;
+            }
+            else if (IsInteractive
+                && method.VelocityAction == eVelocityAction.ProcessInteractive)
+            {
+                if (!ProcessInteractive(ref message))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private void SetComponent(ROMethodAllocationVelocityProperties method)
+        {
+            int compValue;
+            eComponentType compType;
+            if (method.Interactive
+                && method.SelectedComponentIsSet)
+            {
+                //compValue = Convert.ToInt32(cboComponent.SelectedValue, CultureInfo.CurrentUICulture);
+                compValue = method.SelectedComponent.Key;
+
+                foreach (DataRow row in _compDataTable.Rows)
+                {
+                    if ((int)row["TEXT_CODE"] == compValue)
+                    {
+                        compType = (eComponentType)row["CompType"];
+                        switch (compType)
+                        {
+                            case eComponentType.SpecificPack:
+                                Component = new AllocationPackComponent(Convert.ToString(row["TEXT_VALUE"], CultureInfo.CurrentUICulture));
+                                break;
+                            case eComponentType.SpecificColor:
+                                Component = new AllocationColorOrSizeComponent(eSpecificBulkType.SpecificColor, compValue);
+                                break;
+                            case eComponentType.Total:
+                                Component = new GeneralComponent(eGeneralComponentType.Total);
+                                break;
+                            case eComponentType.Bulk:
+                                Component = new GeneralComponent(eGeneralComponentType.Bulk);
+                                break;
+                        }
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                Component = new GeneralComponent(eGeneralComponentType.Total);
+            }
         }
 
         private void SetBasis(ROMethodAllocationVelocityProperties method)
         {
             DataTable dt = _dsVelocity.Tables["Basis"];
             DataRow row;
+            int rowIndex = 0;
+
+            _basisChangesMade = false;
+            if (dt.Rows.Count != method.BasisProfiles.Count)
+            {
+                _basisChangesMade = true;
+            }
+            else
+            {
+                foreach (ROBasisWithLevelDetailProfile basisDetailProfile in method.BasisProfiles)
+                {
+                    if (rowIndex < dt.Rows.Count)
+                    {
+                        row = dt.Rows[rowIndex];
+
+                        if (Convert.ToInt32(row["BasisHNRID"]) != basisDetailProfile.MerchandiseId)
+                        {
+                            _basisChangesMade = true;
+                        }
+                        if (Convert.ToInt32(row["BasisPHRID"]) != basisDetailProfile.MerchPhRId)
+                        {
+                            _basisChangesMade = true;
+                        }
+                        if (Convert.ToInt32(row["BasisPHLSequence"]) != basisDetailProfile.MerchPhlSequence)
+                        {
+                            _basisChangesMade = true;
+                        }
+                        if (Convert.ToInt32(row["BasisFVRID"]) != basisDetailProfile.VersionId)
+                        {
+                            _basisChangesMade = true;
+                        }
+                        if (Convert.ToInt32(row["cdrRID"]) != basisDetailProfile.DateRangeId)
+                        {
+                            _basisChangesMade = true;
+                        }
+                        if (Convert.ToDouble(row["Weight"]) != basisDetailProfile.Weight)
+                        {
+                            _basisChangesMade = true;
+                        }
+
+                        if (_basisChangesMade)
+                        {
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        _basisChangesMade = true;
+                        break;
+                    }
+                    ++rowIndex;
+                }
+            }
 
             if (dt.Rows.Count > 0)
             {
@@ -11425,10 +12086,91 @@ namespace MIDRetail.Business.Allocation
             }
         }
 
-        private void SetVelocityGrades(ROMethodAllocationVelocityProperties method)
+        private bool SetVelocityGrades(ROMethodAllocationVelocityProperties method)
         {
+            bool velocityGradesChanged = false;
             DataTable dt = _dsVelocity.Tables["VelocityGrade"];
             DataRow row;
+            int rowIndex = 0;
+
+            if (dt.Rows.Count != method.VelocityGradeList.Count)
+            {
+                velocityGradesChanged = true;
+            }
+            else
+            {
+                foreach (ROAllocationVelocityGrade velocityGrade in method.VelocityGradeList)
+                {
+                    if (rowIndex < dt.Rows.Count)
+                    {
+                        row = dt.Rows[rowIndex];
+                        if (Convert.ToString(row["Grade"]) != velocityGrade.StoreGrade.Value)
+                        {
+                            velocityGradesChanged = true;
+                        }
+                        else if (Convert.ToInt32(row["Boundary"]) != velocityGrade.StoreGrade.Key)
+                        {
+                            velocityGradesChanged = true;
+                        }
+                        int minStock = -1;
+                        int inputMinStock = -1;
+                        if (row["MinStock"] != System.DBNull.Value)
+                        {
+                            minStock = Convert.ToInt32(row["MinStock"]);
+                        }
+                        if (velocityGrade.MinimumIsSet)
+                        {
+                            inputMinStock = velocityGrade.Minimum;
+                        }
+                        if (minStock != inputMinStock)
+                        {
+                            velocityGradesChanged = true;
+                        }
+
+                        int maxStock = -1;
+                        int inputMaxStock = -1;
+                        if (row["MaxStock"] != System.DBNull.Value)
+                        {
+                            maxStock = Convert.ToInt32(row["MaxStock"]);
+                        }
+                        if (velocityGrade.MaximumIsSet)
+                        {
+                            inputMaxStock = velocityGrade.Maximum;
+                        }
+                        if (maxStock != inputMaxStock)
+                        {
+                            velocityGradesChanged = true;
+                        }
+
+                        int adMin = -1;
+                        int inputAdMin = -1;
+                        if (row["MinAd"] != System.DBNull.Value)
+                        {
+                            adMin = Convert.ToInt32(row["MinAd"]);
+                        }
+                        if (velocityGrade.AdMinimumIsSet)
+                        {
+                            inputAdMin = velocityGrade.AdMinimum;
+                        }
+                        if (adMin != inputAdMin)
+                        {
+                            velocityGradesChanged = true;
+                        }
+
+                        if (velocityGradesChanged)
+                        {
+                            break;
+                        }
+
+                    }
+                    else
+                    {
+                        velocityGradesChanged = true;
+                        break;
+                    }
+                    ++rowIndex;
+                }
+            }
 
             if (dt.Rows.Count > 0)
             {
@@ -11459,6 +12201,8 @@ namespace MIDRetail.Business.Allocation
                 dt.Rows.Add(row);
                 ++sequence;
             }
+
+            return velocityGradesChanged;
         }
 
         private void SetSellThruValues(ROMethodAllocationVelocityProperties method)
@@ -11497,6 +12241,8 @@ namespace MIDRetail.Business.Allocation
             ROMethodAllocationVelocityAttributeSet attributeSet;
             foreach (StoreGroupLevelListViewProfile attrSet in setList)
             {
+                method.AttributeSetList.Add(new KeyValuePair<int, string>(attrSet.Key, attrSet.Name));
+
                 if (method.MatrixAttributeSetValues.TryGetValue(attrSet.Key, out attributeSet))
                 {
                     row = dt.NewRow();
@@ -11543,44 +12289,57 @@ namespace MIDRetail.Business.Allocation
             }
 
             ROMethodAllocationVelocityAttributeSet attributeSet;
-            ROMethodAllocationVelocityMatrixVelocityGrade matrixVelocityGrade;
             foreach (StoreGroupLevelListViewProfile attrSet in setList)
             {
                 if (method.MatrixAttributeSetValues.TryGetValue(attrSet.Key, out attributeSet))
                 {
-                    foreach (ROAllocationVelocityGrade velocityGrade in method.VelocityGradeList)
+                    foreach (ROMethodAllocationVelocityMatrixVelocityGrade matrixVelocityGrade in attributeSet.MatrixGradeValues)
                     {
-                        if (attributeSet.MatrixGradeValues.TryGetValue(velocityGrade.StoreGrade.Key, out matrixVelocityGrade))
+                        foreach (ROMethodAllocationVelocityMatrixCell matrixCell in matrixVelocityGrade.MatrixGradeCells)
                         {
-                            foreach (ROMethodAllocationVelocityMatrixCell matrixCell in matrixVelocityGrade.MatrixGradeCells)
-                            {
-                                row = dt.NewRow();
+                            row = dt.NewRow();
 
-                                row["SglRID"] = attributeSet.AttributeSet.Key;
-                                row["Boundary"] = velocityGrade.StoreGrade.Key;
-                                row["SellThruIndex"] = matrixCell.SellThruIndex;
+                            row["SglRID"] = attributeSet.AttributeSet.Key;
+                            row["Boundary"] = matrixVelocityGrade.VelocityGrade.Key;
+                            row["SellThruIndex"] = matrixCell.SellThruIndex;
+                            if (method.VelocityAction == eVelocityAction.ClearMatrix)
+                            {
+                                row["VelocityRule"] = System.DBNull.Value;
+                                row["VelocityQty"] = System.DBNull.Value;
+                            }
+                            else if (attributeSet.OnHandRuleIsSet)
+                            {
+                                row["VelocityRule"] = attributeSet.OnHandRule.GetHashCode();
                                 if (attributeSet.OnHandRuleIsSet)
                                 {
-                                    row["VelocityRule"] = attributeSet.OnHandRule.GetHashCode();
-                                    if (attributeSet.OnHandRuleIsSet)
-                                    {
-                                        row["VelocityQty"] = attributeSet.OnHandRuleValue;
-                                    }
-                                    else
-                                    {
-                                        row["VelocityQty"] = DBNull.Value;
-                                    }
+                                    row["VelocityQty"] = attributeSet.OnHandRuleValue;
                                 }
                                 else
                                 {
-                                    row["VelocityRule"] = matrixCell.RuleType.GetHashCode();
+                                    row["VelocityQty"] = System.DBNull.Value;
+                                }
+                            }
+                            else
+                            {
+                                row["VelocityRule"] = matrixCell.RuleType.GetHashCode();
+                                if (matrixCell.RuleValueIsSet)
+                                {
                                     row["VelocityQty"] = matrixCell.RuleValue;
                                 }
+                            }
+
+                            if (method.VelocityAction == eVelocityAction.ClearMatrix)
+                            {
+                                row["Stores"] = System.DBNull.Value;
+                                row["AvgWOS"] = System.DBNull.Value;
+                            }
+                            else
+                            {
                                 row["Stores"] = matrixCell.NumberOfStores;
                                 row["AvgWOS"] = matrixCell.AverageWOS;
-
-                                dt.Rows.Add(row);
                             }
+
+                            dt.Rows.Add(row);
                         }
                     }
                 }

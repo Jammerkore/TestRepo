@@ -1247,7 +1247,7 @@ namespace MIDRetail.Business
             sizeCurveGenericHierarchy = GetName.GetLevelKeyValuePair(genCurveMerchType, genCurveHnRID, genCurvePhRID, genCurvePhlSequence, SAB);
             sizeCurveGenericNameExtension = GetName.GetSizeCurveName(genCurveNsccdRID);
             
-            ROSizeCurveProperties sizeCurveProperties = new ROSizeCurveProperties(sizeCurveGroupRID, genCurveNsccdRID, genCurveHcgRID, genCurveHnRID, genCurvePhRID, genCurvePhlSequence, genCurveMerchType,
+            ROSizeCurveProperties sizeCurveProperties = new ROSizeCurveProperties(sizeCurveGroupRID, genCurveNsccdRID, genCurveHcgRID, genCurveHnRID, genCurvePhRID, genCurvePhlSequence, EnumTools.VerifyEnumValue(genCurveMerchType),
             isUseDefault, isApplyRulesOnly, sizeCurve,sizeCurveGenericHierarchy, sizeCurveGenericNameExtension);
 
             return sizeCurveProperties;
@@ -1269,8 +1269,8 @@ namespace MIDRetail.Business
             sizeConstraintGenericHierarchy = GetName.GetLevelKeyValuePair(genConstraintMerchType, genConstraintHnRID, genConstraintPhRID, genConstraintPhlSequence, SAB);
             sizeConstraintGenericHeaderChar = GetName.GetHeaderCharGroupProfile(genConstraintHcgRID);
             
-            ROSizeConstraintProperties sizeConstraintProperties = new ROSizeConstraintProperties(inventoryBasisMerchHnRID, inventoryBasisMerchPhRID, inventoryBasisMerchPhlSequence, inventoryBasisMerchType,
-            sizeConstraintRID, genConstraintHcgRID, genConstraintHnRID, genConstraintPhRID, genConstraintPhlSequence, genConstraintMerchType,
+            ROSizeConstraintProperties sizeConstraintProperties = new ROSizeConstraintProperties(inventoryBasisMerchHnRID, inventoryBasisMerchPhRID, inventoryBasisMerchPhlSequence, EnumTools.VerifyEnumValue(inventoryBasisMerchType),
+            sizeConstraintRID, genConstraintHcgRID, genConstraintHnRID, genConstraintPhRID, genConstraintPhlSequence, EnumTools.VerifyEnumValue(genConstraintMerchType),
             genConstraintColorInd, inventoryBasis, sizeConstraint, sizeConstraintGenericHierarchy, sizeConstraintGenericHeaderChar);
 
             return sizeConstraintProperties;
@@ -1657,7 +1657,7 @@ namespace MIDRetail.Business
                     sizeSEQ = 0;
                 }
 
-                ROMethodSizeRuleProperties rOMethodSizeRulesProperties = new ROMethodSizeRuleProperties(false,false,false, row["BAND_DSC"].ToString(), sgl, colorCode, sizes, dimensions, sizeCode, sizeRule, sizeQuantity, methodRowType, sizeSEQ);
+                ROMethodSizeRuleProperties rOMethodSizeRulesProperties = new ROMethodSizeRuleProperties(false,false,false, row["BAND_DSC"].ToString(), sgl, colorCode, sizes, dimensions, sizeCode, sizeRule, sizeQuantity, EnumTools.VerifyEnumValue(methodRowType), sizeSEQ);
                 rOMethodSizeRules.Add(rOMethodSizeRulesProperties);
             }
 
@@ -2168,7 +2168,7 @@ namespace MIDRetail.Business
                 oll = GetName.GetOverrideLowLevelsModel(Convert.ToInt32(dr["OLL_RID"]), SAB);
                 customOll = GetName.GetOverrideLowLevelsModel(Convert.ToInt32(dr["CUSTOM_OLL_RID"]), SAB);
                 weight = Convert.ToDecimal(dr["WEIGHT"]);
-                merchType = (eMerchandiseType)Convert.ToInt32(dr["MERCH_TYPE"]);
+                merchType = EnumTools.VerifyEnumValue((eMerchandiseType)Convert.ToInt32(dr["MERCH_TYPE"]));
 
                 ROMethodSizeCurveMerchBasisProperties rOMethodSizeCurveMerchBasisProperties = new ROMethodSizeCurveMerchBasisProperties(false, false, false, SEQ, hn, fv, cdr, merchType, weight, oll, customOll);
                 rOMethodSizeCurveMerchBasiss.Add(rOMethodSizeCurveMerchBasisProperties);
@@ -2298,5 +2298,371 @@ namespace MIDRetail.Business
             }
             return dtMerchBasisDetail;
         }
+    }
+
+    public class EnumTools
+    {
+        public static eHierarchyType VerifyEnumValue(eHierarchyType value)
+        {
+            if (!Enum.IsDefined(typeof(eHierarchyType), value))
+            {
+                value = eHierarchyType.None;
+            }
+
+            return value;
+        }
+
+        public static eHierarchyRollupOption VerifyEnumValue(eHierarchyRollupOption value)
+        {
+            if (!Enum.IsDefined(typeof(eHierarchyRollupOption), value))
+            {
+                value = eHierarchyRollupOption.Undefined;
+            }
+
+            return value;
+        }
+
+        public static eOTSPlanLevelType VerifyEnumValue(eOTSPlanLevelType value)
+        {
+            if (!Enum.IsDefined(typeof(eOTSPlanLevelType), value))
+            {
+                value = eOTSPlanLevelType.Undefined;
+            }
+
+            return value;
+        }
+
+        public static eAllocationSelectionViewType VerifyEnumValue(eAllocationSelectionViewType value)
+        {
+            if (!Enum.IsDefined(typeof(eAllocationSelectionViewType), value))
+            {
+                value = eAllocationSelectionViewType.None;
+            }
+
+            return value;
+        }
+
+        public static eMerchandiseType VerifyEnumValue(eMerchandiseType value)
+        {
+            if (!Enum.IsDefined(typeof(eMerchandiseType), value))
+            {
+                value = eMerchandiseType.Undefined;
+            }
+
+            return value;
+        }
+
+        public static eFillSizesToType VerifyEnumValue(eFillSizesToType value)
+        {
+            if (!Enum.IsDefined(typeof(eFillSizesToType), value))
+            {
+                value = eFillSizesToType.Holes;
+            }
+
+            return value;
+        }
+
+        public static eVSWSizeConstraints VerifyEnumValue(eVSWSizeConstraints value)
+        {
+            if (!Enum.IsDefined(typeof(eVSWSizeConstraints), value))
+            {
+                value = eVSWSizeConstraints.None;
+            }
+
+            return value;
+        }
+
+        public static eEquateOverrideSizeType VerifyEnumValue(eEquateOverrideSizeType value)
+        {
+            if (!Enum.IsDefined(typeof(eEquateOverrideSizeType), value))
+            {
+                value = eEquateOverrideSizeType.DimensionSize;
+            }
+
+            return value;
+        }
+
+        public static eSizeCurvesByType VerifyEnumValue(eSizeCurvesByType value)
+        {
+            if (!Enum.IsDefined(typeof(eSizeCurvesByType), value))
+            {
+                value = eSizeCurvesByType.None;
+            }
+
+            return value;
+        }
+
+        public static eNodeChainSalesType VerifyEnumValue(eNodeChainSalesType value)
+        {
+            if (!Enum.IsDefined(typeof(eNodeChainSalesType), value))
+            {
+                value = eNodeChainSalesType.None;
+            }
+
+            return value;
+        }
+
+        public static eDCFulfillmentSplitOption VerifyEnumValue(eDCFulfillmentSplitOption value)
+        {
+            if (!Enum.IsDefined(typeof(eDCFulfillmentSplitOption), value))
+            {
+                value = eDCFulfillmentSplitOption.DCFulfillment;
+            }
+
+            return value;
+        }
+
+        public static eDCFulfillmentHeadersOrder VerifyEnumValue(eDCFulfillmentHeadersOrder value)
+        {
+            if (!Enum.IsDefined(typeof(eDCFulfillmentHeadersOrder), value))
+            {
+                value = eDCFulfillmentHeadersOrder.Ascending;
+            }
+
+            return value;
+        }
+
+        public static eDCFulfillmentSplitByOption VerifyEnumValue(eDCFulfillmentSplitByOption value)
+        {
+            if (!Enum.IsDefined(typeof(eDCFulfillmentSplitByOption), value))
+            {
+                value = eDCFulfillmentSplitByOption.SplitByDC;
+            }
+
+            return value;
+        }
+
+        public static eDCFulfillmentWithinDC VerifyEnumValue(eDCFulfillmentWithinDC value)
+        {
+            if (!Enum.IsDefined(typeof(eDCFulfillmentWithinDC), value))
+            {
+                value = eDCFulfillmentWithinDC.Proportional;
+            }
+
+            return value;
+        }
+
+        public static eDCFulfillmentReserve VerifyEnumValue(eDCFulfillmentReserve value)
+        {
+            if (!Enum.IsDefined(typeof(eDCFulfillmentReserve), value))
+            {
+                value = eDCFulfillmentReserve.ReservePreSplit;
+            }
+
+            return value;
+        }
+
+        public static eDCFulfillmentStoresOrder VerifyEnumValue(eDCFulfillmentStoresOrder value)
+        {
+            if (!Enum.IsDefined(typeof(eDCFulfillmentStoresOrder), value))
+            {
+                value = eDCFulfillmentStoresOrder.Descending;
+            }
+
+            return value;
+        }
+
+        public static eSizeMethodRowType VerifyEnumValue(eSizeMethodRowType value)
+        {
+            if (!Enum.IsDefined(typeof(eSizeMethodRowType), value))
+            {
+                value = eSizeMethodRowType.Default;
+            }
+
+            return value;
+        }
+
+        public static eSortDirection VerifyEnumValue(eSortDirection value)
+        {
+            if (!Enum.IsDefined(typeof(eSortDirection), value))
+            {
+                value = eSortDirection.Descending;
+            }
+
+            return value;
+        }
+
+        public static eComponentType VerifyEnumValue(eComponentType value)
+        {
+            if (!Enum.IsDefined(typeof(eComponentType), value))
+            {
+                value = eComponentType.Total;
+            }
+
+            return value;
+        }
+
+        public static eRuleMethod VerifyEnumValue(eRuleMethod value)
+        {
+            if (!Enum.IsDefined(typeof(eRuleMethod), value))
+            {
+                value = eRuleMethod.None;
+            }
+
+            return value;
+        }
+
+        public static eMinMaxType VerifyEnumValue(eMinMaxType value)
+        {
+            if (!Enum.IsDefined(typeof(eMinMaxType), value))
+            {
+                value = eMinMaxType.Allocation;
+            }
+
+            return value;
+        }
+
+        public static eVelocityCalculateAverageUsing VerifyEnumValue(eVelocityCalculateAverageUsing value)
+        {
+            if (!Enum.IsDefined(typeof(eVelocityCalculateAverageUsing), value))
+            {
+                value = eVelocityCalculateAverageUsing.AllStores;
+            }
+
+            return value;
+        }
+
+        public static eVelocityDetermineShipQtyUsing VerifyEnumValue(eVelocityDetermineShipQtyUsing value)
+        {
+            if (!Enum.IsDefined(typeof(eVelocityDetermineShipQtyUsing), value))
+            {
+                value = eVelocityDetermineShipQtyUsing.Basis;
+            }
+
+            return value;
+        }
+
+        public static eVelocityApplyMinMaxType VerifyEnumValue(eVelocityApplyMinMaxType value)
+        {
+            if (!Enum.IsDefined(typeof(eVelocityApplyMinMaxType), value))
+            {
+                value = eVelocityApplyMinMaxType.None;
+            }
+
+            return value;
+        }
+
+        public static eVelocityMethodGradeVariableType VerifyEnumValue(eVelocityMethodGradeVariableType value)
+        {
+            if (!Enum.IsDefined(typeof(eVelocityMethodGradeVariableType), value))
+            {
+                value = eVelocityMethodGradeVariableType.Stock;
+            }
+
+            return value;
+        }
+
+        public static eVelocityMatrixMode VerifyEnumValue(eVelocityMatrixMode value)
+        {
+            if (!Enum.IsDefined(typeof(eVelocityMatrixMode), value))
+            {
+                value = eVelocityMatrixMode.None;
+            }
+
+            return value;
+        }
+
+        public static eVelocityRuleType VerifyEnumValue(eVelocityRuleType value)
+        {
+            if (!Enum.IsDefined(typeof(eVelocityRuleType), value))
+            {
+                value = eVelocityRuleType.None;
+            }
+
+            return value;
+        }
+
+        public static eVelocityRuleRequiresQuantity VerifyEnumValue(eVelocityRuleRequiresQuantity value)
+        {
+            if (!Enum.IsDefined(typeof(eVelocityRuleRequiresQuantity), value))
+            {
+                value = eVelocityRuleRequiresQuantity.AbsoluteQuantity;
+            }
+
+            return value;
+        }
+
+        public static eVelocitySpreadOption VerifyEnumValue(eVelocitySpreadOption value)
+        {
+            if (!Enum.IsDefined(typeof(eVelocitySpreadOption), value))
+            {
+                value = eVelocitySpreadOption.None;
+            }
+
+            return value;
+        }
+
+        public static eHierarchyLevelType VerifyEnumValue(eHierarchyLevelType value)
+        {
+            if (!Enum.IsDefined(typeof(eHierarchyLevelType), value))
+            {
+                value = eHierarchyLevelType.Undefined;
+            }
+
+            return value;
+        }
+
+        public static eLevelLengthType VerifyEnumValue(eLevelLengthType value)
+        {
+            if (!Enum.IsDefined(typeof(eLevelLengthType), value))
+            {
+                value = eLevelLengthType.unrestricted;
+            }
+
+            return value;
+        }
+
+        public static eHierarchyDisplayOptions VerifyEnumValue(eHierarchyDisplayOptions value)
+        {
+            if (!Enum.IsDefined(typeof(eHierarchyDisplayOptions), value))
+            {
+                value = eHierarchyDisplayOptions.IdAndName;
+            }
+
+            return value;
+        }
+
+        public static eHierarchyIDFormat VerifyEnumValue(eHierarchyIDFormat value)
+        {
+            if (!Enum.IsDefined(typeof(eHierarchyIDFormat), value))
+            {
+                value = eHierarchyIDFormat.Unique;
+            }
+
+            return value;
+        }
+
+        public static eProductType VerifyEnumValue(eProductType value)
+        {
+            if (!Enum.IsDefined(typeof(eProductType), value))
+            {
+                value = eProductType.Undefined;
+            }
+
+            return value;
+        }
+
+        public static ePlanLevelSelectType VerifyEnumValue(ePlanLevelSelectType value)
+        {
+            if (!Enum.IsDefined(typeof(ePlanLevelSelectType), value))
+            {
+                value = ePlanLevelSelectType.Undefined;
+            }
+
+            return value;
+        }
+
+        public static eMaskField VerifyEnumValue(eMaskField value)
+        {
+            if (!Enum.IsDefined(typeof(eMaskField), value))
+            {
+                value = eMaskField.Undefined;
+            }
+
+            return value;
+        }
+
+
+
     }
 }

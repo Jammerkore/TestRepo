@@ -85,7 +85,7 @@ namespace MIDRetail.DataCommon
 		{
             try
             {
-                if (((Profile)obj).Key == _key)
+                if (obj is Profile && ((Profile)obj).Key == _key)
                 {
                     return true;
                 }

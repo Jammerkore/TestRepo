@@ -1797,8 +1797,10 @@ namespace MIDRetail.Business
                 return SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.ForecastMethodsUserPlanningExtract);
             }
         }
-        override public ROMethodProperties MethodGetData(bool processingApply)
+        override public ROMethodProperties MethodGetData(out bool successful, ref string message, bool processingApply = false)
         {
+            successful = true;
+
             ROOverrideLowLevel overrideLowLevel = new ROOverrideLowLevel();
             overrideLowLevel.OverrideLowLevelsModel = GetName.GetOverrideLowLevelsModel(_dlPlanningExtractMethod.OverrideLowLevelRid, SAB); //CustomOLL_RID;
 
@@ -1883,7 +1885,7 @@ namespace MIDRetail.Business
             return method;
         }
 
-        override public bool MethodSetData(ROMethodProperties methodProperties, bool processingApply)
+        override public bool MethodSetData(ROMethodProperties methodProperties, ref string message, bool processingApply)
         {
             ROMethodPlanningExtractProperties roMethodPlanningExtractProperties = (ROMethodPlanningExtractProperties)methodProperties;
             try

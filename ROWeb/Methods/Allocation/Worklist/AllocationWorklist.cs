@@ -258,6 +258,11 @@ namespace Logility.ROWeb
 
             foreach (AllocationHeaderProfile lstItem in headerProfileList)
             {
+                if (lstItem.AsrtType == (int)eAssortmentType.GroupAllocation
+                    || lstItem.AsrtTypeForParentAsrt == (int)eAssortmentType.GroupAllocation)
+                {
+                    continue;
+                }
                 if (excludeAssortmentTypeHeaders)
                 {
                     if (lstItem.AsrtType == (int)eAssortmentType.GroupAllocation
@@ -985,8 +990,8 @@ namespace Logility.ROWeb
             _dtHeaderViewFieldMapping.Rows.Add(new object[] { "NumBulkColors", MIDText.GetTextOnly(eMIDTextCode.lbl_NumBulkColors), "BulkColorCount" });
             _dtHeaderViewFieldMapping.Rows.Add(new object[] { "NumBulkSizes", MIDText.GetTextOnly(eMIDTextCode.lbl_NumBulkSizes), "BulkColorSizeCount" });
             _dtHeaderViewFieldMapping.Rows.Add(new object[] { "ImoId", MIDText.GetTextOnly(eMIDTextCode.lbl_IMO_ID), "ImoID" });
-            _dtHeaderViewFieldMapping.Rows.Add(new object[] { "ItemUnitsAllocated", MIDText.GetTextOnly(eMIDTextCode.lbl_ItemUnitsAllocated), "TotalItemUnitsAllocated" });
-            _dtHeaderViewFieldMapping.Rows.Add(new object[] { "ItemOrigUnitsAllocated", MIDText.GetTextOnly(eMIDTextCode.lbl_ItemOrigUnitsAllocated), "TotalItemOrigUnitsAllocated" });
+            _dtHeaderViewFieldMapping.Rows.Add(new object[] { "ItemUnitsAllocated", MIDText.GetTextOnly(eMIDTextCode.lbl_ItemUnitsAllocated), "StoreTot" });
+            _dtHeaderViewFieldMapping.Rows.Add(new object[] { "ItemOrigUnitsAllocated", MIDText.GetTextOnly(eMIDTextCode.lbl_ItemOrigUnitsAllocated), "VSWtot" });
             _dtHeaderViewFieldMapping.Rows.Add(new object[] { "AdjustVSW", MIDText.GetTextOnly(eMIDTextCode.lbl_AdjustVSW_OnHand), "AdjustVSW" });
             _dtHeaderViewFieldMapping.Rows.Add(new object[] { "PlanHnRID", MIDText.GetTextOnly(eMIDTextCode.lbl_OTSPlan), "PlanHnText" });
             _dtHeaderViewFieldMapping.Rows.Add(new object[] { "OnHandHnRID", MIDText.GetTextOnly(eMIDTextCode.lbl_OnHand), "OnHandHnText" });

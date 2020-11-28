@@ -1404,8 +1404,10 @@ namespace MIDRetail.Business
             }         
         }
 
-        override public ROMethodProperties MethodGetData(bool processingApply)
+        override public ROMethodProperties MethodGetData(out bool successful, ref string message, bool processingApply = false)
         {
+            successful = true;
+
             // Begin RO-740 RDewey
             ROLevelInformation lowLevelInformation = new ROLevelInformation();
             eROLevelsType levelType;
@@ -1478,7 +1480,7 @@ namespace MIDRetail.Business
                 return method;
         }
 
-        override public bool MethodSetData(ROMethodProperties methodProperties, bool processingApply)
+        override public bool MethodSetData(ROMethodProperties methodProperties, ref string message, bool processingApply)
         {
             ROMethodMatrixBalanceProperties roMethodMatrixBalanceProperties = (ROMethodMatrixBalanceProperties)methodProperties;
             try

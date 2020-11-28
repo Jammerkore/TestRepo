@@ -13,7 +13,7 @@ namespace MIDRetail.DataCommon
 	/// Contains the information about the eligibility for a store for a node in a hierarchy
 	/// </summary>
 	[Serializable()]
-	public class StoreEligibilityProfile : Profile
+	public class StoreEligibilityProfile : Profile, ICloneable
 	{
 		// Fields
 
@@ -516,6 +516,24 @@ namespace MIDRetail.DataCommon
 			set { _presPlusSalesInd = value; }
 		}
 		// END MID Track #4827
+
+        #region ICloneable Members
+
+        public object Clone()
+        {
+            try
+            {
+                StoreEligibilityProfile sep = (StoreEligibilityProfile)this.MemberwiseClone();
+                return sep;
+            }
+            catch (Exception ex)
+            {
+                string message = ex.ToString();
+                throw;
+            }
+        }
+
+        #endregion
 	}
 
 	/// <summary>

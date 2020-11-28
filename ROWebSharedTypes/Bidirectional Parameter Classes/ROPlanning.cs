@@ -1557,10 +1557,13 @@ namespace Logility.ROWebSharedTypes
 
         [DataMember(IsRequired = true)]
         private int _sellThru;
+        [DataMember(IsRequired = true)]
+        private string _sellThruHeading;
 
-        public ROSellThruList(int sellThru)
+        public ROSellThruList(int sellThru, string sellThruHeading = null)
         {
             _sellThru = sellThru;
+            _sellThruHeading = sellThruHeading;
 
         }
 
@@ -1568,6 +1571,17 @@ namespace Logility.ROWebSharedTypes
         {
             get { return _sellThru; }
             set { _sellThru = value; }
+        }
+
+        public string SellThruHeading
+        {
+            get { return _sellThruHeading; }
+            set { _sellThruHeading = value; }
+        }
+
+        public bool SellThruHeadingIsSet
+        {
+            get { return _sellThruHeading != null; }
         }
     }
 

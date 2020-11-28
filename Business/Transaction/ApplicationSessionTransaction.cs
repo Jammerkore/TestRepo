@@ -327,6 +327,8 @@ namespace MIDRetail.Business
         private Dictionary<int, AllocationProfileList> _masterSubordinates = new Dictionary<int, AllocationProfileList>();  // TT#1966-MD - JSmith - DC Fulfillment
         private Dictionary<int,long> _instanceTracker = new Dictionary<int, long>(); 
 
+        private bool _velocityStyleReviewLastDisplayed = false;
+
 		//=============
 		// CONSTRUCTORS
 		//=============
@@ -1493,6 +1495,22 @@ namespace MIDRetail.Business
             }
         }
         // End TT#1495-MD
+
+        /// <summary>
+        /// Gets or sets a flag identifying if Velocity Style Review was the last information displayed.
+        /// </summary>
+
+        public bool VelocityStyleReviewLastDisplayed
+        {
+            get
+            {
+                return _velocityStyleReviewLastDisplayed;
+            }
+            set
+            {
+                _velocityStyleReviewLastDisplayed = value;
+            }
+        }
 
 		//========
 		// METHODS

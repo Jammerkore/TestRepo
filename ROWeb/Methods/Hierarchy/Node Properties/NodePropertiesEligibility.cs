@@ -22,7 +22,6 @@ namespace Logility.ROWeb
         //=======
         // FIELDS
         //=======
-        private Dictionary<int, HierarchyNodeProfile> _hnpDict = new Dictionary<int, HierarchyNodeProfile>();
         StoreEligibilityList _storeEligList = null;
 
         //=============
@@ -57,9 +56,9 @@ namespace Logility.ROWeb
             // populate modelProperties using Windows\NodeProperties.cs as a reference
 
             int attributeKey = SAB.ClientServerSession.GlobalOptions.OTSPlanStoreGroupRID;
-            if (parms is RONodePropertyEligibilityKeyParms)
+            if (parms is RONodePropertyAttributeKeyParms)
             {
-                RONodePropertyEligibilityKeyParms nodePropertyEligibilityParms = (RONodePropertyEligibilityKeyParms)parms;
+                RONodePropertyAttributeKeyParms nodePropertyEligibilityParms = (RONodePropertyAttributeKeyParms)parms;
                 if (nodePropertyEligibilityParms.AttributeKey != Include.NoRID)
                 {
                     attributeKey = nodePropertyEligibilityParms.AttributeKey;
@@ -117,7 +116,7 @@ namespace Logility.ROWeb
                             && sep.EligIsInherited
                             && sep.EligInheritedFromNodeRID != Include.NoRID)
                         {
-                            hnp = GetHNProfile(sep.EligInheritedFromNodeRID);
+                            hnp = GetHierarchyNodeProfile(sep.EligInheritedFromNodeRID);
                             eligibilityStore.EligibilityValues.EligibilityInheritedFromNode = new KeyValuePair<int, string>(hnp.Key, inheritedFromText + hnp.Text);
                         }
 
@@ -138,7 +137,7 @@ namespace Logility.ROWeb
                             && sep.StkModIsInherited
                             && sep.StkModInheritedFromNodeRID != Include.NoRID)
                         {
-                            hnp = GetHNProfile(sep.StkModInheritedFromNodeRID);
+                            hnp = GetHierarchyNodeProfile(sep.StkModInheritedFromNodeRID);
                             eligibilityStore.EligibilityValues.StockModifierInheritedFromNode = new KeyValuePair<int, string>(hnp.Key, inheritedFromText + hnp.Text);
                         }
 
@@ -159,7 +158,7 @@ namespace Logility.ROWeb
                             && sep.SlsModIsInherited
                             && sep.SlsModInheritedFromNodeRID != Include.NoRID)
                         {
-                            hnp = GetHNProfile(sep.SlsModInheritedFromNodeRID);
+                            hnp = GetHierarchyNodeProfile(sep.SlsModInheritedFromNodeRID);
                             eligibilityStore.EligibilityValues.SalesModifierInheritedFromNode = new KeyValuePair<int, string>(hnp.Key, inheritedFromText + hnp.Text);
                         }
 
@@ -180,7 +179,7 @@ namespace Logility.ROWeb
                             && sep.FWOSModIsInherited
                             && sep.FWOSModInheritedFromNodeRID != Include.NoRID)
                         {
-                            hnp = GetHNProfile(sep.FWOSModInheritedFromNodeRID);
+                            hnp = GetHierarchyNodeProfile(sep.FWOSModInheritedFromNodeRID);
                             eligibilityStore.EligibilityValues.FWOSModifierInheritedFromNode = new KeyValuePair<int, string>(hnp.Key, inheritedFromText + hnp.Text);
                         }
 
@@ -214,7 +213,7 @@ namespace Logility.ROWeb
                             && sep.SimStoreIsInherited
                             && sep.SimStoreInheritedFromNodeRID != Include.NoRID)
                         {
-                            hnp = GetHNProfile(sep.SimStoreInheritedFromNodeRID);
+                            hnp = GetHierarchyNodeProfile(sep.SimStoreInheritedFromNodeRID);
                             eligibilityStore.EligibilityValues.SimilarStoreInheritedFromNode = new KeyValuePair<int, string>(hnp.Key, inheritedFromText + hnp.Text);
                         }
 
@@ -225,7 +224,7 @@ namespace Logility.ROWeb
                             && sep.PresPlusSalesIsInherited
                             && sep.PresPlusSalesInheritedFromNodeRID != Include.NoRID)
                         {
-                            hnp = GetHNProfile(sep.PresPlusSalesInheritedFromNodeRID);
+                            hnp = GetHierarchyNodeProfile(sep.PresPlusSalesInheritedFromNodeRID);
                             eligibilityStore.EligibilityValues.PresentationPlusSalesInheritedFromNode = new KeyValuePair<int, string>(hnp.Key, inheritedFromText + hnp.Text);
                         }
 
@@ -236,7 +235,7 @@ namespace Logility.ROWeb
                             && sep.StkLeadWeeksInherited
                             && sep.StkLeadWeeksInheritedRid != Include.NoRID)
                         {
-                            hnp = GetHNProfile(sep.StkLeadWeeksInheritedRid);
+                            hnp = GetHierarchyNodeProfile(sep.StkLeadWeeksInheritedRid);
                             eligibilityStore.EligibilityValues.StockLeadWeeksInheritedFromNode = new KeyValuePair<int, string>(hnp.Key, inheritedFromText + hnp.Text);
                         }
                     }
@@ -245,17 +244,6 @@ namespace Logility.ROWeb
 
                 nodeProperties.EligibilityAttributeSet.Add(eligibilityAttributeSet);
             }
-        }
-
-        private HierarchyNodeProfile GetHNProfile(int aKey)
-        {
-            HierarchyNodeProfile hnp = null;
-            if (!_hnpDict.TryGetValue(aKey, out hnp))
-            {
-                hnp = SAB.HierarchyServerSession.GetNodeData(aKey, false);
-                _hnpDict.Add(aKey, hnp);
-            }
-            return hnp;
         }
 
         override public object NodePropertiesUpdateData(RONodeProperties nodePropertiesData, bool cloneDates, ref string message, out bool successful, bool applyOnly = false)
@@ -1036,7 +1024,7 @@ namespace Logility.ROWeb
                 attributeKey = nodePropertiesEligibilityData.Attribute.Key;
             }
 
-            RONodePropertyEligibilityKeyParms profileKeyParms = new RONodePropertyEligibilityKeyParms(sROUserID: parms.ROUserID,
+            RONodePropertyAttributeKeyParms profileKeyParms = new RONodePropertyAttributeKeyParms(sROUserID: parms.ROUserID,
                 sROSessionID: parms.ROSessionID,
                 ROClass: parms.ROClass,
                 RORequest: eRORequest.GetModel,

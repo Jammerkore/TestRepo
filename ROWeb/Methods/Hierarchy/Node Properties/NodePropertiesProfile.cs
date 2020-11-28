@@ -69,7 +69,6 @@ namespace Logility.ROWeb
         {
             string inheritedFromText = MIDText.GetTextOnly(eMIDTextCode.lbl_Inherited_From);
             HierarchyNodeProfile hnp = null;
-            HierarchyProfile mainHierProf = SAB.HierarchyServerSession.GetMainHierarchyData();
 
             if (_hierarchyNodeProfile.HomeHierarchyParentRID != Include.NoRID)
             {
@@ -81,22 +80,22 @@ namespace Logility.ROWeb
             nodeProperties.NodeDescription = _hierarchyNodeProfile.NodeDescription;
             nodeProperties.NodeID = _hierarchyNodeProfile.NodeID;
             nodeProperties.NodeName = _hierarchyNodeProfile.NodeName;
-            nodeProperties.ProductType = _hierarchyNodeProfile.ProductType;
+            nodeProperties.ProductType = EnumTools.VerifyEnumValue(_hierarchyNodeProfile.ProductType);
             switch (_hierarchyNodeProfile.ProductTypeInherited)
             {
                 case eInheritedFrom.Node:
-                    hnp = SAB.HierarchyServerSession.GetNodeData(_hierarchyNodeProfile.ProductTypeInheritedFrom);
+                    hnp = GetHierarchyNodeProfile(key: _hierarchyNodeProfile.ProductTypeInheritedFrom);
                     nodeProperties.ProductTypeInheritedFromNode = new KeyValuePair<int, string>(hnp.Key, inheritedFromText + hnp.Text);
                     break;
                 case eInheritedFrom.HierarchyLevel:
-                    HierarchyLevelProfile hlp = (HierarchyLevelProfile)mainHierProf.HierarchyLevels[_hierarchyNodeProfile.ProductTypeInheritedFrom];
+                    HierarchyLevelProfile hlp = (HierarchyLevelProfile)MainHierProf.HierarchyLevels[_hierarchyNodeProfile.ProductTypeInheritedFrom];
                     nodeProperties.ProductTypeInheritedFromNode = new KeyValuePair<int, string>(_hierarchyNodeProfile.ProductTypeInheritedFrom, inheritedFromText + hlp.LevelID);
                     break;
                 default:
                     break;
             }
 
-            nodeProperties.LevelType = _hierarchyNodeProfile.LevelType;
+            nodeProperties.LevelType = EnumTools.VerifyEnumValue(_hierarchyNodeProfile.LevelType);
             switch (_hierarchyNodeProfile.LevelType)
             {
                 case eHierarchyLevelType.Color:
@@ -120,13 +119,13 @@ namespace Logility.ROWeb
             nodeProperties.IsAllowApply = (!(_hierarchyNodeProfile.HomeHierarchyType == eHierarchyType.organizational));
             if (_hierarchyNodeProfile.ApplyHNRIDFrom != Include.NoRID)
             {
-                nodeProperties.ApplyNodePropertiesFromNode = new KeyValuePair<int, string>(_hierarchyNodeProfile.ApplyHNRIDFrom, SAB.HierarchyServerSession.GetNodeData(_hierarchyNodeProfile.ApplyHNRIDFrom, false).Text);
+                nodeProperties.ApplyNodePropertiesFromNode = new KeyValuePair<int, string>(_hierarchyNodeProfile.ApplyHNRIDFrom, GetHierarchyNodeProfile(key: _hierarchyNodeProfile.ApplyHNRIDFrom, chaseHierarchy: false).Text);
                 if (_hierarchyNodeProfile.ApplyFromInherited != eInheritedFrom.None)
                 {
                     if (hnp == null ||
                         hnp.Key != _hierarchyNodeProfile.ApplyFromInheritedFrom)
                     {
-                        hnp = SAB.HierarchyServerSession.GetNodeData(_hierarchyNodeProfile.ApplyFromInheritedFrom);
+                        hnp = GetHierarchyNodeProfile(key: _hierarchyNodeProfile.ApplyFromInheritedFrom);
                     }
                     switch (_hierarchyNodeProfile.ApplyFromInherited)
                     {
@@ -142,7 +141,7 @@ namespace Logility.ROWeb
                 }
             }
 
-            nodeProperties.OTSForecastSelectType = _hierarchyNodeProfile.OTSPlanLevelSelectType;
+            nodeProperties.OTSForecastSelectType = EnumTools.VerifyEnumValue(_hierarchyNodeProfile.OTSPlanLevelSelectType);
             if (_hierarchyNodeProfile.OTSPlanLevelAnchorNode != Include.NoRID)
             {
                 nodeProperties.OTSForecastAnchorNode = new KeyValuePair<int, string>(_hierarchyNodeProfile.OTSPlanLevelAnchorNode, SAB.HierarchyServerSession.GetNodeText(_hierarchyNodeProfile.OTSPlanLevelAnchorNode));
@@ -153,7 +152,7 @@ namespace Logility.ROWeb
                 BuildOTSLevelList(nodeProperties: nodeProperties);
             }
 
-            nodeProperties.OTSForecastMaskType = _hierarchyNodeProfile.OTSPlanLevelMaskField;
+            nodeProperties.OTSForecastMaskType = EnumTools.VerifyEnumValue(_hierarchyNodeProfile.OTSPlanLevelMaskField);
             nodeProperties.OTSForecastMask = _hierarchyNodeProfile.OTSPlanLevelMask;
 
             switch (_hierarchyNodeProfile.OTSPlanLevelInherited)
@@ -162,7 +161,7 @@ namespace Logility.ROWeb
                     if (hnp == null ||
                         hnp.Key != _hierarchyNodeProfile.OTSPlanLevelInheritedFrom)
                     {
-                        hnp = SAB.HierarchyServerSession.GetNodeData(_hierarchyNodeProfile.OTSPlanLevelInheritedFrom);
+                        hnp = GetHierarchyNodeProfile(key: _hierarchyNodeProfile.OTSPlanLevelInheritedFrom);
                     }
                     nodeProperties.OTSForecastInheritedFromNode = new KeyValuePair<int, string>(hnp.Key, inheritedFromText + hnp.Text);
                     break;
@@ -170,20 +169,20 @@ namespace Logility.ROWeb
                     break;
             }
 
-            nodeProperties.OTSForecastType = _hierarchyNodeProfile.OTSPlanLevelType;
+            nodeProperties.OTSForecastType = EnumTools.VerifyEnumValue(_hierarchyNodeProfile.OTSPlanLevelType);
             switch (_hierarchyNodeProfile.OTSPlanLevelTypeInherited)
             {
                 case eInheritedFrom.Node:
                     if (hnp == null ||
                         hnp.Key != _hierarchyNodeProfile.OTSPlanLevelTypeInheritedFrom)
                     {
-                        hnp = SAB.HierarchyServerSession.GetNodeData(_hierarchyNodeProfile.OTSPlanLevelTypeInheritedFrom);
+                        hnp = GetHierarchyNodeProfile(key: _hierarchyNodeProfile.OTSPlanLevelTypeInheritedFrom);
                     }
                     nodeProperties.OTSForecastTypeInheritedFromNode = new KeyValuePair<int, string>(hnp.Key, inheritedFromText + hnp.Text);
                     break;
                 case eInheritedFrom.HierarchyLevel:
 
-                    HierarchyLevelProfile hlp = (HierarchyLevelProfile)mainHierProf.HierarchyLevels[_hierarchyNodeProfile.OTSPlanLevelTypeInheritedFrom];
+                    HierarchyLevelProfile hlp = (HierarchyLevelProfile)MainHierProf.HierarchyLevels[_hierarchyNodeProfile.OTSPlanLevelTypeInheritedFrom];
                     nodeProperties.OTSForecastTypeInheritedFromNode = new KeyValuePair<int, string>(_hierarchyNodeProfile.OTSPlanLevelTypeInheritedFrom, inheritedFromText + hlp.LevelID);
                     break;
                 case eInheritedFrom.HierarchyDefaults:
@@ -210,7 +209,7 @@ namespace Logility.ROWeb
 
                 if (_hierarchyNodeProfile.OTSPlanLevelAnchorNode != Include.NoRID)
                 {
-                    anchorNodeProfile = SAB.HierarchyServerSession.GetNodeData(_hierarchyNodeProfile.OTSPlanLevelAnchorNode);
+                    anchorNodeProfile = GetHierarchyNodeProfile(key: _hierarchyNodeProfile.OTSPlanLevelAnchorNode);
                 }
 
                 // Load Level arrays
@@ -239,26 +238,25 @@ namespace Logility.ROWeb
                 {
                     _OTSLevelList.Add(new HierarchyLevelComboObject(levelIndex, ePlanLevelLevelType.LevelOffset, anchorNodeProfile.Key, 0, anchorNodeProfile.Text, anchorNodeProfile.Text));
                     ++levelIndex;
-                    HierarchyProfile mainHierProf = SAB.HierarchyServerSession.GetMainHierarchyData();
 
                     int highestGuestLevel = SAB.HierarchyServerSession.GetHighestGuestLevel(_hierarchyNodeProfile.OTSPlanLevelAnchorNode);
 
                     // add guest levels
                     if (highestGuestLevel != int.MaxValue)
                     {
-                        for (i = highestGuestLevel; i <= mainHierProf.HierarchyLevels.Count; i++)
+                        for (i = highestGuestLevel; i <= MainHierProf.HierarchyLevels.Count; i++)
                         {
                             if (i == 0)
                             {
-                                _OTSLevelList.Add(new HierarchyLevelComboObject(levelIndex, ePlanLevelLevelType.HierarchyLevel, mainHierProf.Key, 0, hpHome.HierarchyID));
+                                _OTSLevelList.Add(new HierarchyLevelComboObject(levelIndex, ePlanLevelLevelType.HierarchyLevel, MainHierProf.Key, 0, hpHome.HierarchyID));
                                 ++levelIndex;
                             }
                             else
                             {
-                                HierarchyLevelProfile hlp = (HierarchyLevelProfile)mainHierProf.HierarchyLevels[i];
+                                HierarchyLevelProfile hlp = (HierarchyLevelProfile)MainHierProf.HierarchyLevels[i];
                                 if (hlp.LevelType != eHierarchyLevelType.Size)
                                 {
-                                    _OTSLevelList.Add(new HierarchyLevelComboObject(levelIndex, ePlanLevelLevelType.HierarchyLevel, mainHierProf.Key, ((HierarchyLevelProfile)mainHierProf.HierarchyLevels[i]).Key, ((HierarchyLevelProfile)mainHierProf.HierarchyLevels[i]).LevelID));
+                                    _OTSLevelList.Add(new HierarchyLevelComboObject(levelIndex, ePlanLevelLevelType.HierarchyLevel, MainHierProf.Key, ((HierarchyLevelProfile)MainHierProf.HierarchyLevels[i]).Key, ((HierarchyLevelProfile)MainHierProf.HierarchyLevels[i]).LevelID));
                                     ++levelIndex;
                                 }
                             }
@@ -345,7 +343,7 @@ namespace Logility.ROWeb
             {
                 if (nodePropertiesProfileData.ParentIsSet)
                 {
-                    parent = SAB.HierarchyServerSession.GetNodeData(nodePropertiesProfileData.Parent.Key);
+                    parent = GetHierarchyNodeProfile(key: nodePropertiesProfileData.Parent.Key);
                     hp = SAB.HierarchyServerSession.GetHierarchyData(parent.HomeHierarchyRID);
                 }
 
@@ -505,7 +503,7 @@ namespace Logility.ROWeb
                 else if (nodePropertiesProfileData.LevelType != eHierarchyLevelType.Color &&
                     nodePropertiesProfileData.LevelType != eHierarchyLevelType.Size)
                 {
-                    HierarchyNodeProfile hnp = SAB.HierarchyServerSession.GetNodeData(nodePropertiesProfileData.NodeID);
+                    HierarchyNodeProfile hnp = GetHierarchyNodeProfile(ID: nodePropertiesProfileData.NodeID);
                     if (hnp.Key != Include.NoRID &&
                         hnp.Key != _hierarchyNodeProfile.Key)
                     {
@@ -548,7 +546,7 @@ namespace Logility.ROWeb
 
             if (nodeAdded)
             {
-                _hierarchyNodeProfile = _hierarchyNodeProfile = SAB.HierarchyServerSession.GetNodeDataForUpdate(aNodeRID: _hierarchyNodeProfile.Key, aAllowReadOnly: true);
+                _hierarchyNodeProfile = SAB.HierarchyServerSession.GetNodeDataForUpdate(aNodeRID: _hierarchyNodeProfile.Key, aAllowReadOnly: true);
             }
 
             return true;
@@ -603,7 +601,7 @@ namespace Logility.ROWeb
             }
             else
             {
-                return SAB.HierarchyServerSession.GetNodeData(nodeRID: parms.Key, chaseHierarchy: true);
+                return GetHierarchyNodeProfile(key: parms.Key, chaseHierarchy: true);
             }
         }
 

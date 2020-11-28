@@ -1175,27 +1175,29 @@ namespace MIDRetail.Business.Allocation
             }
 
         }
-        override public ROMethodProperties MethodGetData(bool processingApply)
+        override public ROMethodProperties MethodGetData(out bool successful, ref string message, bool processingApply = false)
         {
+            successful = true;
+
             ROMethodDCStoreCharacteristicSet dCStoreCharacteristicSet = new ROMethodDCStoreCharacteristicSet();
             ROMethodDCFulfillmentProperties method = new ROMethodDCFulfillmentProperties(
                 method: GetName.GetMethod(method: this),
                 description: Method_Description,
                 userKey: User_RID,
-                dCFulfillmentSplitOption: _methodData.SplitOption,
+                dCFulfillmentSplitOption: EnumTools.VerifyEnumValue(_methodData.SplitOption),
                 applyMinimumsInd: _methodData.ApplyMinimumsInd,
                 prioritizeType: GetName.GetPrioritizeHeaderBy(_methodData.PrioritizeType, _methodData.Hcg_RID, _methodData.HeaderField),
-                headersOrder: _methodData.HeadersOrder,
-                split_By_Option: _methodData.Split_By_Option,
-                within_Dc: _methodData.Within_Dc,
-                split_By_Reserve: _methodData.Split_By_Reserve,
+                headersOrder: EnumTools.VerifyEnumValue(_methodData.HeadersOrder),
+                split_By_Option: EnumTools.VerifyEnumValue(_methodData.Split_By_Option),
+                within_Dc: EnumTools.VerifyEnumValue(_methodData.Within_Dc),
+                split_By_Reserve: EnumTools.VerifyEnumValue(_methodData.Split_By_Reserve),
                 storesOrder: _methodData.StoresOrder,
                 dCStoreCharacteristicSet: DCStoreCharacteristicSet.BuildDCStoreCharacteristicSet(_methodData.Method_RID, eMethodType.DCFulfillment, dtStoreOrder, SAB)
                 );
             return method;
         }
 
-        override public bool MethodSetData(ROMethodProperties methodProperties, bool processingApply)
+        override public bool MethodSetData(ROMethodProperties methodProperties, ref string message, bool processingApply)
         {
             ROMethodDCFulfillmentProperties rOMethodDCFulfillmentProperties = (ROMethodDCFulfillmentProperties)methodProperties;
 

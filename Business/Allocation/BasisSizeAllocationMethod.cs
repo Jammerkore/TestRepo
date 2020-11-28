@@ -2436,8 +2436,10 @@ namespace MIDRetail.Business.Allocation
             }
 
         }
-        override public ROMethodProperties MethodGetData(bool processingApply)
+        override public ROMethodProperties MethodGetData(out bool successful, ref string message, bool processingApply = false)
         {
+            successful = true;
+
             //RO-3886 Data Transport for Basis Size Method
             //throw new NotImplementedException("MethodGetData is not implemented");
             KeyValuePair<int, string> keyValuePair = new KeyValuePair<int, string>();
@@ -2468,7 +2470,7 @@ namespace MIDRetail.Business.Allocation
             return method;
         }
 
-        override public bool MethodSetData(ROMethodProperties methodProperties, bool processingApply)
+        override public bool MethodSetData(ROMethodProperties methodProperties, ref string message, bool processingApply)
         {
             //RO-3886 Data Transport for Size Basis Method
             ROMethodBasisSizeProperties roMethodBasisSizeAllocationProperties = (ROMethodBasisSizeProperties)methodProperties;

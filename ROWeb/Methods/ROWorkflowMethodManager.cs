@@ -196,12 +196,14 @@ namespace Logility.ROWeb
         /// <param name="ROWebTools">An instance of the ROWebTools</param>
         /// <param name="ROInstanceID">The instance ID of the session</param>
         /// <param name="applicationType">The application that instantiated the instance</param>
-        public ROWorkflowMethodManager(SessionAddressBlock SAB, ROWebTools ROWebTools, long ROInstanceID, eROApplicationType applicationType)
+        /// <param name="applicationSessionTransaction">The transaction to use for processing</param>
+        public ROWorkflowMethodManager(SessionAddressBlock SAB, ROWebTools ROWebTools, long ROInstanceID, eROApplicationType applicationType, ApplicationSessionTransaction applicationSessionTransaction)
         {
             _SAB = SAB;
             _ROWebTools = ROWebTools;
             _ROInstanceID = ROInstanceID;
             _applicationType = applicationType;
+            _applicationSessionTransaction = applicationSessionTransaction;
         }
 
         public void CleanUp()
@@ -272,10 +274,22 @@ namespace Logility.ROWeb
         #region "Method Processing"
         public ROOut GetMethod(ROMethodParms methodParm, bool processingApply = false)
         {
+            bool successful;
+            string message = null;
+            eROReturnCode returnCode = eROReturnCode.Successful;
+
             // Do not obtain object during Apply since will already have one
             if (!processingApply)
             {
-                _ABM = (ApplicationBaseMethod)GetMethods.GetMethod(methodParm.Key, methodParm.MethodType);
+                if (_ABM == null  
+                    || _ABM.Key != methodParm.Key)
+                {
+                    _ABM = (ApplicationBaseMethod)GetMethods.GetMethod(methodParm.Key, methodParm.MethodType);
+                    if (_ABM is VelocityMethod)
+                    {
+                        ((VelocityMethod)_ABM).AST = _applicationSessionTransaction;
+                    }
+                }
             }
 
             if (!_ABM.AuthorizedToView(SAB.ClientServerSession, SAB.ClientServerSession.UserRID))
@@ -283,7 +297,12 @@ namespace Logility.ROWeb
                 return new ROMethodPropertiesOut(eROReturnCode.Failure, null, ROInstanceID, null);
             }
 
-            ROMethodProperties mp = _ABM.MethodGetData(processingApply);
+            ROMethodProperties mp = _ABM.MethodGetData(successful: out successful, message: ref message, processingApply: processingApply);
+
+            if (!successful)
+            {
+                returnCode = eROReturnCode.Failure;
+            }
 
             FunctionSecurity = _ABM.GetFunctionSecurity();
             mp.CanBeProcessed = FunctionSecurity.AllowExecute;
@@ -297,9 +316,11 @@ namespace Logility.ROWeb
 
             // Do not attempt to lock during Apply since locking processed during initial Get
             if (!mp.IsReadOnly
-                && !processingApply)
+                && _ABM.LockStatus != eLockStatus.Locked
+                && !processingApply
+                && successful)
             {
-                string message = null;
+                message = null;
                 _ABM.LockStatus = WorkflowMethodUtilities.LockWorkflowMethod(
                     SAB: SAB,
                     workflowMethodIND: eWorkflowMethodIND.Methods,
@@ -316,17 +337,23 @@ namespace Logility.ROWeb
                 }
             }
 
-            return new ROMethodPropertiesOut(eROReturnCode.Successful, null, ROInstanceID, mp);
+            return new ROMethodPropertiesOut(returnCode, message, ROInstanceID, mp);
         }
 
         public ROOut SaveMethod(ROMethodPropertiesParms methodParm)
         {
+            string message = null;
+
             if (_ABM == null
                 || methodParm.ROMethodProperties.Method.Key == Include.NoRID)
             {
                 _ABM = (ApplicationBaseMethod)GetMethods.GetMethod(methodParm.ROMethodProperties.Method.Key, methodParm.ROMethodProperties.MethodType);
                 FunctionSecurity = _ABM.GetFunctionSecurity();
                 _ABM.User_RID = methodParm.ROMethodProperties.UserKey;
+                if (_ABM is VelocityMethod)
+                {
+                    ((VelocityMethod)_ABM).AST = _applicationSessionTransaction;
+                }
             }
 
             bool cleanseName = false;
@@ -350,7 +377,7 @@ namespace Logility.ROWeb
             _ABM.User_RID = methodParm.ROMethodProperties.UserKey;
 
 
-            if (_ABM.MethodSetData(methodProperties: methodParm.ROMethodProperties, processingApply: false))
+            if (_ABM.MethodSetData(methodProperties: methodParm.ROMethodProperties, message: ref message, processingApply: false))
             {
                 try
                 {
@@ -388,9 +415,11 @@ namespace Logility.ROWeb
 
         public ROOut ApplyMethod(ROMethodPropertiesParms methodParm)
         {
+            string message = null;
+
             if (_ABM == null)
             {
-                string message = SAB.ClientServerSession.Audit.GetText(
+                message = SAB.ClientServerSession.Audit.GetText(
                     messageCode: eMIDTextCode.msg_ValueWasNotFound,
                     addToAuditReport: true,
                     args: new object[] { MIDText.GetTextOnly(eMIDTextCode.lbl_Method) }
@@ -404,7 +433,7 @@ namespace Logility.ROWeb
             _ABM.Name = methodParm.ROMethodProperties.Method.Value;
             _ABM.Method_Description = methodParm.ROMethodProperties.Description;
             _ABM.User_RID = methodParm.ROMethodProperties.UserKey;
-            _ABM.MethodSetData(methodProperties: methodParm.ROMethodProperties, processingApply: true);
+            _ABM.MethodSetData(methodProperties: methodParm.ROMethodProperties, message: ref message, processingApply: true);
 
             // Build new object with updated values
 			ROMethodParms methodGetParm = new ROMethodParms(
@@ -664,6 +693,7 @@ namespace Logility.ROWeb
             try
             {
                 ClientTransaction.DataAccess.OpenUpdateConnection();
+                DeleteReferences(key: _ABM.Key, profileType: _ABM.ProfileType, dataAccess: ClientTransaction.DataAccess);
                 _ABM.Method_Change_Type = eChangeType.delete;
                 _ABM.Update(ClientTransaction.DataAccess);
                 ClientTransaction.DataAccess.CommitData();
@@ -712,6 +742,10 @@ namespace Logility.ROWeb
             {
                 _ABM = (ApplicationBaseMethod)GetMethods.GetMethod(methodParm.Key, methodParm.MethodType);
                 FunctionSecurity = _ABM.GetFunctionSecurity();
+                if (_ABM is VelocityMethod)
+                {
+                    ((VelocityMethod)_ABM).AST = _applicationSessionTransaction;
+                }
             }
         }
 
@@ -997,6 +1031,7 @@ namespace Logility.ROWeb
             try
             {
                 ClientTransaction.DataAccess.OpenUpdateConnection();
+                DeleteReferences(key: _ABW.Key, profileType: _ABW.ProfileType, dataAccess: ClientTransaction.DataAccess);
                 _ABW.Workflow_Change_Type = eChangeType.delete;
                 _ABW.Update(ClientTransaction.DataAccess);
                 ClientTransaction.DataAccess.CommitData();
@@ -1656,6 +1691,30 @@ namespace Logility.ROWeb
 
         abstract protected ROWorkflow BuildWorkflowOut(ROKeyParms parms);
 
+        protected bool DeleteReferences(int key, eProfileType profileType, TransactionData dataAccess)
+        {
+            FolderDataLayer _dlFolder = new FolderDataLayer(td: dataAccess);
+
+            try
+            {
+                _dlFolder.Folder_Item_Delete(aChildRID: key, aFolderChildType: profileType);
+                _dlFolder.Folder_Shortcut_DeleteAll(aChildRID: key, aFolderChildType: profileType);
+            }
+            catch (DatabaseForeignKeyViolation)
+            {
+                MIDEnvironment.Message = SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_DeleteFailedDataInUse);
+                MIDEnvironment.requestFailed = true;
+                return false;
+            }
+            catch (Exception exc)
+            {
+                string message = exc.ToString();
+                throw;
+            }
+
+            return true;
+        }
+
 
     }
 
@@ -1670,8 +1729,8 @@ namespace Logility.ROWeb
         /// <param name="SAB">The SessionAddressBlock for this user and environment</param>
         /// <param name="ROWebTools">An instance of the ROWebTools</param>
         /// <param name="ROInstanceID">The instance ID of the session</param>
-        public ROAllocationWorkflowMethodManager(SessionAddressBlock SAB, ROWebTools ROWebTools, long ROInstanceID)
-            : base(SAB, ROWebTools, ROInstanceID, eROApplicationType.Allocation)
+        public ROAllocationWorkflowMethodManager(SessionAddressBlock SAB, ApplicationSessionTransaction applicationSessionTransaction, ROWebTools ROWebTools, long ROInstanceID)
+            : base(SAB, ROWebTools, ROInstanceID, eROApplicationType.Allocation, applicationSessionTransaction)
         {
 
         }
@@ -1890,8 +1949,8 @@ namespace Logility.ROWeb
         /// <param name="SAB">The SessionAddressBlock for this user and environment</param>
         /// <param name="ROWebTools">An instance of the ROWebTools</param>
         /// <param name="ROInstanceID">The instance ID of the session</param>
-        public ROPlanningWorkflowMethodManager(SessionAddressBlock SAB, ROWebTools ROWebTools, long ROInstanceID)
-            : base(SAB, ROWebTools, ROInstanceID, eROApplicationType.Forecast)
+        public ROPlanningWorkflowMethodManager(SessionAddressBlock SAB, ApplicationSessionTransaction applicationSessionTransaction, ROWebTools ROWebTools, long ROInstanceID)
+            : base(SAB, ROWebTools, ROInstanceID, eROApplicationType.Forecast, applicationSessionTransaction)
         {
 
         }

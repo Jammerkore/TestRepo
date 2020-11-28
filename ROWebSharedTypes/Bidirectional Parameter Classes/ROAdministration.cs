@@ -1226,18 +1226,141 @@ namespace Logility.ROWebSharedTypes
     [DataContract(Name = "ROModelSizeGroupProperties", Namespace = "http://Logility.ROWeb/")]
     public class ROModelSizeGroupProperties : ROModelProperties
     {
-        // fields specific to Model
+        [DataMember(IsRequired = true)]
+        List<string> _productCategories;
 
+        [DataMember(IsRequired = true)]
+        string _productCategory;
+
+        [DataMember(IsRequired = true)]
+        string _description;
+
+        [DataMember(IsRequired = true)]
+        eSearchContent _verifyCriteria;
+
+        [DataMember(IsRequired = true)]
+        List<KeyValuePair<int, string>> _size;
+
+        [DataMember(IsRequired = true)]
+        List<KeyValuePair<int, string>> _width;
+
+        [DataMember(IsRequired = true)]
+        KeyValuePair<int, string>[][] _sizeMatrix;
+
+        [DataMember(IsRequired = true)]
+        List<KeyValuePair<int, string>> _sizeSelection;
+
+        [DataMember(IsRequired = true)]
+        int _messageRow;
+
+        [DataMember(IsRequired = true)]
+        int _messageColumn;
 
         #region Public Properties
+        public List<string> ProductCategories
+        {
+            get { return _productCategories; }
+        }
+
+        public string ProductCategory
+        {
+            get { return _productCategory; }
+        }
+
+        public string Description
+        {
+            get { return _description; }
+        }
+
+        public eSearchContent VerifyCriteria
+        {
+            get { return _verifyCriteria; }
+            set { _verifyCriteria = value; }
+        }
+
+        public List<KeyValuePair<int, string>> Size
+        {
+            get { return _size; }
+        }
+
+        public List<KeyValuePair<int, string>> Width
+        {
+            get { return _width; }
+        }
+
+        public KeyValuePair<int, string>[][] SizeMatrix
+        {
+            get { return _sizeMatrix; }
+        }
+
+        public List<KeyValuePair<int, string>> SizeSelection
+        {
+            get { return _sizeSelection; }
+        }
+
+        public bool SizeSelectionIsSet
+        {
+            get { return _sizeSelection.Count > 0; }
+        }
+
+        public int MessageRow
+        {
+            get { return _messageRow; }
+            set { _messageRow = value; }
+        }
+
+        public bool MessageRowIsSet
+        {
+            get { return _messageRow != Include.Undefined; }
+        }
+
+        public int MessageColumn
+        {
+            get { return _messageColumn; }
+            set { _messageColumn = value; }
+        }
+
+        public bool MessageColumnIsSet
+        {
+            get { return _messageColumn != Include.Undefined; }
+        }
 
         #endregion
-        public ROModelSizeGroupProperties(KeyValuePair<int, string> model) :
+
+        public ROModelSizeGroupProperties(KeyValuePair<int, string> model,
+            string productCategory,
+            string description) :
             base(eModelType.SizeGroup, model)
 
         {
-            // fields specific to Model
+            _productCategory = productCategory;
+            _description = description;
+            _productCategories = new List<string>();
+            _verifyCriteria = eSearchContent.WholeField;
+            _size = new List<KeyValuePair<int, string>>();
+            _width = new List<KeyValuePair<int, string>>();
+            _sizeSelection = new List<KeyValuePair<int, string>>();
+            _messageRow = Include.Undefined;
+            _messageColumn = Include.Undefined;
+        }
 
+        public void DefineSizeMatrix(int numberOfRows, int numberOfColumns)
+        {
+            if (_width.Count > numberOfRows)
+            {
+                numberOfRows = _width.Count;
+            }
+
+            if (_size.Count > numberOfColumns)
+            {
+                numberOfColumns = _size.Count;
+            }
+
+            _sizeMatrix = new KeyValuePair<int, string>[numberOfRows][];
+            for (int row = 0; row < numberOfRows; row++)
+            {
+                _sizeMatrix[row] = new KeyValuePair<int, string>[numberOfColumns];
+            }
         }
     }
 

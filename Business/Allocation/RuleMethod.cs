@@ -2697,8 +2697,10 @@ namespace MIDRetail.Business.Allocation
 
         }
         // BEGIN RO-2845 Data transport for Rule Method - get data - MGage
-        override public ROMethodProperties MethodGetData(bool processingApply)
+        override public ROMethodProperties MethodGetData(out bool successful, ref string message, bool processingApply = false)
         {
+            successful = true;
+
             ROMethodRuleProperties method = new ROMethodRuleProperties(
                 method: GetName.GetMethod(method: this),
                 description: Method_Description,
@@ -2706,14 +2708,14 @@ namespace MIDRetail.Business.Allocation
                 filter: GetName.GetFilterName(FilterRID),
                 header: GetName.GetHeader(HeaderRID, SAB: SAB),
                 isHeaderMaster: IsHeaderMaster,
-                sortDirection: SortDirection,
+                sortDirection: EnumTools.VerifyEnumValue(SortDirection),
                 includeReserveInd: IncludeReserve,
-                componentType: ComponentType,
+                componentType: EnumTools.VerifyEnumValue(ComponentType),
                 pack: GetName.GetHeaderPack(HeaderRID, PackRID),
                 color: GetName.GetColor(ColorCodeRID, SAB: SAB),
-                includeRuleMethod: IncludeRuleMethod,
+                includeRuleMethod: EnumTools.VerifyEnumValue(IncludeRuleMethod),
                 includeQuantity: IncludeQuantity,
-                excludeRuleMethod: ExcludeRuleMethod,
+                excludeRuleMethod: EnumTools.VerifyEnumValue(ExcludeRuleMethod),
                 excludeQuantity: ExcludeQuantity,
                 hdr_BC: GetName.GetHeader(HdrBCRID, SAB: SAB),
                 storeGroupLevel: GetName.GetAttributeSetName(StoreGroupLevelRID)
@@ -2721,7 +2723,7 @@ namespace MIDRetail.Business.Allocation
             return method;
         }
         // END RO-2845 Data transport for Rule Method - get data  - MGage
-        override public bool MethodSetData(ROMethodProperties methodProperties, bool processingApply)
+        override public bool MethodSetData(ROMethodProperties methodProperties, ref string message, bool processingApply)
         {
             ROMethodRuleProperties roMethodRuleAllocationProperties = (ROMethodRuleProperties)methodProperties;
 

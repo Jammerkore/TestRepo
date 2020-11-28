@@ -486,6 +486,49 @@ namespace Logility.ROWeb
 
         #endregion
 
+        internal ROOut DeleteExplorerData(ROTreeNodeParms Parms)
+        {
+
+            MIDTreeNode node = null;
+            if (Parms.UniqueID != null)
+            {
+                node = _treeView.FindTreeNode(aNodes: _treeView.Nodes, uniqueID: Parms.UniqueID, autoExpandWhileFinding: false);
+            }
+            else if (Parms.OwnerUserRID != Include.NoRID)
+            {
+                node = _treeView.FindTreeNode(aNodes: _treeView.Nodes, aNodeType: Parms.ProfileType, aNodeRID: Parms.Key, ownerUserRID: Parms.OwnerUserRID, autoExpandWhileFinding: false);
+            }
+            else
+            {
+                node = _treeView.FindTreeNode(aNodes: _treeView.Nodes, aNodeType: Parms.ProfileType, aNodeRID: Parms.Key, autoExpandWhileFinding: false);
+            }
+
+            if (node == null)
+            {
+                MIDEnvironment.requestFailed = true;
+                MIDEnvironment.Message = SAB.ClientServerSession.Audit.GetText(
+                    messageCode: eMIDTextCode.msg_ValueWasNotFound,
+                    addToAuditReport: true,
+                    args: new object[] { MIDText.GetTextOnly(eMIDTextCode.lbl_OTS_Node) }
+                    );
+            }
+            else
+            {
+                _treeView.AddSelectedNode(aTreeNode: node);
+
+                _treeView.DeleteTreeNode();
+            }
+
+            if (MIDEnvironment.requestFailed)
+            {
+                return new RONoDataOut(ROReturnCode: eROReturnCode.Failure, sROMessage: MIDEnvironment.Message, ROInstanceID: ROInstanceID);
+            }
+            else
+            {
+                return new RONoDataOut(ROReturnCode: eROReturnCode.Successful, sROMessage: null, ROInstanceID: ROInstanceID);
+            }
+        }
+
         #region Command Processing
 
         public ROOut Rename(RODataExplorerRenameParms Parms)

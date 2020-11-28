@@ -760,8 +760,10 @@ namespace MIDRetail.Business.Allocation
             }
 
         }
-        override public ROMethodProperties MethodGetData(bool processingApply)
-        {  
+        override public ROMethodProperties MethodGetData(out bool successful, ref string message, bool processingApply = false)
+        {
+            successful = true;
+
             ROMethodGeneralAllocationProperties method = new ROMethodGeneralAllocationProperties(
                 method: GetName.GetMethod(method: this),
                 description: Method_Description,
@@ -773,14 +775,14 @@ namespace MIDRetail.Business.Allocation
                 merch_HN: GetName.GetMerchandiseName(nodeRID: Merch_HN_RID, SAB: SAB),
                 merch_PH_RID: Merch_PH_RID,
                 merch_PHL_SEQ: Merch_PHL_Sequence,
-                merchandiseType: MerchandiseType,
+                merchandiseType: EnumTools.VerifyEnumValue(MerchandiseType),
                 genAlloc_HDR: GetName.GetHeader(headerRID: Gen_Alloc_HDR_RID, SAB: SAB),
                 reserveAsBulk: ReserveAsBulk,
                 reserveAsPacks: ReserveAsPacks);
             return method;
         }
 
-        override public bool MethodSetData(ROMethodProperties methodProperties, bool processingApply)
+        override public bool MethodSetData(ROMethodProperties methodProperties, ref string message, bool processingApply)
         {
             ROMethodGeneralAllocationProperties roMethodGeneralAllocationProperties = (ROMethodGeneralAllocationProperties)methodProperties;
 

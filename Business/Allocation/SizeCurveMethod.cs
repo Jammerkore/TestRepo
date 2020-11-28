@@ -937,8 +937,10 @@ namespace MIDRetail.Business.Allocation
             }
 
         }
-        override public ROMethodProperties MethodGetData(bool processingApply)
+        override public ROMethodProperties MethodGetData(out bool successful, ref string message, bool processingApply = false)
         {
+            successful = true;
+
             //RO4431 Data Transport for Size Curve Method
             //throw new NotImplementedException("MethodGetData is not implemented");
             ROMethodSizeCurveProperties method = new ROMethodSizeCurveProperties(
@@ -947,13 +949,13 @@ namespace MIDRetail.Business.Allocation
                 userKey: User_RID,
                 sizeGroup: GetName.GetSizeGroup(_methodData.SizeGroupRID),
                 attribute: GetName.GetAttributeName(_methodData.SizeCurvesBySGRID),
-                sizeCurvesByType: _methodData.SizeCurvesByType,
+                sizeCurvesByType: EnumTools.VerifyEnumValue(_methodData.SizeCurvesByType),
                 merchBasisEqualizeWeight: _methodData.MerchBasisEqualizeWeight,
                 sizeCurveMerchBasisSet: SizeCurveMerchBasisSet.BuildSizeCurveMerchBasisSet(_methodData.Method_RID,
                             _methodData.Method_Type_ID, DTMerchBasisDetail, SAB),
                 tolerMinAvgPerSize: _methodData.TolerMinAvgPerSize,
                 tolerSalesTolerance: _methodData.TolerSalesTolerance,
-                tolerIndexUnitsType: _methodData.TolerIndexUnitsType,
+                tolerIndexUnitsType: EnumTools.VerifyEnumValue(_methodData.TolerIndexUnitsType),
                 tolerMinTolerancePct: _methodData.TolerMinTolerancePct,
                 tolerMaxTolerancePct: _methodData.TolerMaxTolerancePct,
                 applyMinToZeroTolerance: _methodData.ApplyMinToZeroTolerance
@@ -962,7 +964,7 @@ namespace MIDRetail.Business.Allocation
             return method;
         }
 
-        override public bool MethodSetData(ROMethodProperties methodProperties, bool processingApply)
+        override public bool MethodSetData(ROMethodProperties methodProperties, ref string message, bool processingApply)
         {
             //RO4431 Data Transport for Size Curve Method
             ROMethodSizeCurveProperties roMethodSizeCurveProperties = (ROMethodSizeCurveProperties)methodProperties;

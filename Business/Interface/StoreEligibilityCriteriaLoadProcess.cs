@@ -604,6 +604,8 @@ namespace MIDRetail.Business
             StoreEligibilityList _storeEligList = null;
             StoreEligibilityProfile sep = null;
             string currentID = null;
+            StoreEligibilityProfile originalsep = null;
+            bool eligibilityChanged = false;
             DateRangeProfile sedrp;
             ArrayList sepSimStores = null;
             StoreProfile sp = null;
@@ -651,7 +653,9 @@ namespace MIDRetail.Business
                         object salesmodifierModel = System.DBNull.Value;
                         //END TT#3642 - DOConnell - Store Eligibility upload is cancelling out all values
                         //END TT#828 - MD - DOConnell - Getting System.NullReferenceException: Object reference not set to an instance of an object. While running Store Eligibility Load with an invalid stock modifier model name.
-
+                        eModifierType SlsModType = eModifierType.None;
+                        eModifierType StkModType = eModifierType.None;
+                        eModifierType FWOSModType = eModifierType.None;
                         string ineligibleStr = string.Empty; ////BEGIN TT#3663 - DOConnell - Ineligible will not clear
 						
 						//BEGIN TT#3683 - DOConnell - API transactions not accepting 1 or 0 for the Ineligible field 
@@ -730,52 +734,55 @@ namespace MIDRetail.Business
                                 _storeEligList = _SAB.HierarchyServerSession.GetStoreEligibilityList(_storeList, oldNodeRID, true, false);
                                 readNodeRID = oldNodeRID;
                             }
-                            //_storeEligList = _SAB.HierarchyServerSession.GetStoreEligibilityList(_storeList, nodeRID, true, false);
-                            //END TT#3622 - DOConnell - Severe error when running store eligibility load
-                            ErrorList = _hm.ValidEligibilityData(_storeList, _storeEligibilityDataSet, _storeEligList, ErrorList);
-                            for (int e = 0; e < ErrorList.Count; e++)
+                            if (_storeEligibilityDataSet.Tables["Stores"].Rows.Count > 0)
                             {
-                                StoreEligibilityErrors see = (StoreEligibilityErrors)ErrorList[e];
+                                //_storeEligList = _SAB.HierarchyServerSession.GetStoreEligibilityList(_storeList, nodeRID, true, false);
+                                //END TT#3622 - DOConnell - Severe error when running store eligibility load
+                                ErrorList = _hm.ValidEligibilityData(_storeList, _storeEligibilityDataSet, _storeEligList, ErrorList);
+                                for (int e = 0; e < ErrorList.Count; e++)
+                                {
+                                    StoreEligibilityErrors see = (StoreEligibilityErrors)ErrorList[e];
 
-                                if (see.typeErr == true || see.simStoreErr == true)
-                                {
-                                    //Begin TT#4375 - DOConnell - Store eligibility error
-                                    string errMessage = MIDText.GetText(eMIDTextCode.msg_InvalidArgument, false);
-                                    string detMessage = see.message;
-                                    eMIDTextCode errRID = eMIDTextCode.msg_InvalidArgument;
-                                    if (see.simStoreErr)
+                                    if (see.typeErr == true || see.simStoreErr == true)
                                     {
-                                        // Begin TT#1902-MD - JSmith - Store Services - VSW API Error
-                                        //StoreProfile sp1 = StoreMgmt.StoreProfile_Get(see.storeRID); // _SAB.StoreServerSession.GetStoreProfile(see.storeRID);
-                                        StoreProfile sp1 = (StoreProfile)_storeList.FindKey(see.storeRID);
-                                        // End TT#1902-MD - JSmith - Store Services - VSW API Error
-                                        string errNodeID = _SAB.HierarchyServerSession.GetNodeID(oldNodeRID);
-                                        errRID = eMIDTextCode.msg_StoreNotFound;
-                                        detMessage = detMessage.Replace("{0}", see.dataString);
-                                        detMessage = detMessage.Replace("{1}", errNodeID);
-                                        detMessage = detMessage.Replace("{2}", sp1.StoreId.ToString());
+                                        //Begin TT#4375 - DOConnell - Store eligibility error
+                                        string errMessage = MIDText.GetText(eMIDTextCode.msg_InvalidArgument, false);
+                                        string detMessage = see.message;
+                                        eMIDTextCode errRID = eMIDTextCode.msg_InvalidArgument;
+                                        if (see.simStoreErr)
+                                        {
+                                            // Begin TT#1902-MD - JSmith - Store Services - VSW API Error
+                                            //StoreProfile sp1 = StoreMgmt.StoreProfile_Get(see.storeRID); // _SAB.StoreServerSession.GetStoreProfile(see.storeRID);
+                                            StoreProfile sp1 = (StoreProfile)_storeList.FindKey(see.storeRID);
+                                            // End TT#1902-MD - JSmith - Store Services - VSW API Error
+                                            string errNodeID = _SAB.HierarchyServerSession.GetNodeID(oldNodeRID);
+                                            errRID = eMIDTextCode.msg_StoreNotFound;
+                                            detMessage = detMessage.Replace("{0}", see.dataString);
+                                            detMessage = detMessage.Replace("{1}", errNodeID);
+                                            detMessage = detMessage.Replace("{2}", sp1.StoreId.ToString());
+                                        }
+                                        //_SAB.HierarchyServerSession.Audit.Add_Msg(eMIDMessageLevel.Edit, eMIDTextCode.msg_InvalidArgument, see.message, sourceModule);
+                                        _SAB.HierarchyServerSession.Audit.Add_Msg(eMIDMessageLevel.Warning, detMessage, sourceModule);
+                                        //End TT#4375 - DOConnell - Store eligibility error
+                                        returnCode = eReturnCode.severe;
+                                        ++_recordsWithErrors;
                                     }
-                                    //_SAB.HierarchyServerSession.Audit.Add_Msg(eMIDMessageLevel.Edit, eMIDTextCode.msg_InvalidArgument, see.message, sourceModule);
-                                    _SAB.HierarchyServerSession.Audit.Add_Msg(eMIDMessageLevel.Warning, detMessage, sourceModule);
-                                    //End TT#4375 - DOConnell - Store eligibility error
-                                    returnCode = eReturnCode.severe;
-                                    ++_recordsWithErrors;
+                                    else
+                                    {
+                                        _storeEligList = see.sel;
+                                    }
                                 }
-                                else
+                                //BEGIN TT#3622 - DOConnell - Severe error when running store eligibility load
+                                // Begin TT#3691 - JSmith - Combination of product found and product not found causes error
+                                //_SAB.HierarchyServerSession.StoreEligibilityUpdate(Convert.ToInt32(oldNodeID), _storeEligList, false);
+                                if (oldNodeRID != Include.NoRID)
                                 {
-                                    _storeEligList = see.sel;
+                                    _SAB.HierarchyServerSession.StoreEligibilityUpdate(Convert.ToInt32(oldNodeID), _storeEligList, false);
                                 }
+                                // End TT#3691 - JSmith - Combination of product found and product not found causes error
+                                //_SAB.HierarchyServerSession.StoreEligibilityUpdate(Convert.ToInt32(nodeRID), _storeEligList, false);
+                                //END TT#3622 - DOConnell - Severe error when running store eligibility load
                             }
-                            //BEGIN TT#3622 - DOConnell - Severe error when running store eligibility load
-							// Begin TT#3691 - JSmith - Combination of product found and product not found causes error
-                            //_SAB.HierarchyServerSession.StoreEligibilityUpdate(Convert.ToInt32(oldNodeID), _storeEligList, false);
-                            if (oldNodeRID != Include.NoRID)
-                            {
-                                _SAB.HierarchyServerSession.StoreEligibilityUpdate(Convert.ToInt32(oldNodeID), _storeEligList, false);
-                            }
-							// End TT#3691 - JSmith - Combination of product found and product not found causes error
-                            //_SAB.HierarchyServerSession.StoreEligibilityUpdate(Convert.ToInt32(nodeRID), _storeEligList, false);
-                            //END TT#3622 - DOConnell - Severe error when running store eligibility load
                             _storeEligibilityDataSet.Tables["Stores"].Rows.Clear();
                             ErrorList.Clear();
                             oldNodeID = nodeId;
@@ -867,9 +874,15 @@ namespace MIDRetail.Business
                             //}
 
                             sep = (StoreEligibilityProfile)_storeEligList.FindKey(storeRID);
+                            eligibilityChanged = false;
 
                             if (sep != null)
                             {
+                                originalsep = (StoreEligibilityProfile)sep.Clone();
+                                if (!sep.RecordExists)
+                                {
+                                    eligibilityChanged = true;
+                                }
                                 sepSimStores = sep.SimStores;
 								//BEGIN TT#3679 - DOConnell - Store Eligibility - Updating  Stock Modifier Errors
                                 simStoresIndex = sep.SimStoreRatio;
@@ -909,6 +922,7 @@ namespace MIDRetail.Business
                                 }
                                 if (!sep.SlsModIsInherited)
                                 {
+                                    SlsModType = sep.SlsModType;
                                     if (sep.SlsModType == eModifierType.Model)
                                     {
                                         slsModKey = sep.SlsModModelRID;
@@ -922,6 +936,7 @@ namespace MIDRetail.Business
                                 }
                                 if (!sep.StkModIsInherited)
                                 {
+                                    StkModType = sep.StkModType;
                                     if (sep.StkModType == eModifierType.Model)
                                     {
                                         stkModKey = sep.StkModModelRID;
@@ -935,6 +950,7 @@ namespace MIDRetail.Business
                                 }
                                 if (!sep.FWOSModIsInherited)
                                 {
+                                    FWOSModType = sep.FWOSModType;
                                     if (sep.FWOSModType == eModifierType.Model)
                                     {
                                         FWOSModKey = sep.FWOSModModelRID;
@@ -960,6 +976,7 @@ namespace MIDRetail.Business
                             //TT#3675 - DOConnell - Store Eligibility - Sending file without Similar Store ID does not error
                             else
                             {
+                                eligibilityChanged = true;
                                 sep = new StoreEligibilityProfile(storeRID);
                                 if (sep.SimStoreRatio == 0)
                                 {
@@ -1412,6 +1429,7 @@ namespace MIDRetail.Business
                                                 {
                                                     slsModKey = Include.NoRID;
                                                     salesmodifierModel = Convert.ToString(slsModKey);
+                                                    SlsModType = eModifierType.Percent;
 													//BEGIN TT#3664 - DOConnell - Input string was not in a correct format when clearing similar stores.
                                                     //if (fields[j + 2] != null)
                                                     if (fields[j + 2] != null && Convert.ToString(fields[j + 2]).Trim().Length > 0)
@@ -1476,6 +1494,7 @@ namespace MIDRetail.Business
                                         {
                                             salesmodifierValue = salesmodifierModel; // TT#3611 - JSmith - issue with store eligibility node properties upload
                                             salesmodifierModel = Convert.ToString(slsModKey);
+                                            SlsModType = eModifierType.Model;
                                         }
                                         j = j + 2;
                                     }
@@ -1509,6 +1528,7 @@ namespace MIDRetail.Business
                                                 {
                                                     stkModKey = Include.NoRID;
                                                     stockmodifierModel = Convert.ToString(stkModKey);
+                                                    StkModType = eModifierType.Percent;
 													//BEGIN TT#3664 - DOConnell - Input string was not in a correct format when clearing similar stores.
                                                     //if (fields[j + 2] != null)
                                                     if (fields[j + 2] != null && Convert.ToString(fields[j + 2]).Trim().Length > 0)
@@ -1573,6 +1593,7 @@ namespace MIDRetail.Business
                                         {
                                             stockmodifierValue = stockmodifierModel; // TT#3611 - JSmith - issue with store eligibility node properties upload
                                             stockmodifierModel = Convert.ToString(stkModKey);
+                                            StkModType = eModifierType.Model;
                                         }
                                         j = j + 2;
                                     }
@@ -1606,6 +1627,7 @@ namespace MIDRetail.Business
                                                 {
                                                     FWOSModKey = Include.NoRID;
                                                     FWOSmodifierModel = Convert.ToString(FWOSModKey);
+                                                    FWOSModType = eModifierType.Percent;
 													//BEGIN TT#3664 - DOConnell - Input string was not in a correct format when clearing similar stores.
                                                     //if (fields[j + 2] != null)
                                                     if (fields[j + 2] != null && Convert.ToString(fields[j + 2]).Trim().Length > 0)
@@ -1669,6 +1691,7 @@ namespace MIDRetail.Business
                                         {
                                             FWOSmodifierValue = FWOSmodifierModel; // TT#3611 - JSmith - issue with store eligibility node properties upload
                                             FWOSmodifierModel = Convert.ToString(FWOSModKey);
+                                            FWOSModType = eModifierType.Model;
                                         }
                                         j = j + 2;
                                     }
@@ -2096,9 +2119,44 @@ namespace MIDRetail.Business
 							//END TT#3699 - DOConnell - Uploading Sales Modifier Model turned off Min+Sales 
 							//END TT#3661 - DOConnell - Eligibility Upload - Similar Store Date Range
 
-                            try
+                            if (!eligibilityChanged)
                             {
-                                _storeEligibilityDataSet.Tables["Stores"].Rows.Add(new object[] {null, sep.EligIsInherited, sep.EligInheritedFromNodeRID, true, storeRID, storeID, 
+                                if (originalsep.EligIsInherited != sep.EligIsInherited
+                                    || (!originalsep.EligIsInherited && originalsep.EligModelRID != Convert.ToInt32(eligModKey))
+                                    || (!originalsep.EligIsInherited && originalsep.StoreIneligible != Convert.ToBoolean(Ineligible))
+
+                                    || originalsep.PresPlusSalesIsInherited != sep.PresPlusSalesIsInherited
+                                    || (!originalsep.PresPlusSalesIsInherited && MinPlusSales != DBNull.Value && originalsep.PresPlusSalesInd != Convert.ToBoolean(MinPlusSales))
+                                    || (!originalsep.PresPlusSalesIsInherited && MinPlusSales == DBNull.Value && originalsep.PresPlusSalesInd) // turning off
+
+                                    || originalsep.StkModIsInherited != sep.StkModIsInherited
+                                    || (!originalsep.StkModIsInherited && originalsep.StkModType != StkModType)
+                                    || (!originalsep.StkModIsInherited && StkModType == eModifierType.Model && Convert.ToInt32(stockmodifierModel) != originalsep.StkModModelRID)
+                                    || (!originalsep.StkModIsInherited && StkModType == eModifierType.Percent && Convert.ToDouble(stockmodifierValue) != originalsep.StkModPct)
+
+                                    || originalsep.SlsModIsInherited != sep.SlsModIsInherited
+                                    || (!originalsep.SlsModIsInherited && originalsep.SlsModType != SlsModType)
+                                    || (!originalsep.SlsModIsInherited && SlsModType == eModifierType.Model && Convert.ToInt32(salesmodifierModel) != originalsep.SlsModModelRID)
+                                    || (!originalsep.SlsModIsInherited && SlsModType == eModifierType.Percent && Convert.ToDouble(salesmodifierValue) != originalsep.SlsModPct)
+
+                                    || originalsep.FWOSModIsInherited != sep.FWOSModIsInherited
+                                    || (!originalsep.FWOSModIsInherited && originalsep.FWOSModType != FWOSModType)
+                                    || (!originalsep.FWOSModIsInherited && FWOSModType == eModifierType.Model && Convert.ToInt32(FWOSmodifierModel) != originalsep.FWOSModModelRID)
+                                    || (!originalsep.FWOSModIsInherited && FWOSModType == eModifierType.Percent && Convert.ToDouble(FWOSmodifierValue) != originalsep.FWOSModPct)
+
+                                    || originalsep.SimStoreIsInherited != sep.SimStoreIsInherited
+                                    || similarStoreChanged
+                                   )
+                                {
+                                    eligibilityChanged = true;
+                                }
+                            }
+
+                            if (eligibilityChanged)
+                            {
+                                try
+                                {
+                                    _storeEligibilityDataSet.Tables["Stores"].Rows.Add(new object[] {null, sep.EligIsInherited, sep.EligInheritedFromNodeRID, true, storeRID, storeID, 
                                                                                           eligModKey, eligibilityModel, Ineligible, 
                                                                                           MinPlusSales, sep.PresPlusSalesIsInherited, sep.PresPlusSalesInheritedFromNodeRID,
                                                                                           sep.StkModIsInherited, sep.StkModInheritedFromNodeRID, stockmodifierModel, stockmodifierValue,
@@ -2107,22 +2165,23 @@ namespace MIDRetail.Business
                                                                                           sep.SimStoreIsInherited, sep.SimStoreInheritedFromNodeRID, 
                                                                                           false, similarStoreChanged, sepSimStores, simStores, simStoresIndex, dateRangeKey, dateRangeID});
 
-                                //_storeEligibilityDataSet.Tables["Stores"].Rows.Add(new object[] {sglp.Name, sep.EligIsInherited, sep.EligInheritedFromNodeRID, updated, storeProfile.Key, storeProfile.Text, sep.EligModelRID, sep.EligModelName,
-                                //                                                                sep.StoreIneligible, 
-                                //                                                                PMPlusSales, sep.PresPlusSalesIsInherited, sep.PresPlusSalesInheritedFromNodeRID,
-                                //                                                                sep.StkModIsInherited, sep.StkModInheritedFromNodeRID, sep.StkModModelRID, stkMod, 
-                                //                                                                sep.SlsModIsInherited, sep.SlsModInheritedFromNodeRID, sep.SlsModModelRID, slsMod,
-                                //                                                                sep.FWOSModIsInherited, sep.FWOSModInheritedFromNodeRID, sep.FWOSModModelRID, FWOSMod,
-                                //                                                                sep.SimStoreIsInherited, sep.SimStoreInheritedFromNodeRID,
-                                //                                                                usedStoreSelector, similarStoreChanged, sep.SimStores, simStores, ratio, simStoreUntilDateRangeRID, until});
-                                _recordsAddedUpdated++;
-                            }
-                            catch (Exception err)
-                            {
-                                message = err.ToString();
-                                _SAB.HierarchyServerSession.Audit.Add_Msg(eMIDMessageLevel.Edit, eMIDTextCode.msg_InputInvalid, message, sourceModule);
-                                returnCode = eReturnCode.severe;
-                                ++_recordsWithErrors;
+                                    //_storeEligibilityDataSet.Tables["Stores"].Rows.Add(new object[] {sglp.Name, sep.EligIsInherited, sep.EligInheritedFromNodeRID, updated, storeProfile.Key, storeProfile.Text, sep.EligModelRID, sep.EligModelName,
+                                    //                                                                sep.StoreIneligible, 
+                                    //                                                                PMPlusSales, sep.PresPlusSalesIsInherited, sep.PresPlusSalesInheritedFromNodeRID,
+                                    //                                                                sep.StkModIsInherited, sep.StkModInheritedFromNodeRID, sep.StkModModelRID, stkMod, 
+                                    //                                                                sep.SlsModIsInherited, sep.SlsModInheritedFromNodeRID, sep.SlsModModelRID, slsMod,
+                                    //                                                                sep.FWOSModIsInherited, sep.FWOSModInheritedFromNodeRID, sep.FWOSModModelRID, FWOSMod,
+                                    //                                                                sep.SimStoreIsInherited, sep.SimStoreInheritedFromNodeRID,
+                                    //                                                                usedStoreSelector, similarStoreChanged, sep.SimStores, simStores, ratio, simStoreUntilDateRangeRID, until});
+                                    _recordsAddedUpdated++;
+                                }
+                                catch (Exception err)
+                                {
+                                    message = err.ToString();
+                                    _SAB.HierarchyServerSession.Audit.Add_Msg(eMIDMessageLevel.Edit, eMIDTextCode.msg_InputInvalid, message, sourceModule);
+                                    returnCode = eReturnCode.severe;
+                                    ++_recordsWithErrors;
+                                }
                             }
                         }
                         else
@@ -2133,7 +2192,8 @@ namespace MIDRetail.Business
 
 
 
-                        if (EOF)
+                        if (EOF
+                            && _storeEligibilityDataSet.Tables["Stores"].Rows.Count > 0)
                         {
                             ErrorList = _hm.ValidEligibilityData(_storeList, _storeEligibilityDataSet, _storeEligList, ErrorList);
                             

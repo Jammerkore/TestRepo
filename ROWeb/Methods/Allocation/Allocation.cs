@@ -79,7 +79,12 @@ namespace Logility.ROWeb
             {
                 if (_ROWorkflowMethodManager == null)
                 {
-                    _ROWorkflowMethodManager = new ROAllocationWorkflowMethodManager(SAB: SAB, ROWebTools: ROWebTools, ROInstanceID: ROInstanceID);
+                    // make sure you have a transaction to tie methods to review screens
+                    if (_applicationSessionTransaction == null)
+                    {
+                        _applicationSessionTransaction = GetApplicationSessionTransaction();
+                    }
+                    _ROWorkflowMethodManager = new ROAllocationWorkflowMethodManager(SAB: SAB, applicationSessionTransaction: _applicationSessionTransaction, ROWebTools: ROWebTools, ROInstanceID: ROInstanceID);
                 }
                 return _ROWorkflowMethodManager;
             }
@@ -196,6 +201,10 @@ namespace Logility.ROWeb
                 // Style Review
                 case eRORequest.AllocationStyleReviewViews:
                     return GetAllocationStyleReviewViewsInfo();
+                case eRORequest.AllocationStyleReviewVelocityViews:
+                    return GetAllocationStyleReviewVelocityViewsInfo();
+                case eRORequest.AllocationStyleReviewVelocityRules:
+                    return GetAllocationStyleReviewVelocityRules();
                 case eRORequest.GetAllocationStyleReview:
                     return GetAllocationStyleReviewData((ROAllocationReviewOptionsParms)Parms);
                 case eRORequest.UpdateStyleReviewChanges:

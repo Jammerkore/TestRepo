@@ -62,6 +62,9 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         private int _secondaryGroupBy;
 
+        [DataMember(IsRequired = true)]
+        private eAllocationSelectionViewType _viewType;
+
         public ROAllocationReviewOptionsParms(string sROUserID, string sROSessionID, eROClass ROClass, eRORequest RORequest, long ROInstanceID,
            ArrayList ListValues, int GroupBy, eAllocationActionType AllocationActionType = eAllocationActionType.None,
            KeyValuePair<int, string> kvView = default(KeyValuePair<int, string>),
@@ -69,7 +72,8 @@ namespace Logility.ROWebSharedTypes
            KeyValuePair<int, string> kvFilter = default(KeyValuePair<int, string>),
            KeyValuePair<int, string> kvStoreAttribute = default(KeyValuePair<int, string>),
            bool kvViewIsSequential = true,
-           int eSecondaryGroupBy = 0) :
+           int eSecondaryGroupBy = 0,
+           eAllocationSelectionViewType viewType = eAllocationSelectionViewType.None) :
           base(sROUserID, sROSessionID, ROClass, RORequest, ROInstanceID)
         {
             _ListValues = ListValues;
@@ -81,6 +85,7 @@ namespace Logility.ROWebSharedTypes
             _storeAttribute = kvStoreAttribute;
             _viewIsSequential = kvViewIsSequential;
             _secondaryGroupBy = eSecondaryGroupBy;
+            _viewType = viewType;
         }
 
         public ArrayList ListValues { get { return _ListValues; } }
@@ -95,15 +100,19 @@ namespace Logility.ROWebSharedTypes
             set { _view = value; }
         }
 
-        public KeyValuePair<int, string> AttributeSet { get { return _attributeSet; } }
+        public KeyValuePair<int, string> AttributeSet { get { return _attributeSet; } set { _attributeSet = value; } }
 
         public KeyValuePair<int, string> Filter { get { return _filter; } }
 
-        public KeyValuePair<int, string> StoreAttribute { get { return _storeAttribute; } }
+        public KeyValuePair<int, string> StoreAttribute { get { return _storeAttribute; } set { _storeAttribute = value; } }
 
         public bool ViewIsSequential { get { return _viewIsSequential; } }
 
         public int SecondaryGroupBy { get { return _secondaryGroupBy; } }
+
+        public eAllocationSelectionViewType ViewType { get { return _viewType; } set { _viewType = value; } }
+
+        public bool IsVelocity { get { return _viewType == eAllocationSelectionViewType.Velocity; } }
 
     }
 }

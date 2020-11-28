@@ -22,11 +22,17 @@ BEGIN
 			)
 	BEGIN
 		-- define temp table for tracking descendants	
+		--DECLARE @DESCENDANTS TABLE (
+		--	HOME_PH_RID INT,
+		--	HN_RID INT NOT NULL,
+		--	HOME_LEVEL INT NOT NULL,
+		--	PARENT_HN_RID INT
+		--	)
 		DECLARE @DESCENDANTS TABLE (
-			HOME_PH_RID INT,
 			HN_RID INT NOT NULL,
-			HOME_LEVEL INT NOT NULL,
-			PARENT_HN_RID INT
+			LEVEL_TYPE INT,
+			VIRTUAL_IND char(1),
+			HOME_LEVEL INT NOT NULL
 			)
 
 		-- insert node into table

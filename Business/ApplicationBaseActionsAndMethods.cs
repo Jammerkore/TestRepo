@@ -659,9 +659,9 @@ namespace MIDRetail.Business
         //RO-642 - Generic classes for handling Allocation Methods
         abstract public FunctionSecurityProfile GetFunctionSecurity();
 
-        abstract public ROMethodProperties MethodGetData(bool processingApply);
+        abstract public ROMethodProperties MethodGetData(out bool successful, ref string message, bool processingApply);
 
-        abstract public bool MethodSetData(ROMethodProperties methodProperties, bool processingApply);
+        abstract public bool MethodSetData(ROMethodProperties methodProperties, ref string message, bool processingApply);
 
         abstract public ROMethodProperties MethodCopyData();
 

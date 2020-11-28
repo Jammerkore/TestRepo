@@ -3421,8 +3421,10 @@ namespace MIDRetail.Business.Allocation
             }
 
         }
-        override public ROMethodProperties MethodGetData(bool processingApply)
+        override public ROMethodProperties MethodGetData(out bool successful, ref string message, bool processingApply = false)
         {
+            successful = true;
+
             eMerchandiseType otsMerchType, otsOnHandType, ibMerchType;
             eMinMaxType localMinMaxType;
             if (InventoryInd == 'I')
@@ -3493,9 +3495,9 @@ namespace MIDRetail.Business.Allocation
                 merchPlanUnspecified: _mao.Merch_Plan_Unspecified,
                 merchOnHandUnspecified: _mao.Merch_OnHand_Unspecified,
                 storeGradesAttribute: GetName.GetAttributeName(key: _mao.Tab_Store_Group_RID),
-                inventoryIndicator: localMinMaxType,
-                inventoryBasisMerchType: ibMerchType,
-                inventoryBasisMerchandise: GetName.GetLevelKeyValuePair(merchandiseType: ibMerchType, 
+                inventoryIndicator: EnumTools.VerifyEnumValue(localMinMaxType),
+                inventoryBasisMerchType: EnumTools.VerifyEnumValue(ibMerchType),
+                inventoryBasisMerchandise: GetName.GetLevelKeyValuePair(merchandiseType: EnumTools.VerifyEnumValue(ibMerchType), 
                                                                       nodeRID: _mao.IB_MERCH_HN_RID,
                                                                       merchPhRID: _mao.IB_MERCH_PH_RID,
                                                                       merchPhlSequence: _mao.IB_MERCH_PHL_SEQ,
@@ -3795,7 +3797,7 @@ namespace MIDRetail.Business.Allocation
             return method;
         }
 
-        override public bool MethodSetData(ROMethodProperties methodProperties, bool processingApply)
+        override public bool MethodSetData(ROMethodProperties methodProperties, ref string message, bool processingApply)
         {
             ROMethodAllocationOverrideProperties roMethodAllocationOverrideProperties = (ROMethodAllocationOverrideProperties)methodProperties;
             try

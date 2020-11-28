@@ -70,7 +70,7 @@ namespace Logility.ROWeb
             {
                 if (_ROWorkflowMethodManager == null)
                 {
-                    _ROWorkflowMethodManager = new ROPlanningWorkflowMethodManager(SAB: SAB, ROWebTools: ROWebTools, ROInstanceID: ROInstanceID);
+                    _ROWorkflowMethodManager = new ROPlanningWorkflowMethodManager(SAB: SAB, applicationSessionTransaction: null, ROWebTools: ROWebTools, ROInstanceID: ROInstanceID);
                 }
                 return _ROWorkflowMethodManager;
             }

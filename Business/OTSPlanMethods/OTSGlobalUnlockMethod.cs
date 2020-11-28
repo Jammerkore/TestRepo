@@ -1280,8 +1280,10 @@ namespace MIDRetail.Business
             }
 
         }
-        override public ROMethodProperties MethodGetData(bool processingApply)
+        override public ROMethodProperties MethodGetData(out bool successful, ref string message, bool processingApply = false)
         {
+            successful = true;
+
             ROOverrideLowLevel overrideLowLevel = new ROOverrideLowLevel();
             overrideLowLevel.OverrideLowLevelsModel = GetName.GetOverrideLowLevelsModel(OverrideLowLevelRid, SAB); //CustomOLL_RID;
 
@@ -1332,7 +1334,7 @@ namespace MIDRetail.Business
             return method;
         }
 
-        override public bool MethodSetData(ROMethodProperties methodProperties, bool processingApply)
+        override public bool MethodSetData(ROMethodProperties methodProperties, ref string message, bool processingApply)
         {
             ROPlanningGlobalLockUnlockProperties roOTSGlobalUnlockProperties = (ROPlanningGlobalLockUnlockProperties)methodProperties;
 

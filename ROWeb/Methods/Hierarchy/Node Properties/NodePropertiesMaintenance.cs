@@ -364,7 +364,7 @@ namespace Logility.ROWeb
                     _ROWebTools.LogMessage(eROMessageLevel.Information, message);
                     MIDEnvironment.Message = message;
                 }
-                return new ROBoolOut(eROReturnCode.Failure, message, parms.ROInstanceID, false);
+                return new RONodePropertiesOut(eROReturnCode.Failure, message, _ROInstanceID, null);
             }
 
             bool success = _nodePropertiesClass.NodePropertiesDelete(key: parms.Key, message: ref message);
@@ -429,7 +429,7 @@ namespace Logility.ROWeb
                     _ROWebTools.LogMessage(eROMessageLevel.Information, message);
                     MIDEnvironment.Message = message;
                 }
-                return new ROBoolOut(eROReturnCode.Failure, message, parms.ROInstanceID, false);
+                return new RONodePropertiesOut(eROReturnCode.Failure, message, _ROInstanceID, null);
             }
 
             bool success = _nodePropertiesClass.NodePropertiesDescendantsDelete(key: parms.Key, message: ref message);

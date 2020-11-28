@@ -959,7 +959,7 @@ namespace MIDRetail.Windows.Controls
         //END TT#110-MD-VStuart - In Use Tool
 
         // Begin TT#4285 - JSmith - Foreign Key Error When Delete Attribute Folder
-        protected ArrayList GetObjectNodes(ArrayList aNodeList)
+        public ArrayList GetObjectNodes(ArrayList aNodeList)
         {
             ArrayList alObjectNodeList = new ArrayList();
             foreach (MIDTreeNode node in aNodeList)
@@ -1000,6 +1000,41 @@ namespace MIDRetail.Windows.Controls
         }
         // End TT#4285 - JSmith - Foreign Key Error When Delete Attribute Folder
 
+        public ArrayList GetFolderNodes(ArrayList aNodeList)
+        {
+            ArrayList alObjectNodeList = new ArrayList();
+            foreach (MIDTreeNode node in aNodeList)
+            {
+                if (node.isFolder ||
+                    node.isSubFolder)
+                {
+                    alObjectNodeList.Add(node);
+                    AddDescendantFolderNodes(node, alObjectNodeList);
+                }
+
+            }
+
+            return alObjectNodeList;
+        }
+
+        private void AddDescendantFolderNodes(MIDTreeNode aNode, ArrayList alObjectNodeList)
+        {
+            // call expand to load children
+            if (aNode.HasChildren && aNode.DisplayChildren && !aNode.ChildrenLoaded)
+            {
+                MIDTreeView_BeforeExpand(this, new TreeViewCancelEventArgs(aNode, false, TreeViewAction.Expand));
+            }
+            foreach (MIDTreeNode node in aNode.Nodes)
+            {
+                if (node.isFolder ||
+                    node.isSubFolder)
+                {
+                    alObjectNodeList.Add(node);
+                    AddDescendantFolderNodes(node, alObjectNodeList);
+                }
+            }
+        }
+
         /// <summary>
         /// Virtual method used to delete a MIDTreeNode
         /// </summary>
@@ -1012,7 +1047,7 @@ namespace MIDRetail.Windows.Controls
 
         // Begin TT#3630 - JSmith - Delete My Hierarchy
         //virtual protected void DeleteNode(MIDTreeNode aNode)
-		virtual protected void DeleteNode(MIDTreeNode aNode, out bool aDeleteCancelled)
+        virtual protected void DeleteNode(MIDTreeNode aNode, out bool aDeleteCancelled)
 		// End TT#3630 - JSmith - Delete My Hierarchy
         {
             throw new Exception("Method DeleteNode() must be overridden by inheriting class");

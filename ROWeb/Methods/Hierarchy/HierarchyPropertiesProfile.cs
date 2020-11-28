@@ -70,11 +70,11 @@ namespace Logility.ROWeb
             int levelIndex = 0;
 
             hierarchyProperties.HierarchyRootNodeRID = _hierarchyProfile.HierarchyRootNodeRID;
-            hierarchyProperties.HierarchyType = _hierarchyProfile.HierarchyType;
+            hierarchyProperties.HierarchyType = EnumTools.VerifyEnumValue(_hierarchyProfile.HierarchyType);
             hierarchyProperties.OwnerKey = _hierarchyProfile.Owner;
             hierarchyProperties.HierarchyColor = _hierarchyProfile.HierarchyColor;
-            hierarchyProperties.HierarchyRollupOption = _hierarchyProfile.HierarchyRollupOption;
-            hierarchyProperties.PlanLevelType = _hierarchyProfile.OTSPlanLevelType;
+            hierarchyProperties.HierarchyRollupOption = EnumTools.VerifyEnumValue(_hierarchyProfile.HierarchyRollupOption);
+            hierarchyProperties.PlanLevelType = EnumTools.VerifyEnumValue(_hierarchyProfile.OTSPlanLevelType);
 
             if (_hierarchyProfile.HierarchyType == eHierarchyType.organizational)
             {
@@ -107,15 +107,15 @@ namespace Logility.ROWeb
             ROHierarchyLevel level = new ROHierarchyLevel(new KeyValuePair<int, string>(levelIndex, hlp.LevelID));
 
             level.LevelColor = hlp.LevelColor;
-            level.LevelLengthType = hlp.LevelLengthType;
+            level.LevelLengthType = EnumTools.VerifyEnumValue(hlp.LevelLengthType);
             level.LevelRequiredSize = hlp.LevelRequiredSize;
             level.LevelSizeRangeFrom = hlp.LevelSizeRangeFrom;
             level.LevelSizeRangeTo = hlp.LevelSizeRangeTo;
             level.LevelNodesExist = hlp.LevelNodesExist;
-            level.LevelType = hlp.LevelType;
-            level.LevelOTSPlanLevelType = hlp.LevelOTSPlanLevelType;
-            level.LevelDisplayOption = hlp.LevelDisplayOption;
-            level.LevelIDFormat = hlp.LevelIDFormat;
+            level.LevelType = EnumTools.VerifyEnumValue(hlp.LevelType);
+            level.LevelOTSPlanLevelType = EnumTools.VerifyEnumValue(hlp.LevelOTSPlanLevelType);
+            level.LevelDisplayOption = EnumTools.VerifyEnumValue(hlp.LevelDisplayOption);
+            level.LevelIDFormat = EnumTools.VerifyEnumValue(hlp.LevelIDFormat);
             if (hlp.PurgeDailyHistory >= 0)
             {
                 level.PurgeDailyHistory = hlp.PurgeDailyHistory;

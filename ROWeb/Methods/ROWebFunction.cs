@@ -31,6 +31,7 @@ namespace Logility.ROWeb
         private eROClass _roClass;
         private eROReturnCode _returnCode = eROReturnCode.Successful;
         private string _returnMessage = null;
+        private List<eRORequest> _requestList;
 
         //=============
         // CONSTRUCTORS
@@ -45,6 +46,7 @@ namespace Logility.ROWeb
             _ROInstanceID = DateTime.Now.Ticks;
             _SAB = SAB;
             _ROWebTools = RoWebTools;
+            _requestList = new List<eRORequest>();
 		}
 
 		//===========
@@ -126,23 +128,13 @@ namespace Logility.ROWeb
             }
         }
 
-        ///// <summary>
-        ///// Gets or sets the return code of the request
-        ///// </summary>
-        //public eROReturnCode ReturnCode
-        //{
-        //    get { return _returnCode; }
-        //    set { _returnCode = value; }
-        //}
-
-        ///// <summary>
-        ///// Gets or sets the return message of the request
-        ///// </summary>
-        //public string ReturnMessage
-        //{
-        //    get { return _returnMessage; }
-        //    set { _returnMessage = value; }
-        //}
+        public List<eRORequest> RequestList
+        {
+            get
+            {
+                return _requestList;
+            }
+        }
 
         //========
         // METHODS

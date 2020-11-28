@@ -122,6 +122,7 @@ namespace Logility.ROWeb
                 KeyValuePair<int, string> views = GetName.GetViewName(_applicationSessionTransaction.AllocationViewRID);                                
                 KeyValuePair<int, string> sizeCurveValue = GetName.GetSizeCurveGroupName(_applicationSessionTransaction.SizeCurveRID);
 
+                _viewType = EnumTools.VerifyEnumValue(_viewType);
 
                 ROAllocationReviewSelectionProperties rOAllocationProperties =
                     new ROAllocationReviewSelectionProperties(_viewType, allocationPropertiesBasis, allocationPropertiesGridData, storefilterValue, storeProfileValue, groupbyValue,

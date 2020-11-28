@@ -689,7 +689,9 @@ namespace MIDRetail.Business.Allocation
 			eWorkflowProcessOrder aWorkflowProcessOrder,
 			ProfileList aProfileList)
 		{
-			this._applicationSessionTransaction = aApplicationSessionTransaction;
+            aApplicationSessionTransaction.ResetAllocationActionStatus(); // RO-4875 - Allocation Workflow - when processed on Windows receive mssg it was unsuccessful on the WEB receive mssg it was successful
+
+            this._applicationSessionTransaction = aApplicationSessionTransaction;
             //this.SAB = _applicationSessionTransaction.SAB;
 			bool successFlag = true;
 			string wfn = MIDText.GetTextOnly((eMIDTextCode) this.WorkFlowType);

@@ -27,7 +27,7 @@ namespace Logility.ROWeb
 
             try
             {
-                return new ROIntStringPairListOut(eROReturnCode.Successful, null, ROInstanceID, BuildAllocationStyleReviewViews());
+                return new ROIntStringPairListOut(eROReturnCode.Successful, null, ROInstanceID, BuildAllocationStyleReviewViews(layoutID: eLayoutID.styleReviewGrid));
             }
             catch (Exception ex)
             {
@@ -37,19 +37,64 @@ namespace Logility.ROWeb
 
         }
 
-        internal List<KeyValuePair<int, string>> BuildAllocationStyleReviewViews()
+        public ROOut GetAllocationStyleReviewVelocityViewsInfo()
+        {
+
+            try
+            {
+                return new ROIntStringPairListOut(eROReturnCode.Successful, null, ROInstanceID, BuildAllocationStyleReviewViews(layoutID: eLayoutID.velocityStoreDetailGrid));
+            }
+            catch (Exception ex)
+            {
+                ROWebTools.LogMessage(eROMessageLevel.Error, "GetAllocationStyleReviewVelocityViewsInfo failed: " + ex.Message, ROWebTools.ROUserID, ROWebTools.ROSessionID);
+                throw;
+            }
+
+        }
+
+        internal List<KeyValuePair<int, string>> BuildAllocationStyleReviewViews(eLayoutID layoutID)
         {
 
             DataTable dtViews;
             GridViewData gridViewData = new GridViewData();
             UserRIDList();
-            dtViews = gridViewData.GridView_Read((int)eLayoutID.styleReviewGrid, _userRIDList, true);
+            dtViews = gridViewData.GridView_Read((int)layoutID, _userRIDList, true);
 
             dtViews.Rows.Add(new object[] { Include.NoRID, SAB.ClientServerSession.UserRID, (int)eLayoutID.styleReviewGrid, string.Empty });
 
             dtViews.PrimaryKey = new DataColumn[] { dtViews.Columns["VIEW_RID"] };
 
             return ApplicationUtilities.DataTableToKeyValues(dtViews, "VIEW_RID", "VIEW_ID");
+
+        }
+        #endregion
+
+        #region AllocationStyleReviewVelocityRules
+        public ROOut GetAllocationStyleReviewVelocityRules()
+        {
+
+            try
+            {
+                return new ROIntStringPairListOut(eROReturnCode.Successful, null, ROInstanceID, BuildAllocationStyleReviewVelocityRules());
+            }
+            catch (Exception ex)
+            {
+                ROWebTools.LogMessage(eROMessageLevel.Error, "GetAllocationStyleReviewVelocityRules failed: " + ex.Message, ROWebTools.ROUserID, ROWebTools.ROSessionID);
+                throw;
+            }
+
+        }
+
+        internal List<KeyValuePair<int, string>> BuildAllocationStyleReviewVelocityRules()
+        {
+            DataTable dtRules = MIDText.GetLabels((int)eRuleType.None, (int)eRuleType.None);
+            DataTable ruleTable = MIDText.GetLabels((int)eRuleType.WeeksOfSupply, (int)eRuleType.ForwardWeeksOfSupply);
+
+            dtRules.Merge(ruleTable);
+
+            dtRules.PrimaryKey = new DataColumn[] { dtRules.Columns["TEXT_CODE"] };
+
+            return ApplicationUtilities.DataTableToKeyValues(dtRules, "TEXT_CODE", "TEXT_VALUE");
 
         }
         #endregion
@@ -63,7 +108,39 @@ namespace Logility.ROWeb
                 int iFirstRowItem = 0, iLastRowItem = 0, iTotalRowItems = 0, iNumberOfRows = 0;
                 int iFirstColItem = 0, iLastColItem = 0, iTotalColItems = 0, iNumberOfColumns = 0;
 
-                ROData roData = BuildAllocationReviewData(reviewOptionsParms, eAllocationSelectionViewType.Style, false);
+                eAllocationSelectionViewType viewType = eAllocationSelectionViewType.Style;
+                if (reviewOptionsParms.IsVelocity)
+                {
+                    if (_applicationSessionTransaction.VelocityCriteriaExists)
+                    {
+                        viewType = eAllocationSelectionViewType.Velocity;
+                        if (!_wafersBuilt)
+                        {
+                            // override to the attribute used by velocity
+                            if (reviewOptionsParms.StoreAttribute.Key != _applicationSessionTransaction.VelocityStoreGroupRID)
+                            {
+                                reviewOptionsParms.StoreAttribute = GetName.GetAttributeName(key: _applicationSessionTransaction.VelocityStoreGroupRID);
+                                ProfileList storeGroupLevelsList = StoreMgmt.StoreGroup_GetLevelListFilled(_applicationSessionTransaction.VelocityStoreGroupRID);
+                                reviewOptionsParms.AttributeSet = GetName.GetAttributeSetName(key: ((Profile)storeGroupLevelsList.ArrayList[0]).Key);
+                            }
+                        }
+                        else if (_applicationSessionTransaction.AllocationStoreAttributeID != reviewOptionsParms.StoreAttribute.Key)
+                        {
+                            _applicationSessionTransaction.AllocationStoreAttributeID = reviewOptionsParms.StoreAttribute.Key;
+                            _applicationSessionTransaction.CurrentStoreGroupProfile = StoreMgmt.StoreGroup_Get(_applicationSessionTransaction.AllocationStoreAttributeID);
+                            _applicationSessionTransaction.VelocityStoreGroupRID = reviewOptionsParms.StoreAttribute.Key;
+                        }
+                        _applicationSessionTransaction.VelocityStyleReviewLastDisplayed = true;
+                    }
+                    else
+                    {
+                        viewType = eAllocationSelectionViewType.Style;
+                        reviewOptionsParms.ViewType = eAllocationSelectionViewType.Style;
+                        ROWebTools.LogMessage(eROMessageLevel.Warning, "Velocity information does not exist. Overridden to Style Review.", ROWebTools.ROUserID, ROWebTools.ROSessionID);
+                    }
+                }
+
+                ROData roData = BuildAllocationReviewData(reviewOptionsParms, viewType, false);
 
                 if (string.IsNullOrEmpty(_sROMessage))
                 {
@@ -199,7 +276,14 @@ namespace Logility.ROWeb
                     _applicationSessionTransaction.RebuildWafers();
                 }
                 _wafers = _applicationSessionTransaction.AllocationWafers;
-                return FormatGridsWithApplyView(_wafers, reviewOptionsParms, eAllocationSelectionViewType.Style, false, reviewOptionsParms.View.Key);
+                if (reviewOptionsParms.IsVelocity)
+                {
+                    return FormatGridsWithApplyView(_wafers, reviewOptionsParms, eAllocationSelectionViewType.Velocity, false, reviewOptionsParms.View.Key);
+                }
+                else
+                {
+                    return FormatGridsWithApplyView(_wafers, reviewOptionsParms, eAllocationSelectionViewType.Style, false, reviewOptionsParms.View.Key);
+                }
             }
             catch (MIDException MIDexc)
             {

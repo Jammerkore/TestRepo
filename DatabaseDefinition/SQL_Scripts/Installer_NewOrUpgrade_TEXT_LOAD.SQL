@@ -1838,6 +1838,7 @@ exec SP_MID_SET_TEXT 080841,'Selected View is not Implemented',250,0,7,null,0   
 exec SP_MID_SET_TEXT 080842,'Color already contains sizes',250,0,6,null,0   /* RO-3444 - JSmith - RO Web Messaging */
 exec SP_MID_SET_TEXT 080843,'Count must be greater than zero to add placeholders',250,0,6,null,0   /* RO-3444 - JSmith - RO Web Messaging */
 exec SP_MID_SET_TEXT 080844,'Count must be greater than zero to add placeholder colors',250,0,6,null,0   /* RO-3444 - JSmith - RO Web Messaging */
+exec SP_MID_SET_TEXT 080845,'Style Review must be closed before Interactive mode can be enabled.',250,0,5,null,0   /* RO-3444 - JSmith - RO Web Messaging */
 
 /* Assortment Messages 085000-089999 */
 exec SP_MID_SET_TEXT 085000,'Variable, {0}, not supported by General Assortment Method', 250,0,7,null,0 
