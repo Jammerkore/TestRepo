@@ -47,6 +47,7 @@ namespace Logility.ROWebSharedTypes
     [KnownType(typeof(ROCubePeriodChangeParams))]
     [KnownType(typeof(ROGridCellChange))]
     [KnownType(typeof(ROGridChangesParms))]
+    [KnownType(typeof(ROColumnFormat))]
     [KnownType(typeof(ROPagingParms))]
     [KnownType(typeof(ROCalendarSelectorParms))]
     [KnownType(typeof(ROCalendarDeleteParams))]
@@ -278,6 +279,7 @@ namespace Logility.ROWebSharedTypes
     [KnownType(typeof(ROPlanningViewDetails))]
     [KnownType(typeof(ROAllocationReviewViewDetailsParms))]
     [KnownType(typeof(ROAllocationReviewViewDetails))]
+    [KnownType(typeof(ROViewFormatParms))]
 
     [KnownType(typeof(ROMessageResponseParms))]
 

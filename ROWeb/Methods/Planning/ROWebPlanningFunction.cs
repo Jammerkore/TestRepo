@@ -29,7 +29,6 @@ namespace Logility.ROWeb
         //=======
 
         private PlanOpenParms _openParms;
-        protected bool _viewUpdated = false;
         protected ROPlanManager planManager;
         protected string sPrevUnitScaling = "1";
         protected string sPrevDollarScaling = "1";
@@ -134,6 +133,8 @@ namespace Logility.ROWeb
                     return SaveViewDetails((ROPlanningViewDetailsParms)Parms);
                 case eRORequest.DeleteViewDetails:
                     return DeleteViewDetails();
+                case eRORequest.SaveViewFormat:
+                    return planManager.GetViewData.SaveViewFormat((ROViewFormatParms)Parms);
             }
 
             return new RONoDataOut(eROReturnCode.Failure, "Invalid Request", ROInstanceID);
@@ -1091,7 +1092,7 @@ namespace Logility.ROWeb
                 planViewData.CloseUpdateConnection();
                 if (viewRID == planManager.GetViewRID())
                 {
-                    _viewUpdated = true;
+                    planManager.GetViewData.ViewUpdated = true;
                 }
             }
 

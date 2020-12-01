@@ -35,7 +35,7 @@ namespace Logility.ROUI
         
 
         public ROStoreViewData(int viewRID, ROPlanStoreManagerData managerData)
-            : base(managerData)
+            : base(viewRID, managerData)
         {
             
         }

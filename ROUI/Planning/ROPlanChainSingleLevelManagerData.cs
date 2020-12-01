@@ -275,9 +275,8 @@ namespace Logility.ROUI
                 {
                     managerData._planViewDataLayer = new PlanViewData();
                 }
-                DataTable _planViewDetail = managerData._planViewDataLayer.PlanViewDetail_Read(viewRID);
-
-               
+                // Get view details and load view formatting.
+                DataTable _planViewDetail = GetViewDetails(viewKey: viewRID);
 
                 varKeyHash = new Hashtable();
                 _selectableVariableHeaders = new ArrayList();
@@ -1187,7 +1186,8 @@ namespace Logility.ROUI
                 {
                     managerData._planViewDataLayer = new PlanViewData();
                 }
-                DataTable _planViewDetail = managerData._planViewDataLayer.PlanViewDetail_Read(viewRID);
+                // Get view details and load view formatting.
+                DataTable _planViewDetail = GetViewDetails(viewKey: viewRID);
 
 
 
@@ -1868,12 +1868,19 @@ namespace Logility.ROUI
         {
             Dictionary<string, int> columnMap = new Dictionary<string, int>();
             string columnName;
+            ePlanBasisType planBasisType;
+            int variableNumber;
+            int quantityVariableKey;
+            int timePeriodType = Include.Undefined;
+            int width;
 
-            AddColumn("ParentRowKey", cells, Include.DefaultColumnWidth);
-            AddColumn("RowIndex", cells, Include.DefaultColumnWidth);
-            AddColumn("RowSortIndex", cells, Include.DefaultColumnWidth);
-            AddColumn("RowKey", cells, Include.DefaultColumnWidth);
-            AddColumn("RowKeyDisplay", cells, Include.DefaultColumnWidth);
+            AddColumn("ParentRowKey", cells);
+            AddColumn("RowIndex", cells);
+            AddColumn("RowSortIndex", cells);
+            AddColumn("RowKey", cells);
+            // RowKeyDisplay is the heading row
+            width = GetColumnWidth();
+            AddColumn("RowKeyDisplay", cells, width);
 
             _extraColumns = cells.Columns.Count;
 
@@ -1893,7 +1900,19 @@ namespace Logility.ROUI
 
                         case "ADJ":
                             varKey = rowHdrTag.CubeWaferCoorList.FindCoordinateType(eProfileType.Variable).Key;
-                            AddColumn(varKey.ToString() + "~" + rowHdrTag.RowHeading, cells, GetColumnWidth(axis: eViewAxis.Variable, key: varKey));
+                            GetColumnCoordinates(
+                                columnIndex: cubeColumnIndex,
+                                planBasisType: out planBasisType,
+                                variableNumber: out variableNumber,
+                                quantityVariableKey: out quantityVariableKey
+                                );
+                            width = GetColumnWidth(
+                                 planBasisType: (int)planBasisType,
+                                 variableNumber: variableNumber,
+                                 quantityVariableKey: quantityVariableKey,
+                                 timePeriodType: timePeriodType
+                                 );
+                            AddColumn(varKey.ToString() + "~" + rowHdrTag.RowHeading, cells, width);
                             break;
 
                         case "% Change":
@@ -1918,7 +1937,18 @@ namespace Logility.ROUI
                             }
                             varKey = rowHdrTag.CubeWaferCoorList.FindCoordinateType(eProfileType.Variable).Key;
                             coord = rowHdrTag.CubeWaferCoorList.FindCoordinateType(eProfileType.Basis);
-                            int width = GetColumnWidth(axis: eViewAxis.Variable, key: varKey);
+                            GetColumnCoordinates(
+                                columnIndex: cubeColumnIndex,
+                                planBasisType: out planBasisType,
+                                variableNumber: out variableNumber,
+                                quantityVariableKey: out quantityVariableKey
+                                );
+                            width = GetColumnWidth(
+                                 planBasisType: (int)planBasisType,
+                                 variableNumber: variableNumber,
+                                 quantityVariableKey: quantityVariableKey,
+                                 timePeriodType: timePeriodType
+                                 );
                             if (coord == null)
                             {
                                 AddColumn(varKey.ToString() + "~" + displayHeading, cells, width);
@@ -1932,9 +1962,21 @@ namespace Logility.ROUI
                         default:
                             coord = rowHdrTag.CubeWaferCoorList.FindCoordinateType(eProfileType.Basis);
                             varKey = rowHdrTag.CubeWaferCoorList.FindCoordinateType(eProfileType.Variable).Key;
+                            GetColumnCoordinates(
+                                columnIndex: cubeColumnIndex,
+                                planBasisType: out planBasisType,
+                                variableNumber: out variableNumber,
+                                quantityVariableKey: out quantityVariableKey
+                                );
+                            width = GetColumnWidth(
+                                 planBasisType: (int)planBasisType,
+                                 variableNumber: variableNumber,
+                                 quantityVariableKey: quantityVariableKey,
+                                 timePeriodType: timePeriodType
+                                 );
                             if (coord == null)
                             {
-                                AddColumn(rowHdrTag.RowHeading, cells, GetColumnWidth(axis: eViewAxis.Variable, key: varKey));
+                                AddColumn(rowHdrTag.RowHeading, cells, width);
                             }
                             else
                             {
@@ -1961,7 +2003,19 @@ namespace Logility.ROUI
                                         }
                                     }
                                 }
-                                AddColumn(columnName, cells, GetColumnWidth(axis: eViewAxis.Variable, key: varKey));
+                                GetColumnCoordinates(
+                                columnIndex: cubeColumnIndex,
+                                planBasisType: out planBasisType,
+                                variableNumber: out variableNumber,
+                                quantityVariableKey: out quantityVariableKey
+                                );
+                                width = GetColumnWidth(
+                                     planBasisType: (int)planBasisType,
+                                     variableNumber: variableNumber,
+                                     quantityVariableKey: quantityVariableKey,
+                                     timePeriodType: timePeriodType
+                                     );
+                                AddColumn(columnName, cells, width);
                             }
                             break;
                     }
@@ -1972,7 +2026,7 @@ namespace Logility.ROUI
             return columnMap;
         }
 
-        private void AddColumn(string columnName, ROCells cells, int width)
+        private void AddColumn(string columnName, ROCells cells, int width = Include.DefaultColumnWidth)
         {
             cells.Columns.Add(new ROColumnAttributes(columnName, cells.Columns.Count, width));
         }
@@ -2568,6 +2622,122 @@ namespace Logility.ROUI
                 }
             }
         }
+
+        /// <summary>
+        /// Gets the coordinates of the column 
+        /// </summary>
+        /// <param name="columnIndex">The position of the column</param>
+        /// <param name="planBasisType">Output: Is plan or basis</param>
+        /// <param name="variableNumber">Output: Variable Number</param>
+        /// <param name="quantityVariableKey">Output: Indicates if value or comparative</param>
+        private void GetColumnCoordinates(
+            int columnIndex, 
+            out ePlanBasisType planBasisType,
+            out int variableNumber,
+            out int quantityVariableKey
+            )
+        {
+            // data is rotated.  So rows are columns and columns are rows.
+            CubeWaferCoordinateList columnCoordinateList;
+            CubeWaferCoordinateList rowCoordinateList = GetColumnCubeWaferCoordinateList(columnIndex: 0);
+
+            columnCoordinateList = GetRowCubeWaferCoordinateList(rowIndex: columnIndex);
+
+            // type is plan if no basis coordinate exists
+            planBasisType = ePlanBasisType.Plan;
+            if (columnCoordinateList.FindCoordinateType(eProfileType.Basis) != null)
+            {
+                planBasisType = ePlanBasisType.Basis;
+            }
+            variableNumber = columnCoordinateList.FindCoordinateType(eProfileType.Variable).Key;
+            // type is value and not comparative if no QuantityVariable coordinate exists
+            quantityVariableKey = 1;
+            if (columnCoordinateList.FindCoordinateType(eProfileType.QuantityVariable) != null)
+            {
+                quantityVariableKey = columnCoordinateList.FindCoordinateType(eProfileType.QuantityVariable).Key;
+            }
+        }
+
+        /// <summary>
+        /// Save column format information to the database
+        /// </summary>
+        /// <param name="ROViewFormatParms">
+        /// An instance of the ROViewFormatParms containing view formatting</param>
+        /// <returns></returns>
+        override public ROOut SaveViewFormat(ROViewFormatParms ROViewFormatParms)
+        {
+            // data is rotated.  So rows are columns and columns are rows.
+            PlanViewData planViewData;
+            
+            eROReturnCode returnCode = eROReturnCode.Successful;
+            string message = null;
+            bool success = true;
+            ePlanBasisType planBasisType;
+            int variableNumber;
+            int quantityVariableKey;
+            int timePeriodType = Include.Undefined; // This orientation does not have time as a column
+
+            // create data layer to communicate with the database
+            planViewData = new PlanViewData();
+
+            try
+            {
+                planViewData.OpenUpdateConnection();
+                
+                //add format for heading column
+                //heading column has all coordinates undefined
+                planViewData.PlanViewFormat_Insert(
+                    aViewRID: ViewRID,
+                    planBasisType: Include.Undefined,
+                    variableNumber: Include.Undefined,
+                    quantityVariableKey: Include.Undefined,
+                    timePeriodType: Include.Undefined,
+                    timePeriodKey: Include.Undefined,
+                    variableTotalKey: Include.Undefined,
+                    width: ROViewFormatParms.HeadingColumn.Width
+                    );
+
+                // add each column formatting
+                foreach (ROColumnFormat columnFormat in ROViewFormatParms.ColumnFormats)
+                {
+                    GetColumnCoordinates(
+                        columnIndex: columnFormat.ColumnIndex,
+                        planBasisType: out planBasisType,
+                        variableNumber: out variableNumber,
+                        quantityVariableKey: out quantityVariableKey
+                        );
+
+                    // if row exists, width will be updated
+					planViewData.PlanViewFormat_Insert(
+                        aViewRID: ViewRID,
+                        planBasisType: (int)planBasisType,
+                        variableNumber: variableNumber,
+                        quantityVariableKey: quantityVariableKey,
+                        timePeriodType: timePeriodType,
+                        width: columnFormat.Width
+                        );
+
+                }
+                // commit the new values to the database
+                planViewData.CommitData();
+            }
+            catch (Exception exc)
+            {
+                // something went wrong.  Roll back all values inserted to the database
+                planViewData.Rollback();
+                message = exc.ToString();
+                success = false;
+                returnCode = eROReturnCode.Failure;
+            }
+            finally
+            {
+                // close the database connection and update the flag so the view data will be rebuilt during the next data access
+                planViewData.CloseUpdateConnection();
+                ViewUpdated = true;
+            } 
+
+            return new ROBoolOut(returnCode, message, ROViewFormatParms.ROInstanceID, success);
+        }
     }
 
     /// <summary>
@@ -2599,7 +2769,8 @@ namespace Logility.ROUI
                 {
                     managerData._planViewDataLayer = new PlanViewData();
                 }
-                DataTable _planViewDetail = managerData._planViewDataLayer.PlanViewDetail_Read(viewRID);
+                // Get view details and load view formatting.
+                DataTable _planViewDetail = GetViewDetails(viewKey: viewRID);
 
 
 
@@ -3170,12 +3341,19 @@ namespace Logility.ROUI
         {
             Dictionary<string, int> columnMap = new Dictionary<string, int>();
             string columnName;
+            ePlanBasisType planBasisType;
+            int variableNumber;
+            int quantityVariableKey;
+            int timePeriodType = Include.Undefined;
+            int width;
 
-            AddColumn("ParentRowKey", cells, Include.DefaultColumnWidth);
-            AddColumn("RowIndex", cells, Include.DefaultColumnWidth);
-            AddColumn("RowSortIndex", cells, Include.DefaultColumnWidth);
-            AddColumn("RowKey", cells, Include.DefaultColumnWidth);
-            AddColumn("RowKeyDisplay", cells, Include.DefaultColumnWidth);
+            AddColumn("ParentRowKey", cells);
+            AddColumn("RowIndex", cells);
+            AddColumn("RowSortIndex", cells);
+            AddColumn("RowKey", cells);
+            // RowKeyDisplay is the heading row
+            width = GetColumnWidth();
+            AddColumn("RowKeyDisplay", cells, width);
 
             _extraColumns = cells.Columns.Count;
 
@@ -3211,7 +3389,7 @@ namespace Logility.ROUI
                             }
                         }
                     }
-                    AddColumn(columnName, cells, Include.DefaultColumnWidth);
+                    AddColumn(columnName, cells);
                 }
                 cubeColumnIndex++;
             }
@@ -3230,12 +3408,19 @@ namespace Logility.ROUI
         {
             Dictionary<string, int> columnMap = new Dictionary<string, int>();
             string columnName;
+            ePlanBasisType planBasisType;
+            int variableNumber;
+            int quantityVariableKey;
+            int timePeriodType = Include.Undefined;
+            int width;
 
-            AddColumn("ParentRowKey", cells, Include.DefaultColumnWidth);
-            AddColumn("RowIndex", cells, Include.DefaultColumnWidth);
-            AddColumn("RowSortIndex", cells, Include.DefaultColumnWidth);
-            AddColumn("RowKey", cells, Include.DefaultColumnWidth);
-            AddColumn("RowKeyDisplay", cells, Include.DefaultColumnWidth);
+            AddColumn("ParentRowKey", cells);
+            AddColumn("RowIndex", cells);
+            AddColumn("RowSortIndex", cells);
+            AddColumn("RowKey", cells);
+            // RowKeyDisplay is the heading row
+            width = GetColumnWidth();
+            AddColumn("RowKeyDisplay", cells, width);
 
             _extraColumns = cells.Columns.Count;
 
@@ -3244,13 +3429,13 @@ namespace Logility.ROUI
             //for totals grid two columns for each time tot variable (first is description, 2nd is total)
             for (int i = 0; i < maxTimeTotVars * 2; i++)
             {
-                AddColumn("Total" + i.ToString(), cells, Include.DefaultColumnWidth);
+                AddColumn("Total" + i.ToString(), cells);
             }
 
             return columnMap;
         }
 
-        private void AddColumn(string columnName, ROCells cells, int width)
+        private void AddColumn(string columnName, ROCells cells, int width = Include.DefaultColumnWidth)
         {
             cells.Columns.Add(new ROColumnAttributes(columnName, cells.Columns.Count, width));
         }
@@ -3802,6 +3987,12 @@ namespace Logility.ROUI
                     }
                 }
             }
+        }
+
+        // Stub method for inheritance to be completed later
+		override public ROOut SaveViewFormat(ROViewFormatParms ROViewFormatParms)
+        {
+            throw new Exception("SaveViewFormat method not implemented");
         }
     }
 }

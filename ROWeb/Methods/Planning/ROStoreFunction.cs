@@ -198,10 +198,10 @@ namespace Logility.ROWeb
             if (getDataParams.GridOrientation != planManager.Orientation
                 || viewRID != planManager.GetViewRID() || storeAttributeSetKey != planManager.StoreAttributeSetKey
                 || storeAttributeKey != planManager.OpenParms.StoreGroupRID || filterKey != planManager.OpenParms.FilterRID
-                || _viewUpdated)
+                || planManager.GetViewData.ViewUpdated)
                 {
                 planManager.SetViewAndOrientation(viewRID, getDataParams.GridOrientation, storeAttributeSetKey, storeAttributeKey, filterKey);
-                _viewUpdated = false;
+                planManager.GetViewData.ViewUpdated = false;
             }
 
             if (getDataParams.iStartingRowIndex != planManager.StartingRowIndex

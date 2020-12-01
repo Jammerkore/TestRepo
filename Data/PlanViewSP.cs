@@ -284,6 +284,8 @@ namespace MIDRetail.Data
                 private intParameter VARIABLE_NUMBER;
                 private intParameter QUANTITY_VARIABLE_KEY;
                 private intParameter TIME_PERIOD_TYPE;
+                private intParameter TIME_PERIOD_KEY;
+                private intParameter VARIABLE_TOTAL_KEY;
                 private intParameter WIDTH;
 
                 public MID_PLAN_VIEW_FORMAT_INSERT_def()
@@ -296,6 +298,8 @@ namespace MIDRetail.Data
                     VARIABLE_NUMBER = new intParameter("@VARIABLE_NUMBER", base.inputParameterList);
                     QUANTITY_VARIABLE_KEY = new intParameter("@QUANTITY_VARIABLE_KEY", base.inputParameterList);
                     TIME_PERIOD_TYPE = new intParameter("@TIME_PERIOD_TYPE", base.inputParameterList);
+                    TIME_PERIOD_KEY = new intParameter("@TIME_PERIOD_KEY", base.inputParameterList);
+                    VARIABLE_TOTAL_KEY = new intParameter("@VARIABLE_TOTAL_KEY", base.inputParameterList);
                     WIDTH = new intParameter("@WIDTH", base.inputParameterList);
                 }
 
@@ -305,6 +309,8 @@ namespace MIDRetail.Data
                                   int? VARIABLE_NUMBER,
                                   int? QUANTITY_VARIABLE_KEY,
                                   int? TIME_PERIOD_TYPE,
+                                  int? TIME_PERIOD_KEY,
+                                  int? VARIABLE_TOTAL_KEY,
                                   int? WIDTH
                                   )
                 {
@@ -315,6 +321,8 @@ namespace MIDRetail.Data
                         this.VARIABLE_NUMBER.SetValue(VARIABLE_NUMBER);
                         this.QUANTITY_VARIABLE_KEY.SetValue(QUANTITY_VARIABLE_KEY);
                         this.TIME_PERIOD_TYPE.SetValue(TIME_PERIOD_TYPE);
+                        this.TIME_PERIOD_KEY.SetValue(TIME_PERIOD_KEY);
+                        this.VARIABLE_TOTAL_KEY.SetValue(VARIABLE_TOTAL_KEY);
                         this.WIDTH.SetValue(WIDTH);
                         return ExecuteStoredProcedureForInsert(_dba);
                     }

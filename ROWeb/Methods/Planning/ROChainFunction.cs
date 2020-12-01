@@ -154,10 +154,10 @@ namespace Logility.ROWeb
             //RO-3156 and store group set key to get data for store single/multi level
             if (getDataParams.GridOrientation != planManager.Orientation
                 || viewRID != planManager.GetViewRID() || filterKey != planManager.FilterKey
-                || _viewUpdated) 
+                || planManager.GetViewData.ViewUpdated) 
             {
                 planManager.SetViewAndOrientation(viewRID, getDataParams.GridOrientation, getDataParams.StoreAttributeSetKey, getDataParams.StoreAttributeKey, getDataParams.FilterKey);
-                _viewUpdated = false;
+                planManager.GetViewData.ViewUpdated = false;
             }
 
             if (getDataParams.iStartingRowIndex != planManager.StartingRowIndex

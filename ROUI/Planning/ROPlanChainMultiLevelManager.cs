@@ -32,6 +32,8 @@ namespace Logility.ROUI
 
         }
 
+        override public ROPlanViewData GetViewData { get { return chainMultiLevelViewData; } }  // Access view data as base for inheritance
+
         override public void InitializeData()
         {
             managerData = new ROPlanChainMultiLevelManagerData(SAB, OpenParms);

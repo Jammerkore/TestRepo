@@ -637,4 +637,61 @@ namespace Logility.ROWebSharedTypes
         }
 
     }
+
+    [DataContract(Name = "ROColumnFormat", Namespace = "http://Logility.ROWeb/")]
+    public class ROColumnFormat
+    {
+        [DataMember(IsRequired = true)]
+        private eDataType _dataType;  // the table the column is from
+        [DataMember(IsRequired = true)]
+        private int _columnIndex; // the column 
+        [DataMember(IsRequired = true)]
+        private int _width;   // the width
+
+        public ROColumnFormat(eDataType dataType, int columnIndex, int width)
+        {
+            _dataType = dataType;
+            _columnIndex = columnIndex;
+            _width = width;
+        }
+
+        public eDataType DataType { get { return _dataType; } }
+        public int ColumnIndex { get { return _columnIndex; } }
+        public int Width { get { return _width; } }
+    };
+
+    [DataContract(Name = "ROViewFormatParms", Namespace = "http://Logility.ROWeb/")]
+    public class ROViewFormatParms : ROParms
+    {
+        [DataMember(IsRequired = true)]
+        private ROColumnFormat _headingColumn;
+
+        [DataMember(IsRequired = true)]
+        private List<ROColumnFormat> _columnFormats;
+
+        public ROViewFormatParms(
+            string sROUserID,
+            string sROSessionID,
+            eROClass ROClass,
+            eRORequest RORequest,
+            long ROInstanceID,
+            ROColumnFormat headingColumn
+            )
+            : base(
+                  sROUserID: sROUserID,
+                  sROSessionID: sROSessionID,
+                  ROClass: ROClass,
+                  RORequest: RORequest,
+                  ROInstanceID: ROInstanceID
+                  )
+        {
+            _headingColumn = headingColumn;
+            _columnFormats = new List<ROColumnFormat>();
+        }
+
+        public ROColumnFormat HeadingColumn { get { return _headingColumn; } }
+
+        public List<ROColumnFormat> ColumnFormats { get { return _columnFormats; } }
+
+    }
 }

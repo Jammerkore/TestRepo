@@ -35,7 +35,7 @@ namespace Logility.ROUI
         
 
         public ROChainViewData(int viewRID, ROPlanChainManagerData managerData)
-            : base(managerData)
+            : base(viewRID, managerData)
         {
             
         }

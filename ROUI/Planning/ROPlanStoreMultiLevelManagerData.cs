@@ -273,7 +273,8 @@ namespace Logility.ROUI
                 {
                     managerData._planViewDataLayer = new PlanViewData();
                 }
-                DataTable _planViewDetail = managerData._planViewDataLayer.PlanViewDetail_Read(viewRID);
+                // Get view details and load view formatting.
+                DataTable _planViewDetail = GetViewDetails(viewKey: viewRID);
 
                
 
@@ -1198,7 +1199,8 @@ namespace Logility.ROUI
                 {
                     managerData._planViewDataLayer = new PlanViewData();
                 }
-                DataTable _planViewDetail = managerData._planViewDataLayer.PlanViewDetail_Read(viewRID);
+                // Get view details and load view formatting.
+                DataTable _planViewDetail = GetViewDetails(viewKey: viewRID);
 
 
 
@@ -1857,9 +1859,9 @@ namespace Logility.ROUI
             return columnMap;
         }
 
-        private void AddColumn(string columnName, ROCells cells)
+        private void AddColumn(string columnName, ROCells cells, int width = Include.DefaultColumnWidth)
         {
-            cells.Columns.Add(new ROColumnAttributes(columnName, cells.Columns.Count, Include.DefaultColumnWidth));
+            cells.Columns.Add(new ROColumnAttributes(columnName, cells.Columns.Count, width));
         }
 
         private void AddValues(ROData ROData)
@@ -2363,6 +2365,12 @@ namespace Logility.ROUI
                 }
             }
         }
+
+        // Stub method for inheritance to be completed later
+		override public ROOut SaveViewFormat(ROViewFormatParms ROViewFormatParms)
+        {
+            throw new Exception("SaveViewFormat method not implemented");
+        }
     }
 
     /// <summary>
@@ -2394,7 +2402,8 @@ namespace Logility.ROUI
                 {
                     managerData._planViewDataLayer = new PlanViewData();
                 }
-                DataTable _planViewDetail = managerData._planViewDataLayer.PlanViewDetail_Read(viewRID);
+                // Get view details and load view formatting.
+                DataTable _planViewDetail = GetViewDetails(viewKey: viewRID);
 
 
 
@@ -3202,6 +3211,12 @@ namespace Logility.ROUI
                     }
                 }
             }
+        }
+
+        // Stub method for inheritance to be completed later
+		override public ROOut SaveViewFormat(ROViewFormatParms ROViewFormatParms)
+        {
+            throw new Exception("SaveViewFormat method not implemented");
         }
     }
 

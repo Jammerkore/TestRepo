@@ -153,14 +153,21 @@ namespace Logility.ROUI
         private PlanProfile _currentStorePlanProfile;
         private PlanProfile _currentChainPlanProfile;
 
-        private Dictionary<int, Dictionary<int, int>> _viewWidths;
+        private int _viewRID;
+        private bool _viewUpdated = false;
+		// holds view formatting widths
+        DataTable _planViewFormat;
 
-
-        public ROPlanViewData(ROPlanManagerData managerData)
+        public ROPlanViewData(int viewRID, ROPlanManagerData managerData)
         {
             _managerData = managerData;
+            _viewRID = viewRID;
         }
 
+        abstract public ROOut SaveViewFormat(ROViewFormatParms ROViewFormatParms);
+
+        public bool ViewUpdated { get { return _viewUpdated; } set { _viewUpdated = value; } }
+         
         public ROPlanManagerData ManagerData { get { return _managerData; } private set { } }
 
         public FunctionSecurityProfile FunctionSecurity { get { return _functionSecurity; } private set { } }
@@ -169,6 +176,8 @@ namespace Logility.ROUI
 
         public PlanCubeGroup PlanCubeGroup { get { return ManagerData.PlanCubeGroup; } private set { } }
 
+        public int ViewRID { get { return _viewRID; } }
+		
         public ROCell[,] DataGrid1 { get { return _gridData[Grid1]; } }
 
         public ROCell[,] DataGrid2 { get { return _gridData[Grid2]; } }
@@ -692,61 +701,57 @@ namespace Logility.ROUI
             }
         }
 
-        protected void GetViewFormatting (int viewKey)
+        /// <summary>
+        /// Get view details and load view formatting
+        /// </summary>
+        /// <param name="viewKey">The key of the view</param>
+        /// <returns></returns>
+		protected DataTable GetViewDetails (int viewKey)
         {
             PlanViewData planViewData = new PlanViewData();
 
-            _viewWidths = new Dictionary<int, Dictionary<int, int>>();
 
-            DataTable planViewDetail = planViewData.PlanViewDetail_Read(viewKey);
+            _planViewFormat = planViewData.PlanViewFormat_Read(viewKey);
+            
 
-            // load view widths
-            // AXIS: type of field (eViewAxis)
-            // PROFILE_TYPE: type of data (eProfileType)
-            // AXIS_SEQUENCE: order of the field or type of period if PROFILE_TYPE is Period
-            // PROFILE_KEY: Key of the field.  Not used for Period
-            // WIDTH: width of the field
-            //int axis, profileType, profileKey, axisSequence, width;
-            //Dictionary<int, int> widths;
-            //foreach (DataRow row in planViewDetail.Rows)
-            //{
-            //    axis = Convert.ToInt32(row["AXIS"], CultureInfo.CurrentUICulture);
-            //    axisSequence = Convert.ToInt32(row["AXIS_SEQUENCE"], CultureInfo.CurrentUICulture);
-            //    profileType = Convert.ToInt32(row["PROFILE_TYPE"], CultureInfo.CurrentUICulture);
-            //    profileKey = Convert.ToInt32(row["PROFILE_KEY"], CultureInfo.CurrentUICulture);
-            //    width = Convert.ToInt32(row["WIDTH"], CultureInfo.CurrentUICulture);
-            //    if (!_viewWidths.TryGetValue(axis, out widths))
-            //    {
-            //        widths = new Dictionary<int, int>();
-            //        _viewWidths.Add(axis, widths);
-            //    }
-            //    if (axis == (int)eViewAxis.Variable)
-            //    {
-            //        widths.Add(profileKey, width);
-            //    }
-            //    else if (axis == (int)eViewAxis.Quantity)
-            //    {
-            //        widths.Add(profileKey, width);
-            //    }
-            //    else if (axis == (int)eViewAxis.Period)
-            //    {
-            //        widths.Add(axisSequence, width);
-            //    }
-            //}
+            return planViewData.PlanViewDetail_Read(viewKey);
         }
 
-        protected int GetColumnWidth (eViewAxis axis, int key)
+        /// <summary>
+        /// Get the column formatting width from the column coordinates
+        /// </summary>
+        /// <param name="planBasisType">The plan type: plan(0), basis(1)</param>
+        /// <param name="variableNumber">The number of the variable</param>
+        /// <param name="quantityVariableKey">The key if is a value or comparative</param>
+        /// <param name="timePeriodType">The type of time period: Year, Quarter, Month, Week</param>
+        /// <param name="timePeriodKey">The key of the time period.</param>
+        /// <param name="variableTotalKey"> The key of the variable total</param>
+        /// <returns>Integer with the with for the column coordinates.  Returns default width if coordinates are not found.</returns>
+        protected int GetColumnWidth (
+            int planBasisType = Include.Undefined,
+            int variableNumber = Include.Undefined,
+            int quantityVariableKey = Include.Undefined,
+            int timePeriodType = Include.Undefined,
+            int timePeriodKey = Include.Undefined,
+            int variableTotalKey = Include.Undefined
+            )
         {
             int width = Include.DefaultColumnWidth;
-            Dictionary<int, int> widths;
 
-            //if (_viewWidths.TryGetValue((int)axis, out widths))
-            //{
-            //    if (widths.ContainsKey(key))
-            //    {
-            //        width = widths[key];
-            //    }
-            //}
+            DataRow[] formatRows = _planViewFormat.Select(
+                "PLAN_BASIS_TYPE = " + planBasisType.ToString() 
+                + " and VARIABLE_NUMBER = " + variableNumber.ToString() 
+                + " and QUANTITY_VARIABLE_KEY = " + quantityVariableKey.ToString()
+                + " and TIME_PERIOD_TYPE = " + timePeriodType.ToString()
+                + " and TIME_PERIOD_KEY = " + timePeriodKey.ToString()
+                + " and VARIABLE_TOTAL_KEY = " + variableTotalKey.ToString()
+                );
+
+            if (formatRows.Length > 0)
+            {
+                width = Convert.ToInt32(formatRows[0]["WIDTH"]);
+            }
+
 
             return width;
         }

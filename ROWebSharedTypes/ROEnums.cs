@@ -165,6 +165,7 @@
         GetViewDetails,
         SaveViewDetails,
         DeleteViewDetails,
+        SaveViewFormat,
 
         //Hierarchy
         GetHierarchies,

@@ -68,6 +68,8 @@ namespace Logility.ROUI
 
         abstract public FunctionSecurityProfile GetFunctionSecurityProfile();
 
+        abstract public ROPlanViewData GetViewData { get; }  // Access view data as base for inheritance
+
         public DataTable GetViewListDataTable()
         {
             FunctionSecurityProfile viewUserSecurity = SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.ForecastViewsUser);

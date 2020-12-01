@@ -247,21 +247,25 @@ namespace MIDRetail.Data
 
         public void PlanViewFormat_Insert(
             int aViewRID, 
-            ePlanBasisType planBasisType, 
-            int variableNumber, 
-            int quantityVariableKey,
-            int timePeriodType,
-            int width
+            int planBasisType = Include.Undefined, 
+            int variableNumber = Include.Undefined, 
+            int quantityVariableKey = Include.Undefined,
+            int timePeriodType = Include.Undefined,
+            int timePeriodKey = Include.Undefined,
+            int variableTotalKey = Include.Undefined,
+            int width = Include.DefaultColumnWidth
             )
         {
             try
             {
                 StoredProcedures.MID_PLAN_VIEW_FORMAT_INSERT.Insert(_dba,
                                                                     VIEW_RID: aViewRID,
-                                                                    PLAN_BASIS_TYPE: (int)planBasisType,
+                                                                    PLAN_BASIS_TYPE: planBasisType,
                                                                     VARIABLE_NUMBER: variableNumber,
                                                                     QUANTITY_VARIABLE_KEY: quantityVariableKey,
                                                                     TIME_PERIOD_TYPE: timePeriodType,
+                                                                    TIME_PERIOD_KEY: timePeriodKey,
+                                                                    VARIABLE_TOTAL_KEY: variableTotalKey,
                                                                     WIDTH: width
                                                                     );
             }

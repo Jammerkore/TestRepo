@@ -32,6 +32,8 @@ namespace Logility.ROUI
 
         public ROStoreSingleLevelViewData StoreSingleLevelViewData { get { return storeSingleLevelViewData; } }
 
+        override public ROPlanViewData GetViewData { get { return storeSingleLevelViewData; } }  // Access view data as base for inheritance
+
         override public void InitializeData()
         {
             managerData = new ROPlanStoreSingleLevelManagerData(SAB, OpenParms);
