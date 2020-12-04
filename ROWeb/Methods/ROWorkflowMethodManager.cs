@@ -270,7 +270,11 @@ namespace Logility.ROWeb
 
             dtMethods = ApplicationUtilities.SortDataTable(dataTable: dtMethods, sColName: "METHOD_NAME", bAscending: true);
 
-            return ApplicationUtilities.DataTableToKeyValues(dtMethods, "METHOD_RID", "METHOD_NAME", true);
+            List<KeyValuePair<int, string>> methodList =  ApplicationUtilities.DataTableToKeyValues(dtMethods, "METHOD_RID", "METHOD_NAME", true);
+
+            methodList.Add(new KeyValuePair<int, string>(Include.Undefined, "Custom"));
+
+            return methodList;
         }
 
         #endregion
