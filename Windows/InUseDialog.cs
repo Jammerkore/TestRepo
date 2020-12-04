@@ -415,7 +415,7 @@ namespace MIDRetail.Windows
                         showDialog = true;
 
                         MIDEnvironment.Message = MIDText.GetText(textCode: eMIDTextCode.msg_DeleteInUseWarning);
-                        MIDEnvironment.requestFailed = true;
+                        //MIDEnvironment.requestFailed = true;
                     }
                     DataTable dtinUseDataTable = dt.Clone();
 
