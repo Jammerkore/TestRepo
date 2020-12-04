@@ -466,6 +466,11 @@ namespace Logility.ROWeb
                                 sep.StkModPct = 0;
                                 break;
                         }
+                        if (!eligibilityStore.EligibilityValues.StockModifierIsInherited)
+                        {
+                            sep.StkModIsInherited = false;
+                            sep.StkModInheritedFromNodeRID = Include.NoRID;
+                        }
                     }
                     else if (sep.StkModType != eModifierType.None)  // clear value
                     {
@@ -535,6 +540,11 @@ namespace Logility.ROWeb
                             default:
                                 sep.SlsModPct = 0;
                                 break;
+                        }
+                        if (!eligibilityStore.EligibilityValues.SalesModifierIsInherited)
+                        {
+                            sep.SlsModIsInherited = false;
+                            sep.SlsModInheritedFromNodeRID = Include.NoRID;
                         }
                     }
                     else if (sep.SlsModType != eModifierType.None)  // clear value
@@ -606,6 +616,11 @@ namespace Logility.ROWeb
                                 sep.FWOSModPct = 0;
                                 break;
                         }
+                        if (!eligibilityStore.EligibilityValues.FWOSModifierIsInherited)
+                        {
+                            sep.FWOSModIsInherited = false;
+                            sep.FWOSModInheritedFromNodeRID = Include.NoRID;
+                        }
                     }
                     else if (sep.FWOSModType != eModifierType.None)  // clear value
                     {
@@ -671,6 +686,11 @@ namespace Logility.ROWeb
                                 break;
                             default:
                                 break;
+                        }
+                        if (!eligibilityStore.EligibilityValues.SimilarStoreIsInherited)
+                        {
+                            sep.SimStoreIsInherited = false;
+                            sep.SimStoreInheritedFromNodeRID = Include.NoRID;
                         }
                     }
                     else if (sep.SimStoreType != eSimilarStoreType.None)  // clear value
