@@ -175,6 +175,8 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         eMerchandiseType _merchandiseType;
         [DataMember(IsRequired = true)]
+        private List<KeyValuePair<int, string>> _hierarchyLevels;
+        [DataMember(IsRequired = true)]
         KeyValuePair<int, string> _genAlloc_HDR;
         [DataMember(IsRequired = true)]
         double _reserveAsBulk;
@@ -246,6 +248,14 @@ namespace Logility.ROWebSharedTypes
             get { return _reserveAsPacks; }
             set { _reserveAsPacks = value; }
         }
+
+        /// <summary>
+        /// Gets the list of hierarchy levels
+        /// </summary>
+        public List<KeyValuePair<int, string>> HierarchyLevels
+        {
+            get { return _hierarchyLevels; }
+        }
         #endregion
         public ROMethodGeneralAllocationProperties(KeyValuePair<int, string> method, string description, int userKey, KeyValuePair<int, string> begin_CDR, KeyValuePair<int, string> shipTo_CDR, bool percentInd,
             double reserve, KeyValuePair<int, string> merch_HN, int merch_PH_RID, int merch_PHL_SEQ, eMerchandiseType merchandiseType, KeyValuePair<int, string> genAlloc_HDR,
@@ -271,6 +281,7 @@ namespace Logility.ROWebSharedTypes
             _genAlloc_HDR = genAlloc_HDR;
             _reserveAsBulk = reserveAsBulk;
             _reserveAsBulk = reserveAsPacks;
+            _hierarchyLevels = new List<KeyValuePair<int, string>>();
         }
     }
 
