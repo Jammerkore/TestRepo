@@ -779,6 +779,18 @@ namespace MIDRetail.Business.Allocation
                 genAlloc_HDR: GetName.GetHeader(headerRID: Gen_Alloc_HDR_RID, SAB: SAB),
                 reserveAsBulk: ReserveAsBulk,
                 reserveAsPacks: ReserveAsPacks);
+
+            HierarchyLevelProfile hierarchyLevelProfile;
+            HierarchyProfile mainHp = SAB.HierarchyServerSession.GetMainHierarchyData();
+            for (int level = 1; level <= mainHp.HierarchyLevels.Count; level++)
+            {
+                hierarchyLevelProfile = (HierarchyLevelProfile)mainHp.HierarchyLevels[level];
+                if (hierarchyLevelProfile.LevelType != eHierarchyLevelType.Size)
+                {
+                    method.HierarchyLevels.Add(new System.Collections.Generic.KeyValuePair<int, string>(hierarchyLevelProfile.Key, hierarchyLevelProfile.LevelID));
+                }
+            }
+            
             return method;
         }
 
