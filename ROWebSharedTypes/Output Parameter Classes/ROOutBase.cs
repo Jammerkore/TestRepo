@@ -312,6 +312,9 @@ namespace Logility.ROWebSharedTypes
     [KnownType(typeof(ROAllocationReviewViewDetails))]
     [KnownType(typeof(ROAllocationReviewViewDetailsOut))]
 
+    [KnownType(typeof(ROStoreProfile))]
+    [KnownType(typeof(ROStoreProfileOut))]
+
     public abstract class ROOut
     {
         public static readonly long lInvalidInstanceID = -1;

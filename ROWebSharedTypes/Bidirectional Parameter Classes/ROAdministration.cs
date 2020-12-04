@@ -1574,4 +1574,406 @@ namespace Logility.ROWebSharedTypes
         }
     }
 
+    [DataContract(Name = "ROStoreProfile", Namespace = "http://Logility.ROWeb/")]
+    public class ROStoreProfile
+    {
+        [DataMember(IsRequired = true)]
+        KeyValuePair<int, string> _store;
+
+        [DataMember(IsRequired = true)]
+        string _name;
+
+        [DataMember(IsRequired = true)]
+        string _description;
+
+        [DataMember(IsRequired = true)]
+        bool _isActive;
+
+        [DataMember(IsRequired = true)]
+        bool _isMarkedForDeletion;
+
+        [DataMember(IsRequired = true)]
+        private string _city;
+
+        [DataMember(IsRequired = true)]
+        private string _state;
+
+        [DataMember(IsRequired = true)]
+        private int _sellingSquareFootage;
+
+        [DataMember(IsRequired = true)]
+        private string _sellingOpenDate;
+
+        [DataMember(IsRequired = true)]
+        private string _sellingCloseDate;
+
+        [DataMember(IsRequired = true)]
+        private string _stockOpenDate;
+
+        [DataMember(IsRequired = true)]
+        private string _stockCloseDate;
+
+        [DataMember(IsRequired = true)]
+        private int _leadTime;
+
+        [DataMember(IsRequired = true)]
+        private bool _shipOnMonday;
+
+        [DataMember(IsRequired = true)]
+        private bool _shipOnTuesday;
+
+        [DataMember(IsRequired = true)]
+        private bool _shipOnWednesday;
+
+        [DataMember(IsRequired = true)]
+        private bool _shipOnThursday;
+
+        [DataMember(IsRequired = true)]
+        private bool _shipOnFriday;
+
+        [DataMember(IsRequired = true)]
+        private bool _shipOnSaturday;
+
+        [DataMember(IsRequired = true)]
+        private bool _shipOnSunday;
+
+        [DataMember(IsRequired = true)]
+        private string _text;
+
+        [DataMember(IsRequired = true)]
+        private KeyValuePair<int, string> _storeStatus;
+
+        [DataMember(IsRequired = true)]
+        private KeyValuePair<int, string> _stockStatus;
+
+        [DataMember(IsRequired = true)]
+        private bool _similarStoreModel;
+
+        [DataMember(IsRequired = true)]
+        private string _virtualStoreWarehouse_ID;
+
+        [DataMember(IsRequired = true)]
+        private List<ROCharacteristic> _characteristics;
+
+        #region Public Properties
+        /// <summary>
+        /// KeyValuePair with store key and ID
+        /// </summary>
+        public KeyValuePair<int, string> Store
+        {
+            get { return _store; }
+            set { _store = value; }
+        }
+
+        /// <summary>
+        /// The key of the store
+        /// </summary>
+        public int StoreKey
+        {
+            get { return _store.Key; }
+        }
+
+        /// <summary>
+        /// The ID of the store
+        /// </summary>
+        public string StoreID
+        {
+            get { return _store.Value; }
+        }
+
+        /// <summary>
+        /// The name of the store
+        /// </summary>
+        public string Name
+        {
+            get { return _name; }
+            set { _name = value; }
+        }
+
+        /// <summary>
+        /// The description of the store
+        /// </summary>
+        public string Description
+        {
+            get { return _description; }
+            set { _description = value; }
+        }
+
+        /// <summary>
+        /// A flag identifying if the store is active
+        /// </summary>
+        public bool IsActive
+        {
+            get { return _isActive; }
+            set { _isActive = value; }
+        }
+
+        /// <summary>
+        /// A flag identifying if the store is marked for deletion
+        /// </summary>
+        public bool IsMarkedForDeletion
+        {
+            get { return _isMarkedForDeletion; }
+            set { _isMarkedForDeletion = value; }
+        }
+
+        /// <summary>
+        /// The city where the store is located
+        /// </summary>
+        public string City
+        {
+            get { return _city; }
+            set { _city = value; }
+        }
+
+        /// <summary>
+        /// The state where the store is located
+        /// </summary>
+        public string State
+        {
+            get { return _state; }
+            set { _state = value; }
+        }
+
+        /// <summary>
+        /// The selling square footage of the store
+        /// </summary>
+        public int SellingSquareFootage
+        {
+            get { return _sellingSquareFootage; }
+            set { _sellingSquareFootage = value; }
+        }
+
+        /// <summary>
+        /// The selling open date for the store
+        /// </summary>
+        public string SellingOpenDate
+        {
+            get { return _sellingOpenDate; }
+            set { _sellingOpenDate = value; }
+        }
+
+        /// <summary>
+        /// The selling close date for the store
+        /// </summary>
+        public string SellingCloseDate
+        {
+            get { return _sellingCloseDate; }
+            set { _sellingCloseDate = value; }
+        }
+
+        /// <summary>
+        /// The stock open date for the store
+        /// </summary>
+        public string StockOpenDate
+        {
+            get { return _stockOpenDate; }
+            set { _stockOpenDate = value; }
+        }
+
+        /// <summary>
+        /// The stock close date for the store
+        /// </summary>
+        public string StockCloseDate
+        {
+            get { return _stockCloseDate; }
+            set { _stockCloseDate = value; }
+        }
+
+        /// <summary>
+        /// The shipping lead time of the store
+        /// </summary>
+        public int LeadTime
+        {
+            get { return _leadTime; }
+            set { _leadTime = value; }
+        }
+
+        /// <summary>
+        /// A flag indicating if the store receives shipments on Monday
+        /// </summary>
+        public bool ShipOnMonday
+        {
+            get { return _shipOnMonday; }
+            set { _shipOnMonday = value; }
+        }
+
+        /// <summary>
+        /// A flag indicating if the store receives shipments on Tuesday
+        /// </summary>
+        public bool ShipOnTuesday
+        {
+            get { return _shipOnTuesday; }
+            set { _shipOnTuesday = value; }
+        }
+
+        /// <summary>
+        /// A flag indicating if the store receives shipments on Wednesday
+        /// </summary>
+        public bool ShipOnWednesday
+        {
+            get { return _shipOnWednesday; }
+            set { _shipOnWednesday = value; }
+        }
+
+        /// <summary>
+        /// A flag indicating if the store receives shipments on Thursday
+        /// </summary>
+        public bool ShipOnThursday
+        {
+            get { return _shipOnThursday; }
+            set { _shipOnThursday = value; }
+        }
+
+        /// <summary>
+        /// A flag indicating if the store receives shipments on Friday
+        /// </summary>
+        public bool ShipOnFriday
+        {
+            get { return _shipOnFriday; }
+            set { _shipOnFriday = value; }
+        }
+
+        /// <summary>
+        /// A flag indicating if the store receives shipments on Saturday
+        /// </summary>
+        public bool ShipOnSaturday
+        {
+            get { return _shipOnSaturday; }
+            set { _shipOnSaturday = value; }
+        }
+
+        /// <summary>
+        /// A flag indicating if the store receives shipments on Sunday
+        /// </summary>
+        public bool ShipOnSunday
+        {
+            get { return _shipOnSunday; }
+            set { _shipOnSunday = value; }
+        }
+
+        /// <summary>
+        /// The text to use for the store display
+        /// </summary>
+        public string Text
+        {
+            get { return _text; }
+            set { _text = value; }
+        }
+
+        /// <summary>
+        /// A KeyValuePair with the eStoreStatus and text for the status of the store
+        /// </summary>
+        /// <remarks>This is a Key ValuePair in the event updates are allowed in the future
+        /// </remarks>
+        public KeyValuePair<int, string> StoreStatus
+        {
+            get { return _storeStatus; }
+            set { _storeStatus = value; }
+        }
+
+        /// <summary>
+        /// A KeyValuePair with the eStoreStatus and text for the stock status of the store
+        /// </summary>
+        /// <remarks>This is a Key ValuePair in the event updates are allowed in the future
+        /// </remarks>
+        public KeyValuePair<int, string> StockStatus
+        {
+            get { return _stockStatus; }
+            set { _stockStatus = value; }
+        }
+
+        /// <summary>
+        /// A flag identifying if the store is being used as a similar store model store
+        /// </summary>
+        public bool IsSimilarStoreModel
+        {
+            get { return _similarStoreModel; }
+            set { _similarStoreModel = value; }
+        }
+
+        /// <summary>
+        /// The ID of the stores' virtual store warehouse
+        /// </summary>
+        public string virtualStoreWarehouse_ID
+        {
+            get { return _virtualStoreWarehouse_ID; }
+            set { _virtualStoreWarehouse_ID = value; }
+        }
+
+        /// <summary>
+        /// List of ROCharacteristic objects containing store characteristics and values
+        /// </summary>
+        public List<ROCharacteristic> Characteristics
+        {
+            get { return _characteristics; }
+
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Creates an instance of the ROStoreProfile class
+        /// </summary>
+        /// <param name="store">KeyValuePair with store key and ID</param>
+        /// <param name="name">The name of the store</param>
+        /// <param name="description">The description of the store</param>
+        /// <param name="isActive">A flag identifying if the store is active</param>
+        public ROStoreProfile(
+            KeyValuePair<int, string> store,
+            string name = null,
+            string description = null,
+            bool isActive = true,
+            bool isMarkedForDeletion = false,
+            string city = null,
+            string state = null,
+            int sellingSquareFootage = 0,
+            string sellingOpenDate = null,
+            string sellingCloseDate = null,
+            string stockOpenDate = null,
+            string stockCloseDate = null,
+            int leadTime = 0,
+            bool shipOnMonday = false,
+            bool shipOnTuesday = false,
+            bool shipOnWednesday = false,
+            bool shipOnThursday = false,
+            bool shipOnFriday = false,
+            bool shipOnSaturday = false,
+            bool shipOnSunday = false,
+            string text = null,
+            KeyValuePair<int, string> storeStatus = default(KeyValuePair<int, string>),
+            KeyValuePair<int, string> stockStatus = default(KeyValuePair<int, string>),
+            bool similarStoreModel = false,
+            string virtualStoreWarehouse_ID = null
+            )
+        {
+            _store = store;
+            _name = name;
+            _description = description;
+            _isActive = isActive;
+            _isMarkedForDeletion = isMarkedForDeletion;
+            _city = city;
+            _state = state;
+            _sellingSquareFootage = sellingSquareFootage;
+            _sellingOpenDate = sellingOpenDate;
+            _sellingCloseDate = sellingCloseDate;
+            _stockOpenDate = stockOpenDate;
+            _stockCloseDate = stockCloseDate;
+            _leadTime = leadTime;
+            _shipOnMonday = shipOnMonday;
+            _shipOnTuesday = shipOnTuesday;
+            _shipOnWednesday = shipOnWednesday;
+            _shipOnThursday = shipOnThursday;
+            _shipOnFriday = shipOnFriday;
+            _shipOnSaturday = shipOnSaturday;
+            _shipOnSunday = shipOnSunday;
+            _text = text;
+            _storeStatus = storeStatus;
+            _stockStatus = stockStatus;
+            _similarStoreModel = similarStoreModel;
+            _virtualStoreWarehouse_ID = virtualStoreWarehouse_ID;
+            _characteristics = new List<ROCharacteristic>();
+        }
+    }
+
 }

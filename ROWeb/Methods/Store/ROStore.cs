@@ -40,8 +40,16 @@ namespace Logility.ROWeb
             switch (Parms.RORequest)
             {
                 case eRORequest.GetStoreProfile:
-                    ROStringParms parms = (ROStringParms)Parms;
-                    return GetStoreProfile(parms.ROString, SAB);
+                    if (Parms is ROStringParms)
+                    {
+                        ROStringParms parms = (ROStringParms)Parms;
+                        return GetStoreProfile(parms.ROString);
+                    }
+                    else
+                    {
+                        ROKeyParms parms = (ROKeyParms)Parms;
+                        return GetStoreProfile(parms.Key);
+                    }
                 case eRORequest.StoreComboFiltersData:
                     return GetStoreFilterComboData();
                
@@ -52,45 +60,105 @@ namespace Logility.ROWeb
 
         #region "Method to Get Store Profile"
         /// <summary>
-        /// Returns the node properties from the hierarchy
+        /// Retrieves store profile using the store ID
         /// </summary>
-        /// <param name="sStoreId">The node description.</param>
-        /// <param name="aSAB">The reference to the SessionAddressBlock object for the user and environment</param>
-        /// <returns>A datatable</returns>
-        private ROOut GetStoreProfile(string sStoreId, SessionAddressBlock aSAB)
+        /// <param name="storeId">The node description.</param>
+        /// <returns>ROStoreProfileOut</returns>
+        private ROOut GetStoreProfile(string storeId)
         {
+            StoreProfile storeProfile = StoreMgmt.StoreProfile_Get(storeId);
+            return GetStoreProfile(storeProfile: storeProfile);
+        }
+
+        /// <summary>
+        /// Retrieves store profile using the store key
+        /// </summary>
+        /// <param name="storeKey">The node description.</param>
+        /// <returns>ROStoreProfileOut</returns>
+        private ROOut GetStoreProfile(int storeKey)
+        {
+            StoreProfile storeProfile = StoreMgmt.StoreProfile_Get(storeKey);
+            return GetStoreProfile(storeProfile: storeProfile);
+        }
+
+        /// <summary>
+        /// Retrieves the properties for the store
+        /// </summary>
+        /// <param name="storeProfile">The properties for the store</param>
+        /// <returns>ROStoreProfileOut</returns>
+        private ROOut GetStoreProfile(StoreProfile storeProfile)
+        {
+            eROReturnCode returnCode = eROReturnCode.Successful;
+            string message = null;
+
             try
             {
+                ROStoreProfile storeProperties = null;
 
-                DataTable dt = new DataTable();
-                dt.TableName = "Store Profile";
-                dt.Columns.Add("STORE_ID", typeof(int));
-                dt.Columns.Add("NAME", typeof(string));
-                dt.Columns.Add("ACTIVE", typeof(bool));
-                dt.Columns.Add("MARKED_FOR_DELETION", typeof(bool));
-                dt.Columns.Add("SIMILAR_STORE_MODEL", typeof(bool));
-                dt.Columns.Add("STORE_DESCRIPTION", typeof(string));
-                dt.Columns.Add("CITY", typeof(string));
-                dt.Columns.Add("STATE", typeof(string));
-
-                StoreProfile storeProfile = StoreMgmt.StoreProfile_Get(sStoreId);
                 if (storeProfile.Key != Include.NoRID)
                 {
-                    DataRow dr = dt.NewRow();
-                    dr["STORE_ID"] = storeProfile.StoreId;
-                    dr["NAME"] = storeProfile.StoreName;
-                    dr["ACTIVE"] = storeProfile.ActiveInd;
-                    dr["MARKED_FOR_DELETION"] = storeProfile.DeleteStore;
-                    dr["SIMILAR_STORE_MODEL"] = storeProfile.SimilarStoreModel;
-                    dr["STORE_DESCRIPTION"] = storeProfile.StoreDescription;
-                    dr["CITY"] = storeProfile.City;
-                    dr["STATE"] = storeProfile.State;
+                    storeProperties = new ROStoreProfile(
+                        store: new KeyValuePair<int, string>(storeProfile.Key, storeProfile.StoreId),
+                        name: storeProfile.StoreName,
+                        description: storeProfile.StoreDescription,
+                        isActive: storeProfile.ActiveInd,
+                        isMarkedForDeletion: storeProfile.DeleteStore,
+                        city: storeProfile.City == null ? string.Empty : storeProfile.City,
+                        state: storeProfile.State == null ? string.Empty : storeProfile.State,
+                        sellingSquareFootage: storeProfile.SellingSqFt,
+                        sellingOpenDate: storeProfile.SellingOpenDt == Include.UndefinedDate ? string.Empty : storeProfile.SellingOpenDt.ToShortDateString(),
+                        sellingCloseDate: storeProfile.SellingCloseDt == Include.UndefinedDate ? string.Empty : storeProfile.SellingCloseDt.ToShortDateString(),
+                        stockOpenDate: storeProfile.StockOpenDt == Include.UndefinedDate ? string.Empty : storeProfile.StockOpenDt.ToShortDateString(),
+                        stockCloseDate: storeProfile.StockCloseDt == Include.UndefinedDate ? string.Empty : storeProfile.StockCloseDt.ToShortDateString(),
+                        leadTime: storeProfile.LeadTime,
+                        shipOnMonday: storeProfile.ShipOnMonday,
+                        shipOnTuesday: storeProfile.ShipOnTuesday,
+                        shipOnWednesday: storeProfile.ShipOnWednesday,
+                        shipOnThursday: storeProfile.ShipOnThursday,
+                        shipOnFriday: storeProfile.ShipOnFriday,
+                        shipOnSaturday: storeProfile.ShipOnSaturday,
+                        shipOnSunday: storeProfile.ShipOnSunday,
+                        text: storeProfile.Text,
+                        storeStatus: GetName.GetStoreStatus(storeStatus: storeProfile.Status),
+                        stockStatus: GetName.GetStoreStatus(storeStatus: storeProfile.StockStatus),
+                        similarStoreModel: storeProfile.SimilarStoreModel,
+                        virtualStoreWarehouse_ID: storeProfile.IMO_ID == null ? string.Empty : storeProfile.IMO_ID
+                        );
 
-                    dt.Rows.Add(dr);
+                    StoreMaint storeMaintData = new StoreMaint();
+                    DataSet dsValues = storeMaintData.ReadStoresFieldsForMaint(storeProfile.Key);
+                    int characteristicGroupKey, characteristicValueKey;
+                    string characteristicGroupName, characteristicValueName;
+
+                    foreach (DataRow drChar in dsValues.Tables[1].Rows)
+                    {
+                        characteristicGroupKey = Convert.ToInt32(drChar["SCG_RID"]); ;
+                        characteristicGroupName = Convert.ToString(drChar["SCG_ID"]);
+                        characteristicValueKey = 0;
+                        characteristicValueName = string.Empty;
+                        if (drChar["SC_RID"] != System.DBNull.Value)
+                        {
+                            characteristicValueKey = Convert.ToInt32(drChar["SC_RID"]);
+                            characteristicValueName = Convert.ToString(drChar["CHAR_VALUE"]);
+                        }
+
+                        ROCharacteristic characteristic = new ROCharacteristic(
+                            characteristicGroupKey: characteristicGroupKey,
+                            characteristicGroupName: characteristicGroupName,
+                            characteristicValueKey: characteristicValueKey,
+                            characteristicValueName: characteristicValueName
+                            );
+
+                        storeProperties.Characteristics.Add(characteristic);
+                    }
+                }
+                else
+                {
+                    returnCode = eROReturnCode.Failure;
+                    message = SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_StoreNotFound);
                 }
 
-                return new RODataTableOut(eROReturnCode.Successful, null, ROInstanceID, dt);
-                //return dt;
+                return new ROStoreProfileOut(returnCode, message, ROInstanceID, storeProperties);
             }
             catch
             {

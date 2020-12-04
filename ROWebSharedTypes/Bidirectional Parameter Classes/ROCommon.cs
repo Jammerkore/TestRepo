@@ -433,6 +433,10 @@ namespace Logility.ROWebSharedTypes
         public KeyValuePair<int, string> CharacteristicGroup { get { return _characteristicGroup; } set { _characteristicGroup = value; } }
         public KeyValuePair<int, string> CharacteristicValue { get { return _characteristicValue; } set { _characteristicValue = value; } }
         public string InheritedFrom { get { return _inheritedFrom; } }
+
+        public string CharacteristicGroupName { get { return _characteristicGroup.Value; } }
+
+        public string CharacteristicValueName { get { return _characteristicValue.Value; } }
     }
 
     public class ROOverrideLowLevel

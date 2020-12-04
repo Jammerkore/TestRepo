@@ -352,6 +352,12 @@ namespace MIDRetail.Business
             return new KeyValuePair<int, string>(key, name);
         }
 
+        public static KeyValuePair<int, string> GetStoreStatus(eStoreStatus storeStatus)
+        {
+            string status = MIDText.GetTextOnly((int)storeStatus);
+            return new KeyValuePair<int, string>((int)storeStatus, status);
+        }
+
         public static KeyValuePair<int, string> GetAttributeName(int key)
         {
             string name = string.Empty;

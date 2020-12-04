@@ -124,4 +124,20 @@ namespace Logility.ROWebSharedTypes
 
         #endregion
     }
+
+    [DataContract(Name = "ROStoreProfileOut", Namespace = "http://Logility.ROWeb/")]
+    public class ROStoreProfileOut : ROOut
+    {
+        [DataMember(IsRequired = true)]
+        private ROStoreProfile _ROStoreProfile;
+
+        public ROStoreProfileOut(eROReturnCode ROReturnCode, string sROMessage, long ROInstanceID, ROStoreProfile ROStoreProfile) :
+            base(ROReturnCode, sROMessage, ROInstanceID)
+        {
+            _ROStoreProfile = ROStoreProfile;
+        }
+
+        public ROStoreProfile ROStoreProfile { get { return _ROStoreProfile; } }
+
+    }
 }
