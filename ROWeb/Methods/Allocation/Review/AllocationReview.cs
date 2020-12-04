@@ -176,21 +176,6 @@ namespace Logility.ROWeb
                         displayCol = true;
                     }
                 }
-
-                if (displayCol
-                    && (dataType == eDataType.StoreDetail || dataType == eDataType.SetDetail || dataType == eDataType.AllStoreDetail))
-                {
-                    // position current set to component type.  Need to put actual value for component fields.
-                    if (VisiblePosition > 800000)
-                    {
-                        VisiblePosition = _currentVisiblePosition;
-                    }
-                    else if (VisiblePosition > _currentVisiblePosition)  // non displayed fields have visible positions
-                    {
-                        VisiblePosition = _currentVisiblePosition;
-                    }
-                    ++_currentVisiblePosition;
-                }
             }
             else if (selectionViewType == eAllocationSelectionViewType.Summary)
             {
