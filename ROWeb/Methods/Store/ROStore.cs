@@ -90,6 +90,7 @@ namespace Logility.ROWeb
         {
             eROReturnCode returnCode = eROReturnCode.Successful;
             string message = null;
+            DateTime sellingOpenDate, sellingCloseDate, stockOpenDate, stockCloseDate;
 
             try
             {
@@ -97,6 +98,11 @@ namespace Logility.ROWeb
 
                 if (storeProfile.Key != Include.NoRID)
                 {
+                    sellingOpenDate = storeProfile.SellingOpenDt;
+                    sellingCloseDate = storeProfile.SellingCloseDt;
+                    stockOpenDate = storeProfile.StockOpenDt;
+                    stockCloseDate = storeProfile.StockCloseDt;
+
                     storeProperties = new ROStoreProfile(
                         store: new KeyValuePair<int, string>(storeProfile.Key, storeProfile.StoreId),
                         name: storeProfile.StoreName,
@@ -106,10 +112,10 @@ namespace Logility.ROWeb
                         city: storeProfile.City == null ? string.Empty : storeProfile.City,
                         state: storeProfile.State == null ? string.Empty : storeProfile.State,
                         sellingSquareFootage: storeProfile.SellingSqFt,
-                        sellingOpenDate: storeProfile.SellingOpenDt == Include.UndefinedDate ? string.Empty : storeProfile.SellingOpenDt.ToShortDateString(),
-                        sellingCloseDate: storeProfile.SellingCloseDt == Include.UndefinedDate ? string.Empty : storeProfile.SellingCloseDt.ToShortDateString(),
-                        stockOpenDate: storeProfile.StockOpenDt == Include.UndefinedDate ? string.Empty : storeProfile.StockOpenDt.ToShortDateString(),
-                        stockCloseDate: storeProfile.StockCloseDt == Include.UndefinedDate ? string.Empty : storeProfile.StockCloseDt.ToShortDateString(),
+                        sellingOpenDate: sellingOpenDate == Include.UndefinedDate ? string.Empty : sellingOpenDate.ToShortDateString(),
+                        sellingCloseDate: sellingCloseDate == Include.UndefinedDate ? string.Empty : sellingCloseDate.ToShortDateString(),
+                        stockOpenDate: stockOpenDate == Include.UndefinedDate ? string.Empty : stockOpenDate.ToShortDateString(),
+                        stockCloseDate: stockCloseDate == Include.UndefinedDate ? string.Empty : stockCloseDate.ToShortDateString(),
                         leadTime: storeProfile.LeadTime,
                         shipOnMonday: storeProfile.ShipOnMonday,
                         shipOnTuesday: storeProfile.ShipOnTuesday,
@@ -125,6 +131,7 @@ namespace Logility.ROWeb
                         virtualStoreWarehouse_ID: storeProfile.IMO_ID == null ? string.Empty : storeProfile.IMO_ID
                         );
 
+                    // Get all store characteristic groups and values
                     StoreMaint storeMaintData = new StoreMaint();
                     DataSet dsValues = storeMaintData.ReadStoresFieldsForMaint(storeProfile.Key);
                     int characteristicGroupKey, characteristicValueKey;
@@ -136,12 +143,14 @@ namespace Logility.ROWeb
                         characteristicGroupName = Convert.ToString(drChar["SCG_ID"]);
                         characteristicValueKey = 0;
                         characteristicValueName = string.Empty;
+                        // if the SC_RID is DBNull, the store does not have a value for this characteristic group
                         if (drChar["SC_RID"] != System.DBNull.Value)
                         {
                             characteristicValueKey = Convert.ToInt32(drChar["SC_RID"]);
                             characteristicValueName = Convert.ToString(drChar["CHAR_VALUE"]);
                         }
 
+                        // Create and add the characteristic group to the store
                         ROCharacteristic characteristic = new ROCharacteristic(
                             characteristicGroupKey: characteristicGroupKey,
                             characteristicGroupName: characteristicGroupName,
@@ -152,6 +161,7 @@ namespace Logility.ROWeb
                         storeProperties.Characteristics.Add(characteristic);
                     }
                 }
+                // if key is not found, there is no data to return
                 else
                 {
                     returnCode = eROReturnCode.Failure;
