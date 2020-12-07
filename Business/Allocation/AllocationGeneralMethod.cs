@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using MIDRetail.Data;
 using MIDRetail.Common;
 using MIDRetail.DataCommon;
@@ -781,13 +782,13 @@ namespace MIDRetail.Business.Allocation
                 reserveAsPacks: ReserveAsPacks);
 
             HierarchyLevelProfile hierarchyLevelProfile;
-            HierarchyProfile mainHp = SAB.HierarchyServerSession.GetMainHierarchyData();
-            for (int level = 1; level <= mainHp.HierarchyLevels.Count; level++)
+            HierarchyProfile mainHierarchyProfile = SAB.HierarchyServerSession.GetMainHierarchyData();
+            for (int level = 1; level <= mainHierarchyProfile.HierarchyLevels.Count; level++)
             {
-                hierarchyLevelProfile = (HierarchyLevelProfile)mainHp.HierarchyLevels[level];
+                hierarchyLevelProfile = (HierarchyLevelProfile)mainHierarchyProfile.HierarchyLevels[level];
                 if (hierarchyLevelProfile.LevelType != eHierarchyLevelType.Size)
                 {
-                    method.HierarchyLevels.Add(new System.Collections.Generic.KeyValuePair<int, string>(hierarchyLevelProfile.Key, hierarchyLevelProfile.LevelID));
+                    method.HierarchyLevels.Add(new KeyValuePair<int, string>(hierarchyLevelProfile.Key, hierarchyLevelProfile.LevelID));
                 }
             }
             
