@@ -17,6 +17,7 @@ namespace MIDRetail.DataCommon
 
 		private string _name;
 		private bool _systemGen;
+        private eLockStatus _lockStatus;
 
 		//=============
 		// CONSTRUCTORS
@@ -27,6 +28,7 @@ namespace MIDRetail.DataCommon
 		{
 			_name = "";
 			_systemGen = false;
+            _lockStatus = eLockStatus.Undefined;
 		}
 
 		public JobProfile(DataRow aRow)
@@ -35,6 +37,7 @@ namespace MIDRetail.DataCommon
 			try
 			{
 				LoadFromDataRow(aRow);
+                _lockStatus = eLockStatus.Undefined;
 			}
 			catch (Exception exc)
 			{
@@ -48,6 +51,7 @@ namespace MIDRetail.DataCommon
 		{
 			_name = aName;
 			_systemGen = aSystemGenerated;
+            _lockStatus = eLockStatus.Undefined;
 		}
 
 		//===========
@@ -85,6 +89,21 @@ namespace MIDRetail.DataCommon
 				_systemGen = value;
 			}
 		}
+
+        /// <summary>
+		/// Gets or set Workflow lock status
+		/// </summary>
+		public eLockStatus LockStatus
+        {
+            get
+            {
+                return _lockStatus;
+            }
+            set
+            {
+                _lockStatus = value;
+            }
+        }
 
 		//========
 		// METHODS
@@ -681,6 +700,7 @@ namespace MIDRetail.DataCommon
 		//Begin Track #4815 - JSmith - #283-User (Security) Maintenance
 		private int _ownerUserRID;
 		//End Track #4815
+        private eLockStatus _lockStatus;
 
 		//=============
 		// CONSTRUCTORS
@@ -695,6 +715,7 @@ namespace MIDRetail.DataCommon
 			//Begin Track #4815 - JSmith - #283-User (Security) Maintenance
 			_ownerUserRID = 0;
 			//End Track #4815
+            _lockStatus = eLockStatus.Undefined;
 		}
 
 		public TaskListProfile(DataRow aRow)
@@ -703,6 +724,7 @@ namespace MIDRetail.DataCommon
 			try
 			{
 				LoadFromDataRow(aRow);
+                _lockStatus = eLockStatus.Undefined;
 			}
 			catch (Exception exc)
 			{
@@ -723,6 +745,7 @@ namespace MIDRetail.DataCommon
 			//Begin Track #4815 - JSmith - #283-User (Security) Maintenance
 			_ownerUserRID = aOwnerUserRID;
 			//End Track #4815
+            _lockStatus = eLockStatus.Undefined;
 		}
 
 		//===========
@@ -783,6 +806,21 @@ namespace MIDRetail.DataCommon
 			set { _ownerUserRID = value; }
 		}
 		//End Track #4815
+
+        /// <summary>
+        /// Gets or set Workflow lock status
+        /// </summary>
+        public eLockStatus LockStatus
+        {
+            get
+            {
+                return _lockStatus;
+            }
+            set
+            {
+                _lockStatus = value;
+            }
+        }
 
 		//========
 		// METHODS

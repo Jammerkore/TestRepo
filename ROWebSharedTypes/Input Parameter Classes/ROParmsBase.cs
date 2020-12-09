@@ -288,6 +288,10 @@ namespace Logility.ROWebSharedTypes
     [KnownType(typeof(ROAllocationWorklistViewDetails))]
     [KnownType(typeof(ROAllocationWorklistViewDetailsParms))]
 
+    [KnownType(typeof(ROTaskListPropertiesParms))]
+    [KnownType(typeof(ROTaskListProperties))]
+    [KnownType(typeof(ROTaskProperties))]
+
     public abstract class ROParms
     {
         [DataMember(IsRequired = true)]

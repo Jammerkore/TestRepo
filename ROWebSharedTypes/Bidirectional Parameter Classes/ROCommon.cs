@@ -1123,4 +1123,93 @@ namespace Logility.ROWebSharedTypes
         public bool IsUserView { get { return _isUserView; } set { _isUserView = value; } }  
 
     }
+
+    [DataContract(Name = "ROTaskProperties", Namespace = "http://Logility.ROWeb/")]
+    /// <summary>
+    /// Base class for all task classes
+    /// </summary>
+    public abstract class ROTaskProperties
+    {
+        /// <summary>
+        /// KeyValuePair contining the eTaskType and name of the task
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        protected KeyValuePair<int, string> _task;
+
+        public ROTaskProperties(KeyValuePair<int, string> task)
+        {
+            _task = task;
+        }
+    }
+
+    [DataContract(Name = "ROTaskListProperties", Namespace = "http://Logility.ROWeb/")]
+    /// <summary>
+    /// Base class for all task lists
+    /// </summary>
+    public abstract class ROTaskListProperties : ROBaseProperties
+    {
+        [DataMember(IsRequired = true)]
+        protected KeyValuePair<int, string> _taskList;
+
+        [DataMember(IsRequired = true)]
+        protected string _description;
+
+        [DataMember(IsRequired = true)]
+        protected int _userKey;
+
+        [DataMember(IsRequired = true)]
+        protected List<ROTaskProperties> _tasks;
+
+        public ROTaskListProperties(KeyValuePair<int, string> taskList, string description, int userKey)
+        {
+            _taskList = taskList;
+            _description = description;
+            _userKey = userKey;
+            _tasks = new List<ROTaskProperties>();
+        }
+
+        public KeyValuePair<int, string> TaskList
+        {
+            get { return _taskList; }
+            set { _taskList = value; }
+        }
+
+        public bool AddingTaskList
+        {
+            get { return TaskList.Key == Include.NoRID; }
+        }
+
+        public bool UpdatingTaskList
+        {
+            get { return TaskList.Key != Include.NoRID; }
+        }
+
+        public string Description
+        {
+            get { return _description; }
+            set { _description = value; }
+        }
+
+        public int UserKey
+        {
+            get { return _userKey; }
+            set { _userKey = value; }
+        }
+
+
+        public eGlobalUserType GlobalUserType
+        {
+            get
+            {
+                if (UserKey == Include.GetGlobalUserRID())
+                {
+                    return eGlobalUserType.Global;
+                }
+                else
+                {
+                    return eGlobalUserType.User;
+                }
+            }
+        }
+    }
 }

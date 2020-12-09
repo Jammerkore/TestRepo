@@ -105,6 +105,7 @@
     <Compile Include="Methods\Administration\User\UserMaintenance.cs" />
     <Compile Include="Methods\Allocation\Worklist\AllocationMaintenance.cs" />
     <Compile Include="Methods\Assortment\Review\AssortmentMaintenance.cs" />
+    <Compile Include="Methods\Explorer\TaskListExplorer.cs" />
     <Compile Include="Methods\Hierarchy\HierarchyBase.cs" />
     <Compile Include="Methods\Hierarchy\Node Properties\NodePropertiesBase.cs" />
     <Compile Include="Methods\Hierarchy\Node Properties\NodePropertiesCharacteristics.cs" />
@@ -123,6 +124,7 @@
     <Compile Include="Methods\Hierarchy\HierarchyPropertiesMaintenance.cs" />
     <Compile Include="Methods\Hierarchy\HierarchyPropertiesBase.cs" />
     <Compile Include="Methods\Hierarchy\HierarchyPropertiesProfile.cs" />
+    <Compile Include="Methods\ROTaskListManager.cs" />
     <Compile Include="Methods\WorkUltraGrid.cs">
       <SubType>Form</SubType>
     </Compile>

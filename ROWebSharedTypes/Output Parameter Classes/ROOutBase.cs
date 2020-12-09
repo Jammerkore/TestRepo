@@ -315,6 +315,10 @@ namespace Logility.ROWebSharedTypes
     [KnownType(typeof(ROStoreProfile))]
     [KnownType(typeof(ROStoreProfileOut))]
 
+    [KnownType(typeof(ROTaskListProperties))]
+    [KnownType(typeof(ROTaskProperties))]
+    [KnownType(typeof(ROTaskListPropertiesOut))]
+
     public abstract class ROOut
     {
         public static readonly long lInvalidInstanceID = -1;

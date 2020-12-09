@@ -91,7 +91,8 @@
         ROAssortmentFilterExplorer,
         ROPlanning,
         ApplicationCommon,
-        ROMerchandiseExplorer
+        ROMerchandiseExplorer,
+        ROTaskListExplorer
     };
 
     /// <summary>
@@ -199,6 +200,18 @@
         //Workflow Method Explorer
         GetWorkflowMethodExplorerData,
 
+        //TaskList Explorer
+        GetTaskListExplorerData,
+        GetTasksList,
+        GetTask,
+        SaveTask,
+        DeleteTask,
+        GetTaskList,
+        SaveTaskList,
+        ProcessTaskList,
+        CopyTaskList,
+        DeleteTaskList,
+
         //All Explorers
         RefreshExplorerData,
 
@@ -299,10 +312,6 @@
         //Size Groups
         GetSizeGroupDetails,
         GetLowLevelList,
-
-        
-
-        
 
     };
     public enum eROTrendCaps

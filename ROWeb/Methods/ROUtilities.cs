@@ -987,6 +987,515 @@ namespace Logility.ROWeb
         }
     }
 
+    /// <summary>
+    /// Utility methods for task lists
+    /// </summary>
+    public class TaskListUtilities
+    {
+        /// <summary>
+        /// Get key of the folder where to save the task list
+        /// </summary>
+        /// <param name="folderKey"></param>
+        /// <param name="userKey"></param>
+        /// <param name="profileType"></param>
+        /// <param name="uniqueID"></param>
+        /// <returns></returns>
+        public static int GetTaskListFolderRID(
+            eProfileType profileType, 
+            int folderKey, 
+            int userKey, 
+            string uniqueID
+            )
+        {
+            int folderRID, userRID, folderType;
+            bool folderValid = false;
+            DataTable dt;
+            FolderDataLayer dlFolder = new FolderDataLayer();
+
+
+            folderValid = isFolderValid(
+                dlFolder: dlFolder,
+                profileType: profileType,
+                folderKey: folderKey, 
+                userKey: userKey, 
+                folderType: out folderType
+                );
+
+
+            // Get application root folder for user
+            if (!folderValid)
+            {
+                if (uniqueID != null)
+                {
+                    folderRID = GetTaskListFolderRIDFromUniqueID(
+                        dlFolder: dlFolder,  
+                        userKey: userKey, 
+                        profileType: profileType, 
+                        uniqueID: uniqueID
+                        );
+                    if (folderRID != Include.NoRID)
+                    {
+                        return folderRID;
+                    }
+                }
+
+                if (folderType == eProfileType.WorkflowMethodSubFolder.GetHashCode())
+                {
+                    folderRID = GetTaskListFolderRIDFromGrouping(
+                        dlFolder: dlFolder,
+                        userKey: userKey, 
+                        profileType: profileType,
+                        folderKey: folderKey
+                        );
+                    if (folderRID != Include.NoRID)
+                    {
+                        return folderRID;
+                    }
+                }
+
+                //// override type to actual folders
+                //if (applicationFolderType == eProfileType.WorkflowMethodAllocationWorkflowsFolder
+                //    || applicationFolderType == eProfileType.WorkflowMethodAllocationMethodsFolder
+                //    || isAllocationMethodFolder(applicationFolderType))
+                //{
+                //    applicationFolderType = eProfileType.WorkflowMethodAllocationFolder;
+                //}
+                //else if (applicationFolderType == eProfileType.WorkflowMethodOTSForcastWorkflowsFolder
+                //    || applicationFolderType == eProfileType.WorkflowMethodOTSForcastMethodsFolder
+                //    || isOTSForecastMethodFolder(applicationFolderType))
+                //{
+                //    applicationFolderType = eProfileType.WorkflowMethodOTSForcastFolder;
+                //}
+
+                dt = dlFolder.Folder_Read(userKey, profileType);
+                if (dt != null
+                && dt.Rows.Count > 0)
+                {
+                    folderRID = Convert.ToInt32(dt.Rows[0]["FOLDER_RID"]);
+                    userRID = Convert.ToInt32(dt.Rows[0]["USER_RID"]);
+                    folderType = Convert.ToInt32(dt.Rows[0]["FOLDER_TYPE"]);
+
+                    folderValid = true;
+                    folderKey = folderRID;
+                }
+                else
+                {
+                    throw new Exception("Unable to determine folder");
+                }
+            }
+
+            return folderKey;
+        }
+
+        /// <summary>
+        /// Determines if the folder is valid for the item type
+        /// </summary>
+        /// <param name="dlFolder">The data layer for folder database calls</param>
+        /// <param name="profileType">The eProfileType of the item</param>
+        /// <param name="folderKey">The key of the folder</param>
+        /// <param name="userKey">The key of the user</param>
+        /// <param name="folderType">The type of the folder</param>
+        /// <returns>A flag identifying if the folder is valid for the item</returns>
+        private static bool isFolderValid(
+            FolderDataLayer dlFolder, 
+            eProfileType profileType, 
+            int folderKey, 
+            int userKey, 
+            out int folderType
+            )
+        {
+            bool folderValid = false;
+            int folderRID, userRID;
+
+            folderType = Include.Undefined;
+
+            DataTable dt = dlFolder.Folder_Read(folderKey);
+            if (dt != null
+                && dt.Rows.Count > 0)
+            {
+                folderRID = Convert.ToInt32(dt.Rows[0]["FOLDER_RID"]);
+                userRID = Convert.ToInt32(dt.Rows[0]["USER_RID"]);
+                folderType = Convert.ToInt32(dt.Rows[0]["FOLDER_TYPE"]);
+
+                // Is favorites folder
+                if (folderType == eProfileType.TaskListMainFavoritesFolder.GetHashCode())
+                {
+                    folderValid = true;
+                }
+                // Is valid application root folder
+                //else if (userRID == userKey
+                //    && folderType == applicationFolderType.GetHashCode())
+                //{
+                //    folderValid = true;
+                //}
+                //// Is valid subfolder
+                //else
+                //{
+                //    int subfolderType = GetSubFolderType(applicationFolderType, profileType).GetHashCode();
+                //    if (userRID == userKey
+                //        && folderType == subfolderType)
+                //    {
+                //        folderValid = true;
+                //    }
+                //}
+
+            }
+
+            return folderValid;
+        }
+
+        /// <summary>
+        /// Get the folder key using the unique ID
+        /// </summary>
+        /// <param name="dlFolder">The data layer for folder database calls</param>
+        /// <param name="userKey">The key of the user</param>
+        /// <param name="profileType">The eProfileType of the item</param>
+        /// <param name="uniqueID">The unique ID of the item</param>
+        /// <returns></returns>
+        private static int GetTaskListFolderRIDFromUniqueID(
+            FolderDataLayer dlFolder, 
+            int userKey, 
+            eProfileType profileType, 
+            string uniqueID
+            )
+        {
+            int folderKey = Include.NoRID;
+            int folderType;
+
+            string[] keys = uniqueID.Split('_');
+
+            for (int i = keys.Length - 1; i >= 0; --i)
+            {
+                folderKey = Convert.ToInt32(keys[i]);
+                if (isFolderValid(
+                    dlFolder: dlFolder, 
+                    folderKey: folderKey, 
+                    userKey: userKey, 
+                    profileType: profileType, 
+                    folderType: out folderType)
+                    )
+                {
+                    return folderKey;
+                }
+
+                //if (folderType == eProfileType.WorkflowMethodSubFolder.GetHashCode())
+                //{
+                //    folderKey = GetWorkflowMethodFolderRIDFromGrouping(
+                //        dlFolder: dlFolder, 
+                //        userKey: userKey, 
+                //        profileType: profileType, 
+                //        folderKey: folderKey
+                //        );
+                //    if (folderKey != Include.NoRID)
+                //    {
+                //        return folderKey;
+                //    }
+                //}
+            }
+
+            return Include.NoRID;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dlFolder">The data layer for folder database calls</param>
+        /// <param name="userKey">The key of the user</param>
+        /// <param name="profileType">The eProfileType of the data</param>
+        /// <param name="folderKey">The key of the folder</param>
+        /// <returns></returns>
+        private static int GetTaskListFolderRIDFromGrouping(
+            FolderDataLayer dlFolder, 
+            int userKey, 
+            eProfileType profileType, 
+            int folderKey
+            )
+        {
+            DataTable dt;
+            int userRID, folderType;
+
+            dt = dlFolder.Folder_Children_Read(
+                aUserRID: userKey, 
+                aFolderRID: folderKey
+                );
+            if (dt != null
+            && dt.Rows.Count > 0)
+            {
+                foreach (DataRow dr in dt.Rows)
+                {
+                    folderKey = Convert.ToInt32(dr["CHILD_ITEM_RID"]);
+                    userRID = Convert.ToInt32(dr["USER_RID"]);
+                    folderType = Convert.ToInt32(dr["CHILD_ITEM_TYPE"]);
+                    if (folderType == eProfileType.WorkflowMethodSubFolder.GetHashCode())
+                    {
+                        return GetTaskListFolderRIDFromGrouping(
+                            dlFolder: dlFolder, 
+                            userKey: userKey, 
+                            profileType: profileType, 
+                            folderKey: folderKey
+                            );
+                    }
+                    else if (isFolderValid(
+                        dlFolder: dlFolder, 
+                        folderKey: folderKey, 
+                        userKey: userKey, 
+                        profileType: profileType, 
+                        folderType: out folderType)
+                        )
+                    {
+                        return folderKey;
+                    }
+                }
+            }
+
+            return Include.NoRID;
+        }
+
+        /// <summary>
+        /// Get the folder type from the item type
+        /// </summary>
+        /// <param name="profileType">The eProfileType of the data</param>
+        /// <returns></returns>
+        private static eProfileType GetSubFolderType(
+            eProfileType profileType)
+        {
+            switch (profileType)
+            {
+                case eProfileType.TaskList:
+                    return eProfileType.TaskListSubFolder;
+                case eProfileType.Job:
+                    return eProfileType.TaskListSubFolder;
+                default:
+                    return eProfileType.None;
+            }
+        }
+
+        /// <summary>
+        /// Creates a new task list node
+        /// </summary>
+        /// <param name="profileType">The eProfileType of the data</param>
+        /// <param name="taskListProfile">The profile containing the task list properties</param>
+        /// <returns></returns>
+        public static List<ROTreeNodeOut> BuildTaskListNode(
+            eProfileType profileType, 
+            TaskListProfile taskListProfile
+            )
+        {
+            List<ROTreeNodeOut> nodeList = new List<ROTreeNodeOut>();
+
+            //nodeList.Add(new ROTreeNodeOut(
+            //        key: abm.Key,
+            //        text: abm.Name,
+            //        ownerUserRID: abm.User_RID,
+            //        treeNodeType: eTreeNodeType.ObjectNode,
+            //        profileType: abm.ProfileType,
+            //        isReadOnly: false,
+            //        canBeDeleted: true,
+            //        canCreateNewFolder: true,
+            //        canCreateNewItem: true,
+            //        canBeProcessed: true,
+            //        canBeCopied: true,
+            //        canBeCut: true,
+            //        hasChildren: false,
+            //        ROApplicationType: applicationType
+            //        )
+            //        );
+
+            return nodeList;
+        }
+
+        /// <summary>
+        /// Lock a Task List or Job before allowing updating
+        /// </summary>
+        /// <param name="SAB">The SessionAddressBlock containing connectivity to the services</param>
+        /// <param name="profileType">The eProfileType of the item to lock</param>
+        /// <param name="changeType">The eChangeType of the maintenance being performed</param>
+        /// <param name="Key">The key of the item to lock</param>
+        /// <param name="Name">The name of the item to lock</param>
+        /// <param name="allowReadOnly">A flag identifying if the item can be returned read only if a lock cannot be acquired</param>
+        /// <param name="message">A message if an error occurs</param>
+        /// <returns></returns>
+        public static eLockStatus LockItem(
+            SessionAddressBlock SAB, 
+            eProfileType profileType, 
+            eChangeType changeType, 
+            int Key, 
+            string Name, 
+            bool allowReadOnly, 
+            out string message
+            )
+        {
+            eLockStatus lockStatus = eLockStatus.Undefined;
+            message = null;
+            GenericEnqueue objEnqueue;
+            string itemType;
+            string errMsg;
+            eLockType lockType;
+
+            try
+            {
+                switch (profileType)
+                {
+                    case eProfileType.TaskList:
+                        lockType = eLockType.TaskList;
+                        itemType = "Task List";
+                        break;
+                    case eProfileType.Job:
+                        lockType = eLockType.Job;
+                        itemType = "Job";
+                        break;
+                    default:
+                        return lockStatus;
+                }
+
+                objEnqueue = new GenericEnqueue(
+                    aLockType: lockType, 
+                    aObjectRID: Key, 
+                    aUserRID: SAB.ClientServerSession.UserRID, 
+                    aClientThreadID: SAB.ClientServerSession.ThreadID
+                    );
+
+                try
+                {
+                    objEnqueue.EnqueueGeneric();
+                    lockStatus = eLockStatus.Locked;
+                }
+                catch (GenericConflictException)
+                {
+                    string[] errParms = new string[3];
+                    errParms.SetValue(itemType, 0);
+                    errParms.SetValue(Name.Trim(), 1);
+                    errParms.SetValue(((GenericConflict)objEnqueue.ConflictList[0]).UserName, 2);
+                    errMsg = MIDText.GetText(eMIDTextCode.msg_StandardInUseMsg, errParms);
+
+                    lockStatus = eLockStatus.ReadOnly;
+                    if (allowReadOnly)
+                    {
+                        MIDEnvironment.isChangedToReadOnly = true;
+                        message = itemType + " returned as read only";
+                    }
+                    else
+                    {
+                        message = errMsg;
+                    } 
+                }
+
+                return lockStatus;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="SAB">The SessionAddressBlock containing connectivity to the services</param>
+        /// <param name="profileType">The eProfileType of the item to unlock</param>
+        /// <param name="Key">The key of the item to unlock</param>
+        /// <param name="message">A message if an error occurs</param>
+        /// <returns></returns>
+        public static eLockStatus UnLockItem(
+            SessionAddressBlock SAB, 
+            eProfileType profileType, 
+            int Key, 
+            out string message
+            )
+        {
+            eLockStatus lockStatus = eLockStatus.Undefined;
+            message = null;
+            GenericEnqueue objEnqueue;
+            string itemType;
+            eLockType lockType;
+
+            try
+            {
+                switch (profileType)
+                {
+                    case eProfileType.TaskList:
+                        lockType = eLockType.TaskList;
+                        itemType = "Task List";
+                        break;
+                    case eProfileType.Job:
+                        lockType = eLockType.Job;
+                        itemType = "Job";
+                        break;
+                    default:
+                        return lockStatus;
+                }
+
+                objEnqueue = new GenericEnqueue(
+                    aLockType: lockType,
+                    aObjectRID: Key,
+                    aUserRID: SAB.ClientServerSession.UserRID,
+                    aClientThreadID: SAB.ClientServerSession.ThreadID
+                    );
+
+                objEnqueue.DequeueGeneric();
+                lockStatus = eLockStatus.Undefined;
+
+                return lockStatus;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Returns a flag identifying if the profile is a task list
+        /// </summary>
+        /// <param name="profileType">The eProfileType of the item</param>
+        /// <returns></returns>
+        public static bool isTaskList(
+            eProfileType profileType
+            )
+        {
+            if (profileType == eProfileType.TaskList)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Returns a flag identifying if the profile is a job
+        /// </summary>
+        /// <param name="profileType">The eProfileType of the item</param>
+        /// <returns></returns>
+        public static bool isJob(
+            eProfileType profileType
+            )
+        {
+            if (profileType == eProfileType.Job)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Get folder profile type based on type of the item
+        /// </summary>
+        /// <param name="profileType">The eProfileType of the item</param>
+        /// <returns></returns>
+        public static eProfileType GetFolderType(
+            eProfileType profileType
+            )
+        {
+            switch (profileType)
+            {
+                case eProfileType.TaskList:
+                    return eProfileType.TaskListSubFolder;
+                case eProfileType.Job:
+                    return eProfileType.TaskListSubFolder;
+                default:
+                    return eProfileType.TaskListSubFolder;
+            }
+        }
+    }
+
     public class InUse
     {
         /// <summary>

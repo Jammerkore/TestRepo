@@ -929,4 +929,20 @@ namespace Logility.ROWebSharedTypes
 
         #endregion
     }
+
+    [DataContract(Name = "ROTaskListPropertiesOut", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskListPropertiesOut : ROOut
+    {
+        [DataMember(IsRequired = true)]
+        private ROTaskListProperties _ROTaskListProperties;
+
+        public ROTaskListPropertiesOut(eROReturnCode ROReturnCode, string sROMessage, long ROInstanceID, ROTaskListProperties ROTaskListProperties) :
+            base(ROReturnCode, sROMessage, ROInstanceID)
+        {
+            _ROTaskListProperties = ROTaskListProperties;
+        }
+
+        public ROTaskListProperties ROTaskListProperties { get { return _ROTaskListProperties; } }
+
+    }
 }

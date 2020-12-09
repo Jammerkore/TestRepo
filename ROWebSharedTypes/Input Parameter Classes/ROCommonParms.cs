@@ -694,4 +694,30 @@ namespace Logility.ROWebSharedTypes
         public List<ROColumnFormat> ColumnFormats { get { return _columnFormats; } }
 
     }
+
+    [DataContract(Name = "ROTaskListPropertiesParms", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskListPropertiesParms : ROParms
+    {
+        [DataMember(IsRequired = true)]
+        private ROTaskListProperties _ROTaskListProperties;
+        [DataMember(IsRequired = true)]
+        private int _folderKey;
+        [DataMember(IsRequired = true)]
+        private string _folderUniqueID;
+
+        public ROTaskListPropertiesParms(string sROUserID, string sROSessionID, eROClass ROClass, eRORequest RORequest, long ROInstanceID, ROTaskListProperties ROTaskListProperties, int folderKey = Include.NoRID, string folderUniqueID = null) :
+            base(sROUserID, sROSessionID, ROClass, RORequest, ROInstanceID)
+        {
+            _ROTaskListProperties = ROTaskListProperties;
+            _folderKey = folderKey;
+            _folderUniqueID = folderUniqueID;
+        }
+
+        public ROTaskListProperties ROTaskListProperties { get { return _ROTaskListProperties; } }
+
+        public int FolderKey { get { return _folderKey; } set { _folderKey = value; } }
+
+        public string FolderUniqueID { get { return _folderUniqueID; } set { _folderUniqueID = value; } }
+
+    }
 }
