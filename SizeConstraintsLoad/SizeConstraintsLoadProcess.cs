@@ -332,18 +332,23 @@ namespace MIDRetail.SizeConstraintsLoad
 				else 
 				  sizeMax = Convert.ToInt32(mSet.SizeMax,CultureInfo.CurrentUICulture);
 
+                string sizeMultDisplay = string.Empty;
 				if(mSet.SizeMult==null || mSet.SizeMult.Trim()=="")
 				  sizeMult = Include.UndefinedMultiple;
 				else 
-				  sizeMult = Convert.ToInt32(mSet.SizeMult,CultureInfo.CurrentUICulture);
+                {
+                    sizeMult = Convert.ToInt32(mSet.SizeMult, CultureInfo.CurrentUICulture);
+                    sizeMultDisplay = sizeMult.ToString();
+                }
 
-				if(sizeMin >= sizeMax)
+                //if(sizeMin >= sizeMax)
+                if (sizeMin > sizeMax)
 				{
 					//msgText = " Size Min  or Size Mult cannot be greater thanSize Max. Size constraint model = " + conModel.ModelName + System.Environment.NewLine;
 					msgText= _SAB.ApplicationServerSession.Audit.GetText(eMIDTextCode.msg_scl_InvalidSizeMinAndMax);
 					msgText = msgText.Replace("{0}",conModel.ModelName + " Set = " + mSet.SetName + 
                                               " Color = " + mSet.ColorCode +  " Size Min = " + sizeMin + 
-											  " Size Max = "  + sizeMax + "Size Mult = " + sizeMult);
+											  " Size Max = "  + sizeMax + "Size Mult = " + sizeMultDisplay);
 
 					_audit.Add_Msg(eMIDMessageLevel.Edit, msgText, GetType().Name);
 					scError = true;                 
@@ -351,7 +356,8 @@ namespace MIDRetail.SizeConstraintsLoad
 				}
 
 				//Get the Store Group Lvl RID and setIdx
-				DataRow[] setRows = dtGrpLevel.Select("BAND_DSC='" + mSet.SetName + "'");
+                string setName = mSet.SetName.Replace("'", "''");
+                DataRow[] setRows = dtGrpLevel.Select("BAND_DSC='" + setName + "'");
 				if(setRows == null || setRows.Length != 1)
 				{
 					//msgText = "Invalid Store group level defined in size constraint model " + conModel.ModelName + System.Environment.NewLine;
