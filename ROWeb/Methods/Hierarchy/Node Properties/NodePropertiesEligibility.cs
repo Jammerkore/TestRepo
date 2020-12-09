@@ -397,6 +397,11 @@ namespace Logility.ROWeb
                             default:
                                 break;
                         }
+                        if (!eligibilityStore.EligibilityValues.EligibilityIsInherited)
+                        {
+                            sep.EligIsInherited = false;
+                            sep.EligInheritedFromNodeRID = Include.NoRID;
+                        }
                     }
                     else if (sep.EligType != eEligibilitySettingType.None)  // clear value
                     {
