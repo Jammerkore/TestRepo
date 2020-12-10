@@ -314,6 +314,7 @@ namespace Logility.ROWebSharedTypes
 
     [KnownType(typeof(ROStoreProfile))]
     [KnownType(typeof(ROStoreProfileOut))]
+    [KnownType(typeof(ROAllStoresProfilesOut))]
 
     [KnownType(typeof(ROTaskListProperties))]
     [KnownType(typeof(ROTaskProperties))]

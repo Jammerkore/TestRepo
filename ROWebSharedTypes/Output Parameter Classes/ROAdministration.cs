@@ -140,4 +140,32 @@ namespace Logility.ROWebSharedTypes
         public ROStoreProfile ROStoreProfile { get { return _ROStoreProfile; } }
 
     }
+
+    [DataContract(Name = "ROAllStoresProfilesOut", Namespace = "http://Logility.ROWeb/")]
+    public class ROAllStoresProfilesOut : ROOut
+    {
+        [DataMember(IsRequired = true)]
+        private List<ROStoreProfile> _activeStores;
+
+        [DataMember(IsRequired = true)]
+        private List<ROStoreProfile> _inactiveStores;
+
+        [DataMember(IsRequired = true)]
+        private List<ROStoreProfile> _deletedStores;
+
+        public ROAllStoresProfilesOut(eROReturnCode ROReturnCode, string sROMessage, long ROInstanceID) :
+            base(ROReturnCode, sROMessage, ROInstanceID)
+        {
+            _activeStores = new List<ROStoreProfile>();
+            _inactiveStores = new List<ROStoreProfile>();
+            _deletedStores = new List<ROStoreProfile>();
+        }
+
+        public List<ROStoreProfile> ActiveStores { get { return _activeStores; } }
+
+        public List<ROStoreProfile> InactiveStores { get { return _inactiveStores; } }
+
+        public List<ROStoreProfile> DeletedStores { get { return _deletedStores; } }
+
+    }
 }

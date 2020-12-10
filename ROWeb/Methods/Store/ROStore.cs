@@ -50,6 +50,8 @@ namespace Logility.ROWeb
                         ROKeyParms parms = (ROKeyParms)Parms;
                         return GetStoreProfile(parms.Key);
                     }
+                case eRORequest.GetAllStoresProfiles:
+                    return GetAllStoresProfiles();
                 case eRORequest.StoreComboFiltersData:
                     return GetStoreFilterComboData();
                
@@ -90,7 +92,6 @@ namespace Logility.ROWeb
         {
             eROReturnCode returnCode = eROReturnCode.Successful;
             string message = null;
-            DateTime sellingOpenDate, sellingCloseDate, stockOpenDate, stockCloseDate;
 
             try
             {
@@ -98,39 +99,116 @@ namespace Logility.ROWeb
 
                 if (storeProfile.Key != Include.NoRID)
                 {
-                    sellingOpenDate = storeProfile.SellingOpenDt;
-                    sellingCloseDate = storeProfile.SellingCloseDt;
-                    stockOpenDate = storeProfile.StockOpenDt;
-                    stockCloseDate = storeProfile.StockCloseDt;
-
-                    storeProperties = new ROStoreProfile(
-                        store: new KeyValuePair<int, string>(storeProfile.Key, storeProfile.StoreId),
-                        name: storeProfile.StoreName,
-                        description: storeProfile.StoreDescription,
-                        isActive: storeProfile.ActiveInd,
-                        isMarkedForDeletion: storeProfile.DeleteStore,
-                        city: storeProfile.City == null ? string.Empty : storeProfile.City,
-                        state: storeProfile.State == null ? string.Empty : storeProfile.State,
-                        sellingSquareFootage: storeProfile.SellingSqFt,
-                        sellingOpenDate: sellingOpenDate == Include.UndefinedDate ? string.Empty : sellingOpenDate.ToShortDateString(),
-                        sellingCloseDate: sellingCloseDate == Include.UndefinedDate ? string.Empty : sellingCloseDate.ToShortDateString(),
-                        stockOpenDate: stockOpenDate == Include.UndefinedDate ? string.Empty : stockOpenDate.ToShortDateString(),
-                        stockCloseDate: stockCloseDate == Include.UndefinedDate ? string.Empty : stockCloseDate.ToShortDateString(),
-                        leadTime: storeProfile.LeadTime,
-                        shipOnMonday: storeProfile.ShipOnMonday,
-                        shipOnTuesday: storeProfile.ShipOnTuesday,
-                        shipOnWednesday: storeProfile.ShipOnWednesday,
-                        shipOnThursday: storeProfile.ShipOnThursday,
-                        shipOnFriday: storeProfile.ShipOnFriday,
-                        shipOnSaturday: storeProfile.ShipOnSaturday,
-                        shipOnSunday: storeProfile.ShipOnSunday,
-                        text: storeProfile.Text,
-                        storeStatus: GetName.GetStoreStatus(storeStatus: storeProfile.Status),
-                        stockStatus: GetName.GetStoreStatus(storeStatus: storeProfile.StockStatus),
-                        similarStoreModel: storeProfile.SimilarStoreModel,
-                        virtualStoreWarehouse_ID: storeProfile.IMO_ID == null ? string.Empty : storeProfile.IMO_ID
+                    storeProperties = BuildStoreProfile(
+                        storeProfile: storeProfile
                         );
+                }
+                // if key is not found, there is no data to return
+                else
+                {
+                    returnCode = eROReturnCode.Failure;
+                    message = SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_StoreNotFound);
+                }
 
+                return new ROStoreProfileOut(returnCode, message, ROInstanceID, storeProperties);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Retrieves the profiles for all stores separated by active, inactive and deleted
+        /// </summary>
+
+        /// <returns>ROStoreProfileOut</returns>
+        private ROOut GetAllStoresProfiles()
+        {
+            eROReturnCode returnCode = eROReturnCode.Successful;
+            string message = null;
+
+            ROAllStoresProfilesOut allStoresProfiles = new ROAllStoresProfilesOut(returnCode, message, ROInstanceID);
+
+            try
+            {
+                ROStoreProfile storeProperties = null;
+                foreach (StoreProfile storeProfile in StoreMgmt.StoreProfiles_GetAllStoresList())
+                {
+                    storeProperties = BuildStoreProfile(
+                        storeProfile: storeProfile,
+                        populateChracteristics: false
+                        );
+                    if (storeProperties.IsMarkedForDeletion)
+                    {
+                        allStoresProfiles.DeletedStores.Add(storeProperties);
+                    }
+                    else if (storeProperties.IsActive)
+                    {
+                        allStoresProfiles.ActiveStores.Add(storeProperties);
+                    }
+                    else
+                    {
+                        allStoresProfiles.InactiveStores.Add(storeProperties);
+                    }
+                }
+
+                return allStoresProfiles;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Build a ROStoreProfile object from a StoreProfile object for the store
+        /// </summary>
+        /// <param name="storeProfile">The properties for the store</param>
+        /// <returns>ROStoreProfile</returns>
+        private ROStoreProfile BuildStoreProfile(StoreProfile storeProfile, bool populateChracteristics = true)
+        {
+            DateTime sellingOpenDate, sellingCloseDate, stockOpenDate, stockCloseDate;
+
+            try
+            {
+                ROStoreProfile storeProperties;
+
+                sellingOpenDate = storeProfile.SellingOpenDt;
+                sellingCloseDate = storeProfile.SellingCloseDt;
+                stockOpenDate = storeProfile.StockOpenDt;
+                stockCloseDate = storeProfile.StockCloseDt;
+
+                storeProperties = new ROStoreProfile(
+                    store: new KeyValuePair<int, string>(storeProfile.Key, storeProfile.StoreId),
+                    name: storeProfile.StoreName,
+                    description: storeProfile.StoreDescription,
+                    isActive: storeProfile.ActiveInd,
+                    isMarkedForDeletion: storeProfile.DeleteStore,
+                    city: storeProfile.City == null ? string.Empty : storeProfile.City,
+                    state: storeProfile.State == null ? string.Empty : storeProfile.State,
+                    sellingSquareFootage: storeProfile.SellingSqFt,
+                    sellingOpenDate: sellingOpenDate == Include.UndefinedDate ? string.Empty : sellingOpenDate.ToShortDateString(),
+                    sellingCloseDate: sellingCloseDate == Include.UndefinedDate ? string.Empty : sellingCloseDate.ToShortDateString(),
+                    stockOpenDate: stockOpenDate == Include.UndefinedDate ? string.Empty : stockOpenDate.ToShortDateString(),
+                    stockCloseDate: stockCloseDate == Include.UndefinedDate ? string.Empty : stockCloseDate.ToShortDateString(),
+                    leadTime: storeProfile.LeadTime,
+                    shipOnMonday: storeProfile.ShipOnMonday,
+                    shipOnTuesday: storeProfile.ShipOnTuesday,
+                    shipOnWednesday: storeProfile.ShipOnWednesday,
+                    shipOnThursday: storeProfile.ShipOnThursday,
+                    shipOnFriday: storeProfile.ShipOnFriday,
+                    shipOnSaturday: storeProfile.ShipOnSaturday,
+                    shipOnSunday: storeProfile.ShipOnSunday,
+                    text: storeProfile.Text,
+                    storeStatus: GetName.GetStoreStatus(storeStatus: storeProfile.Status),
+                    stockStatus: GetName.GetStoreStatus(storeStatus: storeProfile.StockStatus),
+                    similarStoreModel: storeProfile.SimilarStoreModel,
+                    virtualStoreWarehouse_ID: storeProfile.IMO_ID == null ? string.Empty : storeProfile.IMO_ID
+                    );
+
+                if (populateChracteristics)
+                {
                     // Get all store characteristic groups and values
                     StoreMaint storeMaintData = new StoreMaint();
                     DataSet dsValues = storeMaintData.ReadStoresFieldsForMaint(storeProfile.Key);
@@ -161,14 +239,8 @@ namespace Logility.ROWeb
                         storeProperties.Characteristics.Add(characteristic);
                     }
                 }
-                // if key is not found, there is no data to return
-                else
-                {
-                    returnCode = eROReturnCode.Failure;
-                    message = SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_StoreNotFound);
-                }
 
-                return new ROStoreProfileOut(returnCode, message, ROInstanceID, storeProperties);
+                return storeProperties;
             }
             catch
             {

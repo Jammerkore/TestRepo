@@ -236,6 +236,30 @@ namespace MIDRetail.Business
             }
         }
 
+        public static ProfileList StoreProfiles_GetAllStoresList()
+        {
+            try
+            {
+                AcquireReaderLock();
+                ProfileList activeList = new ProfileList(eProfileType.Store);
+                foreach (StoreProfile sp in _allStoreList.ArrayList)
+                {
+                    activeList.Add(sp);
+                }
+                activeList.ArrayList.Sort();
+                return activeList;
+            }
+            catch (Exception err)
+            {
+                throw;
+            }
+            finally
+            {
+                // Ensure that the lock is released.
+                ReleaseReaderLock();
+            }
+        }
+
         // Begin TT#2078-MD - JSmith - Object Reference error updating Store Group
         //public static void StoreProfiles_RefreshFromService()
         public static void StoreProfiles_RefreshFromService(bool refreshSessions)
