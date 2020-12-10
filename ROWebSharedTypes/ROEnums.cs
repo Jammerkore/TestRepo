@@ -202,7 +202,7 @@
 
         //TaskList Explorer
         GetTaskListExplorerData,
-        GetTasksList,
+        GetListOfTasks,
         GetTask,
         SaveTask,
         DeleteTask,

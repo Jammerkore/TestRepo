@@ -101,8 +101,8 @@ namespace Logility.ROWeb
                     return DeleteExplorerData(Parms: (ROTreeNodeParms)Parms);
                 
                 // Tasks
-                case eRORequest.GetTasksList:
-                    return ROTaskListManager.GetTasksList();
+                case eRORequest.GetListOfTasks:
+                    return ROTaskListManager.GetListOfTasks();
 
                 // TaskLists
                 case eRORequest.GetTaskList:

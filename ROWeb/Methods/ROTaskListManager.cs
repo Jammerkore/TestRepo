@@ -155,6 +155,7 @@ namespace Logility.ROWeb
             _ROWebTools = ROWebTools;
             _ROInstanceID = ROInstanceID;
             _applicationSessionTransaction = applicationSessionTransaction;
+            FunctionSecurity = _SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.ToolsScheduler);
             // Get the security for the user
             _userSecLvl = _SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.ToolsSchedulerUserTaskLists);
             _globalSecLvl = _SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.ToolsSchedulerGlobalTaskLists);
@@ -205,11 +206,11 @@ namespace Logility.ROWeb
         /// Gets a list of tasks for task lists.
         /// </summary>
         /// <returns>ROIntStringPairListOut with KeyValuePair of eTaskType and task name</returns>
-        public ROOut GetTasksList()
+        public ROOut GetListOfTasks()
         {
             try
             {
-                return new ROIntStringPairListOut(eROReturnCode.Successful, null, ROInstanceID, GetTasksLists());
+                return new ROIntStringPairListOut(eROReturnCode.Successful, null, ROInstanceID, GetTasksList());
             }
             catch (Exception ex)
             {
@@ -222,7 +223,7 @@ namespace Logility.ROWeb
         /// Build list of tasks based on the user's security
         /// </summary>
         /// <returns>ROIntStringPairListOut with KeyValuePair of eTaskType and task name</returns>
-        internal List<KeyValuePair<int, string>> GetTasksLists()
+        internal List<KeyValuePair<int, string>> GetTasksList()
         {
             List<KeyValuePair<int, string>> taskList = new List<KeyValuePair<int, string>>();
 
@@ -259,18 +260,116 @@ namespace Logility.ROWeb
         /// <param name="processingApply">A flag identifyinig if an apply is being processed</param>
         /// <returns></returns>
         public ROOut GetTaskList(
-            ROProfileKeyParms TaskListParameters, 
+            ROProfileKeyParms taskListParameters, 
             bool processingApply = false
             )
         {
-            bool successful;
             string message = null;
             eROReturnCode returnCode = eROReturnCode.Successful;
-            ROTaskListProperties taskListProperties = null;
 
-            
+            ROTaskListProperties taskListProperties = BuildTaskListProperties(taskListParameters);
+
+            // update FunctionSecurity based on user's security
+            if (taskListParameters.ReadOnly)
+            {
+                FunctionSecurity.SetReadOnly();
+            }
+            else
+            {
+                switch (_taskListProfile.OwnerUserRID)
+                {
+                    case Include.GlobalUserRID:
+                        if (_globalSecLvl.AllowUpdate)
+                        {
+                            FunctionSecurity.SetAllowUpdate();
+                        }
+                        else
+                        {
+                            FunctionSecurity.SetReadOnly();
+                        }
+                        break;
+                    case Include.SystemUserRID:
+                        if (_systemSecLvl.AllowUpdate)
+                        {
+                            FunctionSecurity.SetAllowUpdate();
+                        }
+                        else
+                        {
+                            FunctionSecurity.SetReadOnly();
+                        }
+                        break;
+                    default:
+                        if (_userSecLvl.AllowUpdate)
+                        {
+                            FunctionSecurity.SetAllowUpdate();
+                        }
+                        else
+                        {
+                            FunctionSecurity.SetReadOnly();
+                        }
+                        break;
+                }
+            }
+
+            // Lock the task list if not read only
+            if (!FunctionSecurity.IsReadOnly)
+            {
+                _taskListProfile.LockStatus = TaskListUtilities.LockItem(
+                    SAB: SAB,
+                    profileType: _taskListProfile.ProfileType,
+                    changeType: eChangeType.update,
+                    Key: _taskListProfile.Key,
+                    Name: _taskListProfile.Name,
+                    allowReadOnly: true,
+                    message: out message
+                    );
+                // set environment variable is was unable to lock the task list
+                if (_taskListProfile.LockStatus == eLockStatus.ReadOnly)
+                {
+                    MIDEnvironment.isChangedToReadOnly = true;
+                    MIDEnvironment.Message = message;
+                }
+            }
 
             return new ROTaskListPropertiesOut(returnCode, message, ROInstanceID, taskListProperties);
+        }
+
+        private ROTaskListProperties BuildTaskListProperties(ROProfileKeyParms taskListParameters)
+        {
+            ROTaskListProperties taskListProperties;
+            ROTaskProperties taskProperties;
+            eTaskType taskType = eTaskType.None;
+            string name, messageLevel;
+            eMIDMessageLevel MIDMessageLevel;
+
+            ScheduleData scheduleData = new ScheduleData();
+            _taskListProfile = new TaskListProfile(scheduleData.TaskList_Read(taskListParameters.Key));
+            taskListProperties = new ROTaskListProperties(
+                taskList: new KeyValuePair<int, string>(_taskListProfile.Key, _taskListProfile.Name),
+                userKey: _taskListProfile.OwnerUserRID
+                );
+
+            DataTable tasks = scheduleData.Task_ReadByTaskList(taskListParameters.Key);
+
+            foreach (DataRow dataRow in tasks.Rows)
+            {
+                taskType = (eTaskType)Convert.ToInt32(dataRow["TASK_TYPE"]);
+                name = MIDText.GetTextOnly((int)taskType);
+                MIDMessageLevel = (eMIDMessageLevel)Convert.ToInt32(dataRow["MAX_MESSAGE_LEVEL"]);
+                messageLevel = MIDText.GetTextOnly((int)MIDMessageLevel);
+
+                taskProperties = new ROTaskProperties(
+                    task: new KeyValuePair<int, string>((int)taskType, name),
+                    maximumMessageLevel: new KeyValuePair<int, string>((int)MIDMessageLevel, messageLevel)
+                    );
+                taskListProperties.Tasks.Add(taskProperties);
+            }
+
+            taskListProperties.IsReadOnly = FunctionSecurity.IsReadOnly;
+            taskListProperties.CanBeProcessed = FunctionSecurity.AllowExecute;
+            taskListProperties.CanBeDeleted = FunctionSecurity.AllowDelete;
+
+            return taskListProperties;
         }
 
         /// <summary>
@@ -316,7 +415,7 @@ namespace Logility.ROWeb
             }
 
             // Build new object with updated values
-            ROProfileKeyParms TaskListGetParm = new ROProfileKeyParms(
+            ROProfileKeyParms taskListGetParameters = new ROProfileKeyParms(
                 sROUserID: TaskListParameters.ROUserID, 
                 sROSessionID: TaskListParameters.ROSessionID, 
                 ROClass: TaskListParameters.ROClass,
@@ -326,7 +425,7 @@ namespace Logility.ROWeb
                 key: TaskListParameters.ROTaskListProperties.TaskList.Key, 
                 readOnly: false
                 );
-            return GetTaskList(TaskListParameters: TaskListGetParm, processingApply: true);
+            return GetTaskList(taskListParameters: taskListGetParameters, processingApply: true);
         }
 
         /// <summary>

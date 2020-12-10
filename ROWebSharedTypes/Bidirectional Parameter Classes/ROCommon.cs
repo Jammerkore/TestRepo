@@ -1126,9 +1126,10 @@ namespace Logility.ROWebSharedTypes
 
     [DataContract(Name = "ROTaskProperties", Namespace = "http://Logility.ROWeb/")]
     /// <summary>
-    /// Base class for all task classes
+    /// Base class for all task classes.
     /// </summary>
-    public abstract class ROTaskProperties
+    /// <remarks>Also used to provide list of tasks in a task list</remarks>
+    public class ROTaskProperties
     {
         /// <summary>
         /// KeyValuePair contining the eTaskType and name of the task
@@ -1136,9 +1137,31 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         protected KeyValuePair<int, string> _task;
 
-        public ROTaskProperties(KeyValuePair<int, string> task)
+        /// <summary>
+        /// KeyValuePair contining the eMIDMessageLevel and message leve of the task
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        protected KeyValuePair<int, string> _maximumMessageLevel;
+
+        public ROTaskProperties(
+            KeyValuePair<int, string> task,
+            KeyValuePair<int, string> maximumMessageLevel
+            )
         {
             _task = task;
+            _maximumMessageLevel = maximumMessageLevel;
+        }
+
+        public KeyValuePair<int, string> Task
+        {
+            get { return _task; }
+            set { _task = value; }
+        }
+
+        public KeyValuePair<int, string> MaximumMessageLevel
+        {
+            get { return _maximumMessageLevel; }
+            set { _maximumMessageLevel = value; }
         }
     }
 
@@ -1146,13 +1169,10 @@ namespace Logility.ROWebSharedTypes
     /// <summary>
     /// Base class for all task lists
     /// </summary>
-    public abstract class ROTaskListProperties : ROBaseProperties
+    public class ROTaskListProperties : ROBaseProperties
     {
         [DataMember(IsRequired = true)]
         protected KeyValuePair<int, string> _taskList;
-
-        [DataMember(IsRequired = true)]
-        protected string _description;
 
         [DataMember(IsRequired = true)]
         protected int _userKey;
@@ -1160,10 +1180,9 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         protected List<ROTaskProperties> _tasks;
 
-        public ROTaskListProperties(KeyValuePair<int, string> taskList, string description, int userKey)
+        public ROTaskListProperties(KeyValuePair<int, string> taskList,int userKey)
         {
             _taskList = taskList;
-            _description = description;
             _userKey = userKey;
             _tasks = new List<ROTaskProperties>();
         }
@@ -1182,12 +1201,6 @@ namespace Logility.ROWebSharedTypes
         public bool UpdatingTaskList
         {
             get { return TaskList.Key != Include.NoRID; }
-        }
-
-        public string Description
-        {
-            get { return _description; }
-            set { _description = value; }
         }
 
         public int UserKey
@@ -1210,6 +1223,11 @@ namespace Logility.ROWebSharedTypes
                     return eGlobalUserType.User;
                 }
             }
+        }
+
+        public List<ROTaskProperties> Tasks
+        {
+            get { return _tasks; }
         }
     }
 }
