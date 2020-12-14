@@ -280,7 +280,7 @@ namespace Logility.ROWebSharedTypes
             }
             _genAlloc_HDR = genAlloc_HDR;
             _reserveAsBulk = reserveAsBulk;
-            _reserveAsBulk = reserveAsPacks;
+            _reserveAsPacks = reserveAsPacks;
             _hierarchyLevels = new List<KeyValuePair<int, string>>();
         }
     }
