@@ -33,6 +33,8 @@ namespace Logility.ROWeb
         private eROApplicationType _applicationType;
         private bool _nameValid = false;
         private string _nameMessage;
+		// Collection to manage methods within the workflow
+        private Dictionary<int, ApplicationBaseMethod> _workflowMethods = new Dictionary<int, ApplicationBaseMethod>();
 
         /// <summary>
         /// Gets the SessionAddressBlock
@@ -212,21 +214,27 @@ namespace Logility.ROWeb
 
         public void CleanUp()
         {
-            if (_ABM != null
-                && _ABM.LockStatus == eLockStatus.Locked)
+            // release locks for all methods retrieved in the workflow
+            foreach (KeyValuePair<int, ApplicationBaseMethod> entry in _workflowMethods)
             {
-                string message = null;
-                _ABM.LockStatus = WorkflowMethodUtilities.UnlockWorkflowMethod(
-                    SAB: SAB,
-                    workflowMethodIND: eWorkflowMethodIND.Methods,
-                    Key: _ABM.Key,
-                    message: out message
-                    );
-                if (_ABM.LockStatus == eLockStatus.Cancel)
+                _ABM = entry.Value;
+                if (_ABM != null
+                    && _ABM.LockStatus == eLockStatus.Locked)
                 {
-                    MIDEnvironment.Message = message;
+                    string message = null;
+                    _ABM.LockStatus = WorkflowMethodUtilities.UnlockWorkflowMethod(
+                        SAB: SAB,
+                        workflowMethodIND: eWorkflowMethodIND.Methods,
+                        Key: _ABM.Key,
+                        message: out message
+                        );
+                    if (_ABM.LockStatus == eLockStatus.Cancel)
+                    {
+                        MIDEnvironment.Message = message;
+                    }
                 }
             }
+			_workflowMethods.Clear();
 
             if (_ABW != null
                 && _ABW.LockStatus == eLockStatus.Locked)
@@ -292,7 +300,12 @@ namespace Logility.ROWeb
                 if (_ABM == null  
                     || _ABM.Key != methodParm.Key)
                 {
-                    _ABM = (ApplicationBaseMethod)GetMethods.GetMethod(methodParm.Key, methodParm.MethodType);
+                    // check if already have method in the collection.  If not create it.
+                    if (!_workflowMethods.TryGetValue(methodParm.Key, out _ABM))
+                    {
+                        _ABM = (ApplicationBaseMethod)GetMethods.GetMethod(methodParm.Key, methodParm.MethodType);
+                        _workflowMethods[_ABM.Key] = _ABM;
+                    }
                     if (_ABM is VelocityMethod)
                     {
                         ((VelocityMethod)_ABM).AST = _applicationSessionTransaction;
@@ -355,7 +368,12 @@ namespace Logility.ROWeb
             if (_ABM == null
                 || methodParm.ROMethodProperties.Method.Key == Include.NoRID)
             {
-                _ABM = (ApplicationBaseMethod)GetMethods.GetMethod(methodParm.ROMethodProperties.Method.Key, methodParm.ROMethodProperties.MethodType);
+                // check if already have method in the collection.  If not create it.
+                if (!_workflowMethods.TryGetValue(methodParm.ROMethodProperties.Method.Key, out _ABM))
+                {
+                    _ABM = (ApplicationBaseMethod)GetMethods.GetMethod(methodParm.ROMethodProperties.Method.Key, methodParm.ROMethodProperties.MethodType);
+                    _workflowMethods[_ABM.Key] = _ABM;
+                }
                 FunctionSecurity = _ABM.GetFunctionSecurity();
                 _ABM.User_RID = methodParm.ROMethodProperties.UserKey;
                 if (_ABM is VelocityMethod)
@@ -408,6 +426,8 @@ namespace Logility.ROWeb
                         dlFolder.Folder_Item_Insert(folderKey, _ABM.Key, _ABM.ProfileType);
                     }
                     ClientTransaction.DataAccess.CommitData();
+                    // add or update the method in the collection
+                    _workflowMethods[_ABM.Key] = _ABM;
                 }
                 finally
                 {
@@ -442,6 +462,9 @@ namespace Logility.ROWeb
             _ABM.Method_Description = methodParm.ROMethodProperties.Description;
             _ABM.User_RID = methodParm.ROMethodProperties.UserKey;
             _ABM.MethodSetData(methodProperties: methodParm.ROMethodProperties, message: ref message, processingApply: true);
+
+            // add or update the method in the collection
+            _workflowMethods[_ABM.Key] = _ABM;
 
             // Build new object with updated values
 			ROMethodParms methodGetParm = new ROMethodParms(
@@ -706,6 +729,8 @@ namespace Logility.ROWeb
                 _ABM.Method_Change_Type = eChangeType.delete;
                 _ABM.Update(ClientTransaction.DataAccess);
                 ClientTransaction.DataAccess.CommitData();
+                // remove from method collection
+                _workflowMethods.Remove(_ABM.Key);
 
                 _ABM.LockStatus = WorkflowMethodUtilities.UnlockWorkflowMethod(
                     SAB: SAB,
@@ -747,7 +772,9 @@ namespace Logility.ROWeb
 
         private void SetMethodObject(ROMethodParms methodParm)
         {
-            if (_ABM == null)
+            // if don't have a method or have a different method, check if need to create it
+            if (_ABM == null
+                || _ABM.Key != methodParm.Key)
             {
                 // need to determine type of method
                 if (!Enum.IsDefined(typeof(eMethodType), (int)methodParm.MethodType) ||
@@ -757,7 +784,12 @@ namespace Logility.ROWeb
                     methodParm.MethodType = DlMethodData.GetMethodType(methodParm.Key);
                 }
 
-                _ABM = (ApplicationBaseMethod)GetMethods.GetMethod(methodParm.Key, methodParm.MethodType);
+                // check if already have method in the collection.  If not create it.
+                if (!_workflowMethods.TryGetValue(methodParm.Key, out _ABM))
+                {
+                    _ABM = (ApplicationBaseMethod)GetMethods.GetMethod(methodParm.Key, methodParm.MethodType);
+                    _workflowMethods[_ABM.Key] = _ABM;
+                }
                 FunctionSecurity = _ABM.GetFunctionSecurity();
                 if (_ABM is VelocityMethod)
                 {
