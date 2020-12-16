@@ -32,7 +32,12 @@ namespace Logility.ROWeb
         private FunctionSecurityProfile _globalSecLvl;
         private FunctionSecurityProfile _systemSecLvl;
         private TaskListProfile _taskListProfile = null;
+        private ROTaskListProperties _taskListProperties = null;
         private JobProfile _jobProfile = null;
+        private TaskBase _task = null;
+        // Collection to manage tasks within the task list.  Key is task type.
+        // All tasks for a single type are contained in the same class
+        private Dictionary<eTaskType, TaskBase> _taskListTasks = new Dictionary<eTaskType, TaskBase>();
 
         /// <summary>
         /// Gets the SessionAddressBlock
@@ -334,42 +339,52 @@ namespace Logility.ROWeb
             return new ROTaskListPropertiesOut(returnCode, message, ROInstanceID, taskListProperties);
         }
 
+        /// <summary>
+        /// Build the task list properties from database values
+        /// </summary>
+        /// <param name="taskListParameters">The keys of the task list to build</param>
+        /// <returns></returns>
         private ROTaskListProperties BuildTaskListProperties(ROProfileKeyParms taskListParameters)
         {
-            ROTaskListProperties taskListProperties;
+            
             ROTaskProperties taskProperties;
             eTaskType taskType = eTaskType.None;
             string name, messageLevel;
             eMIDMessageLevel MIDMessageLevel;
+            int sequence;
 
+            // get the task list values from the database
             ScheduleData scheduleData = new ScheduleData();
             _taskListProfile = new TaskListProfile(scheduleData.TaskList_Read(taskListParameters.Key));
-            taskListProperties = new ROTaskListProperties(
+            _taskListProperties = new ROTaskListProperties(
                 taskList: new KeyValuePair<int, string>(_taskListProfile.Key, _taskListProfile.Name),
                 userKey: _taskListProfile.OwnerUserRID
                 );
 
             DataTable tasks = scheduleData.Task_ReadByTaskList(taskListParameters.Key);
 
+            // populate the task items into the task list
             foreach (DataRow dataRow in tasks.Rows)
             {
+                sequence = Convert.ToInt32(dataRow["TASK_SEQUENCE"]);
                 taskType = (eTaskType)Convert.ToInt32(dataRow["TASK_TYPE"]);
                 name = MIDText.GetTextOnly((int)taskType);
                 MIDMessageLevel = (eMIDMessageLevel)Convert.ToInt32(dataRow["MAX_MESSAGE_LEVEL"]);
                 messageLevel = MIDText.GetTextOnly((int)MIDMessageLevel);
 
                 taskProperties = new ROTaskProperties(
-                    task: new KeyValuePair<int, string>((int)taskType, name),
+                    task: new KeyValuePair<int, string>(sequence, name),
+                    taskType: taskType,
                     maximumMessageLevel: new KeyValuePair<int, string>((int)MIDMessageLevel, messageLevel)
                     );
-                taskListProperties.Tasks.Add(taskProperties);
+                _taskListProperties.Tasks.Add(taskProperties);
             }
 
-            taskListProperties.IsReadOnly = FunctionSecurity.IsReadOnly;
-            taskListProperties.CanBeProcessed = FunctionSecurity.AllowExecute;
-            taskListProperties.CanBeDeleted = FunctionSecurity.AllowDelete;
+            _taskListProperties.IsReadOnly = FunctionSecurity.IsReadOnly;
+            _taskListProperties.CanBeProcessed = FunctionSecurity.AllowExecute;
+            _taskListProperties.CanBeDeleted = FunctionSecurity.AllowDelete;
 
-            return taskListProperties;
+            return _taskListProperties;
         }
 
         /// <summary>
@@ -479,53 +494,10 @@ namespace Logility.ROWeb
         public ROOut DeleteTaskList(ROProfileKeyParms TaskListParameters)
         {
             string message = null;
-            SetTaskListObject(TaskListParameters);
 
             
 
             return new RONoDataOut(eROReturnCode.Successful, message, ROInstanceID);
-        }
-
-
-        /// <summary>
-        /// Lock the task list or job for update control
-        /// </summary>
-        /// <param name="profileType">The eProfileType of the item to be locked</param>
-        /// <param name="key">The key of the item to be locked</param>
-        /// <param name="changeType">The eChangeType being perform to know if can be read only</param>
-        /// <param name="name">The name of the item to be locked for messaging</param>
-        /// <param name="allowReadOnly">A flag identifying if the item can be accessed read only</param>
-        /// <returns></returns>
-        private string LockItem(
-            eProfileType profileType, 
-            int key, 
-            eChangeType changeType, 
-            string name, 
-            bool allowReadOnly
-            )
-        {
-            string message = null;
-            _taskListProfile.LockStatus = TaskListUtilities.LockItem(
-                    SAB: SAB,
-                    profileType: profileType,
-                    changeType: changeType,
-                    Key: key,
-                    Name: name,
-                    allowReadOnly: allowReadOnly,
-                    message: out message
-                    );
-            return message;
-        }
-
-        /// <summary>
-        /// Sets the memory object to the correct profile
-        /// </summary>
-        /// <param name="TaskListParameters">The parameters containing which task list to be referenced</param>
-        private void SetTaskListObject(
-            ROProfileKeyParms TaskListParameters
-            )
-        {
-
         }
 
         #endregion TaskList Processing
@@ -589,7 +561,341 @@ namespace Logility.ROWeb
         }
 
 
+        #region "Task Processing"
+
+        /// <summary>
+        /// Get the details for the task
+        /// </summary>
+        /// <param name="taskParameters">The keys for the task to get</param>
+        /// <param name="processingApply">A flag identifying if an apply is being processed</param>
+        /// <returns></returns>
+        public ROOut GetTask(
+            ROTaskParms taskParameters, 
+            bool processingApply = false
+            )
+        {
+            string message = null;
+            eROReturnCode returnCode = eROReturnCode.Successful;
+            bool getNewClass = true;
+
+            // Do not obtain object during Apply since will already have one
+            if (!processingApply)
+            {
+                if (_task == null
+                    || _task.TaskType != taskParameters.TaskType)
+                {
+                    // check if already have task type in the collection.  If not create it.
+                    if (!_taskListTasks.TryGetValue(taskParameters.TaskType, out _task))
+                    {
+                        _task = GetTaskClass(
+                            taskType: taskParameters.TaskType, 
+                            taskListProperties: _taskListProperties, 
+                            getNewClass: getNewClass
+                            );
+                        _taskListTasks[_task.TaskType] = _task;
+                    }
+                }
+            }
+
+            ROTaskProperties taskProperties = _task.TaskGetData(
+                parms: taskParameters, 
+                message: ref message, 
+                applyOnly: processingApply
+                );
+
+            return new ROTaskPropertiesOut(returnCode, message, ROInstanceID, taskProperties);
+        }
+
+        /// <summary>
+        /// Saves task information to the database
+        /// </summary>
+        /// <param name="taskParameters">The values for the task</param>
+        /// <returns></returns>
+        public ROOut SaveTask(ROTaskPropertiesParms taskParameters)
+        {
+            string message = null;
+            bool cloneDates = false;
+            bool successful;
+            bool getNewClass = true;
+
+            if (_task == null
+                || taskParameters.ROTaskProperties.Task.Key == Include.NoRID)
+            {
+                // check if already have task type in the collection.  If not create it.
+                if (!_taskListTasks.TryGetValue(taskParameters.ROTaskProperties.TaskType, out _task))
+                {
+                    _task = GetTaskClass(
+                        taskType: taskParameters.ROTaskProperties.TaskType,
+                            taskListProperties: _taskListProperties,
+                            getNewClass: getNewClass
+                        );
+                    _taskListTasks[_task.TaskType] = _task;
+                }
+            }
+
+            if (taskParameters.ROTaskProperties.Task.Key == Include.NoRID)
+            {
+                cloneDates = true;
+            }
+
+           ROTaskProperties taskProperties = _task.TaskUpdateData(
+                task: taskParameters.ROTaskProperties,
+                cloneDates: cloneDates,
+                message: ref message,
+                successful: out successful,
+                applyOnly: false
+                );
+
+            // add or update the task in the collection
+            _taskListTasks[_task.TaskType] = _task;
+
+            return new ROTaskPropertiesOut(
+                ROReturnCode: eROReturnCode.Successful,
+                sROMessage: message,
+                ROInstanceID: ROInstanceID,
+                ROTaskProperties: taskProperties);
+        }
+
+        /// <summary>
+        /// Saves task information to memory only
+        /// </summary>
+        /// <param name="taskParameters">The values for the task</param>
+        /// <returns></returns>
+        public ROOut ApplyTask(ROTaskPropertiesParms taskParameters)
+        {
+            string message = null;
+            bool cloneDates = false;
+            bool successful;
+            bool getNewClass = true;
+
+            if (_task == null
+                || taskParameters.ROTaskProperties.Task.Key == Include.NoRID)
+            {
+                // check if already have task type in the collection.  If not create it.
+                if (!_taskListTasks.TryGetValue(taskParameters.ROTaskProperties.TaskType, out _task))
+                {
+                    _task = GetTaskClass(
+                        taskType: taskParameters.ROTaskProperties.TaskType,
+                        taskListProperties: _taskListProperties,
+                        getNewClass: getNewClass
+                        );
+                    _taskListTasks[_task.TaskType] = _task;
+                }
+            }
+
+            // Save values to memory only
+            ROTaskProperties taskProperties = _task.TaskUpdateData(
+                task: taskParameters.ROTaskProperties,
+                cloneDates: cloneDates,
+                message: ref message,
+                successful: out successful,
+                applyOnly: true
+                );
+
+            // add or update the task in the collection
+            _taskListTasks[_task.TaskType] = _task;
+
+            return new ROTaskPropertiesOut(
+                ROReturnCode: eROReturnCode.Successful,
+                sROMessage: message,
+                ROInstanceID: ROInstanceID,
+                ROTaskProperties: taskProperties);
+        }
+
+        public ROOut DeleteTask(ROTaskParms taskParameters)
+        {
+            string message = null;
+            bool getNewClass = true;
+            if (_task == null
+                    || _task.TaskType != taskParameters.TaskType)
+            {
+                // check if already have task type in the collection.  If not create it.
+                if (!_taskListTasks.TryGetValue(taskParameters.TaskType, out _task))
+                {
+                    _task = GetTaskClass(
+                        taskType: taskParameters.TaskType,
+                        taskListProperties: _taskListProperties,
+                        getNewClass: getNewClass
+                        );
+                    _taskListTasks[_task.TaskType] = _task;
+                }
+            }
+
+            _taskListTasks.Remove(taskParameters.TaskType);
+
+            return new RONoDataOut(eROReturnCode.Successful, message, ROInstanceID);
+        }
+
+
+        private TaskBase GetTaskClass(
+            eTaskType taskType,
+            ROTaskListProperties taskListProperties,
+            bool getNewClass = false
+            )
+        {
+
+            switch (taskType)
+            {
+                case eTaskType.Allocate:
+                    return new TaskAllocate(
+                        SAB: _SAB, 
+                        ROWebTools: _ROWebTools, 
+                        taskListProperties: taskListProperties
+                        );
+
+                case eTaskType.HierarchyLoad:
+                    return new TaskHierarchyLoad(
+                        SAB: _SAB,
+                        ROWebTools: _ROWebTools,
+                        taskListProperties: taskListProperties
+                        );
+                case eTaskType.StoreLoad:
+                    return new TaskStoreLoad(
+                        SAB: _SAB,
+                        ROWebTools: _ROWebTools,
+                        taskListProperties: taskListProperties
+                        );
+                case eTaskType.HistoryPlanLoad:
+                    return new TaskHistoryPlanLoad(
+                        SAB: _SAB,
+                        ROWebTools: _ROWebTools,
+                        taskListProperties: taskListProperties
+                        );
+                case eTaskType.ColorCodeLoad:
+                    return new TaskColorCodeLoad(
+                        SAB: _SAB,
+                        ROWebTools: _ROWebTools,
+                        taskListProperties: taskListProperties
+                        );
+                case eTaskType.SizeCodeLoad:
+                    return new TaskSizeCodeLoad(
+                        SAB: _SAB,
+                        ROWebTools: _ROWebTools,
+                        taskListProperties: taskListProperties
+                        );
+                case eTaskType.HeaderLoad:
+                    return new TaskHeaderLoad(
+                        SAB: _SAB,
+                        ROWebTools: _ROWebTools,
+                        taskListProperties: taskListProperties
+                        );
+                case eTaskType.Forecasting:
+                    return new TaskForecasting(
+                        SAB: _SAB,
+                        ROWebTools: _ROWebTools,
+                        taskListProperties: taskListProperties
+                        );
+                case eTaskType.Rollup:
+                    return new TaskRollup(
+                        SAB: _SAB,
+                        ROWebTools: _ROWebTools,
+                        taskListProperties: taskListProperties
+                        );
+                case eTaskType.RelieveIntransit:
+                    return new TaskRelieveIntransit(
+                        SAB: _SAB,
+                        ROWebTools: _ROWebTools,
+                        taskListProperties: taskListProperties
+                        );
+                case eTaskType.Purge:
+                    return new TaskPurge(
+                        SAB: _SAB,
+                        ROWebTools: _ROWebTools,
+                        taskListProperties: taskListProperties
+                        );
+                case eTaskType.ExternalProgram:
+                    return new TaskExternalProgram(
+                        SAB: _SAB,
+                        ROWebTools: _ROWebTools,
+                        taskListProperties: taskListProperties
+                        );
+                case eTaskType.SizeCurveLoad:
+                    return new TaskSizeCurveLoad(
+                        SAB: _SAB,
+                        ROWebTools: _ROWebTools,
+                        taskListProperties: taskListProperties
+                        );
+                case eTaskType.SizeConstraintsLoad:
+                    return new TaskSizeConstraintsLoad(
+                        SAB: _SAB,
+                        ROWebTools: _ROWebTools,
+                        taskListProperties: taskListProperties
+                        );
+                case eTaskType.SizeCurveMethod:
+                    return new TaskSizeCurveMethod(
+                        SAB: _SAB,
+                        ROWebTools: _ROWebTools,
+                        taskListProperties: taskListProperties
+                        );
+                case eTaskType.SizeCurves:
+                    return new TaskSizeCurves(
+                        SAB: _SAB,
+                        ROWebTools: _ROWebTools,
+                        taskListProperties: taskListProperties
+                        );
+                case eTaskType.SizeDayToWeekSummary:
+                    return new TaskSizeDayToWeekSummary(
+                        SAB: _SAB,
+                        ROWebTools: _ROWebTools,
+                        taskListProperties: taskListProperties
+                        );
+                case eTaskType.BuildPackCriteriaLoad:
+                    return new TaskBuildPackCriteriaLoad(
+                        SAB: _SAB,
+                        ROWebTools: _ROWebTools,
+                        taskListProperties: taskListProperties
+                        );
+                case eTaskType.ChainSetPercentCriteriaLoad:
+                    return new TaskChainSetPercentCriteriaLoad(
+                        SAB: _SAB,
+                        ROWebTools: _ROWebTools,
+                        taskListProperties: taskListProperties
+                        );
+                case eTaskType.PushToBackStockLoad:
+                    return new TaskPushToBackStockLoad(
+                        SAB: _SAB,
+                        ROWebTools: _ROWebTools,
+                        taskListProperties: taskListProperties
+                        );
+                case eTaskType.DailyPercentagesCriteriaLoad:
+                    return new TaskDailyPercentagesCriteriaLoad(
+                        SAB: _SAB,
+                        ROWebTools: _ROWebTools,
+                        taskListProperties: taskListProperties
+                        );
+                case eTaskType.StoreEligibilityCriteriaLoad:
+                    return new TaskStoreEligibilityCriteriaLoad(
+                        SAB: _SAB,
+                        ROWebTools: _ROWebTools,
+                        taskListProperties: taskListProperties
+                        );
+                case eTaskType.VSWCriteriaLoad:
+                    return new TaskVSWCriteriaLoad(
+                        SAB: _SAB,
+                        ROWebTools: _ROWebTools,
+                        taskListProperties: taskListProperties
+                        );
+                case eTaskType.HeaderReconcile:
+                    return new TaskHeaderReconcile(
+                        SAB: _SAB,
+                        ROWebTools: _ROWebTools,
+                        taskListProperties: taskListProperties
+                        );
+                case eTaskType.BatchComp:
+                    return new TaskBatchCompute(
+                        SAB: _SAB,
+                        ROWebTools: _ROWebTools,
+                        taskListProperties: taskListProperties
+                        );
+            }
+
+            return null;
+        }
+
+        #endregion Task Processing
+
+
     }
 
-    
+
 }

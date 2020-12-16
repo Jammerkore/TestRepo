@@ -686,6 +686,28 @@ namespace MIDRetail.Business
             return new KeyValuePair<int, string>(key, displayName);
         }
 
+        public static KeyValuePair<int, string> GetMethod(int key)
+        {
+            string name = string.Empty;
+            if (key > Include.NoRID)
+            {
+                WorkflowMethodData methodData = new WorkflowMethodData();
+                name = methodData.GetMethodName(key);
+            }
+            return new KeyValuePair<int, string>(key, name);
+        }
+
+        public static KeyValuePair<int, string> GetWorkflowName(int key)
+        {
+            string name = string.Empty;
+            if (key > Include.NoRID)
+            {
+                WorkflowBaseData workflowData = new WorkflowBaseData();
+                name = workflowData.GetWorkflowName(key);
+            }
+            return new KeyValuePair<int, string>(key, name);
+        }
+
         public static KeyValuePair<int, string> GetHeader(int headerRID, SessionAddressBlock SAB)
         {
             string displayName = string.Empty;

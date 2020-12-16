@@ -78,6 +78,7 @@ namespace Logility.ROWeb
         {
             switch (Parms.RORequest)
             {
+                // Explorer
                 case eRORequest.GetTaskListExplorerData:
                     return GetExplorerData(Parms: (ROTreeNodeParms)Parms);
                 case eRORequest.RefreshExplorerData:
@@ -99,24 +100,32 @@ namespace Logility.ROWeb
                     return GetTaskListManager((ROBaseUpdateParms)Parms).SaveAs((RODataExplorerSaveAsParms)Parms);
                 case eRORequest.Delete:
                     return DeleteExplorerData(Parms: (ROTreeNodeParms)Parms);
-                
-                // Tasks
-                case eRORequest.GetListOfTasks:
-                    return ROTaskListManager.GetListOfTasks();
 
                 // TaskLists
                 case eRORequest.GetTaskList:
                     return ROTaskListManager.GetTaskList((ROProfileKeyParms)Parms);
                 case eRORequest.SaveTaskList:
                     return ROTaskListManager.SaveTaskList((ROTaskListPropertiesParms)Parms);
-                //case eRORequest.ApplyTaskList:
-                //    return ROTaskListManager.ApplyTaskList((ROTaskListPropertiesParms)Parms);
+                case eRORequest.ApplyTaskList:
+                    return ROTaskListManager.ApplyTaskList((ROTaskListPropertiesParms)Parms);
                 case eRORequest.ProcessTaskList:
                     return ROTaskListManager.ProcessTaskList((ROProfileKeyParms)Parms);
                 case eRORequest.CopyTaskList:
                     return ROTaskListManager.CopyTaskList((ROProfileKeyParms)Parms);
                 case eRORequest.DeleteTaskList:
                     return ROTaskListManager.DeleteTaskList((ROProfileKeyParms)Parms);
+
+                // Tasks
+                case eRORequest.GetListOfTasks:
+                    return ROTaskListManager.GetListOfTasks();
+                case eRORequest.GetTask:
+                    return ROTaskListManager.GetTask((ROTaskParms)Parms);
+                case eRORequest.SaveTask:
+                    return ROTaskListManager.SaveTask((ROTaskPropertiesParms)Parms);
+                case eRORequest.ApplyTask:
+                    return ROTaskListManager.ApplyTask((ROTaskPropertiesParms)Parms);
+                case eRORequest.DeleteTask:
+                    return ROTaskListManager.DeleteTask((ROTaskParms)Parms);
 
                     // Jobs
             }

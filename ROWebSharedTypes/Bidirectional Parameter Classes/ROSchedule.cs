@@ -1,0 +1,834 @@
+﻿using MIDRetail.DataCommon;
+using System;
+using System.Collections.Generic;
+using System.Runtime.Serialization;
+
+namespace Logility.ROWebSharedTypes
+{
+    [DataContract(Name = "ROTaskProperties", Namespace = "http://Logility.ROWeb/")]
+    /// <summary>
+    /// Base class for all task classes.
+    /// </summary>
+    /// <remarks>Also used to provide list of tasks in a task list</remarks>
+    public class ROTaskProperties
+    {
+        /// <summary>
+        /// KeyValuePair contining the key and name of the task
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        protected KeyValuePair<int, string> _task;
+
+        /// <summary>
+        /// The eTaskType of the task
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        protected eTaskType _taskType;
+
+        /// <summary>
+        /// KeyValuePair contining the eMIDMessageLevel and message leve of the task
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        protected KeyValuePair<int, string> _maximumMessageLevel;
+
+        public ROTaskProperties(
+            KeyValuePair<int, string> task,
+            eTaskType taskType,
+            KeyValuePair<int, string> maximumMessageLevel
+            )
+        {
+            _task = task;
+            _taskType = taskType;
+            _maximumMessageLevel = maximumMessageLevel;
+        }
+
+        /// <summary>
+        /// KeyValuePair containing the key and name of the task
+        /// </summary>
+        /// <remarks>Key is the sequence of the task</remarks>
+        public KeyValuePair<int, string> Task
+        {
+            get { return _task; }
+            set { _task = value; }
+        }
+
+        public eTaskType TaskType
+        {
+            get { return _taskType; }
+            set { _taskType = value; }
+        }
+
+        public KeyValuePair<int, string> MaximumMessageLevel
+        {
+            get { return _maximumMessageLevel; }
+            set { _maximumMessageLevel = value; }
+        }
+    }
+
+    [DataContract(Name = "ROTaskAllocateMerchandiseWorkflowMethod", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskAllocateMerchandiseWorkflowMethod
+    {
+        /// <summary>
+        /// KeyValuePair contining the key and name of the workflow or method
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        protected KeyValuePair<int, string> _workflowOrMethod;
+
+        /// <summary>
+        /// A flag identifying if the _workflowOrMethod field is a workflow
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        protected bool _isWorkflow;
+
+        /// <summary>
+        /// KeyValuePair contining the key and name of the execute date
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        protected KeyValuePair<int, string> _executeDate;
+
+        #region Public Properties
+
+        /// <summary>
+        /// Gets the flag identifying if the workflow or method has been set.
+        /// </summary>
+        public bool WorkflowOrMethodIsSet
+        {
+            get { return !_workflowOrMethod.Equals(default(KeyValuePair<int, string>)); }
+        }
+
+        /// <summary>
+        /// KeyValuePair with workflow or method key and name
+        /// </summary>
+        public KeyValuePair<int, string> WorkflowOrMethod { get { return _workflowOrMethod; } set { _workflowOrMethod = value; } }
+
+        /// <summary>
+        /// A flag identifying if the _workflowOrMethod field is a workflow
+        /// </summary>
+        public bool IsWorkflow
+        {
+            get { return _isWorkflow; }
+        }
+
+        /// <summary>
+        /// Gets the flag identifying if the execute date has been set.
+        /// </summary>
+        public bool ExecuteDateIsSet
+        {
+            get { return !_executeDate.Equals(default(KeyValuePair<int, string>)); }
+        }
+
+        /// <summary>
+        /// KeyValuePair with execute date key and name
+        /// </summary>
+        public KeyValuePair<int, string> ExecuteDate { get { return _executeDate; } set { _executeDate = value; } }
+
+        #endregion
+
+        public ROTaskAllocateMerchandiseWorkflowMethod(
+            KeyValuePair<int, string> workflowOrMethod,
+            bool isWorkflow = true,
+            KeyValuePair<int, string> executeDate = default(KeyValuePair<int, string>))
+        {
+            _workflowOrMethod = workflowOrMethod;
+            _isWorkflow = isWorkflow;
+            _executeDate = executeDate;
+        }
+    }
+
+    [DataContract(Name = "ROTaskAllocateMerchandise", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskAllocateMerchandise
+    {
+        /// <summary>
+        /// KeyValuePair contining the key and name of the merchandise
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        protected KeyValuePair<int, string> _merchandise;
+
+        /// <summary>
+        /// KeyValuePair contining the key and name of the filter
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        protected KeyValuePair<int, string> _filter;
+
+        /// <summary>
+        /// List of workflow entries
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        private List<ROTaskAllocateMerchandiseWorkflowMethod> _workflow;
+
+        #region Public Properties
+
+        /// <summary>
+        /// Gets the flag identifying if the merchandise has been set.
+        /// </summary>
+        public bool DefaultToWorkflow
+        {
+            get { return !_merchandise.Equals(default(KeyValuePair<int, string>)); }
+        }
+
+        /// <summary>
+        /// KeyValuePair with merchandise key and name
+        /// </summary>
+        public KeyValuePair<int, string> Merchandise { get { return _merchandise; } set { _merchandise = value; } }
+
+        /// <summary>
+        /// Gets the flag identifying if the merchandise has been set.
+        /// </summary>
+        public bool FilterIsSet
+        {
+            get { return !_filter.Equals(default(KeyValuePair<int, string>)); }
+        }
+
+        /// <summary>
+        /// KeyValuePair with merchandise key and name
+        /// </summary>
+        public KeyValuePair<int, string> Filter { get { return _filter; } set { _filter = value; } }
+
+        /// <summary>
+        /// List of workflow entries
+        /// </summary>
+        public List<ROTaskAllocateMerchandiseWorkflowMethod> Workflow { get { return _workflow; } }
+
+        /// <summary>
+        /// Gets the flag identifying if there are workflow values.
+        /// </summary>
+        public bool HasWorkflowValues
+        {
+            get { return _workflow.Count > 0; }
+        }
+
+        #endregion
+
+        public ROTaskAllocateMerchandise(
+            KeyValuePair<int, string> merchandise = default(KeyValuePair<int, string>),
+            KeyValuePair<int, string> filter = default(KeyValuePair<int, string>))
+        {
+            _merchandise = merchandise;
+            _filter = filter;
+            _workflow = new List<ROTaskAllocateMerchandiseWorkflowMethod>();
+        }
+    }
+
+    [DataContract(Name = "ROTaskAllocate", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskAllocate : ROTaskProperties
+    {
+        /// <summary>
+        /// List of merchandise entries
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        private List<ROTaskAllocateMerchandise> _merchandise;
+
+        #region Public Properties
+        /// <summary>
+        /// KeyValuePair with merchandise key and name
+        /// </summary>
+        public List<ROTaskAllocateMerchandise> Merchandise { get { return _merchandise; } }
+
+        /// <summary>
+        /// Gets the flag identifying if there are merchandise values.
+        /// </summary>
+        public bool HasMerchandiseValues
+        {
+            get { return _merchandise.Count > 0; }
+        }
+        #endregion
+
+        public ROTaskAllocate(
+            KeyValuePair<int, string> task,
+            KeyValuePair<int, string> maximumMessageLevel) :
+            base(task: task,
+                taskType: eTaskType.Allocate,
+            maximumMessageLevel: maximumMessageLevel)
+
+        {
+            _merchandise = new List<ROTaskAllocateMerchandise>();
+        }
+    }
+
+    [DataContract(Name = "ROTaskHierarchyLoad", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskHierarchyLoad : ROTaskProperties
+    {
+
+        #region Public Properties
+
+        #endregion
+
+        public ROTaskHierarchyLoad(
+            KeyValuePair<int, string> task,
+            KeyValuePair<int, string> maximumMessageLevel) :
+            base(task: task,
+                taskType: eTaskType.HierarchyLoad,
+            maximumMessageLevel: maximumMessageLevel)
+
+        {
+
+        }
+    }
+
+    [DataContract(Name = "ROTaskStoreLoad", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskStoreLoad : ROTaskProperties
+    {
+
+        #region Public Properties
+
+        #endregion
+
+        public ROTaskStoreLoad(
+            KeyValuePair<int, string> task,
+            KeyValuePair<int, string> maximumMessageLevel) :
+            base(task: task,
+                taskType: eTaskType.StoreLoad,
+            maximumMessageLevel: maximumMessageLevel)
+
+        {
+
+        }
+    }
+
+    [DataContract(Name = "ROTaskHistoryPlanLoad", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskHistoryPlanLoad : ROTaskProperties
+    {
+
+        #region Public Properties
+
+        #endregion
+
+        public ROTaskHistoryPlanLoad(
+            KeyValuePair<int, string> task,
+            KeyValuePair<int, string> maximumMessageLevel) :
+            base(task: task,
+                taskType: eTaskType.HistoryPlanLoad,
+            maximumMessageLevel: maximumMessageLevel)
+
+        {
+
+        }
+    }
+
+    [DataContract(Name = "ROTaskColorCodeLoad", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskColorCodeLoad : ROTaskProperties
+    {
+
+        #region Public Properties
+
+        #endregion
+
+        public ROTaskColorCodeLoad(
+            KeyValuePair<int, string> task,
+            KeyValuePair<int, string> maximumMessageLevel) :
+            base(task: task,
+                taskType: eTaskType.ColorCodeLoad,
+            maximumMessageLevel: maximumMessageLevel)
+
+        {
+
+        }
+    }
+
+    [DataContract(Name = "ROTaskSizeCodeLoad", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskSizeCodeLoad : ROTaskProperties
+    {
+
+        #region Public Properties
+
+        #endregion
+
+        public ROTaskSizeCodeLoad(
+            KeyValuePair<int, string> task,
+            KeyValuePair<int, string> maximumMessageLevel) :
+            base(task: task,
+                taskType: eTaskType.SizeCodeLoad,
+            maximumMessageLevel: maximumMessageLevel)
+
+        {
+
+        }
+    }
+
+    [DataContract(Name = "ROTaskHeaderLoad", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskHeaderLoad : ROTaskProperties
+    {
+
+        #region Public Properties
+
+        #endregion
+
+        public ROTaskHeaderLoad(
+            KeyValuePair<int, string> task,
+            KeyValuePair<int, string> maximumMessageLevel) :
+            base(task: task,
+                taskType: eTaskType.HeaderLoad,
+            maximumMessageLevel: maximumMessageLevel)
+
+        {
+
+        }
+    }
+
+    [DataContract(Name = "ROTaskForecasting", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskForecasting : ROTaskProperties
+    {
+
+        #region Public Properties
+
+        #endregion
+
+        public ROTaskForecasting(
+            KeyValuePair<int, string> task,
+            KeyValuePair<int, string> maximumMessageLevel) :
+            base(task: task,
+                taskType: eTaskType.Forecasting,
+            maximumMessageLevel: maximumMessageLevel)
+
+        {
+
+        }
+    }
+
+    [DataContract(Name = "ROTaskRollup", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskRollup : ROTaskProperties
+    {
+
+        #region Public Properties
+
+        #endregion
+
+        public ROTaskRollup(
+            KeyValuePair<int, string> task,
+            KeyValuePair<int, string> maximumMessageLevel) :
+            base(task: task,
+                taskType: eTaskType.Rollup,
+            maximumMessageLevel: maximumMessageLevel)
+
+        {
+
+        }
+    }
+
+    [DataContract(Name = "ROTaskRelieveIntransit", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskRelieveIntransit : ROTaskProperties
+    {
+
+        #region Public Properties
+
+        #endregion
+
+        public ROTaskRelieveIntransit(
+            KeyValuePair<int, string> task,
+            KeyValuePair<int, string> maximumMessageLevel) :
+            base(task: task,
+                taskType: eTaskType.RelieveIntransit,
+            maximumMessageLevel: maximumMessageLevel)
+
+        {
+
+        }
+    }
+
+    [DataContract(Name = "ROTaskPurge", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskPurge : ROTaskProperties
+    {
+
+        #region Public Properties
+
+        #endregion
+
+        public ROTaskPurge(
+            KeyValuePair<int, string> task,
+            KeyValuePair<int, string> maximumMessageLevel) :
+            base(task: task,
+                taskType: eTaskType.Purge,
+            maximumMessageLevel: maximumMessageLevel)
+
+        {
+
+        }
+    }
+
+    [DataContract(Name = "ROTaskExternalProgram", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskExternalProgram : ROTaskProperties
+    {
+
+        #region Public Properties
+
+        #endregion
+
+        public ROTaskExternalProgram(
+            KeyValuePair<int, string> task,
+            KeyValuePair<int, string> maximumMessageLevel) :
+            base(task: task,
+                taskType: eTaskType.ExternalProgram,
+            maximumMessageLevel: maximumMessageLevel)
+
+        {
+
+        }
+    }
+
+    [DataContract(Name = "ROTaskSizeCurveLoad", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskSizeCurveLoad : ROTaskProperties
+    {
+
+        #region Public Properties
+
+        #endregion
+
+        public ROTaskSizeCurveLoad(
+            KeyValuePair<int, string> task,
+            KeyValuePair<int, string> maximumMessageLevel) :
+            base(task: task,
+                taskType: eTaskType.SizeCurveLoad,
+            maximumMessageLevel: maximumMessageLevel)
+
+        {
+
+        }
+    }
+
+    [DataContract(Name = "ROTaskSQLScript", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskSQLScript : ROTaskProperties
+    {
+
+        #region Public Properties
+
+        #endregion
+
+        public ROTaskSQLScript(
+            KeyValuePair<int, string> task,
+            KeyValuePair<int, string> maximumMessageLevel) :
+            base(task: task,
+                taskType: eTaskType.SQLScript,
+            maximumMessageLevel: maximumMessageLevel)
+
+        {
+
+        }
+    }
+
+    [DataContract(Name = "ROTaskSizeConstraintsLoad", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskSizeConstraintsLoad : ROTaskProperties
+    {
+
+        #region Public Properties
+
+        #endregion
+
+        public ROTaskSizeConstraintsLoad(
+            KeyValuePair<int, string> task,
+            KeyValuePair<int, string> maximumMessageLevel) :
+            base(task: task,
+                taskType: eTaskType.SizeConstraintsLoad,
+            maximumMessageLevel: maximumMessageLevel)
+
+        {
+
+        }
+    }
+
+    [DataContract(Name = "ROTaskSizeCurveMethod", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskSizeCurveMethod : ROTaskProperties
+    {
+
+        #region Public Properties
+
+        #endregion
+
+        public ROTaskSizeCurveMethod(
+            KeyValuePair<int, string> task,
+            KeyValuePair<int, string> maximumMessageLevel) :
+            base(task: task,
+                taskType: eTaskType.SizeCurveMethod,
+            maximumMessageLevel: maximumMessageLevel)
+
+        {
+
+        }
+    }
+
+    [DataContract(Name = "ROTaskSizeCurves", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskSizeCurves : ROTaskProperties
+    {
+
+        #region Public Properties
+
+        #endregion
+
+        public ROTaskSizeCurves(
+            KeyValuePair<int, string> task,
+            KeyValuePair<int, string> maximumMessageLevel) :
+            base(task: task,
+                taskType: eTaskType.SizeCurves,
+            maximumMessageLevel: maximumMessageLevel)
+
+        {
+
+        }
+    }
+
+    [DataContract(Name = "ROTaskSizeDayToWeekSummary", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskSizeDayToWeekSummary : ROTaskProperties
+    {
+
+        #region Public Properties
+
+        #endregion
+
+        public ROTaskSizeDayToWeekSummary(
+            KeyValuePair<int, string> task,
+            KeyValuePair<int, string> maximumMessageLevel) :
+            base(task: task,
+                taskType: eTaskType.SizeDayToWeekSummary,
+            maximumMessageLevel: maximumMessageLevel)
+
+        {
+
+        }
+    }
+
+    [DataContract(Name = "ROTaskBuildPackCriteriaLoad", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskBuildPackCriteriaLoad : ROTaskProperties
+    {
+
+        #region Public Properties
+
+        #endregion
+
+        public ROTaskBuildPackCriteriaLoad(
+            KeyValuePair<int, string> task,
+            KeyValuePair<int, string> maximumMessageLevel) :
+            base(task: task,
+                taskType: eTaskType.BuildPackCriteriaLoad,
+            maximumMessageLevel: maximumMessageLevel)
+
+        {
+
+        }
+    }
+
+    [DataContract(Name = "ROTaskChainSetPercentCriteriaLoad", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskChainSetPercentCriteriaLoad : ROTaskProperties
+    {
+
+        #region Public Properties
+
+        #endregion
+
+        public ROTaskChainSetPercentCriteriaLoad(
+            KeyValuePair<int, string> task,
+            KeyValuePair<int, string> maximumMessageLevel) :
+            base(task: task,
+                taskType: eTaskType.ChainSetPercentCriteriaLoad,
+            maximumMessageLevel: maximumMessageLevel)
+
+        {
+
+        }
+    }
+
+    [DataContract(Name = "ROTaskPushToBackStockLoad", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskPushToBackStockLoad : ROTaskProperties
+    {
+
+        #region Public Properties
+
+        #endregion
+
+        public ROTaskPushToBackStockLoad(
+            KeyValuePair<int, string> task,
+            KeyValuePair<int, string> maximumMessageLevel) :
+            base(task: task,
+                taskType: eTaskType.PushToBackStockLoad,
+            maximumMessageLevel: maximumMessageLevel)
+
+        {
+
+        }
+    }
+
+    [DataContract(Name = "ROTaskDailyPercentagesCriteriaLoad", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskDailyPercentagesCriteriaLoad : ROTaskProperties
+    {
+
+        #region Public Properties
+
+        #endregion
+
+        public ROTaskDailyPercentagesCriteriaLoad(
+            KeyValuePair<int, string> task,
+            KeyValuePair<int, string> maximumMessageLevel) :
+            base(task: task,
+                taskType: eTaskType.DailyPercentagesCriteriaLoad,
+            maximumMessageLevel: maximumMessageLevel)
+
+        {
+
+        }
+    }
+
+    [DataContract(Name = "ROTaskStoreEligibilityCriteriaLoad", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskStoreEligibilityCriteriaLoad : ROTaskProperties
+    {
+
+        #region Public Properties
+
+        #endregion
+
+        public ROTaskStoreEligibilityCriteriaLoad(
+            KeyValuePair<int, string> task,
+            KeyValuePair<int, string> maximumMessageLevel) :
+            base(task: task,
+                taskType: eTaskType.StoreEligibilityCriteriaLoad,
+            maximumMessageLevel: maximumMessageLevel)
+
+        {
+
+        }
+    }
+
+    [DataContract(Name = "ROTaskVSWCriteriaLoad", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskVSWCriteriaLoad : ROTaskProperties
+    {
+
+        #region Public Properties
+
+        #endregion
+
+        public ROTaskVSWCriteriaLoad(
+            KeyValuePair<int, string> task,
+            KeyValuePair<int, string> maximumMessageLevel) :
+            base(task: task,
+                taskType: eTaskType.VSWCriteriaLoad,
+            maximumMessageLevel: maximumMessageLevel)
+
+        {
+
+        }
+    }
+
+    [DataContract(Name = "ROTaskHeaderReconcile", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskHeaderReconcile : ROTaskProperties
+    {
+
+        #region Public Properties
+
+        #endregion
+
+        public ROTaskHeaderReconcile(
+            KeyValuePair<int, string> task,
+            KeyValuePair<int, string> maximumMessageLevel) :
+            base(task: task,
+                taskType: eTaskType.HeaderReconcile,
+            maximumMessageLevel: maximumMessageLevel)
+
+        {
+
+        }
+    }
+
+    [DataContract(Name = "ROTaskBatchCompute", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskBatchCompute : ROTaskProperties
+    {
+
+        #region Public Properties
+
+        #endregion
+
+        public ROTaskBatchCompute(
+            KeyValuePair<int, string> task,
+            KeyValuePair<int, string> maximumMessageLevel) :
+            base(task: task,
+                taskType: eTaskType.BatchComp,
+            maximumMessageLevel: maximumMessageLevel)
+
+        {
+
+        }
+    }
+
+    [DataContract(Name = "ROTaskChainForecasting", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskChainForecasting : ROTaskProperties
+    {
+
+        #region Public Properties
+
+        #endregion
+
+        public ROTaskChainForecasting(
+            KeyValuePair<int, string> task,
+            KeyValuePair<int, string> maximumMessageLevel) :
+            base(task: task,
+                taskType: eTaskType.computationDriver,
+            maximumMessageLevel: maximumMessageLevel)
+
+        {
+
+        }
+    }
+
+    [DataContract(Name = "ROTaskListProperties", Namespace = "http://Logility.ROWeb/")]
+    /// <summary>
+    /// Base class for all task lists
+    /// </summary>
+    public class ROTaskListProperties : ROBaseProperties
+    {
+        [DataMember(IsRequired = true)]
+        protected KeyValuePair<int, string> _taskList;
+
+        [DataMember(IsRequired = true)]
+        protected int _userKey;
+
+        [DataMember(IsRequired = true)]
+        protected List<ROTaskProperties> _tasks;
+
+        public ROTaskListProperties(KeyValuePair<int, string> taskList,int userKey)
+        {
+            _taskList = taskList;
+            _userKey = userKey;
+            _tasks = new List<ROTaskProperties>();
+        }
+
+        public KeyValuePair<int, string> TaskList
+        {
+            get { return _taskList; }
+            set { _taskList = value; }
+        }
+
+        public bool AddingTaskList
+        {
+            get { return TaskList.Key == Include.NoRID; }
+        }
+
+        public bool UpdatingTaskList
+        {
+            get { return TaskList.Key != Include.NoRID; }
+        }
+
+        public int UserKey
+        {
+            get { return _userKey; }
+            set { _userKey = value; }
+        }
+
+
+        public eGlobalUserType GlobalUserType
+        {
+            get
+            {
+                if (UserKey == Include.GetGlobalUserRID())
+                {
+                    return eGlobalUserType.Global;
+                }
+                else
+                {
+                    return eGlobalUserType.User;
+                }
+            }
+        }
+
+        public List<ROTaskProperties> Tasks
+        {
+            get { return _tasks; }
+        }
+    }
+
+    
+}

@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bidirectional Parameter Classes\ROSchedule.cs" />
     <Compile Include="Bidirectional Parameter Classes\ROHierarchy.cs" />
     <Compile Include="Bidirectional Parameter Classes\ROAllocation.cs" />
     <Compile Include="Bidirectional Parameter Classes\ROAssortment.cs" />

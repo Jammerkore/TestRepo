@@ -83,8 +83,24 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         private string _folderUniqueID;
 
-        public ROMethodPropertiesParms(string sROUserID, string sROSessionID, eROClass ROClass, eRORequest RORequest, long ROInstanceID, ROMethodProperties ROMethodProperties, int folderKey = Include.NoRID, string folderUniqueID = null) :
-            base(sROUserID, sROSessionID, ROClass, RORequest, ROInstanceID)
+        public ROMethodPropertiesParms(
+            string sROUserID, 
+            string sROSessionID, 
+            eROClass ROClass, 
+            eRORequest RORequest, 
+            long ROInstanceID, 
+            ROMethodProperties ROMethodProperties, 
+            int folderKey = Include.NoRID, 
+            string folderUniqueID = null
+            ) 
+            :
+            base(
+                sROUserID, 
+                sROSessionID, 
+                ROClass, 
+                RORequest, 
+                ROInstanceID
+                )
         {
             _ROMethodProperties = ROMethodProperties;
             _folderKey = folderKey;
@@ -107,8 +123,23 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         private int _key;
 
-        public ROInUseParms(string sROUserID, string sROSessionID, eROClass ROClass, eRORequest RORequest, long ROInstanceID, eProfileType itemProfileType, int key) :
-            base(sROUserID, sROSessionID, ROClass, RORequest, ROInstanceID)
+        public ROInUseParms(
+            string sROUserID, 
+            string sROSessionID, 
+            eROClass ROClass, 
+            eRORequest RORequest, 
+            long ROInstanceID, 
+            eProfileType itemProfileType, 
+            int key
+            ) 
+            :
+            base(
+                sROUserID, 
+                sROSessionID, 
+                ROClass, 
+                RORequest, 
+                ROInstanceID
+                )
         {
             _itemProfileType = itemProfileType;
             _key = key;
@@ -133,8 +164,24 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         private string _folderUniqueID;
 
-        public ROWorkflowPropertiesParms(string sROUserID, string sROSessionID, eROClass ROClass, eRORequest RORequest, long ROInstanceID, ROWorkflow ROWorkflow, int folderKey = Include.NoRID, string folderUniqueID = null) :
-            base(sROUserID, sROSessionID, ROClass, RORequest, ROInstanceID)
+        public ROWorkflowPropertiesParms(
+            string sROUserID, 
+            string sROSessionID, 
+            eROClass ROClass, 
+            eRORequest RORequest, 
+            long ROInstanceID, 
+            ROWorkflow ROWorkflow, 
+            int folderKey = Include.NoRID, 
+            string folderUniqueID = null
+            ) 
+            :
+            base(
+                sROUserID, 
+                sROSessionID, 
+                ROClass, 
+                RORequest, 
+                ROInstanceID
+                )
         {
             _ROWorkflow = ROWorkflow;
             _folderKey = folderKey;
@@ -158,8 +205,23 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         private int _userKey;
 
-        public ROReleaseResourceParms(string sROUserID, string sROSessionID, eROClass ROClass, eRORequest RORequest, long ROInstanceID, bool AllUsers = false, int userKey = Include.Undefined) :
-            base(sROUserID, sROSessionID, ROClass, RORequest, ROInstanceID)
+        public ROReleaseResourceParms(
+            string sROUserID, 
+            string sROSessionID, 
+            eROClass ROClass, 
+            eRORequest RORequest, 
+            long ROInstanceID, 
+            bool AllUsers = false, 
+            int userKey = Include.Undefined
+            ) 
+            :
+            base(
+                sROUserID, 
+                sROSessionID, 
+                ROClass, 
+                RORequest, 
+                ROInstanceID
+                )
         {
             _allUsers = AllUsers;
             _userKey = userKey;
@@ -705,8 +767,23 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         private string _folderUniqueID;
 
-        public ROTaskListPropertiesParms(string sROUserID, string sROSessionID, eROClass ROClass, eRORequest RORequest, long ROInstanceID, ROTaskListProperties ROTaskListProperties, int folderKey = Include.NoRID, string folderUniqueID = null) :
-            base(sROUserID, sROSessionID, ROClass, RORequest, ROInstanceID)
+        public ROTaskListPropertiesParms(
+            string sROUserID, 
+            string sROSessionID, 
+            eROClass ROClass, 
+            eRORequest RORequest, 
+            long ROInstanceID, 
+            ROTaskListProperties ROTaskListProperties, 
+            int folderKey = Include.NoRID, 
+            string folderUniqueID = null
+            ) :
+            base(
+                sROUserID: sROUserID, 
+                sROSessionID: sROSessionID, 
+                ROClass: ROClass, 
+                RORequest: RORequest, 
+                ROInstanceID: ROInstanceID
+                )
         {
             _ROTaskListProperties = ROTaskListProperties;
             _folderKey = folderKey;
@@ -719,5 +796,86 @@ namespace Logility.ROWebSharedTypes
 
         public string FolderUniqueID { get { return _folderUniqueID; } set { _folderUniqueID = value; } }
 
+    }
+
+    [DataContract(Name = "ROTaskPropertiesParms", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskPropertiesParms : ROParms
+    {
+        [DataMember(IsRequired = true)]
+        private ROTaskProperties _ROTaskProperties;
+        [DataMember(IsRequired = true)]
+        private int _folderKey;
+        [DataMember(IsRequired = true)]
+        private string _folderUniqueID;
+
+        public ROTaskPropertiesParms(string sROUserID,
+            string sROSessionID,
+            eROClass ROClass,
+            eRORequest RORequest,
+            long ROInstanceID,
+            ROTaskProperties ROTaskProperties,
+            int folderKey = Include.NoRID,
+            string folderUniqueID = null
+            ) :
+            base(
+                sROUserID: sROUserID,
+                sROSessionID: sROSessionID,
+                ROClass: ROClass,
+                RORequest: RORequest,
+                ROInstanceID: ROInstanceID
+                )
+        {
+            _ROTaskProperties = ROTaskProperties;
+            _folderKey = folderKey;
+            _folderUniqueID = folderUniqueID;
+        }
+
+        public ROTaskProperties ROTaskProperties { get { return _ROTaskProperties; } }
+
+        public int FolderKey { get { return _folderKey; } set { _folderKey = value; } }
+
+        public string FolderUniqueID { get { return _folderUniqueID; } set { _folderUniqueID = value; } }
+
+    }
+
+    [DataContract(Name = "ROTaskParms", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskParms : ROParms
+    {
+        [DataMember(IsRequired = true)]
+        private eTaskType _taskType;
+        [DataMember(IsRequired = true)]
+        private int _sequence;
+        [DataMember(IsRequired = true)]
+        private bool _readOnly;
+
+        public ROTaskParms(
+            string sROUserID, 
+            string sROSessionID, 
+            eROClass ROClass, 
+            eRORequest RORequest, 
+            long ROInstanceID,
+            eTaskType taskType, 
+            int sequence, 
+            bool readOnly = false
+            )
+            : 
+            base(
+                sROUserID: sROUserID,
+                sROSessionID: sROSessionID,
+                ROClass: ROClass,
+                RORequest: RORequest,
+                ROInstanceID: ROInstanceID
+                )
+        {
+            _taskType = taskType;
+            _sequence = sequence;
+            _readOnly = readOnly;
+        }
+
+        public eTaskType TaskType { get { return _taskType; } set { _taskType = value; } }
+
+        public int Sequence { get { return _sequence; } }
+
+        public bool ReadOnly { get { return _readOnly; } }
     }
 }

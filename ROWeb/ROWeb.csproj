@@ -125,6 +125,33 @@
     <Compile Include="Methods\Hierarchy\HierarchyPropertiesBase.cs" />
     <Compile Include="Methods\Hierarchy\HierarchyPropertiesProfile.cs" />
     <Compile Include="Methods\ROTaskListManager.cs" />
+    <Compile Include="Methods\Scheduler\Task\TaskChainForecasting.cs" />
+    <Compile Include="Methods\Scheduler\Task\TaskHeaderReconcile.cs" />
+    <Compile Include="Methods\Scheduler\Task\TaskPushToBackStockLoad.cs" />
+    <Compile Include="Methods\Scheduler\Task\TaskSizeDayToWeekSummary.cs" />
+    <Compile Include="Methods\Scheduler\Task\TaskSizeCurves.cs" />
+    <Compile Include="Methods\Scheduler\Task\TaskSizeCurveMethod.cs" />
+    <Compile Include="Methods\Scheduler\Task\TaskBatchCompute.cs" />
+    <Compile Include="Methods\Scheduler\Task\TaskExternalProgram.cs" />
+    <Compile Include="Methods\Scheduler\Task\TaskPurge.cs" />
+    <Compile Include="Methods\Scheduler\Task\TaskForecasting.cs" />
+    <Compile Include="Methods\Scheduler\Task\TaskBuildPackCriteriaLoad.cs" />
+    <Compile Include="Methods\Scheduler\Task\TaskColorCodeLoad.cs" />
+    <Compile Include="Methods\Scheduler\Task\TaskHeaderLoad.cs" />
+    <Compile Include="Methods\Scheduler\Task\TaskHistoryPlanLoad.cs" />
+    <Compile Include="Methods\Scheduler\Task\TaskSizeCodeLoad.cs" />
+    <Compile Include="Methods\Scheduler\Task\TaskSizeCurveLoad.cs" />
+    <Compile Include="Methods\Scheduler\Task\TaskSizeConstraintsLoad.cs" />
+    <Compile Include="Methods\Scheduler\Task\TaskStoreLoad.cs" />
+    <Compile Include="Methods\Scheduler\Task\TaskRelieveIntransit.cs" />
+    <Compile Include="Methods\Scheduler\Task\TaskStoreEligibilityCriteriaLoad.cs" />
+    <Compile Include="Methods\Scheduler\Task\TaskVSWCriteriaLoad.cs" />
+    <Compile Include="Methods\Scheduler\Task\TaskDailyPercentagesCriteriaLoad.cs" />
+    <Compile Include="Methods\Scheduler\Task\TaskChainSetPercentCriteriaLoad.cs" />
+    <Compile Include="Methods\Scheduler\Task\TaskHierarchyLoad.cs" />
+    <Compile Include="Methods\Scheduler\Task\TaskRollup.cs" />
+    <Compile Include="Methods\Scheduler\Task\TaskBase.cs" />
+    <Compile Include="Methods\Scheduler\Task\TaskAllocate.cs" />
     <Compile Include="Methods\WorkUltraGrid.cs">
       <SubType>Form</SubType>
     </Compile>
