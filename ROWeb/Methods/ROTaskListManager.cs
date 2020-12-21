@@ -401,6 +401,7 @@ namespace Logility.ROWeb
             string emailFailureBody = null;
 
             // get the task list values from the database
+            // and create the task list properties object
             _taskListProfile = new TaskListProfile(ScheduleDataLayer.TaskList_Read(taskListParameters.Key));
             _taskListProperties = new ROTaskListProperties(
                 taskList: new KeyValuePair<int, string>(_taskListProfile.Key, _taskListProfile.Name),
@@ -408,6 +409,7 @@ namespace Logility.ROWeb
                 );
 
             _tasksDataTable = ScheduleDataLayer.Task_ReadByTaskList(taskListParameters.Key);
+            _tasksDataTable.DefaultView.Sort = "TASK_SEQUENCE";
 
             // populate the task items into the task list
             foreach (DataRow dataRow in _tasksDataTable.Rows)
@@ -1190,7 +1192,8 @@ namespace Logility.ROWeb
             bool getNewClass = true;
 
             if (_task == null
-                || taskParameters.ROTaskProperties.Task.Key == Include.NoRID)
+                || _task.TaskType != taskParameters.ROTaskProperties.TaskType
+                )
             {
                 // check if already have task type in the collection.  If not create it.
                 if (!_taskListTasks.TryGetValue(taskParameters.ROTaskProperties.TaskType, out _task))
@@ -1209,7 +1212,13 @@ namespace Logility.ROWeb
                 cloneDates = true;
             }
 
-           ROTaskProperties taskProperties = _task.TaskUpdateData(
+            // add or update task in main tasks data table
+            TaskUpdateData(
+                task: taskParameters.ROTaskProperties,
+                message: ref message
+                );
+
+            ROTaskProperties taskProperties = _task.TaskUpdateData(
                 task: taskParameters.ROTaskProperties,
                 cloneDates: cloneDates,
                 message: ref message,
@@ -1240,7 +1249,8 @@ namespace Logility.ROWeb
             bool getNewClass = true;
 
             if (_task == null
-                || taskParameters.ROTaskProperties.Task.Key == Include.NoRID)
+                || _task.TaskType != taskParameters.ROTaskProperties.TaskType
+                )
             {
                 // check if already have task type in the collection.  If not create it.
                 if (!_taskListTasks.TryGetValue(taskParameters.ROTaskProperties.TaskType, out _task))
@@ -1253,6 +1263,12 @@ namespace Logility.ROWeb
                     _taskListTasks[_task.TaskType] = _task;
                 }
             }
+
+            // add or update task in main tasks data table
+            TaskUpdateData(
+                task: taskParameters.ROTaskProperties,
+                message: ref message
+                );
 
             // Save values to memory only
             ROTaskProperties taskProperties = _task.TaskUpdateData(
@@ -1273,12 +1289,55 @@ namespace Logility.ROWeb
                 ROTaskProperties: taskProperties);
         }
 
+        private void TaskUpdateData(
+            ROTaskProperties task,
+            ref string message)
+        {
+            // remove the old task entry
+            DeleteTask(
+                sequence: task.Task.Key,
+                message: ref message
+                );
+
+            DataRow taskDataRow = _tasksDataTable.NewRow();
+
+            taskDataRow["TASKLIST_RID"] = _taskListProfile.Key;
+            taskDataRow["TASK_SEQUENCE"] = task.Task.Key;
+            taskDataRow["TASK_TYPE"] = task.TaskType.GetHashCode();
+            taskDataRow["MAX_MESSAGE_LEVEL"] = task.MaximumMessageLevel.Key;
+            taskDataRow["EMAIL_SUCCESS_FROM"] = task.EmailSuccessFrom;
+            taskDataRow["EMAIL_SUCCESS_TO"] = task.EmailSuccessTo;
+            taskDataRow["EMAIL_SUCCESS_CC"] = task.EmailSuccessCC;
+            taskDataRow["EMAIL_SUCCESS_BCC"] = task.EmailSuccessBCC;
+            taskDataRow["EMAIL_SUCCESS_SUBJECT"] = task.EmailFailureSubject;
+            taskDataRow["EMAIL_SUCCESS_BODY"] = task.EmailSuccessBody;
+            taskDataRow["EMAIL_FAILURE_FROM"] = task.EmailFailureFrom;
+            taskDataRow["EMAIL_FAILURE_TO"] = task.EmailFailureTo;
+            taskDataRow["EMAIL_FAILURE_CC"] = task.EmailFailureCC;
+            taskDataRow["EMAIL_FAILURE_BCC"] = task.EmailFailureBCC;
+            taskDataRow["EMAIL_FAILURE_SUBJECT"] = task.EmailFailureSubject;
+            taskDataRow["EMAIL_FAILURE_BODY"] = task.EmailFailureBody;
+            taskDataRow["USER_RID"] = _taskListProfile.UserRID;
+            taskDataRow["ITEM_TYPE"] = eProfileType.TaskList.GetHashCode();
+            taskDataRow["ITEM_RID"] = _taskListProfile.Key;
+            taskDataRow["OWNER_USER_RID"] = _taskListProfile.OwnerUserRID;
+
+            _tasksDataTable.Rows.Add(taskDataRow);
+
+            _tasksDataTable.AcceptChanges();
+
+            // order the rows in the data table
+            _tasksDataTable = _tasksDataTable.DefaultView.ToTable();
+
+        }
+
         public ROOut DeleteTask(ROTaskParms taskParameters)
         {
             string message = null;
             bool getNewClass = true;
             if (_task == null
-                    || _task.TaskType != taskParameters.TaskType)
+                || _task.TaskType != taskParameters.TaskType
+               )
             {
                 // check if already have task type in the collection.  If not create it.
                 if (!_taskListTasks.TryGetValue(taskParameters.TaskType, out _task))
@@ -1293,7 +1352,7 @@ namespace Logility.ROWeb
             }
 
             DeleteTask(
-                taskParameters: taskParameters,
+                sequence: taskParameters.Sequence,
                 message: ref message
                 );
             _task.TaskDelete(
@@ -1304,9 +1363,12 @@ namespace Logility.ROWeb
             return new RONoDataOut(eROReturnCode.Successful, message, ROInstanceID);
         }
 
-        private void DeleteTask(ROTaskParms taskParameters, ref string message)
+        private void DeleteTask(
+            int sequence, 
+            ref string message
+            )
         {
-            string selectString = "TASK_SEQUENCE=" + taskParameters.Sequence;
+            string selectString = "TASK_SEQUENCE=" + sequence;
             if (_task != null)
             {
                 DataRow[] taskDataRows = _tasksDataTable.Select(selectString);

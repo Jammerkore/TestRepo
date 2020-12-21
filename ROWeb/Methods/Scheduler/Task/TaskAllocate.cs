@@ -290,12 +290,79 @@ namespace Logility.ROWeb
             ref string message
             )
         {
+            DataRow merchandiseDataRow;
+            DataRow workflowDataRow;
+            int allocateSequence = 0;
+
             // delete old entries from data tables so new ones can be added
             DeleteTaskRows(
                 sequence: taskData.Task.Key
                 );
 
-            throw new Exception("Not Implemented");
+            // add merchandise and detail workflow rows to the data tables
+            foreach (ROTaskAllocateMerchandise taskAllocateMerchandise in taskData.Merchandise)
+            {
+                merchandiseDataRow = TaskData.NewRow();
+
+                merchandiseDataRow["TASKLIST_RID"] = TaskListProperties.TaskList.Key;
+                merchandiseDataRow["TASK_SEQUENCE"] = taskData.Task.Key;
+                merchandiseDataRow["ALLOCATE_SEQUENCE"] = allocateSequence;
+                if (taskAllocateMerchandise.MerchandiseIsSet
+                    && taskAllocateMerchandise.Merchandise.Key != Include.NoRID)
+                {
+                    merchandiseDataRow["HN_RID"] = taskAllocateMerchandise.Merchandise.Key;
+                }
+                if (taskAllocateMerchandise.FilterIsSet
+                    && taskAllocateMerchandise.Filter.Key != Include.NoRID)
+                {
+                    merchandiseDataRow["FILTER_RID"] = taskAllocateMerchandise.Filter.Key;
+                }
+
+                int detailSequence = 0;
+                foreach (ROTaskAllocateMerchandiseWorkflowMethod allocateMerchandiseWorkflow in taskAllocateMerchandise.Workflow)
+                {
+                    workflowDataRow = TaskDetailData.NewRow();
+
+                    workflowDataRow["TASKLIST_RID"] = TaskListProperties.TaskList.Key;
+                    workflowDataRow["TASK_SEQUENCE"] = taskData.Task.Key;
+                    workflowDataRow["ALLOCATE_SEQUENCE"] = allocateSequence;
+                    workflowDataRow["DETAIL_SEQUENCE"] = detailSequence;
+                    if (allocateMerchandiseWorkflow.WorkflowOrMethodIsSet
+                        && allocateMerchandiseWorkflow.WorkflowOrMethod.Key != Include.NoRID)
+                    {
+                        if (allocateMerchandiseWorkflow.IsWorkflow)
+                        {
+                            workflowDataRow["WORKFLOW_RID"] = allocateMerchandiseWorkflow.WorkflowOrMethod.Key;
+                            workflowDataRow["WORKFLOW_METHOD_IND"] = eWorkflowMethodType.Workflow.GetHashCode();
+                        }
+                        else
+                        {
+                            workflowDataRow["METHOD_RID"] = allocateMerchandiseWorkflow.WorkflowOrMethod.Key;
+                            workflowDataRow["WORKFLOW_METHOD_IND"] = eWorkflowMethodType.Method.GetHashCode();
+                        }
+
+                        if (allocateMerchandiseWorkflow.ExecuteDateIsSet)
+                        {
+                            workflowDataRow["EXECUTE_CDR_RID"] = allocateMerchandiseWorkflow.ExecuteDate.Key;
+                        }
+                    }
+
+                    TaskDetailData.Rows.Add(workflowDataRow);
+
+                    ++detailSequence;
+                }
+
+                TaskData.Rows.Add(merchandiseDataRow);
+
+                ++allocateSequence;
+            }
+
+            TaskData.AcceptChanges();
+            TaskDetailData.AcceptChanges();
+
+            // order the rows in the data tables
+            TaskData = TaskData.DefaultView.ToTable();
+            TaskDetailData = TaskDetailData.DefaultView.ToTable();
 
             return true;
         }

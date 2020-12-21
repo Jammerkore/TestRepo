@@ -395,6 +395,14 @@ namespace Logility.ROWebSharedTypes
         /// <summary>
         /// Gets the flag identifying if the merchandise has been set.
         /// </summary>
+        public bool MerchandiseIsSet
+        {
+            get { return !_merchandise.Equals(default(KeyValuePair<int, string>)); }
+        }
+
+        /// <summary>
+        /// Gets the flag identifying if the filter has been set.
+        /// </summary>
         public bool FilterIsSet
         {
             get { return !_filter.Equals(default(KeyValuePair<int, string>)); }
