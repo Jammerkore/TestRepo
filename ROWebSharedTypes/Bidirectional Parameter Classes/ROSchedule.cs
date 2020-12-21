@@ -16,13 +16,13 @@ namespace Logility.ROWebSharedTypes
         /// KeyValuePair contining the key and name of the task
         /// </summary>
         [DataMember(IsRequired = true)]
-        protected KeyValuePair<int, string> _task;
+        private KeyValuePair<int, string> _task;
 
         /// <summary>
         /// The eTaskType of the task
         /// </summary>
         [DataMember(IsRequired = true)]
-        protected eTaskType _taskType;
+        private eTaskType _taskType;
 
         /// <summary>
         /// KeyValuePair contining the eMIDMessageLevel and message leve of the task
@@ -30,15 +30,112 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         protected KeyValuePair<int, string> _maximumMessageLevel;
 
+        /// <summary>
+        /// The email success from email address
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        private string _emailSuccessFrom;
+
+        /// <summary>
+        /// The email success to email address
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        private string _emailSuccessTo;
+
+        /// <summary>
+        /// The email success from CC address
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        private string _emailSuccessCC;
+
+        /// <summary>
+        /// The email success from BCC address
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        private string _emailSuccessBCC;
+
+        /// <summary>
+        /// The email success subject
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        private string _emailSuccessSubject;
+
+        /// <summary>
+        /// The email success message body
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        private string _emailSuccessBody;
+
+        /// <summary>
+        /// The email failure from email address
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        private string _emailFailureFrom;
+
+        /// <summary>
+        /// The email failure to email address
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        private string _emailFailureTo;
+
+        /// <summary>
+        /// The email failure CC email address
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        private string _emailFailureCC;
+
+        /// <summary>
+        /// The email failure BCC email address
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        private string _emailFailureBCC;
+
+        /// <summary>
+        /// The email failure subject
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        private string _emailFailureSubject;
+
+        /// <summary>
+        /// The email failure message body
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        private string _emailFailureBody;
+        
+
         public ROTaskProperties(
             KeyValuePair<int, string> task,
             eTaskType taskType,
-            KeyValuePair<int, string> maximumMessageLevel
+            KeyValuePair<int, string> maximumMessageLevel,
+            string emailSuccessFrom = null,
+            string emailSuccessTo = null,
+            string emailSuccessCC = null,
+            string emailSuccessBCC = null,
+            string emailSuccessSubject = null,
+            string emailSuccessBody = null,
+            string emailFailureFrom = null,
+            string emailFailureTo = null,
+            string emailFailureCC = null,
+            string emailFailureBCC = null,
+            string emailFailureSubject = null,
+            string emailFailureBody = null
             )
         {
             _task = task;
             _taskType = taskType;
             _maximumMessageLevel = maximumMessageLevel;
+            _emailSuccessFrom = emailSuccessFrom;
+            _emailSuccessTo = emailSuccessTo;
+            _emailSuccessCC = emailSuccessCC;
+            _emailSuccessBCC = emailSuccessBCC;
+            _emailSuccessSubject = emailSuccessSubject;
+            _emailSuccessBody = emailSuccessBody;
+            _emailFailureFrom = emailFailureFrom;
+            _emailFailureTo = emailFailureTo;
+            _emailFailureCC = emailFailureCC;
+            _emailFailureBCC = emailFailureBCC;
+            _emailFailureSubject = emailFailureSubject;
+            _emailFailureBody = emailFailureBody;
         }
 
         /// <summary>
@@ -62,6 +159,131 @@ namespace Logility.ROWebSharedTypes
             get { return _maximumMessageLevel; }
             set { _maximumMessageLevel = value; }
         }
+
+        /// <summary>
+        /// The email success from email address
+        /// </summary>
+        public string EmailSuccessFrom
+        {
+            get { return _emailSuccessFrom; }
+            set { _emailSuccessFrom = value; }
+        }
+
+        /// <summary>
+        /// The email success to email address
+        /// </summary>
+        public string EmailSuccessTo
+        {
+            get { return _emailSuccessTo; }
+            set { _emailSuccessTo = value; }
+        }
+
+        /// <summary>
+        /// The email success from CC address
+        /// </summary>
+        public string EmailSuccessCC
+        {
+            get { return _emailSuccessCC; }
+            set { _emailSuccessCC = value; }
+        }
+
+        /// <summary>
+        /// The email success from BCC address
+        /// </summary>
+        public string EmailSuccessBCC
+        {
+            get { return _emailSuccessBCC; }
+            set { _emailSuccessBCC = value; }
+        }
+
+        /// <summary>
+        /// The email success subject
+        /// </summary>
+        public string EmailSuccessSubject
+        {
+            get { return _emailSuccessSubject; }
+            set { _emailSuccessSubject = value; }
+        }
+
+        /// <summary>
+        /// The email success message body
+        /// </summary>
+        public string EmailSuccessBody
+        {
+            get { return _emailSuccessBody; }
+            set { _emailSuccessBody = value; }
+        }
+
+        /// <summary>
+        /// The email failure from email address
+        /// </summary>
+        public string EmailFailureFrom
+        {
+            get { return _emailFailureFrom; }
+            set { _emailFailureFrom = value; }
+        }
+
+        /// <summary>
+        /// The email failure to email address
+        /// </summary>
+        public string EmailFailureTo
+        {
+            get { return _emailFailureTo; }
+            set { _emailFailureTo = value; }
+        }
+
+        /// <summary>
+        /// The email failure CC email address
+        /// </summary>
+        public string EmailFailureCC
+        {
+            get { return _emailFailureCC; }
+            set { _emailFailureCC = value; }
+        }
+
+        /// <summary>
+        /// The email failure BCC email address
+        /// </summary>
+        public string EmailFailureBCC
+        {
+            get { return _emailFailureBCC; }
+            set { _emailFailureBCC = value; }
+        }
+
+        /// <summary>
+        /// The email failure subject
+        /// </summary>
+        public string EmailFailureSubject
+        {
+            get { return _emailFailureSubject; }
+            set { _emailFailureSubject = value; }
+        }
+
+        /// <summary>
+        /// The email failure message body
+        /// </summary>
+        public string EmailFailureBody
+        {
+            get { return _emailFailureBody; }
+            set { _emailFailureBody = value; }
+        }
+
+        public void CopyValuesToDerivedClass(ROTaskProperties taskProperties)
+        {
+            _emailSuccessFrom = taskProperties.EmailSuccessFrom;
+            _emailSuccessTo = taskProperties.EmailSuccessTo;
+            _emailSuccessCC = taskProperties.EmailSuccessCC;
+            _emailSuccessBCC = taskProperties.EmailSuccessBCC;
+            _emailSuccessSubject = taskProperties.EmailSuccessSubject;
+            _emailSuccessBody = taskProperties.EmailSuccessBody;
+            _emailFailureFrom = taskProperties.EmailFailureFrom;
+            _emailFailureTo = taskProperties.EmailFailureTo;
+            _emailFailureCC = taskProperties.EmailFailureCC;
+            _emailFailureBCC = taskProperties.EmailFailureBCC;
+            _emailFailureSubject = taskProperties.EmailFailureSubject;
+            _emailFailureBody = taskProperties.EmailFailureBody;
+        }
+
     }
 
     [DataContract(Name = "ROTaskAllocateMerchandiseWorkflowMethod", Namespace = "http://Logility.ROWeb/")]
@@ -237,7 +459,8 @@ namespace Logility.ROWebSharedTypes
             KeyValuePair<int, string> maximumMessageLevel) :
             base(task: task,
                 taskType: eTaskType.Allocate,
-            maximumMessageLevel: maximumMessageLevel)
+                maximumMessageLevel: maximumMessageLevel
+                )
 
         {
             _merchandise = new List<ROTaskAllocateMerchandise>();

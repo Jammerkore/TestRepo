@@ -30,24 +30,27 @@ namespace Logility.ROWeb
         private HierarchyProfile _mainHierProf = null;
         private Dictionary<int, HierarchyNodeProfile> _hnpDict = new Dictionary<int, HierarchyNodeProfile>();
         private Dictionary<int, DateRangeProfile> _dateRangeDict = new Dictionary<int, DateRangeProfile>();
-        private ScheduleData _dataLayerSchedule = null;
+        private ScheduleData _ScheduleDataLayer = null;
 
-        private SessionAddressBlock _SAB;
+        private SessionAddressBlock _sessionAddressBlock;
         private ROWebTools _ROWebTools;
         private eTaskType _taskType;
         private eLockStatus _lockStatus = eLockStatus.Undefined;
+
+        private DataTable _taskData = null;
+        private DataTable _taskDetailData = null;
 
         //=============
         // CONSTRUCTORS
         //=============
         public TaskBase(
-            SessionAddressBlock SAB,
+            SessionAddressBlock sessionAddressBlock,
             ROWebTools ROWebTools,
             eTaskType taskType,
             ROTaskListProperties taskListProperties
             )
         {
-            _SAB = SAB;
+            _sessionAddressBlock = sessionAddressBlock;
             _ROWebTools = ROWebTools;
             _taskType = taskType;
             _taskListProperties = taskListProperties;
@@ -68,11 +71,11 @@ namespace Logility.ROWeb
         /// <summary>
         /// Gets SessionAddressBlock.
         /// </summary>
-        public SessionAddressBlock SAB
+        public SessionAddressBlock SessionAddressBlock
         {
             get
             {
-                return _SAB;
+                return _sessionAddressBlock;
             }
         }
         /// <summary>
@@ -108,15 +111,39 @@ namespace Logility.ROWeb
         }
 
 
-        public ScheduleData DataLayerSchedule
+        public ScheduleData ScheduleDataLayer
         {
             get
             {
-                if (_dataLayerSchedule == null)
+                if (_ScheduleDataLayer == null)
                 {
-                    _dataLayerSchedule = new ScheduleData();
+                    _ScheduleDataLayer = new ScheduleData();
                 }
-                return _dataLayerSchedule;
+                return _ScheduleDataLayer;
+            }
+        }
+
+        public DataTable TaskData
+        {
+            get
+            {
+                return _taskData;
+            }
+            set
+            {
+                _taskData = value;
+            }
+        }
+
+        public DataTable TaskDetailData
+        {
+            get
+            {
+                return _taskDetailData;
+            }
+            set
+            {
+                _taskDetailData = value;
             }
         }
 
@@ -170,7 +197,7 @@ namespace Logility.ROWeb
             {
                 if (_mainHierProf == null)
                 {
-                    _mainHierProf = SAB.HierarchyServerSession.GetMainHierarchyData();
+                    _mainHierProf = SessionAddressBlock.HierarchyServerSession.GetMainHierarchyData();
                 }
                 return _mainHierProf;
             }
@@ -195,8 +222,19 @@ namespace Logility.ROWeb
             bool applyOnly = false
             );
 
+        abstract public bool TaskUpdateSequence(
+            int oldSequence,
+            int newSequence,
+            ref string message
+            );
+
+        abstract public bool TaskSaveData(
+            ScheduleData scheduleDataLayer,
+            ref string message
+            );
+
         abstract public bool TaskDelete(
-            int key,
+            ROTaskParms taskParameters,
             ref string message
             );
 
@@ -223,12 +261,72 @@ namespace Logility.ROWeb
             return profileKeyParms;
         }
 
+        abstract public void TaskGetValues();
+
         public void UnlockNode(
             int key
             )
         {
-            SAB.HierarchyServerSession.DequeueNode(nodeRID: key);
+            SessionAddressBlock.HierarchyServerSession.DequeueNode(nodeRID: key);
             _hierarchyNodeProfile.NodeLockStatus = eLockStatus.Undefined;
+        }
+
+        /// <summary>
+        /// Update the sequence in the data tables
+        /// </summary>
+        /// <param name="oldSequence">The current sequence number</param>
+        /// <param name="newSequence">The new sequence number</param>
+        protected void UpdateTaskRowSequence(
+            int oldSequence, 
+            int newSequence
+            )
+        {
+            string selectString = "TASK_SEQUENCE=" + oldSequence;
+            if (_taskData != null)
+            {
+                DataRow[] taskDataRows = _taskData.Select(selectString);
+                foreach (var taskDataRow in taskDataRows)
+                {
+                    taskDataRow["TASK_SEQUENC"] = newSequence;
+                }
+                _taskData.AcceptChanges();
+            }
+
+            if (_taskDetailData != null)
+            {
+                DataRow[] detailDataRows = _taskDetailData.Select(selectString);
+                foreach (var detailDataRow in detailDataRows)
+                {
+                    detailDataRow["TASK_SEQUENC"] = newSequence;
+                }
+                _taskDetailData.AcceptChanges();
+            }
+        }
+
+        protected void DeleteTaskRows(
+            int sequence
+            )
+        {
+            string selectString = "TASK_SEQUENCE=" + sequence;
+            if (_taskData != null)
+            {
+                DataRow[] taskDataRows = _taskData.Select(selectString);
+                foreach (var taskDataRow in taskDataRows)
+                {
+                    taskDataRow.Delete();
+                }
+                _taskData.AcceptChanges();
+            }
+
+            if (_taskDetailData != null)
+            {
+                DataRow[] detailDataRows = _taskDetailData.Select(selectString);
+                foreach (var detailDataRow in detailDataRows)
+                {
+                    detailDataRow.Delete();
+                }
+                _taskDetailData.AcceptChanges();
+            }
         }
 
         public eLockStatus LockNode(
@@ -255,7 +353,7 @@ namespace Logility.ROWeb
             if (chaseHierarchy
                 || buildQualifiedID)
             {
-                hnp = SAB.HierarchyServerSession.GetNodeData(
+                hnp = SessionAddressBlock.HierarchyServerSession.GetNodeData(
                     aNodeRID: key, 
                     aChaseHierarchy: chaseHierarchy, 
                     aBuildQualifiedID: buildQualifiedID
@@ -263,7 +361,7 @@ namespace Logility.ROWeb
             }
             else if (!_hnpDict.TryGetValue(key, out hnp))
             {
-                hnp = SAB.HierarchyServerSession.GetNodeData(
+                hnp = SessionAddressBlock.HierarchyServerSession.GetNodeData(
                     nodeRID: key, 
                     chaseHierarchy: chaseHierarchy
                     );
@@ -282,7 +380,7 @@ namespace Logility.ROWeb
             if (chaseHierarchy
                 || buildQualifiedID)
             {
-                hnp = SAB.HierarchyServerSession.GetNodeData(
+                hnp = SessionAddressBlock.HierarchyServerSession.GetNodeData(
                     aNodeID: ID, 
                     aChaseHierarchy: chaseHierarchy, 
                     aBuildQualifiedID: buildQualifiedID
@@ -290,7 +388,7 @@ namespace Logility.ROWeb
             }
             else
             {
-                hnp = SAB.HierarchyServerSession.GetNodeData(
+                hnp = SessionAddressBlock.HierarchyServerSession.GetNodeData(
                     aNodeID: ID, 
                     aChaseHierarchy: chaseHierarchy, 
                     aBuildQualifiedID: buildQualifiedID
@@ -307,7 +405,7 @@ namespace Logility.ROWeb
             DateRangeProfile dateRange = null;
             if (!_dateRangeDict.TryGetValue(key, out dateRange))
             {
-                dateRange = SAB.ClientServerSession.Calendar.GetDateRange(key);
+                dateRange = SessionAddressBlock.ClientServerSession.Calendar.GetDateRange(key);
                 _dateRangeDict.Add(dateRange.Key, dateRange);
             }
             return dateRange;

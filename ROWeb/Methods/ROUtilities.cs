@@ -1316,7 +1316,7 @@ namespace Logility.ROWeb
         /// <param name="message">A message if an error occurs</param>
         /// <returns></returns>
         public static eLockStatus LockItem(
-            SessionAddressBlock SAB, 
+            SessionAddressBlock sessionAddressBlock, 
             eProfileType profileType, 
             eChangeType changeType, 
             int Key, 
@@ -1351,8 +1351,8 @@ namespace Logility.ROWeb
                 objEnqueue = new GenericEnqueue(
                     aLockType: lockType, 
                     aObjectRID: Key, 
-                    aUserRID: SAB.ClientServerSession.UserRID, 
-                    aClientThreadID: SAB.ClientServerSession.ThreadID
+                    aUserRID: sessionAddressBlock.ClientServerSession.UserRID, 
+                    aClientThreadID: sessionAddressBlock.ClientServerSession.ThreadID
                     );
 
                 try
@@ -1391,13 +1391,13 @@ namespace Logility.ROWeb
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="SAB">The SessionAddressBlock containing connectivity to the services</param>
+        /// <param name="sessionAddressBlock">The SessionAddressBlock containing connectivity to the services</param>
         /// <param name="profileType">The eProfileType of the item to unlock</param>
         /// <param name="Key">The key of the item to unlock</param>
         /// <param name="message">A message if an error occurs</param>
         /// <returns></returns>
         public static eLockStatus UnLockItem(
-            SessionAddressBlock SAB, 
+            SessionAddressBlock sessionAddressBlock, 
             eProfileType profileType, 
             int Key, 
             out string message
@@ -1428,8 +1428,8 @@ namespace Logility.ROWeb
                 objEnqueue = new GenericEnqueue(
                     aLockType: lockType,
                     aObjectRID: Key,
-                    aUserRID: SAB.ClientServerSession.UserRID,
-                    aClientThreadID: SAB.ClientServerSession.ThreadID
+                    aUserRID: sessionAddressBlock.ClientServerSession.UserRID,
+                    aClientThreadID: sessionAddressBlock.ClientServerSession.ThreadID
                     );
 
                 objEnqueue.DequeueGeneric();

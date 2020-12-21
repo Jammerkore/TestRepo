@@ -21,20 +21,19 @@ namespace Logility.ROWeb
         //=======
         // FIELDS
         //=======
-        private DataTable _taskData = null;
-        private DataTable _taskDetailData = null;
+        
 
         //=============
         // CONSTRUCTORS
         //=============
         public TaskAllocate(
-            SessionAddressBlock SAB, 
+            SessionAddressBlock sessionAddressBlock, 
             ROWebTools ROWebTools,
             ROTaskListProperties taskListProperties
             ) 
             :
             base(
-                SAB: SAB, 
+                sessionAddressBlock: sessionAddressBlock, 
                 ROWebTools: ROWebTools, 
                 taskType: eTaskType.Allocate, 
                 taskListProperties: taskListProperties
@@ -75,33 +74,54 @@ namespace Logility.ROWeb
             bool applyOnly = false
             )
         {
+            ROTaskAllocate ROTask = null;
+            ROTaskProperties baseTask = null;
             eMIDMessageLevel MIDMessageLevel = eMIDMessageLevel.Severe;
             string messageLevel, name;
 
             // get the values from the database if not already retrieved
-            if (_taskData == null)
+            if (TaskData == null)
             {
-                TaskGetValues(taskParameters: taskParameters);
+                TaskGetValues();
             }
 
-            // get the message level from the task list properties
-            if (TaskListProperties.Tasks.Count > taskParameters.Sequence)
+            // check if object already converted to derived class.  If so, use it.  Else convert to derived class.
+            if (taskParameters.Sequence < TaskListProperties.Tasks.Count
+                && TaskListProperties.Tasks[taskParameters.Sequence] is ROTaskAllocate)
             {
-                MIDMessageLevel = (eMIDMessageLevel)TaskListProperties.Tasks[taskParameters.Sequence].MaximumMessageLevel.Key;
+                ROTask = (ROTaskAllocate)TaskListProperties.Tasks[taskParameters.Sequence];
             }
+            else
+            {
+                // get the message level from the task list properties
+                if (taskParameters.Sequence < TaskListProperties.Tasks.Count)
+                {
+                    baseTask = TaskListProperties.Tasks[taskParameters.Sequence];
+                    MIDMessageLevel = (eMIDMessageLevel)baseTask.MaximumMessageLevel.Key;
+                }
 
-            name = MIDText.GetTextOnly((int)taskParameters.TaskType);
-            messageLevel = MIDText.GetTextOnly((int)MIDMessageLevel);
-            KeyValuePair<int, string> task = new KeyValuePair<int, string>(key: taskParameters.Sequence, value: name);
-            KeyValuePair<int, string> maximumMessageLevel = new KeyValuePair<int, string>((int)MIDMessageLevel, messageLevel);
-            ROTaskAllocate ROTask = new ROTaskAllocate(
-                task: task,
-                maximumMessageLevel: maximumMessageLevel
-                );
+                name = MIDText.GetTextOnly((int)taskParameters.TaskType);
+                messageLevel = MIDText.GetTextOnly((int)MIDMessageLevel);
+                KeyValuePair<int, string> task = new KeyValuePair<int, string>(key: taskParameters.Sequence, value: name);
+                KeyValuePair<int, string> maximumMessageLevel = new KeyValuePair<int, string>((int)MIDMessageLevel, messageLevel);
+                ROTask = new ROTaskAllocate(
+                    task: task,
+                    maximumMessageLevel: maximumMessageLevel
+                    );
+
+                // copy values from base class to derived class
+                if (baseTask != null)
+                {
+                    ROTask.CopyValuesToDerivedClass(taskProperties: baseTask);
+                }
+            }
 
             // populate using Windows\TaskListProperties.cs as a reference
 
             AddValues(taskParameters: taskParameters, task: ROTask);
+
+            // update task list class with derived class
+            TaskListProperties.Tasks[taskParameters.Sequence] = ROTask;
 
             return ROTask;
         }
@@ -124,7 +144,7 @@ namespace Logility.ROWeb
 
             // add merchandise to allocate
             selectString = "TASK_SEQUENCE=" + taskParameters.Sequence;
-            DataRow[] merchandiseDataRows = _taskData.Select(selectString);
+            DataRow[] merchandiseDataRows = TaskData.Select(selectString);
 
             foreach (DataRow dataRow in merchandiseDataRows)
             {
@@ -138,7 +158,7 @@ namespace Logility.ROWeb
                     merchandiseKey = Convert.ToInt32(dataRow["HN_RID"]);
                     merchandise = GetName.GetMerchandiseName(
                         nodeRID: merchandiseKey,
-                        SAB: SAB
+                        SAB: SessionAddressBlock
                         );
                 }
 
@@ -187,7 +207,7 @@ namespace Logility.ROWeb
 
             // add workflow to merchandise
             selectString = "TASK_SEQUENCE=" + taskParameters.Sequence + " AND ALLOCATE_SEQUENCE = " + allocateSequence;
-            DataRow[] workflowDataRows = _taskDetailData.Select(selectString);
+            DataRow[] workflowDataRows = TaskDetailData.Select(selectString);
 
             foreach (DataRow dataRow in workflowDataRows)
             {
@@ -215,7 +235,7 @@ namespace Logility.ROWeb
                     executeDateKey = Convert.ToInt32(dataRow["EXECUTE_CDR_RID"]);
                     executeDate = GetName.GetCalendarDateRange(
                         calendarDateRID: executeDateKey,
-                        SAB: SAB
+                        SAB: SessionAddressBlock
                         );
                 }
 
@@ -251,14 +271,7 @@ namespace Logility.ROWeb
             successful = true;
             ROTaskAllocate taskAllocateData = (ROTaskAllocate)taskData;
 
-            if (SetTask(taskData: taskAllocateData, message: ref message))
-            {
-                if (!applyOnly)
-                {
-                    UpdateTask();
-                }
-            }
-            else
+            if (!SetTask(taskData: taskAllocateData, message: ref message))
             {
                 successful = false;
             }
@@ -277,47 +290,79 @@ namespace Logility.ROWeb
             ref string message
             )
         {
+            // delete old entries from data tables so new ones can be added
+            DeleteTaskRows(
+                sequence: taskData.Task.Key
+                );
+
             throw new Exception("Not Implemented");
 
             return true;
         }
 
         /// <summary>
-        /// Updates the database for the task
+        /// Update the sequence number of the task
         /// </summary>
-        /// <returns>The status of the update</returns>
-        private bool UpdateTask()
-        {
-            throw new Exception("Not Implemented");
-
-            return true;
-        }
-
-        /// <summary>
-        /// Deletes the task from the database
-        /// </summary>
-        /// <param name="key">The key of the task</param>
+        /// <param name="oldSequence">The current sequence number</param>
+        /// <param name="newSequence">The new sequence number</param>
         /// <param name="message">Message during processing</param>
         /// <returns></returns>
-        override public bool TaskDelete(int key, ref string message)
+        override public bool TaskUpdateSequence(
+            int oldSequence,
+            int newSequence,
+            ref string message
+            )
         {
-            throw new Exception("Not Implemented");
+            UpdateTaskRowSequence(
+                oldSequence: oldSequence,
+                newSequence: newSequence
+                );
 
             return true;
         }
 
+        /// <summary>
+        /// Saves the task to the database
+        /// </summary>
+        /// <param name="scheduleDataLayer">The data layer to communicate with the database for schedule tables</param>
+        /// <param name="message">Message during processing</param>
+        /// <returns></returns>
+        override public bool TaskSaveData(
+            ScheduleData scheduleDataLayer,
+            ref string message)
+        {
+            scheduleDataLayer.TaskAllocate_Insert(TaskData);
+            scheduleDataLayer.TaskAllocateDetail_Insert(TaskDetailData);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Deletes the task from the data table
+        /// </summary>
+        /// <param name="taskParameters">The parameters of the task to delete</param>
+        /// <param name="message">Message during processing</param>
+        /// <returns></returns>
+        override public bool TaskDelete(ROTaskParms taskParameters, ref string message)
+        {
+            DeleteTaskRows(
+                sequence: taskParameters.Sequence
+                );
+
+            return true;
+        }
+
+        
 
         /// <summary>
         /// Gets the task values from the database
         /// </summary>
-        /// <param name="taskParameters"></param>
-        /// <returns></returns>
-        private void TaskGetValues(ROTaskParms taskParameters)
+        public override void TaskGetValues()
         {
-            _taskData = DataLayerSchedule.TaskAllocate_ReadByTaskList(aTaskListRID: TaskListKey);
-            _taskData.DefaultView.Sort = "TASK_SEQUENCE, ALLOCATE_SEQUENCE";
-            _taskDetailData = DataLayerSchedule.TaskAllocateDetail_ReadByTaskList(aTaskListRID: TaskListKey);
-            _taskDetailData.DefaultView.Sort = "TASK_SEQUENCE, ALLOCATE_SEQUENCE, DETAIL_SEQUENCE";
+            TaskData = ScheduleDataLayer.TaskAllocate_ReadByTaskList(aTaskListRID: TaskListKey);
+            TaskData.DefaultView.Sort = "TASK_SEQUENCE, ALLOCATE_SEQUENCE";
+            TaskDetailData = ScheduleDataLayer.TaskAllocateDetail_ReadByTaskList(aTaskListRID: TaskListKey);
+            TaskDetailData.DefaultView.Sort = "TASK_SEQUENCE, ALLOCATE_SEQUENCE, DETAIL_SEQUENCE";
         }
     }
 }

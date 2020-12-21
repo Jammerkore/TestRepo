@@ -26,13 +26,13 @@ namespace Logility.ROWeb
         // CONSTRUCTORS
         //=============
         public TaskPushToBackStockLoad(
-            SessionAddressBlock SAB, 
+            SessionAddressBlock sessionAddressBlock, 
             ROWebTools ROWebTools,
             ROTaskListProperties taskListProperties
             ) 
             :
             base(
-                SAB: SAB, 
+                sessionAddressBlock: sessionAddressBlock, 
                 ROWebTools: ROWebTools, 
                 taskType: eTaskType.PushToBackStockLoad, 
                 taskListProperties: taskListProperties
@@ -73,29 +73,50 @@ namespace Logility.ROWeb
             bool applyOnly = false
             )
         {
+            ROTaskPushToBackStockLoad ROTask = null;
+            ROTaskProperties baseTask = null;
             eMIDMessageLevel MIDMessageLevel = eMIDMessageLevel.Severe;
             string messageLevel, name;
 
             // push to back stock does not have any data
 
-            // get the message level from the task list properties
-            if (TaskListProperties.Tasks.Count > taskParameters.Sequence)
+            // check if object already converted to derived class.  If so, use it.  Else convert to derived class.
+            if (taskParameters.Sequence < TaskListProperties.Tasks.Count
+                && TaskListProperties.Tasks[taskParameters.Sequence] is ROTaskPushToBackStockLoad)
             {
-                MIDMessageLevel = (eMIDMessageLevel)TaskListProperties.Tasks[taskParameters.Sequence].MaximumMessageLevel.Key;
+                ROTask = (ROTaskPushToBackStockLoad)TaskListProperties.Tasks[taskParameters.Sequence];
             }
+            else
+            {
+                // get the message level from the task list properties
+                if (taskParameters.Sequence < TaskListProperties.Tasks.Count)
+                {
+                    baseTask = TaskListProperties.Tasks[taskParameters.Sequence];
+                    MIDMessageLevel = (eMIDMessageLevel)baseTask.MaximumMessageLevel.Key;
+                }
 
-            name = MIDText.GetTextOnly((int)taskParameters.TaskType);
-            messageLevel = MIDText.GetTextOnly((int)MIDMessageLevel);
-            KeyValuePair<int, string> task = new KeyValuePair<int, string>(key: taskParameters.Sequence, value: name);
-            KeyValuePair<int, string> maximumMessageLevel = new KeyValuePair<int, string>((int)MIDMessageLevel, messageLevel);
-            ROTaskPushToBackStockLoad ROTask = new ROTaskPushToBackStockLoad(
-                task: task,
-                maximumMessageLevel: maximumMessageLevel
-                );
+                name = MIDText.GetTextOnly((int)taskParameters.TaskType);
+                messageLevel = MIDText.GetTextOnly((int)MIDMessageLevel);
+                KeyValuePair<int, string> task = new KeyValuePair<int, string>(key: taskParameters.Sequence, value: name);
+                KeyValuePair<int, string> maximumMessageLevel = new KeyValuePair<int, string>((int)MIDMessageLevel, messageLevel);
+                ROTask = new ROTaskPushToBackStockLoad(
+                    task: task,
+                    maximumMessageLevel: maximumMessageLevel
+                    );
+
+                // copy values from base class to derived class
+                if (baseTask != null)
+                {
+                    ROTask.CopyValuesToDerivedClass(taskProperties: baseTask);
+                }
+            }
 
             // populate using Windows\TaskListProperties.cs as a reference
 
             AddValues(taskParameters: taskParameters, task: ROTask);
+
+            // update task list class with derived class
+            TaskListProperties.Tasks[taskParameters.Sequence] = ROTask;
 
             return ROTask;
         }
@@ -131,14 +152,7 @@ namespace Logility.ROWeb
             successful = true;
             ROTaskPushToBackStockLoad taskPushToBackStockLoadData = (ROTaskPushToBackStockLoad)taskData;
 
-            if (SetTask(taskData: taskPushToBackStockLoadData, message: ref message))
-            {
-                if (!applyOnly)
-                {
-                    UpdateTask();
-                }
-            }
-            else
+            if (!SetTask(taskData: taskPushToBackStockLoadData, message: ref message))
             {
                 successful = false;
             }
@@ -157,31 +171,62 @@ namespace Logility.ROWeb
             ref string message
             )
         {
+            // delete old entries from data tables so new ones can be added
+            DeleteTaskRows(
+                sequence: taskData.Task.Key
+                );
+
             throw new Exception("Not Implemented");
 
             return true;
         }
 
         /// <summary>
-        /// Updates the database for the task
+        /// Update the sequence number of the task
         /// </summary>
-        /// <returns>The status of the update</returns>
-        private bool UpdateTask()
-        {
-            throw new Exception("Not Implemented");
-
-            return true;
-        }
-
-        /// <summary>
-        /// Deletes the task from the database
-        /// </summary>
-        /// <param name="key">The key of the task</param>
+        /// <param name="oldSequence">The current sequence number</param>
+        /// <param name="newSequence">The new sequence number</param>
         /// <param name="message">Message during processing</param>
         /// <returns></returns>
-        override public bool TaskDelete(int key, ref string message)
+        override public bool TaskUpdateSequence(
+            int oldSequence,
+            int newSequence,
+            ref string message
+            )
         {
-            throw new Exception("Not Implemented");
+            UpdateTaskRowSequence(
+                oldSequence: oldSequence,
+                newSequence: newSequence
+                );
+
+            return true;
+        }
+
+        /// <summary>
+        /// Saves the task to the database
+        /// </summary>
+        /// <param name="scheduleDataLayer">The data layer to communicate with the database for schedule tables</param>
+        /// <param name="message">Message during processing</param>
+        /// <returns></returns>
+        override public bool TaskSaveData(
+            ScheduleData scheduleDataLayer,
+            ref string message)
+        {
+
+            return true;
+        }
+
+        /// <summary>
+        /// Deletes the task from the data table
+        /// </summary>
+        /// <param name="taskParameters">The parameters of the task to delete</param>
+        /// <param name="message">Message during processing</param>
+        /// <returns></returns>
+        override public bool TaskDelete(ROTaskParms taskParameters, ref string message)
+        {
+            DeleteTaskRows(
+                sequence: taskParameters.Sequence
+                );
 
             return true;
         }
@@ -190,9 +235,7 @@ namespace Logility.ROWeb
         /// <summary>
         /// Gets the task values from the database
         /// </summary>
-        /// <param name="taskParameters"></param>
-        /// <returns></returns>
-        private void TaskGetValues(ROTaskParms taskParameters)
+        public override void TaskGetValues()
         {
 
         }

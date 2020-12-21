@@ -20,7 +20,7 @@ namespace Logility.ROWeb
 {
     public class ROTaskListManager
     {
-        private SessionAddressBlock _SAB;
+        private SessionAddressBlock _sessionAddressBlock;
         private ROWebTools _ROWebTools;
         private FunctionSecurityProfile _functionSecurity;
         private ClientSessionTransaction _clientTransaction = null;
@@ -31,10 +31,13 @@ namespace Logility.ROWeb
         private FunctionSecurityProfile _userSecLvl;
         private FunctionSecurityProfile _globalSecLvl;
         private FunctionSecurityProfile _systemSecLvl;
+        private ScheduleData _scheduleDataLayer = null;
+        private FolderDataLayer _folderDataLayer = null;
         private TaskListProfile _taskListProfile = null;
         private ROTaskListProperties _taskListProperties = null;
         private JobProfile _jobProfile = null;
         private TaskBase _task = null;
+        private DataTable _tasksDataTable;
         // Collection to manage tasks within the task list.  Key is task type.
         // All tasks for a single type are contained in the same class
         private Dictionary<eTaskType, TaskBase> _taskListTasks = new Dictionary<eTaskType, TaskBase>();
@@ -42,9 +45,9 @@ namespace Logility.ROWeb
         /// <summary>
         /// Gets the SessionAddressBlock
         /// </summary>
-        protected SessionAddressBlock SAB
+        protected SessionAddressBlock SessionAddressBlock
         {
-            get { return _SAB; }
+            get { return _sessionAddressBlock; }
         }
 
         /// <summary>
@@ -108,6 +111,38 @@ namespace Logility.ROWeb
         }
 
         /// <summary>
+        /// Data layer class to communicate to the database for schedule data
+        /// </summary>
+        public ScheduleData ScheduleDataLayer
+        {
+            get
+            {
+                if (_scheduleDataLayer == null)
+                {
+                    _scheduleDataLayer = new ScheduleData();
+                }
+                return _scheduleDataLayer;
+            }
+        }
+
+        /// <summary>
+        /// Data layer class to communicate to the database for folder data
+        /// </summary>
+        public FolderDataLayer FolderDataLayer
+        {
+            get
+            {
+                if (_folderDataLayer == null)
+                {
+                    _folderDataLayer = new FolderDataLayer();
+                }
+                return _folderDataLayer;
+            }
+        }
+
+        
+
+        /// <summary>
         /// Gets or sets the function security profile
         /// </summary>
         protected FunctionSecurityProfile FunctionSecurity
@@ -122,7 +157,7 @@ namespace Logility.ROWeb
             {
                 if (_clientTransaction == null)
                 {
-                    _clientTransaction = SAB.ClientServerSession.CreateTransaction();
+                    _clientTransaction = SessionAddressBlock.ClientServerSession.CreateTransaction();
                 }
                 return _clientTransaction;
             }
@@ -137,7 +172,7 @@ namespace Logility.ROWeb
                 {
                     _applicationSessionTransaction.Dispose();
                 }
-                _applicationSessionTransaction = SAB.ApplicationServerSession.CreateTransaction();
+                _applicationSessionTransaction = SessionAddressBlock.ApplicationServerSession.CreateTransaction();
             }
             return _applicationSessionTransaction;
         }
@@ -145,26 +180,26 @@ namespace Logility.ROWeb
         /// <summary>
         /// Creates an instance of the class 
         /// </summary>
-        /// <param name="SAB">The SessionAddressBlock for this user and environment</param>
+        /// <param name="SessionAddressBlock">The SessionAddressBlock for this user and environment</param>
         /// <param name="ROWebTools">An instance of the ROWebTools</param>
         /// <param name="ROInstanceID">The instance ID of the session</param>
         /// <param name="applicationSessionTransaction">The transaction to use for processing</param>
         public ROTaskListManager(
-            SessionAddressBlock SAB, 
+            SessionAddressBlock sessionAddressBlock, 
             ROWebTools ROWebTools, 
             long ROInstanceID, 
             ApplicationSessionTransaction applicationSessionTransaction = null
             )
         {
-            _SAB = SAB;
+            _sessionAddressBlock = sessionAddressBlock;
             _ROWebTools = ROWebTools;
             _ROInstanceID = ROInstanceID;
             _applicationSessionTransaction = applicationSessionTransaction;
-            FunctionSecurity = _SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.ToolsScheduler);
+            FunctionSecurity = _sessionAddressBlock.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.ToolsScheduler);
             // Get the security for the user
-            _userSecLvl = _SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.ToolsSchedulerUserTaskLists);
-            _globalSecLvl = _SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.ToolsSchedulerGlobalTaskLists);
-            _systemSecLvl = _SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.ToolsSchedulerSystemTaskLists);
+            _userSecLvl = _sessionAddressBlock.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.ToolsSchedulerUserTaskLists);
+            _globalSecLvl = _sessionAddressBlock.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.ToolsSchedulerGlobalTaskLists);
+            _systemSecLvl = _sessionAddressBlock.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.ToolsSchedulerSystemTaskLists);
         }
 
         /// <summary>
@@ -177,7 +212,7 @@ namespace Logility.ROWeb
             {
                 string message = null;
                 _taskListProfile.LockStatus = TaskListUtilities.UnLockItem(
-                    SAB: SAB,
+                    sessionAddressBlock: SessionAddressBlock,
                     profileType: eProfileType.TaskList,
                     Key: _taskListProfile.Key,
                     message: out message
@@ -193,7 +228,7 @@ namespace Logility.ROWeb
             {
                 string message = null;
                 _jobProfile.LockStatus = TaskListUtilities.UnLockItem(
-                    SAB: SAB,
+                    sessionAddressBlock: SessionAddressBlock,
                     profileType: eProfileType.Job,
                     Key: _jobProfile.Key,
                     message: out message
@@ -236,7 +271,7 @@ namespace Logility.ROWeb
                aUserSecurity: _userSecLvl, 
                 aGlobalSecurity: _globalSecLvl, 
                 aSystemSecurity: _systemSecLvl, 
-                aIsSizeInstalled: _SAB.ClientServerSession.GlobalOptions.AppConfig.SizeInstalled
+                aIsSizeInstalled: _sessionAddressBlock.ClientServerSession.GlobalOptions.AppConfig.SizeInstalled
                 );
 
             foreach (eTaskType taskType in tasks)
@@ -320,7 +355,7 @@ namespace Logility.ROWeb
             if (!FunctionSecurity.IsReadOnly)
             {
                 _taskListProfile.LockStatus = TaskListUtilities.LockItem(
-                    SAB: SAB,
+                    sessionAddressBlock: SessionAddressBlock,
                     profileType: _taskListProfile.ProfileType,
                     changeType: eChangeType.update,
                     Key: _taskListProfile.Key,
@@ -352,31 +387,115 @@ namespace Logility.ROWeb
             string name, messageLevel;
             eMIDMessageLevel MIDMessageLevel;
             int sequence;
+            string emailSuccessFrom = null;
+            string emailSuccessTo = null;
+            string emailSuccessCC = null;
+            string emailSuccessBCC = null;
+            string emailSuccessSubject = null;
+            string emailSuccessBody = null;
+            string emailFailureFrom = null;
+            string emailFailureTo = null;
+            string emailFailureCC = null;
+            string emailFailureBCC = null;
+            string emailFailureSubject = null;
+            string emailFailureBody = null;
 
             // get the task list values from the database
-            ScheduleData scheduleData = new ScheduleData();
-            _taskListProfile = new TaskListProfile(scheduleData.TaskList_Read(taskListParameters.Key));
+            _taskListProfile = new TaskListProfile(ScheduleDataLayer.TaskList_Read(taskListParameters.Key));
             _taskListProperties = new ROTaskListProperties(
                 taskList: new KeyValuePair<int, string>(_taskListProfile.Key, _taskListProfile.Name),
                 userKey: _taskListProfile.OwnerUserRID
                 );
 
-            DataTable tasks = scheduleData.Task_ReadByTaskList(taskListParameters.Key);
+            _tasksDataTable = ScheduleDataLayer.Task_ReadByTaskList(taskListParameters.Key);
 
             // populate the task items into the task list
-            foreach (DataRow dataRow in tasks.Rows)
+            foreach (DataRow dataRow in _tasksDataTable.Rows)
             {
+                emailSuccessFrom = string.Empty;
+                emailSuccessTo = string.Empty;
+                emailSuccessCC = string.Empty;
+                emailSuccessBCC = string.Empty;
+                emailSuccessSubject = string.Empty;
+                emailSuccessBody = string.Empty;
+                emailFailureFrom = string.Empty;
+                emailFailureTo = string.Empty;
+                emailFailureCC = string.Empty;
+                emailFailureBCC = string.Empty;
+                emailFailureSubject = string.Empty;
+                emailFailureBody = string.Empty;
+
                 sequence = Convert.ToInt32(dataRow["TASK_SEQUENCE"]);
                 taskType = (eTaskType)Convert.ToInt32(dataRow["TASK_TYPE"]);
                 name = MIDText.GetTextOnly((int)taskType);
                 MIDMessageLevel = (eMIDMessageLevel)Convert.ToInt32(dataRow["MAX_MESSAGE_LEVEL"]);
                 messageLevel = MIDText.GetTextOnly((int)MIDMessageLevel);
+                if (dataRow["EMAIL_SUCCESS_FROM"] != DBNull.Value)
+                {
+                    emailSuccessFrom = Convert.ToString(dataRow["EMAIL_SUCCESS_FROM"]);
+                }
+	            if (dataRow["EMAIL_SUCCESS_TO"] != DBNull.Value)
+                {
+                    emailSuccessTo = Convert.ToString(dataRow["EMAIL_SUCCESS_TO"]);
+                }
+                if (dataRow["EMAIL_SUCCESS_CC"] != DBNull.Value)
+                {
+                    emailSuccessCC = Convert.ToString(dataRow["EMAIL_SUCCESS_CC"]);
+                }
+                if (dataRow["EMAIL_SUCCESS_BCC"] != DBNull.Value)
+                {
+                    emailSuccessBCC = Convert.ToString(dataRow["EMAIL_SUCCESS_BCC"]);
+                }
+                if (dataRow["EMAIL_SUCCESS_SUBJECT"] != DBNull.Value)
+                {
+                    emailSuccessSubject = Convert.ToString(dataRow["EMAIL_SUCCESS_SUBJECT"]);
+                }
+                if (dataRow["EMAIL_SUCCESS_BODY"] != DBNull.Value)
+                {
+                    emailSuccessBody = Convert.ToString(dataRow["EMAIL_SUCCESS_BODY"]);
+                }
+                if (dataRow["EMAIL_FAILURE_FROM"] != DBNull.Value)
+                {
+                    emailFailureFrom = Convert.ToString(dataRow["EMAIL_FAILURE_FROM"]); 
+                }
+                if (dataRow["EMAIL_FAILURE_TO"] != DBNull.Value)
+                {
+                    emailFailureTo = Convert.ToString(dataRow["EMAIL_FAILURE_TO"]);
+                }
+                if (dataRow["EMAIL_FAILURE_CC"] != DBNull.Value)
+                {
+                    emailFailureCC = Convert.ToString(dataRow["EMAIL_FAILURE_CC"]);
+                }
+                if (dataRow["EMAIL_FAILURE_BCC"] != DBNull.Value)
+                {
+                    emailFailureBCC = Convert.ToString(dataRow["EMAIL_FAILURE_BCC"]);
+                }
+                if (dataRow["EMAIL_FAILURE_SUBJECT"] != DBNull.Value)
+                {
+                    emailFailureSubject = Convert.ToString(dataRow["EMAIL_FAILURE_SUBJECT"]);
+                }
+                if (dataRow["EMAIL_FAILURE_BODY"] != DBNull.Value)
+                {
+                    emailFailureBody = Convert.ToString(dataRow["EMAIL_FAILURE_BODY"]);
+                }
 
                 taskProperties = new ROTaskProperties(
                     task: new KeyValuePair<int, string>(sequence, name),
                     taskType: taskType,
-                    maximumMessageLevel: new KeyValuePair<int, string>((int)MIDMessageLevel, messageLevel)
-                    );
+                    maximumMessageLevel: new KeyValuePair<int, string>((int)MIDMessageLevel, messageLevel),
+                    emailSuccessFrom: emailSuccessFrom,
+                    emailSuccessTo: emailSuccessTo,
+                    emailSuccessCC: emailSuccessCC,
+                    emailSuccessBCC: emailSuccessBCC,
+                    emailSuccessSubject: emailSuccessSubject,
+                    emailSuccessBody: emailSuccessBody,
+                    emailFailureFrom: emailFailureFrom,
+                    emailFailureTo: emailFailureTo,
+                    emailFailureCC: emailFailureCC,
+                    emailFailureBCC: emailFailureBCC,
+                    emailFailureSubject: emailFailureSubject,
+                    emailFailureBody: emailFailureBody
+                );
                 _taskListProperties.Tasks.Add(taskProperties);
             }
 
@@ -393,17 +512,219 @@ namespace Logility.ROWeb
         /// <param name="TaskListParameters">Contains the task list properties to save</param>
         /// <returns>A ROIListOut object containing an ROTreeNodeOut object with updated task list information</returns>
         public ROOut SaveTaskList(
-            ROTaskListPropertiesParms TaskListParameters
+            ROTaskListPropertiesParms taskListParameters
             )
         {
             string message = null;
+            int sequence = 0;
+            eTaskType taskType;
 
+            // Get task values from database for types that have not been accessed
+            // They are needed based on the way all old values are deleted for a task list
+            // and then inserted.
+            // If the sequence is incorrect because tasks have been deleted or inserted, update the sequence
+            // in the task before it is saved to the database.
+            foreach (ROTaskProperties task in taskListParameters.ROTaskListProperties.Tasks)
+            {
+                if (!_taskListTasks.TryGetValue(task.TaskType, out _task))
+                {
+                    _task = GetTaskClass(
+                        taskType: task.TaskType,
+                        taskListProperties: _taskListProperties,
+                        getNewClass: true
+                        );
+                    
+                    _task.TaskGetValues();
+                    _taskListTasks[_task.TaskType] = _task;
+                }
 
+                // if the task key (sequence) does not match, update the sequence
+                if (task.Task.Key != sequence)
+                {
+                    // update the sequence in the main task data table
+                    TaskUpdateSequence(
+                        oldSequence: task.Task.Key,
+                        newSequence: sequence
+                        );
+
+                    // update the sequence in the task data tables
+                    _task.TaskUpdateSequence(
+                        oldSequence: task.Task.Key,
+                        newSequence: sequence,
+                        message: ref message
+                        );
+                }
+
+                ++sequence;
+            }
+
+            int key = taskListParameters.ROTaskListProperties.TaskList.Key;
+            // make sure task list name is unique for the owner
+            string taskListName = CleanseTaskListName(
+                taskListParameters: taskListParameters
+                );
+            // if the name was changed, update the data class with the new name
+            if (taskListName != taskListParameters.ROTaskListProperties.TaskList.Value)
+            {
+                taskListParameters.ROTaskListProperties.TaskList = new KeyValuePair<int, string>(key, taskListName);
+                _taskListProfile.Name = taskListName;
+            }
+
+            // get the folder key to locate the task list
+            int folderKey = TaskListUtilities.GetTaskListFolderRID(
+                profileType: eProfileType.TaskList,
+                folderKey: taskListParameters.FolderKey,
+                userKey: taskListParameters.ROTaskListProperties.UserKey,
+                uniqueID: taskListParameters.FolderUniqueID);
+
+            try
+            {
+                // open update connection to the database
+                ScheduleDataLayer.OpenUpdateConnection();
+
+                // create or update the task list
+                if (key == Include.NoRID)
+                {
+                    CreateTaskList(
+                        taskListParameters: taskListParameters,
+                        folderKey: folderKey
+                        );
+                }
+                else
+                {
+                    ScheduleDataLayer.TaskList_Update(_taskListProfile, SessionAddressBlock.ClientServerSession.UserRID);
+                }
+
+                // insert the tasks for the task list
+                ScheduleDataLayer.Task_Insert(_tasksDataTable);
+
+                // insert the data for each task type
+                foreach (KeyValuePair<eTaskType, TaskBase> task in _taskListTasks)
+                {
+                    taskType = task.Key;
+                    _task = task.Value;
+
+                    _task.TaskSaveData(
+                        scheduleDataLayer: ScheduleDataLayer,
+                        message: ref message
+                        );
+                }
+
+                ScheduleDataLayer.CommitData();
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+                ScheduleDataLayer.CloseUpdateConnection();
+            }
+
+            // build a new task list node to update the task list explorer 
             List<ROTreeNodeOut> taskListNode = TaskListUtilities.BuildTaskListNode(
                 profileType: eProfileType.TaskList, 
                 taskListProfile: _taskListProfile
                 );
+
             return new ROIListOut(eROReturnCode.Successful, message, ROInstanceID, taskListNode);
+        }
+
+        /// <summary>
+        /// Update the sequence in the main task data table
+        /// </summary>
+        /// <param name="oldSequence">The current sequence number</param>
+        /// <param name="newSequence">The new sequence number</param>
+        private bool TaskUpdateSequence(
+            int oldSequence,
+            int newSequence
+            )
+        {
+            string selectString = "TASK_SEQUENCE=" + oldSequence;
+            if (_tasksDataTable != null)
+            {
+                DataRow[] taskDataRows = _tasksDataTable.Select(selectString);
+                foreach (var taskDataRow in taskDataRows)
+                {
+                    taskDataRow["TASK_SEQUENC"] = newSequence;
+                }
+                _tasksDataTable.AcceptChanges();
+            }
+
+            return true;
+        }
+
+        private void SetTaskData(
+            ROTaskListPropertiesParms taskListParameters
+            )
+        {
+            // Get task values from database for types that have not been accessed
+            // They are needed based on the way all old values are deleted for a task list
+            // and then inserted
+            foreach (ROTaskProperties task in taskListParameters.ROTaskListProperties.Tasks)
+            {
+                if (!_taskListTasks.TryGetValue(task.TaskType, out _task))
+                {
+                    _task = GetTaskClass(
+                        taskType: task.TaskType,
+                        taskListProperties: _taskListProperties,
+                        getNewClass: true
+                        );
+
+                    _task.TaskGetValues();
+                    _taskListTasks[_task.TaskType] = _task;
+                }
+            }
+        }
+
+        private int CreateTaskList(
+            ROTaskListPropertiesParms taskListParameters,
+            int folderKey
+            )
+        {
+            _taskListProfile.UserRID = taskListParameters.ROTaskListProperties.UserKey;
+            _taskListProfile.OwnerUserRID = taskListParameters.ROTaskListProperties.UserKey;
+            _taskListProfile.Key = ScheduleDataLayer.TaskList_Insert(_taskListProfile, _taskListProfile.UserRID);
+
+            FolderDataLayer.OpenUpdateConnection();
+
+            try
+            {
+                FolderDataLayer.Folder_Item_Insert(folderKey, _taskListProfile.Key, eProfileType.TaskList);
+                FolderDataLayer.CommitData();
+            }
+            catch (Exception exc)
+            {
+                string message = exc.ToString();
+                throw;
+            }
+            finally
+            {
+                FolderDataLayer.CloseUpdateConnection();
+            }
+
+            return _taskListProfile.Key;
+        }
+
+        private void DeleteTaskListTasks(
+            )
+        {
+            ScheduleDataLayer.TaskForecastDetail_Delete(_taskListProfile.Key);
+            ScheduleDataLayer.TaskForecast_Delete(_taskListProfile.Key);
+            ScheduleDataLayer.TaskAllocateDetail_Delete(_taskListProfile.Key);
+            ScheduleDataLayer.TaskAllocate_Delete(_taskListProfile.Key);
+            ScheduleDataLayer.TaskRollup_Delete(_taskListProfile.Key);
+            ScheduleDataLayer.TaskSizeCurveMethod_Delete(_taskListProfile.Key);
+            ScheduleDataLayer.TaskSizeCurves_Delete(_taskListProfile.Key);
+            ScheduleDataLayer.TaskSizeCurveGenerateNode_Delete(_taskListProfile.Key);
+            ScheduleDataLayer.TaskSizeDayToWeekSummary_Delete(_taskListProfile.Key);
+            ScheduleDataLayer.TaskPosting_Delete(_taskListProfile.Key);
+            ScheduleDataLayer.TaskProgram_Delete(_taskListProfile.Key);
+            ScheduleDataLayer.TaskBatchComp_Delete(_taskListProfile.Key);  
+            ScheduleDataLayer.TaskHeaderReconcile_Delete(_taskListProfile.Key);    
+            ScheduleDataLayer.Task_Delete(_taskListProfile.Key);
+
+            ScheduleDataLayer.Task_Insert(_tasksDataTable);
         }
 
         /// <summary>
@@ -412,14 +733,14 @@ namespace Logility.ROWeb
         /// <param name="TaskListParameters">Contains the task list properties to apply</param>
         /// <returns></returns>
         public ROOut ApplyTaskList(
-            ROTaskListPropertiesParms TaskListParameters
-            )
+        ROTaskListPropertiesParms taskListParameters
+        )
         {
             string message = null;
 
             if (_taskListProfile == null)
             {
-                message = SAB.ClientServerSession.Audit.GetText(
+                message = SessionAddressBlock.ClientServerSession.Audit.GetText(
                     messageCode: eMIDTextCode.msg_ValueWasNotFound,
                     addToAuditReport: true,
                     args: new object[] { "Task List" }
@@ -431,13 +752,13 @@ namespace Logility.ROWeb
 
             // Build new object with updated values
             ROProfileKeyParms taskListGetParameters = new ROProfileKeyParms(
-                sROUserID: TaskListParameters.ROUserID, 
-                sROSessionID: TaskListParameters.ROSessionID, 
-                ROClass: TaskListParameters.ROClass,
+                sROUserID: taskListParameters.ROUserID, 
+                sROSessionID: taskListParameters.ROSessionID, 
+                ROClass: taskListParameters.ROClass,
                 RORequest: eRORequest.GetTaskList, 
-                ROInstanceID: TaskListParameters.ROInstanceID, 
+                ROInstanceID: taskListParameters.ROInstanceID, 
                 profileType: eProfileType.TaskList,
-                key: TaskListParameters.ROTaskListProperties.TaskList.Key, 
+                key: taskListParameters.ROTaskListProperties.TaskList.Key, 
                 readOnly: false
                 );
             return GetTaskList(taskListParameters: taskListGetParameters, processingApply: true);
@@ -446,12 +767,44 @@ namespace Logility.ROWeb
         /// <summary>
         /// Determines if the task list name is a duplicate and obtains a unique name if it is
         /// </summary>
-        private void CleanseTaskListName()
+        private string CleanseTaskListName(
+            ROTaskListPropertiesParms taskListParameters
+            )
         {
-            string name = _taskListProfile.Name;
+            string name = taskListParameters.ROTaskListProperties.TaskList.Value;
 
-            int userKey = SAB.ClientServerSession.UserRID;
-            
+            int userKey = taskListParameters.ROTaskListProperties.UserKey;
+
+            int nameCntr = 0;
+            while (true)
+            {
+                if (!isDuplicateName(name, userKey))
+                {
+                    break;
+                }
+                else
+                {
+                    nameCntr++;
+                    _taskListProfile.Name = Include.GetNewName(name: name, index: nameCntr);
+                }
+            }
+
+            return name.Trim();
+        }
+
+        /// <summary>
+        /// Check the database to see if the name already exists
+        /// </summary>
+        /// <param name="name">The name of the task list</param>
+        /// <param name="userKey">The owner of the task list</param>
+        /// <returns></returns>
+        private bool isDuplicateName(string name, int userKey)
+        {
+            if (ScheduleDataLayer.TaskList_GetKey(name, userKey) != -1)
+            {
+                return true;
+            }
+            return false;
         }
 
         /// <summary>
@@ -489,15 +842,233 @@ namespace Logility.ROWeb
         /// <summary>
         /// Deletes the task list
         /// </summary>
-        /// <param name="TaskListParameters">The parameters containing which task list to be deleted</param>
+        /// <param name="taskListParameters">The parameters containing which task list to be deleted</param>
         /// <returns></returns>
-        public ROOut DeleteTaskList(ROProfileKeyParms TaskListParameters)
+        public ROOut DeleteTaskList(ROProfileKeyParms taskListParameters)
         {
             string message = null;
+            try
+            {
+                if (TaskListDeleted(taskListParameters, ref message))
+                {
+                    return new RONoDataOut(eROReturnCode.Successful, message, ROInstanceID);
+                }
+                else
+                {
+                    return new RONoDataOut(eROReturnCode.Failure, message, ROInstanceID);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
 
-            
+        private bool TaskListDeleted(
+            ROProfileKeyParms taskListParameters, 
+            ref string message
+            )
+        {
+            bool success = true;
+            message = null;
+            DataTable scheduledJobsDataTable;
+            DataTable jobsDataTable;
+            DataRow[] runningJobs;
+            bool invalidJobStatusFound;
 
-            return new RONoDataOut(eROReturnCode.Successful, message, ROInstanceID);
+            if (taskListParameters.Key != Include.NoRID)
+            {
+                if (_taskListProfile == null)
+                {
+                    _taskListProfile = new TaskListProfile(ScheduleDataLayer.TaskList_Read(taskListParameters.Key));
+                    if (!_taskListProfile.isFound)
+                    {
+                        MIDEnvironment.Message = SessionAddressBlock.ClientServerSession.Audit.GetText(
+                            messageCode: eMIDTextCode.msg_ValueWasNotFound,
+                            addToAuditReport: true,
+                            args: new object[] { MIDText.GetTextOnly(eMIDTextCode.lbl_Workflow) }
+                            );
+                        MIDEnvironment.requestFailed = true;
+                        return false;
+                    }
+                }
+            }
+
+            if (taskListParameters.Key != _taskListProfile.Key)
+            {
+                MIDEnvironment.Message = SessionAddressBlock.ClientServerSession.Audit.GetText(
+                       messageCode: eMIDTextCode.msg_CallParmsDoNotMatchInstance,
+                       addToAuditReport: true
+                       );
+                MIDEnvironment.requestFailed = true;
+                return false;
+            }
+
+            if (!FunctionSecurity.AllowDelete
+                || _taskListProfile.LockStatus == eLockStatus.ReadOnly
+                || !ApplicationUtilities.AllowDeleteFromInUse(
+                    key: _taskListProfile.Key, 
+                    profileType: _taskListProfile.ProfileType, 
+                    SAB: SessionAddressBlock)
+                    )
+            {
+                message = string.Empty;
+                if (!FunctionSecurity.AllowDelete)
+                {
+                    message = MIDText.GetText(eMIDTextCode.msg_NotAuthorized);
+                    ROWebTools.LogMessage(eROMessageLevel.Information, message);
+                    MIDEnvironment.Message = message;
+                }
+                else if (_taskListProfile.LockStatus == eLockStatus.ReadOnly)
+                {
+                    message = MIDText.GetText(eMIDTextCode.msg_DataIsReadOnly);
+                    ROWebTools.LogMessage(eROMessageLevel.Information, message);
+                    _taskListProfile.LockStatus = TaskListUtilities.LockItem(
+                            sessionAddressBlock: SessionAddressBlock,
+                            profileType: _taskListProfile.ProfileType,
+                            changeType: eChangeType.update,
+                            Key: _taskListProfile.Key,
+                            Name: _taskListProfile.Name,
+                            allowReadOnly: true,
+                            message: out message
+                    );
+                    MIDEnvironment.Message = message;
+                }
+                return false;
+            }
+
+            if (_taskListProfile.LockStatus != eLockStatus.Locked)
+            {
+                _taskListProfile.LockStatus = TaskListUtilities.LockItem(
+                    sessionAddressBlock: SessionAddressBlock,
+                    profileType: _taskListProfile.ProfileType,
+                    changeType: eChangeType.update,
+                    Key: _taskListProfile.Key,
+                    Name: _taskListProfile.Name,
+                    allowReadOnly: true,
+                    message: out message
+                    );
+                if (_taskListProfile.LockStatus != eLockStatus.Locked)
+                {
+                    MIDEnvironment.Message = message;
+                    return false;
+                }
+            }
+
+            try
+            {
+                scheduledJobsDataTable = ScheduleDataLayer.ReadNonSystemJobsByTaskList(_taskListProfile.Key);
+
+                if (scheduledJobsDataTable.Rows.Count > 0)
+                {
+                    message = SessionAddressBlock.ClientServerSession.Audit.GetText(eMIDTextCode.msg_DeleteFailedDataInUse);
+                    return false;
+                }
+
+                scheduledJobsDataTable = ScheduleDataLayer.ReadScheduledSystemJobsByTaskList(_taskListProfile.Key);
+
+                if (scheduledJobsDataTable.Rows.Count > 0)
+                {
+                    if (SessionAddressBlock.SchedulerServerSession == null)
+                    {
+                        message = SessionAddressBlock.ClientServerSession.Audit.GetText(eMIDTextCode.msg_ScheduleSessionNotAvailable);
+                        return false;
+                    }
+                    else
+                    {
+                        runningJobs = scheduledJobsDataTable.Select("EXECUTION_STATUS = " + (int)eProcessExecutionStatus.Running + " OR EXECUTION_STATUS = " + (int)eProcessExecutionStatus.Queued);
+
+                        if (runningJobs.Length > 0)
+                        {
+                            message = SessionAddressBlock.ClientServerSession.Audit.GetText(eMIDTextCode.msg_CannotDeleteRunningTaskList);
+                            return false;
+                        }
+
+                        runningJobs = scheduledJobsDataTable.Select(
+                            "EXECUTION_STATUS = " + (int)eProcessExecutionStatus.Executed + " OR EXECUTION_STATUS = " + (int)eProcessExecutionStatus.OnHold +
+                            " OR EXECUTION_STATUS = " + (int)eProcessExecutionStatus.Waiting);
+
+                        if (runningJobs.Length > 0)
+                        {
+                            message = MIDText.GetText(eMIDTextCode.msg_TaskListIsScheduled);
+                            return false;
+                        }
+                    }
+                }
+
+                jobsDataTable = ScheduleDataLayer.ReadSystemJobsByTaskList(_taskListProfile.Key);
+
+                ScheduleDataLayer.OpenUpdateConnection();
+                FolderDataLayer.OpenUpdateConnection();
+
+                try
+                {
+                    if (scheduledJobsDataTable.Rows.Count > 0)
+                    {
+                        invalidJobStatusFound = SessionAddressBlock.SchedulerServerSession.DeleteSchedulesFromList(scheduledJobsDataTable);
+                    }
+                    else
+                    {
+                        invalidJobStatusFound = false;
+                    }
+
+                    if (!invalidJobStatusFound)
+                    {
+                        if (jobsDataTable.Rows.Count > 0)
+                        {
+                            ScheduleDataLayer.JobTaskListJoin_DeleteSystemFromList(jobsDataTable);
+                            ScheduleDataLayer.Job_DeleteSystemFromList(jobsDataTable);
+                        }
+
+                        FolderDataLayer.Folder_Item_Delete(_taskListProfile.Key, eProfileType.TaskList);
+                        FolderDataLayer.Folder_Shortcut_DeleteAll(_taskListProfile.Key, eProfileType.TaskList);
+                        ScheduleDataLayer.TaskList_Delete(_taskListProfile.Key);
+
+                        ScheduleDataLayer.CommitData();
+                        FolderDataLayer.CommitData();
+                    }
+                    else
+                    {
+                        message = SessionAddressBlock.ClientServerSession.Audit.GetText(eMIDTextCode.msg_DeleteFailedDataInUse);
+                        return false;
+                    }
+                }
+                catch (DatabaseForeignKeyViolation)
+                {
+                    message = SessionAddressBlock.ClientServerSession.Audit.GetText(eMIDTextCode.msg_DeleteFailedDataInUse);
+                    return false;
+                }
+                catch (Exception error)
+                {
+                    message = error.ToString();
+                    throw;
+                }
+                finally
+                {
+                    ScheduleDataLayer.CloseUpdateConnection();
+                    FolderDataLayer.CloseUpdateConnection();
+                }
+            }
+            catch (Exception error)
+            {
+                message = error.ToString();
+                throw;
+            }
+            finally
+            {
+                _taskListProfile.LockStatus = TaskListUtilities.UnLockItem(
+                    sessionAddressBlock: SessionAddressBlock,
+                    profileType: eProfileType.TaskList,
+                    Key: _taskListProfile.Key,
+                    message: out message
+                    );
+                if (_taskListProfile.LockStatus == eLockStatus.Cancel)
+                {
+                    success = false;
+                }
+            }
+
+            return success;
         }
 
         #endregion TaskList Processing
@@ -721,9 +1292,30 @@ namespace Logility.ROWeb
                 }
             }
 
-            _taskListTasks.Remove(taskParameters.TaskType);
+            DeleteTask(
+                taskParameters: taskParameters,
+                message: ref message
+                );
+            _task.TaskDelete(
+                taskParameters: taskParameters,
+                message: ref message
+                );
 
             return new RONoDataOut(eROReturnCode.Successful, message, ROInstanceID);
+        }
+
+        private void DeleteTask(ROTaskParms taskParameters, ref string message)
+        {
+            string selectString = "TASK_SEQUENCE=" + taskParameters.Sequence;
+            if (_task != null)
+            {
+                DataRow[] taskDataRows = _tasksDataTable.Select(selectString);
+                foreach (var taskDataRow in taskDataRows)
+                {
+                    taskDataRow.Delete();
+                }
+                _tasksDataTable.AcceptChanges();
+            }
         }
 
 
@@ -738,152 +1330,152 @@ namespace Logility.ROWeb
             {
                 case eTaskType.Allocate:
                     return new TaskAllocate(
-                        SAB: _SAB, 
+                        sessionAddressBlock: _sessionAddressBlock, 
                         ROWebTools: _ROWebTools, 
                         taskListProperties: taskListProperties
                         );
 
                 case eTaskType.HierarchyLoad:
                     return new TaskHierarchyLoad(
-                        SAB: _SAB,
+                        sessionAddressBlock: _sessionAddressBlock,
                         ROWebTools: _ROWebTools,
                         taskListProperties: taskListProperties
                         );
                 case eTaskType.StoreLoad:
                     return new TaskStoreLoad(
-                        SAB: _SAB,
+                        sessionAddressBlock: _sessionAddressBlock,
                         ROWebTools: _ROWebTools,
                         taskListProperties: taskListProperties
                         );
                 case eTaskType.HistoryPlanLoad:
                     return new TaskHistoryPlanLoad(
-                        SAB: _SAB,
+                        sessionAddressBlock: _sessionAddressBlock,
                         ROWebTools: _ROWebTools,
                         taskListProperties: taskListProperties
                         );
                 case eTaskType.ColorCodeLoad:
                     return new TaskColorCodeLoad(
-                        SAB: _SAB,
+                        sessionAddressBlock: _sessionAddressBlock,
                         ROWebTools: _ROWebTools,
                         taskListProperties: taskListProperties
                         );
                 case eTaskType.SizeCodeLoad:
                     return new TaskSizeCodeLoad(
-                        SAB: _SAB,
+                        sessionAddressBlock: _sessionAddressBlock,
                         ROWebTools: _ROWebTools,
                         taskListProperties: taskListProperties
                         );
                 case eTaskType.HeaderLoad:
                     return new TaskHeaderLoad(
-                        SAB: _SAB,
+                        sessionAddressBlock: _sessionAddressBlock,
                         ROWebTools: _ROWebTools,
                         taskListProperties: taskListProperties
                         );
                 case eTaskType.Forecasting:
                     return new TaskForecasting(
-                        SAB: _SAB,
+                        sessionAddressBlock: _sessionAddressBlock,
                         ROWebTools: _ROWebTools,
                         taskListProperties: taskListProperties
                         );
                 case eTaskType.Rollup:
                     return new TaskRollup(
-                        SAB: _SAB,
+                        sessionAddressBlock: _sessionAddressBlock,
                         ROWebTools: _ROWebTools,
                         taskListProperties: taskListProperties
                         );
                 case eTaskType.RelieveIntransit:
                     return new TaskRelieveIntransit(
-                        SAB: _SAB,
+                        sessionAddressBlock: _sessionAddressBlock,
                         ROWebTools: _ROWebTools,
                         taskListProperties: taskListProperties
                         );
                 case eTaskType.Purge:
                     return new TaskPurge(
-                        SAB: _SAB,
+                        sessionAddressBlock: _sessionAddressBlock,
                         ROWebTools: _ROWebTools,
                         taskListProperties: taskListProperties
                         );
                 case eTaskType.ExternalProgram:
                     return new TaskExternalProgram(
-                        SAB: _SAB,
+                        sessionAddressBlock: _sessionAddressBlock,
                         ROWebTools: _ROWebTools,
                         taskListProperties: taskListProperties
                         );
                 case eTaskType.SizeCurveLoad:
                     return new TaskSizeCurveLoad(
-                        SAB: _SAB,
+                        sessionAddressBlock: _sessionAddressBlock,
                         ROWebTools: _ROWebTools,
                         taskListProperties: taskListProperties
                         );
                 case eTaskType.SizeConstraintsLoad:
                     return new TaskSizeConstraintsLoad(
-                        SAB: _SAB,
+                        sessionAddressBlock: _sessionAddressBlock,
                         ROWebTools: _ROWebTools,
                         taskListProperties: taskListProperties
                         );
                 case eTaskType.SizeCurveMethod:
                     return new TaskSizeCurveMethod(
-                        SAB: _SAB,
+                        sessionAddressBlock: _sessionAddressBlock,
                         ROWebTools: _ROWebTools,
                         taskListProperties: taskListProperties
                         );
                 case eTaskType.SizeCurves:
                     return new TaskSizeCurves(
-                        SAB: _SAB,
+                        sessionAddressBlock: _sessionAddressBlock,
                         ROWebTools: _ROWebTools,
                         taskListProperties: taskListProperties
                         );
                 case eTaskType.SizeDayToWeekSummary:
                     return new TaskSizeDayToWeekSummary(
-                        SAB: _SAB,
+                        sessionAddressBlock: _sessionAddressBlock,
                         ROWebTools: _ROWebTools,
                         taskListProperties: taskListProperties
                         );
                 case eTaskType.BuildPackCriteriaLoad:
                     return new TaskBuildPackCriteriaLoad(
-                        SAB: _SAB,
+                        sessionAddressBlock: _sessionAddressBlock,
                         ROWebTools: _ROWebTools,
                         taskListProperties: taskListProperties
                         );
                 case eTaskType.ChainSetPercentCriteriaLoad:
                     return new TaskChainSetPercentCriteriaLoad(
-                        SAB: _SAB,
+                        sessionAddressBlock: _sessionAddressBlock,
                         ROWebTools: _ROWebTools,
                         taskListProperties: taskListProperties
                         );
                 case eTaskType.PushToBackStockLoad:
                     return new TaskPushToBackStockLoad(
-                        SAB: _SAB,
+                        sessionAddressBlock: _sessionAddressBlock,
                         ROWebTools: _ROWebTools,
                         taskListProperties: taskListProperties
                         );
                 case eTaskType.DailyPercentagesCriteriaLoad:
                     return new TaskDailyPercentagesCriteriaLoad(
-                        SAB: _SAB,
+                        sessionAddressBlock: _sessionAddressBlock,
                         ROWebTools: _ROWebTools,
                         taskListProperties: taskListProperties
                         );
                 case eTaskType.StoreEligibilityCriteriaLoad:
                     return new TaskStoreEligibilityCriteriaLoad(
-                        SAB: _SAB,
+                        sessionAddressBlock: _sessionAddressBlock,
                         ROWebTools: _ROWebTools,
                         taskListProperties: taskListProperties
                         );
                 case eTaskType.VSWCriteriaLoad:
                     return new TaskVSWCriteriaLoad(
-                        SAB: _SAB,
+                        sessionAddressBlock: _sessionAddressBlock,
                         ROWebTools: _ROWebTools,
                         taskListProperties: taskListProperties
                         );
                 case eTaskType.HeaderReconcile:
                     return new TaskHeaderReconcile(
-                        SAB: _SAB,
+                        sessionAddressBlock: _sessionAddressBlock,
                         ROWebTools: _ROWebTools,
                         taskListProperties: taskListProperties
                         );
                 case eTaskType.BatchComp:
                     return new TaskBatchCompute(
-                        SAB: _SAB,
+                        sessionAddressBlock: _sessionAddressBlock,
                         ROWebTools: _ROWebTools,
                         taskListProperties: taskListProperties
                         );

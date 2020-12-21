@@ -24,14 +24,14 @@ namespace Logility.ROWeb
         /// <summary>
         /// Creates an instance of the class 
         /// </summary>
-        /// <param name="SAB">The SessionAddressBlock for this user and environment</param>
+        /// <param name="sessionAddressBlock">The SessionAddressBlock for this user and environment</param>
         /// <param name="ROWebTools">An instance of the ROWebTools</param>
-        public ROTaskListExplorer(SessionAddressBlock SAB, ROWebTools ROWebTools)
-            : base(SAB, ROWebTools)
+        public ROTaskListExplorer(SessionAddressBlock sessionAddressBlock, ROWebTools ROWebTools)
+            : base(sessionAddressBlock, ROWebTools)
 		{
             _treeView = new TaskListTreeView();
             _ROTaskListManager = new ROTaskListManager(
-                SAB: SAB, 
+                sessionAddressBlock: sessionAddressBlock, 
                 applicationSessionTransaction: null, 
                 ROWebTools: ROWebTools, 
                 ROInstanceID: ROInstanceID
@@ -59,7 +59,7 @@ namespace Logility.ROWeb
                 if (_ROTaskListManager == null)
                 {
                     _ROTaskListManager = new ROTaskListManager(
-                        SAB: SAB, 
+                        sessionAddressBlock: SAB, 
                         applicationSessionTransaction: null, 
                         ROWebTools: ROWebTools, 
                         ROInstanceID: ROInstanceID
@@ -157,7 +157,7 @@ namespace Logility.ROWeb
                     _ROTaskListManager = null;
                 }
                 _ROTaskListManager = new ROTaskListManager(
-                    SAB: SAB, 
+                    sessionAddressBlock: SAB, 
                     ROWebTools: ROWebTools, 
                     ROInstanceID: ROInstanceID,
                     applicationSessionTransaction: null
