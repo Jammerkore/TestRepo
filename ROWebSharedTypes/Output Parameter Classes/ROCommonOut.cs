@@ -978,7 +978,7 @@ namespace Logility.ROWebSharedTypes
             _ROTaskProperties = ROTaskProperties;
         }
 
-        public ROTaskProperties ROTaskListProperties { get { return _ROTaskProperties; } }
+        public ROTaskProperties ROTaskProperties { get { return _ROTaskProperties; } }
 
     }
 }

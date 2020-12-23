@@ -307,6 +307,19 @@ namespace Logility.ROWeb
             string message = null;
             eROReturnCode returnCode = eROReturnCode.Successful;
 
+            // unlock prior task list if different task list is requested
+            if (_taskListProfile != null
+                && _taskListProfile.Key != taskListParameters.Key
+                && _taskListProfile.LockStatus == eLockStatus.Locked)
+            {
+                _taskListProfile.LockStatus = TaskListUtilities.UnLockItem(
+                    sessionAddressBlock: SessionAddressBlock,
+                    profileType: eProfileType.TaskList,
+                    Key: _taskListProfile.Key,
+                    message: out message
+                    );
+            }
+
             ROTaskListProperties taskListProperties = BuildTaskListProperties(taskListParameters);
 
             // update FunctionSecurity based on user's security
@@ -519,7 +532,37 @@ namespace Logility.ROWeb
         {
             string message = null;
             int sequence = 0;
-            eTaskType taskType;
+            eTaskType taskType;            
+
+            // creating new task list 
+            if (_taskListProfile == null)
+            {
+                _taskListProfile = new TaskListProfile(Include.NoRID);
+            }
+            // Task List must be locked before it can be saved
+            else if (_taskListProfile.LockStatus != eLockStatus.Locked)
+            {
+                return new ROIListOut(eROReturnCode.Failure, "Task list is not locked and cannot be saved", ROInstanceID, null);
+            }
+
+            // Task Lists must have at least one task
+            if (taskListParameters.ROTaskListProperties.Tasks.Count == 0)
+            {
+                message = SessionAddressBlock.ClientServerSession.Audit.GetText(eMIDTextCode.msg_AtLeastOneTaskRequired);
+                return new ROIListOut(eROReturnCode.Failure, message, ROInstanceID, null);
+            }
+            // unlock prior task list if saving as new task list
+            else if(_taskListProfile != null
+                && taskListParameters.ROTaskListProperties.TaskList.Key == Include.NoRID
+                && _taskListProfile.LockStatus == eLockStatus.Locked)
+            {
+                _taskListProfile.LockStatus = TaskListUtilities.UnLockItem(
+                    sessionAddressBlock: SessionAddressBlock,
+                    profileType: eProfileType.TaskList,
+                    Key: _taskListProfile.Key,
+                    message: out message
+                    );
+            }
 
             // Get task values from database for types that have not been accessed
             // They are needed based on the way all old values are deleted for a task list
@@ -562,14 +605,13 @@ namespace Logility.ROWeb
 
             int key = taskListParameters.ROTaskListProperties.TaskList.Key;
             // make sure task list name is unique for the owner
-            string taskListName = CleanseTaskListName(
+            _taskListProfile.Name = CleanseTaskListName(
                 taskListParameters: taskListParameters
                 );
             // if the name was changed, update the data class with the new name
-            if (taskListName != taskListParameters.ROTaskListProperties.TaskList.Value)
+            if (_taskListProfile.Name != taskListParameters.ROTaskListProperties.TaskList.Value)
             {
-                taskListParameters.ROTaskListProperties.TaskList = new KeyValuePair<int, string>(key, taskListName);
-                _taskListProfile.Name = taskListName;
+                taskListParameters.ROTaskListProperties.TaskList = new KeyValuePair<int, string>(key, _taskListProfile.Name);
             }
 
             // get the folder key to locate the task list
@@ -579,6 +621,7 @@ namespace Logility.ROWeb
                 userKey: taskListParameters.ROTaskListProperties.UserKey,
                 uniqueID: taskListParameters.FolderUniqueID);
 
+            bool newTaskList = false;
             try
             {
                 // open update connection to the database
@@ -587,10 +630,17 @@ namespace Logility.ROWeb
                 // create or update the task list
                 if (key == Include.NoRID)
                 {
+                    newTaskList = true;
                     CreateTaskList(
                         taskListParameters: taskListParameters,
                         folderKey: folderKey
                         );
+
+                    // set task list key in tasks data tables
+                    // update main tasks data table
+                    UpdateTaskListKey(
+                         taskListKey: _taskListProfile.Key
+                         );
                 }
                 else
                 {
@@ -605,6 +655,14 @@ namespace Logility.ROWeb
                 {
                     taskType = task.Key;
                     _task = task.Value;
+
+                    // if new task list, set the task list key before saving
+                    if (newTaskList)
+                    {
+                        _task.UpdateTaskListKey(
+                                taskListKey: _taskListProfile.Key
+                                );
+                    }
 
                     _task.TaskSaveData(
                         scheduleDataLayer: ScheduleDataLayer,
@@ -629,7 +687,32 @@ namespace Logility.ROWeb
                 taskListProfile: _taskListProfile
                 );
 
+            _taskListProfile.LockStatus = TaskListUtilities.UnLockItem(
+                    sessionAddressBlock: SessionAddressBlock,
+                    profileType: eProfileType.TaskList,
+                    Key: _taskListProfile.Key,
+                    message: out message
+                    );
+
             return new ROIListOut(eROReturnCode.Successful, message, ROInstanceID, taskListNode);
+        }
+
+        /// <summary>
+        /// Update the task list key in the data tables
+        /// </summary>
+        /// <param name="taskListKey">The key for the task list</param>
+        private void UpdateTaskListKey(
+            int taskListKey
+            )
+        {
+            if (_tasksDataTable != null)
+            {
+                foreach (DataRow taskDataRow in _tasksDataTable.Rows)
+                {
+                    taskDataRow["TASKLIST_RID"] = taskListKey;
+                }
+                _tasksDataTable.AcceptChanges();
+            }
         }
 
         /// <summary>
@@ -787,7 +870,7 @@ namespace Logility.ROWeb
                 else
                 {
                     nameCntr++;
-                    _taskListProfile.Name = Include.GetNewName(name: name, index: nameCntr);
+                    name = Include.GetNewName(name: name, index: nameCntr);
                 }
             }
 
@@ -1186,54 +1269,9 @@ namespace Logility.ROWeb
         /// <returns></returns>
         public ROOut SaveTask(ROTaskPropertiesParms taskParameters)
         {
-            string message = null;
-            bool cloneDates = false;
-            bool successful;
-            bool getNewClass = true;
-
-            if (_task == null
-                || _task.TaskType != taskParameters.ROTaskProperties.TaskType
-                )
-            {
-                // check if already have task type in the collection.  If not create it.
-                if (!_taskListTasks.TryGetValue(taskParameters.ROTaskProperties.TaskType, out _task))
-                {
-                    _task = GetTaskClass(
-                        taskType: taskParameters.ROTaskProperties.TaskType,
-                            taskListProperties: _taskListProperties,
-                            getNewClass: getNewClass
-                        );
-                    _taskListTasks[_task.TaskType] = _task;
-                }
-            }
-
-            if (taskParameters.ROTaskProperties.Task.Key == Include.NoRID)
-            {
-                cloneDates = true;
-            }
-
-            // add or update task in main tasks data table
-            TaskUpdateData(
-                task: taskParameters.ROTaskProperties,
-                message: ref message
-                );
-
-            ROTaskProperties taskProperties = _task.TaskUpdateData(
-                task: taskParameters.ROTaskProperties,
-                cloneDates: cloneDates,
-                message: ref message,
-                successful: out successful,
-                applyOnly: false
-                );
-
-            // add or update the task in the collection
-            _taskListTasks[_task.TaskType] = _task;
-
-            return new ROTaskPropertiesOut(
-                ROReturnCode: eROReturnCode.Successful,
-                sROMessage: message,
-                ROInstanceID: ROInstanceID,
-                ROTaskProperties: taskProperties);
+            // tasks cannot be saved to the database without the task list
+            // so perform an apply if a save is requested
+            return ApplyTask(taskParameters: taskParameters);
         }
 
         /// <summary>
@@ -1293,12 +1331,13 @@ namespace Logility.ROWeb
             ROTaskProperties task,
             ref string message)
         {
-            // remove the old task entry
+            // remove the old task entry if one exists
             DeleteTask(
                 sequence: task.Task.Key,
                 message: ref message
                 );
 
+            // get now data row to add task to the data table
             DataRow taskDataRow = _tasksDataTable.NewRow();
 
             taskDataRow["TASKLIST_RID"] = _taskListProfile.Key;

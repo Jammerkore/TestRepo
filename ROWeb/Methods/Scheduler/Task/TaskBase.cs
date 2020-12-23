@@ -303,6 +303,33 @@ namespace Logility.ROWeb
             }
         }
 
+        /// <summary>
+        /// Update the task list key in the data tables
+        /// </summary>
+        /// <param name="taskListKey">The key for the task list</param>
+        public void UpdateTaskListKey(
+            int taskListKey
+            )
+        {
+            if (_taskData != null)
+            {
+                foreach (DataRow taskDataRow in _taskData.Rows)
+                {
+                    taskDataRow["TASKLIST_RID"] = taskListKey;
+                }
+                _taskData.AcceptChanges();
+            }
+
+            if (_taskDetailData != null)
+            {
+                foreach (DataRow detailDataRow in _taskDetailData.Rows)
+                {
+                    detailDataRow["TASKLIST_RID"] = taskListKey;
+                }
+                _taskDetailData.AcceptChanges();
+            }
+        }
+
         protected void DeleteTaskRows(
             int sequence
             )

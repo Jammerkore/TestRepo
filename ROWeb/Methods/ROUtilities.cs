@@ -1010,11 +1010,10 @@ namespace Logility.ROWeb
             int folderRID, userRID, folderType;
             bool folderValid = false;
             DataTable dt;
-            FolderDataLayer dlFolder = new FolderDataLayer();
-
+            FolderDataLayer folderDataLayer = new FolderDataLayer();
 
             folderValid = isFolderValid(
-                dlFolder: dlFolder,
+                folderDataLayer: folderDataLayer,
                 profileType: profileType,
                 folderKey: folderKey, 
                 userKey: userKey, 
@@ -1028,7 +1027,7 @@ namespace Logility.ROWeb
                 if (uniqueID != null)
                 {
                     folderRID = GetTaskListFolderRIDFromUniqueID(
-                        dlFolder: dlFolder,  
+                        folderDataLayer: folderDataLayer,  
                         userKey: userKey, 
                         profileType: profileType, 
                         uniqueID: uniqueID
@@ -1039,37 +1038,19 @@ namespace Logility.ROWeb
                     }
                 }
 
-                if (folderType == eProfileType.WorkflowMethodSubFolder.GetHashCode())
+                // locate tasklist folder by user
+                if (userKey == Include.GlobalUserRID)
                 {
-                    folderRID = GetTaskListFolderRIDFromGrouping(
-                        dlFolder: dlFolder,
-                        userKey: userKey, 
-                        profileType: profileType,
-                        folderKey: folderKey
-                        );
-                    if (folderRID != Include.NoRID)
-                    {
-                        return folderRID;
-                    }
+                    profileType = eProfileType.TaskListTaskListMainGlobalFolder;
+                }
+                else if (userKey == Include.SystemUserRID)
+                {
+                    profileType = eProfileType.TaskListTaskListMainSystemFolder;
                 }
 
-                //// override type to actual folders
-                //if (applicationFolderType == eProfileType.WorkflowMethodAllocationWorkflowsFolder
-                //    || applicationFolderType == eProfileType.WorkflowMethodAllocationMethodsFolder
-                //    || isAllocationMethodFolder(applicationFolderType))
-                //{
-                //    applicationFolderType = eProfileType.WorkflowMethodAllocationFolder;
-                //}
-                //else if (applicationFolderType == eProfileType.WorkflowMethodOTSForcastWorkflowsFolder
-                //    || applicationFolderType == eProfileType.WorkflowMethodOTSForcastMethodsFolder
-                //    || isOTSForecastMethodFolder(applicationFolderType))
-                //{
-                //    applicationFolderType = eProfileType.WorkflowMethodOTSForcastFolder;
-                //}
-
-                dt = dlFolder.Folder_Read(userKey, profileType);
+                dt = folderDataLayer.Folder_Read(userKey, profileType);
                 if (dt != null
-                && dt.Rows.Count > 0)
+                    && dt.Rows.Count > 0)
                 {
                     folderRID = Convert.ToInt32(dt.Rows[0]["FOLDER_RID"]);
                     userRID = Convert.ToInt32(dt.Rows[0]["USER_RID"]);
@@ -1090,14 +1071,14 @@ namespace Logility.ROWeb
         /// <summary>
         /// Determines if the folder is valid for the item type
         /// </summary>
-        /// <param name="dlFolder">The data layer for folder database calls</param>
+        /// <param name="folderDataLayer">The data layer for folder database calls</param>
         /// <param name="profileType">The eProfileType of the item</param>
         /// <param name="folderKey">The key of the folder</param>
         /// <param name="userKey">The key of the user</param>
         /// <param name="folderType">The type of the folder</param>
         /// <returns>A flag identifying if the folder is valid for the item</returns>
         private static bool isFolderValid(
-            FolderDataLayer dlFolder, 
+            FolderDataLayer folderDataLayer, 
             eProfileType profileType, 
             int folderKey, 
             int userKey, 
@@ -1109,7 +1090,7 @@ namespace Logility.ROWeb
 
             folderType = Include.Undefined;
 
-            DataTable dt = dlFolder.Folder_Read(folderKey);
+            DataTable dt = folderDataLayer.Folder_Read(folderKey);
             if (dt != null
                 && dt.Rows.Count > 0)
             {
@@ -1122,22 +1103,16 @@ namespace Logility.ROWeb
                 {
                     folderValid = true;
                 }
-                // Is valid application root folder
-                //else if (userRID == userKey
-                //    && folderType == applicationFolderType.GetHashCode())
-                //{
-                //    folderValid = true;
-                //}
-                //// Is valid subfolder
-                //else
-                //{
-                //    int subfolderType = GetSubFolderType(applicationFolderType, profileType).GetHashCode();
-                //    if (userRID == userKey
-                //        && folderType == subfolderType)
-                //    {
-                //        folderValid = true;
-                //    }
-                //}
+                // Is valid subfolder
+                else
+                {
+                    int subfolderType = GetSubFolderType(profileType).GetHashCode();
+                    if (userRID == userKey
+                        && folderType == subfolderType)
+                    {
+                        folderValid = true;
+                    }
+                }
 
             }
 
@@ -1147,13 +1122,13 @@ namespace Logility.ROWeb
         /// <summary>
         /// Get the folder key using the unique ID
         /// </summary>
-        /// <param name="dlFolder">The data layer for folder database calls</param>
+        /// <param name="folderDataLayer">The data layer for folder database calls</param>
         /// <param name="userKey">The key of the user</param>
         /// <param name="profileType">The eProfileType of the item</param>
         /// <param name="uniqueID">The unique ID of the item</param>
         /// <returns></returns>
         private static int GetTaskListFolderRIDFromUniqueID(
-            FolderDataLayer dlFolder, 
+            FolderDataLayer folderDataLayer, 
             int userKey, 
             eProfileType profileType, 
             string uniqueID
@@ -1168,7 +1143,7 @@ namespace Logility.ROWeb
             {
                 folderKey = Convert.ToInt32(keys[i]);
                 if (isFolderValid(
-                    dlFolder: dlFolder, 
+                    folderDataLayer: folderDataLayer, 
                     folderKey: folderKey, 
                     userKey: userKey, 
                     profileType: profileType, 
@@ -1176,75 +1151,6 @@ namespace Logility.ROWeb
                     )
                 {
                     return folderKey;
-                }
-
-                //if (folderType == eProfileType.WorkflowMethodSubFolder.GetHashCode())
-                //{
-                //    folderKey = GetWorkflowMethodFolderRIDFromGrouping(
-                //        dlFolder: dlFolder, 
-                //        userKey: userKey, 
-                //        profileType: profileType, 
-                //        folderKey: folderKey
-                //        );
-                //    if (folderKey != Include.NoRID)
-                //    {
-                //        return folderKey;
-                //    }
-                //}
-            }
-
-            return Include.NoRID;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="dlFolder">The data layer for folder database calls</param>
-        /// <param name="userKey">The key of the user</param>
-        /// <param name="profileType">The eProfileType of the data</param>
-        /// <param name="folderKey">The key of the folder</param>
-        /// <returns></returns>
-        private static int GetTaskListFolderRIDFromGrouping(
-            FolderDataLayer dlFolder, 
-            int userKey, 
-            eProfileType profileType, 
-            int folderKey
-            )
-        {
-            DataTable dt;
-            int userRID, folderType;
-
-            dt = dlFolder.Folder_Children_Read(
-                aUserRID: userKey, 
-                aFolderRID: folderKey
-                );
-            if (dt != null
-            && dt.Rows.Count > 0)
-            {
-                foreach (DataRow dr in dt.Rows)
-                {
-                    folderKey = Convert.ToInt32(dr["CHILD_ITEM_RID"]);
-                    userRID = Convert.ToInt32(dr["USER_RID"]);
-                    folderType = Convert.ToInt32(dr["CHILD_ITEM_TYPE"]);
-                    if (folderType == eProfileType.WorkflowMethodSubFolder.GetHashCode())
-                    {
-                        return GetTaskListFolderRIDFromGrouping(
-                            dlFolder: dlFolder, 
-                            userKey: userKey, 
-                            profileType: profileType, 
-                            folderKey: folderKey
-                            );
-                    }
-                    else if (isFolderValid(
-                        dlFolder: dlFolder, 
-                        folderKey: folderKey, 
-                        userKey: userKey, 
-                        profileType: profileType, 
-                        folderType: out folderType)
-                        )
-                    {
-                        return folderKey;
-                    }
                 }
             }
 
@@ -1283,23 +1189,22 @@ namespace Logility.ROWeb
         {
             List<ROTreeNodeOut> nodeList = new List<ROTreeNodeOut>();
 
-            //nodeList.Add(new ROTreeNodeOut(
-            //        key: abm.Key,
-            //        text: abm.Name,
-            //        ownerUserRID: abm.User_RID,
-            //        treeNodeType: eTreeNodeType.ObjectNode,
-            //        profileType: abm.ProfileType,
-            //        isReadOnly: false,
-            //        canBeDeleted: true,
-            //        canCreateNewFolder: true,
-            //        canCreateNewItem: true,
-            //        canBeProcessed: true,
-            //        canBeCopied: true,
-            //        canBeCut: true,
-            //        hasChildren: false,
-            //        ROApplicationType: applicationType
-            //        )
-            //        );
+            nodeList.Add(new ROTreeNodeOut(
+                    key: taskListProfile.Key,
+                    text: taskListProfile.Name,
+                    ownerUserRID: taskListProfile.UserRID,
+                    treeNodeType: eTreeNodeType.ObjectNode,
+                    profileType: taskListProfile.ProfileType,
+                    isReadOnly: false,
+                    canBeDeleted: true,
+                    canCreateNewFolder: false,
+                    canCreateNewItem: false,
+                    canBeProcessed: true,
+                    canBeCopied: true,
+                    canBeCut: true,
+                    hasChildren: false
+                    )
+                    );
 
             return nodeList;
         }
