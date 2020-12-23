@@ -3513,6 +3513,17 @@ namespace MIDRetail.Business.Allocation
                 vswAttributeSet: new System.Collections.Generic.List<ROMethodOverrideVSWAttributeSet>()
                 );
 
+            HierarchyLevelProfile hierarchyLevelProfile;
+            HierarchyProfile mainHierarchyProfile = SAB.HierarchyServerSession.GetMainHierarchyData();
+            for (int level = 1; level <= mainHierarchyProfile.HierarchyLevels.Count; level++)
+            {
+                hierarchyLevelProfile = (HierarchyLevelProfile)mainHierarchyProfile.HierarchyLevels[level];
+                if (hierarchyLevelProfile.LevelType != eHierarchyLevelType.Size)
+                {
+                    method.HierarchyLevels.Add(new KeyValuePair<int, string>(hierarchyLevelProfile.Key, hierarchyLevelProfile.LevelID));
+                }
+            }
+
             if (_applyVSW == false)
             {
                 method.DoNotApplyVSW = true;

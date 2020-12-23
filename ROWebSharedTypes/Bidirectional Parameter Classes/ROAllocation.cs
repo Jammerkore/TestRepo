@@ -2344,6 +2344,8 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         KeyValuePair<int, int> _onHandMerchandiseHierarchy;
         [DataMember(IsRequired = true)]
+        private List<KeyValuePair<int, string>> _hierarchyLevels;
+        [DataMember(IsRequired = true)]
         double _onHandFactor;
         [DataMember(IsRequired = true)]
         int _colorMult;
@@ -2450,6 +2452,14 @@ namespace Logility.ROWebSharedTypes
         {
             get { return _onHandMerchandiseHierarchy; }
             set { _onHandMerchandiseHierarchy = value; }
+        }
+
+        /// <summary>
+        /// Gets the list of hierarchy levels
+        /// </summary>
+        public List<KeyValuePair<int, string>> HierarchyLevels
+        {
+            get { return _hierarchyLevels; }
         }
 
         public double OnHandFactor
@@ -2655,6 +2665,7 @@ namespace Logility.ROWebSharedTypes
             _colorMinMax = colorMinMax;
             _packRounding = packRounding;
             _vswAttributeSet = vswAttributeSet;
+            _hierarchyLevels = new List<KeyValuePair<int, string>>();
         }
 
     }
