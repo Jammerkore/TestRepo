@@ -13,15 +13,15 @@ BEGIN
 	/* These fields are the real output fields for my Data Table. */
 	CREATE TABLE #TEMP (
 		Severity CHAR(10) NULL, -- Object in question severity.
-		Header1 VARCHAR(100) NOT NULL, -- Object in question name.
-		Header2 VARCHAR(100) NULL, -- Object in question type.
-		Header3 VARCHAR(100) NULL, -- Object in use name.
-		Header4 VARCHAR(100) NULL, -- Object in use description.
-		Header5 VARCHAR(100) NULL, -- Object in use folder.
-		Header6 VARCHAR(100) NULL, -- Object in use UserID.
-		Header7 VARCHAR(100) NULL, -- Object in use Reference.
-		Header8 VARCHAR(100) NULL, -- Object in use Reference.
-		Header9 VARCHAR(100) NULL -- Object in use Reference.
+		Header1 VARCHAR(300) NOT NULL, -- Object in question name.
+		Header2 VARCHAR(300) NULL, -- Object in question type.
+		Header3 VARCHAR(300) NULL, -- Object in use name.
+		Header4 VARCHAR(300) NULL, -- Object in use description.
+		Header5 VARCHAR(300) NULL, -- Object in use folder.
+		Header6 VARCHAR(300) NULL, -- Object in use UserID.
+		Header7 VARCHAR(300) NULL, -- Object in use Reference.
+		Header8 VARCHAR(300) NULL, -- Object in use Reference.
+		Header9 VARCHAR(300) NULL -- Object in use Reference.
 		)
 
 	DECLARE C1 CURSOR
