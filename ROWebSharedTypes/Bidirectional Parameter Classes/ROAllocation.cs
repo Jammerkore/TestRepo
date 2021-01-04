@@ -2112,6 +2112,17 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         KeyValuePair<int, string> _storeGroupLevel;
 
+        [DataMember(IsRequired = true)]
+        private List<KeyValuePair<int, string>> _components;
+        [DataMember(IsRequired = true)]
+        private List<KeyValuePair<int, string>> _packs;
+        [DataMember(IsRequired = true)]
+        private List<KeyValuePair<int, string>> _colors;
+        [DataMember(IsRequired = true)]
+        private List<KeyValuePair<int, string>> _includedStoresRules;
+        [DataMember(IsRequired = true)]
+        private List<KeyValuePair<int, string>> _excludedStoresRules;
+
         #region Public Properties
         public KeyValuePair<int, string> Filter 
         {
@@ -2237,6 +2248,46 @@ namespace Logility.ROWebSharedTypes
             set { _storeGroupLevel = value; }
         }
 
+        /// <summary>
+        /// Gets the list of components
+        /// </summary>
+        public List<KeyValuePair<int, string>> Components
+        {
+            get { return _components; }
+        }
+
+        /// <summary>
+        /// Gets the list of packs
+        /// </summary>
+        public List<KeyValuePair<int, string>> Packs
+        {
+            get { return _packs; }
+        }
+
+        /// <summary>
+        /// Gets the list of colors
+        /// </summary>
+        public List<KeyValuePair<int, string>> Colors
+        {
+            get { return _colors; }
+        }
+
+        /// <summary>
+        /// Gets the list of rules for included stores
+        /// </summary>
+        public List<KeyValuePair<int, string>> IncludedStoresRules
+        {
+            get { return _includedStoresRules; }
+        }
+
+        /// <summary>
+        /// Gets the list of rules for excluded stores
+        /// </summary>
+        public List<KeyValuePair<int, string>> ExcludedStoresRules
+        {
+            get { return _excludedStoresRules; }
+        }
+
         #endregion
         public ROMethodRuleProperties(KeyValuePair<int, string> method, string description, int userKey, KeyValuePair<int, string> filter, KeyValuePair<int, string> header, bool isHeaderMaster,
             eSortDirection sortDirection, bool includeReserveInd, eComponentType componentType, KeyValuePair<int, string> pack, KeyValuePair<int, string> color, eRuleMethod includeRuleMethod,
@@ -2287,6 +2338,12 @@ namespace Logility.ROWebSharedTypes
             _excludeQuantity = excludeQuantity;
             _hdr_BC = hdr_BC;
             _storeGroupLevel = storeGroupLevel;
+
+            _components = new List<KeyValuePair<int, string>>();
+            _packs = new List<KeyValuePair<int, string>>();
+            _colors = new List<KeyValuePair<int, string>>();
+            _includedStoresRules = new List<KeyValuePair<int, string>>();
+            _excludedStoresRules = new List<KeyValuePair<int, string>>();
         }
     }
 

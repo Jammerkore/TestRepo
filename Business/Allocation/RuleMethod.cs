@@ -2720,8 +2720,165 @@ namespace MIDRetail.Business.Allocation
                 hdr_BC: GetName.GetHeader(HdrBCRID, SAB: SAB),
                 storeGroupLevel: GetName.GetAttributeSetName(StoreGroupLevelRID)
                 );
+
+            GetComponents(method: method);
+            if (HeaderRID != Include.Undefined)
+            {
+                GetPacksAndColors(method: method);
+            }
+            SetIncludeExcludeLists(method: method);
+
             return method;
         }
+
+        private void GetComponents(ROMethodRuleProperties method)
+        {
+            string filterString, sortString;
+            int ruleNumber;
+            int key;
+            string value;
+            DataRow[] foundRows;
+
+            DataTable componentDataTable = MIDText.GetTextType(eMIDTextType.eComponentType, eMIDTextOrderBy.TextValue);
+            foreach (DataRow dr in componentDataTable.Rows)
+            {
+                eRuleMethodComponentType rmct = (eRuleMethodComponentType)(Convert.ToInt32(dr["TEXT_CODE"], CultureInfo.CurrentUICulture));
+                if (!Enum.IsDefined(typeof(eRuleMethodComponentType), rmct))
+                {
+                    dr.Delete();
+                }
+            }
+            componentDataTable.AcceptChanges();
+
+            if (HeaderRID != Include.NoRID)
+            {
+                filterString = string.Empty;
+            }
+            else
+            {
+                ruleNumber = (int)eRuleMethodComponentType.Total;
+                filterString = "TEXT_CODE = " + Convert.ToString(ruleNumber, CultureInfo.CurrentUICulture);
+            }
+            sortString = "TEXT_VALUE ASC";
+            foundRows = componentDataTable.Select(filterString, sortString);
+
+            if (foundRows.Length > 0)
+            {
+                foreach (DataRow componentRow in foundRows)
+                {
+                    key = Convert.ToInt32(componentRow["TEXT_CODE"]);
+                    value = Convert.ToString(componentRow["TEXT_VALUE"]);
+                    method.Components.Add(new KeyValuePair<int, string>(key, value));
+                }
+            }
+        }
+
+        private void GetPacksAndColors(ROMethodRuleProperties method)
+        {
+            Header header;
+            int key;
+            string value;
+
+            header = new Header();
+            DataTable packsDataTable = header.GetPacks(HeaderRID);
+            DataTable bulkColorsDataTable = header.GetBulkColors(HeaderRID);
+            if (packsDataTable.Rows.Count > 0)
+            {
+                foreach (DataRow packRow in packsDataTable.Rows)
+                {
+                    key = Convert.ToInt32(packRow["HDR_PACK_RID"]);
+                    value = Convert.ToString(packRow["HDR_PACK_NAME"]);
+                    method.Packs.Add(new KeyValuePair<int, string>(key, value));
+                }
+            }
+
+            if (bulkColorsDataTable.Rows.Count > 0)
+            {
+                DataTable headerDataTable = header.GetHeader(HeaderRID);
+                if (headerDataTable.Rows.Count == 0)
+                    return;
+                DataRow row = headerDataTable.Rows[0];
+                int styleHnRID = Convert.ToInt32(row["STYLE_HNRID"], CultureInfo.CurrentUICulture);
+                HierarchyNodeProfile hnp_style = SAB.HierarchyServerSession.GetNodeData(styleHnRID);
+
+                foreach (DataRow colorRow in bulkColorsDataTable.Rows)
+                {
+                    string colorDescription;
+                    int colorKey = Convert.ToInt32(colorRow["COLOR_CODE_RID"], CultureInfo.CurrentUICulture);
+
+                    int hdrBCRID = Convert.ToInt32(colorRow["HDR_BC_RID"], CultureInfo.CurrentUICulture);
+
+                    ColorCodeProfile ccp = SAB.HierarchyServerSession.GetColorCodeProfile(colorKey);
+                    int colorHnRID = Include.NoRID;
+                    if (SAB.HierarchyServerSession.ColorExistsForStyle(hnp_style.HomeHierarchyRID, hnp_style.Key, ccp.ColorCodeID, ref colorHnRID))
+                    {
+                        HierarchyNodeProfile hnp_color = SAB.HierarchyServerSession.GetNodeData(colorHnRID);
+                        colorDescription = hnp_color.NodeDescription;
+                    }
+                    else
+                    {
+                        colorDescription = ccp.ColorCodeName;
+                    }
+
+                    method.Colors.Add(new KeyValuePair<int, string>(colorKey, colorDescription));
+
+                }
+            }
+        }
+
+        private void SetIncludeExcludeLists(ROMethodRuleProperties method)
+        {
+            string filterString, sortString;
+            int ruleNumber;
+            int key;
+            string value;
+            DataRow[] foundRows;
+
+            DataTable includeRuleDataTable = MIDText.GetTextType(eMIDTextType.eRuleMethod, eMIDTextOrderBy.TextValue);
+            if (HeaderRID != Include.NoRID)
+            {
+                filterString = string.Empty;
+            }
+            else
+            {
+                ruleNumber = (int)eRuleMethod.Exact;
+                filterString = "TEXT_CODE < " + Convert.ToString(ruleNumber, CultureInfo.CurrentUICulture);
+            }
+            sortString = "TEXT_VALUE ASC";
+            foundRows = includeRuleDataTable.Select(filterString, sortString);
+            if (foundRows.Length > 0)
+            {
+                foreach (DataRow ruleRow in foundRows)
+                {
+                    key = Convert.ToInt32(ruleRow["TEXT_CODE"]);
+                    value = Convert.ToString(ruleRow["TEXT_VALUE"]);
+                    method.IncludedStoresRules.Add(new KeyValuePair<int, string>(key, value));
+                }
+            }
+
+            DataTable excludeRuleDataTable = MIDText.GetTextType(eMIDTextType.eRuleMethod, eMIDTextOrderBy.TextValue);
+            if (HeaderRID != Include.NoRID)
+            {
+                filterString = string.Empty;
+            }
+            else
+            {
+                ruleNumber = (int)eRuleMethod.Exact;
+                filterString = "TEXT_CODE < " + Convert.ToString(ruleNumber, CultureInfo.CurrentUICulture);
+            }
+            sortString = "TEXT_VALUE ASC";
+            foundRows = excludeRuleDataTable.Select(filterString, sortString);
+            if (foundRows.Length > 0)
+            {
+                foreach (DataRow ruleRow in foundRows)
+                {
+                    key = Convert.ToInt32(ruleRow["TEXT_CODE"]);
+                    value = Convert.ToString(ruleRow["TEXT_VALUE"]);
+                    method.ExcludedStoresRules.Add(new KeyValuePair<int, string>(key, value));
+                }
+            }
+        }
+
         // END RO-2845 Data transport for Rule Method - get data  - MGage
         override public bool MethodSetData(ROMethodProperties methodProperties, ref string message, bool processingApply)
         {
