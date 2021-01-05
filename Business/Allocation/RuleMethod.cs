@@ -2731,6 +2731,10 @@ namespace MIDRetail.Business.Allocation
             return method;
         }
 
+        /// <summary>
+        /// Populates the component list
+        /// </summary>
+        /// <param name="method">The ROMethodRuleProperties instance</param>
         private void GetComponents(ROMethodRuleProperties method)
         {
             string filterString, sortString;
@@ -2750,11 +2754,12 @@ namespace MIDRetail.Business.Allocation
             }
             componentDataTable.AcceptChanges();
 
+            // if header is selected, include all components
             if (HeaderRID != Include.NoRID)
             {
                 filterString = string.Empty;
             }
-            else
+            else // if header is not selected, total is the only valid component
             {
                 ruleNumber = (int)eRuleMethodComponentType.Total;
                 filterString = "TEXT_CODE = " + Convert.ToString(ruleNumber, CultureInfo.CurrentUICulture);
@@ -2773,6 +2778,10 @@ namespace MIDRetail.Business.Allocation
             }
         }
 
+        /// <summary>
+        /// Populates the pack and color lists
+        /// </summary>
+        /// <param name="method">The ROMethodRuleProperties instance</param>
         private void GetPacksAndColors(ROMethodRuleProperties method)
         {
             Header header;
@@ -2810,12 +2819,13 @@ namespace MIDRetail.Business.Allocation
 
                     ColorCodeProfile ccp = SAB.HierarchyServerSession.GetColorCodeProfile(colorKey);
                     int colorHnRID = Include.NoRID;
+                    // if color defined by style, use the color description for the style
                     if (SAB.HierarchyServerSession.ColorExistsForStyle(hnp_style.HomeHierarchyRID, hnp_style.Key, ccp.ColorCodeID, ref colorHnRID))
                     {
                         HierarchyNodeProfile hnp_color = SAB.HierarchyServerSession.GetNodeData(colorHnRID);
                         colorDescription = hnp_color.NodeDescription;
                     }
-                    else
+                    else // otherwise, use the base name for the color
                     {
                         colorDescription = ccp.ColorCodeName;
                     }
@@ -2826,6 +2836,10 @@ namespace MIDRetail.Business.Allocation
             }
         }
 
+        /// <summary>
+        /// Populates the store include and exclude lists
+        /// </summary>
+        /// <param name="method">The ROMethodRuleProperties instance</param>
         private void SetIncludeExcludeLists(ROMethodRuleProperties method)
         {
             string filterString, sortString;
@@ -2835,11 +2849,12 @@ namespace MIDRetail.Business.Allocation
             DataRow[] foundRows;
 
             DataTable includeRuleDataTable = MIDText.GetTextType(eMIDTextType.eRuleMethod, eMIDTextOrderBy.TextValue);
+            // if header is selected, include all rules
             if (HeaderRID != Include.NoRID)
             {
                 filterString = string.Empty;
             }
-            else
+            else // if header is not selected, restrict which rules can be used
             {
                 ruleNumber = (int)eRuleMethod.Exact;
                 filterString = "TEXT_CODE < " + Convert.ToString(ruleNumber, CultureInfo.CurrentUICulture);
@@ -2857,11 +2872,12 @@ namespace MIDRetail.Business.Allocation
             }
 
             DataTable excludeRuleDataTable = MIDText.GetTextType(eMIDTextType.eRuleMethod, eMIDTextOrderBy.TextValue);
+            // if header is selected, include all rules
             if (HeaderRID != Include.NoRID)
             {
                 filterString = string.Empty;
             }
-            else
+            else // if header is not selected, restrict which rules can be used
             {
                 ruleNumber = (int)eRuleMethod.Exact;
                 filterString = "TEXT_CODE < " + Convert.ToString(ruleNumber, CultureInfo.CurrentUICulture);
