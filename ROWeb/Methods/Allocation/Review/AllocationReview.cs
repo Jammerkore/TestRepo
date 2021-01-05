@@ -381,6 +381,7 @@ namespace Logility.ROWeb
             int hcg_RID;
             GridViewData gridViewData = new GridViewData();
             eLayoutID layoutID;
+            List<string> columnList = new List<string>();
 
             try
             {
@@ -462,6 +463,12 @@ namespace Logility.ROWeb
                             isHidden = !field.IsSelected;
                         }
                         sortDirection = (int)field.SortDirection;
+                        // if key is already in the view for this grid, go to the next field
+                        if (columnList.Contains(field.Field.Key))
+                        {
+                            continue;
+                        }
+                        columnList.Add(field.Field.Key);
                         gridViewData.GridViewDetail_Insert(viewRID, "g1", field.Field.Key, visiblePosition, isHidden,
                                                   isGroupByCol, sortDirection, sortSequence, field.Width,
                                                   columnType, hcg_RID);
@@ -469,10 +476,17 @@ namespace Logility.ROWeb
                     }
 
                     visiblePosition = 0;
+                    columnList.Clear();
                     foreach (ROSelectedField field in viewDetails.ROAllocationReviewViewDetails.TotalColumnsByPosition)
                     {
                         isHidden = !field.IsSelected;
                         sortDirection = (int)field.SortDirection;
+                        // if key is already in the view for this grid, go to the next field
+                        if (columnList.Contains(field.Field.Key))
+                        {
+                            continue;
+                        }
+                        columnList.Add(field.Field.Key);
                         gridViewData.GridViewDetail_Insert(viewRID, "g2", field.Field.Key, visiblePosition, isHidden,
                                                   isGroupByCol, sortDirection, sortSequence, field.Width,
                                                   columnType, hcg_RID);
@@ -480,10 +494,17 @@ namespace Logility.ROWeb
                     }
 
                     visiblePosition = 0;
+                    columnList.Clear();
                     foreach (ROSelectedField field in viewDetails.ROAllocationReviewViewDetails.DetailColumnsByPosition)
                     {
                         isHidden = !field.IsSelected;
                         sortDirection = (int)field.SortDirection;
+                        // if key is already in the view for this grid, go to the next field
+                        if (columnList.Contains(field.Field.Key))
+                        {
+                            continue;
+                        }
+                        columnList.Add(field.Field.Key);
                         gridViewData.GridViewDetail_Insert(viewRID, "g3", field.Field.Key, visiblePosition, isHidden,
                                                   isGroupByCol, sortDirection, sortSequence, field.Width,
                                                   columnType, hcg_RID);
