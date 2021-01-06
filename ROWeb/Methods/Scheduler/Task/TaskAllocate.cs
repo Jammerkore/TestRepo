@@ -299,6 +299,12 @@ namespace Logility.ROWeb
                 sequence: taskData.Task.Key
                 );
 
+            if (taskData.Merchandise.Count == 0)
+            {
+                message = SessionAddressBlock.ClientServerSession.Audit.GetText(eMIDTextCode.msg_AtLeastOneMerchandiseRequired);
+                return false;
+            }
+
             // add merchandise and detail workflow rows to the data tables
             foreach (ROTaskAllocateMerchandise taskAllocateMerchandise in taskData.Merchandise)
             {
@@ -316,6 +322,12 @@ namespace Logility.ROWeb
                     && taskAllocateMerchandise.Filter.Key != Include.NoRID)
                 {
                     merchandiseDataRow["FILTER_RID"] = taskAllocateMerchandise.Filter.Key;
+                }
+
+                if (taskAllocateMerchandise.Workflow.Count == 0)
+                {
+                    message = SessionAddressBlock.ClientServerSession.Audit.GetText(eMIDTextCode.msg_AtLeastOneWorkflowRequired);
+                    return false;
                 }
 
                 int detailSequence = 0;
