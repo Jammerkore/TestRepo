@@ -21,6 +21,7 @@ namespace Logility.ROWeb
         //=======
         // FIELDS
         //=======
+        private Dictionary<int, List<HierarchyLevelComboObject>> _levelLists;
 
         //=============
         // CONSTRUCTORS
@@ -82,6 +83,7 @@ namespace Logility.ROWeb
             if (TaskData == null)
             {
                 TaskGetValues();
+                _levelLists = new Dictionary<int, List<HierarchyLevelComboObject>>();
             }
 
             // check if object already converted to derived class.  If so, use it.  Else convert to derived class.
@@ -132,7 +134,414 @@ namespace Logility.ROWeb
         /// <param name="task">The data class of the task</param>
         private void AddValues(ROTaskParms taskParameters, ROTaskRollup task)
         {
-            
+            int merchandiseKey, versionKey, rollupSequence = 0, dateRangeKey;
+            int hierarchyKey, hierarchyLevelSequence, hierarchyOffsetIndicator, hierarchyOffset, hierarchyLevel;
+            ROTaskRollupMerchandise taskRollupMerchandise;
+            KeyValuePair<int, string> merchandise = default(KeyValuePair<int, string>);
+            KeyValuePair<int, string> version = default(KeyValuePair<int, string>);
+            KeyValuePair<int, string> dateRange = default(KeyValuePair<int, string>);
+            KeyValuePair<int, string> fromLevel = default(KeyValuePair<int, string>);
+            KeyValuePair<int, string> toLevel = default(KeyValuePair<int, string>);
+            string selectString;
+            List<HierarchyLevelComboObject> levelList;
+            HierarchyLevelComboObject hierarchyLevelItem;
+            ePlanLevelLevelType planLevelType;
+            bool rollPosting, rollReclass, rollHierarchyLevels, rollDayToWeek, rollDay, rollWeek, rollStore, rollChain;
+            bool rollStoreToChain, rollIntransit;
+
+            // get the list of versions for which the user is authorized
+            ProfileList versionProfList = SessionAddressBlock.ClientServerSession.GetUserForecastVersions();
+            foreach (VersionProfile versionProfile in versionProfList)
+            {
+                task.Versions.Add(new KeyValuePair<int, string>(versionProfile.Key, versionProfile.Description));
+            }
+
+            // get rows for the requested sequence from the DataTable
+            selectString = "TASK_SEQUENCE=" + taskParameters.Sequence;
+            DataRow[] merchandiseDataRows = TaskData.Select(selectString);
+
+
+            // add each merchandise row to Rollup data
+            foreach (DataRow dataRow in merchandiseDataRows)
+            {
+                // get the sequence of this row within the task sequence
+                rollupSequence = Convert.ToInt32(dataRow["ROLLUP_SEQUENCE"]);
+
+                // set default values for fields
+                merchandise = default(KeyValuePair<int, string>);
+                version = default(KeyValuePair<int, string>);
+                dateRange = default(KeyValuePair<int, string>);
+                fromLevel = default(KeyValuePair<int, string>);
+                toLevel = default(KeyValuePair<int, string>);
+                merchandiseKey = Include.NoRID;
+                hierarchyKey = Include.NoRID;
+                hierarchyLevelSequence = Include.Undefined;
+                hierarchyOffsetIndicator = Include.Undefined;
+                hierarchyOffset = Include.Undefined;
+                hierarchyLevel = Include.Undefined;
+                planLevelType = ePlanLevelLevelType.Undefined;
+                rollPosting = false;
+                rollReclass = false;
+                rollHierarchyLevels = false;
+                rollDayToWeek = false;
+                rollDay = false;
+                rollWeek = false;
+                rollStore = false;
+                rollChain = false;
+                rollStoreToChain = false;
+                rollIntransit = false;
+
+                // set the merchandise if provided
+                if (dataRow["HN_RID"] != DBNull.Value)
+                {
+                    merchandiseKey = Convert.ToInt32(dataRow["HN_RID"]);
+                    merchandise = GetName.GetMerchandiseName(
+                        nodeRID: merchandiseKey,
+                        SAB: SessionAddressBlock
+                        );
+                }
+
+                // set the version if provided 
+                if (dataRow["FV_RID"] != DBNull.Value)
+                {
+                    versionKey = Convert.ToInt32(dataRow["FV_RID"]);
+                    version = GetName.GetVersion(
+                        versionRID: versionKey,
+                        SAB: SessionAddressBlock
+                        );
+                }
+
+                // set the date if provided
+                if (dataRow["ROLLUP_CDR_RID"] != DBNull.Value)
+                {
+                    dateRangeKey = Convert.ToInt32(dataRow["ROLLUP_CDR_RID"]);
+                    dateRange = GetName.GetCalendarDateRange(
+                        calendarDateRID: dateRangeKey,
+                        SAB: SessionAddressBlock
+                        );
+                }
+
+                // build hierarchy level lists for from and to level based on merchandise in the task
+                if (merchandiseKey != Include.NoRID)
+                {
+                    if (!_levelLists.TryGetValue(merchandiseKey, out levelList))
+                    {
+                        levelList = FillLevelLists(
+                            nodeKey: merchandiseKey
+                            );
+                        _levelLists.Add(merchandiseKey, levelList);
+                    }
+                }
+                else
+                {
+                    levelList = new List<HierarchyLevelComboObject>();
+                }
+
+                // set the from date
+                // determine if from level is an organizational hierarchy level or an alternate hierarchy offset
+                // based on the FROM_PH_OFFSET_IND
+                if (dataRow["FROM_PH_RID"] != DBNull.Value)
+                {
+                    hierarchyKey = Convert.ToInt32(dataRow["FROM_PH_RID"]);
+                }
+
+                // this will be set for an organizational hierarchy entry
+                if (dataRow["FROM_PHL_SEQUENCE"] != DBNull.Value)
+                {
+                    hierarchyLevelSequence = Convert.ToInt32(dataRow["FROM_PHL_SEQUENCE"]);
+                }
+
+                // this will be set for an alternate hierarchy entry
+                if (dataRow["FROM_OFFSET"] != DBNull.Value)
+                {
+                    hierarchyOffset = Convert.ToInt32(dataRow["FROM_OFFSET"]);
+                }
+
+                // set the appropriate fields to look up the from date is the list based on the level information
+                if (dataRow["FROM_PH_OFFSET_IND"] != DBNull.Value)
+                {
+                    hierarchyOffsetIndicator = Convert.ToInt32(dataRow["FROM_PH_OFFSET_IND"]);
+                    if (hierarchyOffsetIndicator == eHierarchyDescendantType.offset.GetHashCode())
+                    {
+                        planLevelType = ePlanLevelLevelType.LevelOffset;
+                        hierarchyLevel = hierarchyOffset;
+                    }
+                    else
+                    {
+                        planLevelType = ePlanLevelLevelType.HierarchyLevel;
+                        hierarchyLevel = hierarchyLevelSequence;
+                    }
+                }
+
+                // locate the from level in the list of levels
+                // the value used with include the offset in the list and the text for the level
+                for (int i = 0; i < levelList.Count; i++)
+                {
+                    hierarchyLevelItem = (HierarchyLevelComboObject)levelList[i];
+
+                    if (hierarchyLevelItem.PlanLevelLevelType == planLevelType
+                        && hierarchyLevelItem.HierarchyRID == hierarchyKey
+                        && hierarchyLevelItem.Level == hierarchyLevel
+                        )
+                    {
+                        fromLevel = new KeyValuePair<int, string>(hierarchyLevelItem.LevelIndex, hierarchyLevelItem.ToString());
+                        break;
+                    }
+                }
+
+                // set the to date
+                // determine if from level is an organizational hierarchy level or an alternate hierarchy offset
+                // based on the TO_PH_OFFSET_IND
+                if (dataRow["TO_PH_RID"] != DBNull.Value)
+                {
+                    hierarchyKey = Convert.ToInt32(dataRow["TO_PH_RID"]);
+                }
+
+                // this will be set for an organizational hierarchy entry
+                if (dataRow["TO_PHL_SEQUENCE"] != DBNull.Value)
+                {
+                    hierarchyLevelSequence = Convert.ToInt32(dataRow["TO_PHL_SEQUENCE"]);
+                }
+
+                // this will be set for an alternate hierarchy entry
+                if (dataRow["TO_OFFSET"] != DBNull.Value)
+                {
+                    hierarchyOffset = Convert.ToInt32(dataRow["TO_OFFSET"]);
+                }
+
+                // set the appropriate fields to look up the from date is the list based on the level information
+                if (dataRow["TO_PH_OFFSET_IND"] != DBNull.Value)
+                {
+                    hierarchyOffsetIndicator = Convert.ToInt32(dataRow["TO_PH_OFFSET_IND"]);
+                    if (hierarchyOffsetIndicator == eHierarchyDescendantType.offset.GetHashCode())
+                    {
+                        planLevelType = ePlanLevelLevelType.LevelOffset;
+                        hierarchyLevel = hierarchyOffset;
+                    }
+                    else
+                    {
+                        planLevelType = ePlanLevelLevelType.HierarchyLevel;
+                        hierarchyLevel = hierarchyLevelSequence;
+                    }
+                }
+
+                // locate the to level in the list of levels
+                // the value used with include the offset in the list and the text for the level
+                for (int i = 0; i < levelList.Count; i++)
+                {
+                    hierarchyLevelItem = (HierarchyLevelComboObject)levelList[i];
+
+                    if (hierarchyLevelItem.PlanLevelLevelType == planLevelType
+                        && hierarchyLevelItem.HierarchyRID == hierarchyKey
+                        && hierarchyLevelItem.Level == hierarchyLevel
+                        )
+                    {
+                        toLevel = new KeyValuePair<int, string>(hierarchyLevelItem.LevelIndex, hierarchyLevelItem.ToString());
+                        break;
+                    }
+                }
+
+                // flags on the database are held as characters which are converted to boolean
+                // if the value is not set, the flag will use the defaulted value from above
+
+                if (dataRow["POSTING_IND"] != DBNull.Value)
+                {
+                    rollPosting = Include.ConvertCharToBool(Convert.ToChar(dataRow["POSTING_IND"]));
+                }
+
+                if (dataRow["RECLASS_IND"] != DBNull.Value)
+                {
+                    rollReclass = Include.ConvertCharToBool(Convert.ToChar(dataRow["RECLASS_IND"]));
+                }
+
+                if (dataRow["HIERARCHY_LEVELS_IND"] != DBNull.Value)
+                {
+                    rollHierarchyLevels = Include.ConvertCharToBool(Convert.ToChar(dataRow["HIERARCHY_LEVELS_IND"]));
+                }
+
+                if (dataRow["DAY_TO_WEEK_IND"] != DBNull.Value)
+                {
+                    rollDayToWeek = Include.ConvertCharToBool(Convert.ToChar(dataRow["DAY_TO_WEEK_IND"]));
+                }
+
+                if (dataRow["DAY_IND"] != DBNull.Value)
+                {
+                    rollDay = Include.ConvertCharToBool(Convert.ToChar(dataRow["DAY_IND"]));
+                }
+
+                if (dataRow["WEEK_IND"] != DBNull.Value)
+                {
+                    rollWeek = Include.ConvertCharToBool(Convert.ToChar(dataRow["WEEK_IND"]));
+                }
+
+                if (dataRow["STORE_IND"] != DBNull.Value)
+                {
+                    rollStore = Include.ConvertCharToBool(Convert.ToChar(dataRow["STORE_IND"]));
+                }
+
+                if (dataRow["CHAIN_IND"] != DBNull.Value)
+                {
+                    rollChain = Include.ConvertCharToBool(Convert.ToChar(dataRow["CHAIN_IND"]));
+                }
+
+                if (dataRow["STORE_TO_CHAIN_IND"] != DBNull.Value)
+                {
+                    rollStoreToChain = Include.ConvertCharToBool(Convert.ToChar(dataRow["STORE_TO_CHAIN_IND"]));
+                }
+
+                if (dataRow["INTRANSIT_IND"] != DBNull.Value)
+                {
+                    rollIntransit = Include.ConvertCharToBool(Convert.ToChar(dataRow["INTRANSIT_IND"]));
+                }
+
+                // create class
+                taskRollupMerchandise = new ROTaskRollupMerchandise(
+                    merchandise: merchandise,
+                    version: version,
+                    dateRange: dateRange,
+                    fromLevel: fromLevel,
+                    toLevel: toLevel,
+                    rollPosting: rollPosting,
+                    rollReclass: rollReclass,
+                    rollHierarchyLevels: rollHierarchyLevels,
+                    rollDayToWeek: rollDayToWeek,
+                    rollDay: rollDay,
+                    rollWeek: rollWeek,
+                    rollStore: rollStore,
+                    rollChain: rollChain,
+                    rollStoreToChain: rollStoreToChain,
+                    rollIntransit: rollIntransit
+                    );
+                
+
+                // add list for merchandise drop down to be used for both from and to levels
+                foreach (HierarchyLevelComboObject level in levelList)
+                {
+                    taskRollupMerchandise.HierarchyLevels.Add(new KeyValuePair<int, string>(level.LevelIndex, level.ToString()));
+                }
+
+                // add object to merchandise list
+                task.Merchandise.Add(taskRollupMerchandise);
+
+            }
+        }
+
+        private List<HierarchyLevelComboObject> FillLevelLists(
+            int nodeKey
+            )
+        {
+            HierarchyNodeProfile nodeProfile;
+            HierarchyProfile hierarchyProfile;
+            int startLevel;
+            int i;
+            HierarchyProfile mainHierarchyProfile;
+            int highestGuestLevel;
+            int longestBranchCount;
+            int offset;
+            ArrayList guestLevels;
+            HierarchyLevelProfile hierarchyLevelProfile;
+            List<HierarchyLevelComboObject> levelList;
+
+            try
+            {
+                levelList = new List<HierarchyLevelComboObject>();
+                if (nodeKey != Include.NoRID)
+                {
+                    nodeProfile = SessionAddressBlock.HierarchyServerSession.GetNodeData(nodeKey);
+                    hierarchyProfile = SessionAddressBlock.HierarchyServerSession.GetHierarchyData(nodeProfile.HomeHierarchyRID);
+
+                    // Load Level arrays
+
+                    if (hierarchyProfile.HierarchyType == eHierarchyType.organizational)
+                    {
+                        if (nodeProfile.HomeHierarchyLevel == 0)
+                        {
+                            levelList.Add(new HierarchyLevelComboObject(
+                                levelList.Count,
+                                ePlanLevelLevelType.HierarchyLevel,
+                                hierarchyProfile.Key,
+                                0,
+                                hierarchyProfile.HierarchyID
+                                ));
+                            startLevel = 1;
+                        }
+                        else
+                        {
+                            levelList.Add(new HierarchyLevelComboObject(
+                                levelList.Count,
+                                ePlanLevelLevelType.HierarchyLevel,
+                                hierarchyProfile.Key,
+                                ((HierarchyLevelProfile)hierarchyProfile.HierarchyLevels[nodeProfile.HomeHierarchyLevel]).Key,
+                                ((HierarchyLevelProfile)hierarchyProfile.HierarchyLevels[nodeProfile.HomeHierarchyLevel]).LevelID
+                                ));
+                            startLevel = nodeProfile.HomeHierarchyLevel + 1;
+                        }
+
+                        for (i = startLevel; i <= hierarchyProfile.HierarchyLevels.Count; i++)
+                        {
+                            levelList.Add(new HierarchyLevelComboObject(
+                                levelList.Count,
+                                ePlanLevelLevelType.HierarchyLevel,
+                                hierarchyProfile.Key, ((HierarchyLevelProfile)hierarchyProfile.HierarchyLevels[i]).Key,
+                                ((HierarchyLevelProfile)hierarchyProfile.HierarchyLevels[i]).LevelID
+                                ));
+                        }
+                    }
+                    else
+                    {
+                        mainHierarchyProfile = SessionAddressBlock.HierarchyServerSession.GetMainHierarchyData();
+                        highestGuestLevel = SessionAddressBlock.HierarchyServerSession.GetHighestGuestLevel(nodeProfile.Key);
+                        guestLevels = SessionAddressBlock.HierarchyServerSession.GetAllGuestLevels(nodeProfile.Key);
+
+                        levelList.Add(new HierarchyLevelComboObject(
+                            levelList.Count,
+                            ePlanLevelLevelType.HierarchyLevel,
+                            hierarchyProfile.Key,
+                            0,
+                            nodeProfile.NodeID
+                            ));
+                        startLevel = 1;
+
+                        if (guestLevels.Count == 1)
+                        {
+                            hierarchyLevelProfile = (HierarchyLevelProfile)guestLevels[0];
+                            levelList.Add(new HierarchyLevelComboObject(
+                                levelList.Count,
+                                ePlanLevelLevelType.HierarchyLevel,
+                                mainHierarchyProfile.Key,
+                                hierarchyLevelProfile.Key,
+                                hierarchyLevelProfile.LevelID
+                                ));
+                        }
+
+                        longestBranchCount = SessionAddressBlock.HierarchyServerSession.GetLongestBranch(nodeProfile.Key, true);
+                        DataTable hierarchyLevels = SessionAddressBlock.HierarchyServerSession.GetHierarchyDescendantLevels(nodeProfile.Key);
+                        longestBranchCount = hierarchyLevels.Rows.Count - 1;
+
+
+                        offset = 0;
+
+                        for (i = 0; i < longestBranchCount; i++)
+                        {
+                            offset++;
+                            levelList.Add(new HierarchyLevelComboObject(
+                                levelList.Count,
+                                ePlanLevelLevelType.LevelOffset,
+                                hierarchyProfile.Key,
+                                offset,
+                                "+" + offset.ToString()
+                                ));
+                        }
+                    }
+                }
+
+                return levelList;
+            }
+            catch (Exception exc)
+            {
+                string message = exc.ToString();
+                throw;
+            }
         }
 
 
@@ -146,7 +555,7 @@ namespace Logility.ROWeb
         /// <param name="applyOnly">Flag identifying if apply is being processed</param>
         /// <returns>The updated task data</returns>
         override public ROTaskProperties TaskUpdateData(
-            ROTaskProperties taskData, 
+            ROTaskProperties taskData,
             bool cloneDates, 
             ref string message, 
             out bool successful, 

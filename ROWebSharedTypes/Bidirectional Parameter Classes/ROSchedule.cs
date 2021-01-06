@@ -13,7 +13,7 @@ namespace Logility.ROWebSharedTypes
     public class ROTaskProperties
     {
         /// <summary>
-        /// KeyValuePair contining the key and name of the task
+        /// KeyValuePair containing the key and name of the task
         /// </summary>
         [DataMember(IsRequired = true)]
         private KeyValuePair<int, string> _task;
@@ -25,7 +25,7 @@ namespace Logility.ROWebSharedTypes
         private eTaskType _taskType;
 
         /// <summary>
-        /// KeyValuePair contining the eMIDMessageLevel and message leve of the task
+        /// KeyValuePair containing the eMIDMessageLevel and message leve of the task
         /// </summary>
         [DataMember(IsRequired = true)]
         protected KeyValuePair<int, string> _maximumMessageLevel;
@@ -290,7 +290,7 @@ namespace Logility.ROWebSharedTypes
     public class ROTaskAllocateMerchandiseWorkflowMethod
     {
         /// <summary>
-        /// KeyValuePair contining the key and name of the workflow or method
+        /// KeyValuePair containing the key and name of the workflow or method
         /// </summary>
         [DataMember(IsRequired = true)]
         protected KeyValuePair<int, string> _workflowOrMethod;
@@ -302,7 +302,7 @@ namespace Logility.ROWebSharedTypes
         protected bool _isWorkflow;
 
         /// <summary>
-        /// KeyValuePair contining the key and name of the execute date
+        /// KeyValuePair containing the key and name of the execute date
         /// </summary>
         [DataMember(IsRequired = true)]
         protected KeyValuePair<int, string> _executeDate;
@@ -360,13 +360,13 @@ namespace Logility.ROWebSharedTypes
     public class ROTaskAllocateMerchandise
     {
         /// <summary>
-        /// KeyValuePair contining the key and name of the merchandise
+        /// KeyValuePair containing the key and name of the merchandise
         /// </summary>
         [DataMember(IsRequired = true)]
         protected KeyValuePair<int, string> _merchandise;
 
         /// <summary>
-        /// KeyValuePair contining the key and name of the filter
+        /// KeyValuePair containing the key and name of the filter
         /// </summary>
         [DataMember(IsRequired = true)]
         protected KeyValuePair<int, string> _filter;
@@ -615,11 +615,308 @@ namespace Logility.ROWebSharedTypes
         }
     }
 
+    [DataContract(Name = "ROTaskRollupMerchandise", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskRollupMerchandise
+    {
+        /// <summary>
+        /// KeyValuePair containing the key and name of the merchandise
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        protected KeyValuePair<int, string> _merchandise;
+
+        /// <summary>
+        /// KeyValuePair containing the key and name of the version
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        protected KeyValuePair<int, string> _version;
+
+        /// <summary>
+        /// KeyValuePair containing the key and name of the date range
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        protected KeyValuePair<int, string> _dateRange;
+
+        /// <summary>
+        /// List of KeyValuePair containing the hierarchy and sequence for possible from and to levels
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        protected List<KeyValuePair<int, string>> _hierarchyLevels;
+
+        /// <summary>
+        /// KeyValuePair containing the hierarchy and sequence of the from level
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        protected KeyValuePair<int, string> _fromLevel;
+
+        /// <summary>
+        /// KeyValuePair containing the hierarchy and sequence of the from level
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        protected KeyValuePair<int, string> _toLevel;
+
+        /// <summary>
+        /// Flag containing if a Posting Rollup is to be performed
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        protected bool _rollPosting;
+
+        /// <summary>
+        /// Flag containing if a Reclass Rollup is to be performed
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        protected bool _rollReclass;
+
+        /// <summary>
+        /// Flag containing if a Hierarchy Levels Rollup is to be performed
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        protected bool _rollHierarchyLevels;
+
+        /// <summary>
+        /// Flag containing if a Day to Week Rollup is to be performed
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        protected bool _rollDayToWeek;
+
+        /// <summary>
+        /// Flag containing if Days are to be rolled
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        protected bool _rollDay;
+
+        /// <summary>
+        /// Flag containing if Weeks are to be rolled
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        protected bool _rollWeek;
+
+        /// <summary>
+        /// Flag containing if Stores are to be rolled
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        protected bool _rollStore;
+
+        /// <summary>
+        /// Flag containing if Chain is to be rolled
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        protected bool _rollChain;
+
+        /// <summary>
+        /// Flag containing if a Store to Chain Rollup is to be performed
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        protected bool _rollStoreToChain;
+
+        /// <summary>
+        /// Flag containing if an Intransit Rollup is to be performed
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        protected bool _rollIntransit;
+
+        #region Public Properties
+
+        /// <summary>
+        /// KeyValuePair with merchandise key and name
+        /// </summary>
+        public KeyValuePair<int, string> Merchandise { get { return _merchandise; } set { _merchandise = value; } }
+
+        /// <summary>
+        /// Gets the flag identifying if the merchandise has been set.
+        /// </summary>
+        public bool MerchandiseIsSet
+        {
+            get { return !_merchandise.Equals(default(KeyValuePair<int, string>)); }
+        }
+
+        /// <summary>
+        /// Gets the flag identifying if the version has been set.
+        /// </summary>
+        public bool VersionIsSet
+        {
+            get { return !_version.Equals(default(KeyValuePair<int, string>)); }
+        }
+
+        /// <summary>
+        /// KeyValuePair with version key and name
+        /// </summary>
+        public KeyValuePair<int, string> Version { get { return _version; } set { _version = value; } }
+
+        /// <summary>
+        /// Gets the flag identifying if the date range has been set.
+        /// </summary>
+        public bool DateRangeIsSet
+        {
+            get { return !_dateRange.Equals(default(KeyValuePair<int, string>)); }
+        }
+
+        /// <summary>
+        /// KeyValuePair with date range key and name
+        /// </summary>
+        public KeyValuePair<int, string> DateRange { get { return _dateRange; } set { _dateRange = value; } }
+
+        /// <summary>
+        /// List of KeyValuePair containing the hierarchy and sequence for possible from levels
+        /// </summary>
+        public List<KeyValuePair<int, string>> HierarchyLevels { get { return _hierarchyLevels; } }
+
+        /// <summary>
+        /// Gets the flag identifying if the from level has been set.
+        /// </summary>
+        public bool FromLevelIsSet
+        {
+            get { return !_fromLevel.Equals(default(KeyValuePair<int, string>)); }
+        }
+
+        /// <summary>
+        /// KeyValuePair with from level hierarchy and level sequence
+        /// </summary>
+        public KeyValuePair<int, string> FromLevel { get { return _fromLevel; } set { _fromLevel = value; } }
+
+        /// <summary>
+        /// Gets the flag identifying if the to level has been set.
+        /// </summary>
+        public bool ToLevelIsSet
+        {
+            get { return !_toLevel.Equals(default(KeyValuePair<int, string>)); }
+        }
+
+        /// <summary>
+        /// KeyValuePair with to level hierarchy and level sequence
+        /// </summary>
+        public KeyValuePair<int, string> ToLevel { get { return _toLevel; } set { _toLevel = value; } }
+
+        /// <summary>
+        /// Flag containing if a Posting Rollup is to be performed
+        /// </summary>
+        public bool RollPosting { get { return _rollPosting; } set { _rollPosting = value; } }
+
+        /// <summary>
+        /// Flag containing if a Reclass Rollup is to be performed
+        /// </summary>
+        public bool RollReclass { get { return _rollReclass; } set { _rollReclass = value; } }
+
+        /// <summary>
+        /// Flag containing if a Hierarchy Levels Rollup is to be performed
+        /// </summary>
+        public bool RollHierarchyLevels { get { return _rollHierarchyLevels; } set { _rollHierarchyLevels = value; } }
+
+        /// <summary>
+        /// Flag containing if a Day to Week Rollup is to be performed
+        /// </summary>
+        public bool RollDayToWeek { get { return _rollDayToWeek; } set { _rollDayToWeek = value; } }
+
+        /// <summary>
+        /// Flag containing if Days are to be rolled
+        /// </summary>
+        public bool RollDay { get { return _rollDay; } set { _rollDay = value; } }
+
+        /// <summary>
+        /// Flag containing if Weeks are to be rolled
+        /// </summary>
+        public bool RollWeek { get { return _rollWeek; } set { _rollWeek = value; } }
+
+        /// <summary>
+        /// Flag containing if Stores are to be rolled
+        /// </summary>
+        public bool RollStore { get { return _rollStore; } set { _rollStore = value; } }
+
+        /// <summary>
+        /// Flag containing if Chain is to be rolled
+        /// </summary>
+        public bool RollChain { get { return _rollChain; } set { _rollChain = value; } }
+
+        /// <summary>
+        /// Flag containing if a Store to Chain Rollup is to be performed
+        /// </summary>
+        public bool RollStoreToChain { get { return _rollStoreToChain; } set { _rollStoreToChain = value; } }
+
+        /// <summary>
+        /// Flag containing if an Intransit Rollup is to be performed
+        /// </summary>
+        public bool RollIntransit { get { return _rollIntransit; } set { _rollIntransit = value; } }
+
+        #endregion
+
+        public ROTaskRollupMerchandise(
+            KeyValuePair<int, string> merchandise = default(KeyValuePair<int, string>),
+            KeyValuePair<int, string> version = default(KeyValuePair<int, string>),
+            KeyValuePair<int, string> dateRange = default(KeyValuePair<int, string>),
+            KeyValuePair<int, string> fromLevel = default(KeyValuePair<int, string>),
+            KeyValuePair<int, string> toLevel = default(KeyValuePair<int, string>),
+            bool rollPosting = false,
+            bool rollReclass = false,
+            bool rollHierarchyLevels = false,
+            bool rollDayToWeek = false,
+            bool rollDay = false,
+            bool rollWeek = false,
+            bool rollStore = false,
+            bool rollChain = false,
+            bool rollStoreToChain = false,
+            bool rollIntransit = false
+            )
+        {
+            _merchandise = merchandise;
+            _version = version;
+            _dateRange = dateRange;
+            _fromLevel = fromLevel;
+            _toLevel = toLevel;
+            _rollPosting = rollPosting;
+            _rollReclass = rollReclass;
+            _rollHierarchyLevels = rollHierarchyLevels;
+            _rollDayToWeek = rollDayToWeek;
+            _rollDay = rollDay;
+            _rollWeek = rollWeek;
+            _rollStore = rollStore;
+            _rollChain = rollChain;
+            _rollStoreToChain = rollStoreToChain;
+            _rollIntransit = rollIntransit;
+            _hierarchyLevels = new List<KeyValuePair<int, string>>();
+
+        }
+    }
+
     [DataContract(Name = "ROTaskRollup", Namespace = "http://Logility.ROWeb/")]
     public class ROTaskRollup : ROTaskProperties
     {
+        /// <summary>
+        /// List of merchandise entries
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        private List<ROTaskRollupMerchandise> _merchandise;
+
+        /// <summary>
+        /// List of KeyValuePairs for version with version key and name
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        private List<KeyValuePair<int, string>> _versions;
 
         #region Public Properties
+        /// <summary>
+        /// KeyValuePair with merchandise key and name
+        /// </summary>
+        public List<ROTaskRollupMerchandise> Merchandise { get { return _merchandise; } }
+
+        /// <summary>
+        /// Gets the flag identifying if there are merchandise values.
+        /// </summary>
+        public bool HasMerchandiseValues
+        {
+            get { return _merchandise.Count > 0; }
+        }
+
+        /// <summary>
+        /// List of KeyValuePairs for version with version key and name
+        /// </summary>
+        public List<KeyValuePair<int, string>> Versions { get { return _versions; } }
+
+        /// <summary>
+        /// Gets the flag identifying if there are versions.
+        /// </summary>
+        public bool HasVersions
+        {
+            get { return _versions.Count > 0; }
+        }
 
         #endregion
 
@@ -631,7 +928,8 @@ namespace Logility.ROWebSharedTypes
             maximumMessageLevel: maximumMessageLevel)
 
         {
-
+            _merchandise = new List<ROTaskRollupMerchandise>();
+            _versions = new List<KeyValuePair<int, string>>();
         }
     }
 

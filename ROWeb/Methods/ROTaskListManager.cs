@@ -1263,7 +1263,7 @@ namespace Logility.ROWeb
         }
 
         /// <summary>
-        /// Saves task information to the database
+        /// Saves task information to memory
         /// </summary>
         /// <param name="taskParameters">The values for the task</param>
         /// <returns></returns>

@@ -303,6 +303,7 @@ namespace Logility.ROWebSharedTypes
     [KnownType(typeof(ROTaskSizeCodeLoad))]
     [KnownType(typeof(ROTaskHeaderLoad))]
     [KnownType(typeof(ROTaskForecasting))]
+    [KnownType(typeof(ROTaskRollupMerchandise))]
     [KnownType(typeof(ROTaskRollup))]
     [KnownType(typeof(ROTaskRelieveIntransit))]
     [KnownType(typeof(ROTaskPurge))]
