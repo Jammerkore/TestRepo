@@ -584,12 +584,155 @@ namespace Logility.ROWeb
             ref string message
             )
         {
+            DataRow merchandiseDataRow;
+            int rollupSequence = 0;
+            List<HierarchyLevelComboObject> levelList;
+
             // delete old entries from data tables so new ones can be added
             DeleteTaskRows(
                 sequence: taskData.Task.Key
                 );
 
-            throw new Exception("Not Implemented");
+            if (taskData.Merchandise.Count == 0)
+            {
+                message = SessionAddressBlock.ClientServerSession.Audit.GetText(eMIDTextCode.msg_AtLeastOneMerchandiseRequired);
+                return false;
+            }
+
+            // add merchandise  rows to the data tables
+            foreach (ROTaskRollupMerchandise taskRollupMerchandise in taskData.Merchandise)
+            {
+                // create data row from table
+                merchandiseDataRow = TaskData.NewRow();
+
+                // set primary fields for entry
+                merchandiseDataRow["TASKLIST_RID"] = TaskListProperties.TaskList.Key;
+                merchandiseDataRow["TASK_SEQUENCE"] = taskData.Task.Key;
+                merchandiseDataRow["ROLLUP_SEQUENCE"] = rollupSequence;
+
+                if (taskRollupMerchandise.MerchandiseIsSet
+                    && taskRollupMerchandise.Merchandise.Key != Include.NoRID)
+                {
+                    merchandiseDataRow["HN_RID"] = taskRollupMerchandise.Merchandise.Key;
+                }
+                else
+                {
+                    message = SessionAddressBlock.ClientServerSession.Audit.GetText(eMIDTextCode.msg_MerchandiseRequired);
+                    return false;
+                }
+
+                if (taskRollupMerchandise.VersionIsSet
+                    && taskRollupMerchandise.Version.Key != Include.NoRID)
+                {
+                    merchandiseDataRow["FV_RID"] = taskRollupMerchandise.Version.Key;
+                }
+                else
+                {
+                    message = SessionAddressBlock.ClientServerSession.Audit.GetText(eMIDTextCode.msg_VersionRequired);
+                    return false;
+                }
+
+                if (taskRollupMerchandise.DateRangeIsSet
+                    && taskRollupMerchandise.DateRange.Key != Include.NoRID)
+                {
+                    merchandiseDataRow["ROLLUP_CDR_RID"] = taskRollupMerchandise.DateRange.Key;
+                }
+                else
+                {
+                    message = SessionAddressBlock.ClientServerSession.Audit.GetText(eMIDTextCode.msg_RollupDateRequired);
+                    return false;
+                }
+
+                // determine data row value for from level
+                // if merchandise is not in the collection, build the list
+                if (!_levelLists.TryGetValue(taskRollupMerchandise.Merchandise.Key, out levelList))
+                {
+                    levelList = FillLevelLists(
+                        nodeKey: taskRollupMerchandise.Merchandise.Key
+                        );
+                    _levelLists.Add(taskRollupMerchandise.Merchandise.Key, levelList);
+                }
+
+                // if from level is set, locate corresponding entry in level list and update fields appropriately
+                if (taskRollupMerchandise.FromLevelIsSet
+                    && taskRollupMerchandise.FromLevel.Key != Include.NoRID)
+                {
+                    if (taskRollupMerchandise.FromLevel.Key < levelList.Count)
+                    {
+                        HierarchyLevelComboObject hierarchyLevelItem = levelList[taskRollupMerchandise.FromLevel.Key];
+                        merchandiseDataRow["FROM_PH_RID"] = hierarchyLevelItem.HierarchyRID;
+                        if (hierarchyLevelItem.PlanLevelLevelType == ePlanLevelLevelType.LevelOffset)
+                        {
+                            merchandiseDataRow["FROM_PH_OFFSET_IND"] = eHierarchyDescendantType.offset.GetHashCode();
+                            merchandiseDataRow["FROM_OFFSET"] = hierarchyLevelItem.Level;
+                        }
+                        else
+                        {
+                            merchandiseDataRow["FROM_PH_OFFSET_IND"] = eHierarchyDescendantType.levelType.GetHashCode();
+                            merchandiseDataRow["FROM_PHL_SEQUENCE"] = hierarchyLevelItem.Level;
+                        }
+                    }
+                }
+                else
+                {
+                    message = SessionAddressBlock.ClientServerSession.Audit.GetText(eMIDTextCode.msg_RollupFromLevelRequired);
+                    return false;
+                }
+
+                // if to level is set, locate corresponding entry in level list and update fields appropriately
+                if (taskRollupMerchandise.ToLevelIsSet
+                    && taskRollupMerchandise.ToLevel.Key != Include.NoRID)
+                {
+                    if (taskRollupMerchandise.ToLevel.Key < levelList.Count)
+                    {
+                        HierarchyLevelComboObject hierarchyLevelItem = levelList[taskRollupMerchandise.ToLevel.Key];
+                        merchandiseDataRow["TO_PH_RID"] = hierarchyLevelItem.HierarchyRID;
+                        if (hierarchyLevelItem.PlanLevelLevelType == ePlanLevelLevelType.LevelOffset)
+                        {
+                            merchandiseDataRow["TO_PH_OFFSET_IND"] = eHierarchyDescendantType.offset.GetHashCode();
+                            merchandiseDataRow["TO_OFFSET"] = hierarchyLevelItem.Level;
+                        }
+                        else
+                        {
+                            merchandiseDataRow["TO_PH_OFFSET_IND"] = eHierarchyDescendantType.levelType.GetHashCode();
+                            merchandiseDataRow["TO_PHL_SEQUENCE"] = hierarchyLevelItem.Level;
+                        }
+                    }
+                }
+                else
+                {
+                    message = SessionAddressBlock.ClientServerSession.Audit.GetText(eMIDTextCode.msg_RollupToLevelRequired);
+                    return false;
+                }
+
+                // set flag fields
+                merchandiseDataRow["POSTING_IND"] = Include.ConvertBoolToChar(taskRollupMerchandise.RollPosting);
+                merchandiseDataRow["RECLASS_IND"] = Include.ConvertBoolToChar(taskRollupMerchandise.RollReclass);
+                merchandiseDataRow["HIERARCHY_LEVELS_IND"] = Include.ConvertBoolToChar(taskRollupMerchandise.RollHierarchyLevels);
+                merchandiseDataRow["DAY_TO_WEEK_IND"] = Include.ConvertBoolToChar(taskRollupMerchandise.RollDayToWeek);
+                merchandiseDataRow["DAY_IND"] = Include.ConvertBoolToChar(taskRollupMerchandise.RollDay);
+                merchandiseDataRow["WEEK_IND"] = Include.ConvertBoolToChar(taskRollupMerchandise.RollWeek);
+                merchandiseDataRow["STORE_IND"] = Include.ConvertBoolToChar(taskRollupMerchandise.RollStore);
+                merchandiseDataRow["CHAIN_IND"] = Include.ConvertBoolToChar(taskRollupMerchandise.RollChain);
+                merchandiseDataRow["STORE_TO_CHAIN_IND"] = Include.ConvertBoolToChar(taskRollupMerchandise.RollStoreToChain);
+                merchandiseDataRow["INTRANSIT_IND"] = Include.ConvertBoolToChar(taskRollupMerchandise.RollIntransit);
+
+                TaskData.Rows.Add(merchandiseDataRow);
+
+                // merchandise may have changed or new entry so populate Hierarchy Levels list
+                taskRollupMerchandise.HierarchyLevels.Clear();
+                foreach (HierarchyLevelComboObject level in levelList)
+                {
+                    taskRollupMerchandise.HierarchyLevels.Add(new KeyValuePair<int, string>(level.LevelIndex, level.ToString()));
+                }
+
+                ++rollupSequence;
+            }
+
+            TaskData.AcceptChanges();
+
+            // order the rows in the data tables
+            TaskData = TaskData.DefaultView.ToTable();
 
             return true;
         }
