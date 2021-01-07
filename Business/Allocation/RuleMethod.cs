@@ -2742,14 +2742,15 @@ namespace MIDRetail.Business.Allocation
             int key;
             string value;
             DataRow[] foundRows;
+            eRuleMethodComponentType ruleMethodComponentType;
 
             DataTable componentDataTable = MIDText.GetTextType(eMIDTextType.eComponentType, eMIDTextOrderBy.TextValue);
-            foreach (DataRow dr in componentDataTable.Rows)
+            foreach (DataRow dataRow in componentDataTable.Rows)
             {
-                eRuleMethodComponentType rmct = (eRuleMethodComponentType)(Convert.ToInt32(dr["TEXT_CODE"], CultureInfo.CurrentUICulture));
-                if (!Enum.IsDefined(typeof(eRuleMethodComponentType), rmct))
+                ruleMethodComponentType = (eRuleMethodComponentType)(Convert.ToInt32(dataRow["TEXT_CODE"], CultureInfo.CurrentUICulture));
+                if (!Enum.IsDefined(typeof(eRuleMethodComponentType), ruleMethodComponentType))
                 {
-                    dr.Delete();
+                    dataRow.Delete();
                 }
             }
             componentDataTable.AcceptChanges();
@@ -2807,27 +2808,29 @@ namespace MIDRetail.Business.Allocation
                 if (headerDataTable.Rows.Count == 0)
                     return;
                 DataRow row = headerDataTable.Rows[0];
-                int styleHnRID = Convert.ToInt32(row["STYLE_HNRID"], CultureInfo.CurrentUICulture);
-                HierarchyNodeProfile hnp_style = SAB.HierarchyServerSession.GetNodeData(styleHnRID);
+                int styleNodeKey = Convert.ToInt32(row["STYLE_HNRID"], CultureInfo.CurrentUICulture);
+                HierarchyNodeProfile styleNodeProfile = SAB.HierarchyServerSession.GetNodeData(styleNodeKey);
 
                 foreach (DataRow colorRow in bulkColorsDataTable.Rows)
                 {
                     string colorDescription;
                     int colorKey = Convert.ToInt32(colorRow["COLOR_CODE_RID"], CultureInfo.CurrentUICulture);
 
-                    int hdrBCRID = Convert.ToInt32(colorRow["HDR_BC_RID"], CultureInfo.CurrentUICulture);
+                    int headerBulkColorKey = Convert.ToInt32(colorRow["HDR_BC_RID"], CultureInfo.CurrentUICulture);
 
-                    ColorCodeProfile ccp = SAB.HierarchyServerSession.GetColorCodeProfile(colorKey);
-                    int colorHnRID = Include.NoRID;
+                    ColorCodeProfile colorCodeProfile = SAB.HierarchyServerSession.GetColorCodeProfile(colorKey);
+                    int colorNodeKey = Include.NoRID;
                     // if color defined by style, use the color description for the style
-                    if (SAB.HierarchyServerSession.ColorExistsForStyle(hnp_style.HomeHierarchyRID, hnp_style.Key, ccp.ColorCodeID, ref colorHnRID))
+                    int homehierarchyKey = styleNodeProfile.HomeHierarchyRID;
+                    string colorCodeID = colorCodeProfile.ColorCodeID;
+                    if (SAB.HierarchyServerSession.ColorExistsForStyle(homehierarchyKey, styleNodeKey, colorCodeID, ref colorNodeKey))
                     {
-                        HierarchyNodeProfile hnp_color = SAB.HierarchyServerSession.GetNodeData(colorHnRID);
-                        colorDescription = hnp_color.NodeDescription;
+                        HierarchyNodeProfile colorNodeProfile = SAB.HierarchyServerSession.GetNodeData(colorNodeKey);
+                        colorDescription = colorNodeProfile.NodeDescription;
                     }
                     else // otherwise, use the base name for the color
                     {
-                        colorDescription = ccp.ColorCodeName;
+                        colorDescription = colorCodeProfile.ColorCodeName;
                     }
 
                     method.Colors.Add(new KeyValuePair<int, string>(colorKey, colorDescription));
