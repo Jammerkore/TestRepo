@@ -27,9 +27,9 @@ namespace Logility.ROWeb
         protected HierarchyNodeProfile _hierarchyNodeProfile = null;
         private ROTaskListProperties _taskListProperties;
         private HierarchyProfile _hierarchyProfile = null;
-        private HierarchyProfile _mainHierProf = null;
-        private Dictionary<int, HierarchyNodeProfile> _hnpDict = new Dictionary<int, HierarchyNodeProfile>();
-        private Dictionary<int, DateRangeProfile> _dateRangeDict = new Dictionary<int, DateRangeProfile>();
+        private HierarchyProfile _mainHierarchyProfile = null;
+        private Dictionary<int, HierarchyNodeProfile> _hierarchyNodeProfileDictionary = new Dictionary<int, HierarchyNodeProfile>();
+        private Dictionary<int, DateRangeProfile> _dateRangeDictionary = new Dictionary<int, DateRangeProfile>();
         private ScheduleData _ScheduleDataLayer = null;
 
         private SessionAddressBlock _sessionAddressBlock;
@@ -191,15 +191,15 @@ namespace Logility.ROWeb
             }
         }
 
-        protected HierarchyProfile MainHierProf
+        protected HierarchyProfile MainHierarchyProfile
         {
             get
             {
-                if (_mainHierProf == null)
+                if (_mainHierarchyProfile == null)
                 {
-                    _mainHierProf = SessionAddressBlock.HierarchyServerSession.GetMainHierarchyData();
+                    _mainHierarchyProfile = SessionAddressBlock.HierarchyServerSession.GetMainHierarchyData();
                 }
-                return _mainHierProf;
+                return _mainHierarchyProfile;
             }
         }
 
@@ -376,25 +376,25 @@ namespace Logility.ROWeb
             bool buildQualifiedID = false
             )
         {
-            HierarchyNodeProfile hnp = null;
+            HierarchyNodeProfile hierarchyNodeProfile = null;
             if (chaseHierarchy
                 || buildQualifiedID)
             {
-                hnp = SessionAddressBlock.HierarchyServerSession.GetNodeData(
+                hierarchyNodeProfile = SessionAddressBlock.HierarchyServerSession.GetNodeData(
                     aNodeRID: key, 
                     aChaseHierarchy: chaseHierarchy, 
                     aBuildQualifiedID: buildQualifiedID
                     );
             }
-            else if (!_hnpDict.TryGetValue(key, out hnp))
+            else if (!_hierarchyNodeProfileDictionary.TryGetValue(key, out hierarchyNodeProfile))
             {
-                hnp = SessionAddressBlock.HierarchyServerSession.GetNodeData(
+                hierarchyNodeProfile = SessionAddressBlock.HierarchyServerSession.GetNodeData(
                     nodeRID: key, 
                     chaseHierarchy: chaseHierarchy
                     );
-                _hnpDict.Add(key, hnp);
+                _hierarchyNodeProfileDictionary.Add(key, hierarchyNodeProfile);
             }
-            return hnp;
+            return hierarchyNodeProfile;
         }
 
         protected HierarchyNodeProfile GetHierarchyNodeProfile(
@@ -420,7 +420,7 @@ namespace Logility.ROWeb
                     aChaseHierarchy: chaseHierarchy, 
                     aBuildQualifiedID: buildQualifiedID
                     );
-                _hnpDict.Add(hnp.Key, hnp);
+                _hierarchyNodeProfileDictionary.Add(hnp.Key, hnp);
             }
             return hnp;
         }
@@ -430,10 +430,10 @@ namespace Logility.ROWeb
             )
         {
             DateRangeProfile dateRange = null;
-            if (!_dateRangeDict.TryGetValue(key, out dateRange))
+            if (!_dateRangeDictionary.TryGetValue(key, out dateRange))
             {
                 dateRange = SessionAddressBlock.ClientServerSession.Calendar.GetDateRange(key);
-                _dateRangeDict.Add(dateRange.Key, dateRange);
+                _dateRangeDictionary.Add(dateRange.Key, dateRange);
             }
             return dateRange;
         }

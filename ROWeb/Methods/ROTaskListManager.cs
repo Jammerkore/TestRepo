@@ -860,7 +860,7 @@ namespace Logility.ROWeb
 
             int userKey = taskListParameters.ROTaskListProperties.UserKey;
 
-            int nameCntr = 0;
+            int nameCounter = 0;
             while (true)
             {
                 if (!isDuplicateName(name, userKey))
@@ -869,8 +869,8 @@ namespace Logility.ROWeb
                 }
                 else
                 {
-                    nameCntr++;
-                    name = Include.GetNewName(name: name, index: nameCntr);
+                    nameCounter++;
+                    name = Include.GetNewName(name: name, index: nameCounter);
                 }
             }
 
@@ -1061,7 +1061,11 @@ namespace Logility.ROWeb
                     }
                     else
                     {
-                        runningJobs = scheduledJobsDataTable.Select("EXECUTION_STATUS = " + (int)eProcessExecutionStatus.Running + " OR EXECUTION_STATUS = " + (int)eProcessExecutionStatus.Queued);
+                        string selectStatement = "EXECUTION_STATUS = " 
+                            + (int)eProcessExecutionStatus.Running 
+                            + " OR EXECUTION_STATUS = " 
+                            + (int)eProcessExecutionStatus.Queued;
+                        runningJobs = scheduledJobsDataTable.Select(selectStatement);
 
                         if (runningJobs.Length > 0)
                         {
@@ -1070,8 +1074,12 @@ namespace Logility.ROWeb
                         }
 
                         runningJobs = scheduledJobsDataTable.Select(
-                            "EXECUTION_STATUS = " + (int)eProcessExecutionStatus.Executed + " OR EXECUTION_STATUS = " + (int)eProcessExecutionStatus.OnHold +
-                            " OR EXECUTION_STATUS = " + (int)eProcessExecutionStatus.Waiting);
+                            "EXECUTION_STATUS = " 
+                            + (int)eProcessExecutionStatus.Executed 
+                            + " OR EXECUTION_STATUS = " 
+                            + (int)eProcessExecutionStatus.OnHold 
+                            + " OR EXECUTION_STATUS = " 
+                            + (int)eProcessExecutionStatus.Waiting);
 
                         if (runningJobs.Length > 0)
                         {
@@ -1271,15 +1279,19 @@ namespace Logility.ROWeb
         {
             // tasks cannot be saved to the database without the task list
             // so perform an apply if a save is requested
-            return ApplyTask(taskParameters: taskParameters);
+            return ApplyTask(
+                taskParameters: taskParameters,
+                applyOnly: false
+                );
         }
 
         /// <summary>
         /// Saves task information to memory only
         /// </summary>
         /// <param name="taskParameters">The values for the task</param>
+        /// <param name="applyOnly">Indicates an apply is being performed rather than a save</param>
         /// <returns></returns>
-        public ROOut ApplyTask(ROTaskPropertiesParms taskParameters)
+        public ROOut ApplyTask(ROTaskPropertiesParms taskParameters, bool applyOnly = true)
         {
             string message = null;
             bool cloneDates = false;
@@ -1314,7 +1326,7 @@ namespace Logility.ROWeb
                 cloneDates: cloneDates,
                 message: ref message,
                 successful: out successful,
-                applyOnly: true
+                applyOnly: applyOnly
                 );
 
             // add or update the task in the collection
