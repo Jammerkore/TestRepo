@@ -159,7 +159,7 @@ namespace Logility.ROWeb
             // get rows for the requested sequence from the DataTable
             selectString = "TASK_SEQUENCE=" + taskParameters.Sequence;
             DataRow[] merchandiseDataRows = TaskData.Select(selectString);
-
+            task.Merchandise.Clear();
 
             // add each merchandise row to Rollup data
             foreach (DataRow dataRow in merchandiseDataRows)
@@ -565,7 +565,10 @@ namespace Logility.ROWeb
             successful = true;
             ROTaskRollup taskRollupData = (ROTaskRollup)taskData;
 
-            if (!SetTask(taskData: taskRollupData, message: ref message))
+            if (!SetTask(
+                taskData: taskRollupData,
+                applyOnly: applyOnly,
+                message: ref message))
             {
                 successful = false;
             }
@@ -580,7 +583,8 @@ namespace Logility.ROWeb
         /// <param name="taskData">Input values for the task</param>
         /// <param name="message">Message to return</param>
         private bool SetTask(
-            ROTaskRollup taskData, 
+            ROTaskRollup taskData,
+            bool applyOnly,
             ref string message
             )
         {
@@ -615,7 +619,7 @@ namespace Logility.ROWeb
                 {
                     merchandiseDataRow["HN_RID"] = taskRollupMerchandise.Merchandise.Key;
                 }
-                else
+                else if (!applyOnly) // only validate during save
                 {
                     message = SessionAddressBlock.ClientServerSession.Audit.GetText(eMIDTextCode.msg_MerchandiseRequired);
                     return false;
@@ -626,7 +630,7 @@ namespace Logility.ROWeb
                 {
                     merchandiseDataRow["FV_RID"] = taskRollupMerchandise.Version.Key;
                 }
-                else
+                else if (!applyOnly) // only validate during save
                 {
                     message = SessionAddressBlock.ClientServerSession.Audit.GetText(eMIDTextCode.msg_VersionRequired);
                     return false;
@@ -637,7 +641,7 @@ namespace Logility.ROWeb
                 {
                     merchandiseDataRow["ROLLUP_CDR_RID"] = taskRollupMerchandise.DateRange.Key;
                 }
-                else
+                else if (!applyOnly) // only validate during save
                 {
                     message = SessionAddressBlock.ClientServerSession.Audit.GetText(eMIDTextCode.msg_RollupDateRequired);
                     return false;
@@ -673,7 +677,7 @@ namespace Logility.ROWeb
                         }
                     }
                 }
-                else
+                else if (!applyOnly) // only validate during save
                 {
                     message = SessionAddressBlock.ClientServerSession.Audit.GetText(eMIDTextCode.msg_RollupFromLevelRequired);
                     return false;
@@ -699,7 +703,7 @@ namespace Logility.ROWeb
                         }
                     }
                 }
-                else
+                else if (!applyOnly) // only validate during save
                 {
                     message = SessionAddressBlock.ClientServerSession.Audit.GetText(eMIDTextCode.msg_RollupToLevelRequired);
                     return false;
@@ -718,13 +722,6 @@ namespace Logility.ROWeb
                 merchandiseDataRow["INTRANSIT_IND"] = Include.ConvertBoolToChar(taskRollupMerchandise.RollIntransit);
 
                 TaskData.Rows.Add(merchandiseDataRow);
-
-                // merchandise may have changed or new entry so populate Hierarchy Levels list
-                taskRollupMerchandise.HierarchyLevels.Clear();
-                foreach (HierarchyLevelComboObject level in levelList)
-                {
-                    taskRollupMerchandise.HierarchyLevels.Add(new KeyValuePair<int, string>(level.LevelIndex, level.ToString()));
-                }
 
                 ++rollupSequence;
             }

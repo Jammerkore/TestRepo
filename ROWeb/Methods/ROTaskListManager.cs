@@ -1332,11 +1332,27 @@ namespace Logility.ROWeb
             // add or update the task in the collection
             _taskListTasks[_task.TaskType] = _task;
 
-            return new ROTaskPropertiesOut(
-                ROReturnCode: eROReturnCode.Successful,
-                sROMessage: message,
-                ROInstanceID: ROInstanceID,
-                ROTaskProperties: taskProperties);
+            // get data from updates
+            ROTaskParms taskGetParameters = new ROTaskParms(
+                sROUserID: taskParameters.ROUserID,
+                sROSessionID: taskParameters.ROSessionID,
+                ROClass: taskParameters.ROClass,
+                ROInstanceID: taskParameters.ROInstanceID,
+                RORequest: eRORequest.GetTask,
+                taskType: taskParameters.ROTaskProperties.TaskType,
+                sequence: taskParameters.ROTaskProperties.Task.Key                
+                );
+
+            return GetTask(
+                taskParameters: taskGetParameters,
+                processingApply: applyOnly
+                );
+
+            //return new ROTaskPropertiesOut(
+            //    ROReturnCode: eROReturnCode.Successful,
+            //    sROMessage: message,
+            //    ROInstanceID: ROInstanceID,
+            //    ROTaskProperties: taskProperties);
         }
 
         private void TaskUpdateData(
