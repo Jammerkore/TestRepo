@@ -2130,10 +2130,26 @@ namespace Logility.ROWebSharedTypes
             set { _filter = value; }
         }
 
+        /// <summary>
+		/// Gets a flag identifying if the filter is set.
+		/// </summary>
+		public bool FilterIsSet
+        {
+            get { return !_filter.Equals(default(KeyValuePair<int, string>)); }
+        }
+
         public KeyValuePair<int, string> Header
         {
             get { return _header; }
             set { _header = value; }
+        }
+
+        /// <summary>
+		/// Gets a flag identifying if the Header is set.
+		/// </summary>
+		public bool HeaderIsSet
+        {
+            get { return !_header.Equals(default(KeyValuePair<int, string>)); }
         }
 
         public bool IsHeaderMaster
@@ -2156,6 +2172,14 @@ namespace Logility.ROWebSharedTypes
                     _sortDirection = value;
                 }
             }
+        }
+
+        /// <summary>
+		/// Gets a flag identifying if the SortDirection is set.
+		/// </summary>
+		public bool SortDirectionIsSet
+        {
+            get { return _sortDirection != eSortDirection.None; }
         }
 
         public bool IncludeReserveInd
@@ -2186,10 +2210,26 @@ namespace Logility.ROWebSharedTypes
             set { _pack = value; }
         }
 
+        /// <summary>
+		/// Gets a flag identifying if the Pack is set.
+		/// </summary>
+		public bool PackIsSet
+        {
+            get { return !_pack.Equals(default(KeyValuePair<int, string>)); }
+        }
+
         public KeyValuePair<int, string> Color
         {
             get { return _color; }
             set { _color = value; }
+        }
+
+        /// <summary>
+		/// Gets a flag identifying if the Color is set.
+		/// </summary>
+		public bool ColorIsSet
+        {
+            get { return !_color.Equals(default(KeyValuePair<int, string>)); }
         }
 
         public eRuleMethod IncludeRuleMethod
@@ -2206,6 +2246,14 @@ namespace Logility.ROWebSharedTypes
                     _includeRuleMethod = value;
                 }
             }
+        }
+
+        /// <summary>
+		/// Gets a flag identifying if the IncludeRuleMethod is set.
+		/// </summary>
+		public bool IncludeRuleMethodIsSet
+        {
+            get { return _includeRuleMethod != eRuleMethod.None; }
         }
 
         public double IncludeQuantity
@@ -2230,6 +2278,14 @@ namespace Logility.ROWebSharedTypes
             }
         }
 
+        /// <summary>
+		/// Gets a flag identifying if the ExcludeRuleMethod is set.
+		/// </summary>
+		public bool ExcludeRuleMethodIsSet
+        {
+            get { return _excludeRuleMethod != eRuleMethod.None; }
+        }
+
         public double ExcludeQuantity
         {
             get { return _excludeQuantity; }
@@ -2242,10 +2298,26 @@ namespace Logility.ROWebSharedTypes
             set { _hdr_BC = value; }
         }
 
+        /// <summary>
+		/// Gets a flag identifying if the Hdr_BC is set.
+		/// </summary>
+		public bool Hdr_BCIsSet
+        {
+            get { return !_hdr_BC.Equals(default(KeyValuePair<int, string>)); }
+        }
+
         public KeyValuePair<int, string> StoreGroupLevel
         {
             get { return _storeGroupLevel; }
             set { _storeGroupLevel = value; }
+        }
+
+        /// <summary>
+		/// Gets a flag identifying if the StoreGroupLevel is set.
+		/// </summary>
+		public bool StoreGroupLevelIsSet
+        {
+            get { return !_storeGroupLevel.Equals(default(KeyValuePair<int, string>)); }
         }
 
         /// <summary>
@@ -2289,9 +2361,25 @@ namespace Logility.ROWebSharedTypes
         }
 
         #endregion
-        public ROMethodRuleProperties(KeyValuePair<int, string> method, string description, int userKey, KeyValuePair<int, string> filter, KeyValuePair<int, string> header, bool isHeaderMaster,
-            eSortDirection sortDirection, bool includeReserveInd, eComponentType componentType, KeyValuePair<int, string> pack, KeyValuePair<int, string> color, eRuleMethod includeRuleMethod,
-                        double includeQuantity, eRuleMethod excludeRuleMethod, double excludeQuantity, KeyValuePair<int, string> hdr_BC, KeyValuePair<int, string> storeGroupLevel) :
+        public ROMethodRuleProperties(
+            KeyValuePair<int, string> method = default(KeyValuePair<int, string>), 
+            string description = null, 
+            int userKey = Include.Undefined, 
+            KeyValuePair<int, string> filter = default(KeyValuePair<int, string>), 
+            KeyValuePair<int, string> header = default(KeyValuePair<int, string>), 
+            bool isHeaderMaster = false,
+            eSortDirection sortDirection = eSortDirection.None, 
+            bool includeReserveInd = false, 
+            eComponentType componentType = eComponentType.Total, 
+            KeyValuePair<int, string> pack = default(KeyValuePair<int, string>), 
+            KeyValuePair<int, string> color = default(KeyValuePair<int, string>), 
+            eRuleMethod includeRuleMethod = eRuleMethod.None,
+            double includeQuantity = 0, 
+            eRuleMethod excludeRuleMethod = eRuleMethod.None, 
+            double excludeQuantity = 0, 
+            KeyValuePair<int, string> hdr_BC = default(KeyValuePair<int, string>), 
+            KeyValuePair<int, string> storeGroupLevel = default(KeyValuePair<int, string>)
+            ) :
             base(eMethodType.Rule, method, description, userKey)
 
         {

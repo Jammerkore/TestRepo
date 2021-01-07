@@ -2905,22 +2905,56 @@ namespace MIDRetail.Business.Allocation
 
             try
             {
-                Method_Description = roMethodRuleAllocationProperties.Description;
-                User_RID = roMethodRuleAllocationProperties.UserKey;
-                _filterRID = roMethodRuleAllocationProperties.Filter.Key;
-                _headerRID = roMethodRuleAllocationProperties.Header.Key;
+                // update only fields with values
+                if (roMethodRuleAllocationProperties.DescriptionIsSet)
+                {
+                    Method_Description = roMethodRuleAllocationProperties.Description;
+                }
+                if (roMethodRuleAllocationProperties.UserKeyIsSet)
+                {
+                    User_RID = roMethodRuleAllocationProperties.UserKey;
+                }
+                if (roMethodRuleAllocationProperties.FilterIsSet)
+                {
+                    _filterRID = roMethodRuleAllocationProperties.Filter.Key;
+                }
+                if (roMethodRuleAllocationProperties.HeaderIsSet)
+                {
+                    _headerRID = roMethodRuleAllocationProperties.Header.Key;
+                }
                 _isHeaderMaster = roMethodRuleAllocationProperties.IsHeaderMaster;
-                _sortDirection = roMethodRuleAllocationProperties.SortDirection;
+                if (roMethodRuleAllocationProperties.SortDirectionIsSet)
+                {
+                    _sortDirection = roMethodRuleAllocationProperties.SortDirection;
+                }
                 _includeReserve = roMethodRuleAllocationProperties.IncludeReserveInd;
                 _componentType = roMethodRuleAllocationProperties.ComponentType;
-                _packRID = roMethodRuleAllocationProperties.Pack.Key;
-                _colorCodeRID = roMethodRuleAllocationProperties.Color.Key;
-                _includeRuleMethod = roMethodRuleAllocationProperties.IncludeRuleMethod;
+                if (roMethodRuleAllocationProperties.PackIsSet)
+                {
+                    _packRID = roMethodRuleAllocationProperties.Pack.Key;
+                }
+                if (roMethodRuleAllocationProperties.ColorIsSet)
+                {
+                    _colorCodeRID = roMethodRuleAllocationProperties.Color.Key;
+                }
+                if (roMethodRuleAllocationProperties.IncludeRuleMethodIsSet)
+                {
+                    _includeRuleMethod = roMethodRuleAllocationProperties.IncludeRuleMethod;
+                }
                 _includeQuantity = roMethodRuleAllocationProperties.IncludeQuantity;
-                _excludeRuleMethod = roMethodRuleAllocationProperties.ExcludeRuleMethod;
+                if (roMethodRuleAllocationProperties.ExcludeRuleMethodIsSet)
+                {
+                    _excludeRuleMethod = roMethodRuleAllocationProperties.ExcludeRuleMethod;
+                }
                 _excludeQuantity = roMethodRuleAllocationProperties.ExcludeQuantity;
-                _hdrBCRID = roMethodRuleAllocationProperties.Hdr_BC.Key;
-                _storeGroupLevelRID = roMethodRuleAllocationProperties.StoreGroupLevel.Key;
+                if (roMethodRuleAllocationProperties.Hdr_BCIsSet)
+                {
+                    _hdrBCRID = roMethodRuleAllocationProperties.Hdr_BC.Key;
+                }
+                if (roMethodRuleAllocationProperties.StoreGroupLevelIsSet)
+                {
+                    _storeGroupLevelRID = roMethodRuleAllocationProperties.StoreGroupLevel.Key;
+                }
 
                 return true;
             }

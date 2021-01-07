@@ -73,6 +73,14 @@ namespace Logility.ROWebSharedTypes
             set { _method = value; }
         }
 
+        /// <summary>
+		/// Gets a flag identifying if the Method is set.
+		/// </summary>
+		public bool MethodIsSet
+        {
+            get { return !_method.Equals(default(KeyValuePair<int, string>)); }
+        }
+
         public bool AddingMethod
         {
             get { return Method.Key == Include.NoRID; }
@@ -89,16 +97,40 @@ namespace Logility.ROWebSharedTypes
             set { _description = value; }
         }
 
+        /// <summary>
+		/// Gets a flag identifying if the Description is set.
+		/// </summary>
+		public bool DescriptionIsSet
+        {
+            get { return _description != null; }
+        }
+
         public int UserKey
         {
             get { return _userKey; }
             set { _userKey = value; }
         }
 
+        /// <summary>
+		/// Gets a flag identifying if the UserKey is set.
+		/// </summary>
+		public bool UserKeyIsSet
+        {
+            get { return _userKey != Include.Undefined; }
+        }
+
         public eMethodType MethodType
         {
             get { return _methodType; }
             set { _methodType = value; }
+        }
+
+        /// <summary>
+		/// Gets a flag identifying if the MethodType is set.
+		/// </summary>
+		public bool MethodTypeIsSet
+        {
+            get { return _methodType != eMethodType.NotSpecified; }
         }
 
         public eGlobalUserType GlobalUserType
