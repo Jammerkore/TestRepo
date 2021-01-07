@@ -145,6 +145,7 @@ namespace Logility.ROWeb
             // add merchandise to allocate
             selectString = "TASK_SEQUENCE=" + taskParameters.Sequence;
             DataRow[] merchandiseDataRows = TaskData.Select(selectString);
+            task.Merchandise.Clear();
 
             foreach (DataRow dataRow in merchandiseDataRows)
             {
