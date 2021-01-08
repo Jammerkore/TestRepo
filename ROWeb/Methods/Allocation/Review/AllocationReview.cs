@@ -326,6 +326,7 @@ namespace Logility.ROWeb
         public ROOut GetViewDetails()
         {
             List<ROSelectedField> columns = null;
+            List<string> columnList = new List<string>();
 
             ROAllocationReviewViewDetails viewDetails = new ROAllocationReviewViewDetails(view: GetName.GetAllocationViewName(key: _currentViewRID));
             if (_currentViewRID > 0)
@@ -347,24 +348,41 @@ namespace Logility.ROWeb
             }
             foreach (ROSelectedField field in columns)
             {
+                if (columnList.Contains(field.Field.Key))
+                {
+                    continue;
+                }
+                columnList.Add(field.Field.Key);
                 viewDetails.SummaryColumns.Add(field);
             }
 
+            columnList.Clear();
             if (!_columnsList.TryGetValue(eDataType.StoreTotals, out columns))
             {
                 columns = new List<ROSelectedField>();
             }
             foreach (ROSelectedField field in columns)
             {
+                if (columnList.Contains(field.Field.Key))
+                {
+                    continue;
+                }
+                columnList.Add(field.Field.Key);
                 viewDetails.TotalColumns.Add(field);
             }
 
+            columnList.Clear();
             if (!_columnsList.TryGetValue(eDataType.StoreDetail, out columns))
             {
                 columns = new List<ROSelectedField>();
             }
             foreach (ROSelectedField field in columns)
             {
+                if (columnList.Contains(field.Field.Key))
+                {
+                    continue;
+                }
+                columnList.Add(field.Field.Key);
                 viewDetails.DetailColumns.Add(field);
             }
 
