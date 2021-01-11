@@ -2110,7 +2110,9 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         KeyValuePair<int, string> _hdr_BC;
         [DataMember(IsRequired = true)]
-        KeyValuePair<int, string> _storeGroupLevel;
+        KeyValuePair<int, string> _attribute;
+        [DataMember(IsRequired = true)]
+        KeyValuePair<int, string> _attributeSet;
 
         [DataMember(IsRequired = true)]
         private List<KeyValuePair<int, string>> _components;
@@ -2306,10 +2308,25 @@ namespace Logility.ROWebSharedTypes
             get { return !_hdr_BC.Equals(default(KeyValuePair<int, string>)); }
         }
 
+        public KeyValuePair<int, string> Attribute
+        {
+            get { return _attribute; }
+            set { _attribute = value; }
+        }
+
+        /// <summary>
+		/// Gets a flag identifying if the Attribute is set.
+		/// </summary>
+		public bool AttributeIsSet
+        {
+            get { return !_attribute.Equals(default(KeyValuePair<int, string>)); }
+        }
+
+        [ObsoleteAttribute("This property is obsolete. Use AttributeSet instead.", false)]
         public KeyValuePair<int, string> StoreGroupLevel
         {
-            get { return _storeGroupLevel; }
-            set { _storeGroupLevel = value; }
+            get { return _attributeSet; }
+            set { _attributeSet = value; }
         }
 
         /// <summary>
@@ -2317,7 +2334,21 @@ namespace Logility.ROWebSharedTypes
 		/// </summary>
 		public bool StoreGroupLevelIsSet
         {
-            get { return !_storeGroupLevel.Equals(default(KeyValuePair<int, string>)); }
+            get { return !_attributeSet.Equals(default(KeyValuePair<int, string>)); }
+        }
+
+        public KeyValuePair<int, string> AttributeSet
+        {
+            get { return _attributeSet; }
+            set { _attributeSet = value; }
+        }
+
+        /// <summary>
+		/// Gets a flag identifying if the StoreGroupLevel is set.
+		/// </summary>
+		public bool AttributeSetIsSet
+        {
+            get { return !_attributeSet.Equals(default(KeyValuePair<int, string>)); }
         }
 
         /// <summary>
@@ -2378,6 +2409,8 @@ namespace Logility.ROWebSharedTypes
             eRuleMethod excludeRuleMethod = eRuleMethod.None, 
             double excludeQuantity = 0, 
             KeyValuePair<int, string> hdr_BC = default(KeyValuePair<int, string>), 
+            KeyValuePair<int, string> attribute = default(KeyValuePair<int, string>),
+            KeyValuePair<int, string> attributeSet = default(KeyValuePair<int, string>),
             KeyValuePair<int, string> storeGroupLevel = default(KeyValuePair<int, string>)
             ) :
             base(eMethodType.Rule, method, description, userKey)
@@ -2425,7 +2458,9 @@ namespace Logility.ROWebSharedTypes
             }
             _excludeQuantity = excludeQuantity;
             _hdr_BC = hdr_BC;
-            _storeGroupLevel = storeGroupLevel;
+			_attribute = attribute;
+            _attributeSet = attributeSet;
+            _attributeSet = storeGroupLevel;
 
             _components = new List<KeyValuePair<int, string>>();
             _packs = new List<KeyValuePair<int, string>>();

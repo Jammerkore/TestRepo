@@ -2697,9 +2697,23 @@ namespace MIDRetail.Business.Allocation
 
         }
         // BEGIN RO-2845 Data transport for Rule Method - get data - MGage
+
+        bool _headerChanged = false;
+
         override public ROMethodProperties MethodGetData(out bool successful, ref string message, bool processingApply = false)
         {
             successful = true;
+            // Nomally on a new the base method pulls the store attribute from the global options.
+            // store attribute is not required for this method, so we begin with a NoRid value.
+            // Also set other defaults that are set by the Windows code
+            if (Key == Include.NoRID)
+            {
+                SG_RID = Include.NoRID;
+                StoreGroupLevelRID = Include.NoRID;
+                ComponentType = eComponentType.Total;
+                IncludeRuleMethod = eRuleMethod.None;
+                ExcludeRuleMethod = eRuleMethod.None;
+            }
 
             ROMethodRuleProperties method = new ROMethodRuleProperties(
                 method: GetName.GetMethod(method: this),
@@ -2718,6 +2732,8 @@ namespace MIDRetail.Business.Allocation
                 excludeRuleMethod: EnumTools.VerifyEnumValue(ExcludeRuleMethod),
                 excludeQuantity: ExcludeQuantity,
                 hdr_BC: GetName.GetHeader(HdrBCRID, SAB: SAB),
+                attribute: GetName.GetAttributeName(SG_RID),
+                attributeSet: GetName.GetAttributeSetName(StoreGroupLevelRID),
                 storeGroupLevel: GetName.GetAttributeSetName(StoreGroupLevelRID)
                 );
 
@@ -2727,6 +2743,19 @@ namespace MIDRetail.Business.Allocation
                 GetPacksAndColors(method: method);
             }
             SetIncludeExcludeLists(method: method);
+
+            if (_headerChanged)
+            {
+                if (method.Colors.Count > 0)
+                {
+                    method.Color = method.Colors[0];
+                }
+                if (method.Packs.Count > 0)
+                {
+                    method.Pack = method.Packs[0];
+                }
+                _headerChanged = false;
+            }
 
             return method;
         }
@@ -2875,16 +2904,9 @@ namespace MIDRetail.Business.Allocation
             }
 
             DataTable excludeRuleDataTable = MIDText.GetTextType(eMIDTextType.eRuleMethod, eMIDTextOrderBy.TextValue);
-            // if header is selected, include all rules
-            if (HeaderRID != Include.NoRID)
-            {
-                filterString = string.Empty;
-            }
-            else // if header is not selected, restrict which rules can be used
-            {
-                ruleNumber = (int)eRuleMethod.Exact;
-                filterString = "TEXT_CODE < " + Convert.ToString(ruleNumber, CultureInfo.CurrentUICulture);
-            }
+            // exclude is always a subset of the full list
+            ruleNumber = (int)eRuleMethod.Exact;
+            filterString = "TEXT_CODE < " + Convert.ToString(ruleNumber, CultureInfo.CurrentUICulture);
             sortString = "TEXT_VALUE ASC";
             foundRows = excludeRuleDataTable.Select(filterString, sortString);
             if (foundRows.Length > 0)
@@ -2918,9 +2940,14 @@ namespace MIDRetail.Business.Allocation
                 {
                     _filterRID = roMethodRuleAllocationProperties.Filter.Key;
                 }
-                if (roMethodRuleAllocationProperties.HeaderIsSet)
+                if (roMethodRuleAllocationProperties.Header.Key != _headerRID)
                 {
                     _headerRID = roMethodRuleAllocationProperties.Header.Key;
+                    _sortDirection = eSortDirection.Descending;
+                    _componentType = eComponentType.Total;
+                    _packRID = Include.NoRID;
+                    _colorCodeRID = Include.NoRID;
+                    _headerChanged = true;
                 }
                 _isHeaderMaster = roMethodRuleAllocationProperties.IsHeaderMaster;
                 if (roMethodRuleAllocationProperties.SortDirectionIsSet)
@@ -2951,9 +2978,13 @@ namespace MIDRetail.Business.Allocation
                 {
                     _hdrBCRID = roMethodRuleAllocationProperties.Hdr_BC.Key;
                 }
-                if (roMethodRuleAllocationProperties.StoreGroupLevelIsSet)
+                if (roMethodRuleAllocationProperties.AttributeIsSet)
                 {
-                    _storeGroupLevelRID = roMethodRuleAllocationProperties.StoreGroupLevel.Key;
+                    SG_RID = roMethodRuleAllocationProperties.Attribute.Key;
+                }
+                if (roMethodRuleAllocationProperties.AttributeSetIsSet)
+                {
+                    _storeGroupLevelRID = roMethodRuleAllocationProperties.AttributeSet.Key;
                 }
 
                 return true;

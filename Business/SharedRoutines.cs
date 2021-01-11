@@ -718,6 +718,24 @@ namespace MIDRetail.Business
             return new KeyValuePair<int, string>(headerRID, displayName);
         }
 
+        public static KeyValuePair<int, string> GetComponent(eComponentType componentType)
+        {
+            string displayName = string.Empty;
+            int component = componentType.GetHashCode();
+
+            displayName = MIDText.GetTextOnly(component);
+            return new KeyValuePair<int, string>(component, displayName);
+        }
+
+        public static KeyValuePair<int, string> GetRuleMethod(eRuleMethod ruleMethodType)
+        {
+            string displayName = string.Empty;
+            int ruleMethod = ruleMethodType.GetHashCode();
+
+            displayName = MIDText.GetTextOnly(ruleMethod);
+            return new KeyValuePair<int, string>(ruleMethod, displayName);
+        }
+
         public static KeyValuePair<int, string> GetColor(int colorCodeRID, SessionAddressBlock SAB)
         {
             string displayName = string.Empty;
