@@ -171,7 +171,9 @@ namespace Logility.ROWeb
                     {
                         if (buildColumns)  // if field is not selected to display by the view, it is not calculated, so calculate values
                         {
+                            _applicationSessionTransaction.BuildWaferColumnsAdd(0, (eAllocationWaferVariable)variableCoord.Key);
                             _applicationSessionTransaction.BuildWaferColumnsAdd(1, (eAllocationWaferVariable)variableCoord.Key);
+                            _applicationSessionTransaction.BuildWaferColumnsAdd(2, (eAllocationWaferVariable)variableCoord.Key);
                         }
                         displayCol = true;
                     }
@@ -248,6 +250,11 @@ namespace Logility.ROWeb
                 { isViewchanged = false; }
 
                 _applicationSessionTransaction.AllocationViewRID = Convert.ToInt32(reviewOptionsParms.View.Key, CultureInfo.CurrentUICulture);
+
+                if (_viewHasBeenUpdated)
+                {
+                    isViewchanged = true;
+                }
             }
 
             //Filter
