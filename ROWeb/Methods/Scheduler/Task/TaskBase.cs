@@ -287,7 +287,7 @@ namespace Logility.ROWeb
                 DataRow[] taskDataRows = _taskData.Select(selectString);
                 foreach (var taskDataRow in taskDataRows)
                 {
-                    taskDataRow["TASK_SEQUENC"] = newSequence;
+                    taskDataRow["TASK_SEQUENCE"] = newSequence;
                 }
                 _taskData.AcceptChanges();
             }
@@ -297,7 +297,7 @@ namespace Logility.ROWeb
                 DataRow[] detailDataRows = _taskDetailData.Select(selectString);
                 foreach (var detailDataRow in detailDataRows)
                 {
-                    detailDataRow["TASK_SEQUENC"] = newSequence;
+                    detailDataRow["TASK_SEQUENCE"] = newSequence;
                 }
                 _taskDetailData.AcceptChanges();
             }
