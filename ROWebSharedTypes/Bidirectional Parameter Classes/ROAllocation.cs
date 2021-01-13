@@ -255,6 +255,7 @@ namespace Logility.ROWebSharedTypes
         public List<KeyValuePair<int, string>> HierarchyLevels
         {
             get { return _hierarchyLevels; }
+            set { _hierarchyLevels = value; }
         }
         #endregion
         public ROMethodGeneralAllocationProperties(KeyValuePair<int, string> method, string description, int userKey, KeyValuePair<int, string> begin_CDR, KeyValuePair<int, string> shipTo_CDR, bool percentInd,
@@ -2640,6 +2641,7 @@ namespace Logility.ROWebSharedTypes
         public List<KeyValuePair<int, string>> HierarchyLevels
         {
             get { return _hierarchyLevels; }
+            set { _hierarchyLevels = value; }
         }
 
         public double OnHandFactor

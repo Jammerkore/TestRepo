@@ -710,5 +710,27 @@ namespace MIDRetail.Business
             }
             return aMethodName;
         }
+
+        /// <summary>
+        /// Builds list of organizational hierarchy levels
+        /// </summary>
+        /// <returns>List of KeyValuePair with int and string</returns>
+        protected List<KeyValuePair<int, string>> BuildHierarchyLevels()
+        {
+            List<KeyValuePair<int, string>>  hierarchyLevels = new List<KeyValuePair<int, string>>();
+
+            HierarchyLevelProfile hierarchyLevelProfile;
+            HierarchyProfile mainHierarchyProfile = SAB.HierarchyServerSession.GetMainHierarchyData();
+            for (int level = 1; level <= mainHierarchyProfile.HierarchyLevels.Count; level++)
+            {
+                hierarchyLevelProfile = (HierarchyLevelProfile)mainHierarchyProfile.HierarchyLevels[level];
+                if (hierarchyLevelProfile.LevelType != eHierarchyLevelType.Size)
+                {
+                    hierarchyLevels.Add(new KeyValuePair<int, string>(hierarchyLevelProfile.Key, hierarchyLevelProfile.LevelID));
+                }
+            }
+
+            return hierarchyLevels;
+        }
     }
 }
