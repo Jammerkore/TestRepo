@@ -438,5 +438,17 @@ namespace Logility.ROWeb
             return dateRange;
         }
 
+        protected void UpdateTaskList(ROTaskProperties ROTask, int sequence)
+        {
+            if (TaskListProperties.Tasks.Count <= sequence)
+            {
+                TaskListProperties.Tasks.Add(ROTask);
+            }
+            else
+            {
+                TaskListProperties.Tasks[sequence] = ROTask;
+            }
+        }
+
     }
 }

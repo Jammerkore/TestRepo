@@ -116,7 +116,7 @@ namespace Logility.ROWeb
             AddValues(taskParameters: taskParameters, task: ROTask);
 
             // update task list class with derived class
-            TaskListProperties.Tasks[taskParameters.Sequence] = ROTask;
+            UpdateTaskList(ROTask: ROTask, sequence: taskParameters.Sequence);
 
             return ROTask;
         }
@@ -151,6 +151,12 @@ namespace Logility.ROWeb
         {
             successful = true;
             ROTaskPushToBackStockLoad taskPushToBackStockLoadData = (ROTaskPushToBackStockLoad)taskData;
+
+            // get the values from the database if not already retrieved
+            if (TaskData == null)
+            {
+                TaskGetValues();
+            }
 
             if (!SetTask(taskData: taskPushToBackStockLoadData, message: ref message))
             {

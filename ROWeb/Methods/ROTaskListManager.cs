@@ -415,7 +415,14 @@ namespace Logility.ROWeb
 
             // get the task list values from the database
             // and create the task list properties object
-            _taskListProfile = new TaskListProfile(ScheduleDataLayer.TaskList_Read(taskListParameters.Key));
+            if (taskListParameters.Key == Include.NoRID)
+            {
+                _taskListProfile = new TaskListProfile(Include.NoRID);
+            }
+            else
+            {
+                _taskListProfile = new TaskListProfile(ScheduleDataLayer.TaskList_Read(taskListParameters.Key));
+            }
             _taskListProperties = new ROTaskListProperties(
                 taskList: new KeyValuePair<int, string>(_taskListProfile.Key, _taskListProfile.Name),
                 userKey: _taskListProfile.OwnerUserRID
