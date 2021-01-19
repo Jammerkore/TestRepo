@@ -652,6 +652,7 @@ namespace Logility.ROWeb
                 else
                 {
                     ScheduleDataLayer.TaskList_Update(_taskListProfile, SessionAddressBlock.ClientServerSession.UserRID);
+                    DeleteTaskListTasks();
                 }
 
                 // insert the tasks for the task list
@@ -815,8 +816,6 @@ namespace Logility.ROWeb
             ScheduleDataLayer.TaskBatchComp_Delete(_taskListProfile.Key);  
             ScheduleDataLayer.TaskHeaderReconcile_Delete(_taskListProfile.Key);    
             ScheduleDataLayer.Task_Delete(_taskListProfile.Key);
-
-            ScheduleDataLayer.Task_Insert(_tasksDataTable);
         }
 
         /// <summary>
@@ -863,6 +862,8 @@ namespace Logility.ROWeb
             ROTaskListPropertiesParms taskListParameters
             )
         {
+            int key = taskListParameters.ROTaskListProperties.TaskList.Key;
+
             string name = taskListParameters.ROTaskListProperties.TaskList.Value;
 
             int userKey = taskListParameters.ROTaskListProperties.UserKey;
@@ -870,7 +871,7 @@ namespace Logility.ROWeb
             int nameCounter = 0;
             while (true)
             {
-                if (!isDuplicateName(name, userKey))
+                if (!isDuplicateName(name, userKey, key))
                 {
                     break;
                 }
@@ -889,10 +890,15 @@ namespace Logility.ROWeb
         /// </summary>
         /// <param name="name">The name of the task list</param>
         /// <param name="userKey">The owner of the task list</param>
+        /// <param name="key">The key of the task list</param>
         /// <returns></returns>
-        private bool isDuplicateName(string name, int userKey)
+        private bool isDuplicateName(string name, int userKey, int key)
         {
-            if (ScheduleDataLayer.TaskList_GetKey(name, userKey) != -1)
+            int tasklistKey = ScheduleDataLayer.TaskList_GetKey(name, userKey);
+
+            // if name and key are the same, then not a duplicate
+            if (tasklistKey != -1
+                && tasklistKey != key)
             {
                 return true;
             }
