@@ -3424,6 +3424,11 @@ namespace MIDRetail.Business.Allocation
         override public ROMethodProperties MethodGetData(out bool successful, ref string message, bool processingApply = false)
         {
             successful = true;
+            int? storeGradeWeekCount = null;
+            double? percentNeedLimit = null;
+            double? reserveAsBulk = null;
+            double? reserveAsPacks = null;
+            double? onHandFactor = null;
 
             eMerchandiseType otsMerchType, otsOnHandType, ibMerchType;
             eMinMaxType localMinMaxType;
@@ -3470,30 +3475,55 @@ namespace MIDRetail.Business.Allocation
                 otsOnHandType = eMerchandiseType.OTSPlanLevel;
             }
 
+            if (!UseStoreGradeDefault)
+            {
+                storeGradeWeekCount = _mao.Grade_Week_Count;
+            }
+
+            if (!UsePctNeedDefault)
+            {
+                percentNeedLimit = _mao.Percent_Need_Limit;
+            }
+
+            if (ReserveAsBulk > 0)
+            {
+                reserveAsBulk = ReserveAsBulk;
+            }
+
+            if (ReserveAsPacks == 0)
+            {
+                reserveAsPacks = ReserveAsPacks;
+            }
+
+            if (!UseFactorPctDefault)
+            {
+                onHandFactor = OTSPlanFactorPercent;
+            }
+
             ROMethodAllocationOverrideProperties method = new ROMethodAllocationOverrideProperties(
                 method: GetName.GetMethod(method: this),
                 description: Method_Description,
                 userKey: User_RID,
-                storeGradeWeekCount: _mao.Grade_Week_Count,
-                percentNeedLimit: _mao.Percent_Need_Limit,
+                storeGradeWeekCount: storeGradeWeekCount,
+                percentNeedLimit: percentNeedLimit,
                 exceedMaxInd: Include.ConvertCharToBool(_mao.Exceed_Maximums_Ind),
                 reserve: _mao.Reserve,
                 percentInd: Include.ConvertCharToBool(_mao.Percent_Ind),
-                reserveAsBulk: _mao.ReserveAsBulk,
-                reserveAsPacks: _mao.ReserveAsPacks,
+                reserveAsBulk: reserveAsBulk,
+                reserveAsPacks: reserveAsPacks,
+                merchandiseType: otsMerchType,
                 merchandise: GetName.GetLevelKeyValuePair(merchandiseType: otsMerchType, nodeRID: OTSPlanRID, merchPhRID: OTSPlanPHL, merchPhlSequence: OTSPlanPHLSeq, SAB: SAB),
                 merchandiseHierarchy: new KeyValuePair<int, int>(OTSPlanPHL, OTSPlanPHLSeq),
+                onHandMerchandiseType: otsOnHandType,
                 onHandMerchandise: GetName.GetLevelKeyValuePair(merchandiseType: otsOnHandType, nodeRID: OTSOnHandRID, merchPhRID: OTSOnHandPHL, merchPhlSequence: OTSOnHandPHLSeq, SAB: SAB),
                 onHandMerchandiseHierarchy: new KeyValuePair<int, int>(OTSOnHandPHL, OTSOnHandPHLSeq),
-                onHandFactor: OTSPlanFactorPercent,
+                onHandFactor: onHandFactor,
                 colorMult: _mao.All_Color_Multiple,
                 sizeMult: _mao.All_Size_Multiple,
                 allColorMin: _mao.All_Color_Minimum,
                 allColorMax: _mao.All_Color_Maximum,
                 capacityAttribute: GetName.GetAttributeName(key: _mao.Store_Group_RID),
                 exceedCapacity: Include.ConvertCharToBool(_mao.Exceed_Capacity_Ind),
-                merchPlanUnspecified: _mao.Merch_Plan_Unspecified,
-                merchOnHandUnspecified: _mao.Merch_OnHand_Unspecified,
                 storeGradesAttribute: GetName.GetAttributeName(key: _mao.Tab_Store_Group_RID),
                 inventoryIndicator: EnumTools.VerifyEnumValue(localMinMaxType),
                 inventoryBasisMerchType: EnumTools.VerifyEnumValue(ibMerchType),
@@ -3603,7 +3633,7 @@ namespace MIDRetail.Business.Allocation
             }
 
             bool localExceedCapacity;
-            double localExceedByPct;
+            double? localExceedByPct;
             DataTable dtCapacity = _dsOverRide.Tables["Capacity"];
             foreach (DataRow dr in dtCapacity.Rows)
             {
@@ -3622,7 +3652,7 @@ namespace MIDRetail.Business.Allocation
                 }
                 else
                 {
-                    localExceedByPct = System.Double.MinValue;
+                    localExceedByPct = null;
                 }
 
                 ROMethodOverrideCapacityProperties capacities = new ROMethodOverrideCapacityProperties(
@@ -3693,8 +3723,8 @@ namespace MIDRetail.Business.Allocation
                 method.PackRounding.Add(roPackRounding);
             }
 
-            Int32 localMinShipQty, localMaxValue;
-            Double localPctPackThreshold;
+            int? localMinShipQty, localMaxValue;
+            double? localPctPackThreshold;
             string localReservationStore;
             KeyValuePair<int, string> localAttributeSet, localEntry;
             DataTable dtVSWSets = IMODataSet.Tables["Sets"];
@@ -3706,7 +3736,7 @@ namespace MIDRetail.Business.Allocation
                 string localString = Convert.ToString(row["Min Ship Qty"]);
                 if (string.IsNullOrEmpty(localString))
                 {
-                    localMinShipQty = System.Int32.MinValue;
+                    localMinShipQty = null;
                 }
                 else
                 {
@@ -3715,7 +3745,7 @@ namespace MIDRetail.Business.Allocation
                 localString = Convert.ToString(row["Pct Pack Threshold"]);
                 if (string.IsNullOrEmpty(localString))
                 {
-                    localPctPackThreshold = System.Double.MinValue;
+                    localPctPackThreshold = null;
                 }
                 else
                 {
@@ -3724,7 +3754,7 @@ namespace MIDRetail.Business.Allocation
                 localString = Convert.ToString(row["Item Max"]);
                 if (string.IsNullOrEmpty(localString))
                 {
-                    localMaxValue = System.Int32.MinValue;
+                    localMaxValue = null;
                 }
                 else
                 {
@@ -3755,7 +3785,7 @@ namespace MIDRetail.Business.Allocation
                     localString = Convert.ToString(storeRow["Min Ship Qty"]);
                     if (string.IsNullOrEmpty(localString))
                     {
-                        localMinShipQty = System.Int32.MinValue;
+                        localMinShipQty = null;
                     }
                     else
                     {
@@ -3764,7 +3794,7 @@ namespace MIDRetail.Business.Allocation
                     localString = Convert.ToString(storeRow["Pct Pack Threshold"]);
                     if (string.IsNullOrEmpty(localString))
                     {
-                        localPctPackThreshold = System.Double.MinValue;
+                        localPctPackThreshold = null;
                     }
                     else
                     {
@@ -3773,7 +3803,7 @@ namespace MIDRetail.Business.Allocation
                     localString = Convert.ToString(storeRow["Item Max"]);
                     if (string.IsNullOrEmpty(localString))
                     {
-                        localMaxValue = System.Int32.MaxValue;
+                        localMaxValue = null;
                     }
                     else
                     {
@@ -3804,9 +3834,9 @@ namespace MIDRetail.Business.Allocation
             ROMethodAllocationOverrideProperties roMethodAllocationOverrideProperties = (ROMethodAllocationOverrideProperties)methodProperties;
             try
             {
-                if (roMethodAllocationOverrideProperties.StoreGradeWeekCount > 0)
+                if (roMethodAllocationOverrideProperties.StoreGradeWeekCountIsSet)
                 {
-                    _allocationCriteria.GradeWeekCount = roMethodAllocationOverrideProperties.StoreGradeWeekCount;
+                    _allocationCriteria.GradeWeekCount = (int)roMethodAllocationOverrideProperties.StoreGradeWeekCount;
                     _mao.UseStoreGradeDefault = false;
                     _allocationCriteria.UseStoreGradeDefault = false;
                 }
@@ -3817,7 +3847,17 @@ namespace MIDRetail.Business.Allocation
                 }
 
                 _allocationCriteria.ExceedMaximums = roMethodAllocationOverrideProperties.ExceedMaxInd;
-                _allocationCriteria.PercentNeedLimit = roMethodAllocationOverrideProperties.PercentNeedLimit;
+                if (roMethodAllocationOverrideProperties.PercentNeedLimitIsSet)
+                {
+                    _allocationCriteria.PercentNeedLimit = (double)roMethodAllocationOverrideProperties.PercentNeedLimit;
+                    _mao.UsePctNeedDefault = false;
+                    _allocationCriteria.UsePctNeedDefault = false;
+                }
+                else
+                {
+                    _mao.UsePctNeedDefault = true;
+                    _allocationCriteria.UsePctNeedDefault = true;
+                }
                 _allocationCriteria.ReserveQty = roMethodAllocationOverrideProperties.Reserve;
                 _allocationCriteria.ReserveIsPercent = roMethodAllocationOverrideProperties.PercentInd;
                 OTSPlanRID = roMethodAllocationOverrideProperties.Merchandise.Key;
@@ -3826,7 +3866,15 @@ namespace MIDRetail.Business.Allocation
                 OTSOnHandRID = roMethodAllocationOverrideProperties.OnHandMerchandise.Key;
                 OTSOnHandPHL = roMethodAllocationOverrideProperties.OnHandMerchandiseHierarchy.Key;
                 OTSOnHandPHLSeq = roMethodAllocationOverrideProperties.OnHandMerchandiseHierarchy.Value;
-                OTSPlanFactorPercent = roMethodAllocationOverrideProperties.OnHandFactor;
+                if (roMethodAllocationOverrideProperties.OnHandFactorIsSet)
+                {
+                    OTSPlanFactorPercent = (double)roMethodAllocationOverrideProperties.OnHandFactor;
+                }
+                else
+                {
+                    UseFactorPctDefault = true;
+                    _allocationCriteria.UseFactorPctDefault = true;
+                }
                 _allocationCriteria.AllColorMultiple = roMethodAllocationOverrideProperties.ColorMult;
                 _allocationCriteria.AllSizeMultiple = roMethodAllocationOverrideProperties.SizeMult;
                 AllColorMinimum = roMethodAllocationOverrideProperties.AllColorMin;
@@ -3835,11 +3883,39 @@ namespace MIDRetail.Business.Allocation
                 _allocationCriteria.GradeStoreGroupRID = roMethodAllocationOverrideProperties.StoreGradesAttribute.Key;
                 _allocationCriteria.ExceedCapacity = roMethodAllocationOverrideProperties.ExceedCapacity;
                 _applyVSW = roMethodAllocationOverrideProperties.DoNotApplyVSW;
-                
-                _allocationCriteria.MerchUnspecified = roMethodAllocationOverrideProperties.MerchPlanUnspecified;
-                _allocationCriteria.MerchUnspecified = roMethodAllocationOverrideProperties.MerchOnHandUnspecified;
-                _allocationCriteria.ReserveAsBulk = roMethodAllocationOverrideProperties.ReserveAsBulk;
-                _allocationCriteria.ReserveAsPacks = roMethodAllocationOverrideProperties.ReserveAsPacks;
+
+                if (roMethodAllocationOverrideProperties.MerchandiseType == eMerchandiseType.Undefined)
+                {
+                    _allocationCriteria.MerchUnspecified = true;
+                }
+                else
+                {
+                    _allocationCriteria.MerchUnspecified = false;
+                }
+                if (roMethodAllocationOverrideProperties.OnHandMerchandiseType == eMerchandiseType.Undefined)
+                {
+                    _allocationCriteria.OnHandUnspecified = true;
+                }
+                else
+                {
+                    _allocationCriteria.OnHandUnspecified = false;
+                }
+                if (roMethodAllocationOverrideProperties.ReserveAsBulkIsSet)
+                {
+                    _allocationCriteria.ReserveAsBulk = (double)roMethodAllocationOverrideProperties.ReserveAsBulk;
+                }
+                else
+                {
+                    _allocationCriteria.ReserveAsBulk = 0;
+                }
+                if (roMethodAllocationOverrideProperties.ReserveAsPacksIsSet)
+                {
+                    _allocationCriteria.ReserveAsPacks = (double)roMethodAllocationOverrideProperties.ReserveAsPacks;
+                }
+                else
+                {
+                    _allocationCriteria.ReserveAsPacks = 0;
+                }
                 //InventoryInd = roMethodAllocationOverrideProperties.InventoryIndicator;
                 MERCH_HN_RID = roMethodAllocationOverrideProperties.InventoryBasisMerchandise.Key;
                 MERCH_PH_RID = roMethodAllocationOverrideProperties.InventoryBasisMerchandiseHierarchy.Key;
@@ -3875,7 +3951,7 @@ namespace MIDRetail.Business.Allocation
                 _dsOverRide.Tables["Capacity"].Rows.Clear();
                 foreach (ROMethodOverrideCapacityProperties capacityProperty in roMethodAllocationOverrideProperties.Capacity)
                 {
-                    if (capacityProperty.ExceedByPct == System.Double.MinValue)
+                    if (!capacityProperty.ExceedByPctIsSet)
                     {
                         _dsOverRide.Tables["Capacity"].Rows.Add(new object[] { capacityProperty.AttributeSet.Key, capacityProperty.AttributeSet.Value, 0, null });
                     }

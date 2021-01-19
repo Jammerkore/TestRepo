@@ -2503,9 +2503,9 @@ namespace Logility.ROWebSharedTypes
     {
         // fields specific to Allocation Override method
         [DataMember(IsRequired = true)]
-        int _storeGradeWeekCount;
+        int? _storeGradeWeekCount;
         [DataMember(IsRequired = true)]
-        double _percentNeedLimit;
+        double? _percentNeedLimit;
         [DataMember(IsRequired = true)]
         bool _exceedMaxInd;
         [DataMember(IsRequired = true)]
@@ -2513,13 +2513,17 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         bool _percentInd;
         [DataMember(IsRequired = true)]
-        double _reserveAsBulk;
+        double? _reserveAsBulk;
         [DataMember(IsRequired = true)]
-        double _reserveAsPacks;
+        double? _reserveAsPacks;
+        [DataMember(IsRequired = true)]
+        eMerchandiseType _merchandiseType;
         [DataMember(IsRequired = true)]
         KeyValuePair<int, string> _merchandise;
         [DataMember(IsRequired = true)]
         KeyValuePair<int, int> _merchandiseHierarchy;
+        [DataMember(IsRequired = true)]
+        eMerchandiseType _onHandMerchandiseType;
         [DataMember(IsRequired = true)]
         KeyValuePair<int, string> _onHandMerchandise;
         [DataMember(IsRequired = true)]
@@ -2527,7 +2531,7 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         private List<KeyValuePair<int, string>> _hierarchyLevels;
         [DataMember(IsRequired = true)]
-        double _onHandFactor;
+        double? _onHandFactor;
         [DataMember(IsRequired = true)]
         int _colorMult;
         [DataMember(IsRequired = true)]
@@ -2540,10 +2544,6 @@ namespace Logility.ROWebSharedTypes
         KeyValuePair<int, string> _capacityAttribute;
         [DataMember(IsRequired = true)]
         bool _exceedCapacity;
-        [DataMember(IsRequired = true)]
-        bool _merchPlanUnspecified;
-        [DataMember(IsRequired = true)]
-        bool _merchOnHandUnspecified;
         [DataMember(IsRequired = true)]
         KeyValuePair<int, string> _storeGradesAttribute;
         [DataMember(IsRequired = true)]
@@ -2570,13 +2570,24 @@ namespace Logility.ROWebSharedTypes
         private List<ROMethodOverrideVSWAttributeSet> _vswAttributeSet;
 
         #region Public Properties
-        public int StoreGradeWeekCount
+
+        public bool StoreGradeWeekCountIsSet
+        {
+            get { return _storeGradeWeekCount != null; }
+        }
+
+        public int? StoreGradeWeekCount
         {
             get { return _storeGradeWeekCount; }
             set { _storeGradeWeekCount = value; }
         }
 
-        public double PercentNeedLimit
+        public bool PercentNeedLimitIsSet
+        {
+            get { return _percentNeedLimit != null; }
+        }
+
+        public double? PercentNeedLimit
         {
             get { return _percentNeedLimit; }
             set { _percentNeedLimit = value; }
@@ -2600,16 +2611,32 @@ namespace Logility.ROWebSharedTypes
             set { _percentInd = value; }
         }
 
-        public double ReserveAsBulk
+        public bool ReserveAsBulkIsSet
+        {
+            get { return _reserveAsBulk != null; }
+        }
+
+        public double? ReserveAsBulk
         {
             get { return _reserveAsBulk; }
             set { _reserveAsBulk = value; }
         }
 
-        public double ReserveAsPacks
+        public bool ReserveAsPacksIsSet
+        {
+            get { return _reserveAsPacks != null; }
+        }
+
+        public double? ReserveAsPacks
         {
             get { return _reserveAsPacks; }
             set { _reserveAsPacks = value; }
+        }
+
+        public eMerchandiseType MerchandiseType
+        {
+            get { return _merchandiseType; }
+            set { _merchandiseType = value; }
         }
 
         public KeyValuePair<int, string> Merchandise
@@ -2621,6 +2648,12 @@ namespace Logility.ROWebSharedTypes
         {
             get { return _merchandiseHierarchy; }
             set { _merchandiseHierarchy = value; }
+        }
+
+        public eMerchandiseType OnHandMerchandiseType
+        {
+            get { return _onHandMerchandiseType; }
+            set { _onHandMerchandiseType = value; }
         }
 
         public KeyValuePair<int, string> OnHandMerchandise
@@ -2644,7 +2677,12 @@ namespace Logility.ROWebSharedTypes
             set { _hierarchyLevels = value; }
         }
 
-        public double OnHandFactor
+        public bool OnHandFactorIsSet
+        {
+            get { return _onHandFactor != null; }
+        }
+
+        public double? OnHandFactor
         {
             get { return _onHandFactor; }
             set { _onHandFactor = value; }
@@ -2684,18 +2722,6 @@ namespace Logility.ROWebSharedTypes
         {
             get { return _exceedCapacity; }
             set { _exceedCapacity = value; }
-        }
-
-        public bool MerchPlanUnspecified
-        {
-            get { return _merchPlanUnspecified; }
-            set { _merchPlanUnspecified = value; }
-        }
-
-        public bool MerchOnHandUnspecified
-        {
-            get { return _merchOnHandUnspecified; }
-            set { _merchOnHandUnspecified = value; }
         }
 
         public KeyValuePair<int, string> StoreGradesAttribute
@@ -2791,14 +2817,48 @@ namespace Logility.ROWebSharedTypes
         }
 
         #endregion
-        public ROMethodAllocationOverrideProperties(KeyValuePair<int, string> method, string description, int userKey, int storeGradeWeekCount, double percentNeedLimit,
-            bool exceedMaxInd, double reserve, bool percentInd, double reserveAsBulk, double reserveAsPacks, KeyValuePair<int, string> merchandise, KeyValuePair<int, int> merchandiseHierarchy,
-            KeyValuePair<int, string> onHandMerchandise, KeyValuePair<int, int> onHandMerchandiseHierarchy, double onHandFactor, int colorMult, int sizeMult, int allColorMin, int allColorMax,
-            KeyValuePair<int, string> capacityAttribute, bool exceedCapacity, bool merchPlanUnspecified, bool merchOnHandUnspecified, KeyValuePair<int, string> storeGradesAttribute,
-            eMinMaxType inventoryIndicator, eMerchandiseType inventoryBasisMerchType, KeyValuePair<int, string> inventoryBasisMerchandise, KeyValuePair<int, int> inventoryBasisMerchandiseHierarchy,
-            KeyValuePair<int, string> vswAttribute, bool doNotApplyVSW, List<ROAttributeSetStoreGrade> storeGradeValues, List<ROMethodOverrideCapacityProperties> capacity,
-            List<ROMethodOverrideColorProperties> colorMinMax, List<ROMethodOverridePackRoundingProperties> packRounding, List<ROMethodOverrideVSWAttributeSet> vswAttributeSet) :
-            base(eMethodType.AllocationOverride, method, description, userKey)
+        public ROMethodAllocationOverrideProperties(
+            KeyValuePair<int, string> method, 
+            string description, 
+            int userKey, 
+            int? storeGradeWeekCount, 
+            double? percentNeedLimit,
+            bool exceedMaxInd, 
+            double reserve, 
+            bool percentInd, 
+            double? reserveAsBulk, 
+            double? reserveAsPacks,
+            eMerchandiseType merchandiseType,
+            KeyValuePair<int, string> merchandise, 
+            KeyValuePair<int, int> merchandiseHierarchy,
+            eMerchandiseType onHandMerchandiseType,
+            KeyValuePair<int, string> onHandMerchandise, 
+            KeyValuePair<int, int> onHandMerchandiseHierarchy, 
+            double? onHandFactor, 
+            int colorMult, 
+            int sizeMult, 
+            int allColorMin, 
+            int allColorMax,
+            KeyValuePair<int, string> capacityAttribute, 
+            bool exceedCapacity, 
+            KeyValuePair<int, string> storeGradesAttribute,
+            eMinMaxType inventoryIndicator, 
+            eMerchandiseType inventoryBasisMerchType, 
+            KeyValuePair<int, string> inventoryBasisMerchandise, 
+            KeyValuePair<int, int> inventoryBasisMerchandiseHierarchy,
+            KeyValuePair<int, string> vswAttribute, 
+            bool doNotApplyVSW, 
+            List<ROAttributeSetStoreGrade> storeGradeValues, 
+            List<ROMethodOverrideCapacityProperties> capacity,
+            List<ROMethodOverrideColorProperties> colorMinMax, 
+            List<ROMethodOverridePackRoundingProperties> packRounding, 
+            List<ROMethodOverrideVSWAttributeSet> vswAttributeSet) 
+            : base(
+                  eMethodType.AllocationOverride, 
+                  method, 
+                  description, 
+                  userKey
+                  )
         {
             // fields specific to Allocation Override method
             _storeGradeWeekCount = storeGradeWeekCount;
@@ -2819,8 +2879,6 @@ namespace Logility.ROWebSharedTypes
             _allColorMax = allColorMax;
             _capacityAttribute = capacityAttribute;
             _exceedCapacity = exceedCapacity;
-            _merchPlanUnspecified = merchPlanUnspecified;
-            _merchOnHandUnspecified = merchOnHandUnspecified;
             _storeGradesAttribute = storeGradesAttribute;
             if (!Enum.IsDefined(typeof(eMinMaxType), inventoryIndicator))
             {
@@ -2894,7 +2952,7 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         bool _exceedCapacity;
         [DataMember(IsRequired = true)]
-        double _exceedByPct;
+        double? _exceedByPct;
 
         public KeyValuePair<int, string> AttributeSet
         {
@@ -2908,13 +2966,18 @@ namespace Logility.ROWebSharedTypes
             set { _exceedCapacity = value; }
         }
 
-        public double ExceedByPct
+        public bool ExceedByPctIsSet
+        {
+            get { return _exceedByPct != null; }
+        }
+
+        public double? ExceedByPct
         {
             get { return _exceedByPct; }
             set { _exceedByPct = value; }
         }
 
-        public ROMethodOverrideCapacityProperties(KeyValuePair<int, string> attributeSet, bool exceedCapacity, double exceedByPct)
+        public ROMethodOverrideCapacityProperties(KeyValuePair<int, string> attributeSet, bool exceedCapacity, double? exceedByPct)
         {
             _attributeSet = attributeSet;
             _exceedCapacity = exceedCapacity;
@@ -3036,11 +3099,11 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         string _reservationStore;
         [DataMember(IsRequired = true)]
-        int _minimumShipQuantity;
+        int? _minimumShipQuantity;
         [DataMember(IsRequired = true)]
-        double _pctPackThreshold;
+        double? _pctPackThreshold;
         [DataMember(IsRequired = true)]
-        int _itemMaximum;
+        int? _itemMaximum;
 
         public bool Updated
         {
@@ -3059,25 +3122,47 @@ namespace Logility.ROWebSharedTypes
             set { _reservationStore = value; }
         }
 
-        public int MinimumShipQuantity
+        public bool MinimumShipQuantityIsSet
+        {
+            get { return _minimumShipQuantity != null; }
+        }
+
+        public int? MinimumShipQuantity
         {
             get { return _minimumShipQuantity; }
             set { _minimumShipQuantity = value; }
         }
 
-        public double PctPackThreshold
+        public bool PctPackThresholdIsSet
+        {
+            get { return _pctPackThreshold != null; }
+        }
+
+        public double? PctPackThreshold
         {
             get { return _pctPackThreshold; }
             set { _pctPackThreshold = value; }
         }
 
-        public int ItemMaximum
+        public bool ItemMaximumIsSet
+        {
+            get { return _itemMaximum != null; }
+        }
+
+        public int? ItemMaximum
         {
             get { return _itemMaximum; }
             set { _itemMaximum = value; }
         }
 
-        public ROMethodOverrideVSW(bool updated, KeyValuePair<int, string> entry, string reservationStore, int minimumShipQuantity, double pctPackThreshold, int itemMaximum)
+        public ROMethodOverrideVSW(
+            bool updated, 
+            KeyValuePair<int, string> entry, 
+            string reservationStore, 
+            int? minimumShipQuantity, 
+            double? pctPackThreshold, 
+            int? itemMaximum
+            )
         {
             // fields specific to Allocation Override Color
             _updated = updated;
