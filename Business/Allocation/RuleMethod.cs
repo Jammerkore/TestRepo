@@ -2987,6 +2987,14 @@ namespace MIDRetail.Business.Allocation
                     _storeGroupLevelRID = roMethodRuleAllocationProperties.AttributeSet.Key;
                 }
 
+                // Requires key for color within the header
+                if (_componentType == eComponentType.SpecificColor
+                    && _colorCodeRID != Include.NoRID
+                    && _headerRID != Include.NoRID)
+                {
+                    _hdrBCRID = DetermineHeaderBulkColorKey(headerKey: _headerRID, colorKey: _colorCodeRID);
+                }
+
                 return true;
             }
             catch
@@ -2995,6 +3003,28 @@ namespace MIDRetail.Business.Allocation
             }
             //throw new NotImplementedException("MethodSaveData is not implemented");
             
+        }
+
+        private int DetermineHeaderBulkColorKey(int headerKey, int colorKey)
+        {
+            Header header = new Header();
+            DataTable dataTableBulkColors = header.GetBulkColors(headerKey);
+            if (dataTableBulkColors.Rows.Count > 0)
+            {
+
+                foreach (DataRow cRow in dataTableBulkColors.Rows)
+                {
+                    int headerColorKey = Convert.ToInt32(cRow["COLOR_CODE_RID"], CultureInfo.CurrentUICulture);
+                    int headerBulkColorKey = Convert.ToInt32(cRow["HDR_BC_RID"], CultureInfo.CurrentUICulture);
+                    if (headerColorKey == colorKey)
+                    {
+                        return headerBulkColorKey;
+                    }
+                }
+
+            }
+
+            return Include.NoRID;
         }
 
         override public ROMethodProperties MethodCopyData()
