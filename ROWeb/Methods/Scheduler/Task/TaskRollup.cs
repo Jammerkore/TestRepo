@@ -569,6 +569,7 @@ namespace Logility.ROWeb
             if (TaskData == null)
             {
                 TaskGetValues();
+                _levelLists = new Dictionary<int, List<HierarchyLevelComboObject>>();
             }
 
             if (!SetTask(

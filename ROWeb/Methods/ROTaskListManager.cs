@@ -547,7 +547,8 @@ namespace Logility.ROWeb
                 _taskListProfile = new TaskListProfile(Include.NoRID);
             }
             // Task List must be locked before it can be saved
-            else if (_taskListProfile.LockStatus != eLockStatus.Locked)
+            else if (_taskListProfile.Key != Include.NoRID
+                && _taskListProfile.LockStatus != eLockStatus.Locked)
             {
                 return new ROIListOut(eROReturnCode.Failure, "Task list is not locked and cannot be saved", ROInstanceID, null);
             }
