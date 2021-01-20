@@ -2868,8 +2868,10 @@ namespace Logility.ROWebSharedTypes
             _percentInd = percentInd;
             _reserveAsBulk = reserveAsBulk;
             _reserveAsPacks = reserveAsPacks;
+            _merchandiseType = merchandiseType;
             _merchandise = merchandise;
             _merchandiseHierarchy = merchandiseHierarchy;
+            _onHandMerchandiseType = onHandMerchandiseType;
             _onHandMerchandise = onHandMerchandise;
             _onHandMerchandiseHierarchy = onHandMerchandiseHierarchy;
             _onHandFactor = onHandFactor;
