@@ -2480,6 +2480,7 @@ namespace MIDRetail.Business.Allocation
                 newBuildPacksMethod.Method_Description = Method_Description;
                 newBuildPacksMethod.MethodStatus = MethodStatus;
                 newBuildPacksMethod.Name = Name;
+                newBuildPacksMethod.Template_IND = Template_IND;
                 return newBuildPacksMethod;
             }
             catch 
@@ -2565,7 +2566,8 @@ namespace MIDRetail.Business.Allocation
                 maxPackErrorDevTolerance: _bpmData.MaxPackErrorDevTolerance,
                 depleteReserveSelected: _bpmData.DepleteReserveSelected,
                 increaseBuySelected: _bpmData.IncreaseBuySelected,
-                increaseBuyPct: _bpmData.IncreaseBuyPct
+                increaseBuyPct: _bpmData.IncreaseBuyPct,
+                isTemplate: Template_IND
                 );
             return method;
 

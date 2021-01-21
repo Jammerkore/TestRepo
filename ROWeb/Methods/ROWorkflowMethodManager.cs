@@ -259,7 +259,9 @@ namespace Logility.ROWeb
         {
             try
             {
-                return new ROIntStringPairListOut(eROReturnCode.Successful, null, ROInstanceID, GetWorkFlowMethods(parms));
+                List<KeyValuePair<int, string>> workflowMethods;
+                workflowMethods = GetWorkFlowMethods(methodType: (eMethodTypeUI)parms.Key);
+                return new ROIntStringPairListOut(eROReturnCode.Successful, null, ROInstanceID, workflowMethods);
             }
             catch (Exception ex)
             {
@@ -268,21 +270,94 @@ namespace Logility.ROWeb
             }
         }
 
-        internal List<KeyValuePair<int, string>> GetWorkFlowMethods(ROKeyParms parms)
+        public ROOut GetWorkFlowMethodList(ROWorkflowMethodParms parameters)
         {
-            WorkflowMethodManager _wmManager = new WorkflowMethodManager(SAB.ClientServerSession.UserRID);
+            try
+            {
+                List<KeyValuePair<int, string>> workflowMethods;
+                workflowMethods = GetWorkFlowMethods(methodType: (eMethodTypeUI)parameters.MethodType,
+                    workflowKey: parameters.WorkflowKey,
+                    workflowStep: parameters.WorkflowStep);
+                return new ROIntStringPairListOut(eROReturnCode.Successful, null, ROInstanceID, workflowMethods);
+            }
+            catch (Exception ex)
+            {
+                ROWebTools.LogMessage(eROMessageLevel.Error, "GetWorkFlowMethodList failed: " + ex.Message, ROWebTools.ROUserID, ROWebTools.ROSessionID);
+                throw;
+            }
+        }
 
-            eMethodTypeUI methodType = (eMethodTypeUI)(parms.Key);
+        internal List<KeyValuePair<int, string>> GetWorkFlowMethods(
+            eMethodTypeUI methodType,
+            int workflowKey = Include.NoRID,
+            int workflowStep = Include.Undefined
+            )
+        {
+            DataTable methodsDataTable = WmManager.GetMethodList(methodType, SAB.ClientServerSession.UserRID);
 
-            DataTable dtMethods = _wmManager.GetMethodList(methodType, SAB.ClientServerSession.UserRID);
+            // Get only template methods
+            DataRow[] filteredDataRows = methodsDataTable.Select("TEMPLATE_IND = '1'");
 
-            dtMethods = ApplicationUtilities.SortDataTable(dataTable: dtMethods, sColName: "METHOD_NAME", bAscending: true);
+            DataTable filteredDataTable = new DataTable();
 
-            List<KeyValuePair<int, string>> methodList =  ApplicationUtilities.DataTableToKeyValues(dtMethods, "METHOD_RID", "METHOD_NAME", true);
+            if (filteredDataRows.Length != 0)
+            {
+                filteredDataTable = filteredDataRows.CopyToDataTable();
+            }
 
-            methodList.Add(new KeyValuePair<int, string>(Include.Undefined, "Custom"));
+            methodsDataTable = ApplicationUtilities.SortDataTable(dataTable: filteredDataTable, sColName: "METHOD_NAME", bAscending: true);
+
+            List<KeyValuePair<int, string>> methodList;
+            methodList =  ApplicationUtilities.DataTableToKeyValues(methodsDataTable, "METHOD_RID", "METHOD_NAME", true);
+
+            int customKey = Include.Undefined;
+
+            // Determine if workflow step already has custom method
+            if (workflowStep != Include.Undefined)
+            {
+                customKey = DetermineCustomKey(methodType: methodType,
+                    workflowKey: workflowKey,
+                    workflowStep: workflowStep);
+            }
+
+            methodList.Add(new KeyValuePair<int, string>(customKey, "Custom"));
 
             return methodList;
+        }
+
+        private int DetermineCustomKey(
+            eMethodTypeUI methodType,
+            int workflowKey = Include.NoRID,
+            int workflowStep = Include.Undefined)
+        {
+            int customKey = Include.Undefined;
+
+            // no workflow or step to check
+            if (_ABW == null
+                || _ABW.Workflow_Steps.Count <= workflowStep
+                || _ABW.Workflow_Steps[workflowStep] == null
+                )
+            {
+                return customKey;
+            }
+
+            // check if method or action
+            ApplicationWorkFlowStep applicationWorkflowStep;
+            applicationWorkflowStep = (ApplicationWorkFlowStep)_ABW.Workflow_Steps[workflowStep];
+            // make sure is method and same type as requested
+            if (applicationWorkflowStep.Method != null
+                && Enum.IsDefined(typeof(eMethodTypeUI), (int)applicationWorkflowStep.Method.MethodType)  // check if method
+                && methodType == (eMethodTypeUI)applicationWorkflowStep.Method.MethodType)  // make sure is same type 
+            {
+                // if method, convert to type to test for template or custom method
+                ApplicationBaseMethod method = (ApplicationBaseMethod)applicationWorkflowStep.Method;
+                if (!method.Template_IND)
+                {
+                    customKey = method.Key;
+                }
+            }
+
+            return customKey;
         }
 
         #endregion
@@ -394,14 +469,23 @@ namespace Logility.ROWeb
                 cleanseName = _ABM.Name != methodParm.ROMethodProperties.Method.Value;
             }
 
-            _ABM.Name = methodParm.ROMethodProperties.Method.Value;
+            if (methodParm.ROMethodProperties.IsTemplate)
+            {
+                _ABM.Name = methodParm.ROMethodProperties.Method.Value;
+            }
+            else if (!methodParm.ROMethodProperties.IsTemplate
+                && _ABM.Method_Change_Type == eChangeType.add
+                && string.IsNullOrWhiteSpace(_ABM.Name))
+            {
+                _ABM.Name = "Custom" + DateTime.Now.Ticks;
+            }
             if (cleanseName)
             {
                 CleanseMethodName();
             }
             _ABM.Method_Description = methodParm.ROMethodProperties.Description;
             _ABM.User_RID = methodParm.ROMethodProperties.UserKey;
-
+            _ABM.Template_IND = methodParm.ROMethodProperties.IsTemplate;
 
             if (_ABM.MethodSetData(methodProperties: methodParm.ROMethodProperties, message: ref message, processingApply: false))
             {

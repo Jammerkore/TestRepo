@@ -20,7 +20,8 @@ namespace MIDRetail.Data
 		public int InsertMethod(string Name, eMethodType Method_Type_ID, eProfileType Profile_Type_ID, int User_RID,
                                 // Begin TT#1510-MD - JSmith - Correct Method and Workflow Change History and Add Fields for Windows User and Machine
                                 //string Method_Description, int SG_RID, char Virtual_IND, int methosStatus, int customOLL_RID)
-                                string Method_Description, int SG_RID, char Virtual_IND, int methosStatus, int customOLL_RID, int aUpdateUserRID)
+                                string Method_Description, int SG_RID, char Virtual_IND, int methosStatus, int customOLL_RID, int aUpdateUserRID,
+                                char template_IND)
                                 // End TT#1510-MD - JSmith - Correct Method and Workflow Change History and Add Fields for Windows User and Machine
 		{
 			MethodBaseData mb = new MethodBaseData();
@@ -28,7 +29,7 @@ namespace MIDRetail.Data
 			return mb.InsertMethod(Name, Method_Type_ID, Profile_Type_ID, User_RID, Method_Description,
                 // Begin TT#1510-MD - JSmith - Correct Method and Workflow Change History and Add Fields for Windows User and Machine
                 //SG_RID, Virtual_IND, methosStatus, customOLL_RID, _dba);
-                SG_RID, Virtual_IND, methosStatus, customOLL_RID, _dba, aUpdateUserRID);
+                SG_RID, Virtual_IND, methosStatus, customOLL_RID, _dba, aUpdateUserRID, template_IND);
                 // End TT#1510-MD - JSmith - Correct Method and Workflow Change History and Add Fields for Windows User and Machine
 		}
 

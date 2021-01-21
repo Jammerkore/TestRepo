@@ -305,8 +305,9 @@ namespace MIDRetail.Data
                 private intParameter METHOD_STATUS;
                 private intParameter CUSTOM_OLL_RID;
                 private intParameter METHOD_RID; //Declare Output Parameter
-			
-			    public SP_MID_METHOD_INSERT_def()
+                private charParameter TEMPLATE_IND;
+
+                public SP_MID_METHOD_INSERT_def()
 			    {
 			        base.procedureName = "SP_MID_METHOD_INSERT";
 			        base.procedureType = storedProcedureTypes.InsertAndReturnRID;
@@ -318,7 +319,8 @@ namespace MIDRetail.Data
 			        METHOD_DESCRIPTION = new stringParameter("@METHOD_DESCRIPTION", base.inputParameterList);
 			        SG_RID = new intParameter("@SG_RID", base.inputParameterList);
 			        VIRTUAL_IND = new charParameter("@VIRTUAL_IND", base.inputParameterList);
-			        METHOD_STATUS = new intParameter("@METHOD_STATUS", base.inputParameterList);
+                    TEMPLATE_IND = new charParameter("@TEMPLATE_IND", base.inputParameterList);
+                    METHOD_STATUS = new intParameter("@METHOD_STATUS", base.inputParameterList);
 			        CUSTOM_OLL_RID = new intParameter("@CUSTOM_OLL_RID", base.inputParameterList);
 			        METHOD_RID = new intParameter("@METHOD_RID", base.outputParameterList); //Add Output Parameter
 			    }
@@ -332,8 +334,9 @@ namespace MIDRetail.Data
 			                                  int? SG_RID,
 			                                  char? VIRTUAL_IND,
 			                                  int? METHOD_STATUS,
-			                                  int? CUSTOM_OLL_RID
-			                                  )
+			                                  int? CUSTOM_OLL_RID,
+                                              char? TEMPLATE_IND
+                                              )
 			    {
                     lock (typeof(SP_MID_METHOD_INSERT_def))
                     {
@@ -346,6 +349,7 @@ namespace MIDRetail.Data
                         this.VIRTUAL_IND.SetValue(VIRTUAL_IND);
                         this.METHOD_STATUS.SetValue(METHOD_STATUS);
                         this.CUSTOM_OLL_RID.SetValue(CUSTOM_OLL_RID);
+                        this.TEMPLATE_IND.SetValue(TEMPLATE_IND);
                         this.METHOD_RID.SetValue(null); //Initialize Output Parameter
                         return ExecuteStoredProcedureForInsertAndReturnRID(_dba);
                     }
@@ -434,8 +438,9 @@ namespace MIDRetail.Data
                 private charParameter VIRTUAL_IND;
                 private intParameter METHOD_STATUS;
                 private intParameter CUSTOM_OLL_RID;
-			
-			    public MID_METHOD_UPDATE_def()
+                private charParameter TEMPLATE_IND;
+
+                public MID_METHOD_UPDATE_def()
 			    {
 			        base.procedureName = "MID_METHOD_UPDATE";
 			        base.procedureType = storedProcedureTypes.Update;
@@ -450,7 +455,8 @@ namespace MIDRetail.Data
 			        VIRTUAL_IND = new charParameter("@VIRTUAL_IND", base.inputParameterList);
 			        METHOD_STATUS = new intParameter("@METHOD_STATUS", base.inputParameterList);
 			        CUSTOM_OLL_RID = new intParameter("@CUSTOM_OLL_RID", base.inputParameterList);
-			    }
+                    TEMPLATE_IND = new charParameter("@TEMPLATE_IND", base.inputParameterList);
+                }
 			
 			    public int Update(DatabaseAccess _dba, 
 			                      int? METHOD_RID,
@@ -462,8 +468,9 @@ namespace MIDRetail.Data
 			                      int? SG_RID,
 			                      char? VIRTUAL_IND,
 			                      int? METHOD_STATUS,
-			                      int? CUSTOM_OLL_RID
-			                      )
+			                      int? CUSTOM_OLL_RID,
+                                  char? TEMPLATE_IND
+                                  )
 			    {
                     lock (typeof(MID_METHOD_UPDATE_def))
                     {
@@ -477,6 +484,7 @@ namespace MIDRetail.Data
                         this.VIRTUAL_IND.SetValue(VIRTUAL_IND);
                         this.METHOD_STATUS.SetValue(METHOD_STATUS);
                         this.CUSTOM_OLL_RID.SetValue(CUSTOM_OLL_RID);
+                        this.TEMPLATE_IND.SetValue(TEMPLATE_IND);
                         return ExecuteStoredProcedureForUpdate(_dba);
                     }
 			    }

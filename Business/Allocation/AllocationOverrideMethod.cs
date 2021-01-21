@@ -3328,6 +3328,7 @@ namespace MIDRetail.Business.Allocation
 				newAllocationOverrideMethod.UsePctNeedDefault = UsePctNeedDefault;
 				newAllocationOverrideMethod.User_RID = User_RID;
 				newAllocationOverrideMethod.Virtual_IND = Virtual_IND;
+                newAllocationOverrideMethod.Template_IND = Template_IND;
 
                 // Begin TT#709 - RMatelic - Override Method - need option to not set Forecast Level
                 newAllocationOverrideMethod.MerchUnspecified = MerchUnspecified;
@@ -3490,7 +3491,7 @@ namespace MIDRetail.Business.Allocation
                 reserveAsBulk = ReserveAsBulk;
             }
 
-            if (ReserveAsPacks == 0)
+            if (ReserveAsPacks > 0)
             {
                 reserveAsPacks = ReserveAsPacks;
             }
@@ -3540,7 +3541,8 @@ namespace MIDRetail.Business.Allocation
                 capacity: new System.Collections.Generic.List<ROMethodOverrideCapacityProperties>(),
                 colorMinMax: new System.Collections.Generic.List<ROMethodOverrideColorProperties>(),
                 packRounding: new System.Collections.Generic.List<ROMethodOverridePackRoundingProperties>(),
-                vswAttributeSet: new System.Collections.Generic.List<ROMethodOverrideVSWAttributeSet>()
+                vswAttributeSet: new System.Collections.Generic.List<ROMethodOverrideVSWAttributeSet>(),
+                isTemplate: Template_IND
                 );
 
             method.HierarchyLevels = BuildHierarchyLevels();

@@ -908,6 +908,7 @@ namespace MIDRetail.Business.Allocation
 				newGroupAllocationMethod.UsePctNeedDefault = UsePctNeedDefault;
 				newGroupAllocationMethod.User_RID = User_RID;
 				newGroupAllocationMethod.Virtual_IND = Virtual_IND;
+                newGroupAllocationMethod.Template_IND = Template_IND;
 
                 newGroupAllocationMethod.MerchUnspecified = MerchUnspecified;
                 newGroupAllocationMethod.OnHandUnspecified = OnHandUnspecified;

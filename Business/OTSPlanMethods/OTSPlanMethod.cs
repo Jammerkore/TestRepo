@@ -5746,6 +5746,7 @@ namespace MIDRetail.Business
                 newOTSPlanMethod.StockMinMax = StockMinMax;
                 newOTSPlanMethod.User_RID = User_RID;
                 newOTSPlanMethod.Virtual_IND = Virtual_IND;
+                newOTSPlanMethod.Template_IND = Template_IND;
                 // Begin Track #5912 - JSmith - Save As needs to clone custom override models
                 if (aCloneCustomOverrideModels &&
                     CustomOLL_RID != Include.NoRID)
@@ -5960,7 +5961,8 @@ namespace MIDRetail.Business
                bStockBalance: Bal_Stock_Ind,
                applyTrendOptions: GetApplyTrendOptions(ApplyTrendOptionsInd),
                fApplyTrendOptionsValue: ApplyTrendOptionsWOSValue,
-               kvStoreAttribute: GetName.GetAttributeName(SG_RID)
+               kvStoreAttribute: GetName.GetAttributeName(SG_RID),
+               isTemplate: Template_IND
                );
 
             foreach (GroupLevelFunctionProfile GLFProfile in _GLFProfileList)

@@ -1147,6 +1147,7 @@ namespace MIDRetail.Business
                 newOTSGlobalUnlockMethod.User_RID = User_RID;
                 newOTSGlobalUnlockMethod.VersionRID = VersionRID;
                 newOTSGlobalUnlockMethod.Virtual_IND = Virtual_IND;
+                newOTSGlobalUnlockMethod.Template_IND = Template_IND;
                 // Begin Track #5912 - JSmith - Save As needs to clone custom override models
                 if (aCloneCustomOverrideModels &&
                     CustomOLL_RID != Include.NoRID)
@@ -1327,7 +1328,8 @@ namespace MIDRetail.Business
                 attributeSet: SGL_RID_List,
                 kvpFilter: GetName.GetFilterName(Filter),
                 sLastProcessedDateTime: LastProcessedDateTime,
-                sLastProcessedUser: LastProcessedUser
+                sLastProcessedUser: LastProcessedUser,
+                isTemplate: Template_IND
 
 
               );

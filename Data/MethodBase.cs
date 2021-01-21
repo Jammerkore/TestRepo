@@ -28,7 +28,8 @@ namespace MIDRetail.Data
 		private string		_Method_Description;
 		private int			_SG_RID;
 		private char		_Virtual_IND;
-		private string		_Method_Comment = null;
+        private char        _template_IND;
+        private string		_Method_Comment = null;
 		eMethodStatus		_methodStatus;
         private int         _customOLL_RID;     // MID Track #5530 - add CUSTOM_OLL_RID column 
 		
@@ -84,7 +85,13 @@ namespace MIDRetail.Data
 			set	{_Virtual_IND = value;	}
 		}
 
-		public string Method_Comment
+        public char Template_IND
+        {
+            get { return _template_IND; }
+            set { _template_IND = value; }
+        }
+
+        public string Method_Comment
 		{
 			get	{return _Method_Comment;}
 			set	{_Method_Comment = value;	}
@@ -142,7 +149,8 @@ namespace MIDRetail.Data
 					else
 						_SG_RID = Convert.ToInt32(dr["SG_RID"], CultureInfo.CurrentUICulture);
 					_Virtual_IND = Convert.ToChar(dr["VIRTUAL_IND"], CultureInfo.CurrentUICulture);
-					_methodStatus = (eMethodStatus)Convert.ToInt32(dr["METHOD_STATUS"], CultureInfo.CurrentUICulture);
+                    _template_IND = Convert.ToChar(dr["TEMPLATE_IND"], CultureInfo.CurrentUICulture);
+                    _methodStatus = (eMethodStatus)Convert.ToInt32(dr["METHOD_STATUS"], CultureInfo.CurrentUICulture);
                     
                     // BEGIN MID Track #5530 - add CUSTOM_OLL_RID column
                     if (dr["CUSTOM_OLL_RID"] == DBNull.Value)
@@ -196,7 +204,8 @@ namespace MIDRetail.Data
 					else
 						_SG_RID = Convert.ToInt32(dr["SG_RID"], CultureInfo.CurrentUICulture);
 					_Virtual_IND = Convert.ToChar(dr["VIRTUAL_IND"], CultureInfo.CurrentUICulture);
-					_methodStatus = (eMethodStatus)Convert.ToInt32(dr["METHOD_STATUS"], CultureInfo.CurrentUICulture);
+                    _template_IND = Convert.ToChar(dr["TEMPLATE_IND"], CultureInfo.CurrentUICulture);
+                    _methodStatus = (eMethodStatus)Convert.ToInt32(dr["METHOD_STATUS"], CultureInfo.CurrentUICulture);
 
                     // BEGIN MID Track #5530 - add CUSTOM_OLL_RID column
                     if (dr["CUSTOM_OLL_RID"] == DBNull.Value)
@@ -253,7 +262,8 @@ namespace MIDRetail.Data
 					else
 						_SG_RID = Convert.ToInt32(dr["SG_RID"], CultureInfo.CurrentUICulture);
 					_Virtual_IND = Convert.ToChar(dr["VIRTUAL_IND"], CultureInfo.CurrentUICulture);
-					_methodStatus = (eMethodStatus)Convert.ToInt32(dr["METHOD_STATUS"], CultureInfo.CurrentUICulture);
+                    _template_IND = Convert.ToChar(dr["TEMPLATE_IND"], CultureInfo.CurrentUICulture);
+                    _methodStatus = (eMethodStatus)Convert.ToInt32(dr["METHOD_STATUS"], CultureInfo.CurrentUICulture);
 
                     // BEGIN MID Track #5530 - add CUSTOM_OLL_RID column
                     if (dr["CUSTOM_OLL_RID"] == DBNull.Value)
@@ -453,7 +463,7 @@ namespace MIDRetail.Data
         //    DatabaseAccess dba)
         public int InsertMethod(string method_Name, eMethodType method_Type_ID, eProfileType profile_Type_ID,
             int user_RID, string method_Description, int sg_RID, char virtual_IND, int methodStatus, int customOLL_RID,
-            DatabaseAccess dba, int aUpdateUserRID)
+            DatabaseAccess dba, int aUpdateUserRID, char template_IND)
         // End TT#1510-MD - JSmith - Correct Method and Workflow Change History and Add Fields for Windows User and Machine
 		{
 			int method_RID = -1;
@@ -486,6 +496,7 @@ namespace MIDRetail.Data
                                                                                       METHOD_DESCRIPTION: method_Description,
                                                                                       SG_RID: Include.ConvertObjectToNullableInt(oSg_rid),
                                                                                       VIRTUAL_IND: virtual_IND,
+                                                                                      TEMPLATE_IND: template_IND,
                                                                                       METHOD_STATUS: (int)Method_Status,
                                                                                       CUSTOM_OLL_RID: Include.ConvertObjectToNullableInt(oLL_RID)
                                                                                       );
@@ -588,6 +599,7 @@ namespace MIDRetail.Data
                                                                                  METHOD_DESCRIPTION: Method_Description,
                                                                                  SG_RID: Include.ConvertObjectToNullableInt(oSg_rid),
                                                                                  VIRTUAL_IND: Virtual_IND,
+                                                                                 TEMPLATE_IND: Template_IND,
                                                                                  METHOD_STATUS: (int)Method_Status,
                                                                                  CUSTOM_OLL_RID: Include.ConvertObjectToNullableInt(oLL_RID)
                                                                                  );
@@ -716,6 +728,7 @@ namespace MIDRetail.Data
                                                           METHOD_DESCRIPTION: _Method_Description,
                                                           SG_RID: SG_RID_nullable,
                                                           VIRTUAL_IND: _Virtual_IND,
+                                                          TEMPLATE_IND: _template_IND,
                                                           METHOD_STATUS: (int)_methodStatus,
                                                           CUSTOM_OLL_RID: CUSTOM_OLL_RID_nullable
                                                           );
@@ -756,6 +769,7 @@ namespace MIDRetail.Data
                                                           METHOD_DESCRIPTION: _Method_Description,
                                                           SG_RID: SG_RID_nullable,
                                                           VIRTUAL_IND: _Virtual_IND,
+                                                          TEMPLATE_IND: _template_IND,
                                                           METHOD_STATUS: (int)_methodStatus,
                                                           CUSTOM_OLL_RID: CUSTOM_OLL_RID_nullable
                                                           );

@@ -1644,6 +1644,7 @@ namespace MIDRetail.Business
 				newOTSForecastCopyMethod.User_RID = User_RID;
 				newOTSForecastCopyMethod.VersionRID = VersionRID;
 				newOTSForecastCopyMethod.Virtual_IND = Virtual_IND;
+                newOTSForecastCopyMethod.Template_IND = Template_IND;
                 // Begin Track #5912 - JSmith - Save As needs to clone custom override models
                 if (aCloneCustomOverrideModels &&
                     CustomOLL_RID != Include.NoRID)
@@ -1857,7 +1858,8 @@ namespace MIDRetail.Business
                     overrideLowLevel: overrideLowLevel,
                     copyPreInitValues: CopyPreInitValues,
                     emethodType: (PlanType == ePlanType.Chain) ? eMethodType.CopyChainForecast : eMethodType.CopyStoreForecast,
-                    basisProfile: ConvertBasisDataToList(_dsForecastCopy)
+                    basisProfile: ConvertBasisDataToList(_dsForecastCopy),
+                    isTemplate: Template_IND
                 );
 
             return method;

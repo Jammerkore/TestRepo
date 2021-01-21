@@ -795,7 +795,8 @@ namespace MIDRetail.Business.Allocation
                description: Method_Description,
                userKey: User_RID,
                useSelectedHeaders: _methodData.UseSelectedHeaders,
-               listMerchandise: new System.Collections.Generic.List<ROMethodCreateMasterHeadersMerchandise>()
+               listMerchandise: new System.Collections.Generic.List<ROMethodCreateMasterHeadersMerchandise>(),
+               isTemplate: Template_IND
                );
 
             // Loop through each set

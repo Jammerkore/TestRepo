@@ -59,12 +59,22 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         protected eMethodType _methodType;
 
-        public ROMethodProperties(eMethodType methodType, KeyValuePair<int, string> method, string description, int userKey)
+        [DataMember(IsRequired = true)]
+        protected bool _isTemplate;
+
+        public ROMethodProperties(
+            eMethodType methodType, 
+            KeyValuePair<int, string> method, 
+            string description, 
+            int userKey,
+            bool isTemplate
+            )
         {
             _method = method;
             _description = description;
             _userKey = userKey;
             _methodType = methodType;
+            _isTemplate = isTemplate;
         }
 
         public KeyValuePair<int, string> Method
@@ -146,6 +156,15 @@ namespace Logility.ROWebSharedTypes
                     return eGlobalUserType.User;
                 }
             }
+        }
+
+        /// <summary>
+        /// Flag identifying if the method is a template method
+        /// </summary>
+        public bool IsTemplate
+        {
+            get { return _isTemplate; }
+            set { _isTemplate = value; }
         }
     }
 

@@ -2377,8 +2377,9 @@ namespace MIDRetail.Business.Allocation
 				newBasisSizeAllocationMethod.StoreFilterRid = StoreFilterRid;
 				newBasisSizeAllocationMethod.User_RID = User_RID;
 				newBasisSizeAllocationMethod.Virtual_IND = Virtual_IND;
-				// begin Generic Size Constraint data
-				newBasisSizeAllocationMethod.GenConstraintCharGroupRID = GenConstraintCharGroupRID;
+                newBasisSizeAllocationMethod.Template_IND = Template_IND;
+                // begin Generic Size Constraint data
+                newBasisSizeAllocationMethod.GenConstraintCharGroupRID = GenConstraintCharGroupRID;
 				newBasisSizeAllocationMethod.GenConstraintColorInd = GenConstraintColorInd;
 				newBasisSizeAllocationMethod.GenConstraintHash = GenConstraintHash;
 				newBasisSizeAllocationMethod.GenConstraintHnRID = GenConstraintHnRID;
@@ -2464,7 +2465,8 @@ namespace MIDRetail.Business.Allocation
                 ruleQuantity: _methodData.RuleQuantity,
                 attribute: GetName.GetAttributeName(_methodData.SG_RID),
                 sizeRuleAttributeSet: SizeRuleAttributeSet.BuildSizeRuleAttributeSet(_methodData.Method_RID, eMethodType.BasisSizeAllocation, _methodData.SG_RID,  _methodData.SizeGroupRid, _methodData.SizeCurveGroupRid, GetSizesUsing, GetDimensionsUsing, MethodConstraints, SAB),
-                basisSizeSubstituteSet: BasisSizeSubstituteSet.BuildBasisSizeSubstituteSet(_methodData.Method_RID, eMethodType.BasisSizeAllocation, _methodData.SG_RID, _methodData.SizeGroupRid, _methodData.SizeCurveGroupRid, GetSizesUsing, GetDimensionsUsing, _methodData.SubstituteList, SAB) 
+                basisSizeSubstituteSet: BasisSizeSubstituteSet.BuildBasisSizeSubstituteSet(_methodData.Method_RID, eMethodType.BasisSizeAllocation, _methodData.SG_RID, _methodData.SizeGroupRid, _methodData.SizeCurveGroupRid, GetSizesUsing, GetDimensionsUsing, _methodData.SubstituteList, SAB),
+                isTemplate: Template_IND
             );
 
             return method;

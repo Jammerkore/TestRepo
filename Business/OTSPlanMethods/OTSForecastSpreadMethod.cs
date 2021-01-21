@@ -1321,6 +1321,7 @@ namespace MIDRetail.Business
                 newOTSForecastSpreadMethod.User_RID = User_RID;
                 newOTSForecastSpreadMethod.VersionRID = VersionRID;
                 newOTSForecastSpreadMethod.Virtual_IND = Virtual_IND;
+                newOTSForecastSpreadMethod.Template_IND = Template_IND;
                 // Begin Track #5912 - JSmith - Save As needs to clone custom override models
                 if (aCloneCustomOverrideModels &&
                     CustomOLL_RID != Include.NoRID)
@@ -1493,7 +1494,8 @@ namespace MIDRetail.Business
                     spreadOption: SpreadOption,
                     ignoreLocks: IgnoreLocks,
                     equalizeWeighting: EqualizeWeighting,
-                    basisProfile: ConvertBasisDataToList(_dsForecastSpread)
+                    basisProfile: ConvertBasisDataToList(_dsForecastSpread),
+                    isTemplate: Template_IND
                 );
 
             return method;

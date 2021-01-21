@@ -849,6 +849,7 @@ namespace MIDRetail.Business
 				newOTSForecastPlanningExtractMethod.SG_RID = SG_RID;
 				newOTSForecastPlanningExtractMethod.User_RID = User_RID;
 				newOTSForecastPlanningExtractMethod.Virtual_IND = Virtual_IND;
+                newOTSForecastPlanningExtractMethod.Template_IND = Template_IND;
                 if (aCloneCustomOverrideModels &&
                     CustomOLL_RID != Include.NoRID)
                 {
@@ -1880,7 +1881,8 @@ namespace MIDRetail.Business
                 numberOfConcurrentProcesses: _dlPlanningExtractMethod.ConcurrentProcesses,
                 overrideLowLevel: overrideLowLevel,
                 variableList: variableList,
-                totalVariableList: totalVariableList
+                totalVariableList: totalVariableList,
+                isTemplate: Template_IND
               );
             return method;
         }

@@ -13,6 +13,7 @@ create table [dbo].[METHOD] (
 	"SG_RID" int null,
 	"VIRTUAL_IND" char(1) not null,
 	"METHOD_STATUS" int default 0 not null,
-	"CUSTOM_OLL_RID" int null)  
+	"CUSTOM_OLL_RID" int null,
+	"TEMPLATE_IND" char(1))  
 
 go

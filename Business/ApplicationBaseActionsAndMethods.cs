@@ -111,11 +111,12 @@ namespace MIDRetail.Business
         private int _customOLL_RID;     // MID Track #5530 - add CUSTOM_OLL_RID column 
         private bool? _containsUserData = null;   // TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
         private eLockStatus _lockStatus;
+        private bool _template_IND;
 
-		//============
-		// Constructor
-		//============
-		public ApplicationBaseMethod(SessionAddressBlock aSAB,
+        //============
+        // Constructor
+        //============
+        public ApplicationBaseMethod(SessionAddressBlock aSAB,
 			//Begin TT#523 - JScott - Duplicate folder when new folder added
 			//int aMethodRID, eMethodType aMethodType)
 			int aMethodRID, eMethodType aMethodType, eProfileType aProfileType)
@@ -144,6 +145,7 @@ namespace MIDRetail.Business
 				_sg_RID = -1;	// unknown method type
 			}
 			_virtual_IND = false;
+            _template_IND = false;
 			_filled = false;
 			_method_Change_Type = eChangeType.none;
             _customOLL_RID = -1;    // MID Track #5530 - add CUSTOM_OLL_RID
@@ -233,8 +235,8 @@ namespace MIDRetail.Business
 		public string Method_Description 
 		{
 			get { return _method_Description ; }
-			set { _method_Description = value; }
-		}
+            set { _method_Description = value; }
+        }
 
 		/// <summary>
 		/// Gets or sets Store Group RID
@@ -252,13 +254,23 @@ namespace MIDRetail.Business
 		public bool Virtual_IND 
 		{
 			get { return _virtual_IND ; }
-			set { _virtual_IND = value; }
-		}
+            set { _virtual_IND = value; }
+        }
 
-		/// <summary>
-		/// Gets or set Method_Change_Type
+        /// <summary>
+		/// Gets or sets Template indicator.
 		/// </summary>
-		public eChangeType Method_Change_Type
+		/// <remarks>True:  indicates this is a template method; False: indicates a custom defined method.</remarks>
+		public bool Template_IND
+        {
+            get { return _template_IND; }
+            set { _template_IND = value; }
+        }
+
+        /// <summary>
+        /// Gets or set Method_Change_Type
+        /// </summary>
+        public eChangeType Method_Change_Type
 		{
 			get
 			{
@@ -494,7 +506,8 @@ namespace MIDRetail.Business
 				_method_Description = mb.Method_Description;
 				_sg_RID = mb.SG_RID;
 				_virtual_IND = Include.ConvertCharToBool(mb.Virtual_IND);
-				_methodStatus = mb.Method_Status;
+                _template_IND = Include.ConvertCharToBool(mb.Template_IND);
+                _methodStatus = mb.Method_Status;
                 _customOLL_RID = mb.Custom_OLL_RID;     // MID Track #5530 - add CUSTOM_OLL_RID column
 			}
 		}
@@ -565,7 +578,8 @@ namespace MIDRetail.Business
 			mb.Method_Description = _method_Description;
 			mb.SG_RID = _sg_RID;
 			mb.Virtual_IND = Include.ConvertBoolToChar(_virtual_IND);
-			mb.Method_Status = _methodStatus;
+            mb.Template_IND = Include.ConvertBoolToChar(_template_IND);
+            mb.Method_Status = _methodStatus;
             mb.Custom_OLL_RID = _customOLL_RID;     // MID Track #5530 - add CUSTOM_OLL_RID column
 			try
 			{

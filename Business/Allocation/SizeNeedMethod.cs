@@ -4719,8 +4719,9 @@ namespace MIDRetail.Business.Allocation
 				newSizeNeedMethod.SMBD = SMBD;
 				newSizeNeedMethod.User_RID = User_RID;
 				newSizeNeedMethod.Virtual_IND = Virtual_IND;
-				// BEGIN MID Track #4826 - JSmith - Normalize Size Curves
-				newSizeNeedMethod.NormalizeSizeCurves = NormalizeSizeCurves;
+                newSizeNeedMethod.Template_IND = Template_IND;
+                // BEGIN MID Track #4826 - JSmith - Normalize Size Curves
+                newSizeNeedMethod.NormalizeSizeCurves = NormalizeSizeCurves;
 				newSizeNeedMethod.NormalizeSizeCurvesDefaultIsOverridden = NormalizeSizeCurvesDefaultIsOverridden;
 				// END MID Track #4826
 
@@ -4870,7 +4871,8 @@ namespace MIDRetail.Business.Allocation
                 packToleranceNoMaxStep: _methodData.PackToleranceNoMaxStep,
                 maxPackNeedTolerance: _methodData.MaxPackNeedTolerance,
                 attribute: GetName.GetAttributeName(_methodData.SG_RID),
-                sizeRuleAttributeSet: SizeRuleAttributeSet.BuildSizeRuleAttributeSet(_methodData.Method_RID, eMethodType.SizeNeedAllocation, _methodData.SG_RID , _methodData.SizeGroupRid, _methodData.SizeCurveGroupRid, GetSizesUsing, GetDimensionsUsing, MethodConstraints, SAB)
+                sizeRuleAttributeSet: SizeRuleAttributeSet.BuildSizeRuleAttributeSet(_methodData.Method_RID, eMethodType.SizeNeedAllocation, _methodData.SG_RID , _methodData.SizeGroupRid, _methodData.SizeCurveGroupRid, GetSizesUsing, GetDimensionsUsing, MethodConstraints, SAB),
+                isTemplate: Template_IND
             );
 
             return method;

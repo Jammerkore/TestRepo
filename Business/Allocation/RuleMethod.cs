@@ -2656,8 +2656,9 @@ namespace MIDRetail.Business.Allocation
 				newRuleMethod.StoreGroupLevelRID = StoreGroupLevelRID;
 				newRuleMethod.User_RID = User_RID;
 				newRuleMethod.Virtual_IND = Virtual_IND;
+                newRuleMethod.Template_IND = Template_IND;
 
-				return newRuleMethod;
+                return newRuleMethod;
 			}
 			catch (Exception exc)
 			{
@@ -2734,7 +2735,8 @@ namespace MIDRetail.Business.Allocation
                 hdr_BC: GetName.GetHeader(HdrBCRID, SAB: SAB),
                 attribute: GetName.GetAttributeName(SG_RID),
                 attributeSet: GetName.GetAttributeSetName(StoreGroupLevelRID),
-                storeGroupLevel: GetName.GetAttributeSetName(StoreGroupLevelRID)
+                storeGroupLevel: GetName.GetAttributeSetName(StoreGroupLevelRID),
+                isTemplate: Template_IND
                 );
 
             GetComponents(method: method);

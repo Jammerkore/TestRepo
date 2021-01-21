@@ -958,7 +958,8 @@ namespace MIDRetail.Business.Allocation
                 tolerIndexUnitsType: EnumTools.VerifyEnumValue(_methodData.TolerIndexUnitsType),
                 tolerMinTolerancePct: _methodData.TolerMinTolerancePct,
                 tolerMaxTolerancePct: _methodData.TolerMaxTolerancePct,
-                applyMinToZeroTolerance: _methodData.ApplyMinToZeroTolerance
+                applyMinToZeroTolerance: _methodData.ApplyMinToZeroTolerance,
+                isTemplate: Template_IND
             );
 
             return method;

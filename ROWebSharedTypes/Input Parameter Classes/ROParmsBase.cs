@@ -101,6 +101,7 @@ namespace Logility.ROWebSharedTypes
     [KnownType(typeof(ROProfileKeyParms))]
     [KnownType(typeof(ROProfileKey))]
     [KnownType(typeof(ROCalendarDateInfo))]
+    [KnownType(typeof(ROWorkflowMethodParms))]
 
     [KnownType(typeof(ROAssortmentActionParms))]
     [KnownType(typeof(ROAssortmentAction))]
@@ -323,7 +324,7 @@ namespace Logility.ROWebSharedTypes
     [KnownType(typeof(ROTaskHeaderReconcile))]
     [KnownType(typeof(ROTaskBatchCompute))]
     [KnownType(typeof(ROTaskChainForecasting))]
-    
+
 
     public abstract class ROParms
     {

@@ -1067,6 +1067,7 @@ namespace MIDRetail.Business
                 newOTSRollupMethod.User_RID = User_RID;
                 newOTSRollupMethod.VersionRID = VersionRID;
                 newOTSRollupMethod.Virtual_IND = Virtual_IND;
+                newOTSRollupMethod.Template_IND = Template_IND;
 
                 if (_lowlevelVersionOverrideList != null)
                 {
@@ -1218,7 +1219,8 @@ namespace MIDRetail.Business
                 merchandise: GetName.GetMerchandiseName(nodeRID: _hierNodeRid, SAB: SAB),
                 version: GetName.GetVersion(versionRID: _versionRid, SAB: SAB),
                 dateRange: GetName.GetCalendarDateRange(calendarDateRID: _dateRangeRid, SAB: SAB),
-                methodRollupBasisOptions: new System.Collections.Generic.List<ROMethodRollupOptionsBasis>()
+                methodRollupBasisOptions: new System.Collections.Generic.List<ROMethodRollupOptionsBasis>(),
+                isTemplate: Template_IND
                 );
 
             for (int k = 0; k < _dsRollup.Tables[0].Rows.Count; k++)

@@ -1631,7 +1631,8 @@ namespace MIDRetail.Business.Allocation
                 description: Method_Description,
                 userKey: User_RID,
                 attribute: GetName.GetAttributeName(_methodData.SG_RID),
-                allocateOverageTo: _methodData.ApplyOverageTo
+                allocateOverageTo: _methodData.ApplyOverageTo,
+                isTemplate: Template_IND
                 );
             return method;
 

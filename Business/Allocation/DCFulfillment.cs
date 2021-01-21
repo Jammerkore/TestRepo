@@ -1192,7 +1192,8 @@ namespace MIDRetail.Business.Allocation
                 within_Dc: EnumTools.VerifyEnumValue(_methodData.Within_Dc),
                 split_By_Reserve: EnumTools.VerifyEnumValue(_methodData.Split_By_Reserve),
                 storesOrder: _methodData.StoresOrder,
-                dCStoreCharacteristicSet: DCStoreCharacteristicSet.BuildDCStoreCharacteristicSet(_methodData.Method_RID, eMethodType.DCFulfillment, dtStoreOrder, SAB)
+                dCStoreCharacteristicSet: DCStoreCharacteristicSet.BuildDCStoreCharacteristicSet(_methodData.Method_RID, eMethodType.DCFulfillment, dtStoreOrder, SAB),
+                isTemplate: Template_IND
                 );
             return method;
         }

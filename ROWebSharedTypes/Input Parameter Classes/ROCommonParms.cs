@@ -878,4 +878,45 @@ namespace Logility.ROWebSharedTypes
 
         public bool ReadOnly { get { return _readOnly; } }
     }
+
+    [DataContract(Name = "ROWorkflowMethodParms", Namespace = "http://Logility.ROWeb/")]
+    public class ROWorkflowMethodParms : ROParms
+    {
+        [DataMember(IsRequired = true)]
+        private eMethodType _methodType;
+        [DataMember(IsRequired = true)]
+        private int _workflowKey;
+        [DataMember(IsRequired = true)]
+        private int _workflowStep;
+
+        public ROWorkflowMethodParms(
+            string sROUserID, 
+            string sROSessionID, 
+            eROClass ROClass, 
+            eRORequest RORequest, 
+            long ROInstanceID, 
+            eMethodType methodType,
+            int workflowKey = Include.NoRID,
+            int workflowStep = Include.Undefined
+            ) 
+            : base(
+                  sROUserID, 
+                  sROSessionID, 
+                  ROClass, 
+                  RORequest, 
+                  ROInstanceID
+                  )
+        {
+            _methodType = methodType;
+            _workflowKey = workflowKey;
+            _workflowStep = workflowStep;
+        }
+
+        public eMethodType MethodType { get { return _methodType; } }
+
+        public int WorkflowKey { get { return _workflowKey; } }
+
+        public int WorkflowStep { get { return _workflowStep; } }
+
+    };
 }

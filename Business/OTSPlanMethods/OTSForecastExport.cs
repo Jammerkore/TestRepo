@@ -1197,6 +1197,7 @@ namespace MIDRetail.Business
                 newOTSForecastExportMethod.SG_RID = SG_RID;
                 newOTSForecastExportMethod.User_RID = User_RID;
                 newOTSForecastExportMethod.Virtual_IND = Virtual_IND;
+                newOTSForecastExportMethod.Template_IND = Template_IND;
                 // Begin Track #5912 - JSmith - Save As needs to clone custom override models
                 if (aCloneCustomOverrideModels &&
                     CustomOLL_RID != Include.NoRID)
@@ -3372,7 +3373,8 @@ namespace MIDRetail.Business
                 bIsCreateFlagfile: CreateFlagFile,
                 bIsCreateEndfile: CreateEndFile,
                 sFlagFileExtension: FlagFileExtension,
-                sEndFileExtension: EndFileExtension
+                sEndFileExtension: EndFileExtension,
+                isTemplate: Template_IND
               );
             return method;
         }

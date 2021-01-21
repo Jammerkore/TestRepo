@@ -2389,6 +2389,7 @@ namespace MIDRetail.Business
                 newOTSForecastModifySales.SG_RID = SG_RID;
                 newOTSForecastModifySales.User_RID = User_RID;
                 newOTSForecastModifySales.Virtual_IND = Virtual_IND;
+                newOTSForecastModifySales.Template_IND = Template_IND;
 
                 return newOTSForecastModifySales;
             }
@@ -2476,7 +2477,8 @@ namespace MIDRetail.Business
                matrixRulesList: matrixRule,
 
                merchandise: GetName.GetMerchandiseName(_modifySalesData.HierNodeRID, SAB),
-               attribute: GetName.GetAttributeName(_modifySalesData.SG_RID)
+               attribute: GetName.GetAttributeName(_modifySalesData.SG_RID),
+               isTemplate: Template_IND
               );
             return method;
         }

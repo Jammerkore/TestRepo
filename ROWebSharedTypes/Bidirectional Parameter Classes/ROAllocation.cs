@@ -258,10 +258,29 @@ namespace Logility.ROWebSharedTypes
             set { _hierarchyLevels = value; }
         }
         #endregion
-        public ROMethodGeneralAllocationProperties(KeyValuePair<int, string> method, string description, int userKey, KeyValuePair<int, string> begin_CDR, KeyValuePair<int, string> shipTo_CDR, bool percentInd,
-            double reserve, KeyValuePair<int, string> merch_HN, int merch_PH_RID, int merch_PHL_SEQ, eMerchandiseType merchandiseType, KeyValuePair<int, string> genAlloc_HDR,
-            double reserveAsBulk, double reserveAsPacks) :
-            base(eMethodType.GeneralAllocation, method, description, userKey)
+        public ROMethodGeneralAllocationProperties(
+            KeyValuePair<int, string> method, 
+            string description, 
+            int userKey, 
+            KeyValuePair<int, string> begin_CDR, 
+            KeyValuePair<int, string> shipTo_CDR, 
+            bool percentInd,
+            double reserve, 
+            KeyValuePair<int, string> merch_HN, 
+            int merch_PH_RID, 
+            int merch_PHL_SEQ, 
+            eMerchandiseType merchandiseType, 
+            KeyValuePair<int, string> genAlloc_HDR,
+            double reserveAsBulk, 
+            double reserveAsPacks,
+            bool isTemplate = false) 
+            : base(
+                eMethodType.GeneralAllocation,
+                method, 
+                description, 
+                userKey,
+                isTemplate
+                )
 
         {
             // fields specific to General Allocation method
@@ -498,15 +517,43 @@ namespace Logility.ROWebSharedTypes
         }
 
         #endregion
-        public ROMethodFillSizeHolesProperties(KeyValuePair<int, string> method, string description, int userKey, KeyValuePair<int, string> filter
-            , double available, bool percentInd, KeyValuePair<int, string> merch_HN, int merch_PH_RID, int merch_PHL_SEQ, eMerchandiseType merchandiseType
-            , bool normalizeSizeCurvesDefaultIsOverridden, bool normalizeSizeCurves, eFillSizesToType fillSizesToType, KeyValuePair<int, string> sizeGroup
-            , KeyValuePair<int, string> sizeAlternateModel, ROSizeCurveProperties rOSizeCurveProperties, ROSizeConstraintProperties rOSizeConstraintProperties
-            , bool overrideVSWSizeConstraints, eVSWSizeConstraints vSWSizeConstraints, bool overrideAvgPackDevTolerance, double avgPackDeviationTolerance
-            , bool overrideMaxPackNeedTolerance, bool packToleranceStepped, bool packToleranceNoMaxStep, double maxPackNeedTolerance
-            , KeyValuePair<int, string> attribute, ROMethodSizeRuleAttributeSet sizeRuleAttributeSet
-            ) :
-            base(eMethodType.FillSizeHolesAllocation, method, description, userKey)
+        public ROMethodFillSizeHolesProperties(
+            KeyValuePair<int, string> method, 
+            string description, 
+            int userKey, 
+            KeyValuePair<int, string> filter,
+            double available, 
+            bool percentInd, 
+            KeyValuePair<int, string> merch_HN, 
+            int merch_PH_RID, 
+            int merch_PHL_SEQ, 
+            eMerchandiseType merchandiseType,
+            bool normalizeSizeCurvesDefaultIsOverridden, 
+            bool normalizeSizeCurves, 
+            eFillSizesToType fillSizesToType, 
+            KeyValuePair<int, string> sizeGroup,
+            KeyValuePair<int, string> sizeAlternateModel, 
+            ROSizeCurveProperties rOSizeCurveProperties, 
+            ROSizeConstraintProperties rOSizeConstraintProperties,
+            bool overrideVSWSizeConstraints, 
+            eVSWSizeConstraints vSWSizeConstraints, 
+            bool overrideAvgPackDevTolerance, 
+            double avgPackDeviationTolerance,
+            bool overrideMaxPackNeedTolerance, 
+            bool packToleranceStepped, 
+            bool packToleranceNoMaxStep, 
+            double maxPackNeedTolerance,
+            KeyValuePair<int, string> attribute, 
+            ROMethodSizeRuleAttributeSet sizeRuleAttributeSet,
+            bool isTemplate = false
+            ) 
+            : base(
+                  eMethodType.FillSizeHolesAllocation, 
+                  method, 
+                  description, 
+                  userKey,
+                  isTemplate
+                  )
 
         {
             // fields specific to Fill Size Holes method
@@ -724,15 +771,39 @@ namespace Logility.ROWebSharedTypes
         }
 
         #endregion
-        public ROMethodSizeNeedProperties(KeyValuePair<int, string> method, string description, int userKey
-            , KeyValuePair<int, string> merch_HN, int merch_PH_RID, int merch_PHL_SEQ, eMerchandiseType merchandiseType
-            , bool normalizeSizeCurvesDefaultIsOverridden, bool normalizeSizeCurves, KeyValuePair<int, string> sizeGroup
-            , KeyValuePair<int, string> sizeAlternateModel, ROSizeCurveProperties rOSizeCurveProperties, ROSizeConstraintProperties rOSizeConstraintProperties
-            , bool overrideVSWSizeConstraints, eVSWSizeConstraints vSWSizeConstraints, bool overrideAvgPackDevTolerance, double avgPackDeviationTolerance
-            , bool overrideMaxPackNeedTolerance, bool packToleranceStepped, bool packToleranceNoMaxStep, double maxPackNeedTolerance
-            , KeyValuePair<int, string> attribute, ROMethodSizeRuleAttributeSet sizeRuleAttributeSet
-            ) :
-            base(eMethodType.SizeNeedAllocation, method, description, userKey)
+        public ROMethodSizeNeedProperties(
+            KeyValuePair<int, string> method, 
+            string description, 
+            int userKey,
+            KeyValuePair<int, string> merch_HN, 
+            int merch_PH_RID, 
+            int merch_PHL_SEQ, 
+            eMerchandiseType merchandiseType,
+            bool normalizeSizeCurvesDefaultIsOverridden, 
+            bool normalizeSizeCurves, 
+            KeyValuePair<int, string> sizeGroup,
+            KeyValuePair<int, string> sizeAlternateModel, 
+            ROSizeCurveProperties rOSizeCurveProperties, 
+            ROSizeConstraintProperties rOSizeConstraintProperties,
+            bool overrideVSWSizeConstraints, 
+            eVSWSizeConstraints vSWSizeConstraints, 
+            bool overrideAvgPackDevTolerance, 
+            double avgPackDeviationTolerance,
+            bool overrideMaxPackNeedTolerance, 
+            bool packToleranceStepped, 
+            bool packToleranceNoMaxStep, 
+            double maxPackNeedTolerance,
+            KeyValuePair<int, string> attribute, 
+            ROMethodSizeRuleAttributeSet sizeRuleAttributeSet,
+            bool isTemplate = false
+            ) 
+            : base(
+                  eMethodType.SizeNeedAllocation, 
+                  method, 
+                  description, 
+                  userKey,
+                  isTemplate
+                  )
 
         {
             // fields specific to Size Need method
@@ -878,13 +949,31 @@ namespace Logility.ROWebSharedTypes
             set { _basisSizeSubstituteSet = value; }
         }
         #endregion
-        public ROMethodBasisSizeProperties(KeyValuePair<int, string> method, string description, int userKey, KeyValuePair<int, string> filter
-            , KeyValuePair<int, string> sizeGroup, ROSizeCurveProperties rOSizeCurveProperties, ROSizeConstraintProperties rOSizeConstraintProperties
-            , KeyValuePair<int, string> header, bool includeReserve, KeyValuePair<int, string> colorComponent, KeyValuePair<int, string> color
-            , KeyValuePair<int, string> rule, int ruleQuantity
-            , KeyValuePair<int, string> attribute, ROMethodSizeRuleAttributeSet sizeRuleAttributeSet, ROMethodBasisSizeSubstituteSet basisSizeSubstituteSet
-            ) :
-            base(eMethodType.BasisSizeAllocation, method, description, userKey)
+        public ROMethodBasisSizeProperties(
+            KeyValuePair<int, string> method, 
+            string description, 
+            int userKey, 
+            KeyValuePair<int, string> filter,
+            KeyValuePair<int, string> sizeGroup, 
+            ROSizeCurveProperties rOSizeCurveProperties, 
+            ROSizeConstraintProperties rOSizeConstraintProperties,
+            KeyValuePair<int, string> header, 
+            bool includeReserve, 
+            KeyValuePair<int, string> colorComponent, 
+            KeyValuePair<int, string> color,
+            KeyValuePair<int, string> rule, 
+            int ruleQuantity,
+            KeyValuePair<int, string> attribute, 
+            ROMethodSizeRuleAttributeSet sizeRuleAttributeSet, 
+            ROMethodBasisSizeSubstituteSet basisSizeSubstituteSet,
+            bool isTemplate = false
+            ) 
+            : base(
+                  eMethodType.BasisSizeAllocation, 
+                  method, 
+                  description, 
+                  userKey,
+                  isTemplate)
 
         {
             // fields specific to Fill Size Holes method
@@ -1114,12 +1203,30 @@ namespace Logility.ROWebSharedTypes
         }
 
         #endregion
-        public ROMethodSizeCurveProperties(KeyValuePair<int, string> method, string description, int userKey
-            , KeyValuePair<int, string> sizeGroup, KeyValuePair<int, string> attribute, eSizeCurvesByType sizeCurvesByType
-            , bool merchBasisEqualizeWeight, ROMethodSizeCurveMerchBasisSet sizeCurveMerchBasisSet, double tolerMinAvgPerSize , double tolerSalesTolerance
-            , eNodeChainSalesType tolerIndexUnitsType , double tolerMinTolerancePct, double tolerMaxTolerancePct, bool applyMinToZeroTolerance
-            ) :
-            base(eMethodType.SizeCurve, method, description, userKey)
+        public ROMethodSizeCurveProperties(
+            KeyValuePair<int, string> method, 
+            string description, 
+            int userKey,
+            KeyValuePair<int, string> sizeGroup, 
+            KeyValuePair<int, string> attribute, 
+            eSizeCurvesByType sizeCurvesByType,
+            bool merchBasisEqualizeWeight, 
+            ROMethodSizeCurveMerchBasisSet sizeCurveMerchBasisSet, 
+            double tolerMinAvgPerSize, 
+            double tolerSalesTolerance,
+            eNodeChainSalesType tolerIndexUnitsType, 
+            double tolerMinTolerancePct, 
+            double tolerMaxTolerancePct, 
+            bool applyMinToZeroTolerance,
+            bool isTemplate = false
+            ) 
+            : base(
+                  eMethodType.SizeCurve, 
+                  method, 
+                  description, 
+                  userKey,
+                  isTemplate
+                  )
 
         {
             // fields specific to Size Curve method
@@ -1424,11 +1531,28 @@ namespace Logility.ROWebSharedTypes
             set { _dCStoreCharacteristicSet = value; }
         }
         #endregion
-        public ROMethodDCFulfillmentProperties(KeyValuePair<int, string> method, string description, int userKey, eDCFulfillmentSplitOption dCFulfillmentSplitOption, bool applyMinimumsInd
-            , KeyValuePair<int, string> prioritizeType, eDCFulfillmentHeadersOrder headersOrder, eDCFulfillmentSplitByOption split_By_Option, eDCFulfillmentWithinDC within_Dc
-            , eDCFulfillmentReserve split_By_Reserve, eDCFulfillmentStoresOrder storesOrder, ROMethodDCStoreCharacteristicSet dCStoreCharacteristicSet
-            ) :
-            base(eMethodType.DCFulfillment, method, description, userKey)
+        public ROMethodDCFulfillmentProperties(
+            KeyValuePair<int, string> method, 
+            string description, 
+            int userKey, 
+            eDCFulfillmentSplitOption dCFulfillmentSplitOption, 
+            bool applyMinimumsInd,
+            KeyValuePair<int, string> prioritizeType, 
+            eDCFulfillmentHeadersOrder headersOrder, 
+            eDCFulfillmentSplitByOption split_By_Option, 
+            eDCFulfillmentWithinDC within_Dc,
+            eDCFulfillmentReserve split_By_Reserve, 
+            eDCFulfillmentStoresOrder storesOrder, 
+            ROMethodDCStoreCharacteristicSet dCStoreCharacteristicSet,
+            bool isTemplate = false
+            ) 
+            : base(
+                  eMethodType.DCFulfillment, 
+                  method, 
+                  description, 
+                  userKey,
+                  isTemplate
+                  )
 
         {
             // fields specific to DC Fulfillment method
@@ -1663,12 +1787,37 @@ namespace Logility.ROWebSharedTypes
         }
 
         #endregion
-        public ROMethodBuildPacksProperties(KeyValuePair<int, string> method, string description, int userKey, KeyValuePair<int, string> vendor
-            , int packMinOrder, int sizeMultiple, KeyValuePair<int, string> sizeGroup, KeyValuePair<int, string> sizeCurve, List<PackPatternCombo> packCombination
-            , double reserveTotalQty, bool reserveTotalIsPercent, double reserveBulkQty, bool reserveBulkIsPercent, double reservePacksQty,bool reservePacksIsPercent
-            , bool removeBulkInd, double avgPackErrorDevTolerance, double maxPackErrorDevTolerance, bool depleteReserveSelected, bool increaseBuySelected, double increaseBuyPct
-            ) :
-            base(eMethodType.BuildPacks, method, description, userKey)
+        public ROMethodBuildPacksProperties(
+            KeyValuePair<int, string> method, 
+            string description, 
+            int userKey, 
+            KeyValuePair<int, string> vendor,
+            int packMinOrder, 
+            int sizeMultiple, 
+            KeyValuePair<int, string> sizeGroup, 
+            KeyValuePair<int, string> sizeCurve, 
+            List<PackPatternCombo> packCombination,
+            double reserveTotalQty, 
+            bool reserveTotalIsPercent, 
+            double reserveBulkQty, 
+            bool reserveBulkIsPercent, 
+            double reservePacksQty,
+            bool reservePacksIsPercent,
+            bool removeBulkInd, 
+            double avgPackErrorDevTolerance, 
+            double maxPackErrorDevTolerance, 
+            bool depleteReserveSelected, 
+            bool increaseBuySelected, 
+            double increaseBuyPct,
+            bool isTemplate = false
+            ) 
+            : base(
+                  eMethodType.BuildPacks, 
+                  method, 
+                  description, 
+                  userKey,
+                  isTemplate
+                  )
 
         {
             // fields specific to Build Packs method
@@ -2412,9 +2561,17 @@ namespace Logility.ROWebSharedTypes
             KeyValuePair<int, string> hdr_BC = default(KeyValuePair<int, string>), 
             KeyValuePair<int, string> attribute = default(KeyValuePair<int, string>),
             KeyValuePair<int, string> attributeSet = default(KeyValuePair<int, string>),
-            KeyValuePair<int, string> storeGroupLevel = default(KeyValuePair<int, string>)
-            ) :
-            base(eMethodType.Rule, method, description, userKey)
+            KeyValuePair<int, string> storeGroupLevel = default(KeyValuePair<int, string>),
+            bool isTemplate = false
+            ) 
+            : base(
+                  
+                  eMethodType.Rule, 
+                  method, 
+                  description, 
+                  userKey,
+                  isTemplate
+                  )
 
         {
             // fields specific to Rule method
@@ -2852,12 +3009,14 @@ namespace Logility.ROWebSharedTypes
             List<ROMethodOverrideCapacityProperties> capacity,
             List<ROMethodOverrideColorProperties> colorMinMax, 
             List<ROMethodOverridePackRoundingProperties> packRounding, 
-            List<ROMethodOverrideVSWAttributeSet> vswAttributeSet) 
+            List<ROMethodOverrideVSWAttributeSet> vswAttributeSet,
+            bool isTemplate = false) 
             : base(
                   eMethodType.AllocationOverride, 
                   method, 
                   description, 
-                  userKey
+                  userKey,
+                  isTemplate
                   )
         {
             // fields specific to Allocation Override method
@@ -3197,8 +3356,21 @@ namespace Logility.ROWebSharedTypes
             set { _listMerchandise = value; }
         }
 
-        public ROMethodCreateMasterHeadersProperties(KeyValuePair<int, string> method, string description, int userKey, bool useSelectedHeaders, List<ROMethodCreateMasterHeadersMerchandise> listMerchandise) :
-            base(eMethodType.CreateMasterHeaders, method, description, userKey)
+        public ROMethodCreateMasterHeadersProperties(
+            KeyValuePair<int, string> method, 
+            string description, 
+            int userKey, 
+            bool useSelectedHeaders, 
+            List<ROMethodCreateMasterHeadersMerchandise> listMerchandise,
+            bool isTemplate = false
+            ) 
+            : base(
+                  eMethodType.CreateMasterHeaders, 
+                  method, 
+                  description, 
+                  userKey,
+                  isTemplate
+                  )
         {
             _useSelectedHeaders = useSelectedHeaders;
             _listMerchandise = listMerchandise;
@@ -3260,8 +3432,19 @@ namespace Logility.ROWebSharedTypes
             set { _allocateOverageTo = value; }
         }
 
-        public ROMethodDCCartonRoundingProperties(KeyValuePair<int, string> method, string description, int userKey, KeyValuePair<int, string> attribute, eAllocateOverageTo allocateOverageTo) :
-            base(eMethodType.DCCartonRounding, method, description, userKey)
+        public ROMethodDCCartonRoundingProperties(
+            KeyValuePair<int, string> method, 
+            string description, 
+            int userKey, 
+            KeyValuePair<int, string> attribute, 
+            eAllocateOverageTo allocateOverageTo,
+            bool isTemplate = false) 
+            : base(
+                eMethodType.DCCartonRounding, 
+                method, 
+                description, 
+                userKey,
+                isTemplate)
         {
             _attribute = attribute;
             _allocateOverageTo = allocateOverageTo;
@@ -3671,7 +3854,10 @@ namespace Logility.ROWebSharedTypes
         }
 
         #endregion
-        public ROMethodAllocationVelocityProperties(KeyValuePair<int, string> method, string description, int userKey,
+        public ROMethodAllocationVelocityProperties(
+            KeyValuePair<int, string> method, 
+            string description, 
+            int userKey,
             eVelocityCalculateAverageUsing calculateAverageUsing,
             eVelocityDetermineShipQtyUsing determineShipQtyUsing,
             eVelocityApplyMinMaxType applyMinMaxType,
@@ -3685,9 +3871,16 @@ namespace Logility.ROWebSharedTypes
             KeyValuePair<int, string> inventoryMinMaxMerchandise, 
             KeyValuePair<int, int> inventoryMinMaxMerchandiseHierarchy,
             KeyValuePair<int, string> attribute,
-            KeyValuePair<int, string> attributeSet
-            ) :
-            base(eMethodType.Velocity, method, description, userKey)
+            KeyValuePair<int, string> attributeSet,
+            bool isTemplate = false
+            ) 
+            : base(
+                  eMethodType.Velocity, 
+                  method, 
+                  description, 
+                  userKey,
+                  isTemplate
+                  )
         {
             // fields specific to Allocation Velocity method
             

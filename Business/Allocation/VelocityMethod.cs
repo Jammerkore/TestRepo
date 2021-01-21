@@ -10436,8 +10436,9 @@ namespace MIDRetail.Business.Allocation
 				newVelocityMethod.User_RID = User_RID;
 				newVelocityMethod.UseSimilarStoreHistory = UseSimilarStoreHistory;
 				newVelocityMethod.Virtual_IND = Virtual_IND;
+                newVelocityMethod.Template_IND = Template_IND;
 
-				newVelocityMethod.LoadDataArrays();
+                newVelocityMethod.LoadDataArrays();
 //				CopyDataArrays(newVelocityMethod, aSession, aCloneDateRanges);
 
 				return newVelocityMethod;
@@ -10660,7 +10661,8 @@ namespace MIDRetail.Business.Allocation
 
                 inventoryMinMaxMerchandiseHierarchy: new KeyValuePair<int, int>(MERCH_PH_RID, MERCH_PHL_SEQ),
                 attribute: GetName.GetAttributeName(key: SG_RID),
-                attributeSet: GetName.GetAttributeSetName(key: _currentAttributeSet)
+                attributeSet: GetName.GetAttributeSetName(key: _currentAttributeSet),
+                isTemplate: Template_IND
                 );
 
             foreach (StoreGroupLevelListViewProfile attrSet in setList)

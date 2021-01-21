@@ -277,7 +277,14 @@ namespace Logility.ROWeb
                 case eRORequest.DeleteWorkflow:
                     return ROWorkflowMethodManager.DeleteWorkflow(parms: (ROKeyParms)Parms);
                 case eRORequest.GetAllocationWorkFlowMethodList:
-                    return ROWorkflowMethodManager.GetWorkFlowMethodList((ROKeyParms)Parms);
+                    if (Parms is ROKeyParms)
+                    {
+                        return ROWorkflowMethodManager.GetWorkFlowMethodList((ROKeyParms)Parms);
+                    }
+                    else
+                    {
+                        return ROWorkflowMethodManager.GetWorkFlowMethodList((ROWorkflowMethodParms)Parms);
+                    }
                 case eRORequest.GetAllocationWorkFlowMethodActionsList:
                     return GetAllocationWorkFlowMethodActionsList();
                 case eRORequest.ProcessAllocationWorkflow:

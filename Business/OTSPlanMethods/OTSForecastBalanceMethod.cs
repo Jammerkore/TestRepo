@@ -1287,6 +1287,7 @@ namespace MIDRetail.Business
 				newOTSForecastBalanceMethod.User_RID = User_RID;
 				newOTSForecastBalanceMethod.VariableNumber = VariableNumber;
 				newOTSForecastBalanceMethod.Virtual_IND = Virtual_IND;
+                newOTSForecastBalanceMethod.Template_IND = Template_IND;
                 // Begin Track #5912 - JSmith - Save As needs to clone custom override models
                 if (aCloneCustomOverrideModels &&
                     CustomOLL_RID != Include.NoRID)
@@ -1438,7 +1439,8 @@ namespace MIDRetail.Business
                 overrideLowLevel: GetName.GetOverrideLowLevelsModel(modelRID: _overrideLowLevelRid, SAB: SAB),
                 matrixType: _matrixType,
                 model: GetName.GetForecastBalanceModel(modelRID: _modelRID, SAB: SAB),
-                matrixBasis: new System.Collections.Generic.List<ROBasisDetailProfile>()
+                matrixBasis: new System.Collections.Generic.List<ROBasisDetailProfile>(),
+                isTemplate: Template_IND
                 );
 
             lowLevelInformation.LevelValue = GetName.GetLevelName(lowLevelInformation.LevelType, lowLevelInformation.LevelSequence, lowLevelInformation.LevelOffset, SAB);

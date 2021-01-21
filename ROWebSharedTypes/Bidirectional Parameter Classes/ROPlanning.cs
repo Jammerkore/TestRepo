@@ -173,13 +173,30 @@ namespace Logility.ROWebSharedTypes
             //set { _attributeSetProperties = value; }
         }
 
-        public ROPlanningForecastMethodProperties(KeyValuePair<int, string> kvMethod, string sDescription, int iUserKey,
-            KeyValuePair<int, string> kvMerchandise, bool bHighLevel, bool bLowLevels, KeyValuePair<int, string> kvVersion,
-            KeyValuePair<int, string> kvLowLevel, KeyValuePair<int, string> kvDateRange, ROOverrideLowLevel overrideLowLevel,
-            KeyValuePair<int, string> kvChainForecastVersion, bool bSalesBalance, bool bStockBalance, eApplyTrendOptions applyTrendOptions,
-            float fApplyTrendOptionsValue, KeyValuePair<int, string> kvStoreAttribute
-
-            ) : base(eMethodType.OTSPlan, kvMethod, sDescription, iUserKey)
+        public ROPlanningForecastMethodProperties(
+            KeyValuePair<int, string> kvMethod, 
+            string sDescription, int iUserKey,
+            KeyValuePair<int, string> kvMerchandise, 
+            bool bHighLevel, 
+            bool bLowLevels, 
+            KeyValuePair<int, string> kvVersion,
+            KeyValuePair<int, string> kvLowLevel, 
+            KeyValuePair<int, string> kvDateRange, 
+            ROOverrideLowLevel overrideLowLevel,
+            KeyValuePair<int, string> kvChainForecastVersion, 
+            bool bSalesBalance, 
+            bool bStockBalance, 
+            eApplyTrendOptions applyTrendOptions,
+            float fApplyTrendOptionsValue, 
+            KeyValuePair<int, string> kvStoreAttribute,
+            bool isTemplate = false
+            ) 
+            : base(
+                eMethodType.OTSPlan, 
+                kvMethod, 
+                sDescription, 
+                iUserKey,
+                isTemplate)
         {
             _merchandise = kvMerchandise;
             _highLevel = bHighLevel;
@@ -712,15 +729,47 @@ namespace Logility.ROWebSharedTypes
             set { _endFileExtn = value; }
         }
 
-        public ROPlanningForecastExportProperties(KeyValuePair<int, string> kvpMethod, string sDescription, int iUserKey,
-            ePlanType planType, KeyValuePair<int, string> kvpMerchandise, KeyValuePair<int, string> kvpVersion, KeyValuePair<int, string> kvpTimePeriod,
-            KeyValuePair<int, string> kvpFilter, bool bIsLowLevels, bool bIsLowLevelsOnly, ROLevelInformation lowLevel, ROOverrideLowLevel overrideLowLevel,
-            bool bIsExtractIneligibleStores, ROVariableGroupings alVariableList, bool bUseDefaultSettings, eExportType exportType, string sDelimiter,
-            string sCSVFileExtension, eExportDateType exportDateType, bool bIsExtractPreInitValues, bool bIsExcludeZeroValues,
-            string sFilePath, bool bIsDateStamp, bool bIsTimeStamp, eExportSplitType exportSplitType, int iSplitNumEntries,
-            int iConcurrentProcesses, bool bIsCreateFlagfile, bool bIsCreateEndfile, string sFlagFileExtension, string sEndFileExtension
-
-            ) : base(eMethodType.Export, kvpMethod, sDescription, iUserKey)
+        public ROPlanningForecastExportProperties(
+            KeyValuePair<int, string> kvpMethod, 
+            string sDescription, 
+            int iUserKey,
+            ePlanType planType, 
+            KeyValuePair<int, string> kvpMerchandise, 
+            KeyValuePair<int, string> kvpVersion, 
+            KeyValuePair<int, string> kvpTimePeriod,
+            KeyValuePair<int, string> kvpFilter, 
+            bool bIsLowLevels, 
+            bool bIsLowLevelsOnly, 
+            ROLevelInformation lowLevel, 
+            ROOverrideLowLevel overrideLowLevel,
+            bool bIsExtractIneligibleStores, 
+            ROVariableGroupings alVariableList, 
+            bool bUseDefaultSettings, 
+            eExportType exportType, 
+            string sDelimiter,
+            string sCSVFileExtension, 
+            eExportDateType exportDateType, 
+            bool bIsExtractPreInitValues, 
+            bool bIsExcludeZeroValues,
+            string sFilePath, 
+            bool bIsDateStamp, 
+            bool bIsTimeStamp, 
+            eExportSplitType exportSplitType, 
+            int iSplitNumEntries,
+            int iConcurrentProcesses, 
+            bool bIsCreateFlagfile, 
+            bool bIsCreateEndfile, 
+            string sFlagFileExtension, 
+            string sEndFileExtension,
+            bool isTemplate = false
+            ) 
+            : base(
+                  eMethodType.Export, 
+                  kvpMethod, 
+                  sDescription, 
+                  iUserKey,
+                  isTemplate
+                  )
         {
             _planType = planType;
             _merchandise = kvpMerchandise;
@@ -880,13 +929,34 @@ namespace Logility.ROWebSharedTypes
         }
 
 
-        public ROPlanningGlobalLockUnlockProperties(eMethodType methodType, KeyValuePair<int, string> kvpMethod, string sDescription, int iUserKey,
-            KeyValuePair<int, string> kvpMerchandise, KeyValuePair<int, string> kvpVersion, bool bIsMultilevel,
-            ROLevelInformation FromLevel, ROLevelInformation ToLevel, KeyValuePair<int, string> kvpTimePeriod,
-            ROOverrideLowLevel overrideLowLevel, bool bStoreOptions, bool bChainOptions,
-            KeyValuePair<int, string> kvpStoreAttribute, ArrayList attributeSet, KeyValuePair<int, string> kvpFilter,
-            string sLastProcessedDateTime, string sLastProcessedUser
-            ) : base(methodType, kvpMethod, sDescription, iUserKey)
+        public ROPlanningGlobalLockUnlockProperties(
+            eMethodType methodType, 
+            KeyValuePair<int, string> kvpMethod, 
+            string sDescription, 
+            int iUserKey,
+            KeyValuePair<int, string> kvpMerchandise, 
+            KeyValuePair<int, string> kvpVersion, 
+            bool bIsMultilevel,
+            ROLevelInformation FromLevel, 
+            ROLevelInformation ToLevel, 
+            KeyValuePair<int, string> kvpTimePeriod,
+            ROOverrideLowLevel overrideLowLevel, 
+            bool bStoreOptions, 
+            bool bChainOptions,
+            KeyValuePair<int, string> kvpStoreAttribute, 
+            ArrayList attributeSet, 
+            KeyValuePair<int, string> kvpFilter,
+            string sLastProcessedDateTime, 
+            string sLastProcessedUser,
+            bool isTemplate = false
+            ) 
+            : base(
+                  methodType, 
+                  kvpMethod, 
+                  sDescription, 
+                  iUserKey,
+                  isTemplate
+                  )
         {
             _merchandise = kvpMerchandise;
             _version = kvpVersion;
@@ -940,9 +1010,23 @@ namespace Logility.ROWebSharedTypes
             set { _methodRollupBasisOptions = value; }
         }
 
-        public ROMethodRollupProperties(KeyValuePair<int, string> method, string description, int userKey, KeyValuePair<int, string> merchandise, KeyValuePair<int, string> version,
-            KeyValuePair<int, string> dateRange, List<ROMethodRollupOptionsBasis> methodRollupBasisOptions) :
-            base(eMethodType.Rollup, method, description, userKey)
+        public ROMethodRollupProperties(
+            KeyValuePair<int, string> method, 
+            string description, 
+            int userKey, 
+            KeyValuePair<int, string> merchandise, 
+            KeyValuePair<int, string> version,
+            KeyValuePair<int, string> dateRange, 
+            List<ROMethodRollupOptionsBasis> methodRollupBasisOptions,
+            bool isTemplate = false
+            ) 
+            : base(
+                  eMethodType.Rollup, 
+                  method, 
+                  description, 
+                  userKey,
+                  isTemplate
+                  )
         {
             _merchandise = merchandise;
             _version = version;
@@ -1120,10 +1204,31 @@ namespace Logility.ROWebSharedTypes
         }
 
         #endregion
-        public ROMethodCopyForecastProperties(KeyValuePair<int, string> method, string description, eMethodType emethodType, int userKey, KeyValuePair<int, string> merchandise, KeyValuePair<int, string> version,
-            KeyValuePair<int, string> timePeriod, bool multiLevel, ePlanType planType, KeyValuePair<int, string> storeFilter, ROLevelInformation fromLevel, ROLevelInformation toLevel,
-            ROOverrideLowLevel overrideLowLevel, bool copyPreInitValues, List<ROBasisDetailProfile> basisProfile) :
-            base(emethodType, method, description, userKey)
+        public ROMethodCopyForecastProperties(
+            KeyValuePair<int, string> method, 
+            string description, 
+            eMethodType emethodType, 
+            int userKey, 
+            KeyValuePair<int, string> merchandise, 
+            KeyValuePair<int, string> version,
+            KeyValuePair<int, string> timePeriod, 
+            bool multiLevel, 
+            ePlanType planType, 
+            KeyValuePair<int, string> storeFilter, 
+            ROLevelInformation fromLevel, 
+            ROLevelInformation toLevel,
+            ROOverrideLowLevel overrideLowLevel, 
+            bool copyPreInitValues, 
+            List<ROBasisDetailProfile> basisProfile,
+            bool isTemplate = false
+            ) 
+            : base(
+                  emethodType,
+                  method, 
+                  description, 
+                  userKey,
+                  isTemplate
+                  )
 
         {
             // fields specific to Copy Forecast method
@@ -1280,12 +1385,36 @@ namespace Logility.ROWebSharedTypes
             set { _matrixBasis = value; }
         }
 
-        public ROMethodMatrixBalanceProperties(KeyValuePair<int, string> method, string description, int userKey, KeyValuePair<int, string> filter,
-            KeyValuePair<int, string> highLevelMerchandise, KeyValuePair<int, string> highLevelVersion, KeyValuePair<int, string> dateRange,
-            KeyValuePair<int, string> lowLevelVersion, ROLevelInformation lowLevel, bool ineligibleStores, bool similarStores, KeyValuePair<int, string> variable,
-            eIterationType iterationType, int iterationsCount, eBalanceMode balanceMode, string computationMode, KeyValuePair<int, string> overrideLowLevel,
-            eMatrixType matrixType, KeyValuePair<int, string> model, List<ROBasisDetailProfile> matrixBasis) :
-            base(eMethodType.Rollup, method, description, userKey)
+        public ROMethodMatrixBalanceProperties(
+            KeyValuePair<int, string> method, 
+            string description, 
+            int userKey, 
+            KeyValuePair<int, string> filter,
+            KeyValuePair<int, string> highLevelMerchandise, 
+            KeyValuePair<int, string> highLevelVersion, 
+            KeyValuePair<int, string> dateRange,
+            KeyValuePair<int, string> lowLevelVersion, 
+            ROLevelInformation lowLevel, 
+            bool ineligibleStores,
+            bool similarStores, 
+            KeyValuePair<int, string> variable,
+            eIterationType iterationType, 
+            int iterationsCount, 
+            eBalanceMode balanceMode, 
+            string computationMode, 
+            KeyValuePair<int, string> overrideLowLevel,
+            eMatrixType matrixType, 
+            KeyValuePair<int, string> model, 
+            List<ROBasisDetailProfile> matrixBasis,
+            bool isTemplate = false
+            ) 
+            : base(
+                  eMethodType.Rollup, 
+                  method, 
+                  description,
+                  userKey,
+                  isTemplate
+                  )
         {
             _filter = filter;
             _highLevelMerchandise = highLevelMerchandise;
@@ -1393,11 +1522,31 @@ namespace Logility.ROWebSharedTypes
         }
 
         #endregion
-        public ROMethodForecastSpreadProperties(KeyValuePair<int, string> method, string description, eMethodType emethodType, int userKey, KeyValuePair<int, string> merchandise, KeyValuePair<int, string> version,
-            KeyValuePair<int, string> timePeriod, bool multiLevel, ROLevelInformation fromLevel, ROLevelInformation toLevel, ROOverrideLowLevel overrideLowLevel,
-            eSpreadOption spreadOption, bool ignoreLocks,
-            bool equalizeWeighting, List<ROBasisDetailProfile> basisProfile) :
-            base(emethodType, method, description, userKey)
+        public ROMethodForecastSpreadProperties(
+            KeyValuePair<int, string> method, 
+            string description, 
+            eMethodType emethodType, 
+            int userKey, 
+            KeyValuePair<int, string> merchandise, 
+            KeyValuePair<int, string> version,
+            KeyValuePair<int, string> timePeriod, 
+            bool multiLevel, 
+            ROLevelInformation fromLevel, 
+            ROLevelInformation toLevel, 
+            ROOverrideLowLevel overrideLowLevel,
+            eSpreadOption spreadOption, 
+            bool ignoreLocks,
+            bool equalizeWeighting, 
+            List<ROBasisDetailProfile> basisProfile,
+            bool isTemplate = false
+            ) 
+            : base(
+                  emethodType, 
+                  method, 
+                  description, 
+                  userKey,
+                  isTemplate
+                  )
 
         {
             // fields specific to Forecast Spread method
@@ -1501,12 +1650,27 @@ namespace Logility.ROWebSharedTypes
         }
 
         #endregion
-        public ROPlanningModifySalesProperties(KeyValuePair<int, string> method, string description, int userKey,
-            KeyValuePair<int, string> dateRange, KeyValuePair<int, string> filter, eStoreAverageBy averageBy,
-            List<ROStoreGradeList> storeGradesList, List<ROSellThruList> sellThruList
-            , List<ROMatrixRuleList> matrixRulesList, KeyValuePair<int, string> merchandise,
-            KeyValuePair<int, string> attribute
-            ) : base(eMethodType.ForecastModifySales, method, description, userKey)
+        public ROPlanningModifySalesProperties(
+            KeyValuePair<int, string> method, 
+            string description, 
+            int userKey,
+            KeyValuePair<int, string> dateRange, 
+            KeyValuePair<int, string> filter, 
+            eStoreAverageBy averageBy,
+            List<ROStoreGradeList> storeGradesList, 
+            List<ROSellThruList> sellThruList,
+            List<ROMatrixRuleList> matrixRulesList, 
+            KeyValuePair<int, string> merchandise,
+            KeyValuePair<int, string> attribute,
+            bool isTemplate = false
+            ) 
+            : base(
+                  eMethodType.ForecastModifySales, 
+                  method, 
+                  description, 
+                  userKey,
+                  isTemplate
+                  )
 
         {
             // fields specific to Modify Sales method
@@ -1806,11 +1970,36 @@ namespace Logility.ROWebSharedTypes
             set { _totalVariableList = value; }
         }
 
-        public ROMethodPlanningExtractProperties(KeyValuePair<int, string> kvpMethod, string sDescription, int iUserKey, KeyValuePair<int, string> merchandise, KeyValuePair<int, string> versionFilter,
-            KeyValuePair<int, string> timePeriod_CDR, KeyValuePair<int, string> storeFilter, bool chainIndicator, bool storeIndicator, bool attributeSetIndicator, KeyValuePair<int, string> attribute,
-            bool lowLevelsIndicator, bool lowLevelsOnlyIndicator, ROLevelInformation lowLevel, bool extractIneligibleStoresIndicator,
-            bool excludeZeroValuesIndicator, int numberOfConcurrentProcesses, ROOverrideLowLevel overrideLowLevel, ROVariableGroupings variableList, ROVariableGroupings totalVariableList
-            ) : base(eMethodType.PlanningExtract, kvpMethod, sDescription, iUserKey)
+        public ROMethodPlanningExtractProperties(
+            KeyValuePair<int, string> kvpMethod, 
+            string sDescription, 
+            int iUserKey, 
+            KeyValuePair<int, string> merchandise, 
+            KeyValuePair<int, string> versionFilter,
+            KeyValuePair<int, string> timePeriod_CDR, 
+            KeyValuePair<int, string> storeFilter, 
+            bool chainIndicator, 
+            bool storeIndicator,
+            bool attributeSetIndicator, 
+            KeyValuePair<int, string> attribute,
+            bool lowLevelsIndicator, 
+            bool lowLevelsOnlyIndicator, 
+            ROLevelInformation lowLevel, 
+            bool extractIneligibleStoresIndicator,
+            bool excludeZeroValuesIndicator, 
+            int numberOfConcurrentProcesses, 
+            ROOverrideLowLevel overrideLowLevel, 
+            ROVariableGroupings variableList, 
+            ROVariableGroupings totalVariableList,
+            bool isTemplate = false
+            ) 
+            : base(
+                  eMethodType.PlanningExtract, 
+                  kvpMethod, 
+                  sDescription, 
+                  iUserKey,
+                  isTemplate
+                  )
         {
             _merchandise = merchandise;
             _versionFilter = versionFilter;

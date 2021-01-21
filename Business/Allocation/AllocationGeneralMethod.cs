@@ -690,8 +690,9 @@ namespace MIDRetail.Business.Allocation
 				}
 				newAllocationGeneralMethod.User_RID = User_RID;
 				newAllocationGeneralMethod.Virtual_IND = Virtual_IND;
+                newAllocationGeneralMethod.Template_IND = Template_IND;
 
-				return newAllocationGeneralMethod;
+                return newAllocationGeneralMethod;
 			}
 			catch (Exception exc)
 			{
@@ -779,7 +780,8 @@ namespace MIDRetail.Business.Allocation
                 merchandiseType: EnumTools.VerifyEnumValue(MerchandiseType),
                 genAlloc_HDR: GetName.GetHeader(headerRID: Gen_Alloc_HDR_RID, SAB: SAB),
                 reserveAsBulk: ReserveAsBulk,
-                reserveAsPacks: ReserveAsPacks);
+                reserveAsPacks: ReserveAsPacks,
+                isTemplate: Template_IND);
 
             method.HierarchyLevels = BuildHierarchyLevels();
 
