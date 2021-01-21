@@ -3862,15 +3862,37 @@ namespace MIDRetail.Business.Allocation
                 }
                 _allocationCriteria.ReserveQty = roMethodAllocationOverrideProperties.Reserve;
                 _allocationCriteria.ReserveIsPercent = roMethodAllocationOverrideProperties.PercentInd;
-                OTSPlanRID = roMethodAllocationOverrideProperties.Merchandise.Key;
-                OTSPlanPHL = roMethodAllocationOverrideProperties.MerchandiseHierarchy.Key;
-                OTSPlanPHLSeq = roMethodAllocationOverrideProperties.MerchandiseHierarchy.Value;
-                OTSOnHandRID = roMethodAllocationOverrideProperties.OnHandMerchandise.Key;
-                OTSOnHandPHL = roMethodAllocationOverrideProperties.OnHandMerchandiseHierarchy.Key;
-                OTSOnHandPHLSeq = roMethodAllocationOverrideProperties.OnHandMerchandiseHierarchy.Value;
+                OTSPlanRID = Include.NoRID;
+                OTSPlanPHL = Include.NoRID;
+                OTSPlanPHLSeq = 0;
+                if (roMethodAllocationOverrideProperties.MerchandiseType == eMerchandiseType.Node)
+                {
+                    OTSPlanRID = roMethodAllocationOverrideProperties.Merchandise.Key;
+                }
+                else if (roMethodAllocationOverrideProperties.MerchandiseType == eMerchandiseType.HierarchyLevel
+                    || roMethodAllocationOverrideProperties.MerchandiseType == eMerchandiseType.LevelOffset)
+                {
+                    OTSPlanPHL = roMethodAllocationOverrideProperties.MerchandiseHierarchy.Key;
+                    OTSPlanPHLSeq = roMethodAllocationOverrideProperties.MerchandiseHierarchy.Value;
+                }
+                OTSOnHandRID = Include.NoRID;
+                OTSOnHandPHL = Include.NoRID;
+                OTSOnHandPHLSeq = 0;
+                if (roMethodAllocationOverrideProperties.OnHandMerchandiseType == eMerchandiseType.Node)
+                {
+                    OTSOnHandRID = roMethodAllocationOverrideProperties.OnHandMerchandise.Key;
+                }
+                else if (roMethodAllocationOverrideProperties.OnHandMerchandiseType == eMerchandiseType.HierarchyLevel
+                    || roMethodAllocationOverrideProperties.OnHandMerchandiseType == eMerchandiseType.LevelOffset)
+                {
+                    OTSOnHandPHL = roMethodAllocationOverrideProperties.OnHandMerchandiseHierarchy.Key;
+                    OTSOnHandPHLSeq = roMethodAllocationOverrideProperties.OnHandMerchandiseHierarchy.Value;
+                }
                 if (roMethodAllocationOverrideProperties.OnHandFactorIsSet)
                 {
                     OTSPlanFactorPercent = (double)roMethodAllocationOverrideProperties.OnHandFactor;
+                    UseFactorPctDefault = false;
+                    _allocationCriteria.UseFactorPctDefault = false;
                 }
                 else
                 {
