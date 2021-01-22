@@ -441,13 +441,19 @@ namespace Logility.ROWeb
             string message = null;
 
             if (_ABM == null
-                || methodParm.ROMethodProperties.Method.Key == Include.NoRID)
+                || methodParm.ROMethodProperties.Method.Key == Include.NoRID
+                || methodParm.ROMethodProperties.MethodType != _ABM.MethodType
+                )
             {
                 // check if already have method in the collection.  If not create it.
                 if (!_workflowMethods.TryGetValue(methodParm.ROMethodProperties.Method.Key, out _ABM))
                 {
                     _ABM = (ApplicationBaseMethod)GetMethods.GetMethod(methodParm.ROMethodProperties.Method.Key, methodParm.ROMethodProperties.MethodType);
-                    _workflowMethods[_ABM.Key] = _ABM;
+                    // only save if not new method
+                    if (methodParm.ROMethodProperties.Method.Key != Include.NoRID)
+                    {
+                        _workflowMethods[_ABM.Key] = _ABM;
+                    }
                 }
                 FunctionSecurity = _ABM.GetFunctionSecurity();
                 _ABM.User_RID = methodParm.ROMethodProperties.UserKey;
