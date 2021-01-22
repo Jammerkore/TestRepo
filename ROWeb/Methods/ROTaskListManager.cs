@@ -681,9 +681,9 @@ namespace Logility.ROWeb
 
                 ScheduleDataLayer.CommitData();
             }
-            catch
+            catch (Exception ex)
             {
-
+                throw;
             }
             finally
             {
