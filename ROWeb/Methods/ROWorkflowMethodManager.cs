@@ -293,6 +293,14 @@ namespace Logility.ROWeb
             int workflowStep = Include.Undefined
             )
         {
+            List<KeyValuePair<int, string>> methodList = new List<KeyValuePair<int, string>>();
+
+            // if it is not a method, return an empty list
+            if (!Enum.IsDefined(typeof(eMethodTypeUI), (int)methodType))
+            {
+                return methodList;
+            }
+
             DataTable methodsDataTable = WmManager.GetMethodList(methodType, SAB.ClientServerSession.UserRID);
 
             // Get only template methods
@@ -306,8 +314,7 @@ namespace Logility.ROWeb
             }
 
             methodsDataTable = ApplicationUtilities.SortDataTable(dataTable: filteredDataTable, sColName: "METHOD_NAME", bAscending: true);
-
-            List<KeyValuePair<int, string>> methodList;
+            
             methodList =  ApplicationUtilities.DataTableToKeyValues(methodsDataTable, "METHOD_RID", "METHOD_NAME", true);
 
             int customKey = Include.Undefined;
