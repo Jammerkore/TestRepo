@@ -2704,6 +2704,8 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         KeyValuePair<int, string> _storeGradesAttribute;
         [DataMember(IsRequired = true)]
+        KeyValuePair<int, string> _storeGradesAttributeSet;
+        [DataMember(IsRequired = true)]
         eMinMaxType _inventoryIndicator;
         [DataMember(IsRequired = true)]
         eMerchandiseType _inventoryBasisMerchType;
@@ -2796,11 +2798,28 @@ namespace Logility.ROWebSharedTypes
             set { _merchandiseType = value; }
         }
 
+        /// <summary>
+		/// Gets a flag identifying if the  merchandise is set.
+		/// </summary>
+		public bool MerchandiseIsSet
+        {
+            get { return !_merchandise.Equals(default(KeyValuePair<int, string>)); }
+        }
+
         public KeyValuePair<int, string> Merchandise
         {
             get { return _merchandise; }
             set { _merchandise = value; }
         }
+
+        /// <summary>
+		/// Gets a flag identifying if the merchandise hierarchy is set.
+		/// </summary>
+		public bool MerchandiseHierarchyIsSet
+        {
+            get { return !_merchandiseHierarchy.Equals(default(KeyValuePair<int, int>)); }
+        }
+
         public KeyValuePair<int, int> MerchandiseHierarchy
         {
             get { return _merchandiseHierarchy; }
@@ -2813,10 +2832,26 @@ namespace Logility.ROWebSharedTypes
             set { _onHandMerchandiseType = value; }
         }
 
+        /// <summary>
+		/// Gets a flag identifying if the on hand merchandise is set.
+		/// </summary>
+		public bool OnHandMerchandiseIsSet
+        {
+            get { return !_onHandMerchandise.Equals(default(KeyValuePair<int, string>)); }
+        }
+
         public KeyValuePair<int, string> OnHandMerchandise
         {
             get { return _onHandMerchandise; }
             set { _onHandMerchandise = value; }
+        }
+
+        /// <summary>
+		/// Gets a flag identifying if the on hand merchandise hierarchy is set.
+		/// </summary>
+		public bool OnHandMerchandiseHierarchyIsSet
+        {
+            get { return !_onHandMerchandiseHierarchy.Equals(default(KeyValuePair<int, int>)); }
         }
 
         public KeyValuePair<int, int> OnHandMerchandiseHierarchy
@@ -2885,6 +2920,20 @@ namespace Logility.ROWebSharedTypes
         {
             get { return _storeGradesAttribute; }
             set { _storeGradesAttribute = value; }
+        }
+
+        /// <summary>
+		/// Gets a flag identifying if the store grades attribute set is set.
+		/// </summary>
+		public bool StoreGradesAttributeSetIsSet
+        {
+            get { return !_storeGradesAttributeSet.Equals(default(KeyValuePair<int, string>)); }
+        }
+
+        public KeyValuePair<int, string> StoreGradesAttributeSet
+        {
+            get { return _storeGradesAttributeSet; }
+            set { _storeGradesAttributeSet = value; }
         }
 
         public eMinMaxType InventoryIndicator
@@ -3010,6 +3059,7 @@ namespace Logility.ROWebSharedTypes
             List<ROMethodOverrideColorProperties> colorMinMax, 
             List<ROMethodOverridePackRoundingProperties> packRounding, 
             List<ROMethodOverrideVSWAttributeSet> vswAttributeSet,
+            KeyValuePair<int, string> storeGradesAttributeSet = default(KeyValuePair<int, string>),
             bool isTemplate = false) 
             : base(
                   eMethodType.AllocationOverride, 
@@ -3041,6 +3091,7 @@ namespace Logility.ROWebSharedTypes
             _capacityAttribute = capacityAttribute;
             _exceedCapacity = exceedCapacity;
             _storeGradesAttribute = storeGradesAttribute;
+            _storeGradesAttributeSet = storeGradesAttributeSet;
             if (!Enum.IsDefined(typeof(eMinMaxType), inventoryIndicator))
             {
                 throw new Exception("Value " + inventoryIndicator.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);

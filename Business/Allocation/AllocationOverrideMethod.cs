@@ -3430,6 +3430,12 @@ namespace MIDRetail.Business.Allocation
             double? reserveAsBulk = null;
             double? reserveAsPacks = null;
             double? onHandFactor = null;
+            KeyValuePair<int, string> merchandise = default(KeyValuePair<int, string>);
+            KeyValuePair<int, string> onHandMerchandise = default(KeyValuePair<int, string>);
+            KeyValuePair<int, int> merchandiseHierarchy = default(KeyValuePair<int, int>);
+            KeyValuePair<int, int> onHandMerchandiseHierarchy = default(KeyValuePair<int, int>);
+            int capacityAttributeKey = Include.NoRID;
+            int storeGradesAttributeKey = Include.NoRID;
 
             eMerchandiseType otsMerchType, otsOnHandType, ibMerchType;
             eMinMaxType localMinMaxType;
@@ -3501,6 +3507,48 @@ namespace MIDRetail.Business.Allocation
                 onHandFactor = OTSPlanFactorPercent;
             }
 
+            if (otsMerchType != eMerchandiseType.Undefined)
+            {
+                merchandise = GetName.GetLevelKeyValuePair(
+                    merchandiseType: otsMerchType,
+                    nodeRID: OTSPlanRID,
+                    merchPhRID: OTSPlanPHL,
+                    merchPhlSequence: OTSPlanPHLSeq,
+                    SAB: SAB
+                    );
+                merchandiseHierarchy = new KeyValuePair<int, int>(OTSPlanPHL, OTSPlanPHLSeq);
+            }
+
+            if (otsMerchType != eMerchandiseType.Undefined)
+            {
+                onHandMerchandise = GetName.GetLevelKeyValuePair(
+                    merchandiseType: otsOnHandType,
+                    nodeRID: OTSOnHandRID,
+                    merchPhRID: OTSOnHandPHL,
+                    merchPhlSequence: OTSOnHandPHLSeq,
+                    SAB: SAB
+                    );
+                onHandMerchandiseHierarchy = new KeyValuePair<int, int>(OTSOnHandPHL, OTSOnHandPHLSeq);
+            }
+
+            if (_mao.Store_Group_RID > 0)
+            {
+                capacityAttributeKey = _mao.Store_Group_RID;
+            }
+            else
+            {
+                capacityAttributeKey = SAB.ClientServerSession.GlobalOptions.AllocationStoreGroupRID;
+            }
+
+            if (_mao.Tab_Store_Group_RID > 0)
+            {
+                storeGradesAttributeKey = _mao.Tab_Store_Group_RID;
+            }
+            else
+            {
+                storeGradesAttributeKey = SAB.ClientServerSession.GlobalOptions.AllocationStoreGroupRID;
+            }
+
             ROMethodAllocationOverrideProperties method = new ROMethodAllocationOverrideProperties(
                 method: GetName.GetMethod(method: this),
                 description: Method_Description,
@@ -3513,19 +3561,19 @@ namespace MIDRetail.Business.Allocation
                 reserveAsBulk: reserveAsBulk,
                 reserveAsPacks: reserveAsPacks,
                 merchandiseType: otsMerchType,
-                merchandise: GetName.GetLevelKeyValuePair(merchandiseType: otsMerchType, nodeRID: OTSPlanRID, merchPhRID: OTSPlanPHL, merchPhlSequence: OTSPlanPHLSeq, SAB: SAB),
-                merchandiseHierarchy: new KeyValuePair<int, int>(OTSPlanPHL, OTSPlanPHLSeq),
+                merchandise: merchandise,
+                merchandiseHierarchy: merchandiseHierarchy,
                 onHandMerchandiseType: otsOnHandType,
-                onHandMerchandise: GetName.GetLevelKeyValuePair(merchandiseType: otsOnHandType, nodeRID: OTSOnHandRID, merchPhRID: OTSOnHandPHL, merchPhlSequence: OTSOnHandPHLSeq, SAB: SAB),
-                onHandMerchandiseHierarchy: new KeyValuePair<int, int>(OTSOnHandPHL, OTSOnHandPHLSeq),
+                onHandMerchandise: onHandMerchandise,
+                onHandMerchandiseHierarchy: onHandMerchandiseHierarchy,
                 onHandFactor: onHandFactor,
                 colorMult: _mao.All_Color_Multiple,
                 sizeMult: _mao.All_Size_Multiple,
                 allColorMin: _mao.All_Color_Minimum,
                 allColorMax: _mao.All_Color_Maximum,
-                capacityAttribute: GetName.GetAttributeName(key: _mao.Store_Group_RID),
+                capacityAttribute: GetName.GetAttributeName(key: capacityAttributeKey),
                 exceedCapacity: Include.ConvertCharToBool(_mao.Exceed_Capacity_Ind),
-                storeGradesAttribute: GetName.GetAttributeName(key: _mao.Tab_Store_Group_RID),
+                storeGradesAttribute: GetName.GetAttributeName(key: storeGradesAttributeKey),
                 inventoryIndicator: EnumTools.VerifyEnumValue(localMinMaxType),
                 inventoryBasisMerchType: EnumTools.VerifyEnumValue(ibMerchType),
                 inventoryBasisMerchandise: GetName.GetLevelKeyValuePair(merchandiseType: EnumTools.VerifyEnumValue(ibMerchType), 
@@ -3637,33 +3685,53 @@ namespace MIDRetail.Business.Allocation
             bool localExceedCapacity;
             double? localExceedByPct;
             DataTable dtCapacity = _dsOverRide.Tables["Capacity"];
-            foreach (DataRow dr in dtCapacity.Rows)
+            if (dtCapacity.Rows.Count > 0)
             {
-                if (dr["ExceedChar"] != System.DBNull.Value)
+                foreach (DataRow dr in dtCapacity.Rows)
                 {
-                    localExceedCapacity = Include.ConvertCharToBool(Convert.ToChar(dr["ExceedChar"], CultureInfo.CurrentUICulture));
+                    if (dr["ExceedChar"] != System.DBNull.Value)
+                    {
+                        localExceedCapacity = Include.ConvertCharToBool(Convert.ToChar(dr["ExceedChar"], CultureInfo.CurrentUICulture));
+                    }
+                    else
+                    {
+                        localExceedCapacity = false;
+                    }
+
+                    if (dr["Exceed by %"] != System.DBNull.Value)
+                    {
+                        localExceedByPct = Convert.ToDouble(dr["Exceed by %"], CultureInfo.CurrentUICulture);
+                    }
+                    else
+                    {
+                        localExceedByPct = null;
+                    }
+
+                    ROMethodOverrideCapacityProperties capacities = new ROMethodOverrideCapacityProperties(
+                        attributeSet: GetName.GetAttributeSetName(Convert.ToInt32(dr["SglRID"], CultureInfo.CurrentUICulture)),
+                        exceedCapacity: localExceedCapacity,
+                        exceedByPct: localExceedByPct
+                        );
+
+                    method.Capacity.Add(capacities);
                 }
-                else
+            }
+            else if (capacityAttributeKey != Include.NoRID)
+            {
+                ProfileList attributeSetList = StoreMgmt.StoreGroup_GetLevelListViewList(capacityAttributeKey);
+                foreach (StoreGroupLevelListViewProfile attributeSet in attributeSetList)
                 {
                     localExceedCapacity = false;
-                }
-
-                if (dr["Exceed by %"] != System.DBNull.Value)
-                {
-                    localExceedByPct = Convert.ToDouble(dr["Exceed by %"], CultureInfo.CurrentUICulture);
-                }
-                else
-                {
                     localExceedByPct = null;
+
+                    ROMethodOverrideCapacityProperties capacities = new ROMethodOverrideCapacityProperties(
+                        attributeSet: GetName.GetAttributeSetName(attributeSet.Key),
+                        exceedCapacity: localExceedCapacity,
+                        exceedByPct: localExceedByPct
+                        );
+
+                    method.Capacity.Add(capacities);
                 }
-
-                ROMethodOverrideCapacityProperties capacities = new ROMethodOverrideCapacityProperties(
-                    attributeSet: GetName.GetAttributeSetName(Convert.ToInt32(dr["SglRID"], CultureInfo.CurrentUICulture)),
-                    exceedCapacity: localExceedCapacity,
-                    exceedByPct: localExceedByPct
-                    );
-
-                method.Capacity.Add(capacities);
             }
 
             DataTable dtColor = _dsOverRide.Tables["Colors"];

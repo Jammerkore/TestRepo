@@ -395,9 +395,11 @@ namespace Logility.ROWeb
                 }
             }
 
-            if (!_ABM.AuthorizedToView(SAB.ClientServerSession, SAB.ClientServerSession.UserRID))
+            if (methodParm.Key != Include.NoRID
+                && !_ABM.AuthorizedToView(SAB.ClientServerSession, SAB.ClientServerSession.UserRID))
             {
-                return new ROMethodPropertiesOut(eROReturnCode.Failure, null, ROInstanceID, null);
+                message = SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_NotAuthorizedForItem);
+                return new ROMethodPropertiesOut(eROReturnCode.Failure, message, ROInstanceID, null);
             }
 
             ROMethodProperties mp = _ABM.MethodGetData(successful: out successful, message: ref message, processingApply: processingApply);
