@@ -3427,6 +3427,7 @@ namespace MIDRetail.Business.Allocation
             successful = true;
             int? storeGradeWeekCount = null;
             double? percentNeedLimit = null;
+            double? reserve = null;
             double? reserveAsBulk = null;
             double? reserveAsPacks = null;
             double? onHandFactor = null;
@@ -3490,6 +3491,14 @@ namespace MIDRetail.Business.Allocation
             if (!UsePctNeedDefault)
             {
                 percentNeedLimit = _mao.Percent_Need_Limit;
+            }
+
+            if (ReserveQty != Include.UndefinedReserve)
+            {
+                if (ReserveQty > 0)
+                {
+                    reserve = ReserveQty;
+                }
             }
 
             if (ReserveAsBulk > 0)
@@ -3556,7 +3565,7 @@ namespace MIDRetail.Business.Allocation
                 storeGradeWeekCount: storeGradeWeekCount,
                 percentNeedLimit: percentNeedLimit,
                 exceedMaxInd: Include.ConvertCharToBool(_mao.Exceed_Maximums_Ind),
-                reserve: _mao.Reserve,
+                reserve: reserve,
                 percentInd: Include.ConvertCharToBool(_mao.Percent_Ind),
                 reserveAsBulk: reserveAsBulk,
                 reserveAsPacks: reserveAsPacks,
@@ -3928,7 +3937,15 @@ namespace MIDRetail.Business.Allocation
                     _mao.UsePctNeedDefault = true;
                     _allocationCriteria.UsePctNeedDefault = true;
                 }
-                _allocationCriteria.ReserveQty = roMethodAllocationOverrideProperties.Reserve;
+                if (roMethodAllocationOverrideProperties.ReserveIsSet)
+                {
+                    _allocationCriteria.ReserveQty = (double)roMethodAllocationOverrideProperties.Reserve;
+                }
+                else
+                {
+                    _mao.Reserve = 0;
+                    _allocationCriteria.ReserveQty = 0;
+                }
                 _allocationCriteria.ReserveIsPercent = roMethodAllocationOverrideProperties.PercentInd;
                 OTSPlanRID = Include.NoRID;
                 OTSPlanPHL = Include.NoRID;

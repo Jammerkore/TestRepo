@@ -2666,7 +2666,7 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         bool _exceedMaxInd;
         [DataMember(IsRequired = true)]
-        double _reserve;
+        double? _reserve;
         [DataMember(IsRequired = true)]
         bool _percentInd;
         [DataMember(IsRequired = true)]
@@ -2758,7 +2758,12 @@ namespace Logility.ROWebSharedTypes
             set { _exceedMaxInd = value; }
         }
 
-        public double Reserve
+        public bool ReserveIsSet
+        {
+            get { return _reserve != null; }
+        }
+
+        public double? Reserve
         {
             get { return _reserve; }
             set { _reserve = value; }
@@ -3030,7 +3035,7 @@ namespace Logility.ROWebSharedTypes
             int? storeGradeWeekCount, 
             double? percentNeedLimit,
             bool exceedMaxInd, 
-            double reserve, 
+            double? reserve, 
             bool percentInd, 
             double? reserveAsBulk, 
             double? reserveAsPacks,
