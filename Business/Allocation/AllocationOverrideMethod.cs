@@ -3422,6 +3422,9 @@ namespace MIDRetail.Business.Allocation
             }
 
         }
+
+        int _storeGradesAttributeSetKey = Include.NoRID;
+
         override public ROMethodProperties MethodGetData(out bool successful, ref string message, bool processingApply = false)
         {
             successful = true;
@@ -3437,6 +3440,7 @@ namespace MIDRetail.Business.Allocation
             KeyValuePair<int, int> onHandMerchandiseHierarchy = default(KeyValuePair<int, int>);
             int capacityAttributeKey = Include.NoRID;
             int storeGradesAttributeKey = Include.NoRID;
+            ProfileList attributeSetList;
 
             eMerchandiseType otsMerchType, otsOnHandType, ibMerchType;
             eMinMaxType localMinMaxType;
@@ -3558,6 +3562,16 @@ namespace MIDRetail.Business.Allocation
                 storeGradesAttributeKey = SAB.ClientServerSession.GlobalOptions.AllocationStoreGroupRID;
             }
 
+            // get key of first set in attribute
+            if (_storeGradesAttributeSetKey == Include.NoRID)
+            {
+                attributeSetList = StoreMgmt.StoreGroup_GetLevelListViewList(capacityAttributeKey);
+                if (attributeSetList.Count > 0)
+                {
+                    _storeGradesAttributeSetKey = attributeSetList[0].Key;
+                }
+            }
+
             ROMethodAllocationOverrideProperties method = new ROMethodAllocationOverrideProperties(
                 method: GetName.GetMethod(method: this),
                 description: Method_Description,
@@ -3583,6 +3597,7 @@ namespace MIDRetail.Business.Allocation
                 capacityAttribute: GetName.GetAttributeName(key: capacityAttributeKey),
                 exceedCapacity: Include.ConvertCharToBool(_mao.Exceed_Capacity_Ind),
                 storeGradesAttribute: GetName.GetAttributeName(key: storeGradesAttributeKey),
+                storeGradesAttributeSet: GetName.GetAttributeSetName(key: _storeGradesAttributeSetKey),
                 inventoryIndicator: EnumTools.VerifyEnumValue(localMinMaxType),
                 inventoryBasisMerchType: EnumTools.VerifyEnumValue(ibMerchType),
                 inventoryBasisMerchandise: GetName.GetLevelKeyValuePair(merchandiseType: EnumTools.VerifyEnumValue(ibMerchType), 
@@ -3594,7 +3609,7 @@ namespace MIDRetail.Business.Allocation
                 inventoryBasisMerchandiseHierarchy: new KeyValuePair<int, int>(_mao.IB_MERCH_PH_RID, _mao.IB_MERCH_PHL_SEQ),
                 vswAttribute: GetName.GetAttributeName(key: SAB.ClientServerSession.GlobalOptions.OTSPlanStoreGroupRID),
                 doNotApplyVSW: _applyVSW,   // the panel needs the value to be flip-flopped - the db stores "applyVSW" but the panel displays "DoNotApplyVSW"
-                storeGradeValues: new System.Collections.Generic.List<ROAttributeSetStoreGrade>(),
+                storeGradeValues: null,
                 capacity: new System.Collections.Generic.List<ROMethodOverrideCapacityProperties>(),
                 colorMinMax: new System.Collections.Generic.List<ROMethodOverrideColorProperties>(),
                 packRounding: new System.Collections.Generic.List<ROMethodOverridePackRoundingProperties>(),
@@ -3622,13 +3637,19 @@ namespace MIDRetail.Business.Allocation
             foreach (DataRow dr in dtStoreGrades.Rows)
             {
                 int sglRID = Convert.ToInt32(dr["SGLRID"], CultureInfo.CurrentUICulture);
+
+                if (sglRID != _storeGradesAttributeSetKey)
+                {
+                    continue;
+                }
+
                 if (myAttributeSet == null
                     || sglRID != myAttributeSet.AttributeSet.Key)
                 {
                     // Create store grade instance for attribute
                     myAttributeSet = new ROAttributeSetStoreGrade();
                     myAttributeSet.AttributeSet = GetName.GetAttributeSetName(key: sglRID);
-                    method.StoreGradeValues.Add(myAttributeSet);
+                    method.StoreGradeValues = myAttributeSet;
                 }
 
                 ROAllocationStoreGrade storeGrades = new ROAllocationStoreGrade();
@@ -3727,7 +3748,7 @@ namespace MIDRetail.Business.Allocation
             }
             else if (capacityAttributeKey != Include.NoRID)
             {
-                ProfileList attributeSetList = StoreMgmt.StoreGroup_GetLevelListViewList(capacityAttributeKey);
+                attributeSetList = StoreMgmt.StoreGroup_GetLevelListViewList(capacityAttributeKey);
                 foreach (StoreGroupLevelListViewProfile attributeSet in attributeSetList)
                 {
                     localExceedCapacity = false;
@@ -4098,7 +4119,8 @@ namespace MIDRetail.Business.Allocation
                 _dsOverRide.Tables["StoreGrades"].Rows.Clear();
                 i = 0;
 
-                foreach (ROAttributeSetStoreGrade storeGrade in roMethodAllocationOverrideProperties.StoreGradeValues)
+                //foreach (ROAttributeSetStoreGrade storeGrade in roMethodAllocationOverrideProperties.StoreGradeValues)
+                ROAttributeSetStoreGrade storeGrade = roMethodAllocationOverrideProperties.StoreGradeValues;
                 {
                     foreach (ROAllocationStoreGrade setStoreGrades in storeGrade.StoreGrades)
                     {
@@ -4152,6 +4174,12 @@ namespace MIDRetail.Business.Allocation
                 else
                 {
                     _applyVSW = true;
+                }
+
+                // Save selected attribute set to populate duing get.
+                if (roMethodAllocationOverrideProperties.StoreGradesAttributeSetIsSet)
+                {
+                    _storeGradesAttributeSetKey = roMethodAllocationOverrideProperties.StoreGradesAttributeSet.Key;
                 }
 
                 return true;

@@ -2718,7 +2718,7 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         bool _doNotApplyVSW;
         [DataMember(IsRequired = true)]
-        private List<ROAttributeSetStoreGrade> _storeGradeValues;
+        private ROAttributeSetStoreGrade _storeGradeValues;
         [DataMember(IsRequired = true)]
         private List<ROMethodOverrideCapacityProperties> _capacity;
         [DataMember(IsRequired = true)]
@@ -2997,7 +2997,7 @@ namespace Logility.ROWebSharedTypes
             set { _doNotApplyVSW = value; }
         }
 
-        public List<ROAttributeSetStoreGrade> StoreGradeValues
+        public ROAttributeSetStoreGrade StoreGradeValues
         {
             get { return _storeGradeValues; }
             set { _storeGradeValues = value; }
@@ -3059,7 +3059,7 @@ namespace Logility.ROWebSharedTypes
             KeyValuePair<int, int> inventoryBasisMerchandiseHierarchy,
             KeyValuePair<int, string> vswAttribute, 
             bool doNotApplyVSW, 
-            List<ROAttributeSetStoreGrade> storeGradeValues, 
+            ROAttributeSetStoreGrade storeGradeValues, 
             List<ROMethodOverrideCapacityProperties> capacity,
             List<ROMethodOverrideColorProperties> colorMinMax, 
             List<ROMethodOverridePackRoundingProperties> packRounding, 
