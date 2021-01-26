@@ -12122,7 +12122,7 @@ namespace MIDRetail.Business.Allocation
                         }
                         if (velocityGrade.MinimumIsSet)
                         {
-                            inputMinStock = velocityGrade.Minimum;
+                            inputMinStock = (int)velocityGrade.Minimum;
                         }
                         if (minStock != inputMinStock)
                         {
@@ -12137,7 +12137,7 @@ namespace MIDRetail.Business.Allocation
                         }
                         if (velocityGrade.MaximumIsSet)
                         {
-                            inputMaxStock = velocityGrade.Maximum;
+                            inputMaxStock = (int)velocityGrade.Maximum;
                         }
                         if (maxStock != inputMaxStock)
                         {

@@ -338,10 +338,20 @@ namespace Logility.ROWeb
         public static List<ROTreeNodeOut> BuildMethodNode(eROApplicationType applicationType, ApplicationBaseMethod abm)
         {
             List<ROTreeNodeOut> nodeList = new List<ROTreeNodeOut>();
+            string name;
+
+            if (abm.Template_IND)
+            {
+                name = abm.Name;
+            }
+            else
+            {
+                name = Include.Custom;
+            }
 
             nodeList.Add(new ROTreeNodeOut(
                     key: abm.Key,
-                    text: abm.Name,
+                    text: name,
                     ownerUserRID: abm.User_RID,
                     treeNodeType: eTreeNodeType.ObjectNode,
                     profileType: abm.ProfileType,

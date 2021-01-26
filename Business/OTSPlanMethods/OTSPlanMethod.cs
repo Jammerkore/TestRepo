@@ -6215,8 +6215,14 @@ namespace MIDRetail.Business
                     smmp.Boundary = sg.StoreGrade.Key;
                     smmp.StoreGroupLevelRid = sg.StoreGroupLevel.Key;
                     smmp.HN_RID = sg.Merchandise.Key;
-                    smmp.MinimumStock = sg.Minimum;
-                    smmp.MaximumStock = sg.Maximum;
+                    if (sg.MinimumIsSet)
+                    {
+                        smmp.MinimumStock = (int)sg.Minimum;
+                    }
+                    if (sg.MaximumIsSet)
+                    {
+                        smmp.MaximumStock = (int)sg.Maximum;
+                    }
                     smmp.DateRangeRid = sg.DateRange.Key;
                     glnf.Stock_MinMax.Add(smmp);
                 }

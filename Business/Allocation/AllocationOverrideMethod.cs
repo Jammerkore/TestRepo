@@ -3429,6 +3429,10 @@ namespace MIDRetail.Business.Allocation
         {
             successful = true;
             int? storeGradeWeekCount = null;
+            int? colorMultiple = null;
+            int? sizeMultiple = null;
+            int? allColorMinimum = null;
+            int? allColorMaximum = null;
             double? percentNeedLimit = null;
             double? reserve = null;
             double? reserveAsBulk = null;
@@ -3572,6 +3576,26 @@ namespace MIDRetail.Business.Allocation
                 }
             }
 
+            if ( _mao.All_Color_Multiple > 1)
+            {
+                colorMultiple = _mao.All_Color_Multiple;
+            }
+
+            if (_mao.All_Size_Multiple > 1)
+            {
+                sizeMultiple = _mao.All_Size_Multiple;
+            }
+
+            if (!_allocationCriteria.UseAllColorsMinDefault)
+            {
+                allColorMinimum = _mao.All_Color_Minimum;
+            }
+
+            if (!_allocationCriteria.UseAllColorsMaxDefault)
+            {
+                allColorMaximum = _mao.All_Color_Maximum;
+            }
+
             ROMethodAllocationOverrideProperties method = new ROMethodAllocationOverrideProperties(
                 method: GetName.GetMethod(method: this),
                 description: Method_Description,
@@ -3590,10 +3614,10 @@ namespace MIDRetail.Business.Allocation
                 onHandMerchandise: onHandMerchandise,
                 onHandMerchandiseHierarchy: onHandMerchandiseHierarchy,
                 onHandFactor: onHandFactor,
-                colorMult: _mao.All_Color_Multiple,
-                sizeMult: _mao.All_Size_Multiple,
-                allColorMin: _mao.All_Color_Minimum,
-                allColorMax: _mao.All_Color_Maximum,
+                colorMult: colorMultiple,
+                sizeMult: sizeMultiple,
+                allColorMin: allColorMinimum,
+                allColorMax: allColorMaximum,
                 capacityAttribute: GetName.GetAttributeName(key: capacityAttributeKey),
                 exceedCapacity: Include.ConvertCharToBool(_mao.Exceed_Capacity_Ind),
                 storeGradesAttribute: GetName.GetAttributeName(key: storeGradesAttributeKey),
@@ -3661,7 +3685,7 @@ namespace MIDRetail.Business.Allocation
                 }
                 else
                 {
-                    storeGrades.Minimum = System.Int32.MinValue;
+                    storeGrades.Minimum = null;
                 }
 
                 if (dr["Allocation Max"] != System.DBNull.Value)
@@ -3670,7 +3694,7 @@ namespace MIDRetail.Business.Allocation
                 }
                 else
                 {
-                    storeGrades.Maximum = System.Int32.MaxValue;
+                    storeGrades.Maximum = null;
                 }
 
                 if (dr["Min Ad"] != System.DBNull.Value)
@@ -3679,7 +3703,7 @@ namespace MIDRetail.Business.Allocation
                 }
                 else
                 {
-                    storeGrades.AdMinimum = System.Int32.MinValue;
+                    storeGrades.AdMinimum = null;
                 }
 
                 if (dr["Color Min"] != System.DBNull.Value)
@@ -3688,7 +3712,7 @@ namespace MIDRetail.Business.Allocation
                 }
                 else
                 {
-                    storeGrades.ColorMinimum = System.Int32.MinValue;
+                    storeGrades.ColorMinimum = null;
                 }
 
                 if (dr["Color Max"] != System.DBNull.Value)
@@ -3697,7 +3721,7 @@ namespace MIDRetail.Business.Allocation
                 }
                 else
                 {
-                    storeGrades.ColorMaximum = System.Int32.MaxValue;
+                    storeGrades.ColorMaximum = null;
                 }
 
                 if (dr["Ship Up To"] != System.DBNull.Value)
@@ -3706,7 +3730,7 @@ namespace MIDRetail.Business.Allocation
                 }
                 else
                 {
-                    storeGrades.ShipUpTo = System.Int32.MinValue;
+                    storeGrades.ShipUpTo = null;
                 }
 
                 myAttributeSet.StoreGrades.Add(storeGrades);
@@ -4005,10 +4029,42 @@ namespace MIDRetail.Business.Allocation
                     UseFactorPctDefault = true;
                     _allocationCriteria.UseFactorPctDefault = true;
                 }
-                _allocationCriteria.AllColorMultiple = roMethodAllocationOverrideProperties.ColorMult;
-                _allocationCriteria.AllSizeMultiple = roMethodAllocationOverrideProperties.SizeMult;
-                AllColorMinimum = roMethodAllocationOverrideProperties.AllColorMin;
-                AllColorMaximum = roMethodAllocationOverrideProperties.AllColorMax;
+                if (roMethodAllocationOverrideProperties.ColorMultIsSet
+                    && (int)roMethodAllocationOverrideProperties.ColorMult > 1)
+                {
+                    _allocationCriteria.AllColorMultiple = (int)roMethodAllocationOverrideProperties.ColorMult;
+                }
+                else
+                {
+                    _allocationCriteria.AllColorMultiple = 1;
+                }
+                if (roMethodAllocationOverrideProperties.SizeMultIsSet
+                    && (int)roMethodAllocationOverrideProperties.SizeMult > 1)
+                {
+                    _allocationCriteria.AllSizeMultiple = (int)roMethodAllocationOverrideProperties.SizeMult;
+                }
+                else
+                {
+                    _allocationCriteria.AllSizeMultiple = 1;
+                }
+                if (roMethodAllocationOverrideProperties.AllColorMinIsSet)
+                {
+                    AllColorMinimum = (int)roMethodAllocationOverrideProperties.AllColorMin;
+                }
+                else
+                {
+                    UseAllColorsMinDefault = true;
+                    _allocationCriteria.UseAllColorsMinDefault = true;
+                }
+                if (roMethodAllocationOverrideProperties.AllColorMaxIsSet)
+                {
+                    AllColorMaximum = (int)roMethodAllocationOverrideProperties.AllColorMax;
+                }
+                else
+                {
+                    UseAllColorsMaxDefault = true;
+                    _allocationCriteria.UseAllColorsMaxDefault = true;
+                }
                 _allocationCriteria.CapacityStoreGroupRID = roMethodAllocationOverrideProperties.CapacityAttribute.Key;
                 _allocationCriteria.GradeStoreGroupRID = roMethodAllocationOverrideProperties.StoreGradesAttribute.Key;
                 _allocationCriteria.ExceedCapacity = roMethodAllocationOverrideProperties.ExceedCapacity;
@@ -4047,9 +4103,32 @@ namespace MIDRetail.Business.Allocation
                     _allocationCriteria.ReserveAsPacks = 0;
                 }
                 //InventoryInd = roMethodAllocationOverrideProperties.InventoryIndicator;
-                MERCH_HN_RID = roMethodAllocationOverrideProperties.InventoryBasisMerchandise.Key;
-                MERCH_PH_RID = roMethodAllocationOverrideProperties.InventoryBasisMerchandiseHierarchy.Key;
-                MERCH_PHL_SEQ = roMethodAllocationOverrideProperties.InventoryBasisMerchandiseHierarchy.Value;
+                
+                MERCH_HN_RID = Include.NoRID;
+                MERCH_PH_RID = Include.NoRID;
+                MERCH_PHL_SEQ = 0;
+                if (roMethodAllocationOverrideProperties.InventoryBasisMerchType == eMerchandiseType.Node)
+                {
+                    MERCH_HN_RID = roMethodAllocationOverrideProperties.InventoryBasisMerchandise.Key;
+                }
+                else if (roMethodAllocationOverrideProperties.InventoryBasisMerchType == eMerchandiseType.HierarchyLevel
+                    || roMethodAllocationOverrideProperties.InventoryBasisMerchType == eMerchandiseType.LevelOffset)
+                {
+                    MERCH_PH_RID = roMethodAllocationOverrideProperties.InventoryBasisMerchandiseHierarchy.Key;
+                    MERCH_PHL_SEQ = roMethodAllocationOverrideProperties.InventoryBasisMerchandiseHierarchy.Value;
+                }
+
+                if (roMethodAllocationOverrideProperties.OnHandFactorIsSet)
+                {
+                    OTSPlanFactorPercent = (double)roMethodAllocationOverrideProperties.OnHandFactor;
+                    UseFactorPctDefault = false;
+                    _allocationCriteria.UseFactorPctDefault = false;
+                }
+                else
+                {
+                    UseFactorPctDefault = true;
+                    _allocationCriteria.UseFactorPctDefault = true;
+                }
 
                 // color
                 // Building a dataTable called "Colors" to be placed in _dsOverRide
@@ -4116,7 +4195,19 @@ namespace MIDRetail.Business.Allocation
                 }
 
                 // store grade
-                _dsOverRide.Tables["StoreGrades"].Rows.Clear();
+                // remove rows for the set
+                //_dsOverRide.Tables["StoreGrades"].Rows.Clear();
+                if (_storeGradesAttributeSetKey != Include.NoRID)
+                {
+                    string selectString = "SGLRID =" + _storeGradesAttributeSetKey;
+                    DataRow[] detailDataRows = _dsOverRide.Tables["StoreGrades"].Select(selectString);
+                    foreach (var detailDataRow in detailDataRows)
+                    {
+                        detailDataRow.Delete();
+                    }
+                    _dsOverRide.Tables["StoreGrades"].AcceptChanges();
+                }
+
                 i = 0;
 
                 //foreach (ROAttributeSetStoreGrade storeGrade in roMethodAllocationOverrideProperties.StoreGradeValues)
@@ -4124,19 +4215,40 @@ namespace MIDRetail.Business.Allocation
                 {
                     foreach (ROAllocationStoreGrade setStoreGrades in storeGrade.StoreGrades)
                     {
-                        if (setStoreGrades.Minimum == System.Int32.MinValue && setStoreGrades.Maximum == System.Int32.MaxValue && setStoreGrades.AdMinimum == System.Int32.MinValue && setStoreGrades.ColorMinimum == System.Int32.MinValue && setStoreGrades.ColorMaximum == System.Int32.MaxValue)
+                        if (!setStoreGrades.MinimumIsSet 
+                            && !setStoreGrades.MaximumIsSet 
+                            && !setStoreGrades.AdMinimumIsSet 
+                            && !setStoreGrades.ColorMinimumIsSet 
+                            && !setStoreGrades.ColorMaximumIsSet
+                            )
                         {
-                            _dsOverRide.Tables["StoreGrades"].Rows.Add(new object[] { i, storeGrade.AttributeSet.Key, setStoreGrades.StoreGrade.Key, setStoreGrades.StoreGrade.Value, null, null, null, null, null, null });
+                            _dsOverRide.Tables["StoreGrades"].Rows.Add(new object[] {
+                                i,
+                                storeGrade.AttributeSet.Key,
+                                setStoreGrades.StoreGrade.Key,
+                                setStoreGrades.StoreGrade.Value,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null
+                            });
                         }
                         else
                         {
-                            _dsOverRide.Tables["StoreGrades"].Rows.Add(new object[] { i, storeGrade.AttributeSet.Key, setStoreGrades.StoreGrade.Key, setStoreGrades.StoreGrade.Value,
-                                ((setStoreGrades.Minimum == int.MinValue) ? (int?) null : setStoreGrades.Minimum),
-                                ((setStoreGrades.Maximum == int.MaxValue) ? (int?) null : setStoreGrades.Maximum),
-                                ((setStoreGrades.AdMinimum == int.MinValue) ? (int?) null : setStoreGrades.AdMinimum),
-                                ((setStoreGrades.ColorMinimum == int.MinValue) ? (int?) null : setStoreGrades.ColorMinimum),
-                                ((setStoreGrades.ColorMaximum == int.MaxValue) ? (int?) null : setStoreGrades.ColorMaximum),
-                                ((setStoreGrades.ShipUpTo == int.MinValue) ? (int?) null : setStoreGrades.ShipUpTo) });  
+                            _dsOverRide.Tables["StoreGrades"].Rows.Add(new object[] {
+                                i,
+                                storeGrade.AttributeSet.Key,
+                                setStoreGrades.StoreGrade.Key,
+                                setStoreGrades.StoreGrade.Value,
+                                ((setStoreGrades.MinimumIsSet) ? setStoreGrades.Minimum : null),
+                                ((setStoreGrades.MaximumIsSet) ? setStoreGrades.Maximum : null),
+                                ((setStoreGrades.AdMinimumIsSet) ? setStoreGrades.AdMinimum : null),
+                                ((setStoreGrades.ColorMinimumIsSet) ? setStoreGrades.ColorMinimum : null),
+                                ((setStoreGrades.ColorMaximumIsSet) ? setStoreGrades.ColorMaximum : null),
+                                ((setStoreGrades.ShipUpToIsSet) ? setStoreGrades.ShipUpTo : null)
+                            });  
                         }
                         i += 1;
                     }
@@ -4186,6 +4298,7 @@ namespace MIDRetail.Business.Allocation
             }
             catch (Exception e)
             {
+                message = e.Message;
                 return false;
             }
             //throw new NotImplementedException("MethodSaveData is not implemented");

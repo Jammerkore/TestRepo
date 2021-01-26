@@ -503,12 +503,12 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         public KeyValuePair<int, string> StoreGrade { get; set; }
         [DataMember(IsRequired = true)]
-        public int Minimum { get; set; }
+        public int? Minimum { get; set; }
         [DataMember(IsRequired = true)]
-        public int Maximum { get; set; }
+        public int? Maximum { get; set; }
 
-        public bool MinimumIsSet { get { return Minimum != int.MinValue; } }
-        public bool MaximumIsSet { get { return Maximum != int.MaxValue; } }
+        public bool MinimumIsSet { get { return Minimum != null; } }
+        public bool MaximumIsSet { get { return Maximum != null; } }
     }
 
     [DataContract(Name = "ROAttributeSetStoreGrade", Namespace = "http://Logility.ROWeb/")]

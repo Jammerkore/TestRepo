@@ -327,7 +327,7 @@ namespace Logility.ROWeb
                     workflowStep: workflowStep);
             }
 
-            methodList.Add(new KeyValuePair<int, string>(customKey, "Custom"));
+            methodList.Add(new KeyValuePair<int, string>(customKey, Include.Custom));
 
             return methodList;
         }
@@ -448,9 +448,9 @@ namespace Logility.ROWeb
         public ROOut SaveMethod(ROMethodPropertiesParms methodParm)
         {
             string message = null;
+            eROReturnCode returnCode = eROReturnCode.Successful;
 
             if (_ABM == null
-                || methodParm.ROMethodProperties.Method.Key == Include.NoRID
                 || methodParm.ROMethodProperties.MethodType != _ABM.MethodType
                 )
             {
@@ -476,6 +476,22 @@ namespace Logility.ROWeb
             if (methodParm.ROMethodProperties.Method.Key == Include.NoRID)
             {
                 _ABM.Method_Change_Type = eChangeType.add;
+                // unlock previous method if doing a Save As
+                if (_ABM != null
+                    && _ABM.LockStatus == eLockStatus.Locked)
+                {
+                    _ABM.LockStatus = WorkflowMethodUtilities.UnlockWorkflowMethod(
+                        SAB: SAB,
+                        workflowMethodIND: eWorkflowMethodIND.Methods,
+                        Key: _ABM.Key,
+                        message: out message
+                        );
+                    if (_ABM.LockStatus == eLockStatus.Cancel)
+                    {
+                        MIDEnvironment.Message = message;
+                    }
+                }
+                _ABM.Key = methodParm.ROMethodProperties.Method.Key;
                 cleanseName = true;
             }
             else
@@ -492,7 +508,7 @@ namespace Logility.ROWeb
                 && _ABM.Method_Change_Type == eChangeType.add
                 && string.IsNullOrWhiteSpace(_ABM.Name))
             {
-                _ABM.Name = "Custom" + DateTime.Now.Ticks;
+                _ABM.Name = Include.Custom + DateTime.Now.Ticks;
             }
             if (cleanseName)
             {
@@ -509,7 +525,8 @@ namespace Logility.ROWeb
                     if (!FunctionSecurity.AllowUpdate
                         || !_ABM.AuthorizedToUpdate(SAB.ClientServerSession, SAB.ClientServerSession.UserRID))
                     {
-                        return new ROIListOut(eROReturnCode.Failure, null, ROInstanceID, null);
+                        message = MIDText.GetText(eMIDTextCode.msg_NotAuthorized);
+                        return new ROIListOut(eROReturnCode.Failure, message, ROInstanceID, null);
                     }
 
                     int folderKey = methodParm.FolderKey;
@@ -528,6 +545,11 @@ namespace Logility.ROWeb
                     // add or update the method in the collection
                     _workflowMethods[_ABM.Key] = _ABM;
                 }
+                catch (Exception ex)
+                {
+                    message = ex.Message;
+                    returnCode = eROReturnCode.Failure;
+                }
                 finally
                 {
                     if (ClientTransaction.DataAccess.ConnectionIsOpen)
@@ -536,8 +558,12 @@ namespace Logility.ROWeb
                     }
                 }
             }
+            else
+            {
+                returnCode = eROReturnCode.Failure;
+            }
 
-            return new ROIListOut(eROReturnCode.Successful, null, ROInstanceID, WorkflowMethodUtilities.BuildMethodNode(GetApplicationType(), _ABM));
+            return new ROIListOut(returnCode, message, ROInstanceID, WorkflowMethodUtilities.BuildMethodNode(GetApplicationType(), _ABM));
         }
 
         public ROOut ApplyMethod(ROMethodPropertiesParms methodParm)

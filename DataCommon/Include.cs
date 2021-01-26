@@ -37,21 +37,22 @@ namespace MIDRetail.DataCommon
         public const string ErrorDatabase = "The following database errors occurred:\r\n"; // TT#3435 - JSmith - Errors messages not complete with encounter database errors.
 		public const string NoSecondarySize		= "No Secondary Size";
 		public const string NoneText			= "None";  // MID Track #3942
+        public const string Custom = "Custom";
 
-		// some other basic constants
-//		public const string MIDGraphicsDir = "\\..\\Graphics"; 
-//		public const string MIDFolder = "*.*folder.gif";
-//		public const string MIDOpenFolder = ".openfolder.gif";
-//		public const string MIDClosedFolder = ".closedfolder.gif";
-//		public const string MIDDefaultClosedFolder = "default.closedfolder.gif";
-//		public const string MIDDefaultOpenFolder = "default.openfolder.gif";
-//		public const string MIDUpArrow = "UpArrow.gif";
-//		public const string MIDDownArrow = "DownArrow.gif";
-//		public const string MIDCalendarImage = "calendar.bmp";
-//		public const string MIDStoreImage = "store.bmp";
-//		public const string MIDErrorImage = "Error.ico";
-//		public const string MIDReoccurringImage = "dynamic.gif";
-		public const string MIDDefaultColor = "default";
+        // some other basic constants
+        //		public const string MIDGraphicsDir = "\\..\\Graphics"; 
+        //		public const string MIDFolder = "*.*folder.gif";
+        //		public const string MIDOpenFolder = ".openfolder.gif";
+        //		public const string MIDClosedFolder = ".closedfolder.gif";
+        //		public const string MIDDefaultClosedFolder = "default.closedfolder.gif";
+        //		public const string MIDDefaultOpenFolder = "default.openfolder.gif";
+        //		public const string MIDUpArrow = "UpArrow.gif";
+        //		public const string MIDDownArrow = "DownArrow.gif";
+        //		public const string MIDCalendarImage = "calendar.bmp";
+        //		public const string MIDStoreImage = "store.bmp";
+        //		public const string MIDErrorImage = "Error.ico";
+        //		public const string MIDReoccurringImage = "dynamic.gif";
+        public const string MIDDefaultColor = "default";
 		public const string MyHierarchyName = "My Hierarchy";
 //		public const string MIDInheritanceImage = "Inheritance.ico";
 //		public const string MIDStyleImage = "Style.bmp";

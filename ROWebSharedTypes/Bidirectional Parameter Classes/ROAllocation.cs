@@ -2632,18 +2632,18 @@ namespace Logility.ROWebSharedTypes
     public class ROAllocationStoreGrade : ROStoreGrade
     {
         [DataMember(IsRequired = true)]
-        public int AdMinimum { get; set; }
+        public int? AdMinimum { get; set; }
         [DataMember(IsRequired = true)]
-        public int ColorMinimum { get; set; }
+        public int? ColorMinimum { get; set; }
         [DataMember(IsRequired = true)]
-        public int ColorMaximum { get; set; }
+        public int? ColorMaximum { get; set; }
         [DataMember(IsRequired = true)]
-        public int ShipUpTo { get; set; }
+        public int? ShipUpTo { get; set; }
 
-        public bool AdMinimumIsSet { get { return AdMinimum != int.MinValue; } }
-        public bool ColorMinimumIsSet { get { return ColorMinimum != int.MinValue; } }
-        public bool ColorMaximumIsSet { get { return ColorMaximum != int.MaxValue; } }
-        public bool ShipUpToIsSet { get { return ShipUpTo != int.MinValue; } }
+        public bool AdMinimumIsSet { get { return AdMinimum != null; } }
+        public bool ColorMinimumIsSet { get { return ColorMinimum != null; } }
+        public bool ColorMaximumIsSet { get { return ColorMaximum != null; } }
+        public bool ShipUpToIsSet { get { return ShipUpTo != null; } }
     }
 
     [DataContract(Name = "ROAllocationVelocityGrade", Namespace = "http://Logility.ROWeb/")]
@@ -2690,13 +2690,13 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         double? _onHandFactor;
         [DataMember(IsRequired = true)]
-        int _colorMult;
+        int? _colorMult;
         [DataMember(IsRequired = true)]
-        int _sizeMult;
+        int? _sizeMult;
         [DataMember(IsRequired = true)]
-        int _allColorMin;
+        int? _allColorMin;
         [DataMember(IsRequired = true)]
-        int _allColorMax;
+        int? _allColorMax;
         [DataMember(IsRequired = true)]
         KeyValuePair<int, string> _capacityAttribute;
         [DataMember(IsRequired = true)]
@@ -2885,25 +2885,45 @@ namespace Logility.ROWebSharedTypes
             set { _onHandFactor = value; }
         }
 
-        public int ColorMult
+        public bool ColorMultIsSet
+        {
+            get { return _colorMult != null; }
+        }
+
+        public int? ColorMult
         {
             get { return _colorMult; }
             set { _colorMult = value; }
         }
 
-        public int SizeMult
+        public bool SizeMultIsSet
+        {
+            get { return _sizeMult != null; }
+        }
+
+        public int? SizeMult
         {
             get { return _sizeMult; }
             set { _sizeMult = value; }
         }
 
-        public int AllColorMin
+        public bool AllColorMinIsSet
+        {
+            get { return _allColorMin != null; }
+        }
+
+        public int? AllColorMin
         {
             get { return _allColorMin; }
             set { _allColorMin = value; }
         }
 
-        public int AllColorMax
+        public bool AllColorMaxIsSet
+        {
+            get { return _allColorMax != null; }
+        }
+
+        public int? AllColorMax
         {
             get { return _allColorMax; }
             set { _allColorMax = value; }
@@ -3046,10 +3066,10 @@ namespace Logility.ROWebSharedTypes
             KeyValuePair<int, string> onHandMerchandise, 
             KeyValuePair<int, int> onHandMerchandiseHierarchy, 
             double? onHandFactor, 
-            int colorMult, 
-            int sizeMult, 
-            int allColorMin, 
-            int allColorMax,
+            int? colorMult, 
+            int? sizeMult, 
+            int? allColorMin, 
+            int? allColorMax,
             KeyValuePair<int, string> capacityAttribute, 
             bool exceedCapacity, 
             KeyValuePair<int, string> storeGradesAttribute,
