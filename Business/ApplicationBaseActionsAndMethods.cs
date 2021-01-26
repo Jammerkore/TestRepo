@@ -145,7 +145,7 @@ namespace MIDRetail.Business
 				_sg_RID = -1;	// unknown method type
 			}
 			_virtual_IND = false;
-            _template_IND = false;
+            _template_IND = true;
 			_filled = false;
 			_method_Change_Type = eChangeType.none;
             _customOLL_RID = -1;    // MID Track #5530 - add CUSTOM_OLL_RID
