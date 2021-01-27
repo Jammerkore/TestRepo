@@ -534,12 +534,14 @@ namespace Logility.ROWeb
         /// <param name="TaskListParameters">Contains the task list properties to save</param>
         /// <returns>A ROIListOut object containing an ROTreeNodeOut object with updated task list information</returns>
         public ROOut SaveTaskList(
-            ROTaskListPropertiesParms taskListParameters
+            ROTaskListPropertiesParms taskListParameters,
+            bool performingSaveAs = false
             )
         {
             string message = null;
             int sequence = 0;
             eTaskType taskType;            
+            bool cloneDates = performingSaveAs;
 
             // creating new task list 
             if (_taskListProfile == null)
@@ -675,6 +677,7 @@ namespace Logility.ROWeb
 
                     _task.TaskSaveData(
                         scheduleDataLayer: ScheduleDataLayer,
+                        cloneDates: cloneDates,
                         message: ref message
                         );
                 }
@@ -1220,8 +1223,6 @@ namespace Logility.ROWeb
             RODataExplorerSaveAsParms parms
             )
         {
-            
-
             return true;
         }
 
@@ -1308,7 +1309,6 @@ namespace Logility.ROWeb
         public ROOut ApplyTask(ROTaskPropertiesParms taskParameters, bool applyOnly = true)
         {
             string message = null;
-            bool cloneDates = false;
             bool successful;
             bool getNewClass = true;
 
@@ -1337,7 +1337,6 @@ namespace Logility.ROWeb
             // Save values to memory only
             ROTaskProperties taskProperties = _task.TaskUpdateData(
                 task: taskParameters.ROTaskProperties,
-                cloneDates: cloneDates,
                 message: ref message,
                 successful: out successful,
                 applyOnly: applyOnly

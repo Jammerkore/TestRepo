@@ -211,6 +211,7 @@
         GetTaskList,
         ApplyTaskList,
         SaveTaskList,
+        SaveAsTaskList,
         ProcessTaskList,
         CopyTaskList,
         DeleteTaskList,

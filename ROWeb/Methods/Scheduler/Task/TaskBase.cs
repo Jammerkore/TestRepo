@@ -216,7 +216,6 @@ namespace Logility.ROWeb
 
         abstract public ROTaskProperties TaskUpdateData(
             ROTaskProperties task,
-            bool cloneDates,
             ref string message,
             out bool successful,
             bool applyOnly = false
@@ -230,6 +229,7 @@ namespace Logility.ROWeb
 
         abstract public bool TaskSaveData(
             ScheduleData scheduleDataLayer,
+            bool cloneDates,
             ref string message
             );
 
@@ -447,6 +447,22 @@ namespace Logility.ROWeb
             else
             {
                 TaskListProperties.Tasks[sequence] = ROTask;
+            }
+        }
+
+        protected void CloneDateRanges(DataTable dataTable, string dateColumnName)
+        {
+            int executeDateKey;
+            DateRangeProfile dateRange;
+
+            foreach (DataRow dataRow in dataTable.Rows)
+            {
+                if (dataRow[dateColumnName] != DBNull.Value)
+                {
+                    executeDateKey = Convert.ToInt32(dataRow[dateColumnName]);
+                    dateRange = SessionAddressBlock.ClientServerSession.Calendar.GetDateRangeClone(executeDateKey);
+                    dataRow[dateColumnName] = dateRange.Key;
+                }
             }
         }
 

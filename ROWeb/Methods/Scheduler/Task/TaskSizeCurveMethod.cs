@@ -140,14 +140,12 @@ namespace Logility.ROWeb
         /// Accepts data, updates the memory object and conditionally updates the database if values are being saved and not applied
         /// </summary>
         /// <param name="taskData">The data associated with the task</param>
-        /// <param name="cloneDates">Flag identifying if dates should be cloned if task is being copied</param>
         /// <param name="message">Message during processing</param>
         /// <param name="successful">Flag identifying if the process was successful</param>
         /// <param name="applyOnly">Flag identifying if apply is being processed</param>
         /// <returns>The updated task data</returns>
         override public ROTaskProperties TaskUpdateData(
             ROTaskProperties taskData, 
-            bool cloneDates, 
             ref string message, 
             out bool successful, 
             bool applyOnly = false
@@ -216,10 +214,12 @@ namespace Logility.ROWeb
         /// Saves the task to the database
         /// </summary>
         /// <param name="scheduleDataLayer">The data layer to communicate with the database for schedule tables</param>
+        /// <param name="cloneDates">Flag identifying if calendar dates are to be cloned</param>
         /// <param name="message">Message during processing</param>
         /// <returns></returns>
         override public bool TaskSaveData(
             ScheduleData scheduleDataLayer,
+            bool cloneDates,
             ref string message)
         {
             scheduleDataLayer.TaskSizeCurveMethod_Insert(TaskData);

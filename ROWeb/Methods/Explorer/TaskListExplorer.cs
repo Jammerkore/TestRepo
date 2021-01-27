@@ -105,7 +105,9 @@ namespace Logility.ROWeb
                 case eRORequest.GetTaskList:
                     return ROTaskListManager.GetTaskList((ROProfileKeyParms)Parms);
                 case eRORequest.SaveTaskList:
-                    return ROTaskListManager.SaveTaskList((ROTaskListPropertiesParms)Parms);
+                    return ROTaskListManager.SaveTaskList((ROTaskListPropertiesParms)Parms, false);
+                case eRORequest.SaveAsTaskList:
+                    return ROTaskListManager.SaveTaskList((ROTaskListPropertiesParms)Parms, true);
                 case eRORequest.ApplyTaskList:
                     return ROTaskListManager.ApplyTaskList((ROTaskListPropertiesParms)Parms);
                 case eRORequest.ProcessTaskList:
