@@ -360,7 +360,8 @@ namespace Logility.ROWeb
                             workflowDataRow["WORKFLOW_METHOD_IND"] = eWorkflowMethodType.Method.GetHashCode();
                         }
 
-                        if (allocateMerchandiseWorkflow.ExecuteDateIsSet)
+                        if (allocateMerchandiseWorkflow.ExecuteDateIsSet
+                            && allocateMerchandiseWorkflow.ExecuteDate.Key != Include.NoRID)
                         {
                             workflowDataRow["EXECUTE_CDR_RID"] = allocateMerchandiseWorkflow.ExecuteDate.Key;
                         }
