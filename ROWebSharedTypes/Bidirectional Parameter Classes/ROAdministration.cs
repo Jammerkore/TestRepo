@@ -298,7 +298,7 @@ namespace Logility.ROWebSharedTypes
 
     [DataContract(Name = "ROModelProperties", Namespace = "http://Logility.ROWeb/")]
 
-    public abstract class ROModelProperties : ROBaseProperties
+    public class ROModelProperties : ROBaseProperties
     {
         [DataMember(IsRequired = true)]
         protected KeyValuePair<int, string> _model;

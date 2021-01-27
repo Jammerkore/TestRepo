@@ -137,7 +137,7 @@ namespace Logility.ROWebSharedTypes
     }
 
     [DataContract(Name = "ROBaseAssortmentActionDetails", Namespace = "http://Logility.ROWeb/")]
-    public abstract class ROBaseAssortmentActionDetails
+    public class ROBaseAssortmentActionDetails
     {
         [DataMember(IsRequired = true)]
         private List<ROAssortmentActionsGradeDetails> _gradeDetails;

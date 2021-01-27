@@ -45,7 +45,7 @@ namespace Logility.ROWebSharedTypes
 
     [DataContract(Name = "ROMethodProperties", Namespace = "http://Logility.ROWeb/")]
 
-    public abstract class ROMethodProperties : ROBaseProperties
+    public class ROMethodProperties : ROBaseProperties
     {
         [DataMember(IsRequired = true)]
         protected KeyValuePair<int, string> _method;
@@ -169,7 +169,7 @@ namespace Logility.ROWebSharedTypes
     }
 
     [DataContract(Name = "ROWorkflowStep", Namespace = "http://Logility.ROWeb/")]
-    public abstract class ROWorkflowStep
+    public class ROWorkflowStep
     {
         [DataMember(IsRequired = true)]
         private int _rowPosition;
@@ -498,7 +498,7 @@ namespace Logility.ROWebSharedTypes
     }
 
     [DataContract(Name = "ROStoreGrade", Namespace = "http://Logility.ROWeb/")]
-    public abstract class ROStoreGrade
+    public class ROStoreGrade
     {
         [DataMember(IsRequired = true)]
         public KeyValuePair<int, string> StoreGrade { get; set; }
@@ -512,7 +512,7 @@ namespace Logility.ROWebSharedTypes
     }
 
     [DataContract(Name = "ROAttributeSetStoreGrade", Namespace = "http://Logility.ROWeb/")]
-    // Uses abstract ROStoreGrade so can be either ROAllocationStoreGrade or ROPlanningStoreGrade
+    // Uses ROStoreGrade so can be either ROAllocationStoreGrade or ROPlanningStoreGrade
     public class ROAttributeSetStoreGrade
     {
         [DataMember(IsRequired = true)]

@@ -195,7 +195,7 @@ namespace Logility.ROWebSharedTypes
     /// </summary>
 
     [DataContract(Name = "ROModelProfile", Namespace = "http://Logility.ROWeb/")]
-    abstract public class ROModelProfile : ROIntOut
+    public class ROModelProfile : ROIntOut
     {
         #region "Fields"
 
@@ -877,7 +877,7 @@ namespace Logility.ROWebSharedTypes
     }
 
     [DataContract(Name = "ROMessageDetails", Namespace = "http://Logility.ROWeb/")]
-    public abstract class ROMessageDetails
+    public class ROMessageDetails
     {
         #region "DataMember"
         //=======

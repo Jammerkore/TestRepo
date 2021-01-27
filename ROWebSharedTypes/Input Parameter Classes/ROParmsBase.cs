@@ -326,7 +326,7 @@ namespace Logility.ROWebSharedTypes
     [KnownType(typeof(ROTaskChainForecasting))]
 
 
-    public abstract class ROParms
+    public class ROParms
     {
         [DataMember(IsRequired = true)]
         protected string _sROUserID;

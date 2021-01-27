@@ -234,7 +234,7 @@ namespace Logility.ROWebSharedTypes
     }
 
     [DataContract(Name = "ROBaseUpdateParms", Namespace = "http://Logility.ROWeb/")]
-    public abstract class ROBaseUpdateParms : ROParms
+    public class ROBaseUpdateParms : ROParms
     {
         [DataMember(IsRequired = true)]
         private eProfileType _profileType;

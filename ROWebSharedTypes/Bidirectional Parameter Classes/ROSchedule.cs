@@ -346,9 +346,10 @@ namespace Logility.ROWebSharedTypes
         #endregion
 
         public ROTaskAllocateMerchandiseWorkflowMethod(
-            KeyValuePair<int, string> workflowOrMethod,
+            KeyValuePair<int, string> workflowOrMethod = default(KeyValuePair<int, string>),
             bool isWorkflow = true,
-            KeyValuePair<int, string> executeDate = default(KeyValuePair<int, string>))
+            KeyValuePair<int, string> executeDate = default(KeyValuePair<int, string>)
+            )
         {
             _workflowOrMethod = workflowOrMethod;
             _isWorkflow = isWorkflow;

@@ -351,7 +351,7 @@ namespace Logility.ROWebSharedTypes
     [KnownType(typeof(ROTaskBatchCompute))]
     [KnownType(typeof(ROTaskChainForecasting))]
 
-    public abstract class ROOut
+    public class ROOut
     {
         public static readonly long lInvalidInstanceID = -1;
 
