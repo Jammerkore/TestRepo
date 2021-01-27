@@ -3228,9 +3228,9 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         KeyValuePair<int, string> _colorCode;
         [DataMember(IsRequired = true)]
-        int _colorMinimum;
+        int? _colorMinimum;
         [DataMember(IsRequired = true)]
-        int _colorMaximum;
+        int? _colorMaximum;
 
         public KeyValuePair<int, string> ColorCode
         {
@@ -3238,19 +3238,29 @@ namespace Logility.ROWebSharedTypes
             set { _colorCode = value; }
         }
 
-        public int ColorMinimum
+        public bool ColorMinimumIsSet
+        {
+            get { return _colorMinimum != null; }
+        }
+
+        public int? ColorMinimum
         {
             get { return _colorMinimum; }
             set { _colorMinimum = value; }
         }
 
-        public int ColorMaximum
+        public bool ColorMaximumIsSet
+        {
+            get { return _colorMaximum != null; }
+        }
+
+        public int? ColorMaximum
         {
             get { return _colorMaximum; }
             set { _colorMaximum = value; }
         }
 
-        public ROMethodOverrideColorProperties(KeyValuePair<int, string> colorCode, int colorMinimum, int colorMaximum)
+        public ROMethodOverrideColorProperties(KeyValuePair<int, string> colorCode, int? colorMinimum, int? colorMaximum)
         {
             // fields specific to Allocation Override Color
             _colorCode = colorCode;

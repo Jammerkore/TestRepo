@@ -3791,28 +3791,28 @@ namespace MIDRetail.Business.Allocation
             DataTable dtColor = _dsOverRide.Tables["Colors"];
             foreach (DataRow dr in dtColor.Rows)
             {
-                Int32 localColorMin, localColorMax;
+                int? localColorMinimum, localColorMaximum;
                 if (dr["Minimum"] != System.DBNull.Value)
                 {
-                    localColorMin = Convert.ToInt32(dr["Minimum"], CultureInfo.CurrentUICulture);
+                    localColorMinimum = Convert.ToInt32(dr["Minimum"], CultureInfo.CurrentUICulture);
                 }
                 else
                 {
-                    localColorMin = System.Int32.MinValue;
+                    localColorMinimum = null;
                 }
                 if (dr["Maximum"] != System.DBNull.Value)
                 {
-                    localColorMax = Convert.ToInt32(dr["Maximum"], CultureInfo.CurrentUICulture);
+                    localColorMaximum = Convert.ToInt32(dr["Maximum"], CultureInfo.CurrentUICulture);
                 }
                 else
                 {
-                    localColorMax = System.Int32.MaxValue;
+                    localColorMaximum = null;
                 }
 
                 ROMethodOverrideColorProperties colorMinMax = new ROMethodOverrideColorProperties(
                     colorCode: GetName.GetColor(Convert.ToInt32(dr["Color"], CultureInfo.CurrentUICulture), SAB: SAB),
-                    colorMinimum: localColorMin,
-                    colorMaximum: localColorMax
+                    colorMinimum: localColorMinimum,
+                    colorMaximum: localColorMaximum
                     );
 
                 method.ColorMinMax.Add(colorMinMax);
@@ -4134,25 +4134,29 @@ namespace MIDRetail.Business.Allocation
                 // Building a dataTable called "Colors" to be placed in _dsOverRide
                 _dsOverRide.Tables["Colors"].Rows.Clear();
                 int i = 0;
+                int? localColorMinimum, localColorMaximum;
 
                 foreach (ROMethodOverrideColorProperties colorProperty in roMethodAllocationOverrideProperties.ColorMinMax)
                 {
-                    if (colorProperty.ColorMinimum == System.Int32.MinValue && colorProperty.ColorMaximum < System.Int32.MaxValue)
+                    if (colorProperty.ColorMinimumIsSet)
                     {
-                        _dsOverRide.Tables["Colors"].Rows.Add(new object[] { i, colorProperty.ColorCode.Key, null, colorProperty.ColorMaximum });
-                    }
-                    else if (colorProperty.ColorMinimum > System.Int32.MinValue && colorProperty.ColorMaximum == System.Int32.MaxValue)
-                    {
-                        _dsOverRide.Tables["Colors"].Rows.Add(new object[] { i, colorProperty.ColorCode.Key, colorProperty.ColorMinimum, null });
-                    }
-                    else if (colorProperty.ColorMinimum == System.Int32.MinValue && colorProperty.ColorMaximum == System.Int32.MaxValue)
-                    {
-                        _dsOverRide.Tables["Colors"].Rows.Add(new object[] { i, colorProperty.ColorCode.Key, null, null });
+                        localColorMinimum = colorProperty.ColorMinimum;
                     }
                     else
                     {
-                        _dsOverRide.Tables["Colors"].Rows.Add(new object[] { i, colorProperty.ColorCode.Key, colorProperty.ColorMinimum, colorProperty.ColorMaximum });
+                        localColorMinimum = null;
                     }
+                    if (colorProperty.ColorMaximumIsSet)
+                    {
+                        localColorMaximum = colorProperty.ColorMaximum;
+                    }
+                    else
+                    {
+                        localColorMaximum = null;
+                    }
+
+                    _dsOverRide.Tables["Colors"].Rows.Add(new object[] { i, colorProperty.ColorCode.Key, localColorMinimum, localColorMaximum });
+
                     i += 1;
                 }
 
