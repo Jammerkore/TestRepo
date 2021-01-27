@@ -203,7 +203,13 @@ namespace Logility.ROWeb
         /// <param name="ROInstanceID">The instance ID of the session</param>
         /// <param name="applicationType">The application that instantiated the instance</param>
         /// <param name="applicationSessionTransaction">The transaction to use for processing</param>
-        public ROWorkflowMethodManager(SessionAddressBlock SAB, ROWebTools ROWebTools, long ROInstanceID, eROApplicationType applicationType, ApplicationSessionTransaction applicationSessionTransaction)
+        public ROWorkflowMethodManager(
+            SessionAddressBlock SAB, 
+            ROWebTools ROWebTools, 
+            long ROInstanceID, 
+            eROApplicationType applicationType, 
+            ApplicationSessionTransaction applicationSessionTransaction
+            )
         {
             _SAB = SAB;
             _ROWebTools = ROWebTools;
@@ -265,7 +271,8 @@ namespace Logility.ROWeb
             }
             catch (Exception ex)
             {
-                ROWebTools.LogMessage(eROMessageLevel.Error, "GetWorkFlowMethodList failed: " + ex.Message, ROWebTools.ROUserID, ROWebTools.ROSessionID);
+                string message = "GetWorkFlowMethodList failed: " + ex.Message;
+                ROWebTools.LogMessage(eROMessageLevel.Error, message, ROWebTools.ROUserID, ROWebTools.ROSessionID);
                 throw;
             }
         }
@@ -282,7 +289,8 @@ namespace Logility.ROWeb
             }
             catch (Exception ex)
             {
-                ROWebTools.LogMessage(eROMessageLevel.Error, "GetWorkFlowMethodList failed: " + ex.Message, ROWebTools.ROUserID, ROWebTools.ROSessionID);
+                string message = "GetWorkFlowMethodList failed: " + ex.Message;
+                ROWebTools.LogMessage(eROMessageLevel.Error, message, ROWebTools.ROUserID, ROWebTools.ROSessionID);
                 throw;
             }
         }
@@ -457,7 +465,9 @@ namespace Logility.ROWeb
                 // check if already have method in the collection.  If not create it.
                 if (!_workflowMethods.TryGetValue(methodParm.ROMethodProperties.Method.Key, out _ABM))
                 {
-                    _ABM = (ApplicationBaseMethod)GetMethods.GetMethod(methodParm.ROMethodProperties.Method.Key, methodParm.ROMethodProperties.MethodType);
+                    int methodKey = methodParm.ROMethodProperties.Method.Key;
+                    eMethodType methodType = methodParm.ROMethodProperties.MethodType;
+                    _ABM = (ApplicationBaseMethod)GetMethods.GetMethod(methodKey, methodType);
                     // only save if not new method
                     if (methodParm.ROMethodProperties.Method.Key != Include.NoRID)
                     {
@@ -532,7 +542,13 @@ namespace Logility.ROWeb
                     int folderKey = methodParm.FolderKey;
                     if (_ABM.Method_Change_Type == eChangeType.add)
                     {
-                        folderKey = WorkflowMethodUtilities.GetWorkflowMethodFolderRID(GetFolderProfileType(), methodParm.FolderKey, _ABM.User_RID, _ABM.ProfileType, methodParm.FolderUniqueID);
+                        folderKey = WorkflowMethodUtilities.GetWorkflowMethodFolderRID(
+                            GetFolderProfileType(), 
+                            methodParm.FolderKey, 
+                            _ABM.User_RID, 
+                            _ABM.ProfileType, 
+                            methodParm.FolderUniqueID
+                            );
                     }
                     ClientTransaction.DataAccess.OpenUpdateConnection();
                     _ABM.Update(ClientTransaction.DataAccess);
@@ -713,7 +729,8 @@ namespace Logility.ROWeb
             }
             else
             {
-                return new RONoDataOut(eROReturnCode.Failure, SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_NotAuthorizedForNode), ROInstanceID);
+                message = SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_NotAuthorizedForNode);
+                return new RONoDataOut(eROReturnCode.Failure, message, ROInstanceID);
             }
 
             return new RONoDataOut(returnCode, message, ROInstanceID);
@@ -870,7 +887,8 @@ namespace Logility.ROWeb
             }
             catch (DatabaseForeignKeyViolation)
             {
-                return new RONoDataOut(eROReturnCode.Failure, SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_DeleteFailedDataInUse), ROInstanceID);
+                message = SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_DeleteFailedDataInUse);
+                return new RONoDataOut(eROReturnCode.Failure, message, ROInstanceID);
             }
             finally
             {
@@ -1066,7 +1084,13 @@ namespace Logility.ROWeb
                 int folderKey = rOWorkflow.FolderKey;
                 if (_ABW.Workflow_Change_Type == eChangeType.add)
                 {
-                    folderKey = WorkflowMethodUtilities.GetWorkflowMethodFolderRID(GetFolderProfileType(), rOWorkflow.FolderKey, _ABW.UserRID, _ABW.ProfileType, rOWorkflow.FolderUniqueID);
+                    folderKey = WorkflowMethodUtilities.GetWorkflowMethodFolderRID(
+                        GetFolderProfileType(), 
+                        rOWorkflow.FolderKey, 
+                        _ABW.UserRID, 
+                        _ABW.ProfileType, 
+                        rOWorkflow.FolderUniqueID
+                        );
                 }
 
                 try
@@ -1525,7 +1549,13 @@ namespace Logility.ROWeb
             _ABW.Workflow_Change_Type = eChangeType.add;
             CleanseWorkflowName();
 
-            int folderKey = WorkflowMethodUtilities.GetWorkflowMethodFolderRID(GetFolderProfileType(), parms.ToParentKey, _ABW.UserRID, _ABW.ProfileType, parms.ToParentUniqueID);
+            int folderKey = WorkflowMethodUtilities.GetWorkflowMethodFolderRID(
+                GetFolderProfileType(), 
+                parms.ToParentKey, 
+                _ABW.UserRID, 
+                _ABW.ProfileType, 
+                parms.ToParentUniqueID
+                );
 
             try
             {
@@ -1903,8 +1933,19 @@ namespace Logility.ROWeb
         /// <param name="SAB">The SessionAddressBlock for this user and environment</param>
         /// <param name="ROWebTools">An instance of the ROWebTools</param>
         /// <param name="ROInstanceID">The instance ID of the session</param>
-        public ROAllocationWorkflowMethodManager(SessionAddressBlock SAB, ApplicationSessionTransaction applicationSessionTransaction, ROWebTools ROWebTools, long ROInstanceID)
-            : base(SAB, ROWebTools, ROInstanceID, eROApplicationType.Allocation, applicationSessionTransaction)
+        public ROAllocationWorkflowMethodManager(
+            SessionAddressBlock SAB, 
+            ApplicationSessionTransaction applicationSessionTransaction, 
+            ROWebTools ROWebTools, 
+            long ROInstanceID
+            )
+            : base(
+                  SAB, 
+                  ROWebTools, 
+                  ROInstanceID, 
+                  eROApplicationType.Allocation, 
+                  applicationSessionTransaction
+                  )
         {
 
         }
@@ -1964,7 +2005,17 @@ namespace Logility.ROWeb
 
             var allocationworkflowSteps = BuildAllocationWorkflowSteps(parms);
 
-            rOWorkflow = new ROWorkflow(workflowType, workflow, workflowDescription, filter, userType, userId, profileType, isFilled, allocationworkflowSteps);
+            rOWorkflow = new ROWorkflow(
+                workflowType, 
+                workflow, 
+                workflowDescription, 
+                filter, 
+                userType, 
+                userId, 
+                profileType, 
+                isFilled, 
+                allocationworkflowSteps
+                );
 
             eSecurityFunctions securityfunctions;
             if (rOWorkflow.GlobalUserType == eGlobalUserType.Global)
@@ -2052,7 +2103,16 @@ namespace Logility.ROWeb
 
                 KeyValuePair<int, string> specific = new KeyValuePair<int, string>(specificRID, specificName);
 
-                rOWorkflowSteps.Add(new ROAllocationWorkflowStep(rowPosition, methodAction, method, specific, aws.Component.ComponentType, review, dTolerancePercent));
+                rOWorkflowSteps.Add(new ROAllocationWorkflowStep(
+                    rowPosition, 
+                    methodAction, 
+                    method, 
+                    specific, 
+                    aws.Component.ComponentType, 
+                    review, 
+                    dTolerancePercent
+                    )
+                    );
 
                 ++rowPosition;
             }
@@ -2123,8 +2183,19 @@ namespace Logility.ROWeb
         /// <param name="SAB">The SessionAddressBlock for this user and environment</param>
         /// <param name="ROWebTools">An instance of the ROWebTools</param>
         /// <param name="ROInstanceID">The instance ID of the session</param>
-        public ROPlanningWorkflowMethodManager(SessionAddressBlock SAB, ApplicationSessionTransaction applicationSessionTransaction, ROWebTools ROWebTools, long ROInstanceID)
-            : base(SAB, ROWebTools, ROInstanceID, eROApplicationType.Forecast, applicationSessionTransaction)
+        public ROPlanningWorkflowMethodManager(
+            SessionAddressBlock SAB, 
+            ApplicationSessionTransaction applicationSessionTransaction, 
+            ROWebTools ROWebTools, 
+            long ROInstanceID
+            )
+            : base(
+                  SAB, 
+                  ROWebTools, 
+                  ROInstanceID, 
+                  eROApplicationType.Forecast, 
+                  applicationSessionTransaction
+                  )
         {
 
         }
@@ -2184,7 +2255,17 @@ namespace Logility.ROWeb
 
             var otsforecastworkflowSteps = BuildOTSForecastWorkflowSteps(parms);
 
-            rOWorkflow = new ROWorkflow(workflowType, workflow, workflowDescription, filter, userType, userId, profileType, isFilled, otsforecastworkflowSteps);
+            rOWorkflow = new ROWorkflow(
+                workflowType, 
+                workflow, 
+                workflowDescription, 
+                filter, 
+                userType, 
+                userId, 
+                profileType, 
+                isFilled, 
+                otsforecastworkflowSteps
+                );
 
             eSecurityFunctions securityfunctions;
             if (rOWorkflow.GlobalUserType == eGlobalUserType.Global)
@@ -2250,7 +2331,18 @@ namespace Logility.ROWeb
 
                 KeyValuePair<int, string> variable = GetName.GetVariable(variableNumber, SAB);
 
-                rOWorkflowSteps.Add(new ROPlanningWorkflowStep(rowPosition, methodAction, method, specific, review, dTolerancePercent, variable, otspws.Balance, otspws.ComputationMode));
+                rOWorkflowSteps.Add(new ROPlanningWorkflowStep(
+                    rowPosition, 
+                    methodAction, 
+                    method, 
+                    specific, 
+                    review, 
+                    dTolerancePercent, 
+                    variable, 
+                    otspws.Balance, 
+                    otspws.ComputationMode
+                    )
+                    );
 
                 ++rowPosition;
             }
