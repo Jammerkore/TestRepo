@@ -1449,7 +1449,7 @@ namespace Logility.ROWeb
             )
         {
             string selectString = "TASK_SEQUENCE=" + sequence;
-            if (_task != null)
+            if (_tasksDataTable != null)
             {
                 DataRow[] taskDataRows = _tasksDataTable.Select(selectString);
                 foreach (var taskDataRow in taskDataRows)
