@@ -387,14 +387,18 @@ namespace Logility.ROWeb
             // Do not obtain object during Apply since will already have one
             if (!processingApply)
             {
-                if (_ABM == null  
+                if (_ABM == null 
+                    || _ABM.MethodType != methodParm.MethodType
                     || _ABM.Key != methodParm.Key)
                 {
                     // check if already have method in the collection.  If not create it.
                     if (!_workflowMethods.TryGetValue(methodParm.Key, out _ABM))
                     {
                         _ABM = (ApplicationBaseMethod)GetMethods.GetMethod(methodParm.Key, methodParm.MethodType);
-                        _workflowMethods[_ABM.Key] = _ABM;
+                        if (methodParm.Key != Include.NoRID)
+                        {
+                            _workflowMethods[_ABM.Key] = _ABM;
+                        }
                     }
                     if (_ABM is VelocityMethod)
                     {
@@ -428,9 +432,11 @@ namespace Logility.ROWeb
             }
 
             // Do not attempt to lock during Apply since locking processed during initial Get
+            // or if adding method
             if (!mp.IsReadOnly
                 && _ABM.LockStatus != eLockStatus.Locked
                 && !processingApply
+                && _ABM.Key != Include.NoRID
                 && successful)
             {
                 message = null;
@@ -605,7 +611,10 @@ namespace Logility.ROWeb
             _ABM.MethodSetData(methodProperties: methodParm.ROMethodProperties, message: ref message, processingApply: true);
 
             // add or update the method in the collection
-            _workflowMethods[_ABM.Key] = _ABM;
+            if (_ABM.Key != Include.NoRID)
+            {
+                _workflowMethods[_ABM.Key] = _ABM;
+            }
 
             // Build new object with updated values
 			ROMethodParms methodGetParm = new ROMethodParms(
