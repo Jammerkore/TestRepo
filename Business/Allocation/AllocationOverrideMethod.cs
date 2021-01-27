@@ -3446,32 +3446,32 @@ namespace MIDRetail.Business.Allocation
             int storeGradesAttributeKey = Include.NoRID;
             ProfileList attributeSetList;
 
-            eMerchandiseType otsMerchType, otsOnHandType, ibMerchType;
-            eMinMaxType localMinMaxType;
+            eMerchandiseType otsMerchandiseType, otsOnHandType, inventoryBasisMerchandiseType;
+            eMinMaxType localMinimumMaximumType;
             if (InventoryInd == 'I')
             {
-                localMinMaxType = eMinMaxType.Inventory;
+                localMinimumMaximumType = eMinMaxType.Inventory;
             }
             else
             {
-                localMinMaxType = eMinMaxType.Allocation;
+                localMinimumMaximumType = eMinMaxType.Allocation;
             }
-            ibMerchType = eMerchandiseType.Undefined;  // See JIRA 2860 - this is an open issue
+            inventoryBasisMerchandiseType = eMerchandiseType.Undefined; 
             if (MerchUnspecified)
             {
-                otsMerchType = eMerchandiseType.Undefined;
+                otsMerchandiseType = eMerchandiseType.Undefined;
             }
             else if (OTSPlanRID != Include.NoRID)
             {
-                otsMerchType = eMerchandiseType.Node;
+                otsMerchandiseType = eMerchandiseType.Node;
             }
             else if (OTSPlanPHL != Include.NoRID)
             {
-                otsMerchType = eMerchandiseType.HierarchyLevel;
+                otsMerchandiseType = eMerchandiseType.HierarchyLevel;
             }
             else
             {
-                otsMerchType = eMerchandiseType.OTSPlanLevel;
+                otsMerchandiseType = eMerchandiseType.OTSPlanLevel;
             }
 
             if (OnHandUnspecified)
@@ -3524,10 +3524,10 @@ namespace MIDRetail.Business.Allocation
                 onHandFactor = OTSPlanFactorPercent;
             }
 
-            if (otsMerchType != eMerchandiseType.Undefined)
+            if (otsMerchandiseType != eMerchandiseType.Undefined)
             {
                 merchandise = GetName.GetLevelKeyValuePair(
-                    merchandiseType: otsMerchType,
+                    merchandiseType: otsMerchandiseType,
                     nodeRID: OTSPlanRID,
                     merchPhRID: OTSPlanPHL,
                     merchPhlSequence: OTSPlanPHLSeq,
@@ -3536,7 +3536,7 @@ namespace MIDRetail.Business.Allocation
                 merchandiseHierarchy = new KeyValuePair<int, int>(OTSPlanPHL, OTSPlanPHLSeq);
             }
 
-            if (otsMerchType != eMerchandiseType.Undefined)
+            if (otsMerchandiseType != eMerchandiseType.Undefined)
             {
                 onHandMerchandise = GetName.GetLevelKeyValuePair(
                     merchandiseType: otsOnHandType,
@@ -3607,7 +3607,7 @@ namespace MIDRetail.Business.Allocation
                 percentInd: Include.ConvertCharToBool(_mao.Percent_Ind),
                 reserveAsBulk: reserveAsBulk,
                 reserveAsPacks: reserveAsPacks,
-                merchandiseType: otsMerchType,
+                merchandiseType: otsMerchandiseType,
                 merchandise: merchandise,
                 merchandiseHierarchy: merchandiseHierarchy,
                 onHandMerchandiseType: otsOnHandType,
@@ -3622,9 +3622,9 @@ namespace MIDRetail.Business.Allocation
                 exceedCapacity: Include.ConvertCharToBool(_mao.Exceed_Capacity_Ind),
                 storeGradesAttribute: GetName.GetAttributeName(key: storeGradesAttributeKey),
                 storeGradesAttributeSet: GetName.GetAttributeSetName(key: _storeGradesAttributeSetKey),
-                inventoryIndicator: EnumTools.VerifyEnumValue(localMinMaxType),
-                inventoryBasisMerchType: EnumTools.VerifyEnumValue(ibMerchType),
-                inventoryBasisMerchandise: GetName.GetLevelKeyValuePair(merchandiseType: EnumTools.VerifyEnumValue(ibMerchType), 
+                inventoryIndicator: EnumTools.VerifyEnumValue(localMinimumMaximumType),
+                inventoryBasisMerchType: EnumTools.VerifyEnumValue(inventoryBasisMerchandiseType),
+                inventoryBasisMerchandise: GetName.GetLevelKeyValuePair(merchandiseType: EnumTools.VerifyEnumValue(inventoryBasisMerchandiseType), 
                                                                       nodeRID: _mao.IB_MERCH_HN_RID,
                                                                       merchPhRID: _mao.IB_MERCH_PH_RID,
                                                                       merchPhlSequence: _mao.IB_MERCH_PHL_SEQ,
@@ -3847,91 +3847,91 @@ namespace MIDRetail.Business.Allocation
                 method.PackRounding.Add(roPackRounding);
             }
 
-            int? localMinShipQty, localMaxValue;
-            double? localPctPackThreshold;
+            int? localMinimumShipQuantity, localMaximumValue;
+            double? localPercentPackThreshold;
             string localReservationStore;
             KeyValuePair<int, string> localAttributeSet, localEntry;
-            DataTable dtVSWSets = IMODataSet.Tables["Sets"];
-            ROMethodOverrideVSWAttributeSet roVSWAttributeSet;
-            DataTable dtVSWStores = IMODataSet.Tables["Stores"];
-            for (int r = 0; r < dtVSWSets.Rows.Count; r++)
+            DataTable dataTableVSWSets = IMODataSet.Tables["Sets"];
+            ROMethodOverrideVSWAttributeSet VSWAttributeSet;
+            DataTable dataTableVSWStores = IMODataSet.Tables["Stores"];
+            for (int r = 0; r < dataTableVSWSets.Rows.Count; r++)
             {
-                DataRow row = dtVSWSets.Rows[r];
+                DataRow row = dataTableVSWSets.Rows[r];
                 string localString = Convert.ToString(row["Min Ship Qty"]);
                 if (string.IsNullOrEmpty(localString))
                 {
-                    localMinShipQty = null;
+                    localMinimumShipQuantity = null;
                 }
                 else
                 {
-                    localMinShipQty = Convert.ToInt32(localString);
+                    localMinimumShipQuantity = Convert.ToInt32(localString);
                 }
                 localString = Convert.ToString(row["Pct Pack Threshold"]);
                 if (string.IsNullOrEmpty(localString))
                 {
-                    localPctPackThreshold = null;
+                    localPercentPackThreshold = null;
                 }
                 else
                 {
-                    localPctPackThreshold = Convert.ToDouble(localString);
+                    localPercentPackThreshold = Convert.ToDouble(localString);
                 }
                 localString = Convert.ToString(row["Item Max"]);
                 if (string.IsNullOrEmpty(localString))
                 {
-                    localMaxValue = null;
+                    localMaximumValue = null;
                 }
                 else
                 {
-                    localMaxValue = Convert.ToInt32(localString);
+                    localMaximumValue = Convert.ToInt32(localString);
                 }
                 localReservationStore = Convert.ToString(row["Reservation Store"]);
 
                 localAttributeSet = GetName.GetAttributeSetName(IMOGroupLevelList[0].Key);
-                roVSWAttributeSet = new ROMethodOverrideVSWAttributeSet();
-                roVSWAttributeSet.VSWAttributeSetValues = new ROMethodOverrideVSW(
+                VSWAttributeSet = new ROMethodOverrideVSWAttributeSet();
+                VSWAttributeSet.VSWAttributeSetValues = new ROMethodOverrideVSW(
                     updated: false,
                     entry: GetName.GetAttributeSetName(IMOGroupLevelList[0].Key),
                     reservationStore: localReservationStore,
-                    minimumShipQuantity: localMinShipQty,
-                    pctPackThreshold: localPctPackThreshold,
-                    itemMaximum: localMaxValue
+                    minimumShipQuantity: localMinimumShipQuantity,
+                    pctPackThreshold: localPercentPackThreshold,
+                    itemMaximum: localMaximumValue
                     );
 
-                roVSWAttributeSet.VSWAttributeSetValues.MinimumShipQuantity = localMinShipQty;
-                roVSWAttributeSet.VSWAttributeSetValues.PctPackThreshold = localPctPackThreshold;
-                roVSWAttributeSet.VSWAttributeSetValues.ItemMaximum = localMaxValue;
-                method.VSWAttributeSet.Add(roVSWAttributeSet);
+                VSWAttributeSet.VSWAttributeSetValues.MinimumShipQuantity = localMinimumShipQuantity;
+                VSWAttributeSet.VSWAttributeSetValues.PctPackThreshold = localPercentPackThreshold;
+                VSWAttributeSet.VSWAttributeSetValues.ItemMaximum = localMaximumValue;
+                method.VSWAttributeSet.Add(VSWAttributeSet);
 
-                for (int s = 0; s < dtVSWStores.Rows.Count; s++)
+                for (int s = 0; s < dataTableVSWStores.Rows.Count; s++)
                 {
-                    DataRow storeRow = dtVSWStores.Rows[s];
+                    DataRow storeRow = dataTableVSWStores.Rows[s];
                     localReservationStore = Convert.ToString(storeRow["Reservation Store"]);
                     localString = Convert.ToString(storeRow["Min Ship Qty"]);
                     if (string.IsNullOrEmpty(localString))
                     {
-                        localMinShipQty = null;
+                        localMinimumShipQuantity = null;
                     }
                     else
                     {
-                        localMinShipQty = Convert.ToInt32(localString);
+                        localMinimumShipQuantity = Convert.ToInt32(localString);
                     }
                     localString = Convert.ToString(storeRow["Pct Pack Threshold"]);
                     if (string.IsNullOrEmpty(localString))
                     {
-                        localPctPackThreshold = null;
+                        localPercentPackThreshold = null;
                     }
                     else
                     {
-                        localPctPackThreshold = Convert.ToDouble(localString);
+                        localPercentPackThreshold = Convert.ToDouble(localString);
                     }
                     localString = Convert.ToString(storeRow["Item Max"]);
                     if (string.IsNullOrEmpty(localString))
                     {
-                        localMaxValue = null;
+                        localMaximumValue = null;
                     }
                     else
                     {
-                        localMaxValue = Convert.ToInt32(localString);
+                        localMaximumValue = Convert.ToInt32(localString);
                     }
                     int storeRID = Convert.ToInt16(storeRow["Store RID"]);
                     localEntry = GetName.GetStoreName(storeRID);
@@ -3941,12 +3941,12 @@ namespace MIDRetail.Business.Allocation
                         updated: updated,
                         entry: GetName.GetStoreName(localEntry.Key),
                         reservationStore: localReservationStore,
-                        minimumShipQuantity: localMinShipQty,
-                        pctPackThreshold: localPctPackThreshold,
-                        itemMaximum: localMaxValue
+                        minimumShipQuantity: localMinimumShipQuantity,
+                        pctPackThreshold: localPercentPackThreshold,
+                        itemMaximum: localMaximumValue
                         );
 
-                    roVSWAttributeSet.VSWStoresValues.Add(vswStore);
+                    VSWAttributeSet.VSWStoresValues.Add(vswStore);
                 }
             }
 
