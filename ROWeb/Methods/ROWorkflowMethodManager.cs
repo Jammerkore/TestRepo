@@ -508,6 +508,7 @@ namespace Logility.ROWeb
                     }
                 }
                 _ABM.Key = methodParm.ROMethodProperties.Method.Key;
+                _ABM.Name = methodParm.ROMethodProperties.Method.Value;
                 cleanseName = true;
             }
             else
