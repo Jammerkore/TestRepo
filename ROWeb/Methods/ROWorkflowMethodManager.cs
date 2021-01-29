@@ -515,6 +515,7 @@ namespace Logility.ROWeb
             {
                 _ABM.Method_Change_Type = eChangeType.update;
                 cleanseName = _ABM.Name != methodParm.ROMethodProperties.Method.Value;
+                _ABM.Name = methodParm.ROMethodProperties.Method.Value;
             }
 
             if (methodParm.ROMethodProperties.IsTemplate)
