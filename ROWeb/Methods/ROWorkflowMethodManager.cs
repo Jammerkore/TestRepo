@@ -593,43 +593,56 @@ namespace Logility.ROWeb
         public ROOut ApplyMethod(ROMethodPropertiesParms methodParm)
         {
             string message = null;
+            eROReturnCode returnCode = eROReturnCode.Successful;
 
-            if (_ABM == null)
+            try
             {
-                message = SAB.ClientServerSession.Audit.GetText(
-                    messageCode: eMIDTextCode.msg_ValueWasNotFound,
-                    addToAuditReport: true,
-                    args: new object[] { MIDText.GetTextOnly(eMIDTextCode.lbl_Method) }
+
+                if (_ABM == null)
+                {
+                    message = SAB.ClientServerSession.Audit.GetText(
+                        messageCode: eMIDTextCode.msg_ValueWasNotFound,
+                        addToAuditReport: true,
+                        args: new object[] { MIDText.GetTextOnly(eMIDTextCode.lbl_Method) }
+                        );
+                    throw new MIDException(eErrorLevel.severe,
+                        (int)eMIDTextCode.msg_ValueWasNotFound,
+                        message);
+                }
+
+                // Save values to memory only
+                _ABM.Name = methodParm.ROMethodProperties.Method.Value;
+                _ABM.Method_Description = methodParm.ROMethodProperties.Description;
+                _ABM.User_RID = methodParm.ROMethodProperties.UserKey;
+                _ABM.MethodSetData(methodProperties: methodParm.ROMethodProperties, message: ref message, processingApply: true);
+
+                // add or update the method in the collection
+                if (_ABM.Key != Include.NoRID)
+                {
+                    _workflowMethods[_ABM.Key] = _ABM;
+                }
+
+                // Build new object with updated values
+                ROMethodParms methodGetParm = new ROMethodParms(
+                    sROUserID: methodParm.ROUserID,
+                    sROSessionID: methodParm.ROSessionID,
+                    ROClass: methodParm.ROClass,
+                    RORequest: eRORequest.GetMethod,
+                    ROInstanceID: methodParm.ROInstanceID,
+                    methodType: methodParm.ROMethodProperties.MethodType,
+                    key: methodParm.ROMethodProperties.Method.Key,
+                    readOnly: false
                     );
-                throw new MIDException(eErrorLevel.severe,
-                    (int)eMIDTextCode.msg_ValueWasNotFound,
-                    message);
+
+                return GetMethod(methodParm: methodGetParm, processingApply: true);
             }
-
-            // Save values to memory only
-            _ABM.Name = methodParm.ROMethodProperties.Method.Value;
-            _ABM.Method_Description = methodParm.ROMethodProperties.Description;
-            _ABM.User_RID = methodParm.ROMethodProperties.UserKey;
-            _ABM.MethodSetData(methodProperties: methodParm.ROMethodProperties, message: ref message, processingApply: true);
-
-            // add or update the method in the collection
-            if (_ABM.Key != Include.NoRID)
+            catch (Exception ex)
             {
-                _workflowMethods[_ABM.Key] = _ABM;
+                message = ex.Message;
+                returnCode = eROReturnCode.Failure;
             }
 
-            // Build new object with updated values
-			ROMethodParms methodGetParm = new ROMethodParms(
-                sROUserID: methodParm.ROUserID, 
-                sROSessionID: methodParm.ROSessionID, 
-                ROClass: methodParm.ROClass,
-                RORequest: eRORequest.GetMethod, 
-                ROInstanceID: methodParm.ROInstanceID, 
-                methodType: methodParm.ROMethodProperties.MethodType,
-                key: methodParm.ROMethodProperties.Method.Key, 
-                readOnly: false
-                );
-            return GetMethod(methodParm: methodGetParm, processingApply: true);
+            return new ROMethodPropertiesOut(returnCode, message, ROInstanceID, null);
         }
 
         private void CleanseMethodName()
@@ -664,84 +677,92 @@ namespace Logility.ROWeb
             eROReturnCode returnCode = eROReturnCode.Successful;
             string message = null;
 
-            SetMethodObject(methodParm);
+            try
+            {
+                SetMethodObject(methodParm);
 
-            if (!_ABM.AuthorizedToUpdate(SAB.ClientServerSession, SAB.ClientServerSession.UserRID))
-            {
-                return new RONoDataOut(eROReturnCode.Failure, null, ROInstanceID);
-            }
-
-            // front end always uses new instance to add headers and process method.  So no need to always get new instance like in Windows code.
-            ApplicationSessionTransaction applicationSessionTransaction = GetApplicationSessionTransaction(getNewTransaction: false);
-            bool allowProcess = true;
-            if (Enum.IsDefined(typeof(eNoHeaderMethodType), (eNoHeaderMethodType)methodParm.MethodType))
-            {
-                applicationSessionTransaction.NeedHeaders = false;
-                //allowProcess = VerifySecurity(applicationSessionTransaction: applicationSessionTransaction);
-            }
-            else
-            {
-                applicationSessionTransaction.NeedHeaders = true;
-                allowProcess = VerifySecurity(applicationSessionTransaction: applicationSessionTransaction);
-            }
-
-            if (Enum.IsDefined(typeof(eAllocationMethodType), (eAllocationMethodType)methodParm.MethodType))
-            {
-                SelectedHeaderList selectedHeaderList = (SelectedHeaderList)SAB.ClientServerSession.GetSelectedHeaderList();
-                ArrayList headerInGAList = new ArrayList();
-                if (applicationSessionTransaction.ContainsGroupAllocationHeaders(ref headerInGAList, selectedHeaderList))
+                if (!_ABM.AuthorizedToUpdate(SAB.ClientServerSession, SAB.ClientServerSession.UserRID))
                 {
-                    return new RONoDataOut(eROReturnCode.Failure, MIDText.GetText(eMIDTextCode.msg_al_HeaderBelongsToGroupAllocation), ROInstanceID);
+                    return new RONoDataOut(eROReturnCode.Failure, null, ROInstanceID);
                 }
-            }
 
-            if (allowProcess)
-            {
-                string enqMessage;
-
-
-                if (EnqueueHeadersForProcessing(methodType: methodParm.MethodType))
+                // front end always uses new instance to add headers and process method.  So no need to always get new instance like in Windows code.
+                ApplicationSessionTransaction applicationSessionTransaction = GetApplicationSessionTransaction(getNewTransaction: false);
+                bool allowProcess = true;
+                if (Enum.IsDefined(typeof(eNoHeaderMethodType), (eNoHeaderMethodType)methodParm.MethodType))
                 {
-                    if (applicationSessionTransaction.EnqueueSelectedHeaders(out enqMessage))
+                    applicationSessionTransaction.NeedHeaders = false;
+                    //allowProcess = VerifySecurity(applicationSessionTransaction: applicationSessionTransaction);
+                }
+                else
+                {
+                    applicationSessionTransaction.NeedHeaders = true;
+                    allowProcess = VerifySecurity(applicationSessionTransaction: applicationSessionTransaction);
+                }
+
+                if (Enum.IsDefined(typeof(eAllocationMethodType), (eAllocationMethodType)methodParm.MethodType))
+                {
+                    SelectedHeaderList selectedHeaderList = (SelectedHeaderList)SAB.ClientServerSession.GetSelectedHeaderList();
+                    ArrayList headerInGAList = new ArrayList();
+                    if (applicationSessionTransaction.ContainsGroupAllocationHeaders(ref headerInGAList, selectedHeaderList))
                     {
-                        applicationSessionTransaction.ProcessMethod(methodParm.MethodType, _ABM.Key);
+                        return new RONoDataOut(eROReturnCode.Failure, MIDText.GetText(eMIDTextCode.msg_al_HeaderBelongsToGroupAllocation), ROInstanceID);
+                    }
+                }
+
+                if (allowProcess)
+                {
+                    string enqMessage;
+
+
+                    if (EnqueueHeadersForProcessing(methodType: methodParm.MethodType))
+                    {
+                        if (applicationSessionTransaction.EnqueueSelectedHeaders(out enqMessage))
+                        {
+                            applicationSessionTransaction.ProcessMethod(methodParm.MethodType, _ABM.Key);
+                        }
+                        else
+                        {
+                            return new RONoDataOut(eROReturnCode.Failure, enqMessage, ROInstanceID);
+                        }
                     }
                     else
                     {
-                        return new RONoDataOut(eROReturnCode.Failure, enqMessage, ROInstanceID);
+                        applicationSessionTransaction.ProcessMethod(methodParm.MethodType, _ABM.Key);
+                    }
+
+                    // OTS Plan actions and Allocation Actions resolve thier status a little differently...
+                    if (Enum.IsDefined(typeof(eForecastMethodType), (eForecastMethodType)methodParm.MethodType))
+                    {
+                        eOTSPlanActionStatus actionStatus = applicationSessionTransaction.OTSPlanActionStatus;
+                        message = MIDText.GetTextOnly((int)actionStatus);
+                        if (actionStatus != eOTSPlanActionStatus.ActionCompletedSuccessfully)
+                        {
+                            returnCode = eROReturnCode.Failure;
+                        }
+
+                    }
+                    else
+                    {
+                        eAllocationActionStatus actionStatus = applicationSessionTransaction.AllocationActionAllHeaderStatus;
+
+                        message = MIDText.GetTextOnly((int)actionStatus);
+                        if (actionStatus != eAllocationActionStatus.ActionCompletedSuccessfully)
+                        {
+                            returnCode = eROReturnCode.Failure;
+                        }
                     }
                 }
                 else
                 {
-                    applicationSessionTransaction.ProcessMethod(methodParm.MethodType, _ABM.Key);
-                } 
-
-                // OTS Plan actions and Allocation Actions resolve thier status a little differently...
-                if (Enum.IsDefined(typeof(eForecastMethodType), (eForecastMethodType)methodParm.MethodType))
-                {
-                    eOTSPlanActionStatus actionStatus = applicationSessionTransaction.OTSPlanActionStatus;
-                    message = MIDText.GetTextOnly((int)actionStatus);
-                    if (actionStatus != eOTSPlanActionStatus.ActionCompletedSuccessfully)
-                    {
-                        returnCode = eROReturnCode.Failure;
-                    }
-
-                }
-                else
-                {
-                    eAllocationActionStatus actionStatus = applicationSessionTransaction.AllocationActionAllHeaderStatus;
-
-                    message = MIDText.GetTextOnly((int)actionStatus);
-                    if (actionStatus != eAllocationActionStatus.ActionCompletedSuccessfully)
-                    {
-                        returnCode = eROReturnCode.Failure;
-                    }
+                    message = SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_NotAuthorizedForNode);
+                    return new RONoDataOut(eROReturnCode.Failure, message, ROInstanceID);
                 }
             }
-            else
+            catch (Exception ex)
             {
-                message = SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_NotAuthorizedForNode);
-                return new RONoDataOut(eROReturnCode.Failure, message, ROInstanceID);
+                message = ex.Message;
+                returnCode = eROReturnCode.Failure;
             }
 
             return new RONoDataOut(returnCode, message, ROInstanceID);

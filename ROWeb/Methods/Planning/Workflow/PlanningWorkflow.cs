@@ -67,8 +67,8 @@ namespace Logility.ROWeb
 
                 _applicationSessionTransaction.ProcessOTSPlanWorkflow(ABW.Key, true, true, 1);
                 eOTSPlanActionStatus actionStatus = _applicationSessionTransaction.OTSPlanActionStatus;
-                _workflowActionStatus = actionStatus.ToString();
-                string message = MIDText.GetTextOnly((int)actionStatus);
+                _workflowActionStatus = MIDText.GetTextOnly((int)actionStatus);
+                string message = _workflowActionStatus;
 
                 if (actionStatus == eOTSPlanActionStatus.ActionCompletedSuccessfully)
                 {

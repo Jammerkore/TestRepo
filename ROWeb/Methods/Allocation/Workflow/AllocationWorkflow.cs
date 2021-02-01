@@ -35,21 +35,29 @@ namespace Logility.ROWeb
             int aWorkflowRID = 0;
             bool successful = true;
 
-            if (rOIntParms.ROInt != 0)
+            try
             {
-                isFromExplorer = true;
-                aWorkflowRID = rOIntParms.ROInt;
+
+                if (rOIntParms.ROInt != 0)
+                {
+                    isFromExplorer = true;
+                    aWorkflowRID = rOIntParms.ROInt;
+                }
+
+                var rOAllocationHeaderSummaries = ProcessWorkflow(isFromExplorer, out successful, aWorkflowRID);
+
+                if (rOAllocationHeaderSummaries.Count > 0
+                    && successful)
+                {
+                    return new ROIListOut(eROReturnCode.Successful, _workflowActionStatus, ROInstanceID, rOAllocationHeaderSummaries);
+                }
+            }
+            catch (Exception ex)
+            {
+                _workflowActionStatus = ex.Message;
             }
 
-            var rOAllocationHeaderSummaries = ProcessWorkflow(isFromExplorer, out successful, aWorkflowRID);
-
-            if (rOAllocationHeaderSummaries.Count > 0
-                && successful)
-            {
-                return new ROIListOut(eROReturnCode.Successful, _workflowActionStatus, ROInstanceID, rOAllocationHeaderSummaries);
-            }
-
-            return new ROIListOut(eROReturnCode.Failure, _workflowActionStatus, ROInstanceID, rOAllocationHeaderSummaries);
+            return new ROIListOut(eROReturnCode.Failure, _workflowActionStatus, ROInstanceID, null);
         }
 
         internal List<ROAllocationHeaderSummary> ProcessWorkflow(bool isFromExplorer, out bool successful, int aWorkflowRID = 0)
@@ -150,8 +158,8 @@ namespace Logility.ROWeb
                             {
                                 _applicationSessionTransaction.ProcessAllocationWorkflow(ABW.Key, true, true, 1, eWorkflowProcessOrder.AllStepsForHeader);
                                 eAllocationActionStatus actionStatus = _applicationSessionTransaction.AllocationActionAllHeaderStatus;
-                                _workflowActionStatus = actionStatus.ToString();
-                                string message = MIDText.GetTextOnly((int)actionStatus);
+                                _workflowActionStatus = MIDText.GetTextOnly((int)actionStatus);
+                                string message = _workflowActionStatus;
 
                                 if (actionStatus == eAllocationActionStatus.HeaderEnqueueFailed
                                     || actionStatus == eAllocationActionStatus.NoHeaderResourceLocks)
