@@ -309,7 +309,9 @@ namespace Logility.ROWeb
                 return methodList;
             }
 
-            DataTable methodsDataTable = WmManager.GetMethodList(methodType, SAB.ClientServerSession.UserRID);
+            // temporarily change user so only global methods are returned
+            //DataTable methodsDataTable = WmManager.GetMethodList(methodType, SAB.ClientServerSession.UserRID);
+			DataTable methodsDataTable = WmManager.GetMethodList(methodType, Include.GlobalUserRID);
 
             // Get only template methods
             DataRow[] filteredDataRows = methodsDataTable.Select("TEMPLATE_IND = '1'");
