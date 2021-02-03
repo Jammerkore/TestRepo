@@ -3569,7 +3569,7 @@ namespace MIDRetail.Business.Allocation
             // get key of first set in attribute
             if (_storeGradesAttributeSetKey == Include.NoRID)
             {
-                attributeSetList = StoreMgmt.StoreGroup_GetLevelListViewList(capacityAttributeKey);
+                attributeSetList = StoreMgmt.StoreGroup_GetLevelListViewList(storeGradesAttributeKey);
                 if (attributeSetList.Count > 0)
                 {
                     _storeGradesAttributeSetKey = attributeSetList[0].Key;
@@ -4162,6 +4162,21 @@ namespace MIDRetail.Business.Allocation
 
                 // capacity
                 _dsOverRide.Tables["Capacity"].Rows.Clear();
+
+                // check for mismatch between attribute and sets
+				// if attributes do not match, update capacity attribute from set entries attribute
+                if (roMethodAllocationOverrideProperties.Capacity.Count > 0)
+                {
+                    // get atttribute set key from first entry
+                    int attributeSetKey = roMethodAllocationOverrideProperties.Capacity[0].AttributeSet.Key;
+                    int capacityAttributeKey = StoreMgmt.StoreGroupLevel_GetGroup(attributeSetKey);
+                    
+                    if (capacityAttributeKey != _allocationCriteria.CapacityStoreGroupRID)
+                    {
+                        _allocationCriteria.CapacityStoreGroupRID = capacityAttributeKey;
+                    }
+                }
+
                 foreach (ROMethodOverrideCapacityProperties capacityProperty in roMethodAllocationOverrideProperties.Capacity)
                 {
                     if (!capacityProperty.ExceedByPctIsSet)

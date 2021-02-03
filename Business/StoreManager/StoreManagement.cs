@@ -2400,6 +2400,19 @@ namespace MIDRetail.Business
             }
         }
 
+        public static int StoreGroupLevel_GetGroup(int storeGroupLevelKey)
+        {
+            try
+            {
+                StoreGroupLevelProfile sgli = _levelList.Find(x => x.Key == storeGroupLevelKey);
+                return sgli.GroupRid;
+            }
+            catch (Exception err)
+            {
+                throw;
+            }
+        }
+
 
         /// <summary>
         /// Creates a attribute set filter with a dynamic condition
