@@ -1919,78 +1919,104 @@ namespace MIDRetail.DataCommon
 		public static string[] GetFiles(string path, string searchPattern, eAPIFileProcessingDirection direction)
 		{
 			Regex regex;
-			ArrayList outStrs;
+            ArrayList outStrs = new ArrayList();
 
-			try
-			{
-				DirectoryInfo dirinfo = default(DirectoryInfo);
-				FileInfo[] allFiles = null;
-				dirinfo = new DirectoryInfo(path);
-                if (searchPattern == null ||
-                    searchPattern.Trim().Length == 0)
+            int maximumRetryAttempts = 9;
+            int retrySleepTime = 2000;
+            int retryCount = 0;
+            bool retry = true;
+
+            while (retry)
+            {
+                try
                 {
-                    searchPattern = "*.*";
-                }
-                allFiles = dirinfo.GetFiles(searchPattern);
-
-                outStrs = new ArrayList();
-                if (allFiles.Length > 0)
-                {
-                    // Begin TT#4591 - JSmith - Error: 111034:Cooresponding data file not found
-                    //searchPattern = String.Format(".*{0}", searchPattern.Replace("*.", "\\."));
-                    searchPattern = String.Format(".*{0}$", searchPattern.Replace("*.", "\\."));
-                    // End TT#4591 - JSmith - Error: 111034:Cooresponding data file not found
-                    regex = new Regex(searchPattern, RegexOptions.IgnoreCase);
-
-
-                    //===============================================================
-                    // NOTE on Direction
-                    // Because the method that calls this push the file names
-                    // unto a stack and later pops them off, The files are initially 
-                    // sorted the oposite direction. Then the push and pop will 
-                    // reverse them to be correct.
-                    //===============================================================
-                    switch (direction)
+                    DirectoryInfo dirinfo = default(DirectoryInfo);
+                    FileInfo[] allFiles = null;
+                    dirinfo = new DirectoryInfo(path);
+                    if (searchPattern == null ||
+                        searchPattern.Trim().Length == 0)
                     {
-                        case eAPIFileProcessingDirection.FIFO:
-                            Array.Sort(allFiles, new clsCompareFileInfoFILO());
-                            break;
-                        case eAPIFileProcessingDirection.FILO:
-                            Array.Sort(allFiles, new clsCompareFileInfoFIFO());
-                            break;
-                        default:
-                            break;
+                        searchPattern = "*.*";
                     }
+                    allFiles = dirinfo.GetFiles(searchPattern);
 
-                    //foreach (string str in files)
-                    foreach (FileInfo fileInfo in allFiles)
+                    outStrs = new ArrayList();
+                    if (allFiles.Length > 0)
                     {
-                        string str = fileInfo.FullName;
-                        if (regex.IsMatch(str))
+                        // Begin TT#4591 - JSmith - Error: 111034:Cooresponding data file not found
+                        //searchPattern = String.Format(".*{0}", searchPattern.Replace("*.", "\\."));
+                        searchPattern = String.Format(".*{0}$", searchPattern.Replace("*.", "\\."));
+                        // End TT#4591 - JSmith - Error: 111034:Cooresponding data file not found
+                        regex = new Regex(searchPattern, RegexOptions.IgnoreCase);
+
+
+                        //===============================================================
+                        // NOTE on Direction
+                        // Because the method that calls this push the file names
+                        // unto a stack and later pops them off, The files are initially 
+                        // sorted the oposite direction. Then the push and pop will 
+                        // reverse them to be correct.
+                        //===============================================================
+                        switch (direction)
                         {
-                            outStrs.Add(str);
+                            case eAPIFileProcessingDirection.FIFO:
+                                Array.Sort(allFiles, new clsCompareFileInfoFILO());
+                                break;
+                            case eAPIFileProcessingDirection.FILO:
+                                Array.Sort(allFiles, new clsCompareFileInfoFIFO());
+                                break;
+                            default:
+                                break;
+                        }
+
+                        //foreach (string str in files)
+                        foreach (FileInfo fileInfo in allFiles)
+                        {
+                            string str = fileInfo.FullName;
+                            if (regex.IsMatch(str))
+                            {
+                                outStrs.Add(str);
+                            }
+                        }
+                    }
+                    retry = false;
+					
+					//return (string[])outStrs.ToArray(typeof(string));
+                }
+                catch (IOException ex)
+                {
+                    ++retryCount;
+                    if (System.Runtime.InteropServices.Marshal.GetHRForException(ex) == 0x80070012)
+                    {
+                        return new string[0];
+                    }
+                    else
+                    {
+                        if (retryCount < maximumRetryAttempts)
+                        {
+                            System.Threading.Thread.Sleep(retrySleepTime);
+                        }
+                        else
+                        {
+                            throw;
                         }
                     }
                 }
+                catch
+                {
+                    throw;
+                }
+            }
 
-				return (string[])outStrs.ToArray(typeof(string));
-			}
-			catch (IOException ex)
-			{
-				if (System.Runtime.InteropServices.Marshal.GetHRForException(ex) == 0x80070012)
-				{
-					return new string[0];
-				}
-				else
-				{
-					throw;
-				}
-			}
-			catch
-			{
-				throw;
-			}
-		}
+            if (outStrs.Count > 0)
+            {
+                return (string[])outStrs.ToArray(typeof(string));
+            }
+            else
+            {
+                return new string[0];
+            }
+        }
         // End TT#3521 - JSmith - Header Load delay
 
         // Begin TT#1159 - JSmith - Improve Messaging
