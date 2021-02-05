@@ -198,6 +198,7 @@ namespace MIDRetail.Business
     {
         private const string _sourceModule = "StoreValidation.cs";
         public static SessionAddressBlock _SAB;
+		private static bool storeSellingDateErrorWritten = false;
         
         private static object _writeLock = new object();
         public static void SetSAB(SessionAddressBlock SAB)
@@ -207,6 +208,11 @@ namespace MIDRetail.Business
                 _SAB = SAB;
                 
             }
+        }
+
+        public static void ResetValues()
+        {
+            storeSellingDateErrorWritten = false;
         }
 
      
@@ -643,13 +649,15 @@ namespace MIDRetail.Business
 
                     if (sellingOpenDt != Include.UndefinedDate && sellingCloseDt != Include.UndefinedDate)
                     {
-                        if (sellingOpenDt > sellingCloseDt)
+                        if (sellingOpenDt > sellingCloseDt
+                            && !storeSellingDateErrorWritten)
                         {
                             string msgDetails = "Store: " + storeId +
                                 " " + storeFieldTypes.SellingOpenDate.Name + sellingOpenDt.ToString("d", CultureInfo.CurrentUICulture) +
                                 " " + storeFieldTypes.SellingCloseDate.Name + sellingCloseDt.ToString("d", CultureInfo.CurrentUICulture);
                             msgDetails += System.Environment.NewLine + MIDText.GetTextOnly(eMIDTextCode.msg_StoreSellingDateError);      
                             msgList.Add(new MIDMsg { msgLevel = eMIDMessageLevel.Edit, textCode = eMIDTextCode.msg_StoreSellingDateError, msg = msgDetails });
+                            storeSellingDateErrorWritten = true;
                             return false;
                         }
                     }
@@ -696,13 +704,15 @@ namespace MIDRetail.Business
 
                     if (sellingCloseDt != Include.UndefinedDate && sellingOpenDt != Include.UndefinedDate)
                     {
-                        if (sellingOpenDt > sellingCloseDt)
+                        if (sellingOpenDt > sellingCloseDt
+                            && !storeSellingDateErrorWritten)
                         {
                             string msgDetails = "Store: " + storeId +
                                 " " + storeFieldTypes.SellingOpenDate.Name + sellingOpenDt.ToString("d", CultureInfo.CurrentUICulture) +
                                 " " + storeFieldTypes.SellingCloseDate.Name + sellingCloseDt.ToString("d", CultureInfo.CurrentUICulture);
                             msgDetails += System.Environment.NewLine + MIDText.GetTextOnly(eMIDTextCode.msg_StoreSellingDateError);
                             msgList.Add(new MIDMsg { msgLevel = eMIDMessageLevel.Edit, textCode = eMIDTextCode.msg_StoreSellingDateError, msg = msgDetails });
+                            storeSellingDateErrorWritten = true;
                             return false;
                         }
                     }
@@ -868,6 +878,8 @@ namespace MIDRetail.Business
         public static bool IsStoreFieldValid(validationKinds validationKind, int objectType, int fieldIndex, int storeRID, object originalValue, object proposedValue, List<MIDMsg> msgList, FieldValueGetForCurrentField fieldValueGetCurrent, FieldValueSetForCurrentField fieldValueSetCurrent)
         {
             bool isValid = true;
+            // Since static class, class values must be reset for each store
+            ResetValues();
 
             if (objectType == storeObjectTypes.StoreFields) //Store Fields
             {

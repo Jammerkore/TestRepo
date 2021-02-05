@@ -785,7 +785,9 @@ namespace MIDRetail.Business
 
             storeProfile = (StoreProfile)StoreMgmt.StoreProfile_Get(storeRecord.StoreID).Clone();  //Making a copy for existing stores, so we do not immediately edit unintentionally.  New stores will have a store RID of -1
 
-
+            // Since static class, class values must be reset for each store
+            StoreValidation.ResetValues();
+            
             //Validate the store ID first, since it is used to identify the store later for other validation.
             if (storeRecord.StoreID != null)
             {
