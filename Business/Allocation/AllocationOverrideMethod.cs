@@ -3548,18 +3548,19 @@ namespace MIDRetail.Business.Allocation
                 onHandMerchandiseHierarchy = new KeyValuePair<int, int>(OTSOnHandPHL, OTSOnHandPHLSeq);
             }
 
-            if (_mao.Store_Group_RID > 0)
+            // Windows code uses SG_RID to set field and not CapacityStoreGroupRID
+            if (SG_RID > 0)
             {
-                capacityAttributeKey = _mao.Store_Group_RID;
+                capacityAttributeKey = SG_RID;
             }
             else
             {
                 capacityAttributeKey = SAB.ClientServerSession.GlobalOptions.AllocationStoreGroupRID;
             }
 
-            if (_mao.Tab_Store_Group_RID > 0)
+            if (GradeStoreGroupRID > 0)
             {
-                storeGradesAttributeKey = _mao.Tab_Store_Group_RID;
+                storeGradesAttributeKey = GradeStoreGroupRID;
             }
             else
             {
@@ -4065,8 +4066,10 @@ namespace MIDRetail.Business.Allocation
                     UseAllColorsMaxDefault = true;
                     _allocationCriteria.UseAllColorsMaxDefault = true;
                 }
-                _allocationCriteria.CapacityStoreGroupRID = roMethodAllocationOverrideProperties.CapacityAttribute.Key;
-                _allocationCriteria.GradeStoreGroupRID = roMethodAllocationOverrideProperties.StoreGradesAttribute.Key;
+                // Both fields are set to the same capacity attribute key
+                SG_RID = roMethodAllocationOverrideProperties.CapacityAttribute.Key;
+                CapacityStoreGroupRID = roMethodAllocationOverrideProperties.CapacityAttribute.Key;
+                GradeStoreGroupRID = roMethodAllocationOverrideProperties.StoreGradesAttribute.Key;
                 _allocationCriteria.ExceedCapacity = roMethodAllocationOverrideProperties.ExceedCapacity;
                 _applyVSW = roMethodAllocationOverrideProperties.DoNotApplyVSW;
 
@@ -4163,9 +4166,10 @@ namespace MIDRetail.Business.Allocation
                 // capacity
                 _dsOverRide.Tables["Capacity"].Rows.Clear();
 
-                // check for mismatch between attribute and sets
+                // check for mismatch between attribute and sets during a save only
 				// if attributes do not match, update capacity attribute from set entries attribute
-                if (roMethodAllocationOverrideProperties.Capacity.Count > 0)
+                if (!processingApply
+                    && roMethodAllocationOverrideProperties.Capacity.Count > 0)
                 {
                     // get atttribute set key from first entry
                     int attributeSetKey = roMethodAllocationOverrideProperties.Capacity[0].AttributeSet.Key;
@@ -4173,9 +4177,12 @@ namespace MIDRetail.Business.Allocation
                     
                     if (capacityAttributeKey != _allocationCriteria.CapacityStoreGroupRID)
                     {
-                        _allocationCriteria.CapacityStoreGroupRID = capacityAttributeKey;
+                        CapacityStoreGroupRID = capacityAttributeKey;
                     }
                 }
+
+                // Capacity attribute is held in multiple fields
+                SG_RID = CapacityStoreGroupRID;
 
                 foreach (ROMethodOverrideCapacityProperties capacityProperty in roMethodAllocationOverrideProperties.Capacity)
                 {
@@ -4231,6 +4238,8 @@ namespace MIDRetail.Business.Allocation
 
                 //foreach (ROAttributeSetStoreGrade storeGrade in roMethodAllocationOverrideProperties.StoreGradeValues)
                 ROAttributeSetStoreGrade storeGrade = roMethodAllocationOverrideProperties.StoreGradeValues;
+                if (storeGrade != null
+                    && storeGrade.StoreGrades != null)
                 {
                     foreach (ROAllocationStoreGrade setStoreGrades in storeGrade.StoreGrades)
                     {
