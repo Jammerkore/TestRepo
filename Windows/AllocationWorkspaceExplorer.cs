@@ -27776,6 +27776,12 @@ namespace MIDRetail.Windows
 		{
 			try 
 			{
+                FunctionSecurityProfile functionSecurity = _SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.ExplorersAllocationWorkspace);
+                if (functionSecurity.AccessDenied)
+                {
+                    return;
+                }
+
 				Cursor.Current = Cursors.WaitCursor;
                 // Begin TT#2349 - JSmith - Allocation Workspace Freezes when Refreshing using Ctrl-R
                 _controlKeyPressedUpperGrid = false;
