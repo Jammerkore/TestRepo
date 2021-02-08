@@ -739,27 +739,29 @@ namespace MIDRetail.Business
                 }
 
                 // Begin RO-3962 - JSmith - Purge is not deleting dynamic empty set attribute sets
-                if (!isNewGroup
-                    && isDynamic)
-                {
-                    sSQL += htab1 + System.Environment.NewLine;
-                    sSQL += htab1 + "--update sets inactive that have no stores" + System.Environment.NewLine;
-                    DataTable dt;
-                    ProfileList attributeSets = StoreMgmt.StoreGroup_GetLevelListViewList(groupRID);
-                    foreach (StoreGroupLevelListViewProfile sgl in attributeSets)
-                    {
-                        if (sgl.Sequence != 2147483647)
-                        {
-                            dt = sd.GetInUseData(sgl.Key, (int)eProfileType.StoreGroupLevel, out AllowDelete);
-                            if (dt.Rows.Count == 0)
-                            {
-                                sSQL += htab1 + "UPDATE STORE_GROUP_LEVEL set IS_ACTIVE = 0 " + System.Environment.NewLine;
-                                sSQL += htab1 + "FROM @FINAL_LEVELS f " + System.Environment.NewLine;
-                                sSQL += htab1 + "WHERE STORE_GROUP_LEVEL.SGL_RID = " + sgl.Key.ToString() + " AND STORE_GROUP_LEVEL.SGL_RID=f.SGL_RID AND f.STORE_COUNT = 0" + System.Environment.NewLine;
-                            }
-                        }
-                    }
-                } 
+                // Move to after attribute is updated so store count in set can be checked before InUse to improve performance
+                //if (!isNewGroup
+                //    && isDynamic)
+                //{
+                //    sSQL += htab1 + System.Environment.NewLine;
+                //    sSQL += htab1 + "--update sets inactive that have no stores" + System.Environment.NewLine;
+                //    DataTable dt;
+                //    ProfileList attributeSets = StoreMgmt.StoreGroup_GetLevelListViewList(groupRID);
+                //    foreach (StoreGroupLevelListViewProfile sgl in attributeSets)
+                //    {
+                //        if (sgl.Sequence != 2147483647)
+                //        {
+                //            //if not all stores, makes sure attribute set is not referenced before it is allowed to be deleted
+                //            dt = sd.GetInUseData(sgl.Key, (int)eProfileType.StoreGroupLevel, out AllowDelete);
+                //            if (dt.Rows.Count == 0)
+                //            {
+                //                sSQL += htab1 + "UPDATE STORE_GROUP_LEVEL set IS_ACTIVE = 0 " + System.Environment.NewLine;
+                //                sSQL += htab1 + "FROM @FINAL_LEVELS f " + System.Environment.NewLine;
+                //                sSQL += htab1 + "WHERE STORE_GROUP_LEVEL.SGL_RID = " + sgl.Key.ToString() + " AND STORE_GROUP_LEVEL.SGL_RID=f.SGL_RID AND f.STORE_COUNT = 0" + System.Environment.NewLine;
+                //            }
+                //        }
+                //    }
+                //} 
                 // End RO-3962 - JSmith - Purge is not deleting dynamic empty set attribute sets
 
                 // Begin TT#1868-MD - JSmith - Control Service gets database errors during startup
@@ -829,12 +831,112 @@ namespace MIDRetail.Business
                 {
                     dlFilters.CloseUpdateConnection();
                 }
+
+                // if updating dynamic attribute, check if any set can be inactivated 
+                // because of no stores in the set and it is not In Use
+                // SQL must be executed first to determine if the dynamic sets contain stores
+                if (!isNewGroup
+                    && isDynamic)
+                {
+                    MakeSetsInactive(
+                        filter: f,
+                        attributeKey: groupRID,
+                        attributeSets: ds.Tables["Table"]
+                        );
+                }
+
                 return ds;
             }
             catch (Exception ex)
             {
                 ExceptionHandler.HandleException(ex);
                 return null;
+            }
+        }
+
+        /// <summary>
+        /// Make attributes inactive if no stores and not In Use
+        /// </summary>
+        /// <param name="filter">The filter object used to build the attribute</param>
+        /// <param name="attributeKey">The key of the attribute associated with the filter</param>
+        /// <param name="attributeSets">DataTable of attributes sets</param>
+        private static void MakeSetsInactive(
+            filter filter,
+            int attributeKey,
+            DataTable attributeSets
+            )
+        {
+            bool allowDelete = true;
+            FilterData dataLayerFilters;
+            SystemData systemDataLayer = new SystemData();
+            int storeCount;
+            bool attributeSetInactivated = false;
+            bool inactivateAttributeSet = false;
+            string SQLCommand = string.Empty;
+            DataRow[] attributeSetRows;
+            DataTable dataTableInUse;
+
+            // get current attribute sets to compare to updated attribute sets
+            ProfileList currentAttributeSets = StoreMgmt.StoreGroup_GetLevelListViewList(attributeKey);
+            foreach (StoreGroupLevelListViewProfile attributeSet in currentAttributeSets)
+            {
+                inactivateAttributeSet = false;
+                // check if not available stores set
+                if (attributeSet.Sequence != 2147483647)
+                {
+                    // get attribute set from updated attribute sets
+                    attributeSetRows = attributeSets.Select("SGL_RID=" + attributeSet.Key.ToString());
+                    // if not included in the updated attribute sets, the set is being removed so inactivate it
+                    if (attributeSetRows.Length == 0)
+                    {
+                        inactivateAttributeSet = true;
+                    }
+                    else
+                    {
+                        // check store count, if no stores, inactivate it
+                        storeCount = Convert.ToInt32(attributeSetRows[0]["STORE_COUNT"]);
+                        if (storeCount == 0)
+                        {
+                            inactivateAttributeSet = true;
+                        }
+                    }
+
+                    // if attribute set is to be inactivated, check for In Use
+                    if (inactivateAttributeSet)
+                    {
+                        dataTableInUse = systemDataLayer.GetInUseData(attributeSet.Key, (int)eProfileType.StoreGroupLevel, out allowDelete);
+                        if (dataTableInUse.Rows.Count == 0
+                            && allowDelete)
+                        {
+                            // inactivate attribute set if not In Use
+                            SQLCommand += htab1 + "UPDATE STORE_GROUP_LEVEL set IS_ACTIVE = 0 " + System.Environment.NewLine;
+                            SQLCommand += htab1 + " WHERE SGL_RID = " + attributeSet.Key.ToString() + System.Environment.NewLine;
+                            attributeSetInactivated = true;
+                        }
+                    }
+                }
+            }
+
+            // if any sets are inactivated, execute command to inactivate attribute sets
+            if ( attributeSetInactivated)
+            {
+                dataLayerFilters = new FilterData();
+                try
+                {
+                    dataLayerFilters.OpenUpdateConnection();
+                    dataLayerFilters.ExecuteSqlForAttributeFilters(SQLCommand, 0);
+
+                    dataLayerFilters.CommitData();
+                }
+                catch (Exception ex)
+                {
+                    string err = "Error executing filter: " + filter.filterName + " (RID=" + filter.filterRID.ToString() + "): " + ex.ToString();
+                    ExceptionHandler.HandleException(err);
+                }
+                finally
+                {
+                    dataLayerFilters.CloseUpdateConnection();
+                }
             }
         }
 
