@@ -27776,7 +27776,8 @@ namespace MIDRetail.Windows
 		{
 			try 
 			{
-                FunctionSecurityProfile functionSecurity = _SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.ExplorersAllocationWorkspace);
+                FunctionSecurityProfile functionSecurity;
+                functionSecurity = _SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.ExplorersAllocationWorkspace);
                 if (functionSecurity.AccessDenied)
                 {
                     return;
