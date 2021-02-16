@@ -2327,13 +2327,19 @@ namespace Logility.ROWeb
         #region "Method to Process AllocationWorklist Action Processing #2524"
         private ROOut ProcessAllocationWorklistAction(ROIntParms actionType)
         {
+            string message = null;
+            eROReturnCode returnCode = eROReturnCode.Successful;
 
-            bool isProcessCompleted = ProcessAction(actionType.ROInt);
+            bool isProcessCompleted = ProcessAction(actionType.ROInt, ref message);
+            if (!isProcessCompleted)
+            {
+                returnCode = eROReturnCode.Failure;
+            }
 
-            return new ROBoolOut(eROReturnCode.Successful, null, ROInstanceID, isProcessCompleted);
+            return new ROBoolOut(returnCode, message, ROInstanceID, isProcessCompleted);
         }
 
-        internal bool ProcessAction(int action)
+        internal bool ProcessAction(int action, ref string message)
         {
 
             bool isActionCompleted = false;
@@ -2354,7 +2360,7 @@ namespace Logility.ROWeb
                 blActionSelected = true;
                 processTransaction = _applicationSessionTransaction;
 
-                if (!EnqueueHeadersForAction(processTransaction))
+                if (!EnqueueHeadersForAction(processTransaction, ref message))
                 {
                     return false;
                 }
@@ -2422,7 +2428,7 @@ namespace Logility.ROWeb
             return isActionCompleted;
         }
 
-        internal bool EnqueueHeadersForAction(ApplicationSessionTransaction aTrans)
+        internal bool EnqueueHeadersForAction(ApplicationSessionTransaction aTrans, ref string message)
         {
             string enqMessage;
             List<int> hdrRidList = new List<int>();
@@ -2436,12 +2442,17 @@ namespace Logility.ROWeb
 
             if (hdrRidList.Count == 0)
             {
+                message = "There are no worklist items";
                 return false;
             }
 
             if (aTrans.EnqueueHeaders(aTrans.GetHeadersToEnqueue(hdrRidList), out enqMessage))
             {
                 return true;
+            }
+            else
+            {
+                message = enqMessage;
             }
 
             return false;
@@ -2451,13 +2462,15 @@ namespace Logility.ROWeb
         {
             try
             {
-                var selectedHeaders = (SelectedHeaderList)_applicationSessionTransaction.GetSelectedHeaders();
-
-                for (int i = 0; i < selectedHeaders.Count; i++)
+                if (_applicationSessionTransaction != null)
                 {
-                    _selectedHeaderKeyList.Add(selectedHeaders[i].Key);
-                }
+                    var selectedHeaders = (SelectedHeaderList)_applicationSessionTransaction.GetSelectedHeaders();
 
+                    for (int i = 0; i < selectedHeaders.Count; i++)
+                    {
+                        _selectedHeaderKeyList.Add(selectedHeaders[i].Key);
+                    }
+                }
             }
             catch
             {
