@@ -24,7 +24,7 @@ pipeline
 			steps
 			{
 				sh '''
-					git checkout -b "rel/$BRANCHNAME.0/main" || true
+					git checkout -b "rel/$BRANCHNAME.0" || true
 					git push https://$GITAUTH@$GITREPO "rel/$BRANCHNAME.0" || true
 				'''
 			}
