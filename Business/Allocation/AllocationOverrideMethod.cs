@@ -3430,6 +3430,9 @@ namespace MIDRetail.Business.Allocation
         bool _storeGroupAttributeChanged = false;
         StoreGradeList _storeGradeList = null;
 
+        int _VSWAttributeSetKey = Include.NoRID;
+        int _VSWAttributeKey = Include.NoRID;
+
         override public ROMethodProperties MethodGetData(out bool successful, ref string message, bool processingApply = false)
         {
             successful = true;
@@ -3581,6 +3584,21 @@ namespace MIDRetail.Business.Allocation
                 }
             }
 
+            if (_VSWAttributeKey == Include.NoRID)
+            {
+                _VSWAttributeKey = SAB.ClientServerSession.GlobalOptions.OTSPlanStoreGroupRID;
+            }
+
+            // get key of first set in attribute
+            if (_VSWAttributeSetKey == Include.NoRID)
+            {
+                attributeSetList = StoreMgmt.StoreGroup_GetLevelListViewList(_VSWAttributeKey);
+                if (attributeSetList.Count > 0)
+                {
+                    _VSWAttributeSetKey = attributeSetList[0].Key;
+                }
+            }
+
             if ( _mao.All_Color_Multiple > 1)
             {
                 colorMultiple = _mao.All_Color_Multiple;
@@ -3636,14 +3654,15 @@ namespace MIDRetail.Business.Allocation
                                                                       SAB: SAB),
 
                 inventoryBasisMerchandiseHierarchy: new KeyValuePair<int, int>(_mao.IB_MERCH_PH_RID, _mao.IB_MERCH_PHL_SEQ),
-                vswAttribute: GetName.GetAttributeName(key: SAB.ClientServerSession.GlobalOptions.OTSPlanStoreGroupRID),
+                vswAttribute: GetName.GetAttributeName(key: _VSWAttributeKey),
                 doNotApplyVSW: _applyVSW,   // the panel needs the value to be flip-flopped - the db stores "applyVSW" but the panel displays "DoNotApplyVSW"
                 storeGradeValues: null,
                 capacity: new System.Collections.Generic.List<ROMethodOverrideCapacityProperties>(),
                 colorMinMax: new System.Collections.Generic.List<ROMethodOverrideColorProperties>(),
                 packRounding: new System.Collections.Generic.List<ROMethodOverridePackRoundingProperties>(),
-                vswAttributeSet: new System.Collections.Generic.List<ROMethodOverrideVSWAttributeSet>(),
-                isTemplate: Template_IND
+                vswAttributeSetValues: null,
+                isTemplate: Template_IND,
+                vswAttributeSet: GetName.GetAttributeSetName(key: _VSWAttributeSetKey)
                 );
 
             method.HierarchyLevels = BuildHierarchyLevels();
@@ -3895,6 +3914,14 @@ namespace MIDRetail.Business.Allocation
             for (int r = 0; r < dataTableVSWSets.Rows.Count; r++)
             {
                 DataRow row = dataTableVSWSets.Rows[r];
+
+                string setID = Convert.ToString(row["SetID"], CultureInfo.CurrentUICulture);
+
+                if (setID != method.VSWAttributeSet.Value)
+                {
+                    continue;
+                }
+
                 string localString = Convert.ToString(row["Min Ship Qty"]);
                 if (string.IsNullOrEmpty(localString))
                 {
@@ -3924,11 +3951,11 @@ namespace MIDRetail.Business.Allocation
                 }
                 localReservationStore = Convert.ToString(row["Reservation Store"]);
 
-                localAttributeSet = GetName.GetAttributeSetName(IMOGroupLevelList[0].Key);
+                localAttributeSet = GetName.GetAttributeSetName(key: _VSWAttributeSetKey);
                 VSWAttributeSet = new ROMethodOverrideVSWAttributeSet();
                 VSWAttributeSet.VSWAttributeSetValues = new ROMethodOverrideVSW(
                     updated: false,
-                    entry: GetName.GetAttributeSetName(IMOGroupLevelList[0].Key),
+                    entry: localAttributeSet,
                     reservationStore: localReservationStore,
                     minimumShipQuantity: localMinimumShipQuantity,
                     pctPackThreshold: localPercentPackThreshold,
@@ -3938,11 +3965,19 @@ namespace MIDRetail.Business.Allocation
                 VSWAttributeSet.VSWAttributeSetValues.MinimumShipQuantity = localMinimumShipQuantity;
                 VSWAttributeSet.VSWAttributeSetValues.PctPackThreshold = localPercentPackThreshold;
                 VSWAttributeSet.VSWAttributeSetValues.ItemMaximum = localMaximumValue;
-                method.VSWAttributeSet.Add(VSWAttributeSet);
+                method.VSWAttributeSetValues = VSWAttributeSet;
 
                 for (int s = 0; s < dataTableVSWStores.Rows.Count; s++)
                 {
                     DataRow storeRow = dataTableVSWStores.Rows[s];
+
+                    setID = Convert.ToString(storeRow["SetID"], CultureInfo.CurrentUICulture);
+
+                    if (setID != method.VSWAttributeSet.Value)
+                    {
+                        continue;
+                    }
+
                     localReservationStore = Convert.ToString(storeRow["Reservation Store"]);
                     localString = Convert.ToString(storeRow["Min Ship Qty"]);
                     if (string.IsNullOrEmpty(localString))
@@ -4448,14 +4483,36 @@ namespace MIDRetail.Business.Allocation
 
                 }
 
-                // vsw  
-                string localSetID = IMODataSet.Tables["Sets"].Rows[0]["SetID"].ToString();
-                IMODataSet.Tables["Stores"].Rows.Clear();
-                IMODataSet.Tables["Sets"].Rows.Clear();   
+                // vsw 
+                // get ID associated with the attribute set key
+                KeyValuePair<int, string> VSWAttributeSet = GetName.GetAttributeSetName(
+                     key: roMethodAllocationOverrideProperties.VSWAttributeSetValues.VSWAttributeSetValues.Entry.Key
+                     );
+                string localSetID = VSWAttributeSet.Value;
+
+                // remove rows for the set
+                if (roMethodAllocationOverrideProperties.VSWAttributeSetValues != null
+                    && roMethodAllocationOverrideProperties.VSWAttributeSetValues.VSWAttributeSetValues.EntryIsSet )
+                {
+                    string selectString = "SetID = '" + localSetID + "'";
+                    DataRow[] detailDataRows = IMODataSet.Tables["Sets"].Select(selectString);
+                    foreach (var detailDataRow in detailDataRows)
+                    {
+                        detailDataRow.Delete();
+                    }
+                    IMODataSet.Tables["Sets"].AcceptChanges();
+
+                   detailDataRows = IMODataSet.Tables["Stores"].Select(selectString);
+                    foreach (var detailDataRow in detailDataRows)
+                    {
+                        detailDataRow.Delete();
+                    }
+                    IMODataSet.Tables["Stores"].AcceptChanges();
+                }
 
                 IMODataSet.Tables["Sets"].Rows.Add(new object[] { localSetID, string.Empty, string.Empty, string.Empty, string.Empty });
 
-                foreach (ROMethodOverrideVSW vswStores in roMethodAllocationOverrideProperties.VSWAttributeSet[0].VSWStoresValues)
+                foreach (ROMethodOverrideVSW vswStores in roMethodAllocationOverrideProperties.VSWAttributeSetValues.VSWStoresValues)
                 {
                     if (vswStores.MinimumShipQuantity == System.Int32.MinValue && vswStores.ItemMaximum == System.Int32.MaxValue && vswStores.PctPackThreshold == System.Double.MinValue)
                     {
@@ -4496,6 +4553,31 @@ namespace MIDRetail.Business.Allocation
                         }
                     }
                 }
+
+                // If VSW attribute is changed, rebuild VSW dataset with new attribute
+                if (roMethodAllocationOverrideProperties.VSWAttributeIsSet
+                    && roMethodAllocationOverrideProperties.VSWAttribute.Key != _VSWAttributeKey)
+                {
+                    IMOGroupLevelList = StoreMgmt.StoreGroup_GetLevelListViewList(roMethodAllocationOverrideProperties.VSWAttribute.Key, true);
+                    Reservation_Populate(
+                        nodeRID: Include.NoRID, 
+                        aAttributeChanged: true);
+                    _VSWAttributeKey = roMethodAllocationOverrideProperties.VSWAttribute.Key;
+                }
+
+                if (roMethodAllocationOverrideProperties.VSWAttributeSetIsSet)
+                {
+                    _VSWAttributeSetKey = roMethodAllocationOverrideProperties.VSWAttributeSet.Key;
+                    // check to determine if attribute set is part of new attribute
+                    // if not, set so will use first set in the attribute
+                    if (roMethodAllocationOverrideProperties.VSWAttributeIsSet)
+                    {
+                        ProfileList attributeSetList = StoreMgmt.StoreGroup_GetLevelListViewList(_VSWAttributeKey);
+                        if (attributeSetList.FindKey(aKey: _VSWAttributeSetKey) == null)
+                        {
+                            _VSWAttributeSetKey = Include.NoRID;
+                        }
+                    }
                 }
 
                 return true;
