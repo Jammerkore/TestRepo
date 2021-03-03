@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MIDRetailControlService</name>
+    </assembly>
+    <members>
+        <member name="F:MIDRetail.Service.Control.ControlService.components">
+            <summary> 
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:MIDRetail.Service.Control.ControlService.InitializeComponent">
+            <summary> 
+            Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="M:MIDRetail.Service.Control.ControlService.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+        </member>
+        <member name="M:MIDRetail.Service.Control.ControlService.OnStart(System.String[])">
+            <summary>
+            Set things in motion so your service can do its work.
+            </summary>
+        </member>
+        <member name="M:MIDRetail.Service.Control.ControlService.OnStop">
+            <summary>
+            Stop this service.
+            </summary>
+        </member>
+        <member name="T:MIDRetail.Service.Control.ProjectInstaller">
+            <summary>
+            Summary description for ProjectInstaller.
+            </summary>
+        </member>
+        <member name="F:MIDRetail.Service.Control.ProjectInstaller.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:MIDRetail.Service.Control.ProjectInstaller.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+    </members>
+</doc>

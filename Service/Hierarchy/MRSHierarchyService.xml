@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MIDRetailHierarchyService</name>
+    </assembly>
+    <members>
+        <member name="F:MIDRetail.Service.Hierarchy.HierarchyService.components">
+            <summary> 
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:MIDRetail.Service.Hierarchy.HierarchyService.InitializeComponent">
+            <summary> 
+            Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="M:MIDRetail.Service.Hierarchy.HierarchyService.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+        </member>
+        <member name="M:MIDRetail.Service.Hierarchy.HierarchyService.OnStart(System.String[])">
+            <summary>
+            Set things in motion so your service can do its work.
+            </summary>
+        </member>
+        <member name="M:MIDRetail.Service.Hierarchy.HierarchyService.OnStop">
+            <summary>
+            Stop this service.
+            </summary>
+        </member>
+        <member name="M:MIDRetail.Service.Hierarchy.HierarchyService.GarbageCollect">
+            <summary>
+            Method that routinely colllect memory.
+            </summary>
+        </member>
+        <member name="T:MIDRetail.Service.Hierarchy.ProjectInstaller">
+            <summary>
+            Summary description for ProjectInstaller.
+            </summary>
+        </member>
+        <member name="F:MIDRetail.Service.Hierarchy.ProjectInstaller.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:MIDRetail.Service.Hierarchy.ProjectInstaller.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+    </members>
+</doc>

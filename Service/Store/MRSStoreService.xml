@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MIDRetailStoreService</name>
+    </assembly>
+    <members>
+        <member name="T:MIDRetail.Service.Store.ProjectInstaller">
+            <summary>
+            Summary description for ProjectInstaller.
+            </summary>
+        </member>
+        <member name="F:MIDRetail.Service.Store.ProjectInstaller.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:MIDRetail.Service.Store.ProjectInstaller.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:MIDRetail.Service.Store.StoreService.components">
+            <summary> 
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:MIDRetail.Service.Store.StoreService.InitializeComponent">
+            <summary> 
+            Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="M:MIDRetail.Service.Store.StoreService.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+        </member>
+        <member name="M:MIDRetail.Service.Store.StoreService.OnStart(System.String[])">
+            <summary>
+            Set things in motion so your service can do its work.
+            </summary>
+        </member>
+        <member name="M:MIDRetail.Service.Store.StoreService.OnStop">
+            <summary>
+            Stop this service.
+            </summary>
+        </member>
+        <member name="M:MIDRetail.Service.Store.StoreService.GarbageCollect">
+            <summary>
+            Method that routinely colllect memory.
+            </summary>
+        </member>
+    </members>
+</doc>
