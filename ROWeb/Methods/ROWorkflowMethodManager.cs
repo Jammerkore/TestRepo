@@ -768,6 +768,12 @@ namespace Logility.ROWeb
                             returnCode = eROReturnCode.Failure;
                         }
                     }
+
+                    applicationSessionTransaction.ClearAllocationCubeGroup();
+                    applicationSessionTransaction.ResetFilter(eProfileType.Store);
+
+                    applicationSessionTransaction.GetIMOReader().ResetIMO_Reader();
+                    applicationSessionTransaction.GetIntransitReader().ResetIntransitReader();
                 }
                 else
                 {
