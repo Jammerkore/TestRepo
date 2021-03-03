@@ -3424,6 +3424,11 @@ namespace MIDRetail.Business.Allocation
         }
 
         int _storeGradesAttributeSetKey = Include.NoRID;
+        int _storeGradesAttributeKey = Include.NoRID;
+        int _storeGradesMerchandiseKey = 0;
+        bool _populateStoreGrades = false;
+        bool _storeGroupAttributeChanged = false;
+        StoreGradeList _storeGradeList = null;
 
         override public ROMethodProperties MethodGetData(out bool successful, ref string message, bool processingApply = false)
         {
@@ -3443,7 +3448,6 @@ namespace MIDRetail.Business.Allocation
             KeyValuePair<int, int> merchandiseHierarchy = default(KeyValuePair<int, int>);
             KeyValuePair<int, int> onHandMerchandiseHierarchy = default(KeyValuePair<int, int>);
             int capacityAttributeKey = Include.NoRID;
-            int storeGradesAttributeKey = Include.NoRID;
             ProfileList attributeSetList;
 
             eMerchandiseType otsMerchandiseType, otsOnHandType, inventoryBasisMerchandiseType;
@@ -3536,7 +3540,7 @@ namespace MIDRetail.Business.Allocation
                 merchandiseHierarchy = new KeyValuePair<int, int>(OTSPlanPHL, OTSPlanPHLSeq);
             }
 
-            if (otsMerchandiseType != eMerchandiseType.Undefined)
+            if (otsOnHandType != eMerchandiseType.Undefined)
             {
                 onHandMerchandise = GetName.GetLevelKeyValuePair(
                     merchandiseType: otsOnHandType,
@@ -3560,17 +3564,17 @@ namespace MIDRetail.Business.Allocation
 
             if (GradeStoreGroupRID > 0)
             {
-                storeGradesAttributeKey = GradeStoreGroupRID;
+                _storeGradesAttributeKey = GradeStoreGroupRID;
             }
             else
             {
-                storeGradesAttributeKey = SAB.ClientServerSession.GlobalOptions.AllocationStoreGroupRID;
+                _storeGradesAttributeKey = SAB.ClientServerSession.GlobalOptions.AllocationStoreGroupRID;
             }
 
             // get key of first set in attribute
             if (_storeGradesAttributeSetKey == Include.NoRID)
             {
-                attributeSetList = StoreMgmt.StoreGroup_GetLevelListViewList(storeGradesAttributeKey);
+                attributeSetList = StoreMgmt.StoreGroup_GetLevelListViewList(_storeGradesAttributeKey);
                 if (attributeSetList.Count > 0)
                 {
                     _storeGradesAttributeSetKey = attributeSetList[0].Key;
@@ -3621,7 +3625,7 @@ namespace MIDRetail.Business.Allocation
                 allColorMax: allColorMaximum,
                 capacityAttribute: GetName.GetAttributeName(key: capacityAttributeKey),
                 exceedCapacity: Include.ConvertCharToBool(_mao.Exceed_Capacity_Ind),
-                storeGradesAttribute: GetName.GetAttributeName(key: storeGradesAttributeKey),
+                storeGradesAttribute: GetName.GetAttributeName(key: _storeGradesAttributeKey),
                 storeGradesAttributeSet: GetName.GetAttributeSetName(key: _storeGradesAttributeSetKey),
                 inventoryIndicator: EnumTools.VerifyEnumValue(localMinimumMaximumType),
                 inventoryBasisMerchType: EnumTools.VerifyEnumValue(inventoryBasisMerchandiseType),
@@ -3651,6 +3655,39 @@ namespace MIDRetail.Business.Allocation
             else
             {
                 method.DoNotApplyVSW = false;
+            }
+
+            // build initial store grade list from database 
+            if (_storeGradeList == null)
+            {
+                _storeGradeList = new StoreGradeList(eProfileType.StoreGrade);
+                foreach (DataRow row in _dsOverRide.Tables["GradeBoundary"].Rows)
+                {
+                    string gradeCode = row["GradeCode"].ToString();
+                    int boundary = int.Parse(row["Boundary"].ToString());
+                    StoreGradeProfile gradeProf = new StoreGradeProfile(boundary);
+                    gradeProf.StoreGrade = gradeCode;
+                    gradeProf.Boundary = boundary;
+                    _storeGradeList.Add(gradeProf);
+                }
+            }
+
+            if (_populateStoreGrades)
+            {
+                StoreGrades_InitialPopulate(
+                    storeGradesMerchandiseKey: _storeGradesMerchandiseKey,
+                    storeGradesAttributeKey: _storeGradesAttributeKey,
+                    resetGrid: _storeGroupAttributeChanged
+                    );
+                _populateStoreGrades = false;
+                _storeGroupAttributeChanged = false;
+            }
+
+            if (_storeGradesMerchandiseKey != Include.NoRID)
+            {
+                method.StoreGradesMerchandise = GetName.GetMerchandiseName(nodeRID: _storeGradesMerchandiseKey,
+                    SAB: SAB);
+                _storeGradesMerchandiseKey = Include.NoRID;
             }
 
             ROAttributeSetStoreGrade myAttributeSet = null;
@@ -3954,6 +3991,119 @@ namespace MIDRetail.Business.Allocation
             return method;
         }
 
+        /// <summary>
+		/// Populates store grade values when the Merchandise Node changes
+		/// </summary>
+		/// <param name="storeGradesMerchandiseKey">The merchandise key to use to retrieve store grades</param>
+        /// <param name="storeGradesAttributeKey">The attribute key to use to populate store grades</param>
+		private void StoreGrades_InitialPopulate(
+            int storeGradesMerchandiseKey,
+            int storeGradesAttributeKey,
+            bool resetGrid)
+        {
+            ProfileList attributeSetList;
+
+            try
+            {
+                int count = 0;
+                int? minimumStock, maximumStock, minimumAd, minimumColor, maximumColor, shipUpTo;
+                 
+                _dsOverRide.Tables["StoreGrades"].Clear();
+                _dsOverRide.Tables["StoreGrades"].AcceptChanges();
+
+                if (storeGradesMerchandiseKey != Include.NoRID)
+                {
+                    _storeGradeList = SAB.HierarchyServerSession.GetStoreGradeList(storeGradesMerchandiseKey, false, true);
+                }
+
+                attributeSetList = StoreMgmt.StoreGroup_GetLevelListViewList(storeGradesAttributeKey);
+
+                foreach (StoreGroupLevelListViewProfile storeGroupLevelListViewProfile in attributeSetList)
+                {
+                    foreach (StoreGradeProfile storeGradeProfile in _storeGradeList)
+                    {
+                        if (storeGradeProfile.MinStock > Include.Undefined
+                            && !resetGrid)
+                        {
+                            minimumStock = storeGradeProfile.MinStock;
+                        }
+                        else
+                        {
+                            minimumStock = null;
+                        }
+                        if (storeGradeProfile.MaxStock > Include.Undefined
+                            && !resetGrid)
+                        {
+                            maximumStock = storeGradeProfile.MaxStock;
+                        }
+                        else
+                        {
+                            maximumStock = null;
+                        }
+                        if (storeGradeProfile.MinAd > Include.Undefined
+                            && !resetGrid)
+                        {
+                            minimumAd = storeGradeProfile.MinAd;
+                        }
+                        else
+                        {
+                            minimumAd = null;
+                        }
+                        if (storeGradeProfile.MinColor > Include.Undefined
+                            && !resetGrid)
+                        {
+                            minimumColor = storeGradeProfile.MinColor;
+                        }
+                        else
+                        {
+                            minimumColor = null;
+                        }
+                        if (storeGradeProfile.MaxColor > Include.Undefined
+                            && !resetGrid)
+                        {
+                            maximumColor = storeGradeProfile.MaxColor;
+                        }
+                        else
+                        {
+                            maximumColor = null;
+                        }
+                        if (storeGradeProfile.ShipUpTo > Include.Undefined
+                            && !resetGrid)
+                        {
+                            shipUpTo = storeGradeProfile.ShipUpTo;
+                        }
+                        else
+                        {
+                            shipUpTo = null;
+                        }
+
+                        _dsOverRide.Tables["StoreGrades"].Rows.Add(new object[] 
+                        {
+                            count,
+                            storeGroupLevelListViewProfile.Key,
+                            storeGradeProfile.Boundary,
+                            storeGradeProfile.StoreGrade,
+                            minimumStock,
+                            maximumStock,
+                            minimumAd,
+                            minimumColor,
+                            maximumColor,
+                            shipUpTo
+                        });
+
+                        ++count;
+                    }
+                }
+
+                _dsOverRide.Tables["StoreGrades"].DefaultView.RowFilter = null;
+
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
         override public bool MethodSetData(ROMethodProperties methodProperties, ref string message, bool processingApply)
         {
             ROMethodAllocationOverrideProperties roMethodAllocationOverrideProperties = (ROMethodAllocationOverrideProperties)methodProperties;
@@ -4234,6 +4384,21 @@ namespace MIDRetail.Business.Allocation
                     _dsOverRide.Tables["StoreGrades"].AcceptChanges();
                 }
 
+                // If merchandise key is provided, set flag to populate store grades during get
+                // If key is -1 store grades will be cleared
+                if (roMethodAllocationOverrideProperties.StoreGradesMerchandiseIsSet
+                    && roMethodAllocationOverrideProperties.StoreGradesMerchandise.Key != _storeGradesMerchandiseKey)
+                {
+                    _storeGradesMerchandiseKey = roMethodAllocationOverrideProperties.StoreGradesMerchandise.Key;
+                    _populateStoreGrades = true;
+                }
+                else if (_storeGradesAttributeKey != roMethodAllocationOverrideProperties.StoreGradesAttribute.Key)
+                {
+                    _storeGradesAttributeKey = roMethodAllocationOverrideProperties.StoreGradesAttribute.Key;
+                    _populateStoreGrades = true;
+                    _storeGroupAttributeChanged = true;
+                }
+
                 i = 0;
 
                 //foreach (ROAttributeSetStoreGrade storeGrade in roMethodAllocationOverrideProperties.StoreGradeValues)
@@ -4320,6 +4485,17 @@ namespace MIDRetail.Business.Allocation
                 if (roMethodAllocationOverrideProperties.StoreGradesAttributeSetIsSet)
                 {
                     _storeGradesAttributeSetKey = roMethodAllocationOverrideProperties.StoreGradesAttributeSet.Key;
+                    // check to determine if attribute set is part of new attribute
+                    // if not, set so will use first set in the attribute
+                    if (_storeGroupAttributeChanged)
+                    {
+                        ProfileList attributeSetList = StoreMgmt.StoreGroup_GetLevelListViewList(_storeGradesAttributeKey);
+                        if (attributeSetList.FindKey(aKey: _storeGradesAttributeSetKey) == null)
+                        {
+                            _storeGradesAttributeSetKey = Include.NoRID;
+                        }
+                    }
+                }
                 }
 
                 return true;

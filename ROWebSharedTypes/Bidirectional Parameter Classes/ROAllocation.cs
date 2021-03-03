@@ -2706,6 +2706,8 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         KeyValuePair<int, string> _storeGradesAttributeSet;
         [DataMember(IsRequired = true)]
+        KeyValuePair<int, string> _storeGradesMerchandise;
+        [DataMember(IsRequired = true)]
         eMinMaxType _inventoryIndicator;
         [DataMember(IsRequired = true)]
         eMerchandiseType _inventoryBasisMerchType;
@@ -2961,6 +2963,20 @@ namespace Logility.ROWebSharedTypes
             set { _storeGradesAttributeSet = value; }
         }
 
+        /// <summary>
+		/// Gets a flag identifying if the store grades merchandise is set.
+		/// </summary>
+		public bool StoreGradesMerchandiseIsSet
+        {
+            get { return !_storeGradesMerchandise.Equals(default(KeyValuePair<int, string>)); }
+        }
+
+        public KeyValuePair<int, string> StoreGradesMerchandise
+        {
+            get { return _storeGradesMerchandise; }
+            set { _storeGradesMerchandise = value; }
+        }
+
         public eMinMaxType InventoryIndicator
         {
             get { return _inventoryIndicator; }
@@ -3085,7 +3101,9 @@ namespace Logility.ROWebSharedTypes
             List<ROMethodOverridePackRoundingProperties> packRounding, 
             List<ROMethodOverrideVSWAttributeSet> vswAttributeSet,
             KeyValuePair<int, string> storeGradesAttributeSet = default(KeyValuePair<int, string>),
-            bool isTemplate = false) 
+            bool isTemplate = false,
+            KeyValuePair<int, string> storeGradesMerchandise = default(KeyValuePair<int, string>)
+            ) 
             : base(
                   eMethodType.AllocationOverride, 
                   method, 
@@ -3117,6 +3135,7 @@ namespace Logility.ROWebSharedTypes
             _exceedCapacity = exceedCapacity;
             _storeGradesAttribute = storeGradesAttribute;
             _storeGradesAttributeSet = storeGradesAttributeSet;
+            _storeGradesMerchandise = storeGradesMerchandise;
             if (!Enum.IsDefined(typeof(eMinMaxType), inventoryIndicator))
             {
                 throw new Exception("Value " + inventoryIndicator.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
