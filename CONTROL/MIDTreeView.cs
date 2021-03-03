@@ -1653,6 +1653,7 @@ namespace MIDRetail.Windows.Controls
                                 {
                                     if (!AllowInUseDelete(deleteList))
                                     {
+                                        MIDEnvironment.requestFailed = true;
                                         return;
                                     }
                                     BeginUpdate();
