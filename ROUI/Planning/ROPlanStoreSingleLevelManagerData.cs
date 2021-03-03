@@ -2443,8 +2443,7 @@ namespace Logility.ROUI
             int baseColumnCount = 5;
 
             //create the ROCells Out for Store Totals (g5)
-            //if (rowHeaderList.Count > 0 && columnHeaderList.Count > 0)
-            if (columnHeaderList.Count > 0)
+            if (rowHeaderList.Count > 0 && columnHeaderList.Count > 0)
             {
                 ROCells StoreTotals = new ROCells();
                 currentColumnHeaderList = columnHeaderList;
@@ -2455,21 +2454,11 @@ namespace Logility.ROUI
                 _pagingCoordinates.LastColumnIndex = columnHeaderList.Count - 1;
                 AddColumns(StoreTotals, eDataType.StoreTotals);
                 StoreTotals.AddCells(rowHeaderList.Count, StoreTotals.Columns.Count);
-                // add stores
-                if (rowHeaderList.Count > 0)
-                {
-                    ROData.AddCells(eDataType.StoreTotals, StoreTotals);
-                    AddValues(ROData, eDataType.StoreTotals, Grid5);
-                }
-                // if no stores, add class so will have columns
-                else
-                {
-                    ROData.AddCells(eDataType.StoreTotals, StoreTotals);
-                }
+                ROData.AddCells(eDataType.StoreTotals, StoreTotals);
+                AddValues(ROData, eDataType.StoreTotals, Grid5);
             }
             //create the ROCells Out for Store Detail (g6)
-            //if (rowHeaderList.Count > 0 && columnTimeTotHeaderList.Count > 0)
-            if (columnTimeTotHeaderList.Count > 0)
+            if (rowHeaderList.Count > 0 && columnTimeTotHeaderList.Count > 0)
             {
                 ROCells StoreDetail = new ROCells();
                 currentColumnHeaderList = columnTimeTotHeaderList;
@@ -2477,17 +2466,8 @@ namespace Logility.ROUI
                 _pagingCoordinates = SetPageCoordinates(StartingRowIndex, NumberOfRows, StartingColIndex, NumberOfColumns);
                 AddColumns(StoreDetail, eDataType.StoreDetail);
                 StoreDetail.AddCells(rowHeaderList.Count, StoreDetail.Columns.Count);
-                // add stores
-                if (rowHeaderList.Count > 0)
-                {
-                    ROData.AddCells(eDataType.StoreDetail, StoreDetail);
-                    AddValues(ROData, eDataType.StoreDetail, Grid6);
-                }
-                // if no stores, add class so will have columns
-                else
-                {
-                    ROData.AddCells(eDataType.StoreDetail, StoreDetail);
-                }
+                ROData.AddCells(eDataType.StoreDetail, StoreDetail);
+                AddValues(ROData, eDataType.StoreDetail, Grid6);
             }
 
             /////create the ROCells Out for Set Total (g8)
@@ -3034,8 +3014,7 @@ namespace Logility.ROUI
             )
         {
             CubeWaferCoordinateList columnCoordinateList;
-			// Don't need row coordinates to build columns
-            //CubeWaferCoordinateList rowCoordinateList = GetRowCubeWaferCoordinateList(rowIndex: 0, dataType: dataType);
+            CubeWaferCoordinateList rowCoordinateList = GetRowCubeWaferCoordinateList(rowIndex: 0, dataType: dataType);
 
             columnCoordinateList = GetColumnCubeWaferCoordinateList(columnIndex: columnIndex, dataType: dataType);
 
