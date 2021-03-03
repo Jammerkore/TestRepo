@@ -1174,6 +1174,16 @@ namespace Logility.ROWeb
                     {
                         FolderDataLayer dlFolder = new FolderDataLayer(ClientTransaction.DataAccess);
                         dlFolder.Folder_Item_Insert(folderKey, _ABW.Key, _ABW.ProfileType);
+                        // lock new workflow
+                        _ABW.LockStatus = WorkflowMethodUtilities.LockWorkflowMethod(
+                            SAB: SAB,
+                            workflowMethodIND: eWorkflowMethodIND.Workflows,
+                            aChangeType: eChangeType.update,
+                            Key: _ABW.Key,
+                            Name: _ABW.WorkFlowName,
+                            allowReadOnly: true,
+                            message: out message
+                            );
                     }
 
                     ClientTransaction.DataAccess.CommitData();
