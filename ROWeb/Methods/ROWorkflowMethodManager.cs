@@ -532,7 +532,7 @@ namespace Logility.ROWeb
             }
             if (cleanseName)
             {
-                CleanseMethodName();
+                CleanseMethodName(applicationBaseMethod: _ABM);
             }
             _ABM.Method_Description = methodParm.ROMethodProperties.Description;
             _ABM.User_RID = methodParm.ROMethodProperties.UserKey;
@@ -624,6 +624,14 @@ namespace Logility.ROWeb
                     _workflowMethods[_ABM.Key] = _ABM;
                 }
 
+                // set the readOnly flag based on the lock status of the method
+                bool readOnly = true;
+                if (_ABM.LockStatus == eLockStatus.Locked
+                    || _ABM.Key == Include.NoRID)
+                {
+                    readOnly = false;
+                }
+
                 // Build new object with updated values
                 ROMethodParms methodGetParm = new ROMethodParms(
                     sROUserID: methodParm.ROUserID,
@@ -633,7 +641,7 @@ namespace Logility.ROWeb
                     ROInstanceID: methodParm.ROInstanceID,
                     methodType: methodParm.ROMethodProperties.MethodType,
                     key: methodParm.ROMethodProperties.Method.Key,
-                    readOnly: false
+                    readOnly: readOnly
                     );
 
                 return GetMethod(methodParm: methodGetParm, processingApply: true);
@@ -647,12 +655,12 @@ namespace Logility.ROWeb
             return new ROMethodPropertiesOut(returnCode, message, ROInstanceID, null);
         }
 
-        private void CleanseMethodName()
+        private void CleanseMethodName(ApplicationBaseMethod applicationBaseMethod)
         {
-            string name = _ABM.Name;
+            string name = applicationBaseMethod.Name;
 
             int userKey = SAB.ClientServerSession.UserRID;
-            if (_ABM.GlobalUserType == eGlobalUserType.Global)
+            if (applicationBaseMethod.GlobalUserType == eGlobalUserType.Global)
             {
                 userKey = Include.GlobalUserRID;
             }
@@ -660,15 +668,14 @@ namespace Logility.ROWeb
             int nameCntr = 0;
             while (true)
             {
-                if (!WmManager.CheckForDuplicateMethodID(userKey, _ABM))
+                if (!WmManager.CheckForDuplicateMethodID(userKey, applicationBaseMethod))
                 {
                     break;
                 }
                 else
                 {
                     nameCntr++;
-                    //_ABM.Name = name + ":" + nameCntr;
-                    _ABM.Name = Include.GetNewName(name: name, index: nameCntr);
+                    applicationBaseMethod.Name = Include.GetNewName(name: name, index: nameCntr);
                 }
             }
         }
@@ -1053,22 +1060,28 @@ namespace Logility.ROWeb
         #region Workflows  - Save/Update
         public ROOut SaveWorkflow(ROWorkflowPropertiesParms rOWorkflow)
         {
+            // message field to pass to all methods to set proper message
+            string message = null;
             bool WorkflowSaved = false;
 
-            WorkflowSaved = SaveWorkflowData(rOWorkflow);
+            WorkflowSaved = SaveWorkflowData(rOWorkflow, ref message);
 
-            return new ROIListOut(eROReturnCode.Successful, null, ROInstanceID,
+            return new ROIListOut(eROReturnCode.Successful, message, ROInstanceID,
                                     WorkflowMethodUtilities.BuildWorkflowNode(GetApplicationType(), _ABW));
         }
 
-        internal bool SaveWorkflowData(ROWorkflowPropertiesParms rOWorkflow)
+        internal bool SaveWorkflowData(ROWorkflowPropertiesParms rOWorkflow, 
+            ref string message
+            )
         {
-            SetWorkflowCommonFields(rOWorkflow);
+            SetWorkflowCommonFields(rOWorkflow: rOWorkflow, message: ref message);
 
-            return SaveWorkflowChanges(rOWorkflow);
+            return SaveWorkflowChanges(rOWorkflow: rOWorkflow, message: ref message);
         }
 
-        internal void SetWorkflowCommonFields(ROWorkflowPropertiesParms rOWorkflow)
+        internal void SetWorkflowCommonFields(ROWorkflowPropertiesParms rOWorkflow, 
+            ref string message
+            )
         {
             int userRID;
             if (rOWorkflow.ROWorkflow.GlobalUserType == eGlobalUserType.Global)
@@ -1112,7 +1125,9 @@ namespace Logility.ROWeb
             _ABW.WorkFlowDescription = rOWorkflow.ROWorkflow.WorkflowDescription;
         }
 
-        internal bool SaveWorkflowChanges(ROWorkflowPropertiesParms rOWorkflow)
+        internal bool SaveWorkflowChanges(ROWorkflowPropertiesParms rOWorkflow, 
+            ref string message
+            )
         {
             try
             {
@@ -1598,9 +1613,15 @@ namespace Logility.ROWeb
                 parms.ToParentUniqueID
                 );
 
+            // Determine method folder keys before starting updates or will deadlock database
+            int[] folderKeys = GetFolderKeysForCustomMethods();
+
             try
             {
                 ClientTransaction.DataAccess.OpenUpdateConnection();
+
+                // clone all custom methods
+                CloneCustomMethods(folderKeys: folderKeys);
 
                 _ABW.Update(ClientTransaction.DataAccess);
 
@@ -1620,6 +1641,95 @@ namespace Logility.ROWeb
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Get folder keys for new custom methods
+        /// </summary>
+        /// <returns></returns>
+        private int[] GetFolderKeysForCustomMethods()
+        {
+            ApplicationBaseMethod applicationBaseMethod;
+            int i = 0;
+
+            int[] folderKeys = new int[_ABW.Workflow_Steps.Count];
+
+            // check each step using base class so will work for Allocation and Planning workflow steps including actions
+            foreach (ApplicationWorkFlowStep applicationWorkflowStep in _ABW.Workflow_Steps)
+            {
+                // check if method
+                if (applicationWorkflowStep.Method != null
+                && Enum.IsDefined(typeof(eMethodTypeUI), (int)applicationWorkflowStep.Method.MethodType))  
+                {
+                    // if method, convert to type to test for template or custom method
+                    applicationBaseMethod = (ApplicationBaseMethod)applicationWorkflowStep.Method;
+                    // if not template, determine the key of the root folder for the method type
+                    if (!applicationBaseMethod.Template_IND)
+                    {
+                        // store folder key in position of method
+                        folderKeys[i] = WorkflowMethodUtilities.GetWorkflowMethodFolderRID(
+                            applicationFolderType: GetFolderProfileType(),
+                            folderKey: Include.NoRID,
+                            userKey: applicationBaseMethod.User_RID,
+                            profileType: applicationBaseMethod.ProfileType,
+                            uniqueID: null
+                            );
+                    }
+                }
+
+                i++;
+            }
+
+            return folderKeys;
+        }
+
+        private bool CloneCustomMethods(int[] folderKeys)
+        {
+            bool successful = true;
+            ApplicationBaseMethod applicationBaseMethod;
+            int i = 0;
+
+            // check each step using base class so will work for Allocation and Planning workflow steps including actions
+            foreach (ApplicationWorkFlowStep applicationWorkflowStep in _ABW.Workflow_Steps)
+            {
+                // check if method
+                if (applicationWorkflowStep.Method != null
+                && Enum.IsDefined(typeof(eMethodTypeUI), (int)applicationWorkflowStep.Method.MethodType))
+                {
+                    // if method, convert to type to test for template or custom method
+                    applicationBaseMethod = (ApplicationBaseMethod)applicationWorkflowStep.Method;
+                    // if not template, duplicate the method to a different key
+                    if (!applicationBaseMethod.Template_IND)
+                    {
+                        // copy the method data requesting all dates to be cloned to unique keys
+                        applicationBaseMethod = applicationBaseMethod.Copy(
+                            aSession: SAB.ClientServerSession,
+                            aCloneDateRanges: true,
+                            aCloneCustomOverrideModels: true
+                            );
+                        // modify method values so will add new method
+                        applicationBaseMethod.Key = Include.NoRID;
+                        applicationBaseMethod.Method_Change_Type = eChangeType.add;
+                        applicationBaseMethod.Name = Include.Custom + DateTime.Now.Ticks;
+                        CleanseMethodName(applicationBaseMethod: applicationBaseMethod);
+                        // save the cloned method to get key
+                        applicationBaseMethod.Update(ClientTransaction.DataAccess);
+                        // update the workflow step with the new method
+                        applicationWorkflowStep.Method = applicationBaseMethod;
+                        // add method to root folder for method type
+                        FolderDataLayer dataLayer = new FolderDataLayer(ClientTransaction.DataAccess);
+                        dataLayer.Folder_Item_Insert(
+                            folderKeys[i], 
+                            applicationBaseMethod.Key, 
+                            applicationBaseMethod.ProfileType
+                            );
+                    }
+                }
+
+                i++;
+            }
+
+            return successful;
         }
 
         #endregion Save As WorkFlow/Method
