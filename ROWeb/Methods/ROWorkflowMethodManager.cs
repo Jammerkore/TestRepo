@@ -704,6 +704,7 @@ namespace Logility.ROWeb
 
                 // front end always uses new instance to add headers and process method.  So no need to always get new instance like in Windows code.
                 ApplicationSessionTransaction applicationSessionTransaction = GetApplicationSessionTransaction(getNewTransaction: false);
+                applicationSessionTransaction.Initialize();
                 bool allowProcess = true;
                 if (Enum.IsDefined(typeof(eNoHeaderMethodType), (eNoHeaderMethodType)methodParm.MethodType))
                 {
