@@ -63,6 +63,7 @@ namespace Logility.ROWeb
         private DataTable _dtHeaderViewFieldMapping = null;
 
         private ArrayList _selectedHeaderKeyList;
+        private ArrayList _selectedAssortmentKeyList;
 
         private List<ROAllocationWorklistOut> _allocationWorklistOut;
         //=================
@@ -2400,6 +2401,7 @@ namespace Logility.ROWeb
             bool blActionSelected = false;
             bool isMasterOrSubordinate = false;
             _selectedHeaderKeyList = new ArrayList();
+            _selectedAssortmentKeyList = new ArrayList();
 
             try
             {
@@ -2410,6 +2412,12 @@ namespace Logility.ROWeb
 
                 blActionSelected = true;
                 processTransaction = _applicationSessionTransaction;
+
+                // get header list from transaction before clearing values
+                // then reload the headers
+                _selectedHeaderKeyList = GetHeadersInAllocation();
+                processTransaction.Initialize();
+                processTransaction.LoadHeadersInTransaction(_selectedHeaderKeyList, _selectedAssortmentKeyList, true);
 
                 if (!EnqueueHeadersForAction(processTransaction, ref message))
                 {
@@ -2484,7 +2492,7 @@ namespace Logility.ROWeb
             string enqMessage;
             List<int> hdrRidList = new List<int>();
 
-            _selectedHeaderKeyList = GetHeadersInAllocation();
+            //_selectedHeaderKeyList = GetHeadersInAllocation();
 
             foreach (int key in _selectedHeaderKeyList)
             {
