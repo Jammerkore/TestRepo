@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>StoreLoad</name>
+    </assembly>
+    <members>
+        <member name="T:MIDRetail.StoreLoad.LoadBase">
+            <summary>
+            Base class to provide batch load capabilities to sessions.
+            Marked abstract because some manipulation of the SAB object
+            is required prior to calling BatchLoad.
+            </summary>
+        </member>
+        <member name="M:MIDRetail.StoreLoad.LoadBase.#ctor(System.String)">
+            <summary>
+            Initializes the eventlog and other base properties.
+            </summary>
+        </member>
+        <member name="P:MIDRetail.StoreLoad.LoadBase.SAB">
+            <summary>
+            A reference to the internal SessionAddressBlock.
+            The client session must be created and logged in prior to calling BatchLoad
+            </summary>
+        </member>
+        <member name="P:MIDRetail.StoreLoad.LoadBase.sponsor">
+            <summary>
+            A reference to the internal SessionSponsor.
+            </summary>
+        </member>
+        <member name="P:MIDRetail.StoreLoad.LoadBase.messageCallback">
+            <summary>
+            A reference to the internal MessageCallback
+            </summary>
+        </member>
+        <member name="P:MIDRetail.StoreLoad.LoadBase.eventLogID">
+            <summary>
+            The eventLogID that will be used for logging
+            </summary>
+        </member>
+        <member name="P:MIDRetail.StoreLoad.LoadBase.sourceModule">
+            <summary>
+            The sourceModule that will be used for logging
+            </summary>
+        </member>
+        <member name="P:MIDRetail.StoreLoad.LoadBase.fileLocation">
+            <summary>
+            The fileLocation used for the batch load.
+            Must be set if not defined as 'InputFile' in the config file.
+            </summary>
+        </member>
+        <member name="P:MIDRetail.StoreLoad.LoadBase.exceptionFile">
+            <summary>
+             The exceptionFile that will be used for the batch load.
+             Defaults to .\exceptionFile.txt if 'ExceptionFile' is not defined in the config file.
+            </summary>
+        </member>
+        <member name="P:MIDRetail.StoreLoad.LoadBase.commitLimit">
+            <summary>
+            The commitLimit used by batch load.
+            Defaults to 1000 if 'CommitLimit' is not defined in the config file.
+            </summary>
+        </member>
+        <member name="P:MIDRetail.StoreLoad.LoadBase.delimiter">
+            <summary>
+            The delimiter used by batch load.
+            Defaults to ~.
+            Ignored when processing .XML files.
+            </summary>
+        </member>
+        <member name="P:MIDRetail.StoreLoad.LoadBase.autoAddCharacteristics">
+            <summary>
+            Identifies is characteristics are to be auto added
+            </summary>
+            <remarks>Defaults to False</remarks>
+        </member>
+        <member name="P:MIDRetail.StoreLoad.LoadBase.characteristicDelimiter">
+            <summary>
+            The delimiter used to delimite characteristic types from values.
+            Defaults to \.
+            </summary>
+        </member>
+        <member name="P:MIDRetail.StoreLoad.LoadBase.UseCharacteristicTransaction">
+            <summary>
+            Indicates whether the newer transaction types ("S", "C") will be used.
+            Defaults to False.
+            </summary>
+        </member>
+        <member name="P:MIDRetail.StoreLoad.LoadBase.processId">
+            <summary>
+            The processId that will be used to initalize the ClientServerSession.
+            Defaults to -1.
+            </summary>
+        </member>
+        <member name="M:MIDRetail.StoreLoad.LoadBase.BatchLoad(MIDRetail.Business.IBatchLoadData)">
+            <summary>
+            Performs a batch load.
+            Will pass the file specified by the fileLocation property with the delimiter and commitLimit specified
+            to the passed in batchSession.
+            </summary>
+            <param name="batchSession">Any class that implements the BatchLoadData interface</param>
+            <returns>True on success, false on failure</returns>
+        </member>
+        <member name="M:MIDRetail.StoreLoad.LoadBase.ProcessArgs(System.String[])">
+            <summary>
+            Performs a BatchLoad.
+            Takes an args list typically entered from the command line and extracts the appropriate
+            parameters for use in calling the passed batch session objects Load method. Un-set args
+            will be loaded from the configuration file.
+            </summary>
+            <param name="args">args[0]=filename, args[1]=delimiter, args[2]=processRID</param>
+            <param name="batchSession">Any class that implements the BatchLoadData interface</param>
+            <returns>True on success, false on failure</returns>
+        </member>
+        <member name="T:MIDRetail.StoreLoad.StoreLoad">
+            <summary>
+            The StoreLoad class in a console application that calls StoreLoadWorker class
+            that performs the actual functionality
+            </summary>
+        </member>
+        <member name="M:MIDRetail.StoreLoad.StoreLoad.Main(System.String[])">
+            <summary>
+            The main entry point for the application.
+            </summary>
+        </member>
+        <member name="M:MIDRetail.StoreLoad.StoreLoadWorker.#ctor">
+            <summary>
+            Used to construct an instance of the class.
+            </summary>
+        </member>
+    </members>
+</doc>

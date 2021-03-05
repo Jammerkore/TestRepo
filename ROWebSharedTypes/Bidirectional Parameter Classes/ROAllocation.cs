@@ -2650,9 +2650,9 @@ namespace Logility.ROWebSharedTypes
     public class ROAllocationVelocityGrade : ROStoreGrade
     {
         [DataMember(IsRequired = true)]
-        public int AdMinimum { get; set; }
+        public int? AdMinimum { get; set; }
 
-        public bool AdMinimumIsSet { get { return AdMinimum != int.MinValue; } }
+        public bool AdMinimumIsSet { get { return AdMinimum != null; } }
     }
 
     [DataContract(Name = "ROMethodAllocationOverrideProperties", Namespace = "http://Logility.ROWeb/")]
@@ -2706,6 +2706,8 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         KeyValuePair<int, string> _storeGradesAttributeSet;
         [DataMember(IsRequired = true)]
+        KeyValuePair<int, string> _storeGradesMerchandise;
+        [DataMember(IsRequired = true)]
         eMinMaxType _inventoryIndicator;
         [DataMember(IsRequired = true)]
         eMerchandiseType _inventoryBasisMerchType;
@@ -2715,6 +2717,8 @@ namespace Logility.ROWebSharedTypes
         KeyValuePair<int, int> _inventoryBasisMerchandiseHierarchy;
         [DataMember(IsRequired = true)]
         KeyValuePair<int, string> _vswAttribute;
+        [DataMember(IsRequired = true)]
+        KeyValuePair<int, string> _vswAttributeSet;
         [DataMember(IsRequired = true)]
         bool _doNotApplyVSW;
         [DataMember(IsRequired = true)]
@@ -2726,7 +2730,7 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         private List<ROMethodOverridePackRoundingProperties> _packRounding;
         [DataMember(IsRequired = true)]
-        private List<ROMethodOverrideVSWAttributeSet> _vswAttributeSet;
+        private ROMethodOverrideVSWAttributeSet _vswAttributeSetValues;
 
         #region Public Properties
 
@@ -2961,6 +2965,20 @@ namespace Logility.ROWebSharedTypes
             set { _storeGradesAttributeSet = value; }
         }
 
+        /// <summary>
+		/// Gets a flag identifying if the store grades merchandise is set.
+		/// </summary>
+		public bool StoreGradesMerchandiseIsSet
+        {
+            get { return !_storeGradesMerchandise.Equals(default(KeyValuePair<int, string>)); }
+        }
+
+        public KeyValuePair<int, string> StoreGradesMerchandise
+        {
+            get { return _storeGradesMerchandise; }
+            set { _storeGradesMerchandise = value; }
+        }
+
         public eMinMaxType InventoryIndicator
         {
             get { return _inventoryIndicator; }
@@ -3005,10 +3023,32 @@ namespace Logility.ROWebSharedTypes
             set { _inventoryBasisMerchandiseHierarchy = value; }
         }
 
+        /// <summary>
+		/// Gets a flag identifying if the VSW attribute is set.
+		/// </summary>
+		public bool VSWAttributeIsSet
+        {
+            get { return !_vswAttribute.Equals(default(KeyValuePair<int, string>)); }
+        }
+
         public KeyValuePair<int, string> VSWAttribute
         {
             get { return _vswAttribute; }
             set { _vswAttribute = value; }
+        }
+
+        /// <summary>
+		/// Gets a flag identifying if the store grades attribute set is set.
+		/// </summary>
+		public bool VSWAttributeSetIsSet
+        {
+            get { return !_vswAttributeSet.Equals(default(KeyValuePair<int, string>)); }
+        }
+
+        public KeyValuePair<int, string> VSWAttributeSet
+        {
+            get { return _vswAttributeSet; }
+            set { _vswAttributeSet = value; }
         }
 
         public bool DoNotApplyVSW
@@ -3041,10 +3081,10 @@ namespace Logility.ROWebSharedTypes
             set { _packRounding = value; }
         }
 
-        public List<ROMethodOverrideVSWAttributeSet> VSWAttributeSet
+        public ROMethodOverrideVSWAttributeSet VSWAttributeSetValues
         {
-            get { return _vswAttributeSet; }
-            set { _vswAttributeSet = value; }
+            get { return _vswAttributeSetValues; }
+            set { _vswAttributeSetValues = value; }
         }
 
         #endregion
@@ -3083,9 +3123,12 @@ namespace Logility.ROWebSharedTypes
             List<ROMethodOverrideCapacityProperties> capacity,
             List<ROMethodOverrideColorProperties> colorMinMax, 
             List<ROMethodOverridePackRoundingProperties> packRounding, 
-            List<ROMethodOverrideVSWAttributeSet> vswAttributeSet,
+            ROMethodOverrideVSWAttributeSet vswAttributeSetValues,
             KeyValuePair<int, string> storeGradesAttributeSet = default(KeyValuePair<int, string>),
-            bool isTemplate = false) 
+            bool isTemplate = false,
+            KeyValuePair<int, string> storeGradesMerchandise = default(KeyValuePair<int, string>),
+            KeyValuePair<int, string> vswAttributeSet = default(KeyValuePair<int, string>)
+            ) 
             : base(
                   eMethodType.AllocationOverride, 
                   method, 
@@ -3117,6 +3160,7 @@ namespace Logility.ROWebSharedTypes
             _exceedCapacity = exceedCapacity;
             _storeGradesAttribute = storeGradesAttribute;
             _storeGradesAttributeSet = storeGradesAttributeSet;
+            _storeGradesMerchandise = storeGradesMerchandise;
             if (!Enum.IsDefined(typeof(eMinMaxType), inventoryIndicator))
             {
                 throw new Exception("Value " + inventoryIndicator.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
@@ -3136,12 +3180,13 @@ namespace Logility.ROWebSharedTypes
             _inventoryBasisMerchandise = inventoryBasisMerchandise;
             _inventoryBasisMerchandiseHierarchy = inventoryBasisMerchandiseHierarchy;
             _vswAttribute = vswAttribute;
+            _vswAttributeSet = vswAttributeSet;
             _doNotApplyVSW = doNotApplyVSW;
             _storeGradeValues = storeGradeValues;
             _capacity = capacity;
             _colorMinMax = colorMinMax;
             _packRounding = packRounding;
-            _vswAttributeSet = vswAttributeSet;
+            _vswAttributeSetValues = vswAttributeSetValues;
             _hierarchyLevels = new List<KeyValuePair<int, string>>();
         }
 
@@ -3357,6 +3402,15 @@ namespace Logility.ROWebSharedTypes
             get { return _updated; }
             set { _updated = value; }
         }
+
+        /// <summary>
+        /// Gets a flag identifying if the entry is set.
+        /// </summary>
+        public bool EntryIsSet
+        {
+            get { return !Entry.Equals(default(KeyValuePair<int, string>)); }
+        }
+
         public KeyValuePair<int, string> Entry
         {
             get { return _entry; }
@@ -3404,11 +3458,11 @@ namespace Logility.ROWebSharedTypes
 
         public ROMethodOverrideVSW(
             bool updated, 
-            KeyValuePair<int, string> entry, 
-            string reservationStore, 
-            int? minimumShipQuantity, 
-            double? pctPackThreshold, 
-            int? itemMaximum
+            KeyValuePair<int, string> entry = default(KeyValuePair<int, string>), 
+            string reservationStore = null, 
+            int? minimumShipQuantity = null, 
+            double? pctPackThreshold = null, 
+            int? itemMaximum = null
             )
         {
             // fields specific to Allocation Override Color
@@ -3593,7 +3647,7 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         private List<KeyValuePair<int, string>> _matrixModeRuleList;
         [DataMember(IsRequired = true)]
-        private Dictionary<int, ROMethodAllocationVelocityAttributeSet> _matrixAttributeSetValues;
+        private ROMethodAllocationVelocityAttributeSet _matrixAttributeSetValues;
         [DataMember(IsRequired = true)]
         private List<KeyValuePair<int, string>> _matrixViews;
         [DataMember(IsRequired = true)]
@@ -3608,6 +3662,8 @@ namespace Logility.ROWebSharedTypes
         private List<KeyValuePair<int, string>> _components;
         [DataMember(IsRequired = true)]
         private KeyValuePair<int, string> _selectedComponent;
+        KeyValuePair<int, string> _velocityGradesMerchandise;
+        [DataMember(IsRequired = true)]
 
         #region Public Properties
         /// <summary>
@@ -3852,11 +3908,12 @@ namespace Logility.ROWebSharedTypes
         }
 
         /// <summary>
-        /// Gets the dictionary of attribute set values
+        /// Gets the attribute set values
         /// </summary>
-        public Dictionary<int, ROMethodAllocationVelocityAttributeSet> MatrixAttributeSetValues
+        public ROMethodAllocationVelocityAttributeSet MatrixAttributeSetValues
         {
             get { return _matrixAttributeSetValues; }
+            set { _matrixAttributeSetValues = value; }
         }
 
         /// <summary>
@@ -3939,6 +3996,20 @@ namespace Logility.ROWebSharedTypes
             get { return !SelectedComponent.Equals(default(KeyValuePair<int, string>)); }
         }
 
+        /// <summary>
+        /// Gets a flag identifying if the velocity grades merchandise is set.
+        /// </summary>
+        public bool VelocityGradesMerchandiseIsSet
+        {
+            get { return !_velocityGradesMerchandise.Equals(default(KeyValuePair<int, string>)); }
+        }
+
+        public KeyValuePair<int, string> VelocityGradesMerchandise
+        {
+            get { return _velocityGradesMerchandise; }
+            set { _velocityGradesMerchandise = value; }
+        }
+
         #endregion
         public ROMethodAllocationVelocityProperties(
             KeyValuePair<int, string> method, 
@@ -3958,7 +4029,8 @@ namespace Logility.ROWebSharedTypes
             KeyValuePair<int, int> inventoryMinMaxMerchandiseHierarchy,
             KeyValuePair<int, string> attribute,
             KeyValuePair<int, string> attributeSet,
-            bool isTemplate = false
+            bool isTemplate = false,
+            KeyValuePair<int, string> velocityGradesMerchandise = default(KeyValuePair<int, string>)
             ) 
             : base(
                   eMethodType.Velocity, 
@@ -3997,7 +4069,6 @@ namespace Logility.ROWebSharedTypes
             _noOnHandRuleList = new List<KeyValuePair<int, string>>();
             _onHandRuleList = new List<KeyValuePair<int, string>>();
             _matrixModeRuleList = new List<KeyValuePair<int, string>>();
-            _matrixAttributeSetValues = new Dictionary<int, ROMethodAllocationVelocityAttributeSet>();
             _matrixViews = new List<KeyValuePair<int, string>>();
             _matrixSelectedView = default(KeyValuePair<int, string>);
             _matrixViewColumns = new List<KeyValuePair<string, bool>>();
@@ -4005,6 +4076,7 @@ namespace Logility.ROWebSharedTypes
             _velocityAction = eVelocityAction.None;
             _components = new List<KeyValuePair<int, string>>();
             _selectedComponent = default(KeyValuePair<int, string>);
+            _velocityGradesMerchandise = velocityGradesMerchandise;
         }
 
     }

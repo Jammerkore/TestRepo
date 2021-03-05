@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SpecialRequest</name>
+    </assembly>
+    <members>
+        <member name="M:MIDRetail.SpecialRequest.SpecialRequest.Main(System.String[])">
+            <summary>
+            The main entry point for the application.
+            </summary>
+            <remarks>
+            First Arg = Method_RID
+            Second Arg (optional) = Proccess_RID
+            </remarks>
+        </member>
+        <member name="T:MIDRetail.SpecialRequest.SpecialRequestProcess">
+            <summary>
+            Processes a Special Request
+            </summary>
+        </member>
+    </members>
+</doc>

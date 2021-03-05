@@ -828,15 +828,66 @@ namespace Logility.ROWeb
             ArrayList selectedAssortmentList = new ArrayList(); //to pass an empty seleted assortement list 
             try
             {
+                bool getNewTransaction = false;
+
                 var selectedHeaderList4mSession = (SelectedHeaderList)SAB.ClientServerSession.GetSelectedHeaderList();
 
                 if (selectedHeaderList4mSession.ArrayList.Count > 0)
                 {
+                    // get a new ApplicationSessionTransaction if header list is different
+                    if (selectedHeaders.ListValues.Count != selectedHeaderList4mSession.ArrayList.Count)
+                    {
+                        getNewTransaction = true;
+                    }
+                    else
+                    {
+                        foreach (int headerKey in selectedHeaders.ListValues)
+                        {
+                            bool foundHeader = false;
+                            foreach (SelectedHeaderProfile selectedHeaderProfile in selectedHeaderList4mSession.ArrayList)
+                            {
+                                if (selectedHeaderProfile.Key == headerKey)
+                                {
+                                    foundHeader = true;
+                                    break;
+                                }
+                            }
+                            if (!foundHeader)
+                            {
+                                getNewTransaction = true;
+                            }
+                        }
+                    }
+
                     SAB.ClientServerSession.ClearSelectedHeaderList();
                     SAB.ClientServerSession.ClearSelectedComponentList();
+                    // if have a transaction and not getting new transaction, remove subtotals to rebuild
+                    if (_applicationSessionTransaction != null
+                        && !getNewTransaction)
+                    {
+                        AllocationSubtotalProfileList subtotalList;
+                        eProfileType profileType = eProfileType.AllocationSubtotal;
+                        subtotalList = (AllocationSubtotalProfileList)_applicationSessionTransaction.GetMasterProfileList(profileType);
+                        if (subtotalList != null)
+                        {
+                            foreach (AllocationSubtotalProfile allocationSubtotalProfile in subtotalList)
+                            {
+                                allocationSubtotalProfile.RemoveAllSubtotalMembers();
+                            }
+                            _applicationSessionTransaction.RemoveAllocationSubtotalProfileList();
+                        }
+                    }
                 }
 
-                _applicationSessionTransaction = GetApplicationSessionTransaction();
+                // if getting new transaction, clear the ROWorkflowMethodManager so new one is built for different headers
+                if (getNewTransaction
+                    && _ROWorkflowMethodManager != null)
+                {
+                    _ROWorkflowMethodManager.CleanUp();
+                    _ROWorkflowMethodManager = null;
+                }
+
+                _applicationSessionTransaction = GetApplicationSessionTransaction(getNewTransaction: getNewTransaction);
 
                 _applicationSessionTransaction.LoadHeadersInTransaction(selectedHeaders.ListValues, selectedAssortmentList, true, false);
 

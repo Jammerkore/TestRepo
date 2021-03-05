@@ -10515,7 +10515,7 @@ namespace MIDRetail.Business.Allocation
 
         private System.Data.DataTable _merchandiseDataTable;
         private HierarchyProfile _hp = null;
-        private int _currentAttributeSet = 0;
+        private int _currentAttributeSet = Include.NoRID;
         private DataTable _compDataTable = null;
         private bool _needToLockHeaders = false;
         private bool _statisticsCalculated = false;
@@ -10523,6 +10523,8 @@ namespace MIDRetail.Business.Allocation
         private bool _clearMatrix = false;
         private bool _matrixProcessed = false;
         private bool _matrixEverProcessed = false;
+        int _velocityGradesMerchandiseKey = 0;
+        bool _populateVelocityGrades = false;
 
         private HierarchyProfile HP
         {
@@ -10548,6 +10550,7 @@ namespace MIDRetail.Business.Allocation
             }
 
         }
+
         override public ROMethodProperties MethodGetData(out bool successful, ref string message, bool processingApply = false)
         {
             successful = true;
@@ -10634,9 +10637,19 @@ namespace MIDRetail.Business.Allocation
             }
 
             ProfileList setList = StoreMgmt.StoreGroup_GetLevelListViewList(SG_RID);
-            if (_currentAttributeSet == 0)
+            if (_currentAttributeSet == Include.NoRID)
             {
                 _currentAttributeSet = ((StoreGroupLevelListViewProfile)setList.ArrayList[0]).Key;
+            }
+
+            KeyValuePair<int, string> attributeSet;
+            if (_currentAttributeSet == Include.TotalMatrixLevelRID)
+            {
+                attributeSet = new KeyValuePair<int, string>(Include.TotalMatrixLevelRID, MIDText.GetTextOnly(eMIDTextCode.lbl_TotalMatrix));
+            }
+            else
+            {
+                attributeSet = GetName.GetAttributeSetName(key: _currentAttributeSet);
             }
 
             ROMethodAllocationVelocityProperties method = new ROMethodAllocationVelocityProperties(
@@ -10661,13 +10674,31 @@ namespace MIDRetail.Business.Allocation
 
                 inventoryMinMaxMerchandiseHierarchy: new KeyValuePair<int, int>(MERCH_PH_RID, MERCH_PHL_SEQ),
                 attribute: GetName.GetAttributeName(key: SG_RID),
-                attributeSet: GetName.GetAttributeSetName(key: _currentAttributeSet),
+                attributeSet: attributeSet,
                 isTemplate: Template_IND
                 );
 
             foreach (StoreGroupLevelListViewProfile attrSet in setList)
             {
                 method.AttributeSetList.Add(new KeyValuePair<int, string>(attrSet.Key, attrSet.Name));
+            }
+            // add total matrix
+            string totalMatrixText = MIDText.GetTextOnly(eMIDTextCode.lbl_TotalMatrix);
+            method.AttributeSetList.Add(new KeyValuePair<int, string>(Include.TotalMatrixLevelRID, totalMatrixText));
+
+            // matrix is being reset based on different merchandise selected to build the velocity grades
+            if (_populateVelocityGrades)
+            {
+                VelocityGrades_InitialPopulate(
+                    velocityGradesMerchandiseKey: _velocityGradesMerchandiseKey
+                    );
+                _populateVelocityGrades = false;
+            }
+
+            if (_velocityGradesMerchandiseKey != Include.NoRID)
+            {
+                method.VelocityGradesMerchandise = GetName.GetMerchandiseName(nodeRID: _velocityGradesMerchandiseKey,
+                    SAB: SAB);
             }
 
             BuildDataTables();
@@ -10695,7 +10726,62 @@ namespace MIDRetail.Business.Allocation
 
             return method;
         }
-        
+
+        /// <summary>
+        /// Populates velocity grade values when the Merchandise Node changes
+        /// </summary>
+        /// <param name="velocityGradesMerchandiseKey">The merchandise key to use to retrieve velocity grades</param>
+        private void VelocityGrades_InitialPopulate(
+            int velocityGradesMerchandiseKey)
+        {
+            VelocityGradeList velocityGradeList = null;
+
+            try
+            {
+                int count = 0;
+
+                _dsVelocity.Tables["VelocityGrade"].Clear();
+                _dsVelocity.Tables["VelocityGrade"].AcceptChanges();
+
+                if (velocityGradesMerchandiseKey != Include.NoRID)
+                {
+                    velocityGradeList = SAB.HierarchyServerSession.GetVelocityGradeList(velocityGradesMerchandiseKey, true);
+                }
+                else // no merchandise, so returned cleared grades
+                {
+                    return;
+                }
+
+                foreach (VelocityGradeProfile vgp in velocityGradeList)
+                {
+                    _dsVelocity.Tables["VelocityGrade"].Rows.Add(new object[] { count, vgp.VelocityGrade, vgp.Boundary, vgp.VelocityMinStock, vgp.VelocityMaxStock, vgp.VelocityMinAd });
+                    ++count;
+                }
+
+                foreach (DataRow velocityGradeRow in _dsVelocity.Tables["VelocityGrade"].Rows)
+                {
+                    if (Convert.ToInt32(velocityGradeRow["MinStock"]) == -1)
+                    {
+                        velocityGradeRow["MinStock"] = DBNull.Value;
+                    }
+                    if (Convert.ToInt32(velocityGradeRow["MaxStock"]) == -1)
+                    {
+                        velocityGradeRow["MaxStock"] = DBNull.Value;
+                    }
+                    if (Convert.ToInt32(velocityGradeRow["MinAd"]) == -1)
+                    {
+                        velocityGradeRow["MinAd"] = DBNull.Value;
+                    }
+                }
+
+                _dsVelocity.Tables["VelocityGrade"].DefaultView.RowFilter = null;
+
+            }
+            catch
+            {
+                throw;
+            }
+        }
 
         private void AddBasis (ROMethodAllocationVelocityProperties method)
         {
@@ -10986,7 +11072,7 @@ namespace MIDRetail.Business.Allocation
                 }
                 else
                 {
-                    velocityGrade.Minimum = System.Int32.MinValue;
+                    velocityGrade.Minimum = null;
                 }
 
                 if (row["MaxStock"] != System.DBNull.Value)
@@ -10995,7 +11081,7 @@ namespace MIDRetail.Business.Allocation
                 }
                 else
                 {
-                    velocityGrade.Maximum = System.Int32.MaxValue;
+                    velocityGrade.Maximum = null;
                 }
 
                 if (row["MinAd"] != System.DBNull.Value)
@@ -11004,7 +11090,7 @@ namespace MIDRetail.Business.Allocation
                 }
                 else
                 {
-                    velocityGrade.AdMinimum = System.Int32.MinValue;
+                    velocityGrade.AdMinimum = null;
                 }
 
                 method.VelocityGradeList.Add(velocityGrade);
@@ -11089,6 +11175,11 @@ namespace MIDRetail.Business.Allocation
 
             foreach (GroupLvlMatrix glm in _groupLvlMtrxData.Values)
             {
+                if (glm.SglRID != method.AttributeSet.Key)
+                {
+                    continue;
+                }
+
                 if (glm.ModeInd == 'A')
                 {
                     matrixMode = eVelocityMatrixMode.Average;
@@ -11161,7 +11252,8 @@ namespace MIDRetail.Business.Allocation
 
                 AddVelocityGradeValues(method: method, attributeSet: attributeSet, glm: glm);
 
-                method.MatrixAttributeSetValues.Add(attributeSet.AttributeSet.Key, attributeSet);
+                //method.MatrixAttributeSetValues.Add(attributeSet.AttributeSet.Key, attributeSet);
+                method.MatrixAttributeSetValues = attributeSet;
             }            
         }
 
@@ -11948,6 +12040,15 @@ namespace MIDRetail.Business.Allocation
             }
             IsInteractive = method.Interactive;
 
+            // If merchandise key is provided, set flag to populate velocity grades during get
+            // If key is -1 store grades will be cleared
+            if (method.VelocityGradesMerchandiseIsSet
+                && method.VelocityGradesMerchandise.Key != _velocityGradesMerchandiseKey)
+            {
+                _velocityGradesMerchandiseKey = method.VelocityGradesMerchandise.Key;
+                _populateVelocityGrades = true;
+            }
+
             LoadDataArrays();
 
             if (method.VelocityAction == eVelocityAction.ClearMatrix)
@@ -12114,8 +12215,8 @@ namespace MIDRetail.Business.Allocation
                         {
                             velocityGradesChanged = true;
                         }
-                        int minStock = -1;
-                        int inputMinStock = -1;
+                        int? minStock = null;
+                        int? inputMinStock = null;
                         if (row["MinStock"] != System.DBNull.Value)
                         {
                             minStock = Convert.ToInt32(row["MinStock"]);
@@ -12129,8 +12230,8 @@ namespace MIDRetail.Business.Allocation
                             velocityGradesChanged = true;
                         }
 
-                        int maxStock = -1;
-                        int inputMaxStock = -1;
+                        int? maxStock = null;
+                        int? inputMaxStock = null;
                         if (row["MaxStock"] != System.DBNull.Value)
                         {
                             maxStock = Convert.ToInt32(row["MaxStock"]);
@@ -12144,8 +12245,8 @@ namespace MIDRetail.Business.Allocation
                             velocityGradesChanged = true;
                         }
 
-                        int adMin = -1;
-                        int inputAdMin = -1;
+                        int? adMin = null;
+                        int? inputAdMin = null;
                         if (row["MinAd"] != System.DBNull.Value)
                         {
                             adMin = Convert.ToInt32(row["MinAd"]);
@@ -12235,49 +12336,51 @@ namespace MIDRetail.Business.Allocation
             DataTable dt = _dsVelocity.Tables["GroupLevel"];
             DataRow row;
 
+            // remove attribute set row to rebuild
             if (dt.Rows.Count > 0)
             {
-                dt.Clear();
+                string selectString = "SglRID=" + method.MatrixAttributeSetValues.AttributeSet.Key;
+                DataRow[] attributeSetRows = dt.Select(selectString);
+                foreach (var attributeSetDataRow in attributeSetRows)
+                {
+                    attributeSetDataRow.Delete();
+                }
+                dt.AcceptChanges();
             }
 
             ROMethodAllocationVelocityAttributeSet attributeSet;
-            foreach (StoreGroupLevelListViewProfile attrSet in setList)
+            attributeSet = method.MatrixAttributeSetValues;
+
+            row = dt.NewRow();
+
+            row["SglRID"] = attributeSet.AttributeSet.Key;
+            row["NoOnHandRule"] = attributeSet.NoOnHandRule.GetHashCode();
+            if (attributeSet.NoOnHandRuleValueIsSet)
             {
-                method.AttributeSetList.Add(new KeyValuePair<int, string>(attrSet.Key, attrSet.Name));
-
-                if (method.MatrixAttributeSetValues.TryGetValue(attrSet.Key, out attributeSet))
-                {
-                    row = dt.NewRow();
-
-                    row["SglRID"] = attributeSet.AttributeSet.Key;
-                    row["NoOnHandRule"] = attributeSet.NoOnHandRule.GetHashCode();
-                    if (attributeSet.NoOnHandRuleValueIsSet)
-                    {
-                        row["NoOnHandQty"] = attributeSet.NoOnHandRuleValue;
-                    }
-                    if (attributeSet.MatrixMode == eVelocityMatrixMode.Average)
-                    {
-                        row["ModeInd"] = 'A';
-                        row["AverageRule"] = attributeSet.MatrixModeAverageRule.GetHashCode();
-                        row["AverageQty"] = attributeSet.MatrixModeAverageRuleValue;
-                    }
-                    else
-                    {
-                        row["ModeInd"] = 'N';
-                    }
-
-                    if (attributeSet.SpreadOption == eVelocitySpreadOption.Index)
-                    {
-                        row["SpreadInd"] = 'I';
-                    }
-                    else
-                    {
-                        row["SpreadInd"] = 'S';
-                    }
-
-                    dt.Rows.Add(row);
-                }
+                row["NoOnHandQty"] = attributeSet.NoOnHandRuleValue;
             }
+            if (attributeSet.MatrixMode == eVelocityMatrixMode.Average)
+            {
+                row["ModeInd"] = 'A';
+                row["AverageRule"] = attributeSet.MatrixModeAverageRule.GetHashCode();
+                row["AverageQty"] = attributeSet.MatrixModeAverageRuleValue;
+            }
+            else
+            {
+                row["ModeInd"] = 'N';
+            }
+
+            if (attributeSet.SpreadOption == eVelocitySpreadOption.Index)
+            {
+                row["SpreadInd"] = 'I';
+            }
+            else
+            {
+                row["SpreadInd"] = 'S';
+            }
+
+            dt.Rows.Add(row);
+
         }
 
         private void SetVelocityMatrix(ROMethodAllocationVelocityProperties method, ArrayList setList)
@@ -12285,67 +12388,71 @@ namespace MIDRetail.Business.Allocation
             DataTable dt = _dsVelocity.Tables["VelocityMatrix"];
             DataRow row;
 
+            // remove attribute set rows to rebuild
             if (dt.Rows.Count > 0)
             {
-                dt.Clear();
+                string selectString = "SglRID=" + method.MatrixAttributeSetValues.AttributeSet.Key;
+                DataRow[] attributeSetRows = dt.Select(selectString);
+                foreach (var attributeSetDataRow in attributeSetRows)
+                {
+                    attributeSetDataRow.Delete();
+                }
+                dt.AcceptChanges();
             }
 
             ROMethodAllocationVelocityAttributeSet attributeSet;
-            foreach (StoreGroupLevelListViewProfile attrSet in setList)
+            attributeSet = method.MatrixAttributeSetValues;
+
+            foreach (ROMethodAllocationVelocityMatrixVelocityGrade matrixVelocityGrade in attributeSet.MatrixGradeValues)
             {
-                if (method.MatrixAttributeSetValues.TryGetValue(attrSet.Key, out attributeSet))
+                foreach (ROMethodAllocationVelocityMatrixCell matrixCell in matrixVelocityGrade.MatrixGradeCells)
                 {
-                    foreach (ROMethodAllocationVelocityMatrixVelocityGrade matrixVelocityGrade in attributeSet.MatrixGradeValues)
+                    row = dt.NewRow();
+
+                    row["SglRID"] = attributeSet.AttributeSet.Key;
+                    row["Boundary"] = matrixVelocityGrade.VelocityGrade.Key;
+                    row["SellThruIndex"] = matrixCell.SellThruIndex;
+                    if (method.VelocityAction == eVelocityAction.ClearMatrix)
                     {
-                        foreach (ROMethodAllocationVelocityMatrixCell matrixCell in matrixVelocityGrade.MatrixGradeCells)
+                        row["VelocityRule"] = System.DBNull.Value;
+                        row["VelocityQty"] = System.DBNull.Value;
+                    }
+                    else if (attributeSet.OnHandRuleIsSet)
+                    {
+                        row["VelocityRule"] = attributeSet.OnHandRule.GetHashCode();
+                        if (attributeSet.OnHandRuleIsSet)
                         {
-                            row = dt.NewRow();
-
-                            row["SglRID"] = attributeSet.AttributeSet.Key;
-                            row["Boundary"] = matrixVelocityGrade.VelocityGrade.Key;
-                            row["SellThruIndex"] = matrixCell.SellThruIndex;
-                            if (method.VelocityAction == eVelocityAction.ClearMatrix)
-                            {
-                                row["VelocityRule"] = System.DBNull.Value;
-                                row["VelocityQty"] = System.DBNull.Value;
-                            }
-                            else if (attributeSet.OnHandRuleIsSet)
-                            {
-                                row["VelocityRule"] = attributeSet.OnHandRule.GetHashCode();
-                                if (attributeSet.OnHandRuleIsSet)
-                                {
-                                    row["VelocityQty"] = attributeSet.OnHandRuleValue;
-                                }
-                                else
-                                {
-                                    row["VelocityQty"] = System.DBNull.Value;
-                                }
-                            }
-                            else
-                            {
-                                row["VelocityRule"] = matrixCell.RuleType.GetHashCode();
-                                if (matrixCell.RuleValueIsSet)
-                                {
-                                    row["VelocityQty"] = matrixCell.RuleValue;
-                                }
-                            }
-
-                            if (method.VelocityAction == eVelocityAction.ClearMatrix)
-                            {
-                                row["Stores"] = System.DBNull.Value;
-                                row["AvgWOS"] = System.DBNull.Value;
-                            }
-                            else
-                            {
-                                row["Stores"] = matrixCell.NumberOfStores;
-                                row["AvgWOS"] = matrixCell.AverageWOS;
-                            }
-
-                            dt.Rows.Add(row);
+                            row["VelocityQty"] = attributeSet.OnHandRuleValue;
+                        }
+                        else
+                        {
+                            row["VelocityQty"] = System.DBNull.Value;
                         }
                     }
+                    else
+                    {
+                        row["VelocityRule"] = matrixCell.RuleType.GetHashCode();
+                        if (matrixCell.RuleValueIsSet)
+                        {
+                            row["VelocityQty"] = matrixCell.RuleValue;
+                        }
+                    }
+
+                    if (method.VelocityAction == eVelocityAction.ClearMatrix)
+                    {
+                        row["Stores"] = System.DBNull.Value;
+                        row["AvgWOS"] = System.DBNull.Value;
+                    }
+                    else
+                    {
+                        row["Stores"] = matrixCell.NumberOfStores;
+                        row["AvgWOS"] = matrixCell.AverageWOS;
+                    }
+
+                    dt.Rows.Add(row);
                 }
             }
+
         }
 
         override public ROMethodProperties MethodCopyData()

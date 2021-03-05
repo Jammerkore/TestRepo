@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>PlanForecasting</name>
+    </assembly>
+    <members>
+        <member name="T:MIDRetail.PlanForecasting.PlanForecasting">
+            <summary>
+            Summary description for PlanForecasting.
+            </summary>
+        </member>
+        <member name="M:MIDRetail.PlanForecasting.PlanForecasting.Main(System.String[])">
+            <summary>
+            The main entry point for the application.
+            </summary>
+            <remarks>
+            First Arg = Method_RID
+            Second Arg (optional) = Proccess_RID
+            </remarks>
+        </member>
+    </members>
+</doc>
