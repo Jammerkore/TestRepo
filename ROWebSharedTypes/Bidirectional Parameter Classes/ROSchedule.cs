@@ -579,9 +579,49 @@ namespace Logility.ROWebSharedTypes
     [DataContract(Name = "ROTaskHeaderLoad", Namespace = "http://Logility.ROWeb/")]
     public class ROTaskHeaderLoad : ROTaskProperties
     {
+        [DataMember(IsRequired = true)]
+        private string _directory;
+
+        [DataMember(IsRequired = true)]
+        private string _flagFileSuffix;
+
+        [DataMember(IsRequired = true)]
+        private int _concurrentFiles;
+
+        [DataMember(IsRequired = true)]
+        private int _processingDirection;
+
+        [DataMember(IsRequired = true)]
+        private bool _enableRunSuffix;
+
+        [DataMember(IsRequired = true)]
+        private string _runSuffix;
 
         #region Public Properties
-
+        public string Directory {
+            get { return _directory; }
+            set { _directory = value; }
+        }
+        public string FlagFileSuffix {
+            get { return _flagFileSuffix; }
+            set { _flagFileSuffix = value; }
+        }
+        public int ConcurrentFiles {
+            get { return _concurrentFiles; }
+            set { _concurrentFiles = value; }
+        }
+        public int ProcessingDirection {
+            get { return _processingDirection; }
+            set { _processingDirection = value; }
+        }
+        public bool EnableRunSuffix {
+            get { return _enableRunSuffix; }
+            set { _enableRunSuffix = value; }
+        }
+        public string RunSuffix {
+            get { return _runSuffix; }
+            set { _runSuffix = value; }
+        }
         #endregion
 
         public ROTaskHeaderLoad(

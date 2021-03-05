@@ -77,7 +77,7 @@ namespace Logility.ROWeb
             ROTaskProperties baseTask = null;
             eMIDMessageLevel MIDMessageLevel = eMIDMessageLevel.Severe;
             string messageLevel, name;
-
+            Sequence = taskParameters.Sequence;
             // get the values from the database if not already retrieved
             if (TaskData == null)
             {
@@ -132,7 +132,15 @@ namespace Logility.ROWeb
         /// <param name="task">The data class of the task</param>
         private void AddValues(ROTaskParms taskParameters, ROTaskHeaderLoad task)
         {
-            
+            string selectString;
+            selectString = "TASK_SEQUENCE=" + taskParameters.Sequence;
+            DataRow headerDataRow = TaskData.Select(selectString).First();
+            task.ProcessingDirection = Convert.ToInt32(headerDataRow["FILE_PROCESSING_DIRECTION"]);
+            task.Directory = Convert.ToString(headerDataRow["INPUT_DIRECTORY"]);
+            task.FlagFileSuffix = Convert.ToString(headerDataRow["FILE_MASK"]);
+            task.ConcurrentFiles = Convert.ToInt32(headerDataRow["CONCURRENT_FILES"]);
+            task.EnableRunSuffix = Convert.ToString(headerDataRow["RUN_UNTIL_FILE_PRESENT_IND"]) == "1" ? true : false;
+            task.RunSuffix = Convert.ToString(headerDataRow["RUN_UNTIL_FILE_MASK"]);
         }
 
 
@@ -184,8 +192,19 @@ namespace Logility.ROWeb
                 sequence: taskData.Task.Key
                 );
 
-            throw new Exception("Not Implemented");
-
+            DataRow headerDataRow = TaskData.NewRow();
+            headerDataRow["TASKLIST_RID"] = TaskListProperties.TaskList.Key;
+            headerDataRow["TASK_SEQUENCE"] = taskData.Task.Key;
+            headerDataRow["FILE_PROCESSING_DIRECTION"] = taskData.ProcessingDirection;
+            headerDataRow["INPUT_DIRECTORY"] = taskData.Directory;
+            headerDataRow["FILE_MASK"] = taskData.FlagFileSuffix;
+            headerDataRow["CONCURRENT_FILES"] = taskData.ConcurrentFiles;
+            headerDataRow["RUN_UNTIL_FILE_PRESENT_IND"] = taskData.EnableRunSuffix ? "1" : "0";
+            headerDataRow["RUN_UNTIL_FILE_MASK"] = taskData.RunSuffix;
+            TaskData.Rows.Add(headerDataRow);
+            TaskData.AcceptChanges();
+            // order the rows in the data tables
+            TaskData = TaskData.DefaultView.ToTable();
             return true;
         }
 
@@ -222,7 +241,12 @@ namespace Logility.ROWeb
             bool cloneDates,
             ref string message)
         {
-            scheduleDataLayer.TaskPosting_Insert(TaskData);
+            string selectString;
+            selectString = "TASK_SEQUENCE=" + Sequence;
+            DataRow headerDataRow = TaskData.Select(selectString).First();
+            DataTable _headerDataTable = TaskData.Clone();
+            _headerDataTable.ImportRow(headerDataRow);
+            scheduleDataLayer.TaskPosting_Insert(_headerDataTable);
 
             return true;
         }

@@ -40,6 +40,8 @@ namespace Logility.ROWeb
         private DataTable _taskData = null;
         private DataTable _taskDetailData = null;
 
+        private int _sequence;
+
         //=============
         // CONSTRUCTORS
         //=============
@@ -188,6 +190,18 @@ namespace Logility.ROWeb
             set
             {
                 _lockStatus = value;
+            }
+        }
+
+        public int Sequence
+        {
+            get
+            {
+                return _sequence;
+            }
+            set
+            {
+                _sequence = value;
             }
         }
 
