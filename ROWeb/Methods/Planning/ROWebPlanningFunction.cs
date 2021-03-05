@@ -1061,6 +1061,11 @@ namespace Logility.ROWeb
                     planViewData.PlanViewDetail_Delete(
                         aViewRID: viewRID
                         );
+                    if (viewDetails.ROPlanningViewDetails.View.Key != viewRID)
+                    {
+                        string viewName = viewDetails.ROPlanningViewDetails.View.Value;
+                        viewDetails.ROPlanningViewDetails.View = new KeyValuePair<int, string>(viewRID, viewName);
+                    }
                 }
                 else
                 {
