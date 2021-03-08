@@ -576,8 +576,8 @@ namespace Logility.ROWebSharedTypes
         }
     }
 
-    [DataContract(Name = "ROTaskHeaderLoad", Namespace = "http://Logility.ROWeb/")]
-    public class ROTaskHeaderLoad : ROTaskProperties
+    [DataContract(Name = "ROTaskLoad", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskLoad : ROTaskProperties
     {
         [DataMember(IsRequired = true)]
         private string _directory;
@@ -598,30 +598,56 @@ namespace Logility.ROWebSharedTypes
         private string _runSuffix;
 
         #region Public Properties
-        public string Directory {
+        public string Directory
+        {
             get { return _directory; }
             set { _directory = value; }
         }
-        public string FlagFileSuffix {
+        public string FlagFileSuffix
+        {
             get { return _flagFileSuffix; }
             set { _flagFileSuffix = value; }
         }
-        public int ConcurrentFiles {
+        public int ConcurrentFiles
+        {
             get { return _concurrentFiles; }
             set { _concurrentFiles = value; }
         }
-        public int ProcessingDirection {
+        public int ProcessingDirection
+        {
             get { return _processingDirection; }
             set { _processingDirection = value; }
         }
-        public bool EnableRunSuffix {
+        public bool EnableRunSuffix
+        {
             get { return _enableRunSuffix; }
             set { _enableRunSuffix = value; }
         }
-        public string RunSuffix {
+        public string RunSuffix
+        {
             get { return _runSuffix; }
             set { _runSuffix = value; }
         }
+        #endregion
+
+        public ROTaskLoad(
+            KeyValuePair<int, string> task,
+            eTaskType taskType,
+            KeyValuePair<int, string> maximumMessageLevel) :
+            base(task: task,
+                taskType: taskType,
+            maximumMessageLevel: maximumMessageLevel)
+
+        {
+
+        }
+    }
+
+    [DataContract(Name = "ROTaskHeaderLoad", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskHeaderLoad : ROTaskLoad
+    {
+        #region Public Properties
+
         #endregion
 
         public ROTaskHeaderLoad(
