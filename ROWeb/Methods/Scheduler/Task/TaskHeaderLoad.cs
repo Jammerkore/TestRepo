@@ -241,14 +241,7 @@ namespace Logility.ROWeb
             bool cloneDates,
             ref string message)
         {
-            // Sequence used to get correct data since
-            // all Load related data is available in TaskData
-            string selectString;
-            selectString = "TASK_SEQUENCE=" + Sequence;
-            DataRow headerDataRow = TaskData.Select(selectString).First();
-            DataTable _headerDataTable = TaskData.Clone();
-            _headerDataTable.ImportRow(headerDataRow);
-            scheduleDataLayer.TaskPosting_Insert(_headerDataTable);
+            scheduleDataLayer.TaskPosting_Insert(TaskData);
 
             return true;
         }
