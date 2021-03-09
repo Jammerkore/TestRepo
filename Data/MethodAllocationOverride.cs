@@ -944,7 +944,7 @@ namespace MIDRetail.Data
                 if (UseAllColorsMaxDefault == false) ALL_COLOR_MAX_Nullable = All_Color_Maximum;
 
                 int? SG_RID_Nullable = null;
-                if (Store_Group_RID != Include.NoRID) SG_RID_Nullable = Store_Group_RID;
+                if (Tab_Store_Group_RID != Include.NoRID) SG_RID_Nullable = Tab_Store_Group_RID;
 
                 int? STORE_GRADES_SG_RID_Nullable = null;
                 if (Tab_Store_Group_RID != Include.NoRID) STORE_GRADES_SG_RID_Nullable = Tab_Store_Group_RID;
