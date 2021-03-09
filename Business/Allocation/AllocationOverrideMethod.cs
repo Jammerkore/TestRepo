@@ -3893,11 +3893,12 @@ namespace MIDRetail.Business.Allocation
             DataTable dtPackRounding = _dsOverRide.Tables["PackRounding"];
             foreach (DataRow row in dtPackRounding.Rows)
             {
-                double localFirstPack, localNthPack;
+                string packText =  Convert.ToString(row["PackText"]); ;
+                double? localFirstPack, localNthPack;
                 int localPackMultRID = Convert.ToInt32(row["PackMultiple"]);
                 if (row["FstPack"] == DBNull.Value)
                 {
-                    localFirstPack = Include.DefaultGenericPackRounding1stPackPct;
+                    localFirstPack = null;
                 }
                 else
                 {
@@ -3905,7 +3906,7 @@ namespace MIDRetail.Business.Allocation
                 }
                 if (row["NthPack"] == DBNull.Value)
                 {
-                    localNthPack = Include.DefaultGenericPackRoundingNthPackPct;
+                    localNthPack = null;
                 }
                 else
                 {
@@ -3915,7 +3916,9 @@ namespace MIDRetail.Business.Allocation
                 ROMethodOverridePackRoundingProperties roPackRounding = new ROMethodOverridePackRoundingProperties(
                     packMultiple: localPackMultRID,
                     firstPackPct: localFirstPack,
-                    nthPackPct: localNthPack);
+                    nthPackPct: localNthPack,
+                    packName: packText
+                    );
                 method.PackRounding.Add(roPackRounding);
             }
 
@@ -4400,24 +4403,13 @@ namespace MIDRetail.Business.Allocation
                 _dsOverRide.Tables["PackRounding"].Rows.Clear();
                 foreach (ROMethodOverridePackRoundingProperties packProperty in roMethodAllocationOverrideProperties.PackRounding)
                 {
-                    // NEED PACKTEXT FIRST AND PACK MULTIPLE LAST
-                    if (packProperty.FirstPackPct == Include.DefaultGenericPackRounding1stPackPct && packProperty.NthPackPct == Include.DefaultGenericPackRoundingNthPackPct)
-                    {
-                        _dsOverRide.Tables["PackRounding"].Rows.Add(new object[] { " ", null, null, packProperty.PackMultiple });
-                    }
-                    else if (packProperty.FirstPackPct == Include.DefaultGenericPackRounding1stPackPct)
-                    {
-                        _dsOverRide.Tables["PackRounding"].Rows.Add(new object[] { " ", null, packProperty.NthPackPct, packProperty.PackMultiple });
-                    }
-                    else if (packProperty.NthPackPct == Include.DefaultGenericPackRoundingNthPackPct)
-                    {
-                        _dsOverRide.Tables["PackRounding"].Rows.Add(new object[] { " ", packProperty.FirstPackPct, null, packProperty.PackMultiple });
-                    }
-                    else
-                    {
-                        _dsOverRide.Tables["PackRounding"].Rows.Add(new object[] { Convert.ToString(packProperty.PackMultiple), packProperty.FirstPackPct, packProperty.NthPackPct, packProperty.PackMultiple });
-
-                    }
+                    _dsOverRide.Tables["PackRounding"].Rows.Add(
+                        new object[] {
+                            packProperty.PackName,
+                            packProperty.FirstPackPct,
+                            packProperty.NthPackPct,
+                            packProperty.PackMultiple
+                        });
                 }
 
                 // store grade

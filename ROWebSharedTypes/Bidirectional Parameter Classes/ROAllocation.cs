@@ -3318,11 +3318,19 @@ namespace Logility.ROWebSharedTypes
     public class ROMethodOverridePackRoundingProperties
     {
         [DataMember(IsRequired = true)]
+        string _packName;
+        [DataMember(IsRequired = true)]
         int _packMultiple;
         [DataMember(IsRequired = true)]
-        double _firstPackPct;
+        double? _firstPackPct;
         [DataMember(IsRequired = true)]
-        double _nthPackPct;
+        double? _nthPackPct;
+
+        public string PackName
+        {
+            get { return _packName; }
+            set { _packName = value; }
+        }
 
         public int PackMultiple
         {
@@ -3330,21 +3338,37 @@ namespace Logility.ROWebSharedTypes
             set { _packMultiple = value; }
         }
 
-        public double FirstPackPct
+        public bool FirstPackPctIsSet
+        {
+            get { return _firstPackPct != null; }
+        }
+
+        public double? FirstPackPct
         {
             get { return _firstPackPct; }
             set { _firstPackPct = value; }
         }
 
-        public double NthPackPct
+        public bool NthPackPctIsSet
+        {
+            get { return _nthPackPct != null; }
+        }
+
+        public double? NthPackPct
         {
             get { return _nthPackPct; }
             set { _nthPackPct = value; }
         }
 
-        public ROMethodOverridePackRoundingProperties(int packMultiple, double firstPackPct, double nthPackPct)
+        public ROMethodOverridePackRoundingProperties(
+            int packMultiple, 
+            double? firstPackPct = null, 
+            double? nthPackPct = null,
+            string packName = null
+            )
         {
-            // fields specific to Allocation Override Color
+            // fields specific to Allocation Override Pack Rounding
+            _packName = packName;
             _packMultiple = packMultiple;
             _firstPackPct = firstPackPct;
             _nthPackPct = nthPackPct;
