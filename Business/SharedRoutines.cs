@@ -683,6 +683,10 @@ namespace MIDRetail.Business
             if (method.Key > Include.NoRID)
 
             { key = method.Key; displayName = method.Name; }
+            else if (method.Name != null)
+            {
+                displayName = method.Name;
+            }
             return new KeyValuePair<int, string>(key, displayName);
         }
 

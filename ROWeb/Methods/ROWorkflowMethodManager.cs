@@ -599,20 +599,54 @@ namespace Logility.ROWeb
 
             try
             {
-
+                // If don't have method object, see if it is in dictionary cache
                 if (_ABM == null)
                 {
-                    message = SAB.ClientServerSession.Audit.GetText(
-                        messageCode: eMIDTextCode.msg_ValueWasNotFound,
-                        addToAuditReport: true,
-                        args: new object[] { MIDText.GetTextOnly(eMIDTextCode.lbl_Method) }
-                        );
-                    throw new MIDException(eErrorLevel.severe,
-                        (int)eMIDTextCode.msg_ValueWasNotFound,
-                        message);
+                    if (methodParm.ROMethodProperties.Method.Key != Include.NoRID)
+                    {
+                        if (!_workflowMethods.TryGetValue(methodParm.ROMethodProperties.Method.Key, out _ABM))
+                        {
+                            message = SAB.ClientServerSession.Audit.GetText(
+                                        messageCode: eMIDTextCode.msg_ValueWasNotFound,
+                                        addToAuditReport: true,
+                                        args: new object[] { MIDText.GetTextOnly(eMIDTextCode.lbl_Method) }
+                                        );
+                            throw new MIDException(eErrorLevel.severe,
+                                (int)eMIDTextCode.msg_ValueWasNotFound,
+                                message);
+                        }
+                    }
                 }
 
                 // Save values to memory only
+                // Make sure method has been retrieved before it can be applied
+                if (_ABM.Key != methodParm.ROMethodProperties.Method.Key)
+                {
+                    if (methodParm.ROMethodProperties.Method.Key != Include.NoRID)
+                    {
+                        message = SAB.ClientServerSession.Audit.GetText(
+                                        messageCode: eMIDTextCode.msg_ValueWasNotFound,
+                                        addToAuditReport: true,
+                                        args: new object[] { MIDText.GetTextOnly(eMIDTextCode.lbl_Method) }
+                                        );
+                        throw new MIDException(eErrorLevel.severe,
+                            (int)eMIDTextCode.msg_ValueWasNotFound,
+                            message);
+                    }
+                    // unlock previous method if applying to new one
+                    _ABM.LockStatus = WorkflowMethodUtilities.UnlockWorkflowMethod(
+                        SAB: SAB,
+                        workflowMethodIND: eWorkflowMethodIND.Methods,
+                        Key: _ABM.Key,
+                        message: out message
+                        );
+                    if (_ABM.LockStatus == eLockStatus.Cancel)
+                    {
+                        MIDEnvironment.Message = message;
+                    }
+                    _ABM.Key = methodParm.ROMethodProperties.Method.Key;
+                }
+
                 _ABM.Name = methodParm.ROMethodProperties.Method.Value;
                 _ABM.Method_Description = methodParm.ROMethodProperties.Description;
                 _ABM.User_RID = methodParm.ROMethodProperties.UserKey;
@@ -1036,21 +1070,29 @@ namespace Logility.ROWeb
                 SetWorkflowObject();
 
                 if (!FunctionSecurity.IsReadOnly)
-                {
-                    string message = null;
-                    _ABW.LockStatus = WorkflowMethodUtilities.LockWorkflowMethod(
-                        SAB: SAB,
-                        workflowMethodIND: eWorkflowMethodIND.Workflows,
-                        aChangeType: eChangeType.update,
-                        Key: roWorkflow.Workflow.Key,
-                        Name: roWorkflow.Workflow.Value,
-                        allowReadOnly: true,
-                        message: out message
-                        );
-                    if (_ABW.LockStatus == eLockStatus.ReadOnly)
+                {   // Do not lock if new workflow
+                    if (roWorkflow.Workflow.Key == Include.NoRID)
                     {
-                        MIDEnvironment.isChangedToReadOnly = true;
-                        MIDEnvironment.Message = message;
+                        _ABW.LockStatus = eLockStatus.Locked;
+                    }
+                    else
+                    {
+
+                        string message = null;
+                        _ABW.LockStatus = WorkflowMethodUtilities.LockWorkflowMethod(
+                            SAB: SAB,
+                            workflowMethodIND: eWorkflowMethodIND.Workflows,
+                            aChangeType: eChangeType.update,
+                            Key: roWorkflow.Workflow.Key,
+                            Name: roWorkflow.Workflow.Value,
+                            allowReadOnly: true,
+                            message: out message
+                            );
+                        if (_ABW.LockStatus == eLockStatus.ReadOnly)
+                        {
+                            MIDEnvironment.isChangedToReadOnly = true;
+                            MIDEnvironment.Message = message;
+                        }
                     }
                 }
 
