@@ -134,7 +134,7 @@ namespace Logility.ROWeb
 
                         if (VSWProfile.IMOPackQty != Include.PercentPackThresholdDefault)
                         {
-                            VSWStore.VSWValues.PackQty = VSWProfile.IMOPackQty;
+                            VSWStore.VSWValues.PackQty = Math.Round(VSWProfile.IMOPackQty * 100, 2);
                         }
 
                         if (VSWProfile.IMOMaxValue != int.MaxValue)
@@ -320,7 +320,7 @@ namespace Logility.ROWeb
                     // percent pack threshold
                     if (VSWAttributeSet.VSWValues.PackQtyIsSet)
                     {
-                        vsw.IMOPackQty = Convert.ToInt32(VSWAttributeSet.VSWValues.PackQty);
+                        vsw.IMOPackQty = Convert.ToDouble(VSWAttributeSet.VSWValues.PackQty) / 100;
                         vsw.IMOIsInherited = false;
                         vsw.IMOInheritedFromNodeRID = Include.NoRID;
                         valueChanged = true;
@@ -329,7 +329,7 @@ namespace Logility.ROWeb
                     {
                         if (vsw.IMOPackQty != VSWStore.VSWValues.PackQty)
                         {
-                            vsw.IMOPackQty = Convert.ToInt32(VSWStore.VSWValues.PackQty);
+                            vsw.IMOPackQty = Convert.ToDouble(VSWStore.VSWValues.PackQty) / 100;
                             vsw.IMOIsInherited = false;
                             vsw.IMOInheritedFromNodeRID = Include.NoRID;
                             valueChanged = true;
