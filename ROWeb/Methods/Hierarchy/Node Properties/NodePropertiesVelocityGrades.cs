@@ -259,6 +259,7 @@ namespace Logility.ROWeb
                         if (nodePropertiesVelocityGradesData.VelocityGradesIsInherited)
                         {
                             vgp.VelocityGradeIsInherited = true;
+                            vgp.VelocityGradeInheritedFromNodeRID = nodePropertiesVelocityGradesData.VelocityGradesInheritedFromNode.Key;
                             vgp.VelocityMinMaxChangeType = eChangeType.add; // if velocity grades don't exist, must add min/maxes
                         }
                         else
