@@ -4309,19 +4309,24 @@ namespace MIDRetail.Business.Allocation
                     _allocationCriteria.ReserveAsPacks = 0;
                 }
                 //InventoryInd = roMethodAllocationOverrideProperties.InventoryIndicator;
-                
+
+                InventoryInd = 'A';
                 MERCH_HN_RID = Include.NoRID;
                 MERCH_PH_RID = Include.NoRID;
                 MERCH_PHL_SEQ = 0;
-                if (roMethodAllocationOverrideProperties.InventoryBasisMerchType == eMerchandiseType.Node)
+                if (roMethodAllocationOverrideProperties.InventoryIndicator == eMinMaxType.Inventory)
                 {
-                    MERCH_HN_RID = roMethodAllocationOverrideProperties.InventoryBasisMerchandise.Key;
-                }
-                else if (roMethodAllocationOverrideProperties.InventoryBasisMerchType == eMerchandiseType.HierarchyLevel
-                    || roMethodAllocationOverrideProperties.InventoryBasisMerchType == eMerchandiseType.LevelOffset)
-                {
-                    MERCH_PH_RID = roMethodAllocationOverrideProperties.InventoryBasisMerchandiseHierarchy.Key;
-                    MERCH_PHL_SEQ = roMethodAllocationOverrideProperties.InventoryBasisMerchandiseHierarchy.Value;
+                    InventoryInd = 'I';
+                    if (roMethodAllocationOverrideProperties.InventoryBasisMerchType == eMerchandiseType.Node)
+                    {
+                        MERCH_HN_RID = roMethodAllocationOverrideProperties.InventoryBasisMerchandise.Key;
+                    }
+                    else if (roMethodAllocationOverrideProperties.InventoryBasisMerchType == eMerchandiseType.HierarchyLevel
+                        || roMethodAllocationOverrideProperties.InventoryBasisMerchType == eMerchandiseType.LevelOffset)
+                    {
+                        MERCH_PH_RID = roMethodAllocationOverrideProperties.InventoryBasisMerchandiseHierarchy.Key;
+                        MERCH_PHL_SEQ = roMethodAllocationOverrideProperties.InventoryBasisMerchandiseHierarchy.Value;
+                    }
                 }
 
                 if (roMethodAllocationOverrideProperties.OnHandFactorIsSet)
