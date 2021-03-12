@@ -7,6 +7,19 @@ using System.Runtime.Serialization;
 
 namespace Logility.ROWebSharedTypes
 {
+    [DataContract(Name = "ROAttributeSetAllocationStoreGrade", Namespace = "http://Logility.ROWeb/")]
+    public class ROAttributeSetAllocationStoreGrade
+    {
+        [DataMember(IsRequired = true)]
+        public KeyValuePair<int, string> AttributeSet { get; set; }
+        [DataMember(IsRequired = true)]
+        public List<ROAllocationStoreGrade> StoreGrades { get; set; }
+
+        public ROAttributeSetAllocationStoreGrade()
+        {
+            StoreGrades = new List<ROAllocationStoreGrade>();
+        }
+    }
 
     [DataContract(Name = "ROAllocationReviewSelectionProperties", Namespace = "http://Logility.ROWeb/")]
     public class ROAllocationReviewSelectionProperties
@@ -2722,7 +2735,7 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         bool _doNotApplyVSW;
         [DataMember(IsRequired = true)]
-        private ROAttributeSetStoreGrade _storeGradeValues;
+        private ROAttributeSetAllocationStoreGrade _storeGradeValues;
         [DataMember(IsRequired = true)]
         private List<ROMethodOverrideCapacityProperties> _capacity;
         [DataMember(IsRequired = true)]
@@ -3057,7 +3070,7 @@ namespace Logility.ROWebSharedTypes
             set { _doNotApplyVSW = value; }
         }
 
-        public ROAttributeSetStoreGrade StoreGradeValues
+        public ROAttributeSetAllocationStoreGrade StoreGradeValues
         {
             get { return _storeGradeValues; }
             set { _storeGradeValues = value; }
@@ -3119,7 +3132,7 @@ namespace Logility.ROWebSharedTypes
             KeyValuePair<int, int> inventoryBasisMerchandiseHierarchy,
             KeyValuePair<int, string> vswAttribute, 
             bool doNotApplyVSW, 
-            ROAttributeSetStoreGrade storeGradeValues, 
+            ROAttributeSetAllocationStoreGrade storeGradeValues, 
             List<ROMethodOverrideCapacityProperties> capacity,
             List<ROMethodOverrideColorProperties> colorMinMax, 
             List<ROMethodOverridePackRoundingProperties> packRounding, 

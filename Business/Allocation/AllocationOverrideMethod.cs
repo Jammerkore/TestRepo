@@ -3724,7 +3724,7 @@ namespace MIDRetail.Business.Allocation
                 _storeGradesMerchandiseKey = Include.NoRID;
             }
 
-            ROAttributeSetStoreGrade myAttributeSet = null;
+            ROAttributeSetAllocationStoreGrade myAttributeSet = null;
             DataTable dtStoreGrades = _dsOverRide.Tables["StoreGrades"];
             // Insure the rows come out in the expected order
             dtStoreGrades.DefaultView.Sort = "RowPosition ASC";
@@ -3743,7 +3743,7 @@ namespace MIDRetail.Business.Allocation
                     || sglRID != myAttributeSet.AttributeSet.Key)
                 {
                     // Create store grade instance for attribute
-                    myAttributeSet = new ROAttributeSetStoreGrade();
+                    myAttributeSet = new ROAttributeSetAllocationStoreGrade();
                     myAttributeSet.AttributeSet = GetName.GetAttributeSetName(key: sglRID);
                     method.StoreGradeValues = myAttributeSet;
                 }
@@ -4449,7 +4449,7 @@ namespace MIDRetail.Business.Allocation
                 i = 0;
 
                 //foreach (ROAttributeSetStoreGrade storeGrade in roMethodAllocationOverrideProperties.StoreGradeValues)
-                ROAttributeSetStoreGrade storeGrade = roMethodAllocationOverrideProperties.StoreGradeValues;
+                ROAttributeSetAllocationStoreGrade storeGrade = roMethodAllocationOverrideProperties.StoreGradeValues;
                 if (storeGrade != null
                     && storeGrade.StoreGrades != null)
                 {

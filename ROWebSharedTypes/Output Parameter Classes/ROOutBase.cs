@@ -194,6 +194,7 @@ namespace Logility.ROWebSharedTypes
     [KnownType(typeof(ROPlanningStoreGrade))]
     [KnownType(typeof(ROAllocationStoreGrade))]
     [KnownType(typeof(ROAttributeSetStoreGrade))]
+    [KnownType(typeof(ROAttributeSetAllocationStoreGrade))]
     [KnownType(typeof(ROAllocationVelocityGrade))]
     [KnownType(typeof(ROMethodOverrideCapacityProperties))]
     [KnownType(typeof(ROMethodOverrideColorProperties))]
