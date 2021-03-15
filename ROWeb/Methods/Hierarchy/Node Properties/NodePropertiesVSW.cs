@@ -327,7 +327,8 @@ namespace Logility.ROWeb
                     }
                     else if (VSWStore.VSWValues.PackQtyIsSet)
                     {
-                        if (vsw.IMOPackQty != VSWStore.VSWValues.PackQty)
+                        double packQty = Math.Round(vsw.IMOPackQty * 100, 2);
+                        if (packQty != VSWStore.VSWValues.PackQty)
                         {
                             vsw.IMOPackQty = Convert.ToDouble(VSWStore.VSWValues.PackQty) / 100;
                             vsw.IMOIsInherited = false;
