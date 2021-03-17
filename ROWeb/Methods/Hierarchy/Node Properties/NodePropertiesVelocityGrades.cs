@@ -315,7 +315,15 @@ namespace Logility.ROWeb
                     }
                 }
 
-                
+
+            }
+            // set change type so values will be resaved or will be cleared
+            else if (!nodePropertiesVelocityGradesData.MinimumMaximumsIsInherited)
+            {
+                foreach (VelocityGradeProfile velocityGradeProfile in _velocityGradeList)
+                {
+                    velocityGradeProfile.VelocityMinMaxChangeType = eChangeType.add;
+                }
             }
 
             return true;
