@@ -736,7 +736,10 @@ namespace Logility.ROUI
             int variableTotalKey = Include.Undefined
             )
         {
+            bool widthFound = false;
             int width = Include.DefaultColumnWidth;
+
+            // check for different combinations of coordinates with each call being less specific
 
             DataRow[] formatRows = _planViewFormat.Select(
                 "PLAN_BASIS_TYPE = " + planBasisType.ToString() 
@@ -750,6 +753,35 @@ namespace Logility.ROUI
             if (formatRows.Length > 0)
             {
                 width = Convert.ToInt32(formatRows[0]["WIDTH"]);
+                widthFound = true;
+            }
+
+            // check for variable and time period type (period, year, season, quarter, month, week)
+            if (!widthFound)
+            {
+                formatRows = _planViewFormat.Select(
+                "VARIABLE_NUMBER = " + variableNumber.ToString()
+                 + " and TIME_PERIOD_TYPE = " + timePeriodType.ToString()
+                );
+                if (formatRows.Length > 0)
+                {
+                    width = Convert.ToInt32(formatRows[0]["WIDTH"]);
+                    widthFound = true;
+                }
+            }
+
+
+            // if don't find a specific entry, use width of the variable
+            if (!widthFound)
+            {
+                formatRows = _planViewFormat.Select(
+                "VARIABLE_NUMBER = " + variableNumber.ToString()
+                );
+                if (formatRows.Length > 0)
+                {
+                    width = Convert.ToInt32(formatRows[0]["WIDTH"]);
+                    widthFound = true;
+                }
             }
 
 
