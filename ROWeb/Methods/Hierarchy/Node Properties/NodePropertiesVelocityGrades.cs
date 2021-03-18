@@ -378,6 +378,13 @@ namespace Logility.ROWeb
 
                     ++index;
                 }
+            }// set change type so values will be resaved or will be cleared
+            else if (!nodePropertiesVelocityGradesData.SellThruPercentsIsInherited)
+            {
+                foreach (SellThruPctProfile sellThruPercentProfile in _sellThruPctList)
+                {
+                    sellThruPercentProfile.SellThruPctChangeType = eChangeType.add;
+                }
             }
 
             return true;
