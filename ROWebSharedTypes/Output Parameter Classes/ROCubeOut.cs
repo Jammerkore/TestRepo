@@ -14,12 +14,24 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         private Dictionary<eDataType, ROCells> _cells;
 
+        [DataMember(IsRequired = true)]
+        private List<double> _verticalSplitterPercentages;
+
+        [DataMember(IsRequired = true)]
+        private List<double> _horizontalSplitterPercentages;
+
         public ROData()
         {
             _cells = new Dictionary<eDataType, ROCells>();
+            _verticalSplitterPercentages = new List<double>();
+            _horizontalSplitterPercentages = new List<double>();
         }
 
         public Dictionary<eDataType, ROCells> Cells { get { return _cells; } }
+
+        public List<double> VerticalSplitterPercentages { get { return _verticalSplitterPercentages; } }
+
+        public List<double> HorizontalSplitterPercentages { get { return _horizontalSplitterPercentages; } }
 
         /// <summary>
         /// Adds and instance of the ROCells class to the collection

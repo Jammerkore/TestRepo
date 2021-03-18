@@ -2763,6 +2763,11 @@ namespace Logility.ROUI
                 AddValues(ROData, eDataType.ChainSummaryDetail, Grid12);
             }
 
+            ROData.VerticalSplitterPercentages.Add(20);
+
+            ROData.HorizontalSplitterPercentages.Add(20);
+            ROData.HorizontalSplitterPercentages.Add(80);
+
             return ROData;
         }
 

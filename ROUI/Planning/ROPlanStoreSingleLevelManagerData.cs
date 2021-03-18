@@ -1722,6 +1722,11 @@ namespace Logility.ROUI
 
             AddValues(ROData);
 
+            ROData.VerticalSplitterPercentages.Add(20);
+
+            ROData.HorizontalSplitterPercentages.Add(20);
+            ROData.HorizontalSplitterPercentages.Add(80);
+
             return ROData;
         }
 
@@ -2545,6 +2550,11 @@ namespace Logility.ROUI
                 ROData.AddCells(eDataType.AllStoreDetail, AllStoreDetail);
                 AddValues(ROData, eDataType.AllStoreDetail, Grid12);
             }
+
+            ROData.VerticalSplitterPercentages.Add(20);
+            
+            ROData.HorizontalSplitterPercentages.Add(20);
+            ROData.HorizontalSplitterPercentages.Add(80);
 
             return ROData;
         }

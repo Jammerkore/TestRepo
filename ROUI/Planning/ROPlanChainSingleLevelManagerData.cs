@@ -1842,6 +1842,8 @@ namespace Logility.ROUI
 
             AddValues(ROData);
 
+            ROData.HorizontalSplitterPercentages.Add(20);
+
             return ROData;
         }
 
@@ -3315,6 +3317,8 @@ namespace Logility.ROUI
                 //Add cube values for both weeks and totals details
                 AddValues(ROData);
             }
+
+            ROData.HorizontalSplitterPercentages.Add(20);
 
             return ROData;
         }
