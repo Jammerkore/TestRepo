@@ -738,40 +738,42 @@ namespace Logility.ROUI
         {
             bool widthFound = false;
             int width = Include.DefaultColumnWidth;
+            DataRow[] formatRows;
 
             // check for different combinations of coordinates with each call being less specific
 
-            DataRow[] formatRows = _planViewFormat.Select(
-                "PLAN_BASIS_TYPE = " + planBasisType.ToString() 
-                + " and VARIABLE_NUMBER = " + variableNumber.ToString() 
-                + " and QUANTITY_VARIABLE_KEY = " + quantityVariableKey.ToString()
-                + " and TIME_PERIOD_TYPE = " + timePeriodType.ToString()
-                + " and TIME_PERIOD_KEY = " + timePeriodKey.ToString()
-                + " and VARIABLE_TOTAL_KEY = " + variableTotalKey.ToString()
-                );
+            //formatRows = _planViewFormat.Select(
+            //    "PLAN_BASIS_TYPE = " + planBasisType.ToString() 
+            //    + " and VARIABLE_NUMBER = " + variableNumber.ToString() 
+            //    + " and QUANTITY_VARIABLE_KEY = " + quantityVariableKey.ToString()
+            //    + " and TIME_PERIOD_TYPE = " + timePeriodType.ToString()
+            //    + " and TIME_PERIOD_KEY = " + timePeriodKey.ToString()
+            //    + " and VARIABLE_TOTAL_KEY = " + variableTotalKey.ToString()
+            //    );
 
-            if (formatRows.Length > 0)
-            {
-                width = Convert.ToInt32(formatRows[0]["WIDTH"]);
-                widthFound = true;
-            }
+            //if (formatRows.Length > 0)
+            //{
+            //    width = Convert.ToInt32(formatRows[0]["WIDTH"]);
+            //    widthFound = true;
+            //}
 
-            // check for variable and time period type (period, year, season, quarter, month, week)
-            if (!widthFound)
-            {
-                formatRows = _planViewFormat.Select(
-                "VARIABLE_NUMBER = " + variableNumber.ToString()
-                 + " and TIME_PERIOD_TYPE = " + timePeriodType.ToString()
-                );
-                if (formatRows.Length > 0)
-                {
-                    width = Convert.ToInt32(formatRows[0]["WIDTH"]);
-                    widthFound = true;
-                }
-            }
+            //// check for variable and time period type (period, year, season, quarter, month, week)
+            //if (!widthFound)
+            //{
+            //    formatRows = _planViewFormat.Select(
+            //    "VARIABLE_NUMBER = " + variableNumber.ToString()
+            //     + " and TIME_PERIOD_TYPE = " + timePeriodType.ToString()
+            //    );
+            //    if (formatRows.Length > 0)
+            //    {
+            //        width = Convert.ToInt32(formatRows[0]["WIDTH"]);
+            //        widthFound = true;
+            //    }
+            //}
 
 
             // if don't find a specific entry, use width of the variable
+            // set all columns for the variable to the same width
             if (!widthFound)
             {
                 formatRows = _planViewFormat.Select(

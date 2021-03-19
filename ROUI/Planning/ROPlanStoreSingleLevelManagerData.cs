@@ -3113,6 +3113,7 @@ namespace Logility.ROUI
             int timePeriodType = Include.Undefined; // This orientation does not have time as a column
             int timePeriodKey;
             int variableTotalKey;
+            List<int> variables = new List<int>();
 
             // create data layer to communicate with the database
             planViewData = new PlanViewData();
@@ -3120,6 +3121,8 @@ namespace Logility.ROUI
             try
             {
                 planViewData.OpenUpdateConnection();
+
+                planViewData.PlanViewFormat_Delete(aViewRID: ViewRID);
 
                 //add format for heading column
                 //heading column has all coordinates undefined
@@ -3148,6 +3151,12 @@ namespace Logility.ROUI
                         variableTotalKey: out variableTotalKey
                         );
 
+                    // only keep one entry per variable
+                    if (variables.Contains(variableNumber))
+                    {
+                        continue;
+                    }
+
                     // if row exists, width will be updated
                     planViewData.PlanViewFormat_Insert(
                         aViewRID: ViewRID,
@@ -3159,6 +3168,8 @@ namespace Logility.ROUI
                         variableTotalKey: variableTotalKey,
                         width: columnFormat.Width
                         );
+
+                    variables.Add(variableNumber);
 
                 }
                 // commit the new values to the database
