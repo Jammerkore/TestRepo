@@ -384,6 +384,9 @@ namespace Logility.ROWeb
         {
             SAB.HierarchyServerSession.IMOUpdate(nodeKey, _VSWList, false);
 
+            // set global list to updated values including inheritance for values removed
+            _VSWList = GetVSW(key: nodeKey);
+
             return true;
         }
 
