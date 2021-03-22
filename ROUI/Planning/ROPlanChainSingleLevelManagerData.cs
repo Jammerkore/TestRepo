@@ -276,7 +276,10 @@ namespace Logility.ROUI
                     managerData._planViewDataLayer = new PlanViewData();
                 }
                 // Get view details and load view formatting.
-                DataTable _planViewDetail = GetViewDetails(viewKey: viewRID);
+                DataTable _planViewDetail = GetViewDetails(
+                    viewKey: viewRID,
+                    userKey: ManagerData.SAB.ClientServerSession.UserRID
+                    );
 
                 varKeyHash = new Hashtable();
                 _selectableVariableHeaders = new ArrayList();
@@ -1187,7 +1190,10 @@ namespace Logility.ROUI
                     managerData._planViewDataLayer = new PlanViewData();
                 }
                 // Get view details and load view formatting.
-                DataTable _planViewDetail = GetViewDetails(viewKey: viewRID);
+                DataTable _planViewDetail = GetViewDetails(
+                    viewKey: viewRID,
+                    userKey: ManagerData.SAB.ClientServerSession.UserRID
+                    );
 
 
 
@@ -1842,7 +1848,21 @@ namespace Logility.ROUI
 
             AddValues(ROData);
 
-            ROData.HorizontalSplitterPercentages.Add(20);
+            // Get splitter percentages for the view
+            List<double> verticalSplitterPercentages, horizontalSplitterPercentages;
+
+            GetViewSplittersPercentages(out verticalSplitterPercentages,
+            out horizontalSplitterPercentages);
+
+            foreach (double splitterPercentage in verticalSplitterPercentages)
+            {
+                ROData.VerticalSplitterPercentages.Add(splitterPercentage);
+            }
+
+            foreach (double splitterPercentage in horizontalSplitterPercentages)
+            {
+                ROData.HorizontalSplitterPercentages.Add(splitterPercentage);
+            }
 
             return ROData;
         }
@@ -2731,8 +2751,25 @@ namespace Logility.ROUI
                     variables.Add(variableNumber);
 
                 }
+
+                // save splitter settings
+                if (!SaveViewSplitters(
+                   userKey: ManagerData.SAB.ClientServerSession.UserRID,
+                   planSessionType: ePlanSessionType.ChainSingleLevel,
+                   ROViewFormatParms: ROViewFormatParms,
+                   planViewData: planViewData,
+                   message: out message
+                   ))
+                {
+                    success = false;
+                    returnCode = eROReturnCode.Failure;
+                }
+
                 // commit the new values to the database
-                planViewData.CommitData();
+                if (success)
+                {
+                    planViewData.CommitData();
+                }
             }
             catch (Exception exc)
             {
@@ -2746,7 +2783,10 @@ namespace Logility.ROUI
             {
                 // close the database connection and update the flag so the view data will be rebuilt during the next data access
                 planViewData.CloseUpdateConnection();
-                ViewUpdated = true;
+                if (success)
+                {
+                    ViewUpdated = true;
+                }
             } 
 
             return new ROBoolOut(returnCode, message, ROViewFormatParms.ROInstanceID, success);
@@ -2783,7 +2823,10 @@ namespace Logility.ROUI
                     managerData._planViewDataLayer = new PlanViewData();
                 }
                 // Get view details and load view formatting.
-                DataTable _planViewDetail = GetViewDetails(viewKey: viewRID);
+                DataTable _planViewDetail = GetViewDetails(
+                    viewKey: viewRID,
+                    userKey: ManagerData.SAB.ClientServerSession.UserRID
+                    );
 
 
 
@@ -3329,7 +3372,21 @@ namespace Logility.ROUI
                 AddValues(ROData);
             }
 
-            ROData.HorizontalSplitterPercentages.Add(20);
+            // Get splitter percentages for the view
+            List<double> verticalSplitterPercentages, horizontalSplitterPercentages;
+
+            GetViewSplittersPercentages(out verticalSplitterPercentages,
+            out horizontalSplitterPercentages);
+
+            foreach (double splitterPercentage in verticalSplitterPercentages)
+            {
+                ROData.VerticalSplitterPercentages.Add(splitterPercentage);
+            }
+
+            foreach (double splitterPercentage in horizontalSplitterPercentages)
+            {
+                ROData.HorizontalSplitterPercentages.Add(splitterPercentage);
+            }
 
             return ROData;
         }

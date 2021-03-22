@@ -961,7 +961,51 @@ namespace Logility.ROWeb
                    selected: selectWeek)
                    );
 
+            // add widths
+			// this code will only work as long as there is a single width for each variable
+            PlanViewData planViewData = new PlanViewData();
+            DataTable planViewFormat = planViewData.PlanViewFormat_Read(aViewRID: OpenParms.ViewRID);
+            foreach (ROSelectedField variable in viewDetails.VariableGroupings.SelectedVariables)
+            {
+                variable.Width = GetColumnWidth(
+                    planViewFormat: planViewFormat,
+                    variableNumber: Convert.ToInt32(variable.Field.Key)
+                    );
+            }
+
             return new ROPlanningViewDetailsOut(eROReturnCode.Successful, null, ROInstanceID, viewDetails);
+        }
+
+        /// <summary>
+        /// Get the column formatting width
+        /// </summary>
+        /// <param name="planViewFormat">The DataTable containing the column widths for the view</param>
+        /// <param name="variableNumber">The number of the variable</param>
+        /// <returns>Integer with the with for the column coordinates.  Returns default width if coordinates are not found.</returns>
+        protected int GetColumnWidth(
+            DataTable planViewFormat,
+            int variableNumber = Include.Undefined
+            )
+        {
+            bool widthFound = false;
+            int width = Include.DefaultColumnWidth;
+            DataRow[] formatRows;
+
+            
+            if (!widthFound)
+            {
+                formatRows = planViewFormat.Select(
+                "VARIABLE_NUMBER = " + variableNumber.ToString()
+                );
+                if (formatRows.Length > 0)
+                {
+                    width = Convert.ToInt32(formatRows[0]["WIDTH"]);
+                    widthFound = true;
+                }
+            }
+
+
+            return width;
         }
 
         /// <summary>
@@ -1098,6 +1142,16 @@ namespace Logility.ROWeb
                 if (viewRID == planManager.GetViewRID())
                 {
                     planManager.GetViewData.ViewUpdated = true;
+                }
+                else  // build new view class
+                {
+                    planManager.SetViewAndOrientation(
+                        viewRID: viewRID, 
+                        gridOrientation: planManager.Orientation, 
+                        StoreAttributeSetKey: planManager.StoreAttributeSetKey, 
+                        StoreAttributeKey: planManager.StoreAttributeKey, 
+                        FilterKey: planManager.FilterKey
+                        );
                 }
             }
 

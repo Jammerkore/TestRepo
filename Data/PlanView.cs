@@ -289,6 +289,77 @@ namespace MIDRetail.Data
             }
         }
 
+        public DataTable PlanViewSplitter_Read(
+            int viewRID,
+            int userRID,
+            ePlanSessionType planSessionType)
+        {
+            try
+            {
+                return StoredProcedures.MID_PLAN_VIEW_SPLITTER_READ.Read(_dba, 
+                    VIEW_RID:viewRID,
+                    USER_RID: userRID,
+                    PLAN_SESSION_TYPE: (int)planSessionType
+                    );
+            }
+            catch (Exception exc)
+            {
+                string message = exc.ToString();
+                throw;
+            }
+        }
+
+
+        public void PlanViewSplitter_Insert(
+            int viewRID,
+            int userRID,
+            ePlanSessionType planSessionType = ePlanSessionType.None,
+            char splitterTypeIndicator = 'V',
+            int splitterSequence = Include.Undefined,
+            double splitterPercentage = 0
+            )
+        {
+            try
+            {
+                StoredProcedures.MID_PLAN_VIEW_SPLITTER_INSERT.Insert(_dba,
+                                                                    VIEW_RID: viewRID,
+                                                                    USER_RID: userRID,
+                                                                    PLAN_SESSION_TYPE: (int)planSessionType,
+                                                                    SPLITTER_TYPE_IND: splitterTypeIndicator,
+                                                                    SPLITTER_SEQUENCE: splitterSequence,
+                                                                    SPLITTER_PERCENTAGE: splitterPercentage
+                                                                    );
+            }
+            catch (Exception exc)
+            {
+                string message = exc.ToString();
+                throw;
+            }
+
+        }
+
+        public void PlanViewSplitter_Delete(
+            int viewRID,
+            int userRID,
+             ePlanSessionType planSessionType
+            )
+        {
+            try
+            {
+                StoredProcedures.MID_PLAN_VIEW_SPLITTER_DELETE.Delete(
+                    _dba, 
+                    VIEW_RID: viewRID,
+                    USER_RID: userRID,
+                    PLAN_SESSION_TYPE: (int)planSessionType
+                    );
+            }
+            catch (Exception exc)
+            {
+                string message = exc.ToString();
+                throw;
+            }
+        }
+
         private DataTable BuildUserListAsDataset(ArrayList aValueList)
         {
             DataTable dtUserList = null;

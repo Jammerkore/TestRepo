@@ -731,6 +731,12 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         private List<ROColumnFormat> _columnFormats;
 
+        [DataMember(IsRequired = true)]
+        private List<double> _verticalSplitterPercentages;
+
+        [DataMember(IsRequired = true)]
+        private List<double> _horizontalSplitterPercentages;
+
         public ROViewFormatParms(
             string sROUserID,
             string sROSessionID,
@@ -749,11 +755,17 @@ namespace Logility.ROWebSharedTypes
         {
             _headingColumn = headingColumn;
             _columnFormats = new List<ROColumnFormat>();
+            _verticalSplitterPercentages = new List<double>();
+            _horizontalSplitterPercentages = new List<double>();
         }
 
         public ROColumnFormat HeadingColumn { get { return _headingColumn; } }
 
         public List<ROColumnFormat> ColumnFormats { get { return _columnFormats; } }
+
+        public List<double> VerticalSplitterPercentages { get { return _verticalSplitterPercentages; } }
+
+        public List<double> HorizontalSplitterPercentages { get { return _horizontalSplitterPercentages; } }
 
     }
 

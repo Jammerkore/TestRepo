@@ -274,7 +274,10 @@ namespace Logility.ROUI
                     managerData._planViewDataLayer = new PlanViewData();
                 }
                 // Get view details and load view formatting.
-                DataTable _planViewDetail = GetViewDetails(viewKey: viewRID);
+                DataTable _planViewDetail = GetViewDetails(
+                    viewKey: viewRID,
+                    userKey: ManagerData.SAB.ClientServerSession.UserRID
+                    );
 
                
 
@@ -1200,7 +1203,10 @@ namespace Logility.ROUI
                     managerData._planViewDataLayer = new PlanViewData();
                 }
                 // Get view details and load view formatting.
-                DataTable _planViewDetail = GetViewDetails(viewKey: viewRID);
+                DataTable _planViewDetail = GetViewDetails(
+                    viewKey: viewRID,
+                    userKey: ManagerData.SAB.ClientServerSession.UserRID
+                    );
 
 
 
@@ -2403,7 +2409,10 @@ namespace Logility.ROUI
                     managerData._planViewDataLayer = new PlanViewData();
                 }
                 // Get view details and load view formatting.
-                DataTable _planViewDetail = GetViewDetails(viewKey: viewRID);
+                DataTable _planViewDetail = GetViewDetails(
+                    viewKey: viewRID,
+                    userKey: ManagerData.SAB.ClientServerSession.UserRID
+                    );
 
 
 

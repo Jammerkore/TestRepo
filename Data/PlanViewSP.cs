@@ -354,6 +354,126 @@ namespace MIDRetail.Data
                 }
             }
 
+            public static MID_PLAN_VIEW_SPLITTER_READ_def MID_PLAN_VIEW_SPLITTER_READ = new MID_PLAN_VIEW_SPLITTER_READ_def();
+            public class MID_PLAN_VIEW_SPLITTER_READ_def : baseStoredProcedure
+            {
+                //"file:///C:\SCMVS2010\gohere.html?filepath=DatabaseDefinition\SQL_StoredProcedures\MID_PLAN_VIEW_SPLITTER_READ.SQL"
+
+                private intParameter VIEW_RID;
+                private intParameter USER_RID;
+                private intParameter PLAN_SESSION_TYPE;
+
+                public MID_PLAN_VIEW_SPLITTER_READ_def()
+                {
+                    base.procedureName = "MID_PLAN_VIEW_SPLITTER_READ";
+                    base.procedureType = storedProcedureTypes.Read;
+                    base.tableNames.Add("PLAN_VIEW_SPLITTER");
+                    VIEW_RID = new intParameter("@VIEW_RID", base.inputParameterList);
+                    USER_RID = new intParameter("@USER_RID", base.inputParameterList);
+                    PLAN_SESSION_TYPE = new intParameter("@PLAN_SESSION_TYPE", base.inputParameterList);
+                }
+
+                public DataTable Read(
+                    DatabaseAccess _dba, 
+                    int? VIEW_RID,
+                    int? USER_RID,
+                    int? PLAN_SESSION_TYPE
+                    )
+                {
+                    lock (typeof(MID_PLAN_VIEW_SPLITTER_READ_def))
+                    {
+                        this.VIEW_RID.SetValue(VIEW_RID);
+                        this.USER_RID.SetValue(USER_RID);
+                        this.PLAN_SESSION_TYPE.SetValue(PLAN_SESSION_TYPE);
+                        return ExecuteStoredProcedureForRead(_dba);
+                    }
+                }
+            }
+
+            public static MID_PLAN_VIEW_SPLITTER_INSERT_def MID_PLAN_VIEW_SPLITTER_INSERT = new MID_PLAN_VIEW_SPLITTER_INSERT_def();
+            public class MID_PLAN_VIEW_SPLITTER_INSERT_def : baseStoredProcedure
+            {
+                //"file:///C:\SCMVS2010\gohere.html?filepath=DatabaseDefinition\SQL_StoredProcedures\MID_PLAN_VIEW_SPLITTER_INSERT.SQL"
+
+                private intParameter VIEW_RID;
+                private intParameter USER_RID;
+                private intParameter PLAN_SESSION_TYPE;
+                private charParameter SPLITTER_TYPE_IND;
+                private intParameter SPLITTER_SEQUENCE;
+                private floatParameter SPLITTER_PERCENTAGE;
+
+
+                public MID_PLAN_VIEW_SPLITTER_INSERT_def()
+                {
+                    base.procedureName = "MID_PLAN_VIEW_SPLITTER_INSERT";
+                    base.procedureType = storedProcedureTypes.Insert;
+                    base.tableNames.Add("PLAN_VIEW_SPLITTER");
+                    VIEW_RID = new intParameter("@VIEW_RID", base.inputParameterList);
+                    USER_RID = new intParameter("@USER_RID", base.inputParameterList);
+                    PLAN_SESSION_TYPE = new intParameter("@PLAN_SESSION_TYPE", base.inputParameterList);
+                    SPLITTER_TYPE_IND = new charParameter("@SPLITTER_TYPE_IND", base.inputParameterList);
+                    SPLITTER_SEQUENCE = new intParameter("@SPLITTER_SEQUENCE", base.inputParameterList);
+                    SPLITTER_PERCENTAGE = new floatParameter("@SPLITTER_PERCENTAGE", base.inputParameterList);
+                }
+
+                public int Insert(DatabaseAccess _dba,
+                                  int? VIEW_RID,
+                                  int? USER_RID,
+                                  int? PLAN_SESSION_TYPE,
+                                  char SPLITTER_TYPE_IND,
+                                  int? SPLITTER_SEQUENCE,
+                                  double? SPLITTER_PERCENTAGE
+                                  )
+                {
+                    lock (typeof(MID_PLAN_VIEW_SPLITTER_INSERT_def))
+                    {
+                        this.VIEW_RID.SetValue(VIEW_RID);
+                        this.USER_RID.SetValue(USER_RID);
+                        this.PLAN_SESSION_TYPE.SetValue(PLAN_SESSION_TYPE);
+                        this.SPLITTER_TYPE_IND.SetValue(SPLITTER_TYPE_IND);
+                        this.SPLITTER_SEQUENCE.SetValue(SPLITTER_SEQUENCE);
+                        this.SPLITTER_PERCENTAGE.SetValue(SPLITTER_PERCENTAGE);
+                        return ExecuteStoredProcedureForInsert(_dba);
+                    }
+                }
+            }
+
+            public static MID_PLAN_VIEW_SPLITTER_DELETE_def MID_PLAN_VIEW_SPLITTER_DELETE = new MID_PLAN_VIEW_SPLITTER_DELETE_def();
+            public class MID_PLAN_VIEW_SPLITTER_DELETE_def : baseStoredProcedure
+            {
+                //"file:///C:\SCMVS2010\gohere.html?filepath=DatabaseDefinition\SQL_StoredProcedures\MID_PLAN_VIEW_SPLITTER_DELETE.SQL"
+
+                private intParameter VIEW_RID;
+                private intParameter USER_RID;
+                private intParameter PLAN_SESSION_TYPE;
+
+                public MID_PLAN_VIEW_SPLITTER_DELETE_def()
+                {
+                    base.procedureName = "MID_PLAN_VIEW_SPLITTER_DELETE";
+                    base.procedureType = storedProcedureTypes.Delete;
+                    base.tableNames.Add("PLAN_VIEW_SPLITTER");
+                    VIEW_RID = new intParameter("@VIEW_RID", base.inputParameterList);
+                    USER_RID = new intParameter("@USER_RID", base.inputParameterList);
+                    PLAN_SESSION_TYPE = new intParameter("@PLAN_SESSION_TYPE", base.inputParameterList);
+                }
+
+                public int Delete(
+                    DatabaseAccess _dba, 
+                    int? VIEW_RID,
+                    int? USER_RID,
+                    int? PLAN_SESSION_TYPE
+                    )
+                {
+                    lock (typeof(MID_PLAN_VIEW_SPLITTER_DELETE_def))
+                    {
+                        this.VIEW_RID.SetValue(VIEW_RID);
+                        this.USER_RID.SetValue(USER_RID);
+                        this.PLAN_SESSION_TYPE.SetValue(PLAN_SESSION_TYPE);
+                        return ExecuteStoredProcedureForDelete(_dba);
+                    }
+                }
+            }
+
             //INSERT NEW STORED PROCEDURES ABOVE HERE
         }
     }  

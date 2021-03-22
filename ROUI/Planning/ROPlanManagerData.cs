@@ -157,6 +157,10 @@ namespace Logility.ROUI
         private bool _viewUpdated = false;
 		// holds view formatting widths
         DataTable _planViewFormat;
+        // holds view formatting splitters
+        DataTable _planViewSplitter;
+        private List<double> _verticalSplitterPercentages;
+        private List<double> _horizontalSplitterPercentages;
 
         public ROPlanViewData(int viewRID, ROPlanManagerData managerData)
         {
@@ -705,16 +709,85 @@ namespace Logility.ROUI
         /// Get view details and load view formatting
         /// </summary>
         /// <param name="viewKey">The key of the view</param>
+        /// <param name="userKey">The key of the user</param>
         /// <returns></returns>
-		protected DataTable GetViewDetails (int viewKey)
+		protected DataTable GetViewDetails (
+            int viewKey,
+            int userKey
+            )
         {
             PlanViewData planViewData = new PlanViewData();
 
 
             _planViewFormat = planViewData.PlanViewFormat_Read(viewKey);
-            
+
+            _planViewSplitter = planViewData.PlanViewSplitter_Read(
+                viewRID: viewKey, 
+                userRID: userKey,
+                planSessionType: ManagerData.OpenParms.PlanSessionType);
+            LoadSplitterPercentages();
 
             return planViewData.PlanViewDetail_Read(viewKey);
+        }
+
+        private void LoadSplitterPercentages()
+        {
+            char splitterTypeIndicator;
+            double splitterPercentage;
+
+            _verticalSplitterPercentages = new List<double>();
+            _horizontalSplitterPercentages = new List<double>();
+
+            if (_planViewSplitter.Rows.Count == 0)  // set defaults
+            {
+                switch (ManagerData.OpenParms.PlanSessionType)
+                {
+                    case ePlanSessionType.ChainMultiLevel:
+                        _horizontalSplitterPercentages.Add(70);
+                        _verticalSplitterPercentages.Add(30);
+
+                        break;
+
+                    case ePlanSessionType.ChainSingleLevel:
+                        _horizontalSplitterPercentages.Add(70);
+
+                        break;
+
+                    case ePlanSessionType.StoreMultiLevel:
+
+                        break;
+
+                    case ePlanSessionType.StoreSingleLevel:
+                        _horizontalSplitterPercentages.Add(80);
+                        _horizontalSplitterPercentages.Add(80);
+                        _verticalSplitterPercentages.Add(30);
+
+                        break;
+                }
+            }
+            else
+            {
+                foreach (DataRow row in _planViewSplitter.Rows)
+                {
+                    splitterTypeIndicator = Convert.ToChar(row["SPLITTER_TYPE_IND"], CultureInfo.CurrentUICulture);
+                    splitterPercentage = Convert.ToDouble(row["SPLITTER_PERCENTAGE"], CultureInfo.CurrentUICulture);
+                    if (splitterTypeIndicator == 'V')
+                    {
+                        _verticalSplitterPercentages.Add(splitterPercentage);
+                    }
+                    else
+                    {
+                        _horizontalSplitterPercentages.Add(splitterPercentage);
+                    }
+                }
+            }
+        }
+
+        protected void GetViewSplittersPercentages(out List<double> verticalSplitterPercentages,
+            out List<double> horizontalSplitterPercentages)
+        {
+            verticalSplitterPercentages = _verticalSplitterPercentages;
+            horizontalSplitterPercentages = _horizontalSplitterPercentages;
         }
 
         /// <summary>
@@ -5653,6 +5726,76 @@ namespace Logility.ROUI
                         break;
                 }
             }
+        }
+
+        /// <summary>
+        /// Saves splitter percentages to the database
+        /// </summary>
+        /// <param name="planSessionType">The plan session type for splitters</param>
+        /// <param name="ROViewFormatParms">An instance of the ROViewFormatParms containing view formatting</param>
+        /// <param name="planViewData">The data layer for views</param>
+        /// <returns></returns>
+        protected bool SaveViewSplitters(
+            int userKey,
+            ePlanSessionType planSessionType,
+            ROViewFormatParms ROViewFormatParms,
+            PlanViewData planViewData,
+            out string message
+            )
+        {
+            bool success = true;
+            int splitterSequence = 0;
+            message = null;
+
+            try
+            {
+                // delete current settings
+                planViewData.PlanViewSplitter_Delete(
+                    viewRID: ViewRID,
+                    userRID: userKey,
+                    planSessionType: planSessionType
+                    );
+
+                // add each horizontal splitter
+                foreach (double splitterPercentage in ROViewFormatParms.HorizontalSplitterPercentages)
+                {
+                    // if row exists, splitterPercentage will be updated
+                    planViewData.PlanViewSplitter_Insert(
+                        viewRID: ViewRID,
+                        userRID: userKey,
+                        planSessionType: planSessionType,
+                        splitterTypeIndicator: 'H',
+                        splitterSequence: splitterSequence,
+                        splitterPercentage: splitterPercentage
+                        );
+
+                    ++splitterSequence;
+                }
+
+                // add each vertical splitter
+                splitterSequence = 0;
+                foreach (double splitterPercentage in ROViewFormatParms.VerticalSplitterPercentages)
+                {
+                    // if row exists, splitterPercentage will be updated
+                    planViewData.PlanViewSplitter_Insert(
+                        viewRID: ViewRID,
+                        userRID: userKey,
+                        planSessionType: planSessionType,
+                        splitterTypeIndicator: 'V',
+                        splitterSequence: splitterSequence,
+                        splitterPercentage: splitterPercentage
+                        );
+
+                    ++splitterSequence;
+                }
+            }
+            catch (Exception exc)
+            {
+                success = false;
+                message = exc.ToString();
+            }
+
+            return success;
         }
 
     }
