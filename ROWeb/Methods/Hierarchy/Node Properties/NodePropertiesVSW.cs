@@ -230,6 +230,8 @@ namespace Logility.ROWeb
                     else if (vsw.IMOMaxValue != int.MaxValue)  // clear value
                     {
                         vsw.IMOMaxValue = int.MaxValue;
+                        vsw.IMOIsInherited = false;
+                        vsw.IMOInheritedFromNodeRID = Include.NoRID;
                         valueChanged = true;
                     }
 
@@ -254,6 +256,8 @@ namespace Logility.ROWeb
                     else if (vsw.IMOMinShipQty != 0)  // clear value
                     {
                         vsw.IMOMinShipQty = 0;
+                        vsw.IMOIsInherited = false;
+                        vsw.IMOInheritedFromNodeRID = Include.NoRID;
                         valueChanged = true;
                     }
 
@@ -314,6 +318,8 @@ namespace Logility.ROWeb
                         vsw.IMOFWOS_Max = int.MaxValue;
                         vsw.IMOFWOS_MaxModelRID = Include.NoRID;
                         vsw.IMOFWOS_MaxType = eModifierType.None;
+                        vsw.IMOIsInherited = false;
+                        vsw.IMOInheritedFromNodeRID = Include.NoRID;
                         valueChanged = true;
                     }
 
@@ -339,6 +345,8 @@ namespace Logility.ROWeb
                     else if (vsw.IMOPackQty != Include.PercentPackThresholdDefault)  // clear value
                     {
                         vsw.IMOPackQty = Include.PercentPackThresholdDefault;
+                        vsw.IMOIsInherited = false;
+                        vsw.IMOInheritedFromNodeRID = Include.NoRID;
                         valueChanged = true;
                     }
 
@@ -363,6 +371,8 @@ namespace Logility.ROWeb
                     else if (vsw.IMOPshToBackStock != Include.NoRID)  // clear value
                     {
                         vsw.IMOPshToBackStock = Include.NoRID;
+                        vsw.IMOIsInherited = false;
+                        vsw.IMOInheritedFromNodeRID = Include.NoRID;
                         valueChanged = true;
                     }
 
