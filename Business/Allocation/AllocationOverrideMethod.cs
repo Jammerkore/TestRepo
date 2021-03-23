@@ -3463,14 +3463,14 @@ namespace MIDRetail.Business.Allocation
             {
                 localMinimumMaximumType = eMinMaxType.Allocation;
             }
-            inventoryBasisMerchandiseType = MerchandiseType;
+            inventoryBasisMerchandiseType = eMerchandiseType.Undefined;
             if (localMinimumMaximumType == eMinMaxType.Inventory)
             {
                 if (MERCH_HN_RID != Include.NoRID)
                 {
                     inventoryBasisMerchandiseType = eMerchandiseType.Node;
                 }
-                else if (MERCH_PHL_SEQ != Include.NoRID)
+                else if (MERCH_PH_RID != Include.NoRID)
                 {
                     inventoryBasisMerchandiseType = eMerchandiseType.HierarchyLevel;
                 }
