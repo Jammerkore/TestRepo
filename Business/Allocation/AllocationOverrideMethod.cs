@@ -3663,12 +3663,12 @@ namespace MIDRetail.Business.Allocation
                 inventoryIndicator: EnumTools.VerifyEnumValue(localMinimumMaximumType),
                 inventoryBasisMerchType: EnumTools.VerifyEnumValue(inventoryBasisMerchandiseType),
                 inventoryBasisMerchandise: GetName.GetLevelKeyValuePair(merchandiseType: EnumTools.VerifyEnumValue(inventoryBasisMerchandiseType), 
-                                                                      nodeRID: _mao.IB_MERCH_HN_RID,
-                                                                      merchPhRID: _mao.IB_MERCH_PH_RID,
-                                                                      merchPhlSequence: _mao.IB_MERCH_PHL_SEQ,
+                                                                      nodeRID: MERCH_HN_RID,
+                                                                      merchPhRID: MERCH_PH_RID,
+                                                                      merchPhlSequence: MERCH_PHL_SEQ,
                                                                       SAB: SAB),
 
-                inventoryBasisMerchandiseHierarchy: new KeyValuePair<int, int>(_mao.IB_MERCH_PH_RID, _mao.IB_MERCH_PHL_SEQ),
+                inventoryBasisMerchandiseHierarchy: new KeyValuePair<int, int>(MERCH_PH_RID, MERCH_PHL_SEQ),
                 vswAttribute: GetName.GetAttributeName(key: _VSWAttributeKey),
                 doNotApplyVSW: _applyVSW,   // the panel needs the value to be flip-flopped - the db stores "applyVSW" but the panel displays "DoNotApplyVSW"
                 storeGradeValues: null,
