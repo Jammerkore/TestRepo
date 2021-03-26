@@ -4544,6 +4544,16 @@ namespace MIDRetail.Business.Allocation
                                 });
                                 gradeCodeOrBoundaryModified = true;
                             }
+                            else
+                            {
+                                // if row exists, see if boundary has changed for grade
+                                boundary = Convert.ToInt32(storeGradeDataRows[0]["Boundary"], CultureInfo.CurrentUICulture);
+                                if (boundary != setStoreGrades.StoreGrade.Key)
+                                {
+                                    storeGradeDataRows[0]["Boundary"] = setStoreGrades.StoreGrade.Key;
+                                    gradeCodeOrBoundaryModified = true;
+                                }
+                            }
                         }
                     }
 
