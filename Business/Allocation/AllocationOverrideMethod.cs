@@ -3728,6 +3728,7 @@ namespace MIDRetail.Business.Allocation
             DataTable dtStoreGrades = _dsOverRide.Tables["StoreGrades"];
             // Insure the rows come out in the expected order
             dtStoreGrades.DefaultView.Sort = "RowPosition ASC";
+            dtStoreGrades = dtStoreGrades.DefaultView.ToTable();
 
             // Loop through each set
             foreach (DataRow dr in dtStoreGrades.Rows)
@@ -4418,14 +4419,29 @@ namespace MIDRetail.Business.Allocation
                 }
 
                 // store grade
-                // remove rows for the set
+                string grade;
+                string selectString;
+                List<string> gradesToDelete = new List<string>();
+                // remove rows for the set and check if any grade codes have been deleted
                 //_dsOverRide.Tables["StoreGrades"].Rows.Clear();
                 if (_storeGradesAttributeSetKey != Include.NoRID)
                 {
-                    string selectString = "SGLRID =" + _storeGradesAttributeSetKey;
+                    selectString = "SGLRID =" + _storeGradesAttributeSetKey;
                     DataRow[] detailDataRows = _dsOverRide.Tables["StoreGrades"].Select(selectString);
-                    foreach (var detailDataRow in detailDataRows)
+                    foreach (DataRow detailDataRow in detailDataRows)
                     {
+                        // check to see if grades have been deleted from interface class
+                        grade = Convert.ToString(detailDataRow["Grade"]);
+                        if (roMethodAllocationOverrideProperties.StoreGradeValues != null)
+                        {
+                            if (roMethodAllocationOverrideProperties.StoreGradeValues.StoreGrades.Find(g => g.StoreGrade.Value == grade) == null)
+                            {
+                                // if grade code is not in interface class, add to list of grade codes to be deleted
+                                // grade code will be deleted after all other adjustments
+                                gradesToDelete.Add(grade);
+                            }
+                        }
+
                         detailDataRow.Delete();
                     }
                     _dsOverRide.Tables["StoreGrades"].AcceptChanges();
@@ -4453,6 +4469,12 @@ namespace MIDRetail.Business.Allocation
                 if (storeGrade != null
                     && storeGrade.StoreGrades != null)
                 {
+                    bool gradeCodeOrBoundaryModified = false;
+					ProfileList attributeSetList = StoreMgmt.StoreGroup_GetLevelListViewList(_storeGradesAttributeKey);
+                    DataRow[] storeGradeDataRows;
+                    string sortString;
+                    int boundary;
+
                     foreach (ROAllocationStoreGrade setStoreGrades in storeGrade.StoreGrades)
                     {
                         if (!setStoreGrades.MinimumIsSet 
@@ -4491,8 +4513,73 @@ namespace MIDRetail.Business.Allocation
                             });  
                         }
                         i += 1;
+
+                        // check to see if need to add/update grade or boundary for other sets
+                        foreach (StoreGroupLevelListViewProfile attributeSet in attributeSetList)
+                        {
+                            // no need to update same attribute set
+                            // already done above
+                            if (attributeSet.Key == storeGrade.AttributeSet.Key)
+                            {
+                                continue;
+                            }
+
+                            // check for row for attribute set and grade
+                            selectString = "SGLRID = " + attributeSet.Key + " AND Grade = '" + setStoreGrades.StoreGrade.Value + "'";
+                            storeGradeDataRows = _dsOverRide.Tables["StoreGrades"].Select(selectString);
+                            // if no row, new grade needs added to attribute set
+                            if (storeGradeDataRows.Length == 0)
+                            {
+                                _dsOverRide.Tables["StoreGrades"].Rows.Add(new object[] {
+                                i,
+                                attributeSet.Key,
+                                setStoreGrades.StoreGrade.Key,
+                                setStoreGrades.StoreGrade.Value,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null
+                                });
+                                gradeCodeOrBoundaryModified = true;
+                            }
+                        }
                     }
 
+                    // delete grade codes that have been removed
+                    if (gradesToDelete.Count > 0)
+                    {
+                        foreach (string gradeCode in gradesToDelete)
+                        {
+                            selectString = "Grade = '" + gradeCode + "'";
+                            storeGradeDataRows = _dsOverRide.Tables["StoreGrades"].Select(selectString);
+                            foreach (DataRow detailDataRow in storeGradeDataRows)
+                            {
+                                detailDataRow.Delete();
+                                gradeCodeOrBoundaryModified = true;
+                            }
+                        }
+                        _dsOverRide.Tables["StoreGrades"].AcceptChanges();
+                    }
+
+                    // need to update row position to reflect changes
+                    if (gradeCodeOrBoundaryModified)
+                    {
+                        selectString = "SGLRID is not null";
+                        sortString = "SGLRID ASC, Boundary DESC";
+                        storeGradeDataRows = _dsOverRide.Tables["StoreGrades"].Select(selectString, sortString);
+                        i = 0;
+                        foreach (DataRow dataRow in storeGradeDataRows)
+                        {
+                            dataRow["RowPosition"] = i;
+                            ++i;
+                        }
+
+                        _dsOverRide.Tables["StoreGrades"].AcceptChanges();
+
+                        _dsOverRide.Tables["StoreGrades"].DefaultView.Sort = "RowPosition ASC";
+                    }
                 }
 
                 // vsw 
@@ -4506,7 +4593,7 @@ namespace MIDRetail.Business.Allocation
                 if (roMethodAllocationOverrideProperties.VSWAttributeSetValues != null
                     && roMethodAllocationOverrideProperties.VSWAttributeSetValues.VSWAttributeSetValues.EntryIsSet )
                 {
-                    string selectString = "SetID = '" + localSetID + "'";
+                    selectString = "SetID = '" + localSetID + "'";
                     DataRow[] detailDataRows = IMODataSet.Tables["Sets"].Select(selectString);
                     foreach (var detailDataRow in detailDataRows)
                     {
