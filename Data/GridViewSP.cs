@@ -576,7 +576,127 @@ namespace MIDRetail.Data
             //}
             //End TT#1313-MD -jsobek -Header Filters
 
-			//INSERT NEW STORED PROCEDURES ABOVE HERE
+            public static MID_GRID_VIEW_SPLITTER_READ_def MID_GRID_VIEW_SPLITTER_READ = new MID_GRID_VIEW_SPLITTER_READ_def();
+            public class MID_GRID_VIEW_SPLITTER_READ_def : baseStoredProcedure
+            {
+                //"file:///C:\SCMVS2010\gohere.html?filepath=DatabaseDefinition\SQL_StoredProcedures\MID_GRID_VIEW_SPLITTER_READ.SQL"
+
+                private intParameter VIEW_RID;
+                private intParameter USER_RID;
+                private intParameter LAYOUT_ID;
+
+                public MID_GRID_VIEW_SPLITTER_READ_def()
+                {
+                    base.procedureName = "MID_GRID_VIEW_SPLITTER_READ";
+                    base.procedureType = storedProcedureTypes.Read;
+                    base.tableNames.Add("GRID_VIEW_SPLITTER");
+                    VIEW_RID = new intParameter("@VIEW_RID", base.inputParameterList);
+                    USER_RID = new intParameter("@USER_RID", base.inputParameterList);
+                    LAYOUT_ID = new intParameter("@LAYOUT_ID", base.inputParameterList);
+                }
+
+                public DataTable Read(
+                    DatabaseAccess _dba,
+                    int? VIEW_RID,
+                    int? USER_RID,
+                    int? LAYOUT_ID
+                    )
+                {
+                    lock (typeof(MID_GRID_VIEW_SPLITTER_READ_def))
+                    {
+                        this.VIEW_RID.SetValue(VIEW_RID);
+                        this.USER_RID.SetValue(USER_RID);
+                        this.LAYOUT_ID.SetValue(LAYOUT_ID);
+                        return ExecuteStoredProcedureForRead(_dba);
+                    }
+                }
+            }
+
+            public static MID_GRID_VIEW_SPLITTER_INSERT_def MID_GRID_VIEW_SPLITTER_INSERT = new MID_GRID_VIEW_SPLITTER_INSERT_def();
+            public class MID_GRID_VIEW_SPLITTER_INSERT_def : baseStoredProcedure
+            {
+                //"file:///C:\SCMVS2010\gohere.html?filepath=DatabaseDefinition\SQL_StoredProcedures\MID_GRID_VIEW_SPLITTER_INSERT.SQL"
+
+                private intParameter VIEW_RID;
+                private intParameter USER_RID;
+                private intParameter LAYOUT_ID;
+                private charParameter SPLITTER_TYPE_IND;
+                private intParameter SPLITTER_SEQUENCE;
+                private floatParameter SPLITTER_PERCENTAGE;
+
+
+                public MID_GRID_VIEW_SPLITTER_INSERT_def()
+                {
+                    base.procedureName = "MID_GRID_VIEW_SPLITTER_INSERT";
+                    base.procedureType = storedProcedureTypes.Insert;
+                    base.tableNames.Add("GRID_VIEW_SPLITTER");
+                    VIEW_RID = new intParameter("@VIEW_RID", base.inputParameterList);
+                    USER_RID = new intParameter("@USER_RID", base.inputParameterList);
+                    LAYOUT_ID = new intParameter("@LAYOUT_ID", base.inputParameterList);
+                    SPLITTER_TYPE_IND = new charParameter("@SPLITTER_TYPE_IND", base.inputParameterList);
+                    SPLITTER_SEQUENCE = new intParameter("@SPLITTER_SEQUENCE", base.inputParameterList);
+                    SPLITTER_PERCENTAGE = new floatParameter("@SPLITTER_PERCENTAGE", base.inputParameterList);
+                }
+
+                public int Insert(DatabaseAccess _dba,
+                                  int? VIEW_RID,
+                                  int? USER_RID,
+                                  int? LAYOUT_ID,
+                                  char SPLITTER_TYPE_IND,
+                                  int? SPLITTER_SEQUENCE,
+                                  double? SPLITTER_PERCENTAGE
+                                  )
+                {
+                    lock (typeof(MID_GRID_VIEW_SPLITTER_INSERT_def))
+                    {
+                        this.VIEW_RID.SetValue(VIEW_RID);
+                        this.USER_RID.SetValue(USER_RID);
+                        this.LAYOUT_ID.SetValue(LAYOUT_ID);
+                        this.SPLITTER_TYPE_IND.SetValue(SPLITTER_TYPE_IND);
+                        this.SPLITTER_SEQUENCE.SetValue(SPLITTER_SEQUENCE);
+                        this.SPLITTER_PERCENTAGE.SetValue(SPLITTER_PERCENTAGE);
+                        return ExecuteStoredProcedureForInsert(_dba);
+                    }
+                }
+            }
+
+            public static MID_GRID_VIEW_SPLITTER_DELETE_def MID_GRID_VIEW_SPLITTER_DELETE = new MID_GRID_VIEW_SPLITTER_DELETE_def();
+            public class MID_GRID_VIEW_SPLITTER_DELETE_def : baseStoredProcedure
+            {
+                //"file:///C:\SCMVS2010\gohere.html?filepath=DatabaseDefinition\SQL_StoredProcedures\MID_GRID_VIEW_SPLITTER_DELETE.SQL"
+
+                private intParameter VIEW_RID;
+                private intParameter USER_RID;
+                private intParameter LAYOUT_ID;
+
+                public MID_GRID_VIEW_SPLITTER_DELETE_def()
+                {
+                    base.procedureName = "MID_GRID_VIEW_SPLITTER_DELETE";
+                    base.procedureType = storedProcedureTypes.Delete;
+                    base.tableNames.Add("GRID_VIEW_SPLITTER");
+                    VIEW_RID = new intParameter("@VIEW_RID", base.inputParameterList);
+                    USER_RID = new intParameter("@USER_RID", base.inputParameterList);
+                    LAYOUT_ID = new intParameter("@LAYOUT_ID", base.inputParameterList);
+                }
+
+                public int Delete(
+                    DatabaseAccess _dba,
+                    int? VIEW_RID,
+                    int? USER_RID,
+                    int? LAYOUT_ID
+                    )
+                {
+                    lock (typeof(MID_GRID_VIEW_SPLITTER_DELETE_def))
+                    {
+                        this.VIEW_RID.SetValue(VIEW_RID);
+                        this.USER_RID.SetValue(USER_RID);
+                        this.LAYOUT_ID.SetValue(LAYOUT_ID);
+                        return ExecuteStoredProcedureForDelete(_dba);
+                    }
+                }
+            }
+
+            //INSERT NEW STORED PROCEDURES ABOVE HERE
         }
     }  
 }

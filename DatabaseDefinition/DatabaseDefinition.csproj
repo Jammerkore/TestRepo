@@ -133,6 +133,8 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="KeyFile.txt" />
+    <Content Include="SQL_Constraints\APPLICATION_USER_GRID_VIEW_SPLITTER_FK1.SQL" />
+    <Content Include="SQL_Constraints\GRID_VIEW_SPLITTER_FK1.SQL" />
     <Content Include="SQL_Constraints\HEADER_PACK_HEADER_PACK_ASSOCIATION_FK2.SQL" />
     <Content Include="SQL_Constraints\HEADER_PACK_HEADER_PACK_ASSOCIATION_FK1.SQL" />
     <Content Include="SQL_Constraints\HEADER_HEADER_PACK_ASSOCIATION_FK1.SQL" />
@@ -172,10 +174,13 @@
     <Content Include="SQL_StoredProcedures\MID_METHOD_PLANNING_EXTRACT_VARIABLES_DELETE.SQL" />
     <Content Include="SQL_StoredProcedures\MID_METHOD_PLANNING_EXTRACT_VARIABLES_INSERT.SQL" />
     <Content Include="SQL_StoredProcedures\MID_METHOD_PLANNING_EXTRACT_VARIABLES_READ.SQL" />
+    <Content Include="SQL_StoredProcedures\MID_GRID_VIEW_SPLITTER_DELETE.SQL" />
     <Content Include="SQL_StoredProcedures\MID_PLAN_VIEW_SPLITTER_DELETE.SQL" />
     <Content Include="SQL_StoredProcedures\MID_PLAN_VIEW_FORMAT_DELETE.SQL" />
+    <Content Include="SQL_StoredProcedures\MID_GRID_VIEW_SPLITTER_INSERT.SQL" />
     <Content Include="SQL_StoredProcedures\MID_PLAN_VIEW_SPLITTER_INSERT.SQL" />
     <Content Include="SQL_StoredProcedures\MID_PLAN_VIEW_FORMAT_INSERT.SQL" />
+    <Content Include="SQL_StoredProcedures\MID_GRID_VIEW_SPLITTER_READ.SQL" />
     <Content Include="SQL_StoredProcedures\MID_PLAN_VIEW_SPLITTER_READ.SQL" />
     <Content Include="SQL_StoredProcedures\MID_PLAN_VIEW_FORMAT_READ.SQL" />
     <Content Include="SQL_StoredProcedures\MID_ROLLUP_ITEM_READ_PROCESSED.SQL" />
@@ -218,7 +223,6 @@
     <Content Include="SQL_Constraints\FILTER_CONDITION_LIST_VALUES_FK1.SQL" />
     <Content Include="SQL_Constraints\FILTER_DEF1.SQL" />
     <Content Include="SQL_Constraints\FORECAST_VERSION_DESC.SQL" />
-    <Content Include="SQL_Constraints\GRID_VIEW_DEF1.SQL" />
     <Content Include="SQL_Constraints\HEADER_BULK_COLOR_SIZE_AK1_UC1.SQL" />
     <Content Include="SQL_Constraints\HEADER_CHAR_GROUP_FK2.SQL" />
     <Content Include="SQL_Constraints\JOB_UC1.SQL" />
@@ -2551,6 +2555,7 @@
     <Content Include="SQL_Tables\METHOD_CREATE_MASTER_HEADERS.SQL" />
     <Content Include="SQL_Tables\METHOD_PLANNING_EXTRACT.SQL" />
     <Content Include="SQL_Tables\METHOD_PLANNING_EXTRACT_VARIABLES.SQL" />
+    <Content Include="SQL_Tables\GRID_VIEW_SPLITTER.SQL" />
     <Content Include="SQL_Tables\PLAN_VIEW_SPLITTER.SQL" />
     <Content Include="SQL_Tables\PLAN_VIEW_FORMAT.SQL" />
     <Content Include="SQL_Tables\SYSTEM_OPTIONS_DC_FULFILLMENT_STORE_ORDER.SQL" />

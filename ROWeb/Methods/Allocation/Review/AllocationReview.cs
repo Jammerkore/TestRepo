@@ -299,15 +299,7 @@ namespace Logility.ROWeb
 
         private int GetReviewGridId(eAllocationSelectionViewType selectionViewType)
         {
-            eLayoutID layoutID = eLayoutID.NotDefined;
-            if (selectionViewType == eAllocationSelectionViewType.Style)
-            { layoutID = eLayoutID.styleReviewGrid; }
-            else if (selectionViewType == eAllocationSelectionViewType.Velocity)
-            { layoutID = eLayoutID.velocityStoreDetailGrid; }
-            else if (selectionViewType == eAllocationSelectionViewType.Size)
-            { layoutID = eLayoutID.sizeReviewGrid; }
-            else if (selectionViewType == eAllocationSelectionViewType.Summary)
-            { layoutID = eLayoutID.sizeReviewGrid; }
+            eLayoutID layoutID = GetLayoutID(allocationSelectionType: selectionViewType);
 
             int viewRID = _userGridView.UserGridView_Read(SAB.ClientServerSession.UserRID, layoutID);
 
@@ -393,11 +385,92 @@ namespace Logility.ROWeb
                 viewDetails.DetailColumns.Add(field);
             }
 
+            // Get splitter percentages for the view
+            List<double> verticalSplitterPercentages, horizontalSplitterPercentages;
+
+            GetSplitterPercentages(
+                viewKey: _currentViewRID,
+                userKey: SAB.ClientServerSession.UserRID,
+                layoutID: GetLayoutID(allocationSelectionType: _applicationSessionTransaction.AllocationViewType),
+                verticalSplitterPercentages: out verticalSplitterPercentages,
+                horizontalSplitterPercentages: out horizontalSplitterPercentages
+                );
+
+            foreach (double splitterPercentage in verticalSplitterPercentages)
+            {
+                viewDetails.VerticalSplitterPercentages.Add(splitterPercentage);
+            }
+
+            foreach (double splitterPercentage in horizontalSplitterPercentages)
+            {
+                viewDetails.HorizontalSplitterPercentages.Add(splitterPercentage);
+            }
+
             return new ROAllocationReviewViewDetailsOut(eROReturnCode.Successful, null, ROInstanceID, viewDetails);
+        }
+
+        private void GetSplitterPercentages(
+            int viewKey,
+            int userKey,
+            eLayoutID layoutID,
+            out List<double> verticalSplitterPercentages,
+            out List<double> horizontalSplitterPercentages
+            )
+        {
+            char splitterTypeIndicator;
+            double splitterPercentage;
+            verticalSplitterPercentages = new List<double>();
+            horizontalSplitterPercentages = new List<double>();
+
+            DataTable _viewSplitter = _gridViewData.GridViewSplitter_Read(
+                viewRID: viewKey,
+                userRID: userKey,
+                layoutID: layoutID);
+
+            if (_viewSplitter.Rows.Count == 0)  // set defaults
+            {
+                switch (layoutID)
+                {
+                    case eLayoutID.styleReviewGrid:
+                        horizontalSplitterPercentages.Add(80);
+                        horizontalSplitterPercentages.Add(80);
+                        verticalSplitterPercentages.Add(30);
+                        verticalSplitterPercentages.Add(30);
+
+                        break;
+
+                    case eLayoutID.sizeReviewGrid:
+                        horizontalSplitterPercentages.Add(80);
+                        horizontalSplitterPercentages.Add(80);
+                        verticalSplitterPercentages.Add(30);
+                        verticalSplitterPercentages.Add(30);
+
+                        break;
+
+                }
+            }
+            else
+            {
+                foreach (DataRow row in _viewSplitter.Rows)
+                {
+                    splitterTypeIndicator = Convert.ToChar(row["SPLITTER_TYPE_IND"], CultureInfo.CurrentUICulture);
+                    splitterPercentage = Convert.ToDouble(row["SPLITTER_PERCENTAGE"], CultureInfo.CurrentUICulture);
+                    if (splitterTypeIndicator == 'V')
+                    {
+                        verticalSplitterPercentages.Add(splitterPercentage);
+                    }
+                    else
+                    {
+                        horizontalSplitterPercentages.Add(splitterPercentage);
+                    }
+                }
+            }
         }
 
         public ROOut SaveViewDetails(ROAllocationReviewViewDetailsParms viewDetails)
         {
+            eROReturnCode returnCode = eROReturnCode.Successful;
+            bool success = true;
             string message = null;
             int viewRID = Include.NoRID, viewUserRID;
             int visiblePosition, sortDirection, sortSequence, width;
@@ -536,9 +609,25 @@ namespace Logility.ROWeb
                         ++visiblePosition;
                     }
 
+                    // save splitter settings
+                    if (!SaveViewSplitters(
+                       userKey: SAB.ClientServerSession.UserRID,
+                       viewKey: viewRID,
+                       layoutID: layoutID,
+                       viewDetails: viewDetails,
+                       gridViewData: gridViewData,
+                       message: out message
+                       ))
+                    {
+                        success = false;
+                        returnCode = eROReturnCode.Failure;
+                    }
 
-
-                    gridViewData.CommitData();
+                    // commit the new values to the database
+                    if (success)
+                    {
+                        gridViewData.CommitData();
+                    }
                 }
                 catch (Exception exc)
                 {
@@ -562,7 +651,81 @@ namespace Logility.ROWeb
             }
 
 
-            return new ROAllocationReviewViewDetailsOut(eROReturnCode.Successful, message, ROInstanceID, viewDetails.ROAllocationReviewViewDetails);
+            return new ROAllocationReviewViewDetailsOut(returnCode, message, ROInstanceID, viewDetails.ROAllocationReviewViewDetails);
+        }
+
+        /// <summary>
+        /// Saves splitter percentages to the database
+        /// </summary>
+        /// <param name="userKey">The key of the user for the view</param>
+        /// <param name="viewKey">The key of the view</param>
+        /// <param name="layoutID">The layout ID for splitters</param>
+        /// <param name="viewDetails">An instance of the ROAllocationReviewViewDetailsParms containing view formatting</param>
+        /// <param name="gridViewData">The data layer for views</param>
+        /// <param name="message">A message during processing</param>
+        /// <returns></returns>
+        protected bool SaveViewSplitters(
+            int userKey,
+            int viewKey,
+            eLayoutID layoutID,
+            ROAllocationReviewViewDetailsParms viewDetails,
+            GridViewData gridViewData,
+            out string message
+            )
+        {
+            bool success = true;
+            int splitterSequence = 0;
+            message = null;
+
+            try
+            {
+                // delete current settings
+                gridViewData.GridViewSplitter_Delete(
+                    viewRID: viewKey,
+                    userRID: userKey,
+                    layoutID: layoutID
+                    );
+
+                // add each horizontal splitter
+                foreach (double splitterPercentage in viewDetails.ROAllocationReviewViewDetails.HorizontalSplitterPercentages)
+                {
+                    // if row exists, splitterPercentage will be updated
+                    gridViewData.GridViewSplitter_Insert(
+                        viewRID: viewKey,
+                        userRID: userKey,
+                        layoutID: layoutID,
+                        splitterTypeIndicator: 'H',
+                        splitterSequence: splitterSequence,
+                        splitterPercentage: splitterPercentage
+                        );
+
+                    ++splitterSequence;
+                }
+
+                // add each vertical splitter
+                splitterSequence = 0;
+                foreach (double splitterPercentage in viewDetails.ROAllocationReviewViewDetails.VerticalSplitterPercentages)
+                {
+                    // if row exists, splitterPercentage will be updated
+                    gridViewData.GridViewSplitter_Insert(
+                        viewRID: viewKey,
+                        userRID: userKey,
+                        layoutID: layoutID,
+                        splitterTypeIndicator: 'V',
+                        splitterSequence: splitterSequence,
+                        splitterPercentage: splitterPercentage
+                        );
+
+                    ++splitterSequence;
+                }
+            }
+            catch (Exception exc)
+            {
+                success = false;
+                message = exc.ToString();
+            }
+
+            return success;
         }
 
         public ROOut DeleteReviewViewDetails()
@@ -1365,8 +1528,45 @@ namespace Logility.ROWeb
                     roData.AddCells(dataType, cells);
                 }
             }
+
+            // Get splitter percentages for the view
+            List<double> verticalSplitterPercentages, horizontalSplitterPercentages;
+
+            GetSplitterPercentages(
+                viewKey: _currentViewRID,
+                userKey: SAB.ClientServerSession.UserRID,
+                layoutID: GetLayoutID(allocationSelectionType: selectionViewType),
+                verticalSplitterPercentages: out verticalSplitterPercentages,
+                horizontalSplitterPercentages: out horizontalSplitterPercentages
+                );
+
+            foreach (double splitterPercentage in verticalSplitterPercentages)
+            {
+                roData.VerticalSplitterPercentages.Add(splitterPercentage);
+            }
+
+            foreach (double splitterPercentage in horizontalSplitterPercentages)
+            {
+                roData.HorizontalSplitterPercentages.Add(splitterPercentage);
+            }
+
             allocationReviewData = roData;
             return roData;
+        }
+
+        private eLayoutID GetLayoutID (eAllocationSelectionViewType allocationSelectionType)
+        {
+            eLayoutID layoutID = eLayoutID.NotDefined;
+            if (allocationSelectionType == eAllocationSelectionViewType.Style)
+            { layoutID = eLayoutID.styleReviewGrid; }
+            else if (allocationSelectionType == eAllocationSelectionViewType.Velocity)
+            { layoutID = eLayoutID.velocityStoreDetailGrid; }
+            else if (allocationSelectionType == eAllocationSelectionViewType.Size)
+            { layoutID = eLayoutID.sizeReviewGrid; }
+            else if (allocationSelectionType == eAllocationSelectionViewType.Summary)
+            { layoutID = eLayoutID.sizeReviewGrid; }
+
+            return layoutID;
         }
 
         private void AddSizeLabelColumns(ROCells cells, ROAllocationReviewOptionsParms reviewOptionsParms, eDataType dataType)

@@ -4743,12 +4743,20 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         private List<ROSelectedField> _detailColumns;
 
+        [DataMember(IsRequired = true)]
+        private List<double> _verticalSplitterPercentages;
+
+        [DataMember(IsRequired = true)]
+        private List<double> _horizontalSplitterPercentages;
+
         public ROAllocationReviewViewDetails(KeyValuePair<int, string> view) :
             base(view)
         {
             _summaryColumns = new List<ROSelectedField>();
             _totalColumns = new List<ROSelectedField>();
             _detailColumns = new List<ROSelectedField>();
+            _verticalSplitterPercentages = new List<double>();
+            _horizontalSplitterPercentages = new List<double>();
         }
 
         public List<ROSelectedField> SummaryColumns { get { return _summaryColumns; } }
@@ -4758,6 +4766,10 @@ namespace Logility.ROWebSharedTypes
         public List<ROSelectedField> SummaryColumnsByPosition { get { return _summaryColumns.OrderBy(hdr => hdr.VisiblePosition).ToList(); } }
         public List<ROSelectedField> TotalColumnsByPosition { get { return _totalColumns.OrderBy(hdr => hdr.VisiblePosition).ToList(); } }
         public List<ROSelectedField> DetailColumnsByPosition { get { return _detailColumns.OrderBy(hdr => hdr.VisiblePosition).ToList(); } }
+
+        public List<double> VerticalSplitterPercentages { get { return _verticalSplitterPercentages; } }
+
+        public List<double> HorizontalSplitterPercentages { get { return _horizontalSplitterPercentages; } }
 
     }
 

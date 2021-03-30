@@ -614,6 +614,77 @@ namespace MIDRetail.Data
             }
         }
 
+        public DataTable GridViewSplitter_Read(
+            int viewRID,
+            int userRID,
+            eLayoutID layoutID)
+        {
+            try
+            {
+                return StoredProcedures.MID_GRID_VIEW_SPLITTER_READ.Read(_dba,
+                    VIEW_RID: viewRID,
+                    USER_RID: userRID,
+                    LAYOUT_ID: (int)layoutID
+                    );
+            }
+            catch (Exception exc)
+            {
+                string message = exc.ToString();
+                throw;
+            }
+        }
+
+
+        public void GridViewSplitter_Insert(
+            int viewRID,
+            int userRID,
+            eLayoutID layoutID = eLayoutID.NotDefined,
+            char splitterTypeIndicator = 'V',
+            int splitterSequence = Include.Undefined,
+            double splitterPercentage = 0
+            )
+        {
+            try
+            {
+                StoredProcedures.MID_GRID_VIEW_SPLITTER_INSERT.Insert(_dba,
+                                                                    VIEW_RID: viewRID,
+                                                                    USER_RID: userRID,
+                                                                    LAYOUT_ID: (int)layoutID,
+                                                                    SPLITTER_TYPE_IND: splitterTypeIndicator,
+                                                                    SPLITTER_SEQUENCE: splitterSequence,
+                                                                    SPLITTER_PERCENTAGE: splitterPercentage
+                                                                    );
+            }
+            catch (Exception exc)
+            {
+                string message = exc.ToString();
+                throw;
+            }
+
+        }
+
+        public void GridViewSplitter_Delete(
+            int viewRID,
+            int userRID,
+             eLayoutID layoutID
+            )
+        {
+            try
+            {
+                StoredProcedures.MID_GRID_VIEW_SPLITTER_DELETE.Delete(
+                    _dba,
+                    VIEW_RID: viewRID,
+                    USER_RID: userRID,
+                    LAYOUT_ID: (int)layoutID
+                    );
+            }
+            catch (Exception exc)
+            {
+                string message = exc.ToString();
+                throw;
+            }
+        }
+
         #region Grid View Filters
 
         //Begin TT#1313-MD -jsobek -Header Filters
