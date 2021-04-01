@@ -271,6 +271,7 @@
   <configuration config_file = "Rollup.exe.config" parent = "appSettings" setting = "IncludeZeroInAverage" lookupType = "child"  type = "boolean" id = "IncludeZeroInAverage"/>
   
   <configuration config_file = "ROWebHost.exe.config" parent = "appSettings" setting = "GraphicsDirectory" lookupType = "child"  type = "directory" id = "GraphicsDirectory"/>
+  <configuration config_file = "ROWebHost.exe.config" parent = "appSettings" setting = "FileDirectory" lookupType = "child"  type = "directory" id = "FileDirectory"/>
   <configuration config_file = "ROWebHost.exe.config" parent = "configuration/log4net/root/level" setting = "Log File Level" lookupType = "parent"  type = "list" id = "log4netLevel"/>
   <configuration config_file = "ROWebHost.exe.config" parent = "configuration/log4net/appender/file" setting = "Log File Name" lookupType = "parent"  type = "open_file" id = "log4netFile"/>
   
@@ -690,6 +691,7 @@
   <!-- End TT#3822 - JSmith - Add Stop Time to Purge -->
   
   <description id = "GraphicsDirectory"  text = "Indicates the folder where graphics files are found." defaultValue = ""/>
+  <description id = "FileDirectory"  text = "Indicates the folder where files are found." defaultValue = "C:\Logility\ROData"/>
   
   <description id = "log4netName"  text = "The name of the log file." defaultValue = ""/>
   <description id = "log4netLevel"  text = "Indicates the minimum level of messages that are to be written to the log file." defaultValue = "INFO" list = "ALL|DEBUG|INFO|WARN|ERROR|FATAL|Off"/>

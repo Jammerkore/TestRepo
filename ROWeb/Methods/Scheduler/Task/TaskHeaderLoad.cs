@@ -135,8 +135,12 @@ namespace Logility.ROWeb
             string selectString;
             selectString = "TASK_SEQUENCE=" + taskParameters.Sequence;
             DataRow headerDataRow = TaskData.Select(selectString).First();
+            string inputDirectory = Convert.ToString(headerDataRow["INPUT_DIRECTORY"]);
+            inputDirectory = string.IsNullOrEmpty(inputDirectory) ?
+                string.IsNullOrEmpty(MIDConfigurationManager.AppSettings["FileDirectory"]) ? @"C:\Logility\ROData\Headers":
+                string.Concat(MIDConfigurationManager.AppSettings["FileDirectory"], @"\Headers") : inputDirectory;
             task.ProcessingDirection = Convert.ToInt32(headerDataRow["FILE_PROCESSING_DIRECTION"]);
-            task.Directory = Convert.ToString(headerDataRow["INPUT_DIRECTORY"]);
+            task.Directory = inputDirectory;
             task.FlagFileSuffix = Convert.ToString(headerDataRow["FILE_MASK"]);
             task.ConcurrentFiles = Convert.ToInt32(headerDataRow["CONCURRENT_FILES"]);
             task.EnableRunSuffix = Convert.ToString(headerDataRow["RUN_UNTIL_FILE_PRESENT_IND"]) == "1" ? true : false;
