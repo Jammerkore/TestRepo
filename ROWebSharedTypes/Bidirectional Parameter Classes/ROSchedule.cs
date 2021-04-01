@@ -1303,9 +1303,66 @@ namespace Logility.ROWebSharedTypes
     [DataContract(Name = "ROTaskHeaderReconcile", Namespace = "http://Logility.ROWeb/")]
     public class ROTaskHeaderReconcile : ROTaskProperties
     {
+        [DataMember(IsRequired = true)]
+        private string _inputDirectory;
+
+        [DataMember(IsRequired = true)]
+        private string _outputDirectory;
+
+        [DataMember(IsRequired = true)]
+        private string _triggerSuffix;
+
+        [DataMember(IsRequired = true)]
+        private string _removeTransactionFileName;
+
+        [DataMember(IsRequired = true)]
+        private string _removeTransactionTriggerSuffix;
+
+        [DataMember(IsRequired = true)]
+        private string _headerTypes;
+
+        [DataMember(IsRequired = true)]
+        private string _headerFileName;
 
         #region Public Properties
+        public string InputDirectory
+        {
+            get { return _inputDirectory; }
+            set { _inputDirectory = value; }
+        }
 
+        public string OutputDirectory
+        {
+            get { return _outputDirectory; }
+            set { _outputDirectory = value; }
+        }
+
+        public string TriggerSuffix
+        {
+            get { return _triggerSuffix; }
+            set { _triggerSuffix = value; }
+        }
+
+        public string RemoveTransactionFileName
+        {
+            get { return _removeTransactionFileName; }
+            set { _removeTransactionFileName = value; }
+        }
+        public string RemoveTransactionTriggerSuffix
+        {
+            get { return _removeTransactionTriggerSuffix; }
+            set { _removeTransactionTriggerSuffix = value; }
+        }
+        public string HeaderTypes
+        {
+            get { return _headerTypes; }
+            set { _headerTypes = value; }
+        }
+        public string HeaderFileName
+        {
+            get { return _headerFileName; }
+            set { _headerFileName = value; }
+        }
         #endregion
 
         public ROTaskHeaderReconcile(

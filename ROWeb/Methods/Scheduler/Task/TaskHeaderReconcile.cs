@@ -132,7 +132,16 @@ namespace Logility.ROWeb
         /// <param name="task">The data class of the task</param>
         private void AddValues(ROTaskParms taskParameters, ROTaskHeaderReconcile task)
         {
-            
+            string selectString;
+            selectString = "TASK_SEQUENCE=" + taskParameters.Sequence;
+            DataRow headerDataRow = TaskData.Select(selectString).First();
+            task.HeaderFileName = Convert.ToString(headerDataRow["HEADER_KEYS_FILE_NAME"]);
+            task.HeaderTypes = Convert.ToString(headerDataRow["HEADER_TYPES"]);
+            task.InputDirectory = Convert.ToString(headerDataRow["INPUT_DIRECTORY"]);
+            task.OutputDirectory = Convert.ToString(headerDataRow["OUTPUT_DIRECTORY"]);
+            task.RemoveTransactionFileName = Convert.ToString(headerDataRow["REMOVE_TRANS_FILE_NAME"]);
+            task.RemoveTransactionTriggerSuffix = Convert.ToString(headerDataRow["REMOVE_TRANS_TRIGGER_SUFFIX"]);
+            task.TriggerSuffix = Convert.ToString(headerDataRow["TRIGGER_SUFFIX"]);
         }
 
 
@@ -184,7 +193,20 @@ namespace Logility.ROWeb
                 sequence: taskData.Task.Key
                 );
 
-            throw new Exception("Not Implemented");
+            DataRow headerReconcileDataRow = TaskData.NewRow();
+            headerReconcileDataRow["TASKLIST_RID"] = TaskListProperties.TaskList.Key;
+            headerReconcileDataRow["TASK_SEQUENCE"] = taskData.Task.Key;
+            headerReconcileDataRow["INPUT_DIRECTORY"] = taskData.InputDirectory;
+            headerReconcileDataRow["OUTPUT_DIRECTORY"] = taskData.OutputDirectory;
+            headerReconcileDataRow["TRIGGER_SUFFIX"] = taskData.TriggerSuffix;
+            headerReconcileDataRow["REMOVE_TRANS_FILE_NAME"] = taskData.RemoveTransactionFileName;
+            headerReconcileDataRow["REMOVE_TRANS_TRIGGER_SUFFIX"] = taskData.RemoveTransactionTriggerSuffix;
+            headerReconcileDataRow["HEADER_TYPES"] = taskData.HeaderTypes;
+            headerReconcileDataRow["HEADER_KEYS_FILE_NAME"] = taskData.HeaderFileName;
+            TaskData.Rows.Add(headerReconcileDataRow);
+            TaskData.AcceptChanges();
+            // order the rows in the data tables
+            TaskData = TaskData.DefaultView.ToTable();
 
             return true;
         }
