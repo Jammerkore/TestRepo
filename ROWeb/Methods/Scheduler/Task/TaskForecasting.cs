@@ -132,8 +132,117 @@ namespace Logility.ROWeb
         /// <param name="task">The data class of the task</param>
         private void AddValues(ROTaskParms taskParameters, ROTaskForecasting task)
         {
-            
+            int merchandiseKey, versionKey, forecastSequence = 0;
+            ROTaskForecastMerchandise taskForecastMerchandise;
+            KeyValuePair<int, string> merchandise = default(KeyValuePair<int, string>);
+            KeyValuePair<int, string> version = default(KeyValuePair<int, string>);
+            string selectString;
+
+            // add merchandise to allocate
+            selectString = "TASK_SEQUENCE=" + taskParameters.Sequence;
+            DataRow[] merchandiseDataRows = TaskData.Select(selectString);
+            task.Merchandise.Clear();
+
+            foreach (DataRow dataRow in merchandiseDataRows)
+            {
+                forecastSequence = Convert.ToInt32(dataRow["FORECAST_SEQUENCE"]);
+
+                merchandise = default(KeyValuePair<int, string>);
+                version = default(KeyValuePair<int, string>);
+
+                if (dataRow["HN_RID"] != DBNull.Value)
+                {
+                    merchandiseKey = Convert.ToInt32(dataRow["HN_RID"]);
+                    merchandise = GetName.GetMerchandiseName(
+                        nodeRID: merchandiseKey,
+                        SAB: SessionAddressBlock
+                        );
+                }
+
+                if (dataRow["FV_RID"] != DBNull.Value)
+                {
+                    versionKey = Convert.ToInt32(dataRow["FV_RID"]);
+                    version = GetName.GetVersion(
+                        versionRID: versionKey,
+                        SAB: SessionAddressBlock
+                        );
+                }
+
+                taskForecastMerchandise = new ROTaskForecastMerchandise(
+                    merchandise: merchandise,
+                    version: version
+                    );
+
+                AddWorkflowValues(
+                    taskParameters: taskParameters,
+                    taskForecastMerchandise: taskForecastMerchandise,
+                    forecastSequence: forecastSequence
+                    );
+
+                task.Merchandise.Add(taskForecastMerchandise);
+
+            }
+
         }
+
+        private void AddWorkflowValues(
+            ROTaskParms taskParameters,
+            ROTaskForecastMerchandise taskForecastMerchandise,
+            int forecastSequence
+            )
+        {
+            int workflowOrMethodKey, executeDateKey;
+            bool isWorkflow;
+            ROTaskForecastMerchandiseWorkflowMethod forecastMerchandiseWorkflow;
+            KeyValuePair<int, string> workflowOrMethod = default(KeyValuePair<int, string>);
+            KeyValuePair<int, string> executeDate = default(KeyValuePair<int, string>);
+            string selectString;
+
+            // add workflow to merchandise
+            selectString = "TASK_SEQUENCE=" + taskParameters.Sequence + " AND FORECAST_SEQUENCE = " + forecastSequence;
+            DataRow[] workflowDataRows = TaskDetailData.Select(selectString);
+
+            foreach (DataRow dataRow in workflowDataRows)
+            {
+                workflowOrMethod = default(KeyValuePair<int, string>);
+                executeDate = default(KeyValuePair<int, string>);
+                isWorkflow = true;
+
+                if (dataRow["WORKFLOW_RID"] != DBNull.Value)
+                {
+                    workflowOrMethodKey = Convert.ToInt32(dataRow["WORKFLOW_RID"]);
+                    workflowOrMethod = GetName.GetWorkflowName(
+                        key: workflowOrMethodKey
+                        );
+                }
+                else if (dataRow["METHOD_RID"] != DBNull.Value)
+                {
+                    workflowOrMethodKey = Convert.ToInt32(dataRow["METHOD_RID"]);
+                    workflowOrMethod = GetName.GetMethod(
+                        key: workflowOrMethodKey
+                        );
+                }
+
+                if (dataRow["EXECUTE_CDR_RID"] != DBNull.Value)
+                {
+                    executeDateKey = Convert.ToInt32(dataRow["EXECUTE_CDR_RID"]);
+                    executeDate = GetName.GetCalendarDateRange(
+                        calendarDateRID: executeDateKey,
+                        SAB: SessionAddressBlock
+                        );
+                }
+
+                forecastMerchandiseWorkflow = new ROTaskForecastMerchandiseWorkflowMethod(
+                    workflowOrMethod: workflowOrMethod,
+                    isWorkflow: isWorkflow,
+                    executeDate: executeDate
+                    );
+
+                taskForecastMerchandise.Workflow.Add(forecastMerchandiseWorkflow);
+            }
+
+        }
+
 
 
         /// <summary>
@@ -179,12 +288,92 @@ namespace Logility.ROWeb
             ref string message
             )
         {
+            DataRow merchandiseDataRow;
+            DataRow workflowDataRow;
+            int forecastSequence = 0;
+
             // delete old entries from data tables so new ones can be added
             DeleteTaskRows(
                 sequence: taskData.Task.Key
                 );
 
-            throw new Exception("Not Implemented");
+            if (taskData.Merchandise.Count == 0)
+            {
+                message = SessionAddressBlock.ClientServerSession.Audit.GetText(eMIDTextCode.msg_AtLeastOneMerchandiseRequired);
+                return false;
+            }
+
+            // add merchandise and detail workflow rows to the data tables
+            foreach (ROTaskForecastMerchandise taskForecastMerchandise in taskData.Merchandise)
+            {
+                merchandiseDataRow = TaskData.NewRow();
+
+                merchandiseDataRow["TASKLIST_RID"] = TaskListProperties.TaskList.Key;
+                merchandiseDataRow["TASK_SEQUENCE"] = taskData.Task.Key;
+                merchandiseDataRow["ALLOCATE_SEQUENCE"] = forecastSequence;
+                if (taskForecastMerchandise.MerchandiseIsSet
+                    && taskForecastMerchandise.Merchandise.Key != Include.NoRID)
+                {
+                    merchandiseDataRow["HN_RID"] = taskForecastMerchandise.Merchandise.Key;
+                }
+                if (taskForecastMerchandise.VersionIsSet
+                    && taskForecastMerchandise.Version.Key != Include.NoRID)
+                {
+                    merchandiseDataRow["FV_RID"] = taskForecastMerchandise.Version.Key;
+                }
+
+                if (taskForecastMerchandise.Workflow.Count == 0)
+                {
+                    message = SessionAddressBlock.ClientServerSession.Audit.GetText(eMIDTextCode.msg_AtLeastOneWorkflowRequired);
+                    return false;
+                }
+
+                int detailSequence = 0;
+                foreach (ROTaskForecastMerchandiseWorkflowMethod forecastMerchandiseWorkflow in taskForecastMerchandise.Workflow)
+                {
+                    workflowDataRow = TaskDetailData.NewRow();
+
+                    workflowDataRow["TASKLIST_RID"] = TaskListProperties.TaskList.Key;
+                    workflowDataRow["TASK_SEQUENCE"] = taskData.Task.Key;
+                    workflowDataRow["FORECAST_SEQUENCE"] = forecastSequence;
+                    workflowDataRow["DETAIL_SEQUENCE"] = detailSequence;
+                    if (forecastMerchandiseWorkflow.WorkflowOrMethodIsSet
+                        && forecastMerchandiseWorkflow.WorkflowOrMethod.Key != Include.NoRID)
+                    {
+                        if (forecastMerchandiseWorkflow.IsWorkflow)
+                        {
+                            workflowDataRow["WORKFLOW_RID"] = forecastMerchandiseWorkflow.WorkflowOrMethod.Key;
+                            workflowDataRow["WORKFLOW_METHOD_IND"] = eWorkflowMethodType.Workflow.GetHashCode();
+                        }
+                        else
+                        {
+                            workflowDataRow["METHOD_RID"] = forecastMerchandiseWorkflow.WorkflowOrMethod.Key;
+                            workflowDataRow["WORKFLOW_METHOD_IND"] = eWorkflowMethodType.Method.GetHashCode();
+                        }
+
+                        if (forecastMerchandiseWorkflow.ExecuteDateIsSet
+                            && forecastMerchandiseWorkflow.ExecuteDate.Key != Include.NoRID)
+                        {
+                            workflowDataRow["EXECUTE_CDR_RID"] = forecastMerchandiseWorkflow.ExecuteDate.Key;
+                        }
+                    }
+
+                    TaskDetailData.Rows.Add(workflowDataRow);
+
+                    ++detailSequence;
+                }
+
+                TaskData.Rows.Add(merchandiseDataRow);
+
+                ++forecastSequence;
+            }
+
+            TaskData.AcceptChanges();
+            TaskDetailData.AcceptChanges();
+
+            // order the rows in the data tables
+            TaskData = TaskData.DefaultView.ToTable();
+            TaskDetailData = TaskDetailData.DefaultView.ToTable();
 
             return true;
         }
@@ -222,6 +411,15 @@ namespace Logility.ROWeb
             bool cloneDates,
             ref string message)
         {
+            // If save as is being performed, clone date ranges so new task has separate date object
+            if (cloneDates)
+            {
+                CloneDateRanges(
+                    dataTable: TaskDetailData,
+                    dateColumnName: "EXECUTE_CDR_RID"
+                    );
+            }
+
             scheduleDataLayer.TaskForecast_Insert(TaskData);
             scheduleDataLayer.TaskForecastDetail_Insert(TaskDetailData);
 

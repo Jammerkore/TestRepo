@@ -665,9 +665,14 @@ namespace Logility.ROWebSharedTypes
     [DataContract(Name = "ROTaskForecasting", Namespace = "http://Logility.ROWeb/")]
     public class ROTaskForecasting : ROTaskProperties
     {
+        /// <summary>
+        /// List of merchandise entries
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        private List<ROTaskForecastMerchandise> _merchandise;
 
         #region Public Properties
-
+        public List<ROTaskForecastMerchandise> Merchandise { get { return _merchandise; } }
         #endregion
 
         public ROTaskForecasting(
@@ -678,7 +683,160 @@ namespace Logility.ROWebSharedTypes
             maximumMessageLevel: maximumMessageLevel)
 
         {
+            _merchandise = new List<ROTaskForecastMerchandise>();
+        }
+    }
 
+    [DataContract(Name = "ROTaskForecastMerchandise", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskForecastMerchandise
+    {
+        /// <summary>
+        /// KeyValuePair containing the key and name of the merchandise
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        protected KeyValuePair<int, string> _merchandise;
+
+        /// <summary>
+        /// KeyValuePair containing the key and name of the filter
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        protected KeyValuePair<int, string> _version;
+
+        /// <summary>
+        /// List of workflow entries
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        private List<ROTaskForecastMerchandiseWorkflowMethod> _workflow;
+
+        #region Public Properties
+
+        /// <summary>
+        /// Gets the flag identifying if the merchandise has been set.
+        /// </summary>
+        public bool DefaultToWorkflow
+        {
+            get { return !_merchandise.Equals(default(KeyValuePair<int, string>)); }
+        }
+
+        /// <summary>
+        /// KeyValuePair with merchandise key and name
+        /// </summary>
+        public KeyValuePair<int, string> Merchandise { get { return _merchandise; } set { _merchandise = value; } }
+
+        /// <summary>
+        /// Gets the flag identifying if the merchandise has been set.
+        /// </summary>
+        public bool MerchandiseIsSet
+        {
+            get { return !_merchandise.Equals(default(KeyValuePair<int, string>)); }
+        }
+
+        /// <summary>
+        /// Gets the flag identifying if the filter has been set.
+        /// </summary>
+        public bool VersionIsSet
+        {
+            get { return !_version.Equals(default(KeyValuePair<int, string>)); }
+        }
+
+        /// <summary>
+        /// KeyValuePair with merchandise key and name
+        /// </summary>
+        public KeyValuePair<int, string> Version { get { return _version; } set { _version = value; } }
+
+        /// <summary>
+        /// List of workflow entries
+        /// </summary>
+        public List<ROTaskForecastMerchandiseWorkflowMethod> Workflow { get { return _workflow; } }
+
+        /// <summary>
+        /// Gets the flag identifying if there are workflow values.
+        /// </summary>
+        public bool HasWorkflowValues
+        {
+            get { return _workflow.Count > 0; }
+        }
+
+        #endregion
+
+        public ROTaskForecastMerchandise(
+            KeyValuePair<int, string> merchandise = default(KeyValuePair<int, string>),
+            KeyValuePair<int, string> version = default(KeyValuePair<int, string>))
+        {
+            _merchandise = merchandise;
+            _version = version;
+            _workflow = new List<ROTaskForecastMerchandiseWorkflowMethod>();
+        }
+    }
+
+    [DataContract(Name = "ROTaskForecastMerchandiseWorkflowMethod", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskForecastMerchandiseWorkflowMethod
+    {
+        /// <summary>
+        /// KeyValuePair containing the key and name of the workflow or method
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        protected KeyValuePair<int, string> _workflowOrMethod;
+
+        /// <summary>
+        /// A flag identifying if the _workflowOrMethod field is a workflow
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        protected bool _isWorkflow;
+
+        /// <summary>
+        /// KeyValuePair containing the key and name of the execute date
+        /// </summary>
+        [DataMember(IsRequired = true)]
+        protected KeyValuePair<int, string> _executeDate;
+
+        #region Public Properties
+
+        /// <summary>
+        /// Gets the flag identifying if the workflow or method has been set.
+        /// </summary>
+        public bool WorkflowOrMethodIsSet
+        {
+            get { return !_workflowOrMethod.Equals(default(KeyValuePair<int, string>)); }
+        }
+
+        /// <summary>
+        /// KeyValuePair with workflow or method key and name
+        /// </summary>
+        public KeyValuePair<int, string> WorkflowOrMethod { get { return _workflowOrMethod; } set { _workflowOrMethod = value; } }
+
+        /// <summary>
+        /// A flag identifying if the _workflowOrMethod field is a workflow
+        /// </summary>
+        public bool IsWorkflow
+        {
+            get { return _isWorkflow; }
+        }
+
+        /// <summary>
+        /// Gets the flag identifying if the execute date has been set.
+        /// </summary>
+        public bool ExecuteDateIsSet
+        {
+            get { return !_executeDate.Equals(default(KeyValuePair<int, string>)); }
+        }
+
+        /// <summary>
+        /// KeyValuePair with execute date key and name
+        /// </summary>
+        public KeyValuePair<int, string> ExecuteDate { get { return _executeDate; } set { _executeDate = value; } }
+
+        #endregion
+
+        public ROTaskForecastMerchandiseWorkflowMethod(
+            KeyValuePair<int, string> workflowOrMethod = default(KeyValuePair<int, string>),
+            bool isWorkflow = true,
+            KeyValuePair<int, string> executeDate = default(KeyValuePair<int, string>)
+            )
+        {
+            _workflowOrMethod = workflowOrMethod;
+            _isWorkflow = isWorkflow;
+            _executeDate = executeDate;
         }
     }
 
