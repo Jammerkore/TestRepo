@@ -4011,7 +4011,7 @@ namespace MIDRetail.Windows
                         //BEGIN TT#4689 - DOConnell - OTS Forecast - Multi-Level Low Levels not being populated correctly
                         //int longestBranchCount = SAB.HierarchyServerSession.GetLongestBranch(aHierarchyNodeProfile.Key);
                         DataTable hierarchyLevels = SAB.HierarchyServerSession.GetHierarchyDescendantLevels(aHierarchyNodeProfile.Key);
-                        int longestBranchCount = hierarchyLevels.Rows.Count;
+                        int longestBranchCount = hierarchyLevels.Rows.Count - 1;
                         //END TT#4689 - DOConnell - OTS Forecast - Multi-Level Low Levels not being populated correctly
 
                         //if (aComboBox.Name == "cboFromLevel")

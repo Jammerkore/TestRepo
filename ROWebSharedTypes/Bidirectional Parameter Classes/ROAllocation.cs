@@ -3655,6 +3655,8 @@ namespace Logility.ROWebSharedTypes
         private List<ROBasisWithLevelDetailProfile> _basisProfiles;
         [DataMember(IsRequired = true)]
         List<ROMerchandiseListEntry> _merchandiseList;
+        [DataMember(IsRequired = true)]
+        private List<KeyValuePair<int, string>> _basisVersions;
 
         // Store Grade fields
         [DataMember(IsRequired = true)]
@@ -3830,6 +3832,19 @@ namespace Logility.ROWebSharedTypes
         public List<ROMerchandiseListEntry> MerchandiseList
         {
             get { return _merchandiseList; }
+        }
+
+        /// <summary>
+        /// List of KeyValuePairs for basis version with version key and name
+        /// </summary>
+        public List<KeyValuePair<int, string>> BasisVersions { get { return _basisVersions; } }
+
+        /// <summary>
+        /// Gets the flag identifying if there are basis versions.
+        /// </summary>
+        public bool HasBasisVersions
+        {
+            get { return _basisVersions.Count > 0; }
         }
 
         // Store Grade properties
@@ -4091,6 +4106,7 @@ namespace Logility.ROWebSharedTypes
 
             _basisProfiles = new List<ROBasisWithLevelDetailProfile>();
             _merchandiseList = new List<ROMerchandiseListEntry>();
+            _basisVersions = new List<KeyValuePair<int, string>>();
 
             InventoryIndicator = inventoryIndicator;
             InventoryMinMaxMerchType = inventoryMinMaxMerchType;
