@@ -10887,6 +10887,14 @@ namespace MIDRetail.Business.Allocation
 
                 
             }
+
+            // add list of versions for basis drop down
+            ProfileList versionProfList = SAB.ClientServerSession.GetUserForecastVersions();
+            foreach (VersionProfile versionProfile in versionProfList)
+            {
+                method.BasisVersions.Add(new KeyValuePair<int, string>(versionProfile.Key, versionProfile.Description));
+            }
+
         }
 
         private string GetMerchandiseText(int seq)
