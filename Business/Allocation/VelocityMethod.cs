@@ -10652,6 +10652,11 @@ namespace MIDRetail.Business.Allocation
                 attributeSet = GetName.GetAttributeSetName(key: _currentAttributeSet);
             }
 
+            if (GradeVariableType != eVelocityMethodGradeVariableType.Stock)
+            {
+                GradeVariableType = eVelocityMethodGradeVariableType.Sales;
+            }
+
             ROMethodAllocationVelocityProperties method = new ROMethodAllocationVelocityProperties(
                 method: GetName.GetMethod(method: this),
                 description: Method_Description,
@@ -11170,7 +11175,7 @@ namespace MIDRetail.Business.Allocation
 
         private void AddMatrixAttributeSets(ROMethodAllocationVelocityProperties method)
         {
-            ROMethodAllocationVelocityAttributeSet attributeSet;
+            ROMethodAllocationVelocityAttributeSet attributeSet = null;
             eVelocityMatrixMode matrixMode;
             eVelocitySpreadOption spreadOption;
             KeyValuePair<int, string> attributeSetKVP;
@@ -11181,88 +11186,112 @@ namespace MIDRetail.Business.Allocation
             double? averageWOS;
             double? sellThruPercent;
 
-            foreach (GroupLvlMatrix glm in _groupLvlMtrxData.Values)
+            if (_groupLvlMtrxData != null)
             {
-                if (glm.SglRID != method.AttributeSet.Key)
+                foreach (GroupLvlMatrix glm in _groupLvlMtrxData.Values)
                 {
-                    continue;
-                }
+                    if (glm.SglRID != method.AttributeSet.Key)
+                    {
+                        continue;
+                    }
 
-                if (glm.ModeInd == 'A')
-                {
-                    matrixMode = eVelocityMatrixMode.Average;
-                    matrixModeAverageRuleValue = glm.AverageQty;
-                }
-                else
-                {
-                    matrixMode = eVelocityMatrixMode.Normal;
-                    matrixModeAverageRuleValue = null;
-                }
+                    if (glm.ModeInd == 'A')
+                    {
+                        matrixMode = eVelocityMatrixMode.Average;
+                        matrixModeAverageRuleValue = glm.AverageQty;
+                    }
+                    else
+                    {
+                        matrixMode = eVelocityMatrixMode.Normal;
+                        matrixModeAverageRuleValue = null;
+                    }
 
-                if (glm.SpreadInd == 'S')
-                {
-                    spreadOption = eVelocitySpreadOption.Smooth;
-                }
-                else
-                {
-                    spreadOption = eVelocitySpreadOption.Index;
-                }
+                    if (glm.SpreadInd == 'S')
+                    {
+                        spreadOption = eVelocitySpreadOption.Smooth;
+                    }
+                    else
+                    {
+                        spreadOption = eVelocitySpreadOption.Index;
+                    }
 
-                if (glm.SglRID == 0)
-                {
-                    attributeSetKVP = new KeyValuePair<int, string>(glm.SglRID, "Total Matrix");
-                }
-                else
-                {
-                    attributeSetKVP = GetName.GetAttributeSetName(key: glm.SglRID);
-                }
+                    if (glm.SglRID == 0)
+                    {
+                        attributeSetKVP = new KeyValuePair<int, string>(glm.SglRID, "Total Matrix");
+                    }
+                    else
+                    {
+                        attributeSetKVP = GetName.GetAttributeSetName(key: glm.SglRID);
+                    }
 
-                if (glm.NoOnHandRuleType == eVelocityRuleType.None
-                    || glm.NoOnHandRuleType == eVelocityRuleType.Out
-                    || glm.NoOnHandRuleQty == Include.NoRuleQty)
-                {
-                    noOnHandRuleValue = null;
-                }
-                else
-                {
-                    noOnHandRuleValue = glm.NoOnHandRuleQty;
-                }
+                    if (glm.NoOnHandRuleType == eVelocityRuleType.None
+                        || glm.NoOnHandRuleType == eVelocityRuleType.Out
+                        || glm.NoOnHandRuleQty == Include.NoRuleQty)
+                    {
+                        noOnHandRuleValue = null;
+                    }
+                    else
+                    {
+                        noOnHandRuleValue = glm.NoOnHandRuleQty;
+                    }
 
-                allStoresAverageWOS = null;
-                averageWOS = null;
-                if (_statisticsCalculated)
-                {
-                    allStoresAverageWOS = _applicationTransaction.VelocityGetMatrixChainAvgWOS(glm.SglRID);
-                    averageWOS = _applicationTransaction.VelocityGetMatrixGroupAvgWOS(glm.SglRID);
-                }
+                    allStoresAverageWOS = null;
+                    averageWOS = null;
+                    if (_statisticsCalculated)
+                    {
+                        allStoresAverageWOS = _applicationTransaction.VelocityGetMatrixChainAvgWOS(glm.SglRID);
+                        averageWOS = _applicationTransaction.VelocityGetMatrixGroupAvgWOS(glm.SglRID);
+                    }
 
-                allStoresSellThruPercent = null;
-                sellThruPercent = null;
-                if (_statisticsCalculated)
-                {
-                    allStoresSellThruPercent = _applicationTransaction.VelocityGetMatrixChainPctSellThru(glm.SglRID);
-                    sellThruPercent = _applicationTransaction.VelocityGetMatrixGroupPctSellThru(glm.SglRID);
+                    allStoresSellThruPercent = null;
+                    sellThruPercent = null;
+                    if (_statisticsCalculated)
+                    {
+                        allStoresSellThruPercent = _applicationTransaction.VelocityGetMatrixChainPctSellThru(glm.SglRID);
+                        sellThruPercent = _applicationTransaction.VelocityGetMatrixGroupPctSellThru(glm.SglRID);
+                    }
+
+                    attributeSet = new ROMethodAllocationVelocityAttributeSet(
+                        attributeSet: attributeSetKVP,
+                        noOnHandRule: EnumTools.VerifyEnumValue(glm.NoOnHandRuleType),
+                        noOnHandRuleValue: noOnHandRuleValue,
+                        matrixMode: EnumTools.VerifyEnumValue(matrixMode),
+                        matrixModeAverageRule: EnumTools.VerifyEnumValue(glm.AverageRule),
+                        matrixModeAverageRuleValue: matrixModeAverageRuleValue,
+                        spreadOption: EnumTools.VerifyEnumValue(spreadOption),
+                        allStoresAverageWOS: allStoresAverageWOS,
+                        allStoresSellThruPercent: allStoresSellThruPercent,
+                        averageWOS: averageWOS,
+                        sellThruPercent: sellThruPercent
+                    );
+
+                    AddVelocityGradeValues(method: method, attributeSet: attributeSet, glm: glm);
+
+                    //method.MatrixAttributeSetValues.Add(attributeSet.AttributeSet.Key, attributeSet);
+                    method.MatrixAttributeSetValues = attributeSet;
                 }
+            }
+
+            if (attributeSet == null) // set defaults if no entry
+            {
+                attributeSetKVP = GetName.GetAttributeSetName(key: method.AttributeSet.Key);
 
                 attributeSet = new ROMethodAllocationVelocityAttributeSet(
-                    attributeSet: attributeSetKVP,
-                    noOnHandRule: EnumTools.VerifyEnumValue(glm.NoOnHandRuleType),
-                    noOnHandRuleValue: noOnHandRuleValue,
-                    matrixMode: EnumTools.VerifyEnumValue(matrixMode),
-                    matrixModeAverageRule: EnumTools.VerifyEnumValue(glm.AverageRule),
-                    matrixModeAverageRuleValue: matrixModeAverageRuleValue,
-                    spreadOption: EnumTools.VerifyEnumValue(spreadOption),
-                    allStoresAverageWOS: allStoresAverageWOS,
-                    allStoresSellThruPercent: allStoresSellThruPercent,
-                    averageWOS: averageWOS,
-                    sellThruPercent: sellThruPercent
-                );
+                        attributeSet: attributeSetKVP,
+                        noOnHandRule: eVelocityRuleType.None,
+                        noOnHandRuleValue: null,
+                        matrixMode: eVelocityMatrixMode.Normal,
+                        matrixModeAverageRule: eVelocityRuleRequiresQuantity.AbsoluteQuantity,
+                        matrixModeAverageRuleValue: null,
+                        spreadOption: eVelocitySpreadOption.Smooth,
+                        allStoresAverageWOS: null,
+                        allStoresSellThruPercent: null,
+                        averageWOS: null,
+                        sellThruPercent: null
+                    );
 
-                AddVelocityGradeValues(method: method, attributeSet: attributeSet, glm: glm);
-
-                //method.MatrixAttributeSetValues.Add(attributeSet.AttributeSet.Key, attributeSet);
                 method.MatrixAttributeSetValues = attributeSet;
-            }            
+            }
         }
 
         private Dictionary<int, string> BuildSellThruColumnHeadings()

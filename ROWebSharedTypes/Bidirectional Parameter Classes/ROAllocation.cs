@@ -3701,8 +3701,9 @@ namespace Logility.ROWebSharedTypes
         private List<KeyValuePair<int, string>> _components;
         [DataMember(IsRequired = true)]
         private KeyValuePair<int, string> _selectedComponent;
-        KeyValuePair<int, string> _velocityGradesMerchandise;
         [DataMember(IsRequired = true)]
+        KeyValuePair<int, string> _velocityGradesMerchandise;
+        
 
         #region Public Properties
         /// <summary>
