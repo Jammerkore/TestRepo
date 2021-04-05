@@ -1626,23 +1626,6 @@ namespace Logility.ROWeb
             return null;
         }
 
-        public ROIListOut GetForecastVersions()
-        {
-            ForecastVersion forVersion = new ForecastVersion();
-            DataTable dtFV = forVersion.GetForecastVersions(false);
-
-            List<KeyValuePair<int, string>> versions = new List<KeyValuePair<int, string>>();
-            FVRowHandler rowHandler = FVRowHandler.Instance;
-
-            foreach (DataRow drIn in dtFV.Rows)
-            {
-                rowHandler.ParseDBRow(drIn);
-                versions.Add(new KeyValuePair<int, string>(rowHandler.iRID, rowHandler.sDescription));
-            }
-
-            ROIListOut ROVersionList = new ROIListOut(eROReturnCode.Successful, "Success", ROInstanceID, versions);
-            return ROVersionList;
-        }
         #endregion Task Processing
 
 

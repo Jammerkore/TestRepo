@@ -128,8 +128,6 @@ namespace Logility.ROWeb
                     return ROTaskListManager.ApplyTask((ROTaskPropertiesParms)Parms);
                 case eRORequest.DeleteTask:
                     return ROTaskListManager.DeleteTask((ROTaskParms)Parms);
-                case eRORequest.GetVersions:
-                    return ROTaskListManager.GetForecastVersions();
                     // Jobs
             }
 
