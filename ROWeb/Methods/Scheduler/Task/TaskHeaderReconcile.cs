@@ -135,10 +135,18 @@ namespace Logility.ROWeb
             string selectString;
             selectString = "TASK_SEQUENCE=" + taskParameters.Sequence;
             DataRow headerDataRow = TaskData.Select(selectString).First();
+            string inputDirectory = Convert.ToString(headerDataRow["INPUT_DIRECTORY"]);
+            string outputDirectory = Convert.ToString(headerDataRow["OUTPUT_DIRECTORY"]);
+            inputDirectory = string.IsNullOrEmpty(inputDirectory) ?
+                string.IsNullOrEmpty(MIDConfigurationManager.AppSettings["FileDirectory"]) ? @"C:\Logility\ROData\Header Reconcile" :
+                string.Concat(MIDConfigurationManager.AppSettings["FileDirectory"], @"\Header Reconcile") : inputDirectory;            
+            outputDirectory = string.IsNullOrEmpty(outputDirectory) ?
+                string.IsNullOrEmpty(MIDConfigurationManager.AppSettings["FileDirectory"]) ? @"C:\Logility\ROData\Headers" :
+                string.Concat(MIDConfigurationManager.AppSettings["FileDirectory"], @"\Headers") : outputDirectory;
             task.HeaderFileName = Convert.ToString(headerDataRow["HEADER_KEYS_FILE_NAME"]);
             task.HeaderTypes = Convert.ToString(headerDataRow["HEADER_TYPES"]);
-            task.InputDirectory = Convert.ToString(headerDataRow["INPUT_DIRECTORY"]);
-            task.OutputDirectory = Convert.ToString(headerDataRow["OUTPUT_DIRECTORY"]);
+            task.InputDirectory = inputDirectory;
+            task.OutputDirectory = outputDirectory;
             task.RemoveTransactionFileName = Convert.ToString(headerDataRow["REMOVE_TRANS_FILE_NAME"]);
             task.RemoveTransactionTriggerSuffix = Convert.ToString(headerDataRow["REMOVE_TRANS_TRIGGER_SUFFIX"]);
             task.TriggerSuffix = Convert.ToString(headerDataRow["TRIGGER_SUFFIX"]);
