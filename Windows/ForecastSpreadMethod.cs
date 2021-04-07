@@ -2642,6 +2642,12 @@ namespace MIDRetail.Windows
                 {
                     HierarchyNodeProfile hnp = (HierarchyNodeProfile)((MIDTag)(((TextBox)sender).Tag)).MIDTagData;
 
+                    if (!hnp.HasChildren)
+                    {
+                        MessageBox.Show(SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_pl_NoLowLevelsExist));
+                        return;
+                    }
+
                     _OTSForecastSpreadMethod.HierNodeRID = hnp.Key;
 
                     PopulateFromToLevels(hnp, cboFromLevel.ComboBox, 0);//TT#7 - RBeck - Dynamic dropdowns
