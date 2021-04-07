@@ -310,7 +310,7 @@ namespace Logility.ROWeb
 
                 merchandiseDataRow["TASKLIST_RID"] = TaskListProperties.TaskList.Key;
                 merchandiseDataRow["TASK_SEQUENCE"] = taskData.Task.Key;
-                merchandiseDataRow["ALLOCATE_SEQUENCE"] = forecastSequence;
+                merchandiseDataRow["FORECAST_SEQUENCE"] = forecastSequence;
                 if (taskForecastMerchandise.MerchandiseIsSet
                     && taskForecastMerchandise.Merchandise.Key != Include.NoRID)
                 {
