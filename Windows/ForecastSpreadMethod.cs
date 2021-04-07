@@ -2645,6 +2645,7 @@ namespace MIDRetail.Windows
                     if (!hnp.HasChildren)
                     {
                         MessageBox.Show(SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_pl_NoLowLevelsExist));
+                        txtSpreadNode.Text = "";
                         return;
                     }
 
