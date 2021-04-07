@@ -12084,6 +12084,10 @@ namespace MIDRetail.Business.Allocation
             {
                 _velocityGradesMerchandiseKey = method.VelocityGradesMerchandise.Key;
                 _populateVelocityGrades = true;
+                method.VelocityAction = eVelocityAction.ClearMatrix;
+                // Clear the rule values to rebuild matrix
+                _dsVelocity.Tables["VelocityMatrix"].Clear();
+                _dsVelocity.Tables["VelocityMatrix"].AcceptChanges();
             }
 
             LoadDataArrays();
