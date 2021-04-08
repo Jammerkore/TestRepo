@@ -82,14 +82,7 @@ namespace Logility.ROWebSharedTypes
             get { return _hierarchyType; }
             set
             {
-                if (Enum.IsDefined(typeof(eHierarchyType), value))
-                {
-                    _hierarchyType = value;
-                }
-                else
-                {
-                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
-                }
+                _hierarchyType = value;
             }
         }
 
@@ -104,14 +97,7 @@ namespace Logility.ROWebSharedTypes
             get { return _hierarchyRollupOption; }
             set
             {
-                if (Enum.IsDefined(typeof(eHierarchyRollupOption), value))
-                {
-                    _hierarchyRollupOption = value;
-                }
-                else
-                {
-                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
-                }
+                _hierarchyRollupOption = value;
             }
         }
 
@@ -120,14 +106,7 @@ namespace Logility.ROWebSharedTypes
             get { return _planLevelType; }
             set
             {
-                if (Enum.IsDefined(typeof(eOTSPlanLevelType), value))
-                {
-                    _planLevelType = value;
-                }
-                else
-                {
-                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
-                }
+                _planLevelType = value;
             }
         }
 
@@ -277,14 +256,7 @@ namespace Logility.ROWebSharedTypes
             get { return _levelType; }
             set
             {
-                if (Enum.IsDefined(typeof(eHierarchyLevelType), value))
-                {
-                    _levelType = value;
-                }
-                else
-                {
-                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
-                }
+                _levelType = value;
             }
         }
         /// <summary>
@@ -295,14 +267,7 @@ namespace Logility.ROWebSharedTypes
             get { return _levelLengthType; }
             set
             {
-                if (Enum.IsDefined(typeof(eLevelLengthType), value))
-                {
-                    _levelLengthType = value;
-                }
-                else
-                {
-                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
-                }
+                _levelLengthType = value;
             }
         }
         /// <summary>
@@ -346,14 +311,7 @@ namespace Logility.ROWebSharedTypes
             get { return _levelOTSPlanLevelType; }
             set
             {
-                if (Enum.IsDefined(typeof(eOTSPlanLevelType), value))
-                {
-                    _levelOTSPlanLevelType = value;
-                }
-                else
-                {
-                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
-                }
+                _levelOTSPlanLevelType = value;
             }
         }
         public bool LevelNodesExist
@@ -369,14 +327,7 @@ namespace Logility.ROWebSharedTypes
             get { return _levelDisplayOption; }
             set
             {
-                if (Enum.IsDefined(typeof(eHierarchyDisplayOptions), value))
-                {
-                    _levelDisplayOption = value;
-                }
-                else
-                {
-                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
-                }
+                _levelDisplayOption = value;
             }
         }
         /// <summary>
@@ -387,14 +338,7 @@ namespace Logility.ROWebSharedTypes
             get { return _levelIDFormat; }
             set
             {
-                if (Enum.IsDefined(typeof(eHierarchyIDFormat), value))
-                {
-                    _levelIDFormat = value;
-                }
-                else
-                {
-                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
-                }
+                _levelIDFormat = value;
             }
         }
         /// <summary>
@@ -774,17 +718,10 @@ namespace Logility.ROWebSharedTypes
             get { return _productType; }
             set
             {
-                if (Enum.IsDefined(typeof(eProductType), value))
+                _productType = value;
+                if (_originalProductType == eProductType.Undefined)
                 {
-                    _productType = value;
-                    if (_originalProductType == eProductType.Undefined)
-                    {
-                        _originalProductType = _productType;
-                    }
-                }
-                else
-                {
-                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
+                    _originalProductType = _productType;
                 }
             }
         }
@@ -803,14 +740,7 @@ namespace Logility.ROWebSharedTypes
             get { return _levelType; }
             set
             {
-                if (Enum.IsDefined(typeof(eHierarchyLevelType), value))
-                {
-                    _levelType = value;
-                }
-                else
-                {
-                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
-                }
+                _levelType = value;
             }
         }
         /// <summary>
@@ -890,14 +820,7 @@ namespace Logility.ROWebSharedTypes
             get { return _OTSForecastSelectType; }
             set
             {
-                if (Enum.IsDefined(typeof(ePlanLevelSelectType), value))
-                {
-                    _OTSForecastSelectType = value;
-                }
-                else
-                {
-                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
-                }
+                _OTSForecastSelectType = value;
             }
         }
         /// <summary>
@@ -945,14 +868,7 @@ namespace Logility.ROWebSharedTypes
             get { return _OTSForecastMaskType; }
             set
             {
-                if (Enum.IsDefined(typeof(eMaskField), value))
-                {
-                    _OTSForecastMaskType = value;
-                }
-                else
-                {
-                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
-                }
+                _OTSForecastMaskType = value;
             }
         }
         /// <summary>
@@ -993,17 +909,10 @@ namespace Logility.ROWebSharedTypes
             get { return _OTSForecastType; }
             set
             {
-                if (Enum.IsDefined(typeof(eOTSPlanLevelType), value))
+                _OTSForecastType = value;
+                if (_originalOTSForecastType == eOTSPlanLevelType.Undefined)
                 {
-                    _OTSForecastType = value;
-                    if (_originalOTSForecastType == eOTSPlanLevelType.Undefined)
-                    {
-                        _originalOTSForecastType = _OTSForecastType;
-                    }
-                }
-                else
-                {
-                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
+                    _originalOTSForecastType = _OTSForecastType;
                 }
             }
         }

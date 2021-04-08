@@ -1052,14 +1052,7 @@ namespace Logility.ROWebSharedTypes
             get { return _merchandiseType; }
             set
             {
-                if (!Enum.IsDefined(typeof(eMerchandiseType), value))
-                {
-                    throw new Exception("Value " + value.ToString() + " is not valid for " + this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name);
-                }
-                else
-                {
-                    _merchandiseType = value;
-                }
+                 _merchandiseType = value;
             }
         }
 
