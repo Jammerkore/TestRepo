@@ -10740,9 +10740,11 @@ namespace MIDRetail.Business.Allocation
             int velocityGradesMerchandiseKey)
         {
             VelocityGradeList velocityGradeList = null;
+            SellThruPctList sellThruPctList = null;
 
             try
             {
+                // build velocity grades
                 int count = 0;
 
                 _dsVelocity.Tables["VelocityGrade"].Clear();
@@ -10780,6 +10782,22 @@ namespace MIDRetail.Business.Allocation
                 }
 
                 _dsVelocity.Tables["VelocityGrade"].DefaultView.RowFilter = null;
+
+                // build sell thru percentages
+                count = 0;
+
+                _dsVelocity.Tables["SellThru"].Clear();
+                _dsVelocity.Tables["SellThru"].AcceptChanges();
+
+                sellThruPctList = SAB.HierarchyServerSession.GetSellThruPctList(velocityGradesMerchandiseKey, false);
+                foreach (SellThruPctProfile stpp in sellThruPctList)
+                {
+                    _dsVelocity.Tables["SellThru"].Rows.Add(new object[] { count, stpp.SellThruPct });
+                    ++count;
+                }
+
+                // reload data with new grades and sell thru percents
+                LoadDataArrays();
 
             }
             catch
