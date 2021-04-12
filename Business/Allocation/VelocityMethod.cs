@@ -10636,7 +10636,7 @@ namespace MIDRetail.Business.Allocation
                 }
             }
 
-            ProfileList setList = StoreMgmt.StoreGroup_GetLevelListViewList(SG_RID);
+            ProfileList setList = StoreMgmt.StoreGroup_GetLevelListViewList(_SG_RID);
             if (_currentAttributeSet == Include.NoRID)
             {
                 _currentAttributeSet = ((StoreGroupLevelListViewProfile)setList.ArrayList[0]).Key;
@@ -10678,7 +10678,7 @@ namespace MIDRetail.Business.Allocation
                                                                       SAB: SAB),
 
                 inventoryMinMaxMerchandiseHierarchy: new KeyValuePair<int, int>(MERCH_PH_RID, MERCH_PHL_SEQ),
-                attribute: GetName.GetAttributeName(key: SG_RID),
+                attribute: GetName.GetAttributeName(key: _SG_RID),
                 attributeSet: attributeSet,
                 isTemplate: Template_IND
                 );
@@ -10695,7 +10695,8 @@ namespace MIDRetail.Business.Allocation
             if (_populateVelocityGrades)
             {
                 VelocityGrades_InitialPopulate(
-                    velocityGradesMerchandiseKey: _velocityGradesMerchandiseKey
+                    velocityGradesMerchandiseKey: _velocityGradesMerchandiseKey,
+                    setList: setList
                     );
                 _populateVelocityGrades = false;
             }
@@ -10736,64 +10737,88 @@ namespace MIDRetail.Business.Allocation
         /// Populates velocity grade values when the Merchandise Node changes
         /// </summary>
         /// <param name="velocityGradesMerchandiseKey">The merchandise key to use to retrieve velocity grades</param>
+        /// <param name="setList">List of attribute sets</param>
         private void VelocityGrades_InitialPopulate(
-            int velocityGradesMerchandiseKey)
+            int velocityGradesMerchandiseKey,
+             ProfileList setList)
         {
             VelocityGradeList velocityGradeList = null;
             SellThruPctList sellThruPctList = null;
 
             try
             {
-                // build velocity grades
-                int count = 0;
-
-                _dsVelocity.Tables["VelocityGrade"].Clear();
-                _dsVelocity.Tables["VelocityGrade"].AcceptChanges();
-
-                if (velocityGradesMerchandiseKey != Include.NoRID)
+                if (velocityGradesMerchandiseKey > 0)
                 {
-                    velocityGradeList = SAB.HierarchyServerSession.GetVelocityGradeList(velocityGradesMerchandiseKey, true);
-                }
-                else // no merchandise, so returned cleared grades
-                {
-                    return;
-                }
+                    // build velocity grades
+                    int count = 0;
 
-                foreach (VelocityGradeProfile vgp in velocityGradeList)
-                {
-                    _dsVelocity.Tables["VelocityGrade"].Rows.Add(new object[] { count, vgp.VelocityGrade, vgp.Boundary, vgp.VelocityMinStock, vgp.VelocityMaxStock, vgp.VelocityMinAd });
-                    ++count;
-                }
+                    _dsVelocity.Tables["VelocityGrade"].Clear();
+                    _dsVelocity.Tables["VelocityGrade"].AcceptChanges();
 
-                foreach (DataRow velocityGradeRow in _dsVelocity.Tables["VelocityGrade"].Rows)
-                {
-                    if (Convert.ToInt32(velocityGradeRow["MinStock"]) == -1)
+                    if (velocityGradesMerchandiseKey != Include.NoRID)
                     {
-                        velocityGradeRow["MinStock"] = DBNull.Value;
+                        velocityGradeList = SAB.HierarchyServerSession.GetVelocityGradeList(velocityGradesMerchandiseKey, true);
                     }
-                    if (Convert.ToInt32(velocityGradeRow["MaxStock"]) == -1)
+                    else // no merchandise, so returned cleared grades
                     {
-                        velocityGradeRow["MaxStock"] = DBNull.Value;
+                        return;
                     }
-                    if (Convert.ToInt32(velocityGradeRow["MinAd"]) == -1)
+
+                    foreach (VelocityGradeProfile vgp in velocityGradeList)
                     {
-                        velocityGradeRow["MinAd"] = DBNull.Value;
+                        _dsVelocity.Tables["VelocityGrade"].Rows.Add(new object[] { count, vgp.VelocityGrade, vgp.Boundary, vgp.VelocityMinStock, vgp.VelocityMaxStock, vgp.VelocityMinAd });
+                        ++count;
+                    }
+
+                    foreach (DataRow velocityGradeRow in _dsVelocity.Tables["VelocityGrade"].Rows)
+                    {
+                        if (Convert.ToInt32(velocityGradeRow["MinStock"]) == -1)
+                        {
+                            velocityGradeRow["MinStock"] = DBNull.Value;
+                        }
+                        if (Convert.ToInt32(velocityGradeRow["MaxStock"]) == -1)
+                        {
+                            velocityGradeRow["MaxStock"] = DBNull.Value;
+                        }
+                        if (Convert.ToInt32(velocityGradeRow["MinAd"]) == -1)
+                        {
+                            velocityGradeRow["MinAd"] = DBNull.Value;
+                        }
+                    }
+
+                    _dsVelocity.Tables["VelocityGrade"].DefaultView.RowFilter = null;
+
+                    // build sell thru percentages
+                    count = 0;
+
+                    _dsVelocity.Tables["SellThru"].Clear();
+                    _dsVelocity.Tables["SellThru"].AcceptChanges();
+
+                    sellThruPctList = SAB.HierarchyServerSession.GetSellThruPctList(velocityGradesMerchandiseKey, false);
+                    foreach (SellThruPctProfile stpp in sellThruPctList)
+                    {
+                        _dsVelocity.Tables["SellThru"].Rows.Add(new object[] { count, stpp.SellThruPct });
+                        ++count;
                     }
                 }
 
-                _dsVelocity.Tables["VelocityGrade"].DefaultView.RowFilter = null;
+                // build attribute sets
+                DataRow setRow = null;
 
-                // build sell thru percentages
-                count = 0;
+                _dsVelocity.Tables["GroupLevel"].Clear();
+                _dsVelocity.Tables["GroupLevel"].AcceptChanges();
 
-                _dsVelocity.Tables["SellThru"].Clear();
-                _dsVelocity.Tables["SellThru"].AcceptChanges();
-
-                sellThruPctList = SAB.HierarchyServerSession.GetSellThruPctList(velocityGradesMerchandiseKey, false);
-                foreach (SellThruPctProfile stpp in sellThruPctList)
+                foreach (StoreGroupLevelListViewProfile attributeSet in setList)
                 {
-                    _dsVelocity.Tables["SellThru"].Rows.Add(new object[] { count, stpp.SellThruPct });
-                    ++count;
+                    setRow = _dsVelocity.Tables["GroupLevel"].NewRow();
+                    setRow["SglRID"] = attributeSet.Key;
+                    setRow["NoOnHandRule"] = (int)eVelocityRuleType.None;
+                    setRow["NoOnHandQty"] = System.DBNull.Value;
+                    setRow["ModeInd"] = 'A';
+                    setRow["AverageRule"] = (int)eVelocityRuleType.None;
+                    setRow["AverageQty"] = System.DBNull.Value;
+                    setRow["SpreadInd"] = 'S';
+                    _dsVelocity.Tables["GroupLevel"].Rows.Add(setRow);
                 }
 
                 // reload data with new grades and sell thru percents
@@ -12058,14 +12083,21 @@ namespace MIDRetail.Business.Allocation
             OTSPlanPHLSeq = 0;
             OTS_Begin_CDR_RID = Include.UndefinedCalendarDateRange;
             OTS_Ship_To_CDR_RID = Include.UndefinedCalendarDateRange;
-            if (SG_RID != method.Attribute.Key
+            if (_SG_RID != method.Attribute.Key
                 && !method.AddingMethod)
             {
                 _matrixProcessed = false;
                 method.VelocityAction = eVelocityAction.ClearMatrix;
             }
 
-            SG_RID = method.Attribute.Key;
+            if (_SG_RID != method.Attribute.Key)
+            {
+                // is attribute is changed, rebuild matrix data
+				_populateVelocityGrades = true;
+                // two different fields.  No idea why.  But, setting both since both are referenced
+                _SG_RID = method.Attribute.Key;
+                SG_RID = method.Attribute.Key;
+            }
             _currentAttributeSet = method.AttributeSet.Key;
 
             if (_dsVelocity == null)
