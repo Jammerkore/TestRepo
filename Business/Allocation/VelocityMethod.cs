@@ -11400,7 +11400,7 @@ namespace MIDRetail.Business.Allocation
                 matrixCells.Add(key, matrixCells_HT[key]);
             }
 
-            int sellThruIndexCount = matrixCells.Count / method.VelocityGradeList.Count;
+            int sellThruIndexCount = method.VelocityGradeList.Count == 0 ? 0 : matrixCells.Count / method.VelocityGradeList.Count;
 
             foreach (ROAllocationVelocityGrade velocityGrade in method.VelocityGradeList)
             {
