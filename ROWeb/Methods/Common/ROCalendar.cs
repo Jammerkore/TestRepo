@@ -143,14 +143,89 @@ namespace Logility.ROWeb
             return textDataHandler.GetUITextTable(eMIDTextType.eCalendarDateType, eMIDTextOrderBy.TextCode);
         }
 
-        private DataTable GetCalendarRangeTypeList()
+        private DataTable GetCalendarRangeTypeList(
+            bool bAllowDynamic,
+            bool bAllowReoccurring,
+            bool bAllowDynamicSwitch
+            )
         {
-            return eNumConverter.AddEnumsToTable<eCalendarRangeType>("eCalendarRangeType");
+            DataTable calendarRangeTypes;
+            List<DataRow> RowsToDelete = new List<DataRow>();
+            eCalendarRangeType calendarRangeType;
+
+            calendarRangeTypes = eNumConverter.AddEnumsToTable<eCalendarRangeType>("eCalendarRangeType");
+
+            // remove rows based on options
+            for (int i = 0; i < calendarRangeTypes.Rows.Count; i++)
+            {
+                calendarRangeType = (eCalendarRangeType)Convert.ToInt32(calendarRangeTypes.Rows[i]["ID"]);
+                if (calendarRangeType == eCalendarRangeType.Dynamic
+                    && !bAllowDynamic)
+                {
+                    RowsToDelete.Add(calendarRangeTypes.Rows[i]);
+                }
+                else if (calendarRangeType == eCalendarRangeType.Reoccurring
+                    && !bAllowReoccurring)
+                {
+                    RowsToDelete.Add(calendarRangeTypes.Rows[i]);
+                }
+                else if (calendarRangeType == eCalendarRangeType.DynamicSwitch
+                    && !bAllowDynamicSwitch)
+                {
+                    RowsToDelete.Add(calendarRangeTypes.Rows[i]);
+                }
+            }
+
+            foreach (var dataRow in RowsToDelete)
+            {
+                calendarRangeTypes.Rows.Remove(dataRow);
+            }
+
+            calendarRangeTypes.AcceptChanges();
+
+            return calendarRangeTypes;
         }
 
-        private DataTable GetDateRangeRelativeToList()
+        private DataTable GetDateRangeRelativeToList(
+            bool bAllowDynamicToCurrent,
+            bool bAllowDynamicToPlan,
+            bool bAllowDynamicToStoreOpen)
         {
-            return eNumConverter.AddEnumsToTable<eDateRangeRelativeTo>("eDateRangeRelativeTo");
+            DataTable calendarRangeRelativeTo;
+            List<DataRow> RowsToDelete = new List<DataRow>();
+            eDateRangeRelativeTo dateRangeRelativeTo;
+
+            calendarRangeRelativeTo =  eNumConverter.AddEnumsToTable<eDateRangeRelativeTo>("eDateRangeRelativeTo");
+
+            // remove rows based on options
+            for (int i = 0; i < calendarRangeRelativeTo.Rows.Count; i++)
+            {
+                dateRangeRelativeTo = (eDateRangeRelativeTo)Convert.ToInt32(calendarRangeRelativeTo.Rows[i]["ID"]);
+                if (dateRangeRelativeTo == eDateRangeRelativeTo.Current
+                    && !bAllowDynamicToCurrent)
+                {
+                    RowsToDelete.Add(calendarRangeRelativeTo.Rows[i]);
+                }
+                else if (dateRangeRelativeTo == eDateRangeRelativeTo.Plan
+                    && !bAllowDynamicToPlan)
+                {
+                    RowsToDelete.Add(calendarRangeRelativeTo.Rows[i]);
+                }
+                else if (dateRangeRelativeTo == eDateRangeRelativeTo.StoreOpen
+                    && !bAllowDynamicToStoreOpen)
+                {
+                    RowsToDelete.Add(calendarRangeRelativeTo.Rows[i]);
+                }
+            }
+
+            foreach (var dataRow in RowsToDelete)
+            {
+                calendarRangeRelativeTo.Rows.Remove(dataRow);
+            }
+
+            calendarRangeRelativeTo.AcceptChanges();
+
+            return calendarRangeRelativeTo;
         }
 
         /// <summary>
@@ -171,8 +246,14 @@ namespace Logility.ROWeb
 
                 // Add tables containing enum values
                 dsCalendarSelector.Tables.Add(GetCalendarDateTypeList());
-                dsCalendarSelector.Tables.Add(GetCalendarRangeTypeList());
-                dsCalendarSelector.Tables.Add(GetDateRangeRelativeToList());
+                dsCalendarSelector.Tables.Add(GetCalendarRangeTypeList(
+				    bAllowDynamic: bAllowDynamicToCurrent || bAllowDynamicToPlan || bAllowDynamicToStoreOpen,
+                    bAllowReoccurring: bAllowReoccurring,
+                    bAllowDynamicSwitch: bAllowDynamicSwitch));
+                dsCalendarSelector.Tables.Add(GetDateRangeRelativeToList(
+				    bAllowDynamicToCurrent: bAllowDynamicToCurrent,
+                    bAllowDynamicToPlan: bAllowDynamicToPlan,
+                    bAllowDynamicToStoreOpen: bAllowDynamicToStoreOpen));
 
                 // Add Predefined Date Ranges
                 DataView dv = CalendarDateSelectorManager.GetDateRangesWithNames();
