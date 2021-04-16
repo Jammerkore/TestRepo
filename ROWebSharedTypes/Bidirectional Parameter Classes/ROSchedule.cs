@@ -1301,9 +1301,11 @@ namespace Logility.ROWebSharedTypes
     [DataContract(Name = "ROTaskSizeCurves", Namespace = "http://Logility.ROWeb/")]
     public class ROTaskSizeCurves : ROTaskProperties
     {
+        [DataMember(IsRequired = true)]
+        protected List<KeyValuePair<int, string>> _merchandise;
 
         #region Public Properties
-
+        public List<KeyValuePair<int, string>> Merchandise { get { return _merchandise; } set { _merchandise = value; } }
         #endregion
 
         public ROTaskSizeCurves(
@@ -1314,7 +1316,7 @@ namespace Logility.ROWebSharedTypes
             maximumMessageLevel: maximumMessageLevel)
 
         {
-
+            _merchandise = new List<KeyValuePair<int, string>>();
         }
     }
 

@@ -132,7 +132,16 @@ namespace Logility.ROWeb
         /// <param name="task">The data class of the task</param>
         private void AddValues(ROTaskParms taskParameters, ROTaskSizeCurves task)
         {
-            
+            string selectString;
+            selectString = "TASK_SEQUENCE=" + taskParameters.Sequence;
+            DataRow[] dataRows = TaskData.Select(selectString);
+            foreach (DataRow dataRow in dataRows)
+            {
+                task.Merchandise.Add(GetName.GetMerchandiseName(
+                    nodeRID: Convert.ToInt32(dataRow["HN_RID"]),
+                    SAB: SessionAddressBlock
+                    ));
+            }
         }
 
 
@@ -183,8 +192,31 @@ namespace Logility.ROWeb
             DeleteTaskRows(
                 sequence: taskData.Task.Key
                 );
+            DataRow dataRow;
+            for (int i = 0; i < taskData.Merchandise.Count; i++)
+            {
+                dataRow = TaskData.NewRow();
+                dataRow["TASKLIST_RID"] = TaskListProperties.TaskList.Key;
+                dataRow["TASK_SEQUENCE"] = taskData.Task.Key;
+                dataRow["HN_RID"] = taskData.Merchandise[i].Key;
+                dataRow["GENERATE_SEQUENCE"] = i;
+                TaskData.Rows.Add(dataRow);
+            }
+            
 
-            throw new Exception("Not Implemented");
+            DataRow detailDataRow = TaskData.NewRow();
+            detailDataRow["TASKLIST_RID"] = TaskListProperties.TaskList.Key;
+            detailDataRow["TASK_SEQUENCE"] = taskData.Task.Key;
+            detailDataRow["CONCURRENT_PROCESSES"] = Include.ConcurrentSizeCurveProcesses;
+            TaskDetailData.Rows.Add(detailDataRow);
+            
+
+            TaskData.AcceptChanges();
+            TaskDetailData.AcceptChanges();
+
+            // order the rows in the data tables
+            TaskData = TaskData.DefaultView.ToTable();
+            TaskDetailData = TaskDetailData.DefaultView.ToTable();
 
             return true;
         }
