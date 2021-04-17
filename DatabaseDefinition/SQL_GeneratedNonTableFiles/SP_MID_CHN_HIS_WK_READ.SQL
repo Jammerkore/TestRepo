@@ -1,0 +1,108 @@
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[SP_MID_CHN_HIS_WK_READ]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+drop procedure [dbo].[SP_MID_CHN_HIS_WK_READ]
+GO
+ 
+CREATE PROCEDURE [dbo].[SP_MID_CHN_HIS_WK_READ]
+@dt MID_CHN_HIS_WK_READ_TYPE READONLY,
+@Rollup CHAR(1) = NULL
+AS
+SET NOCOUNT ON
+DECLARE @idoc int,
+        @Tables INT,
+        @Loop INT,
+        @HN_TYPE INT,
+        @HN_RID INT,
+        @HN_MOD INT,
+        @ROLL_OPTION INT,
+        @LoopCount INT,
+        @NextLoopCount INT
+SET @Tables = 10
+SELECT DISTINCT @HN_TYPE = ph.PH_TYPE, @HN_RID = t.HN_RID, @HN_MOD = t.HN_RID % @Tables,
+                @ROLL_OPTION = COALESCE(ph.HISTORY_ROLL_OPTION, 800251)
+        FROM HIERARCHY_NODE hn (NOLOCK)
+        JOIN PRODUCT_HIERARCHY ph (NOLOCK) ON ph.PH_RID = hn.HOME_PH_RID
+        JOIN @dt t on t.HN_RID = hn.HN_RID
+IF @HN_TYPE = 800001 and @ROLL_OPTION = 800251 -- Realtime
+   BEGIN
+   SET @LoopCount = 0
+   CREATE TABLE #TREE (LOOPCOUNT INT NOT NULL, PARENT_HN_RID INT NOT NULL, HOME_PH_RID INT, PH_TYPE INT, CHILD_HN_RID INT NOT NULL, CHILD_HN_MOD INT NOT NULL)
+   -- insert the children of the node into the temp table
+   INSERT #TREE (LOOPCOUNT, PARENT_HN_RID, HOME_PH_RID, PH_TYPE, CHILD_HN_RID, CHILD_HN_MOD) 
+       select @LoopCount as LOOPCOUNT, @HN_RID as PARENT_HN_RID, hn.HOME_PH_RID, ph.PH_TYPE, hnj.HN_RID, hnj.HN_RID % @Tables
+         from HIER_NODE_JOIN hnj (NOLOCK)
+           JOIN HIERARCHY_NODE hn (NOLOCK) ON hn.HN_RID = hnj.HN_RID
+           JOIN PRODUCT_HIERARCHY ph (NOLOCK) ON ph.PH_RID = hn.HOME_PH_RID
+       where @HN_RID = hnj.PARENT_HN_RID
+   SET @Loop = @@ROWCOUNT
+   -- chase all paths until you get the main hierarchy (type 800000) or the lowest leaf
+   SET @NextLoopCount = @LoopCount + 1
+   WHILE @Loop > 0
+   BEGIN
+      INSERT #TREE
+        select @NextLoopCount as LOOPCOUNT, hnj.PARENT_HN_RID, hn.HOME_PH_RID, ph.PH_TYPE, hnj.HN_RID, hnj.HN_RID % @Tables
+          from HIER_NODE_JOIN hnj (NOLOCK)
+            JOIN HIERARCHY_NODE hn (NOLOCK) ON hn.HN_RID = hnj.HN_RID
+            JOIN PRODUCT_HIERARCHY ph (NOLOCK) ON ph.PH_RID = hn.HOME_PH_RID
+            JOIN #TREE t ON hnj.PARENT_HN_RID = t.CHILD_HN_RID
+        WHERE t.LOOPCOUNT =  @LoopCount AND t.PH_TYPE <> 800000
+      SET @Loop = @@ROWCOUNT
+      SET @LoopCount = @LoopCount + 1
+      SET @NextLoopCount = @LoopCount + 1
+   END
+   -- join with dates from xml selecting only nodes from the main hierarchy or lowest leaf alternates
+   SELECT * 
+     INTO #TEMP2
+     FROM #TREE
+     CROSS JOIN @dt
+   where LOOPCOUNT = @LoopCount - 1
+	     or PH_TYPE = 800000
+       SELECT @HN_RID AS HN_RID, 1 AS FV_RID, chw.TIME_ID, COALESCE(SUM(SALES), 0) SALES, COALESCE(SUM(SALES_REG), 0) SALES_REG, 
+          COALESCE(SUM(SALES_PROMO), 0) SALES_PROMO, COALESCE(SUM(SALES_MKDN), 0) SALES_MKDN, COALESCE(SUM(STOCK), 0) STOCK, 
+          COALESCE(SUM(STOCK_REG), 0) STOCK_REG, COALESCE(SUM(STOCK_MKDN), 0) STOCK_MKDN, COALESCE(SUM(WOS), 0) WOS, 
+          COALESCE(SUM(WOS_REGPROMO), 0) WOS_REGPROMO, 
+          0 AS SALES_LOCK, 0 AS SALES_REG_LOCK, 0 AS SALES_PROMO_LOCK, 0 AS SALES_MKDN_LOCK, 0 AS STOCK_LOCK, 
+          0 AS STOCK_REG_LOCK, 0 AS STOCK_MKDN_LOCK, 0 AS WOS_LOCK, 0 AS WOS_REGPROMO_LOCK
+		FROM #TEMP2 t
+		JOIN VW_CHAIN_HISTORY_WEEK chw (NOLOCK) ON t.CHILD_HN_RID = chw.HN_RID
+			AND chw.TIME_ID = t.TIME_ID
+		GROUP BY chw.TIME_ID
+		OPTION (MAXDOP 1)
+	RETURN 0
+	END
+-- Process variables
+-- GET ALL THE ROWS
+IF @Rollup = 'Y'
+       SELECT chw.HN_RID, 1 AS FV_RID, COALESCE(SUM(chw.SALES), 0) SALES, COALESCE(SUM(chw.SALES_REG), 0) SALES_REG, 
+          COALESCE(SUM(chw.SALES_PROMO), 0) SALES_PROMO, COALESCE(SUM(chw.SALES_MKDN), 0) SALES_MKDN, 
+          COALESCE(SUM(chw.STOCK), 0) STOCK, COALESCE(SUM(chw.STOCK_REG), 0) STOCK_REG, COALESCE(SUM(chw.STOCK_MKDN), 0) STOCK_MKDN, 
+          COALESCE(SUM(chw.WOS), 0) WOS, COALESCE(SUM(chw.WOS_REGPROMO), 0) WOS_REGPROMO, 
+          0 AS SALES_LOCK, 0 AS SALES_REG_LOCK, 0 AS SALES_PROMO_LOCK, 0 AS SALES_MKDN_LOCK, 
+          0 AS STOCK_LOCK, 0 AS STOCK_REG_LOCK, 0 AS STOCK_MKDN_LOCK, 0 AS WOS_LOCK, 0 AS WOS_REGPROMO_LOCK
+          
+        FROM @dt xml
+	JOIN VW_CHAIN_HISTORY_WEEK chw ON xml.HN_RID = chw.HN_RID
+		AND chw.TIME_ID = xml.TIME_ID
+	GROUP BY chw.HN_RID
+	OPTION (MAXDOP 1)
+ELSE
+       SELECT chw.HN_RID, 1 AS FV_RID, chw.TIME_ID, COALESCE(chw.SALES, 0) SALES, COALESCE(chw.SALES_REG, 0) SALES_REG, 
+          COALESCE(chw.SALES_PROMO, 0) SALES_PROMO, COALESCE(chw.SALES_MKDN, 0) SALES_MKDN, 
+          COALESCE(chw.STOCK, 0) STOCK, COALESCE(chw.STOCK_REG, 0) STOCK_REG, COALESCE(chw.STOCK_MKDN, 0) STOCK_MKDN, 
+          COALESCE(chw.WOS, 0) WOS, COALESCE(chw.WOS_REGPROMO, 0) WOS_REGPROMO, 
+          0 AS SALES_LOCK, 0 AS SALES_REG_LOCK, 0 AS SALES_PROMO_LOCK, 0 AS SALES_MKDN_LOCK, 
+          0 AS STOCK_LOCK, 0 AS STOCK_REG_LOCK, 0 AS STOCK_MKDN_LOCK, 0 AS WOS_LOCK, 0 AS WOS_REGPROMO_LOCK
+          
+		FROM @dt xml
+	JOIN VW_CHAIN_HISTORY_WEEK chw ON xml.HN_RID = chw.HN_RID
+		AND chw.TIME_ID = xml.TIME_ID
+	OPTION (MAXDOP 1)
+
+
+if (select object_id('tempdb.dbo.#TEMP2')) > 0 DROP TABLE #TEMP2
+
+
+
+
+GO
+
+

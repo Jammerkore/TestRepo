@@ -1,0 +1,22 @@
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[SP_MID_CHN_FOR_WK_READ]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+drop procedure [dbo].[SP_MID_CHN_FOR_WK_READ]
+GO
+ 
+CREATE PROCEDURE [dbo].[SP_MID_CHN_FOR_WK_READ]
+@dt MID_CHN_FOR_WK_READ_TYPE READONLY
+AS
+SET NOCOUNT ON
+       SELECT cfw.HN_RID, cfw.FV_RID, cfw.TIME_ID, COALESCE(cfw.SALES, 0) SALES, COALESCE(cfw.SALES_REG, 0) SALES_REG, 
+          COALESCE(cfw.SALES_PROMO, 0) SALES_PROMO, COALESCE(cfw.SALES_MKDN, 0) SALES_MKDN, 
+          COALESCE(cfw.STOCK, 0) STOCK, COALESCE(cfw.STOCK_REG, 0) STOCK_REG, COALESCE(cfw.STOCK_MKDN, 0) STOCK_MKDN, 
+          COALESCE(cfw.WOS, 0) WOS, COALESCE(cfw.WOS_REGPROMO, 0) WOS_REGPROMO
+		FROM @dt xml
+	JOIN VW_CHAIN_FORECAST_WEEK cfw ON xml.HN_RID = cfw.HN_RID
+		AND cfw.FV_RID = xml.FV_RID
+		AND cfw.TIME_ID = xml.TIME_ID
+	OPTION (MAXDOP 1)
+
+
+GO
+
+

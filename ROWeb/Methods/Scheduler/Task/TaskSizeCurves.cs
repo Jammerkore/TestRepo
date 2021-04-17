@@ -204,7 +204,7 @@ namespace Logility.ROWeb
             }
             
 
-            DataRow detailDataRow = TaskData.NewRow();
+            DataRow detailDataRow = TaskDetailData.NewRow();
             detailDataRow["TASKLIST_RID"] = TaskListProperties.TaskList.Key;
             detailDataRow["TASK_SEQUENCE"] = taskData.Task.Key;
             detailDataRow["CONCURRENT_PROCESSES"] = Include.ConcurrentSizeCurveProcesses;
