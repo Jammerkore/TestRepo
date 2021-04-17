@@ -12205,6 +12205,17 @@ namespace MIDRetail.Business.Allocation
             DataRow row;
             int rowIndex = 0;
 
+            // adjust values from FE
+            foreach (ROBasisWithLevelDetailProfile basisDetailProfile in method.BasisProfiles)
+            {
+                // if hierarchy level, the FE does not have the correct organizational key
+                // override the hierarchy key to the key of the organizational hierarchy
+                if (basisDetailProfile.MerchPhlSequence > 0)
+                {
+                    basisDetailProfile.MerchPhRId = HP.Key;
+                }
+            }
+
             _basisChangesMade = false;
             if (dt.Rows.Count != method.BasisProfiles.Count)
             {
