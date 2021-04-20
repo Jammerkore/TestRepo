@@ -4353,6 +4353,9 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         private List<double> _horizontalSplitterPercentages;
 
+        [DataMember(IsRequired = true)]
+        private int _groupBy;
+
         public ROAllocationReviewViewDetails(KeyValuePair<int, string> view) :
             base(view)
         {
@@ -4374,6 +4377,8 @@ namespace Logility.ROWebSharedTypes
         public List<double> VerticalSplitterPercentages { get { return _verticalSplitterPercentages; } }
 
         public List<double> HorizontalSplitterPercentages { get { return _horizontalSplitterPercentages; } }
+
+        public int GroupBy { get { return _groupBy; } set { _groupBy = value; } }
 
     }
 

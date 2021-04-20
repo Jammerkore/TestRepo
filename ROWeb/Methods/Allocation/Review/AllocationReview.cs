@@ -338,6 +338,11 @@ namespace Logility.ROWeb
                     {
                         viewDetails.IsUserView = true;
                     }
+                    int groupBy = Convert.ToInt32(row["GROUP_BY"], CultureInfo.CurrentUICulture);
+                    if (groupBy != 0)
+                    {
+                        viewDetails.GroupBy = groupBy;
+                    }
                 }
             }
 
