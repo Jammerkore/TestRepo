@@ -4356,6 +4356,12 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         private int _groupBy;
 
+        [DataMember(IsRequired = true)]
+        private int _secondaryGroupBy;
+
+        [DataMember(IsRequired = true)]
+        private bool _isSequential;
+
         public ROAllocationReviewViewDetails(KeyValuePair<int, string> view) :
             base(view)
         {
@@ -4379,6 +4385,8 @@ namespace Logility.ROWebSharedTypes
         public List<double> HorizontalSplitterPercentages { get { return _horizontalSplitterPercentages; } }
 
         public int GroupBy { get { return _groupBy; } set { _groupBy = value; } }
+        public int SecondaryGroupBy { get { return _secondaryGroupBy; } set { _secondaryGroupBy = value; } }
+        public bool IsSequential { get { return _isSequential; } set { _isSequential = value; } }
 
     }
 

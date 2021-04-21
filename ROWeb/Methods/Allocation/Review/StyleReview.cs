@@ -27,7 +27,30 @@ namespace Logility.ROWeb
 
             try
             {
-                return new ROIntStringPairListOut(eROReturnCode.Successful, null, ROInstanceID, BuildAllocationStyleReviewViews(layoutID: eLayoutID.styleReviewGrid));
+                DataTable _dtViews;
+                GridViewData gridViewData = new GridViewData();
+                List<ROWorklistViewOut> views = new List<ROWorklistViewOut>();
+                UserRIDList();
+                _dtViews = gridViewData.GridView_Read((int)eLayoutID.styleReviewGrid, _userRIDList, true);
+                _dtViews.Rows.Add(new object[] { Include.NoRID, SAB.ClientServerSession.UserRID, (int)eLayoutID.allocationWorkspaceGrid, "  " });
+
+                DataView dv = new DataView(_dtViews);
+
+                foreach (DataRowView rowView in dv)
+                {
+                    int viewRID = Convert.ToInt32(rowView.Row["VIEW_RID"]);
+                    string viewName = Convert.ToString(rowView.Row["VIEW_ID"]);
+                    int filterRID = (rowView["WORKSPACE_FILTER_RID"] != DBNull.Value) ? Convert.ToInt32(rowView["WORKSPACE_FILTER_RID"]) : Include.NoRID;
+                    var roWorklistViewOut = new ROWorklistViewOut(viewRID, viewName, filterRID);
+                    roWorklistViewOut.GroupBy = (rowView["GROUP_BY"] != DBNull.Value) ? Convert.ToInt32(rowView["GROUP_BY"]) : Include.NoRID;
+                    roWorklistViewOut.SecondaryGroupBy = (rowView["GROUP_BY_SECONDARY"] != DBNull.Value) ? Convert.ToInt32(rowView["GROUP_BY_SECONDARY"]) : Include.NoRID;
+                    roWorklistViewOut.IsSequential = (rowView["IS_SEQUENTIAL"] != DBNull.Value) ? Convert.ToBoolean(rowView["IS_SEQUENTIAL"]) : false;
+                    views.Add(roWorklistViewOut);
+                }
+
+
+                return new ROIListOut(eROReturnCode.Successful, null, ROInstanceID, views); ;
+
             }
             catch (Exception ex)
             {

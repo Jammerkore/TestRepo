@@ -518,6 +518,8 @@ namespace Logility.ROWeb
                 }
 
                 layoutID = eLayoutID.NotDefined;
+                bool isSequential = false;
+                int secondaryGroupBy = Include.NoRID;
                 if (_applicationSessionTransaction.AllocationViewType == eAllocationSelectionViewType.Velocity)
                 {
                     layoutID = eLayoutID.velocityStoreDetailGrid;
@@ -529,6 +531,8 @@ namespace Logility.ROWeb
                 else if (_applicationSessionTransaction.AllocationViewType == eAllocationSelectionViewType.Size)
                 {
                     layoutID = eLayoutID.sizeReviewGrid;
+                    isSequential = viewDetails.ROAllocationReviewViewDetails.IsSequential;
+                    secondaryGroupBy = viewDetails.ROAllocationReviewViewDetails.SecondaryGroupBy;
                 }
 
                 gridViewData.OpenUpdateConnection();
@@ -539,11 +543,11 @@ namespace Logility.ROWeb
                     if (viewRID != Include.NoRID)
                     {
                         gridViewData.GridViewDetail_Delete(viewRID);
-                        gridViewData.GridView_Update(viewRID, true, _applicationSessionTransaction.AllocationGroupBy, Include.NoRID, false, Include.NoRID, false);
+                        gridViewData.GridView_Update(viewRID, true, viewDetails.ROAllocationReviewViewDetails.GroupBy, secondaryGroupBy, isSequential, Include.NoRID, false);
                     }
                     else
                     {
-                        viewRID = gridViewData.GridView_Insert(viewUserRID, (int)layoutID, viewDetails.ROAllocationReviewViewDetails.View.Value, false, _applicationSessionTransaction.AllocationGroupBy, Include.NoRID, false, Include.NoRID, false);
+                        viewRID = gridViewData.GridView_Insert(viewUserRID, (int)layoutID, viewDetails.ROAllocationReviewViewDetails.View.Value, false, viewDetails.ROAllocationReviewViewDetails.GroupBy, secondaryGroupBy, isSequential, Include.NoRID, false);
                         string viewName = viewDetails.ROAllocationReviewViewDetails.View.Value;
                         viewDetails.ROAllocationReviewViewDetails.View = new KeyValuePair<int, string>(viewRID, viewName);
                     }

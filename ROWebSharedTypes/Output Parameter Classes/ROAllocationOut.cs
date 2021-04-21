@@ -2275,6 +2275,15 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         private int _filterKey;
 
+        [DataMember(IsRequired = true)]
+        private int _groupBy;
+
+        [DataMember(IsRequired = true)]
+        private int _secondaryGroupBy;
+
+        [DataMember(IsRequired = true)]
+        private bool _isSequential;
+
         #endregion
 
         #region Constructor
@@ -2282,7 +2291,6 @@ namespace Logility.ROWebSharedTypes
         {
             _view = new KeyValuePair<int, string>(viewKey, viewName);
             _filterKey = filterKey;
-
         }
         #endregion  
 
@@ -2299,7 +2307,9 @@ namespace Logility.ROWebSharedTypes
             set { _filterKey = value; }
         }
 
-
+        public int GroupBy { get { return _groupBy; } set { _groupBy = value; } }
+        public int SecondaryGroupBy { get { return _secondaryGroupBy; } set { _secondaryGroupBy = value; } }
+        public bool IsSequential { get { return _isSequential; } set { _isSequential = value; } }
         #endregion
     }
 
