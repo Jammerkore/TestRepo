@@ -72,7 +72,7 @@ namespace Logility.ROWeb
                 var roWorklistViewOut = new ROWorklistViewOut(viewRID, viewName, filterRID);
                 roWorklistViewOut.GroupBy = (rowView["GROUP_BY"] != DBNull.Value) ? Convert.ToInt32(rowView["GROUP_BY"]) : Include.NoRID;
                 roWorklistViewOut.SecondaryGroupBy = (rowView["GROUP_BY_SECONDARY"] != DBNull.Value) ? Convert.ToInt32(rowView["GROUP_BY_SECONDARY"]) : Include.NoRID;
-                roWorklistViewOut.IsSequential = (rowView["IS_SEQUENTIAL"] != DBNull.Value) ? Convert.ToBoolean(rowView["IS_SEQUENTIAL"]) : false;
+                roWorklistViewOut.IsSequential = (rowView["IS_SEQUENTIAL"] != DBNull.Value) ? Convert.ToBoolean(Convert.ToInt32(rowView["IS_SEQUENTIAL"])) : false;
                 views.Add(roWorklistViewOut);
             }
 
