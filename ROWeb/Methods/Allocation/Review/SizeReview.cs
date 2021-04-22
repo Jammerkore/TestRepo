@@ -24,9 +24,7 @@ namespace Logility.ROWeb
         {
             try
             {
-                List<KeyValuePair<int, string>> defaultViewDetails = GetDefaultViewDetails();
-
-                return new ROIntStringPairListOut(eROReturnCode.Successful, null, ROInstanceID, defaultViewDetails);
+                return new ROIListOut(eROReturnCode.Successful, null, ROInstanceID, BuildAllocationReviewViews(eLayoutID.sizeReviewGrid));
             }
             catch (Exception ex)
             {
