@@ -12097,6 +12097,7 @@ namespace MIDRetail.Business.Allocation
                 // two different fields.  No idea why.  But, setting both since both are referenced
                 _SG_RID = method.Attribute.Key;
                 SG_RID = method.Attribute.Key;
+                method.VelocityAction = eVelocityAction.ClearMatrix;
             }
             _currentAttributeSet = method.AttributeSet.Key;
 
@@ -12487,6 +12488,14 @@ namespace MIDRetail.Business.Allocation
 
         private void SetVelocityMatrix(ROMethodAllocationVelocityProperties method, ArrayList setList)
         {
+            if (method.VelocityAction == eVelocityAction.ClearMatrix)
+            {
+                // clear matrix datatable
+                _dsVelocity.Tables["VelocityMatrix"].Clear();
+                _dsVelocity.Tables["VelocityMatrix"].AcceptChanges();
+                return;
+            }
+
             DataTable dt = _dsVelocity.Tables["VelocityMatrix"];
             DataRow row;
 
