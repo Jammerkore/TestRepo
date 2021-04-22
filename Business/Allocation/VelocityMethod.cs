@@ -10814,7 +10814,7 @@ namespace MIDRetail.Business.Allocation
                     setRow["SglRID"] = attributeSet.Key;
                     setRow["NoOnHandRule"] = (int)eVelocityRuleType.None;
                     setRow["NoOnHandQty"] = System.DBNull.Value;
-                    setRow["ModeInd"] = 'A';
+                    setRow["ModeInd"] = 'N';
                     setRow["AverageRule"] = (int)eVelocityRuleType.None;
                     setRow["AverageQty"] = System.DBNull.Value;
                     setRow["SpreadInd"] = 'S';
