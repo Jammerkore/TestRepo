@@ -1211,7 +1211,15 @@ namespace Logility.ROWeb
                         if (dataType == eDataType.StoreSummary)
                         {
                             int width;
-                            viewColumn = GetViewColumnIfExists(0, _lblStore, out width);
+                            // view keys are held differently for Size Review and Style Review
+                            if (selectionViewType == eAllocationSelectionViewType.Size)
+                            {
+                                viewColumn = GetViewColumnIfExists(0, eMIDTextCode.lbl_StoreSingular.GetHashCode().ToString(), out width);
+                            }
+                            else
+                            {
+                                viewColumn = GetViewColumnIfExists(0, _lblStore, out width);
+                            }
                             if (viewColumn == null) { viewColumn = new AllocationViewColumn(string.Empty, false, 0, eSortDirection.None, 0); }
                             columns.Add(new ROSelectedField(fieldkey: _lblStore, field: "Channel", selected: true, sortDirection: viewColumn.SortDirection, width: viewColumn.Width, visiblePosition: viewColumn.VisiblePosition));
                         }
@@ -1615,29 +1623,29 @@ namespace Logility.ROWeb
             // use max so sorts to the end column
             if ((eAllocationSizeViewGroupBy)reviewOptionsParms.GroupBy == eAllocationSizeViewGroupBy.Header)
             {
-                viewColumn = GetViewColumnIfExists(0, lblHeader, out width);
+                viewColumn = GetViewColumnIfExists(0, eMIDTextCode.lbl_Header.GetHashCode().ToString(), out width);
                 cells.Columns.Add(new ROColumnAttributes(lblHeader, k, k, int.MaxValue, true, 0, width));
                 k++;
-                viewColumn = GetViewColumnIfExists(0, lblColor, out width);
+                viewColumn = GetViewColumnIfExists(0, eMIDTextCode.lbl_Color.GetHashCode().ToString(), out width);
                 cells.Columns.Add(new ROColumnAttributes(lblColor, k, k, int.MaxValue, true, 0, width));
             }
             else
             {
-                viewColumn = GetViewColumnIfExists(0, lblColor, out width);
+                viewColumn = GetViewColumnIfExists(0, eMIDTextCode.lbl_Color.GetHashCode().ToString(), out width);
                 cells.Columns.Add(new ROColumnAttributes(lblColor, k, k, int.MaxValue, true, 0, width));
                 k++;
-                viewColumn = GetViewColumnIfExists(0, lblHeader, out width);
+                viewColumn = GetViewColumnIfExists(0, eMIDTextCode.lbl_Header.GetHashCode().ToString(), out width);
                 cells.Columns.Add(new ROColumnAttributes(lblHeader, k, k, int.MaxValue, true, 0, width));
 
             }
             if (!reviewOptionsParms.ViewIsSequential)
             {
                 k++;
-                viewColumn = GetViewColumnIfExists(0, lblDimension, out width);
+                viewColumn = GetViewColumnIfExists(0, eMIDTextCode.lbl_Dimension.GetHashCode().ToString(), out width);
                 cells.Columns.Add(new ROColumnAttributes(lblDimension, k, k, int.MaxValue, true, 0, width));
             }
             k++;
-            viewColumn = GetViewColumnIfExists(0, lblVariable, out width);
+            viewColumn = GetViewColumnIfExists(0, eMIDTextCode.lbl_Variable.GetHashCode().ToString(), out width);
             cells.Columns.Add(new ROColumnAttributes(lblVariable, k, k, int.MaxValue, true, 0, width));
         }
 
