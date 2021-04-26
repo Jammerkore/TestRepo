@@ -1211,17 +1211,20 @@ namespace Logility.ROWeb
                         if (dataType == eDataType.StoreSummary)
                         {
                             int width;
+                            string fieldKey;
                             // view keys are held differently for Size Review and Style Review
                             if (selectionViewType == eAllocationSelectionViewType.Size)
                             {
                                 viewColumn = GetViewColumnIfExists(0, eMIDTextCode.lbl_StoreSingular.GetHashCode().ToString(), out width);
+                                fieldKey = eMIDTextCode.lbl_StoreSingular.GetHashCode().ToString();
                             }
                             else
                             {
                                 viewColumn = GetViewColumnIfExists(0, _lblStore, out width);
+                                fieldKey = _lblStore;
                             }
                             if (viewColumn == null) { viewColumn = new AllocationViewColumn(string.Empty, false, 0, eSortDirection.None, 0); }
-                            columns.Add(new ROSelectedField(fieldkey: _lblStore, field: "Channel", selected: true, sortDirection: viewColumn.SortDirection, width: viewColumn.Width, visiblePosition: viewColumn.VisiblePosition));
+                            columns.Add(new ROSelectedField(fieldkey: fieldKey, field: "Channel", selected: true, sortDirection: viewColumn.SortDirection, width: viewColumn.Width, visiblePosition: viewColumn.VisiblePosition));
                         }
                     }
 
