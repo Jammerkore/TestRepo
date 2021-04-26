@@ -10525,6 +10525,7 @@ namespace MIDRetail.Business.Allocation
         private bool _matrixEverProcessed = false;
         int _velocityGradesMerchandiseKey = 0;
         bool _populateVelocityGrades = false;
+        bool _attributeChanged = false;
 
         private HierarchyProfile HP
         {
@@ -10699,6 +10700,7 @@ namespace MIDRetail.Business.Allocation
                     setList: setList
                     );
                 _populateVelocityGrades = false;
+                _attributeChanged = false;
             }
 
             if (_velocityGradesMerchandiseKey != Include.NoRID)
@@ -10805,20 +10807,23 @@ namespace MIDRetail.Business.Allocation
                 // build attribute sets
                 DataRow setRow = null;
 
-                _dsVelocity.Tables["GroupLevel"].Clear();
-                _dsVelocity.Tables["GroupLevel"].AcceptChanges();
-
-                foreach (StoreGroupLevelListViewProfile attributeSet in setList)
+                if (_attributeChanged)
                 {
-                    setRow = _dsVelocity.Tables["GroupLevel"].NewRow();
-                    setRow["SglRID"] = attributeSet.Key;
-                    setRow["NoOnHandRule"] = (int)eVelocityRuleType.None;
-                    setRow["NoOnHandQty"] = System.DBNull.Value;
-                    setRow["ModeInd"] = 'N';
-                    setRow["AverageRule"] = (int)eVelocityRuleType.None;
-                    setRow["AverageQty"] = System.DBNull.Value;
-                    setRow["SpreadInd"] = 'S';
-                    _dsVelocity.Tables["GroupLevel"].Rows.Add(setRow);
+                    _dsVelocity.Tables["GroupLevel"].Clear();
+                    _dsVelocity.Tables["GroupLevel"].AcceptChanges();
+
+                    foreach (StoreGroupLevelListViewProfile attributeSet in setList)
+                    {
+                        setRow = _dsVelocity.Tables["GroupLevel"].NewRow();
+                        setRow["SglRID"] = attributeSet.Key;
+                        setRow["NoOnHandRule"] = (int)eVelocityRuleType.None;
+                        setRow["NoOnHandQty"] = System.DBNull.Value;
+                        setRow["ModeInd"] = 'N';
+                        setRow["AverageRule"] = (int)eVelocityRuleType.None;
+                        setRow["AverageQty"] = System.DBNull.Value;
+                        setRow["SpreadInd"] = 'S';
+                        _dsVelocity.Tables["GroupLevel"].Rows.Add(setRow);
+                    }
                 }
 
                 // reload data with new grades and sell thru percents
@@ -12094,6 +12099,7 @@ namespace MIDRetail.Business.Allocation
             {
                 // is attribute is changed, rebuild matrix data
 				_populateVelocityGrades = true;
+                _attributeChanged = true;
                 // two different fields.  No idea why.  But, setting both since both are referenced
                 _SG_RID = method.Attribute.Key;
                 SG_RID = method.Attribute.Key;
