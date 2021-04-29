@@ -180,8 +180,6 @@ namespace Logility.ROWeb
                 sequence: taskData.Task.Key
                 );
 
-            throw new Exception("Not Implemented");
-
             return true;
         }
 
