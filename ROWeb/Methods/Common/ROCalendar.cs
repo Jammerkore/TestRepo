@@ -413,6 +413,8 @@ namespace Logility.ROWeb
             private TypedColumnHandler<string> _name = new TypedColumnHandler<string>("Name", eMIDTextCode.Unassigned, false, string.Empty);
             private TypedColumnHandler<bool> _isDynamicSwitch = new TypedColumnHandler<bool>("Is Dynamic Switch", eMIDTextCode.Unassigned, false, false);
             private TypedColumnHandler<int> _dynamicSwitchDate = new TypedColumnHandler<int>("Dynamic Switch Date", eMIDTextCode.Unassigned, false, 0);
+            private TypedColumnHandler<int> _CDR_SELECTED_START = new TypedColumnHandler<int>("Selected Start Week", eMIDTextCode.Unassigned, false, 0);
+            private TypedColumnHandler<int> _CDR_SELECTED_END = new TypedColumnHandler<int>("Selected End Week", eMIDTextCode.Unassigned, false, 0);
 
             protected CalendarDateRangeRowHandler(DateRangeProfile DateRangeProfile, CalendarDateSelectorManager CalendarDateSelectorManager)
             {
@@ -420,7 +422,7 @@ namespace Logility.ROWeb
                 _calendarDateSelectorManager = CalendarDateSelectorManager;
 
                 _aColumnHandlers = new ColumnHandler[] { _Key, _CDR_START, _CDR_END, _CDR_RELATIVE_TO, _CDT_ID, _CDR_RANGE_TYPE_ID, _anchorDate,
-            _displayDate, _name, _isDynamicSwitch, _dynamicSwitchDate};
+            _displayDate, _name, _isDynamicSwitch, _dynamicSwitchDate, _CDR_SELECTED_START, _CDR_SELECTED_END};
             }
 
             public override void ParseUIRow(DataRow dr)
@@ -439,6 +441,11 @@ namespace Logility.ROWeb
 
             public override void FillUIRow(DataRow dr)
             {
+                // update selected date information with new key
+                WeekProfile selectedStartWeek = new WeekProfile(Include.NoRID);
+                WeekProfile selectedEndWeek = new WeekProfile(Include.NoRID);
+                _calendarDateSelectorManager.GetSelectedDates(_DateRangeProfile.Key, out selectedStartWeek, out selectedEndWeek);
+
                 _Key.SetUIColumn(dr, _DateRangeProfile.Key);
                 _CDR_START.SetUIColumn(dr, _DateRangeProfile.StartDateKey);
                 _CDR_END.SetUIColumn(dr, _DateRangeProfile.EndDateKey);
@@ -449,6 +456,8 @@ namespace Logility.ROWeb
                 _name.SetUIColumn(dr, _DateRangeProfile.Name != null ? _DateRangeProfile.Name : string.Empty);
                 _isDynamicSwitch.SetUIColumn(dr, _DateRangeProfile.IsDynamicSwitch);
                 _dynamicSwitchDate.SetUIColumn(dr, _DateRangeProfile.DynamicSwitchDate);
+                _CDR_SELECTED_START.SetUIColumn(dr, selectedStartWeek.YearWeek);
+                _CDR_SELECTED_END.SetUIColumn(dr, selectedEndWeek.YearWeek);
             }
         }
     }
