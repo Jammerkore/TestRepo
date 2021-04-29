@@ -477,7 +477,7 @@ namespace Logility.ROWebSharedTypes
     }
 
     [DataContract(Name = "ROTaskHierarchyLoad", Namespace = "http://Logility.ROWeb/")]
-    public class ROTaskHierarchyLoad : ROTaskProperties
+    public class ROTaskHierarchyLoad : ROTaskLoad
     {
 
         #region Public Properties
@@ -497,7 +497,7 @@ namespace Logility.ROWebSharedTypes
     }
 
     [DataContract(Name = "ROTaskStoreLoad", Namespace = "http://Logility.ROWeb/")]
-    public class ROTaskStoreLoad : ROTaskProperties
+    public class ROTaskStoreLoad : ROTaskLoad
     {
 
         #region Public Properties
@@ -1159,7 +1159,7 @@ namespace Logility.ROWebSharedTypes
     }
 
     [DataContract(Name = "ROTaskRelieveIntransit", Namespace = "http://Logility.ROWeb/")]
-    public class ROTaskRelieveIntransit : ROTaskProperties
+    public class ROTaskRelieveIntransit : ROTaskLoad
     {
 
         #region Public Properties
@@ -1421,7 +1421,7 @@ namespace Logility.ROWebSharedTypes
     }
 
     [DataContract(Name = "ROTaskStoreEligibilityCriteriaLoad", Namespace = "http://Logility.ROWeb/")]
-    public class ROTaskStoreEligibilityCriteriaLoad : ROTaskProperties
+    public class ROTaskStoreEligibilityCriteriaLoad : ROTaskLoad
     {
 
         #region Public Properties

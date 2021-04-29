@@ -132,7 +132,19 @@ namespace Logility.ROWeb
         /// <param name="task">The data class of the task</param>
         private void AddValues(ROTaskParms taskParameters, ROTaskRelieveIntransit task)
         {
-            
+            string selectString;
+            selectString = "TASK_SEQUENCE=" + taskParameters.Sequence;
+            DataRow headerDataRow = TaskData.Select(selectString).First();
+            string inputDirectory = Convert.ToString(headerDataRow["INPUT_DIRECTORY"]);
+            inputDirectory = string.IsNullOrEmpty(inputDirectory) ?
+                string.IsNullOrEmpty(MIDConfigurationManager.AppSettings["FileDirectory"]) ? @"C:\Logility\ROData\Headers" :
+                string.Concat(MIDConfigurationManager.AppSettings["FileDirectory"], @"\Headers") : inputDirectory;
+            //task.ProcessingDirection = Convert.ToInt32(headerDataRow["FILE_PROCESSING_DIRECTION"]);
+            task.Directory = inputDirectory;
+            task.FlagFileSuffix = Convert.ToString(headerDataRow["FILE_MASK"]);
+            //task.ConcurrentFiles = Convert.ToInt32(headerDataRow["CONCURRENT_FILES"]);
+            task.EnableRunSuffix = Convert.ToString(headerDataRow["RUN_UNTIL_FILE_PRESENT_IND"]) == "1" ? true : false;
+            task.RunSuffix = Convert.ToString(headerDataRow["RUN_UNTIL_FILE_MASK"]);
         }
 
 
@@ -184,7 +196,19 @@ namespace Logility.ROWeb
                 sequence: taskData.Task.Key
                 );
 
-            throw new Exception("Not Implemented");
+            DataRow headerDataRow = TaskData.NewRow();
+            headerDataRow["TASKLIST_RID"] = TaskListProperties.TaskList.Key;
+            headerDataRow["TASK_SEQUENCE"] = taskData.Task.Key;
+            headerDataRow["FILE_PROCESSING_DIRECTION"] = eAPIFileProcessingDirection.Config;
+            headerDataRow["INPUT_DIRECTORY"] = taskData.Directory;
+            headerDataRow["FILE_MASK"] = taskData.FlagFileSuffix;
+            headerDataRow["CONCURRENT_FILES"] = 1;
+            headerDataRow["RUN_UNTIL_FILE_PRESENT_IND"] = taskData.EnableRunSuffix ? "1" : "0";
+            headerDataRow["RUN_UNTIL_FILE_MASK"] = taskData.RunSuffix;
+            TaskData.Rows.Add(headerDataRow);
+            TaskData.AcceptChanges();
+            // order the rows in the data tables
+            TaskData = TaskData.DefaultView.ToTable();
 
             return true;
         }
