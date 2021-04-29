@@ -517,7 +517,7 @@ namespace Logility.ROWebSharedTypes
     }
 
     [DataContract(Name = "ROTaskHistoryPlanLoad", Namespace = "http://Logility.ROWeb/")]
-    public class ROTaskHistoryPlanLoad : ROTaskProperties
+    public class ROTaskHistoryPlanLoad : ROTaskLoad
     {
 
         #region Public Properties
