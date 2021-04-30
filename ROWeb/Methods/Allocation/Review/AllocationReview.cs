@@ -1340,11 +1340,11 @@ namespace Logility.ROWeb
                         else if (dataType == eDataType.StoreDetail)
                         {
                             int waferCoordKey = waferCoord.Key;
-                            if (selectionViewType == eAllocationSelectionViewType.Style
-                                || selectionViewType == eAllocationSelectionViewType.Velocity)
-                            {
-                                waferCoord = waferCoordlist[_compRow];
-                            }
+                            //if (selectionViewType == eAllocationSelectionViewType.Style
+                            //    || selectionViewType == eAllocationSelectionViewType.Velocity)
+                            //{
+                            //    waferCoord = waferCoordlist[_compRow];
+                            //}
                             if (waferCoord.CoordinateSubType != (int)eComponentType.Bulk
                                 && waferCoord.CoordinateSubType != (int)eComponentType.SpecificPack
                                 && waferCoord.CoordinateSubType != (int)eComponentType.SpecificColor
@@ -1624,6 +1624,7 @@ namespace Logility.ROWeb
             AllocationViewColumn viewColumn;
             int width = 100;
             // use max so sorts to the end column
+            // Header is always displayed
             if ((eAllocationSizeViewGroupBy)reviewOptionsParms.GroupBy == eAllocationSizeViewGroupBy.Header)
             {
                 viewColumn = GetViewColumnIfExists(0, eMIDTextCode.lbl_Header.GetHashCode().ToString(), out width);
@@ -1654,6 +1655,11 @@ namespace Logility.ROWeb
 
         private void AddSizeLabelValues(ROCells cells, ROAllocationReviewOptionsParms reviewOptionsParms, AllocationWafer wafer, eDataType dataType)
         {
+            string lblHeader = MIDText.GetTextOnly((int)eMIDTextCode.lbl_Header);
+            string lblColor = MIDText.GetTextOnly((int)eMIDTextCode.lbl_Color);
+            string lblVariable = MIDText.GetTextOnly(eMIDTextCode.lbl_Variable);
+            string lblDimension = MIDText.GetTextOnly((int)eMIDTextCode.lbl_Dimension);
+
             string[,] RowLabels = _wafers[0, 0].RowLabels;
             if (dataType == eDataType.AllStoreSummary)
             {
@@ -1664,6 +1670,8 @@ namespace Logility.ROWeb
                 RowLabels = _wafers[1, 0].RowLabels;
             }
 
+            // RowLabels always contains all columns even if not to be displayed
+            // The order is different based on the Group By
             ROCell cell;
             int cellRow = 0;
             for (int row = 0; row < RowLabels.GetLength(0); row++)
@@ -1680,7 +1688,59 @@ namespace Logility.ROWeb
                     {
                         if (col.ColumnHeader == int.MaxValue)
                         {
-                            cell = new ROCell(eCellDataType.Label, RowLabels[row, rowLabelCol]);
+                            if (col.Label == lblHeader)
+                            {
+                                if ((eAllocationSizeViewGroupBy)reviewOptionsParms.GroupBy == eAllocationSizeViewGroupBy.Header)
+                                {
+                                    rowLabelCol = 1;
+                                }
+                                else
+                                {
+                                    rowLabelCol = 2;
+                                }
+                            }
+                            else if (col.Label == lblColor)
+                            {
+                                if ((eAllocationSizeViewGroupBy)reviewOptionsParms.GroupBy == eAllocationSizeViewGroupBy.Header)
+                                {
+                                    rowLabelCol = 2;
+                                }
+                                else
+                                {
+                                    rowLabelCol = 1;
+                                }
+                            }
+                            else if (col.Label == lblDimension)
+                            {
+                                // only include dimension if not sequential
+                                if (reviewOptionsParms.ViewIsSequential)
+                                {
+                                    rowLabelCol = 999;
+                                }
+                                else
+                                {
+                                    rowLabelCol = 3;
+                                }
+                            }
+                            else if (col.Label == lblVariable)
+                            {
+                                if (reviewOptionsParms.ViewIsSequential)
+                                {
+                                    rowLabelCol = 3;
+                                }
+                                else
+                                {
+                                    rowLabelCol = 4;
+                                }
+                            }
+
+                            string rowLabel = string.Empty;
+                            if (rowLabelCol < RowLabels.GetLength(1))
+                            {
+                                rowLabel = RowLabels[row, rowLabelCol];
+                            }
+
+                            cell = new ROCell(eCellDataType.Label, rowLabel);
                             cell.ColumnPosition = cellColumn;
                             cell.ColumnHeader = int.MaxValue;  // use max so sorts to the end column
                             cell.DisplayedInWindows = true;
