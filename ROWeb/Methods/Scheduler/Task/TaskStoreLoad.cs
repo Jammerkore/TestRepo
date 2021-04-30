@@ -137,8 +137,8 @@ namespace Logility.ROWeb
             DataRow headerDataRow = TaskData.Select(selectString).First();
             string inputDirectory = Convert.ToString(headerDataRow["INPUT_DIRECTORY"]);
             inputDirectory = string.IsNullOrEmpty(inputDirectory) ?
-                string.IsNullOrEmpty(MIDConfigurationManager.AppSettings["FileDirectory"]) ? @"C:\Logility\ROData\Headers" :
-                string.Concat(MIDConfigurationManager.AppSettings["FileDirectory"], @"\Headers") : inputDirectory;
+                string.IsNullOrEmpty(MIDConfigurationManager.AppSettings["FileDirectory"]) ? @"C:\Logility\ROData\Channel" :
+                string.Concat(MIDConfigurationManager.AppSettings["FileDirectory"], @"\Channel") : inputDirectory;
             task.ProcessingDirection = Convert.ToInt32(headerDataRow["FILE_PROCESSING_DIRECTION"]);
             task.Directory = inputDirectory;
             task.FlagFileSuffix = Convert.ToString(headerDataRow["FILE_MASK"]);
