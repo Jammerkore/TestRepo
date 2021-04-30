@@ -157,6 +157,17 @@ namespace MIDRetail.Windows
             return dt;
         }
 
+        public void GetSelectedDates(int iDateRangeRID, out WeekProfile selectedStartWeek, out WeekProfile selectedEndWeek)
+        {
+            if (_calendarDateSelector.DateRangeRID != iDateRangeRID)
+            {
+                _calendarDateSelector.DateRangeRID = iDateRangeRID;
+                _calendarDateSelector.SetUp(iDateRangeRID);
+            }
+
+            _calendarDateSelector.GetSelectedDates(out selectedStartWeek, out selectedEndWeek);
+        }
+
         public DataTable GetDateSelectionTable()
         {
             return _calendar.DateSmallSelectionDataTable;
