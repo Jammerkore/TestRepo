@@ -12067,7 +12067,7 @@ namespace MIDRetail.Business.Allocation
                         MERCH_HN_RID = method.InventoryMinMaxMerchandise.Key;
                         break;
                     case eMerchandiseType.HierarchyLevel:
-                        MERCH_PHL_SEQ = method.InventoryMinMaxMerchandise.Key;
+                        MERCH_PHL_SEQ = method.InventoryMinMaxMerchandiseHierarchy.Value;
                         MERCH_PH_RID = HP.Key;
                         MERCH_HN_RID = Include.NoRID;
                         break;
