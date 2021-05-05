@@ -1628,29 +1628,35 @@ namespace Logility.ROWeb
             if ((eAllocationSizeViewGroupBy)reviewOptionsParms.GroupBy == eAllocationSizeViewGroupBy.Header)
             {
                 viewColumn = GetViewColumnIfExists(0, eMIDTextCode.lbl_Header.GetHashCode().ToString(), out width);
-                cells.Columns.Add(new ROColumnAttributes(lblHeader, viewColumn.VisiblePosition, viewColumn.VisiblePosition, int.MaxValue, true, 0, width));
+                cells.Columns.Add(new ROColumnAttributes(lblHeader, viewColumn != null ? viewColumn.VisiblePosition : k,
+                                    viewColumn != null ? viewColumn.VisiblePosition : k, int.MaxValue, true, 0, width));
                 k++;
                 viewColumn = GetViewColumnIfExists(0, eMIDTextCode.lbl_Color.GetHashCode().ToString(), out width);
-                cells.Columns.Add(new ROColumnAttributes(lblColor, viewColumn.VisiblePosition, viewColumn.VisiblePosition, int.MaxValue, true, 0, width));
+                cells.Columns.Add(new ROColumnAttributes(lblColor, viewColumn != null ? viewColumn.VisiblePosition : k,
+                                    viewColumn != null ? viewColumn.VisiblePosition : k, int.MaxValue, true, 0, width));
             }
             else
             {
                 viewColumn = GetViewColumnIfExists(0, eMIDTextCode.lbl_Color.GetHashCode().ToString(), out width);
-                cells.Columns.Add(new ROColumnAttributes(lblColor, viewColumn.VisiblePosition, viewColumn.VisiblePosition, int.MaxValue, true, 0, width));
+                cells.Columns.Add(new ROColumnAttributes(lblColor, viewColumn != null ? viewColumn.VisiblePosition : k,
+                                    viewColumn != null ? viewColumn.VisiblePosition : k, int.MaxValue, true, 0, width));
                 k++;
                 viewColumn = GetViewColumnIfExists(0, eMIDTextCode.lbl_Header.GetHashCode().ToString(), out width);
-                cells.Columns.Add(new ROColumnAttributes(lblHeader, viewColumn.VisiblePosition, viewColumn.VisiblePosition, int.MaxValue, true, 0, width));
+                cells.Columns.Add(new ROColumnAttributes(lblHeader, viewColumn != null ? viewColumn.VisiblePosition : k,
+                                    viewColumn != null ? viewColumn.VisiblePosition : k, int.MaxValue, true, 0, width));
 
             }
             if (!reviewOptionsParms.ViewIsSequential)
             {
                 k++;
                 viewColumn = GetViewColumnIfExists(0, eMIDTextCode.lbl_Dimension.GetHashCode().ToString(), out width);
-                cells.Columns.Add(new ROColumnAttributes(lblDimension, viewColumn.VisiblePosition, viewColumn.VisiblePosition, int.MaxValue, true, 0, width));
+                cells.Columns.Add(new ROColumnAttributes(lblDimension, viewColumn != null? viewColumn.VisiblePosition: k,
+                                    viewColumn != null ? viewColumn.VisiblePosition : k, int.MaxValue, true, 0, width));
             }
             k++;
             viewColumn = GetViewColumnIfExists(0, eMIDTextCode.lbl_Variable.GetHashCode().ToString(), out width);
-            cells.Columns.Add(new ROColumnAttributes(lblVariable, viewColumn.VisiblePosition, viewColumn.VisiblePosition, int.MaxValue, true, 0, width));
+            cells.Columns.Add(new ROColumnAttributes(lblVariable, viewColumn != null ? viewColumn.VisiblePosition : k,
+                                viewColumn != null ? viewColumn.VisiblePosition : k, int.MaxValue, true, 0, width));
         }
 
         private void AddSizeLabelValues(ROCells cells, ROAllocationReviewOptionsParms reviewOptionsParms, AllocationWafer wafer, eDataType dataType)
@@ -1741,7 +1747,7 @@ namespace Logility.ROWeb
                             }
 
                             cell = new ROCell(eCellDataType.Label, rowLabel);
-                            cell.ColumnPosition = cellColumn;
+                            cell.ColumnPosition = col.ColumnPosition;
                             cell.ColumnHeader = int.MaxValue;  // use max so sorts to the end column
                             cell.DisplayedInWindows = true;
                             cells.ROCell[cellRow][cellColumn] = cell;
