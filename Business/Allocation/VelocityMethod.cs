@@ -12148,6 +12148,10 @@ namespace MIDRetail.Business.Allocation
                 _dsVelocity.Tables["VelocityMatrix"].Clear();
                 _dsVelocity.Tables["VelocityMatrix"].AcceptChanges();
             }
+            else
+            {
+                _velocityGradesMerchandiseKey = Include.NoRID;
+            }
 
             LoadDataArrays();
 
@@ -12164,6 +12168,7 @@ namespace MIDRetail.Business.Allocation
                     return false;
                 }
             }
+            Template_IND = method.IsTemplate;
 
             return true;
         }
