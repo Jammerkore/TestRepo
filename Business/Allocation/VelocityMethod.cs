@@ -10561,6 +10561,8 @@ namespace MIDRetail.Business.Allocation
                 _dataLoaded = true;
             }
 
+            BuildDataTables();
+
             eVelocityCalculateAverageUsing calculateAverageUsing;
             if (_CalculateAverageUsingChain)
             {
@@ -10709,7 +10711,7 @@ namespace MIDRetail.Business.Allocation
                     SAB: SAB);
             }
 
-            BuildDataTables();
+
             AddBasis(method: method);
             AddMerchandiseList(method: method);
             AddVelocityGrades(method: method);

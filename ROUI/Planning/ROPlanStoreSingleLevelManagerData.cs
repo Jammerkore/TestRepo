@@ -439,6 +439,12 @@ namespace Logility.ROUI
                 {
                     cont = false;
 
+                    if (qVarProf.isStoreSingleView && qVarProf.isHighLevel &&
+                                (qVarProf.isChainDetailCube || qVarProf.isStoreDetailCube || qVarProf.isStoreSetCube || qVarProf.isStoreTotalCube))
+                    {
+                        cont = true;
+                    }
+
                     if (qVarProf.isSelectable && cont)
                     {
                         viewRow = (DataRow)qVarKeyHash[qVarProf.Key];
@@ -1422,6 +1428,13 @@ namespace Logility.ROUI
                 foreach (QuantityVariableProfile qVarProf in managerData._quantityVariableProfileList)
                 {
                     cont = false;
+
+                    if (qVarProf.isStoreSingleView && qVarProf.isHighLevel &&
+                                (qVarProf.isChainDetailCube || qVarProf.isStoreDetailCube || qVarProf.isStoreSetCube || qVarProf.isStoreTotalCube))
+                    {
+                        cont = true;
+                    }
+
                     if (qVarProf.isSelectable && cont)
                     {
                         viewRow = (DataRow)qVarKeyHash[qVarProf.Key];
@@ -2305,7 +2318,8 @@ namespace Logility.ROUI
                 {
                     cont = false;
 
-                    if (qVarProf.isLowLevel && qVarProf.isChainDetailCube)
+                    if (qVarProf.isStoreSingleView && qVarProf.isHighLevel &&
+                                (qVarProf.isChainDetailCube || qVarProf.isStoreDetailCube || qVarProf.isStoreSetCube || qVarProf.isStoreTotalCube))
                     {
                         cont = true;
                     }
