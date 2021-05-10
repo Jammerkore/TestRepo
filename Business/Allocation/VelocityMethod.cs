@@ -12127,7 +12127,7 @@ namespace MIDRetail.Business.Allocation
             }
             SetSellThruValues(method: method);
             SetAttributeSet(method: method, setList: attributeSetList.ArrayList);
-            SetVelocityMatrix(method: method, setList: attributeSetList.ArrayList);
+            SetVelocityMatrix(method: method, setList: attributeSetList.ArrayList, velocityGradesChanged: velocityGradesChanged);
 
             if (method.Interactive
                 && !IsInteractive)
@@ -12499,7 +12499,11 @@ namespace MIDRetail.Business.Allocation
 
         }
 
-        private void SetVelocityMatrix(ROMethodAllocationVelocityProperties method, ArrayList setList)
+        private void SetVelocityMatrix(
+            ROMethodAllocationVelocityProperties method, 
+            ArrayList setList,
+            bool velocityGradesChanged
+            )
         {
             if (method.VelocityAction == eVelocityAction.ClearMatrix)
             {
@@ -12522,6 +12526,31 @@ namespace MIDRetail.Business.Allocation
                     attributeSetDataRow.Delete();
                 }
                 dt.AcceptChanges();
+                // remove rows that do not match boundaries
+                if (velocityGradesChanged)
+                {
+                    int boundary;
+                    List<int> boundaries = new List<int>();
+                    List<DataRow> rowsToDelete = new List<DataRow>();
+
+                    foreach (DataRow velocityGradeRow in _dsVelocity.Tables["VelocityGrade"].Rows)
+                    {
+                        boundaries.Add(Convert.ToInt32(velocityGradeRow["Boundary"], CultureInfo.CurrentUICulture));
+                    }
+                    foreach (DataRow matrixRow in dt.Rows)
+                    {
+                        boundary = Convert.ToInt32(matrixRow["Boundary"], CultureInfo.CurrentUICulture);
+                        if (!boundaries.Contains(boundary))
+                        {
+                            rowsToDelete.Add(matrixRow);
+                        }
+                    }
+                    foreach (var matrixRow in rowsToDelete)
+                    {
+                        matrixRow.Delete();
+                    }
+                    dt.AcceptChanges();
+                }
             }
 
             ROMethodAllocationVelocityAttributeSet attributeSet;
