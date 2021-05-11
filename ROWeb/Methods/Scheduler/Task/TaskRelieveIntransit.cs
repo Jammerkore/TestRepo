@@ -273,7 +273,9 @@ namespace Logility.ROWeb
         /// </summary>
         public override void TaskGetValues()
         {
-            TaskData = ScheduleDataLayer.TaskPosting_ReadByTaskList(aTaskListRID: TaskListKey);
+            TaskData = DatabaseSchema.GetTableSchema("TASK_POSTING");
+            // Add the data row for the task
+            TaskData.ImportRow(ScheduleDataLayer.TaskPosting_Read(aTaskListRID: TaskListKey, aTaskSequence: Sequence));
         }
     }
 }
