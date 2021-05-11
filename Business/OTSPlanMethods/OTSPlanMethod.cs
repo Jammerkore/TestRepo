@@ -5922,10 +5922,13 @@ namespace MIDRetail.Business
 
         }
 
+        int _attributeSetKey = Include.NoRID;
+        bool _attributeChanged = false;
 
         override public ROMethodProperties MethodGetData(out bool successful, ref string message, bool processingApply = false)
         {
             successful = true;
+            ProfileList attributeSetList;
 
             KeyValuePair<int, string> thisMethod = GetName.GetMethod(method: this);
 
@@ -5944,32 +5947,71 @@ namespace MIDRetail.Business
             roOverrideLowLevel.LowLevel = lowLevel;
             roOverrideLowLevel.OverrideLowLevelsModel = GetName.GetOverrideLowLevelsModel(OverrideLowLevelRid, SAB);
 
+            // get key of first set in attribute
+            if (_attributeSetKey == Include.NoRID)
+            {
+                attributeSetList = StoreMgmt.StoreGroup_GetLevelListViewList(SG_RID);
+                if (attributeSetList.Count > 0)
+                {
+                    _attributeSetKey = attributeSetList[0].Key;
+                }
+            }
 
             ROPlanningForecastMethodProperties method = new ROPlanningForecastMethodProperties(
-               kvMethod: thisMethod,
-               sDescription: Method_Description,
-               iUserKey: User_RID,
-               kvMerchandise: GetName.GetMerchandiseName(Plan_HN_RID, SAB),
-               bHighLevel: HighLevelInd,
-               bLowLevels: LowLevelsInd,
-               kvVersion: GetName.GetVersion(Plan_FV_RID, SAB),
-               kvLowLevel: GetName.GetOverrideLowLevelsModel(CustomOLL_RID, SAB),
-               kvDateRange: GetName.GetCalendarDateRange(CDR_RID, SAB),
+               method: thisMethod,
+               description: Method_Description,
+               userKey: User_RID,
+               merchandise: GetName.GetMerchandiseName(Plan_HN_RID, SAB),
+               highLevel: HighLevelInd,
+               lowLevels: LowLevelsInd,
+               version: GetName.GetVersion(Plan_FV_RID, SAB),
+               lowLevel: GetName.GetOverrideLowLevelsModel(CustomOLL_RID, SAB),
+               dateRange: GetName.GetCalendarDateRange(CDR_RID, SAB),
                overrideLowLevel: roOverrideLowLevel,
-               kvChainForecastVersion: GetName.GetVersion(Chain_FV_RID, SAB),
-               bSalesBalance: Bal_Sales_Ind,
-               bStockBalance: Bal_Stock_Ind,
+               chainVersion: GetName.GetVersion(Chain_FV_RID, SAB),
+               salesBalance: Bal_Sales_Ind,
+               stockBalance: Bal_Stock_Ind,
                applyTrendOptions: GetApplyTrendOptions(ApplyTrendOptionsInd),
-               fApplyTrendOptionsValue: ApplyTrendOptionsWOSValue,
-               kvStoreAttribute: GetName.GetAttributeName(SG_RID),
+               applyTrendOptionsValue: ApplyTrendOptionsWOSValue,
+               attribute: GetName.GetAttributeName(SG_RID),
+               attributeSet: GetName.GetAttributeSetName(key: _attributeSetKey),
                isTemplate: Template_IND
                );
 
             foreach (GroupLevelFunctionProfile GLFProfile in _GLFProfileList)
             {
-                method.AttributeSetProperties.Add(BuildAttributeSetProperties(GLFProfile));
+                if (GLFProfile.Key != _attributeSetKey)
+                {
+                    continue;
+                }
+
+                method.AttributeSetValues = BuildAttributeSetProperties(GLFProfile);
             }
+
+            BuildVersionLists(method: method);
+
             return method;
+        }
+
+        private void BuildVersionLists(ROPlanningForecastMethodProperties method)
+        {
+            ProfileList storeVersionList = GetForecastVersionList(eSecuritySelectType.Update, eSecurityTypes.Store, true, Plan_FV_RID, true);
+            foreach (VersionProfile versionProfile in storeVersionList)
+            {
+                method.Versions.Add(new KeyValuePair<int, string>(versionProfile.Key, versionProfile.Description));
+            }
+
+            ProfileList chainVersionList = GetForecastVersionList(eSecuritySelectType.View | eSecuritySelectType.Update, eSecurityTypes.Chain, true, Chain_FV_RID);
+            foreach (VersionProfile versionProfile in chainVersionList)
+            {
+                method.ChainVersions.Add(new KeyValuePair<int, string>(versionProfile.Key, versionProfile.Description));
+            }
+
+            ProfileList basisVersionList = base.GetForecastVersionList(eSecuritySelectType.View | eSecuritySelectType.Update, eSecurityTypes.Store);
+            foreach (VersionProfile versionProfile in basisVersionList)
+            {
+                method.BasisVersions.Add(new KeyValuePair<int, string>(versionProfile.Key, versionProfile.Description));
+            }
         }
 
         private ROPlanningForecastMethodAttributeSetProperties BuildAttributeSetProperties(GroupLevelFunctionProfile GLFProfile)
@@ -6009,30 +6051,30 @@ namespace MIDRetail.Business
             storeGrades = MergeStoreGradesWithStockMinMax(storeGrades, stockMinMaxes);
 
             ROPlanningForecastMethodAttributeSetProperties attributeSetProperties = new ROPlanningForecastMethodAttributeSetProperties(
-                   kvAttributeSet: GetName.GetAttributeSetName(GLFProfile.Key),
-                   bIsDefaultProperties: GLFProfile.Default_IND,
-                   bIsAttributeSetForecast: GLFProfile.Plan_IND,
-                   bIsAttributeSetToUseDefault: GLFProfile.Use_Default_IND,
+                   attributeSet: GetName.GetAttributeSetName(GLFProfile.Key),
+                   isDefaultProperties: GLFProfile.Default_IND,
+                   isAttributeSetForecast: GLFProfile.Plan_IND,
+                   isAttributeSetToUseDefault: GLFProfile.Use_Default_IND,
                    forecastMethod: GetName.GetForecastMethodType(GLFProfile.GLFT_ID),
                    smoothBy: GetName.GetSmoothByType(GLFProfile.GLSB_ID),
-                   roForecastBasisDetailProfiles: forecastBasisDetailProfiles,
-                   kvStockMerchandise: GetName.GetMerchandiseName(GLNFunction.HN_RID, SAB),
-                   bApplyMinMax: GLNFunction.ApplyMinMaxesInd,
+                   forecastBasisDetailProfiles: forecastBasisDetailProfiles,
+                   stockMerchandise: GetName.GetMerchandiseName(GLNFunction.HN_RID, SAB),
+                   applyMinMax: GLNFunction.ApplyMinMaxesInd,
                    minMaxInheritType: GLNFunction.MinMaxInheritType,
                    storeGrades: storeGrades,
-                   roForecastBasisDetailProfilesTY: forecastBasisDetailProfilesTY,
-                   bEqualizingWaitingTY: GLFProfile.TY_Weight_Multiple_Basis_Ind,
-                   roForecastBasisDetailProfilesLY: forecastBasisDetailProfilesLY,
-                   bEqualizingWaitingLY: GLFProfile.LY_Weight_Multiple_Basis_Ind,
-                   bIsAlternateLY: GLFProfile.LY_Alt_IND,
-                   roForcastBasisDetailProfilesApplyTrendTo: forecastBasisDetailProfilesTrend,
-                   bEqualizingWaitingApplyTrendTo: GLFProfile.Apply_Weight_Multiple_Basis_Ind,
-                   bIsAlternateApplyTrendTo: GLFProfile.Trend_Alt_IND,
-                   bIsProjectCurrentWeekSales: GLFProfile.Proj_Curr_Wk_Sales_IND,
+                   forecastBasisDetailProfilesTY: forecastBasisDetailProfilesTY,
+                   equalizingWaitingTY: GLFProfile.TY_Weight_Multiple_Basis_Ind,
+                   forecastBasisDetailProfilesLY: forecastBasisDetailProfilesLY,
+                   equalizingWaitingLY: GLFProfile.LY_Weight_Multiple_Basis_Ind,
+                   isAlternateLY: GLFProfile.LY_Alt_IND,
+                   forcastBasisDetailProfilesApplyTrendTo: forecastBasisDetailProfilesTrend,
+                   equalizingWaitingApplyTrendTo: GLFProfile.Apply_Weight_Multiple_Basis_Ind,
+                   isAlternateApplyTrendTo: GLFProfile.Trend_Alt_IND,
+                   isProjectCurrentWeekSales: GLFProfile.Proj_Curr_Wk_Sales_IND,
                    trendCapId: trendCapId,
-                   iTrendCapsTolerance: intTrendCapsTolerance,
-                   iTrendCapsLowLimit: intTrendCapsLowLimit,
-                   iTrendCapsHighLimit: intTrendCapsHighLimit
+                   trendCapsTolerance: intTrendCapsTolerance,
+                   trendCapsLowLimit: intTrendCapsLowLimit,
+                   trendCapsHighLimit: intTrendCapsHighLimit
                 );
 
             return attributeSetProperties;
@@ -6294,14 +6336,31 @@ namespace MIDRetail.Business
                 LowLevelsType = (eLowLevelsType)properties.OverrideLowLevel.LowLevel.LevelType;
 
                 OverrideLowLevelRid = properties.OverrideLowLevel.OverrideLowLevelsModel.Key;
-                Chain_FV_RID = properties.ChainForcastVersion.Key;
+                Chain_FV_RID = properties.ChainVersion.Key;
                 Bal_Sales_Ind = properties.SalesBalance;
                 Bal_Stock_Ind = properties.StockBalance;
                 ApplyTrendOptionsInd = SetApplyTrendOptions(properties.ApplyTrendOptions);
                 ApplyTrendOptionsWOSValue = properties.ApplyTrendOptionsValue;
-                SG_RID = properties.StoreAttribute.Key;
+                _attributeChanged = SG_RID != properties.Attribute.Key;
+                SG_RID = properties.Attribute.Key;
 
-                foreach (ROPlanningForecastMethodAttributeSetProperties item in properties.AttributeSetProperties)
+                if (properties.AttributeSetIsSet)
+                {
+                    _attributeSetKey = properties.AttributeSet.Key;
+                    // check to determine if attribute set is part of new attribute
+                    // if not, set so will use first set in the attribute
+                    if (_attributeChanged)
+                    {
+                        ProfileList attributeSetList = StoreMgmt.StoreGroup_GetLevelListViewList(SG_RID);
+                        if (attributeSetList.FindKey(aKey: _attributeSetKey) == null)
+                        {
+                            _attributeSetKey = Include.NoRID;
+                        }
+                    }
+                }
+
+                //foreach (ROPlanningForecastMethodAttributeSetProperties item in properties.AttributeSetProperties)
+                ROPlanningForecastMethodAttributeSetProperties item = properties.AttributeSetValues;
                 {
                     GroupLevelFunctionProfile newGLFP = new GroupLevelFunctionProfile(item.AttributeSet.Key);
                     GroupLevelNodeFunction GLNFunction = new GroupLevelNodeFunction();  //(GroupLevelNodeFunction)newGLFP.Group_Level_Nodes[Plan_HN_RID];

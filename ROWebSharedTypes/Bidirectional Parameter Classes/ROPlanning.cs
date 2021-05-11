@@ -87,6 +87,14 @@ namespace Logility.ROWebSharedTypes
         }
 
         [DataMember(IsRequired = true)]
+        private List<KeyValuePair<int, string>> _versions;
+        public List<KeyValuePair<int, string>> Versions { get { return _versions; } }
+
+        [DataMember(IsRequired = true)]
+        private List<KeyValuePair<int, string>> _basisVersions;
+        public List<KeyValuePair<int, string>> BasisVersions { get { return _basisVersions; } }
+
+        [DataMember(IsRequired = true)]
         private KeyValuePair<int, string> _lowLevel;
 
         public KeyValuePair<int, string> LowLevel
@@ -113,13 +121,18 @@ namespace Logility.ROWebSharedTypes
             set { _overrideLowLevel = value; }
         }
         [DataMember(IsRequired = true)]
-        private KeyValuePair<int, string> _chainForecastVersion;
+        private KeyValuePair<int, string> _chainVersion;
 
-        public KeyValuePair<int, string> ChainForcastVersion
+        public KeyValuePair<int, string> ChainVersion
         {
-            get { return _chainForecastVersion; }
-            set { _chainForecastVersion = value; }
+            get { return _chainVersion; }
+            set { _chainVersion = value; }
         }
+
+        [DataMember(IsRequired = true)]
+        private List<KeyValuePair<int, string>> _chainVersions;
+        public List<KeyValuePair<int, string>> ChainVersions { get { return _chainVersions; } }
+
         [DataMember(IsRequired = true)]
         private bool _salesBalance;
 
@@ -155,63 +168,85 @@ namespace Logility.ROWebSharedTypes
         }
 
         [DataMember(IsRequired = true)]
-        private KeyValuePair<int, string> _storeAttribute;
+        private KeyValuePair<int, string> _attribute;
 
-        public KeyValuePair<int, string> StoreAttribute
+        public KeyValuePair<int, string> Attribute
         {
-            get { return _storeAttribute; }
-            set { _storeAttribute = value; }
+            get { return _attribute; }
+            set { _attribute = value; }
+        }
+        public bool AttributeIsSet
+        {
+            get { return !_attributeSet.Equals(default(KeyValuePair<int, string>)); }
+        }
+
+        [DataMember(IsRequired = true)]
+        private KeyValuePair<int, string> _attributeSet;
+        public KeyValuePair<int, string> AttributeSet
+        {
+            get { return _attributeSet; }
+            set { _attributeSet = value; }
+        }
+        public bool AttributeSetIsSet
+        {
+            get { return !_attributeSet.Equals(default(KeyValuePair<int, string>)); }
         }
 
 
         [DataMember(IsRequired = true)]
-        private List<ROPlanningForecastMethodAttributeSetProperties> _attributeSetProperties;
+        private ROPlanningForecastMethodAttributeSetProperties _attributeSetValues;
 
-        public List<ROPlanningForecastMethodAttributeSetProperties> AttributeSetProperties
+        public ROPlanningForecastMethodAttributeSetProperties AttributeSetValues
         {
-            get { return _attributeSetProperties; }
-            //set { _attributeSetProperties = value; }
+            get { return _attributeSetValues; }
+            set { _attributeSetValues = value; }
         }
 
         public ROPlanningForecastMethodProperties(
-            KeyValuePair<int, string> kvMethod, 
-            string sDescription, int iUserKey,
-            KeyValuePair<int, string> kvMerchandise, 
-            bool bHighLevel, 
-            bool bLowLevels, 
-            KeyValuePair<int, string> kvVersion,
-            KeyValuePair<int, string> kvLowLevel, 
-            KeyValuePair<int, string> kvDateRange, 
+            KeyValuePair<int, string> method,
+            string description,
+            int userKey,
+            KeyValuePair<int, string> merchandise, 
+            bool highLevel, 
+            bool lowLevels, 
+            KeyValuePair<int, string> version,
+            KeyValuePair<int, string> lowLevel, 
+            KeyValuePair<int, string> dateRange, 
             ROOverrideLowLevel overrideLowLevel,
-            KeyValuePair<int, string> kvChainForecastVersion, 
-            bool bSalesBalance, 
-            bool bStockBalance, 
+            KeyValuePair<int, string> chainVersion, 
+            bool salesBalance, 
+            bool stockBalance, 
             eApplyTrendOptions applyTrendOptions,
-            float fApplyTrendOptionsValue, 
-            KeyValuePair<int, string> kvStoreAttribute,
+            float applyTrendOptionsValue,
+            KeyValuePair<int, string> attribute,
+            KeyValuePair<int, string> attributeSet,
             bool isTemplate = false
             ) 
             : base(
                 eMethodType.OTSPlan, 
-                kvMethod, 
-                sDescription, 
-                iUserKey,
+                method, 
+                description, 
+                userKey,
                 isTemplate)
         {
-            _merchandise = kvMerchandise;
-            _highLevel = bHighLevel;
-            _lowLevels = bLowLevels;
-            _version = kvVersion;
-            _lowLevel = kvLowLevel;
-            _dateRange = kvDateRange;
+            _merchandise = merchandise;
+            _highLevel = highLevel;
+            _lowLevels = lowLevels;
+            _version = version;
+            _lowLevel = lowLevel;
+            _dateRange = dateRange;
             _overrideLowLevel = overrideLowLevel;
-            _chainForecastVersion = kvChainForecastVersion;
-            _salesBalance = bSalesBalance;
-            _stockBalance = bStockBalance;
+            _chainVersion = chainVersion;
+            _salesBalance = salesBalance;
+            _stockBalance = stockBalance;
             _applyTrendOptions = applyTrendOptions;
-            _applyTrendOptionsValue = fApplyTrendOptionsValue;
-            _storeAttribute = kvStoreAttribute;
-            _attributeSetProperties = new List<ROPlanningForecastMethodAttributeSetProperties>();
+            _applyTrendOptionsValue = applyTrendOptionsValue;
+            _attribute = attribute;
+            _attributeSet = attributeSet;
+            //_attributeSetProperties = new List<ROPlanningForecastMethodAttributeSetProperties>();
+            _versions = new List<KeyValuePair<int, string>>();
+            _chainVersions = new List<KeyValuePair<int, string>>();
+            _basisVersions = new List<KeyValuePair<int, string>>();
         }
     }
 
@@ -438,40 +473,58 @@ namespace Logility.ROWebSharedTypes
         }
 
         #endregion
-        public ROPlanningForecastMethodAttributeSetProperties(KeyValuePair<int, string> kvAttributeSet, bool bIsDefaultProperties, bool bIsAttributeSetForecast, bool bIsAttributeSetToUseDefault,
+        public ROPlanningForecastMethodAttributeSetProperties(
+            KeyValuePair<int, string> attributeSet, 
+            bool isDefaultProperties, 
+            bool isAttributeSetForecast, 
+            bool isAttributeSetToUseDefault,
             KeyValuePair<eGroupLevelFunctionType, string> forecastMethod,
-            KeyValuePair<eGroupLevelSmoothBy, string> smoothBy, List<ROForecastingBasisDetailsProfile> roForecastBasisDetailProfiles, KeyValuePair<int, string> kvStockMerchandise,
-            bool bApplyMinMax, eMinMaxInheritType minMaxInheritType, List<ROPlanningStoreGrade> storeGrades, List<ROForecastingBasisDetailsProfile> roForecastBasisDetailProfilesTY,
-            bool bEqualizingWaitingTY, List<ROForecastingBasisDetailsProfile> roForecastBasisDetailProfilesLY, bool bEqualizingWaitingLY, bool bIsAlternateLY,
-            List<ROForecastingBasisDetailsProfile> roForcastBasisDetailProfilesApplyTrendTo, bool bEqualizingWaitingApplyTrendTo, bool bIsAlternateApplyTrendTo, bool bIsProjectCurrentWeekSales,
-            eTrendCapID trendCapId, int iTrendCapsTolerance, int iTrendCapsLowLimit, int iTrendCapsHighLimit
+            KeyValuePair<eGroupLevelSmoothBy, string> smoothBy, 
+            List<ROForecastingBasisDetailsProfile> forecastBasisDetailProfiles, 
+            KeyValuePair<int, string> stockMerchandise,
+            bool applyMinMax, 
+            eMinMaxInheritType minMaxInheritType, 
+            List<ROPlanningStoreGrade> storeGrades, 
+            List<ROForecastingBasisDetailsProfile> forecastBasisDetailProfilesTY,
+            bool equalizingWaitingTY, 
+            List<ROForecastingBasisDetailsProfile> forecastBasisDetailProfilesLY, 
+            bool equalizingWaitingLY, 
+            bool isAlternateLY,
+            List<ROForecastingBasisDetailsProfile> forcastBasisDetailProfilesApplyTrendTo, 
+            bool equalizingWaitingApplyTrendTo, 
+            bool isAlternateApplyTrendTo, 
+            bool isProjectCurrentWeekSales,
+            eTrendCapID trendCapId, 
+            int trendCapsTolerance, 
+            int trendCapsLowLimit, 
+            int trendCapsHighLimit
 
             )
         {
-            _attributeSet = kvAttributeSet;
-            _isDefaultProperties = bIsDefaultProperties;
-            _isAttributeSetForecast = bIsAttributeSetForecast;
-            _isAttributeSetToUseDefault = bIsAttributeSetToUseDefault;
+            _attributeSet = attributeSet;
+            _isDefaultProperties = isDefaultProperties;
+            _isAttributeSetForecast = isAttributeSetForecast;
+            _isAttributeSetToUseDefault = isAttributeSetToUseDefault;
             _forecastMethod = forecastMethod;
             _smoothBy = smoothBy;
-            _roForecastBasisDetailProfiles = roForecastBasisDetailProfiles;
-            _stockMerchandise = kvStockMerchandise;
-            _applyMinMax = bApplyMinMax;
-            _minMaxInheritType = MinMaxInheritType;
+            _roForecastBasisDetailProfiles = forecastBasisDetailProfiles;
+            _stockMerchandise = stockMerchandise;
+            _applyMinMax = applyMinMax;
+            _minMaxInheritType = minMaxInheritType;
             _storeGrades = storeGrades;
-            _roForecastBasisDetailProfilesTY = roForecastBasisDetailProfilesTY;
-            _equalizingWaitingTY = bEqualizingWaitingTY;
-            _roForecastBasisDetailProfilesLY = roForecastBasisDetailProfilesLY;
-            _equalizingWaitingLY = bEqualizingWaitingLY;
-            _isAlternateLY = bIsAlternateLY;
-            _roForecastBasisDetailProfilesApplyTrendTo = roForcastBasisDetailProfilesApplyTrendTo;
-            _equalizingWaitingApplyTrendTo = bEqualizingWaitingTY;
-            _isAlternateApplyTrendTo = bIsAlternateApplyTrendTo;
-            _isProjectCurrentWeekSales = bIsProjectCurrentWeekSales;
+            _roForecastBasisDetailProfilesTY = forecastBasisDetailProfilesTY;
+            _equalizingWaitingTY = equalizingWaitingTY;
+            _roForecastBasisDetailProfilesLY = forecastBasisDetailProfilesLY;
+            _equalizingWaitingLY = equalizingWaitingLY;
+            _isAlternateLY = isAlternateLY;
+            _roForecastBasisDetailProfilesApplyTrendTo = forcastBasisDetailProfilesApplyTrendTo;
+            _equalizingWaitingApplyTrendTo = equalizingWaitingTY;
+            _isAlternateApplyTrendTo = isAlternateApplyTrendTo;
+            _isProjectCurrentWeekSales = isProjectCurrentWeekSales;
             _trendCapId = trendCapId;
-            _trendCapsTolerance = iTrendCapsTolerance;
-            _trendCapsLowLimit = iTrendCapsLowLimit;
-            _trendCapsHighLimit = iTrendCapsHighLimit;
+            _trendCapsTolerance = trendCapsTolerance;
+            _trendCapsLowLimit = trendCapsLowLimit;
+            _trendCapsHighLimit = trendCapsHighLimit;
         }
     }
 
