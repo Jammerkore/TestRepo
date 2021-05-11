@@ -660,7 +660,10 @@ namespace Logility.ROWeb
 
                 // insert the tasks for the task list
                 ScheduleDataLayer.Task_Insert(_tasksDataTable);
-
+                // To remove Task instance _taskListTasks based on Task sent from client side
+                _taskListTasks = _taskListTasks.
+                                    Where(w => taskListParameters.ROTaskListProperties.Tasks.Select(s => s.TaskType).Contains(w.Key)).
+                                    ToDictionary(d => d.Key, d => d.Value);
                 // insert the data for each task type
                 foreach (KeyValuePair<eTaskType, TaskBase> task in _taskListTasks)
                 {
