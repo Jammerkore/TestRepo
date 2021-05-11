@@ -12118,7 +12118,8 @@ namespace MIDRetail.Business.Allocation
 
             SetComponent(method: method);
             SetBasis(method: method);
-            bool velocityGradesChanged = SetVelocityGrades(method: method);
+            bool velocityBoundaryChanged;
+            bool velocityGradesChanged = SetVelocityGrades(method: method, velocityBoundaryChanged: out velocityBoundaryChanged);
             if (velocityGradesChanged
                 && !method.AddingMethod)
             {
@@ -12127,7 +12128,7 @@ namespace MIDRetail.Business.Allocation
             }
             SetSellThruValues(method: method);
             SetAttributeSet(method: method, setList: attributeSetList.ArrayList);
-            SetVelocityMatrix(method: method, setList: attributeSetList.ArrayList, velocityGradesChanged: velocityGradesChanged);
+            SetVelocityMatrix(method: method, setList: attributeSetList.ArrayList, velocityBoundaryChanged: velocityBoundaryChanged);
 
             if (method.Interactive
                 && !IsInteractive)
@@ -12305,9 +12306,10 @@ namespace MIDRetail.Business.Allocation
             }
         }
 
-        private bool SetVelocityGrades(ROMethodAllocationVelocityProperties method)
+        private bool SetVelocityGrades(ROMethodAllocationVelocityProperties method, out bool velocityBoundaryChanged)
         {
             bool velocityGradesChanged = false;
+            velocityBoundaryChanged = false;
             DataTable dt = _dsVelocity.Tables["VelocityGrade"];
             DataRow row;
             int rowIndex = 0;
@@ -12327,9 +12329,10 @@ namespace MIDRetail.Business.Allocation
                         {
                             velocityGradesChanged = true;
                         }
-                        else if (Convert.ToInt32(row["Boundary"]) != velocityGrade.StoreGrade.Key)
+                        if (Convert.ToInt32(row["Boundary"]) != velocityGrade.StoreGrade.Key)
                         {
                             velocityGradesChanged = true;
+                            velocityBoundaryChanged = true;
                         }
                         int? minStock = null;
                         int? inputMinStock = null;
@@ -12502,7 +12505,7 @@ namespace MIDRetail.Business.Allocation
         private void SetVelocityMatrix(
             ROMethodAllocationVelocityProperties method, 
             ArrayList setList,
-            bool velocityGradesChanged
+            bool velocityBoundaryChanged
             )
         {
             if (method.VelocityAction == eVelocityAction.ClearMatrix)
@@ -12527,7 +12530,7 @@ namespace MIDRetail.Business.Allocation
                 }
                 dt.AcceptChanges();
                 // remove rows that do not match boundaries
-                if (velocityGradesChanged)
+                if (velocityBoundaryChanged)
                 {
                     int boundary;
                     List<int> boundaries = new List<int>();
