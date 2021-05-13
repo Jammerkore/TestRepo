@@ -11241,7 +11241,7 @@ namespace MIDRetail.Business.Allocation
             {
                 foreach (GroupLvlMatrix groupLevelMatrix in _groupLvlMtrxData.Values)
                 {
-                    if (groupLevelMatrix.SglRID != method.AttributeSet.Key)
+                    if (groupLevelMatrix.SglRID == method.AttributeSet.Key)
                     {
                         glm = groupLevelMatrix;
                         break;
