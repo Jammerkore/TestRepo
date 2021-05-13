@@ -173,6 +173,10 @@ namespace Logility.ROWeb
                 {
                     _returnCode = eROReturnCode.Successful;
                 }
+                else
+                {
+                    _returnCode = eROReturnCode.ChangedToReadOnly;
+                }
                 return new ROGridData(_returnCode, _sROMessage, ROInstanceID, roData, iFirstRowItem, iLastRowItem, iTotalRowItems, iNumberOfRows,
                     iFirstColItem, iLastColItem, iTotalColItems, iNumberOfColumns);
 

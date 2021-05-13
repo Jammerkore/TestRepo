@@ -830,6 +830,11 @@ namespace Logility.ROWeb
                     }
                     _headersLocked = true;
                 }
+                else
+                {
+                    MIDEnvironment.isChangedToReadOnly = true;
+                    _sROMessage = MIDText.GetTextOnly(eMIDTextCode.msg_ReadOnlyMode);
+                }
 
                 if (_fromAssortment
                     && _wafers == null)
