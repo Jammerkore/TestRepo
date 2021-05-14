@@ -120,6 +120,19 @@ namespace Logility.ROWebSharedTypes
             get { return _overrideLowLevel; }
             set { _overrideLowLevel = value; }
         }
+
+        [DataMember(IsRequired = true)]
+        private eMerchandiseType _hierarchyLevelsType;
+        public eMerchandiseType HierarchyLevelsType
+        {
+            get { return _hierarchyLevelsType; }
+            set { _hierarchyLevelsType = value; }
+        }
+
+        [DataMember(IsRequired = true)]
+        private List<KeyValuePair<int, string>> _hierarchyLevels;
+        public List<KeyValuePair<int, string>> HierarchyLevels { get { return _hierarchyLevels; } }
+
         [DataMember(IsRequired = true)]
         private KeyValuePair<int, string> _chainVersion;
 
@@ -247,6 +260,8 @@ namespace Logility.ROWebSharedTypes
             _versions = new List<KeyValuePair<int, string>>();
             _chainVersions = new List<KeyValuePair<int, string>>();
             _basisVersions = new List<KeyValuePair<int, string>>();
+            _hierarchyLevelsType = eMerchandiseType.Undefined;
+            _hierarchyLevels = new List<KeyValuePair<int, string>>();
         }
     }
 

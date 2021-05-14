@@ -5988,7 +5988,18 @@ namespace MIDRetail.Business
                 method.AttributeSetValues = BuildAttributeSetProperties(GLFProfile);
             }
 
+            if (method.AttributeSetValues == null)
+            {
+                GroupLevelFunctionProfile GLFProfile = new GroupLevelFunctionProfile(aKey: _attributeSetKey);
+                method.AttributeSetValues = BuildAttributeSetProperties(GLFProfile);
+            }
+
             BuildVersionLists(method: method);
+
+            if (Plan_HN_RID > 0)
+            {
+                BuildLowLevelList(method: method);
+            }
 
             return method;
         }
@@ -6014,10 +6025,40 @@ namespace MIDRetail.Business
             }
         }
 
+        private void BuildLowLevelList(ROPlanningForecastMethodProperties method)
+        {
+            eMerchandiseType merchandiseType;
+            List<HierarchyLevelComboObject> levelList = HierarchyTools.GetLevelsList(
+                sessionAddressBlock: SAB,
+                nodeKey: Plan_HN_RID,
+                includeHomeLevel: false,
+                includeOrganizationLevelsForAlternate: false,
+                merchandiseType: out merchandiseType
+                );
+
+            method.HierarchyLevelsType = merchandiseType;
+            foreach (HierarchyLevelComboObject level in levelList)
+            {
+                if (merchandiseType == eMerchandiseType.LevelOffset)
+                {
+                    method.HierarchyLevels.Add(new KeyValuePair<int, string>(level.LevelIndex, level.ToString()));
+                }
+                else
+                {
+                    method.HierarchyLevels.Add(new KeyValuePair<int, string>(level.Level, level.LevelName));
+                }
+            }
+        }
+         
         private ROPlanningForecastMethodAttributeSetProperties BuildAttributeSetProperties(GroupLevelFunctionProfile GLFProfile)
         {
 
             GroupLevelNodeFunction GLNFunction = (GroupLevelNodeFunction)GLFProfile.Group_Level_Nodes[Plan_HN_RID];
+
+            if (GLNFunction == null)
+            {
+                GLNFunction = new GroupLevelNodeFunction();
+            }
 
             ProfileList pl = GLFProfile.Trend_Caps;
             TrendCapsProfile trendCapsProfile = null;
