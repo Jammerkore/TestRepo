@@ -3462,7 +3462,10 @@ namespace Logility.ROWebSharedTypes
         KeyValuePair<int, string> _similarStoresAttribute;
 
         [DataMember(IsRequired = true)]
-        List<RONodePropertiesSizeCurvesSimilarStoresAttributeSet> _similarStoresAttributeSets;
+        KeyValuePair<int, string> _similarStoresAttributeSet;
+
+        [DataMember(IsRequired = true)]
+        RONodePropertiesSizeCurvesSimilarStoresAttributeSet _similarStoresAttributeSetValues;
 
         #region Public Properties
 
@@ -3709,9 +3712,20 @@ namespace Logility.ROWebSharedTypes
             get { return _similarStoresAttribute; }
             set { _similarStoresAttribute = value; }
         }
-        public List<RONodePropertiesSizeCurvesSimilarStoresAttributeSet> SimilarStoresAttributeSets
+        public bool SimilarStoresAttributeSetIsSet
         {
-            get { return _similarStoresAttributeSets; }
+            get { return !_similarStoresAttributeSet.Equals(default(KeyValuePair<int, string>)); }
+        }
+        public KeyValuePair<int, string> SimilarStoresAttributeSet
+        {
+            get { return _similarStoresAttributeSet; }
+            set { _similarStoresAttributeSet = value; }
+        }
+
+        public RONodePropertiesSizeCurvesSimilarStoresAttributeSet SimilarStoresAttributeSetValues
+        {
+            get { return _similarStoresAttributeSetValues; }
+            set { _similarStoresAttributeSetValues = value; }
         }
 
         #endregion
@@ -3743,8 +3757,9 @@ namespace Logility.ROWebSharedTypes
 
             // Similar Stores
 
-            _similarStoresAttributeSets = new List<RONodePropertiesSizeCurvesSimilarStoresAttributeSet>();
+            // _similarStoresAttributeSets = new List<RONodePropertiesSizeCurvesSimilarStoresAttributeSet>();
             _similarStoresAttribute = default(KeyValuePair<int, string>);
+            _similarStoresAttributeSet = default(KeyValuePair<int, string>);
         }
     }
 

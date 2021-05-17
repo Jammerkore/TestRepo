@@ -516,10 +516,22 @@ namespace Logility.ROWeb
             StoreProfile sp;
             string inheritedFromText = MIDText.GetTextOnly(eMIDTextCode.lbl_Inherited_From);
 
-            ProfileList storeEligibilityGroupLevelList = StoreMgmt.StoreGroup_GetLevelListViewList(nodeProperties.SimilarStoresAttribute.Key, true);
+            ProfileList storeSimilarStoresGroupLevelList = StoreMgmt.StoreGroup_GetLevelListViewList(nodeProperties.SimilarStoresAttribute.Key, true);
 
-            foreach (StoreGroupLevelListViewProfile sglp in storeEligibilityGroupLevelList)
+            if (!nodeProperties.SimilarStoresAttributeSetIsSet)
             {
+                StoreGroupLevelListViewProfile attributeSet = (StoreGroupLevelListViewProfile)storeSimilarStoresGroupLevelList[0];
+                nodeProperties.SimilarStoresAttributeSet = new KeyValuePair<int, string>(attributeSet.Key, attributeSet.Name);
+            }
+
+
+            foreach (StoreGroupLevelListViewProfile sglp in storeSimilarStoresGroupLevelList)
+            {
+                if (sglp.Key != nodeProperties.SimilarStoresAttributeSet.Key)
+                {
+                    continue;
+                }
+
                 similarStoresAttributeSet = new RONodePropertiesSizeCurvesSimilarStoresAttributeSet(attributeSet: new KeyValuePair<int, string>(sglp.Key, sglp.Name));
                 foreach (StoreProfile storeProfile in sglp.Stores)
                 {
@@ -551,7 +563,8 @@ namespace Logility.ROWeb
                     similarStoresAttributeSet.SimilarStores.Add(sizeCurvesStore);
                 }
 
-                nodeProperties.SimilarStoresAttributeSets.Add(similarStoresAttributeSet);
+                // nodeProperties.SimilarStoresAttributeSets.Add(similarStoresAttributeSet);
+                nodeProperties.SimilarStoresAttributeSetValues = similarStoresAttributeSet;
             }
         }
 
@@ -909,7 +922,8 @@ namespace Logility.ROWeb
 
             SizeCurveSimilarStoreProfile scsp;
 
-            foreach (RONodePropertiesSizeCurvesSimilarStoresAttributeSet attributeSet in nodePropertiesSizeCurvesData.SimilarStoresAttributeSets)
+            //foreach (RONodePropertiesSizeCurvesSimilarStoresAttributeSet attributeSet in nodePropertiesSizeCurvesData.SimilarStoresAttributeSets)
+            RONodePropertiesSizeCurvesSimilarStoresAttributeSet attributeSet = nodePropertiesSizeCurvesData.SimilarStoresAttributeSetValues;
             {
                 foreach (RONodePropertiesSizeCurvesSimilarStore similarStore in attributeSet.SimilarStores)
                 {
@@ -1209,10 +1223,15 @@ namespace Logility.ROWeb
         override public ROProfileKeyParms NodePropertiesGetParms(RONodePropertiesParms parms, eProfileType profileType, int key, bool readOnly = false)
         {
             int attributeKey = Include.NoRID;
+            int attributeSetKey = Include.NoRID;
             if (parms.RONodeProperties is RONodePropertiesSizeCurves)
             {
                 RONodePropertiesSizeCurves nodePropertiesSizeCurvesData = (RONodePropertiesSizeCurves)parms.RONodeProperties;
                 attributeKey = nodePropertiesSizeCurvesData.SimilarStoresAttribute.Key;
+                if (nodePropertiesSizeCurvesData.SimilarStoresAttributeSetIsSet)
+                {
+                    attributeSetKey = nodePropertiesSizeCurvesData.SimilarStoresAttributeSet.Key;
+                }
             }
 
             RONodePropertyAttributeKeyParms profileKeyParms = new RONodePropertyAttributeKeyParms(sROUserID: parms.ROUserID,
@@ -1223,7 +1242,8 @@ namespace Logility.ROWeb
                 profileType: profileType,
                 key: key,
                 readOnly: readOnly,
-                attributeKey: attributeKey
+                attributeKey: attributeKey,
+                attributeSetKey: attributeSetKey
                 );
 
             return profileKeyParms;
