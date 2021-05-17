@@ -5985,13 +5985,13 @@ namespace MIDRetail.Business
                     continue;
                 }
 
-                method.AttributeSetValues = BuildAttributeSetProperties(GLFProfile, roOverrideLowLevel.LowLevel.LevelValue);
+                method.AttributeSetValues = BuildAttributeSetProperties(GLFProfile, roOverrideLowLevel.LowLevel);
             }
 
             if (method.AttributeSetValues == null)
             {
                 GroupLevelFunctionProfile GLFProfile = new GroupLevelFunctionProfile(aKey: _attributeSetKey);
-                method.AttributeSetValues = BuildAttributeSetProperties(GLFProfile, roOverrideLowLevel.LowLevel.LevelValue);
+                method.AttributeSetValues = BuildAttributeSetProperties(GLFProfile, roOverrideLowLevel.LowLevel);
             }
 
             BuildVersionLists(method: method);
@@ -6051,8 +6051,8 @@ namespace MIDRetail.Business
         }
          
         private ROPlanningForecastMethodAttributeSetProperties BuildAttributeSetProperties(
-            GroupLevelFunctionProfile GLFProfile, 
-            string levelName
+            GroupLevelFunctionProfile GLFProfile,
+            ROLevelInformation lowLevel
             )
         {
 
@@ -6088,22 +6088,22 @@ namespace MIDRetail.Business
             List<ROForecastingBasisDetailsProfile> forecastBasisDetailProfiles = ConvertBasisDataToList(
                 groupBasisProfiles: groupLevelBasis, 
                 tyLyType: eTyLyType.NonTyLy,
-                levelName: levelName
+                lowLevel: lowLevel
                 );
             List<ROForecastingBasisDetailsProfile> forecastBasisDetailProfilesTY = ConvertBasisDataToList(
                 groupBasisProfiles: groupLevelBasis,
                 tyLyType: eTyLyType.TyLy,
-                levelName: levelName
+                lowLevel: lowLevel
                 );
             List<ROForecastingBasisDetailsProfile> forecastBasisDetailProfilesLY = ConvertBasisDataToList(
                 groupBasisProfiles: groupLevelBasis,
                 tyLyType: eTyLyType.AlternateLy,
-                levelName: levelName
+                lowLevel: lowLevel
                 );
             List<ROForecastingBasisDetailsProfile> forecastBasisDetailProfilesTrend = ConvertBasisDataToList(
                 groupBasisProfiles: groupLevelBasis,
                 tyLyType: eTyLyType.AlternateApplyTo,
-                levelName: levelName
+                lowLevel: lowLevel
                 );
 
             List<ROPlanningStoreGrade> storeGrades = BuildStoreGrades(GLNFunction);
@@ -6142,7 +6142,11 @@ namespace MIDRetail.Business
 
         #region MethodGetData Private Functions
         const string STOREGRADE_DEFAULT = "(Default)";
-        private List<ROForecastingBasisDetailsProfile> ConvertBasisDataToList(ProfileList groupBasisProfiles, eTyLyType tyLyType, string levelName)
+        private List<ROForecastingBasisDetailsProfile> ConvertBasisDataToList(
+            ProfileList groupBasisProfiles, 
+            eTyLyType tyLyType,
+            ROLevelInformation lowLevel
+            )
         {
             KeyValuePair<int, string> workKVP;
             List<ROForecastingBasisDetailsProfile> basisDetailProfiles = new List<ROForecastingBasisDetailsProfile>();
@@ -6156,7 +6160,9 @@ namespace MIDRetail.Business
                     string sMerchandise = workKVP.Value;
                     if (basis.MerchType == eMerchandiseType.SameNode)
                     {
-                        sMerchandise = levelName;
+                        sMerchandise = lowLevel.LevelValue;
+                        basis.MerchPhlSequence = lowLevel.LevelSequence;
+                        basis.MerchOffset = lowLevel.LevelOffset;
                     }
                     int iVersionId = Convert.ToInt32(basis.Basis_FV_RID.ToString());
                     workKVP = GetName.GetVersion(iVersionId, SAB);
