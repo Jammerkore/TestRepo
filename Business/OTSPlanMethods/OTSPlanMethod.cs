@@ -5985,13 +5985,13 @@ namespace MIDRetail.Business
                     continue;
                 }
 
-                method.AttributeSetValues = BuildAttributeSetProperties(GLFProfile);
+                method.AttributeSetValues = BuildAttributeSetProperties(GLFProfile, roOverrideLowLevel.LowLevel.LevelValue);
             }
 
             if (method.AttributeSetValues == null)
             {
                 GroupLevelFunctionProfile GLFProfile = new GroupLevelFunctionProfile(aKey: _attributeSetKey);
-                method.AttributeSetValues = BuildAttributeSetProperties(GLFProfile);
+                method.AttributeSetValues = BuildAttributeSetProperties(GLFProfile, roOverrideLowLevel.LowLevel.LevelValue);
             }
 
             BuildVersionLists(method: method);
@@ -6050,7 +6050,10 @@ namespace MIDRetail.Business
             }
         }
          
-        private ROPlanningForecastMethodAttributeSetProperties BuildAttributeSetProperties(GroupLevelFunctionProfile GLFProfile)
+        private ROPlanningForecastMethodAttributeSetProperties BuildAttributeSetProperties(
+            GroupLevelFunctionProfile GLFProfile, 
+            string levelName
+            )
         {
 
             GroupLevelNodeFunction GLNFunction = (GroupLevelNodeFunction)GLFProfile.Group_Level_Nodes[Plan_HN_RID];
@@ -6082,10 +6085,26 @@ namespace MIDRetail.Business
             }
 
             ProfileList groupLevelBasis = GLFProfile.GroupLevelBasis;
-            List<ROForecastingBasisDetailsProfile> forecastBasisDetailProfiles = ConvertBasisDataToList(groupLevelBasis, eTyLyType.NonTyLy);
-            List<ROForecastingBasisDetailsProfile> forecastBasisDetailProfilesTY = ConvertBasisDataToList(groupLevelBasis, eTyLyType.TyLy);
-            List<ROForecastingBasisDetailsProfile> forecastBasisDetailProfilesLY = ConvertBasisDataToList(groupLevelBasis, eTyLyType.AlternateLy);
-            List<ROForecastingBasisDetailsProfile> forecastBasisDetailProfilesTrend = ConvertBasisDataToList(groupLevelBasis, eTyLyType.AlternateApplyTo);
+            List<ROForecastingBasisDetailsProfile> forecastBasisDetailProfiles = ConvertBasisDataToList(
+                groupBasisProfiles: groupLevelBasis, 
+                tyLyType: eTyLyType.NonTyLy,
+                levelName: levelName
+                );
+            List<ROForecastingBasisDetailsProfile> forecastBasisDetailProfilesTY = ConvertBasisDataToList(
+                groupBasisProfiles: groupLevelBasis,
+                tyLyType: eTyLyType.TyLy,
+                levelName: levelName
+                );
+            List<ROForecastingBasisDetailsProfile> forecastBasisDetailProfilesLY = ConvertBasisDataToList(
+                groupBasisProfiles: groupLevelBasis,
+                tyLyType: eTyLyType.AlternateLy,
+                levelName: levelName
+                );
+            List<ROForecastingBasisDetailsProfile> forecastBasisDetailProfilesTrend = ConvertBasisDataToList(
+                groupBasisProfiles: groupLevelBasis,
+                tyLyType: eTyLyType.AlternateApplyTo,
+                levelName: levelName
+                );
 
             List<ROPlanningStoreGrade> storeGrades = BuildStoreGrades(GLNFunction);
             List<ROStockMinMax> stockMinMaxes = BuildDataStockMinMax(GLNFunction, ref storeGrades);
@@ -6123,7 +6142,7 @@ namespace MIDRetail.Business
 
         #region MethodGetData Private Functions
         const string STOREGRADE_DEFAULT = "(Default)";
-        private List<ROForecastingBasisDetailsProfile> ConvertBasisDataToList(ProfileList groupBasisProfiles, eTyLyType tyLyType)
+        private List<ROForecastingBasisDetailsProfile> ConvertBasisDataToList(ProfileList groupBasisProfiles, eTyLyType tyLyType, string levelName)
         {
             KeyValuePair<int, string> workKVP;
             List<ROForecastingBasisDetailsProfile> basisDetailProfiles = new List<ROForecastingBasisDetailsProfile>();
@@ -6135,6 +6154,10 @@ namespace MIDRetail.Business
                     int iMerchandiseId = Convert.ToInt32(basis.Basis_HN_RID.ToString());
                     workKVP = GetName.GetMerchandiseName(iMerchandiseId, SAB);
                     string sMerchandise = workKVP.Value;
+                    if (basis.MerchType == eMerchandiseType.SameNode)
+                    {
+                        sMerchandise = levelName;
+                    }
                     int iVersionId = Convert.ToInt32(basis.Basis_FV_RID.ToString());
                     workKVP = GetName.GetVersion(iVersionId, SAB);
                     string sVersion = workKVP.Value;
@@ -6148,11 +6171,9 @@ namespace MIDRetail.Business
                     string sDateRange = workKVP.Value;
                     string sPicture = string.Empty;
                     float fWeight = Convert.ToSingle(basis.Basis_Weight.ToString());
-                    int iIsIncluded = Include.ConvertBoolToInt(basis.Basis_ExcludeInd);
-                    bool bIsIncluded = false;
-                    if (iIsIncluded == 1) bIsIncluded = true;
+                    bool bIsIncluded = !basis.Basis_ExcludeInd;
 
-                    string sIncludeButton = basis.Basis_ExcludeInd.ToString();
+                    string sIncludeButton = bIsIncluded.ToString();
                     ROForecastingBasisDetailsProfile forecastBasisDetailProfile = new ROForecastingBasisDetailsProfile(basis.Key, iMerchandiseId, sMerchandise, iVersionId, sVersion,
                         iDateRangeID, sDateRange, sPicture, fWeight, bIsIncluded, sIncludeButton, tyLyType, basis.MerchType, basis.MerchPhRid, basis.MerchPhlSequence, basis.MerchOffset);
 
@@ -6346,10 +6367,10 @@ namespace MIDRetail.Business
                 glbProfile.Basis_FV_RID = forcastBasisDetailProfile.VersionId;
                 glbProfile.Basis_Weight = forcastBasisDetailProfile.Weight;
                 glbProfile.Basis_CDR_RID = forcastBasisDetailProfile.DateRangeId;
-                glbProfile.Basis_ExcludeInd = Include.ConvertStringToBool(forcastBasisDetailProfile.IncludeButton);
+                glbProfile.Basis_ExcludeInd = !forcastBasisDetailProfile.IsIncluded;
                 glbProfile.Basis_TyLyType = forcastBasisDetailProfile.TyLyType;
                 glbProfile.MerchType = forcastBasisDetailProfile.MerchandiseType;
-                glbProfile.MerchPhRid = forcastBasisDetailProfile.MerchPhRId; ;
+                glbProfile.MerchPhRid = forcastBasisDetailProfile.MerchPhRId;
                 glbProfile.MerchPhlSequence = forcastBasisDetailProfile.MerchPhlSequence;
                 glbProfile.MerchOffset = forcastBasisDetailProfile.MerchOffset;
                 groupBasisList.Add(glbProfile);
