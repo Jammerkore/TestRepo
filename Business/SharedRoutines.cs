@@ -1012,6 +1012,11 @@ namespace MIDRetail.Business
         {
             string displayName = string.Empty;
 
+            if (!Enum.IsDefined(typeof(eGroupLevelFunctionType), functionType))
+            {
+                functionType = eGroupLevelFunctionType.PercentContribution;
+            }
+
             displayName = MIDText.GetTextOnly(functionType.GetHashCode());
 
             return new KeyValuePair<eGroupLevelFunctionType, string>(functionType, displayName);
@@ -1020,6 +1025,11 @@ namespace MIDRetail.Business
         public static KeyValuePair<eGroupLevelSmoothBy, string> GetSmoothByType(eGroupLevelSmoothBy smoothByType)
         {
             string displayName = string.Empty;
+
+            if (!Enum.IsDefined(typeof(eGroupLevelSmoothBy), smoothByType))
+            {
+                smoothByType = eGroupLevelSmoothBy.None;
+            }
 
             displayName = MIDText.GetTextOnly(smoothByType.GetHashCode());
 
