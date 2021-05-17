@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 
+using MIDRetail.Common;
 using MIDRetail.Data;
 using MIDRetail.DataCommon;
 using MIDRetail.Business.Allocation;
@@ -2731,7 +2732,146 @@ namespace MIDRetail.Business
             return value;
         }
 
+    }
 
+    public class HierarchyTools
+    {
+        public static List<HierarchyLevelComboObject> GetLevelsList(
+            SessionAddressBlock sessionAddressBlock,
+            int nodeKey,
+            bool includeHomeLevel,
+            bool includeOrganizationLevelsForAlternate,
+            out eMerchandiseType merchandiseType
+            )
+        {
+            HierarchyNodeProfile nodeProfile;
+            HierarchyProfile hierarchyProfile;
+            int startLevel;
+            int i;
+            HierarchyProfile mainHierarchyProfile;
+            int highestGuestLevel;
+            int longestBranchCount;
+            int offset;
+            ArrayList guestLevels;
+            HierarchyLevelProfile hierarchyLevelProfile;
+            List<HierarchyLevelComboObject> levelList;
+            merchandiseType = eMerchandiseType.Undefined;
+
+            try
+            {
+                levelList = new List<HierarchyLevelComboObject>();
+                if (nodeKey != Include.NoRID)
+                {
+                    nodeProfile = sessionAddressBlock.HierarchyServerSession.GetNodeData(nodeKey);
+                    hierarchyProfile = sessionAddressBlock.HierarchyServerSession.GetHierarchyData(nodeProfile.HomeHierarchyRID);
+
+                    // Load Level arrays
+
+                    if (hierarchyProfile.HierarchyType == eHierarchyType.organizational)
+                    {
+                        merchandiseType = eMerchandiseType.HierarchyLevel;
+                        if (nodeProfile.HomeHierarchyLevel == 0)
+                        {
+                            if (includeHomeLevel)
+                            {
+                                levelList.Add(new HierarchyLevelComboObject(
+                                    levelList.Count,
+                                    ePlanLevelLevelType.HierarchyLevel,
+                                    hierarchyProfile.Key,
+                                    0,
+                                    hierarchyProfile.HierarchyID
+                                    ));
+                            }
+                            startLevel = 1;
+                        }
+                        else
+                        {
+                            if (includeHomeLevel)
+                            {
+                                levelList.Add(new HierarchyLevelComboObject(
+                                levelList.Count,
+                                ePlanLevelLevelType.HierarchyLevel,
+                                hierarchyProfile.Key,
+                                ((HierarchyLevelProfile)hierarchyProfile.HierarchyLevels[nodeProfile.HomeHierarchyLevel]).Key,
+                                ((HierarchyLevelProfile)hierarchyProfile.HierarchyLevels[nodeProfile.HomeHierarchyLevel]).LevelID
+                                ));
+                            }
+                            startLevel = nodeProfile.HomeHierarchyLevel + 1;
+                        }
+
+                        for (i = startLevel; i <= hierarchyProfile.HierarchyLevels.Count; i++)
+                        {
+                            levelList.Add(new HierarchyLevelComboObject(
+                                levelList.Count,
+                                ePlanLevelLevelType.HierarchyLevel,
+                                hierarchyProfile.Key, ((HierarchyLevelProfile)hierarchyProfile.HierarchyLevels[i]).Key,
+                                ((HierarchyLevelProfile)hierarchyProfile.HierarchyLevels[i]).LevelID
+                                ));
+                        }
+                    }
+                    else
+                    {
+                        merchandiseType = eMerchandiseType.LevelOffset;
+                        mainHierarchyProfile = sessionAddressBlock.HierarchyServerSession.GetMainHierarchyData();
+                        highestGuestLevel = sessionAddressBlock.HierarchyServerSession.GetHighestGuestLevel(nodeProfile.Key);
+                        guestLevels = sessionAddressBlock.HierarchyServerSession.GetAllGuestLevels(nodeProfile.Key);
+
+                        if (includeHomeLevel)
+                        {
+                            levelList.Add(new HierarchyLevelComboObject(
+                            levelList.Count,
+                            ePlanLevelLevelType.HierarchyLevel,
+                            hierarchyProfile.Key,
+                            0,
+                            nodeProfile.NodeID
+                            ));
+                        }
+                        startLevel = 1;
+
+                        if (includeOrganizationLevelsForAlternate)
+                        {
+                            if (guestLevels.Count == 1)
+                            {
+                                hierarchyLevelProfile = (HierarchyLevelProfile)guestLevels[0];
+                                levelList.Add(new HierarchyLevelComboObject(
+                                    levelList.Count,
+                                    ePlanLevelLevelType.HierarchyLevel,
+                                    mainHierarchyProfile.Key,
+                                    hierarchyLevelProfile.Key,
+                                    hierarchyLevelProfile.LevelID
+                                    ));
+                            }
+                        }
+
+                        longestBranchCount = sessionAddressBlock.HierarchyServerSession.GetLongestBranch(nodeProfile.Key, true);
+                        DataTable hierarchyLevels = sessionAddressBlock.HierarchyServerSession.GetHierarchyDescendantLevels(nodeProfile.Key);
+                        longestBranchCount = hierarchyLevels.Rows.Count - 1;
+
+
+                        offset = 0;
+
+                        for (i = 0; i < longestBranchCount; i++)
+                        {
+                            offset++;
+                            levelList.Add(new HierarchyLevelComboObject(
+                                levelList.Count,
+                                ePlanLevelLevelType.LevelOffset,
+                                hierarchyProfile.Key,
+                                offset,
+                                "+" + offset.ToString()
+                                ));
+                        }
+                    }
+                }
+
+                return levelList;
+            }
+            catch (Exception exc)
+            {
+                string message = exc.ToString();
+                throw;
+            }
+        }
 
     }
 }

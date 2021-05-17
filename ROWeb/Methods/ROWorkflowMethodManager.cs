@@ -428,7 +428,9 @@ namespace Logility.ROWeb
             mp.CanBeDeleted = FunctionSecurity.AllowDelete;
             mp.IsReadOnly = FunctionSecurity.IsReadOnly;
             // if not read only, check based on data in the method
-            if (!mp.IsReadOnly)
+            if (!mp.IsReadOnly
+                 && _ABM.Key != Include.NoRID  // don't check if new method
+               )
             {
                 mp.IsReadOnly = !_ABM.AuthorizedToUpdate(SAB.ClientServerSession, SAB.ClientServerSession.UserRID);
             }
