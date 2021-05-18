@@ -6387,7 +6387,6 @@ namespace MIDRetail.Business
         }
         override public bool MethodSetData(ROMethodProperties methodProperties, ref string message, bool processingApply)
         {
-            ProfileList glfProfileList = new ProfileList(eProfileType.GroupLevelFunction);
             ROPlanningForecastMethodProperties properties = (ROPlanningForecastMethodProperties)methodProperties;
 
             try
@@ -6419,6 +6418,8 @@ namespace MIDRetail.Business
                     // if not, set so will use first set in the attribute
                     if (_attributeChanged)
                     {
+                        // delete all settings
+						GLFProfileList.Clear();
                         ProfileList attributeSetList = StoreMgmt.StoreGroup_GetLevelListViewList(SG_RID);
                         if (attributeSetList.FindKey(aKey: _attributeSetKey) == null)
                         {
@@ -6427,61 +6428,70 @@ namespace MIDRetail.Business
                     }
                 }
 
-                //foreach (ROPlanningForecastMethodAttributeSetProperties item in properties.AttributeSetProperties)
-                ROPlanningForecastMethodAttributeSetProperties item = properties.AttributeSetValues;
+                // only update attribute set values if attribute did not change
+                if (!_attributeChanged)
                 {
-                    GroupLevelFunctionProfile newGLFP = new GroupLevelFunctionProfile(item.AttributeSet.Key);
-                    GroupLevelNodeFunction GLNFunction = new GroupLevelNodeFunction();  //(GroupLevelNodeFunction)newGLFP.Group_Level_Nodes[Plan_HN_RID];
-
-                    newGLFP.Key = item.AttributeSet.Key;
-                    newGLFP.Default_IND = item.IsDefaultProperties;
-                    newGLFP.Plan_IND = item.IsAttributeSetForecast;
-                    newGLFP.Use_Default_IND = item.IsAttributeSetToUseDefault;
-                    newGLFP.GLFT_ID = item.ForecastMethod.Key;
-                    newGLFP.GLSB_ID = item.SmoothBy.Key;
-
-                    GLNFunction.HN_RID = item.StockMerchandise.Key;
-                    GLNFunction.ApplyMinMaxesInd = item.ApplyMinMax;
-                    GLNFunction.MinMaxInheritType = item.MinMaxInheritType;
-                    //TO DO:: Stock Min Max to be assigned here.
-                    //GLNFunction.Stock_MinMax
-                    SetStockMinMax(item.StoreGrades, ref GLNFunction);
-                    newGLFP.Group_Level_Nodes.Add(newGLFP.Key, GLNFunction);
-                    newGLFP.TY_Weight_Multiple_Basis_Ind = item.EqualizingWaitingTY;
-                    newGLFP.LY_Weight_Multiple_Basis_Ind = item.EqualizingWaitingLY;
-                    newGLFP.LY_Alt_IND = item.IsAlternateLY;
-                    newGLFP.Trend_Alt_IND = item.IsAlternateApplyTrendTo;
-                    newGLFP.Apply_Weight_Multiple_Basis_Ind = item.EqualizingWaitingApplyTrendTo;
-                    newGLFP.Proj_Curr_Wk_Sales_IND = item.IsProjectCurrentWeekSales;
-                    //TO DO:: All Trend Caps data need to assign here.
-                    TrendCapsProfile tcp = new TrendCapsProfile(newGLFP.Key);
-                    tcp.TrendCapID = item.TrendCapId;
-                    tcp.LowLimit = item.TrendCapsLowLimit;
-                    tcp.HighLimit = item.TrendCapsHighLimit;
-                    tcp.TolPct = item.TrendCapsTolerance;
-                    newGLFP.Trend_Caps.Add(tcp);
-
-
-                    if (item.ForecastMethod.Key == eGroupLevelFunctionType.PercentContribution)
+                    ROPlanningForecastMethodAttributeSetProperties item = properties.AttributeSetValues;
                     {
-                        ProfileList groupBasisProfileList = GetGroupBasisProfileList(item.ROForecastBasisDetailProfiles);
-                        newGLFP.GroupLevelBasis = groupBasisProfileList;
-                    }
-                    else if (item.ForecastMethod.Key == eGroupLevelFunctionType.TyLyTrend)
-                    {
-                        ProfileList groupBasisProfileListTY = GetGroupBasisProfileList(item.ROForecastBasisDetailProfilesTY);
-                        ProfileList groupBasisProfileListLY = GetGroupBasisProfileList(item.ROForecastBasisDetailProfilesLY);
-                        ProfileList groupBasisProfileListTrend = GetGroupBasisProfileList(item.ROForecastBasisDetailProfilesApplyTrendTo);
-                        newGLFP.GroupLevelBasis.AddRange(groupBasisProfileListTY);
-                        newGLFP.GroupLevelBasis.AddRange(groupBasisProfileListLY);
-                        newGLFP.GroupLevelBasis.AddRange(groupBasisProfileListTrend);
-                        //To DO:: Need to check how basis objects to be assigned.
-                    }
-                    glfProfileList.Add(newGLFP);
+                        // remove old data for attribute set to rebuild
+                        GroupLevelFunctionProfile newGLFP = (GroupLevelFunctionProfile)_GLFProfileList.FindKey(item.AttributeSet.Key);
+                        if (newGLFP != null)
+                        {
+                            GLFProfileList.Remove(newGLFP);
+                        }
 
+                        newGLFP = new GroupLevelFunctionProfile(item.AttributeSet.Key);
+
+                        GroupLevelNodeFunction GLNFunction = new GroupLevelNodeFunction();  //(GroupLevelNodeFunction)newGLFP.Group_Level_Nodes[Plan_HN_RID];
+
+                        newGLFP.Key = item.AttributeSet.Key;
+                        newGLFP.Default_IND = item.IsDefaultProperties;
+                        newGLFP.Plan_IND = item.IsAttributeSetForecast;
+                        newGLFP.Use_Default_IND = item.IsAttributeSetToUseDefault;
+                        newGLFP.GLFT_ID = item.ForecastMethod.Key;
+                        newGLFP.GLSB_ID = item.SmoothBy.Key;
+
+                        GLNFunction.HN_RID = item.StockMerchandise.Key;
+                        GLNFunction.ApplyMinMaxesInd = item.ApplyMinMax;
+                        GLNFunction.MinMaxInheritType = item.MinMaxInheritType;
+                        //TO DO:: Stock Min Max to be assigned here.
+                        //GLNFunction.Stock_MinMax
+                        SetStockMinMax(item.StoreGrades, ref GLNFunction);
+                        newGLFP.Group_Level_Nodes.Add(newGLFP.Key, GLNFunction);
+                        newGLFP.TY_Weight_Multiple_Basis_Ind = item.EqualizingWaitingTY;
+                        newGLFP.LY_Weight_Multiple_Basis_Ind = item.EqualizingWaitingLY;
+                        newGLFP.LY_Alt_IND = item.IsAlternateLY;
+                        newGLFP.Trend_Alt_IND = item.IsAlternateApplyTrendTo;
+                        newGLFP.Apply_Weight_Multiple_Basis_Ind = item.EqualizingWaitingApplyTrendTo;
+                        newGLFP.Proj_Curr_Wk_Sales_IND = item.IsProjectCurrentWeekSales;
+                        //TO DO:: All Trend Caps data need to assign here.
+                        TrendCapsProfile tcp = new TrendCapsProfile(newGLFP.Key);
+                        tcp.TrendCapID = item.TrendCapId;
+                        tcp.LowLimit = item.TrendCapsLowLimit;
+                        tcp.HighLimit = item.TrendCapsHighLimit;
+                        tcp.TolPct = item.TrendCapsTolerance;
+                        newGLFP.Trend_Caps.Add(tcp);
+
+
+                        if (item.ForecastMethod.Key == eGroupLevelFunctionType.PercentContribution)
+                        {
+                            ProfileList groupBasisProfileList = GetGroupBasisProfileList(item.ROForecastBasisDetailProfiles);
+                            newGLFP.GroupLevelBasis = groupBasisProfileList;
+                        }
+                        else if (item.ForecastMethod.Key == eGroupLevelFunctionType.TyLyTrend)
+                        {
+                            ProfileList groupBasisProfileListTY = GetGroupBasisProfileList(item.ROForecastBasisDetailProfilesTY);
+                            ProfileList groupBasisProfileListLY = GetGroupBasisProfileList(item.ROForecastBasisDetailProfilesLY);
+                            ProfileList groupBasisProfileListTrend = GetGroupBasisProfileList(item.ROForecastBasisDetailProfilesApplyTrendTo);
+                            newGLFP.GroupLevelBasis.AddRange(groupBasisProfileListTY);
+                            newGLFP.GroupLevelBasis.AddRange(groupBasisProfileListLY);
+                            newGLFP.GroupLevelBasis.AddRange(groupBasisProfileListTrend);
+                            //To DO:: Need to check how basis objects to be assigned.
+                        }
+
+                        GLFProfileList.Add(newGLFP);
+                    }
                 }
-
-                GLFProfileList = glfProfileList;
 
                 return true;
             }
