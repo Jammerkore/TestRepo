@@ -215,6 +215,20 @@ namespace Logility.ROWebSharedTypes
             set { _attributeSetValues = value; }
         }
 
+        [DataMember(IsRequired = true)]
+        private int _defaultAttributeSetKey;
+
+        public int DefaultAttributeSetKey
+        {
+            get { return _defaultAttributeSetKey; }
+            set { _defaultAttributeSetKey = value; }
+        }
+
+        public bool DefaultAttributeSetIsSet
+        {
+            get { return _defaultAttributeSetKey != Include.NoRID; }
+        }
+
         public ROPlanningForecastMethodProperties(
             KeyValuePair<int, string> method,
             string description,
@@ -262,6 +276,7 @@ namespace Logility.ROWebSharedTypes
             _basisVersions = new List<KeyValuePair<int, string>>();
             _hierarchyLevelsType = eMerchandiseType.Undefined;
             _hierarchyLevels = new List<KeyValuePair<int, string>>();
+            _defaultAttributeSetKey = Include.NoRID;
         }
     }
 

@@ -5978,6 +5978,9 @@ namespace MIDRetail.Business
                isTemplate: Template_IND
                );
 
+            method.DefaultAttributeSetKey = GetDefaultGLFRid();
+
+            GroupLevelFunctionProfile attributeSetProfile;
             foreach (GroupLevelFunctionProfile GLFProfile in _GLFProfileList)
             {
                 if (GLFProfile.Key != _attributeSetKey)
@@ -5985,7 +5988,25 @@ namespace MIDRetail.Business
                     continue;
                 }
 
-                method.AttributeSetValues = BuildAttributeSetProperties(GLFProfile, roOverrideLowLevel.LowLevel);
+                attributeSetProfile = GLFProfile;
+
+                // if attribute set is to use the default set, get the values for the default set
+                if (GLFProfile.Use_Default_IND)
+                {
+                    // get default attribute set values
+                    GroupLevelFunctionProfile defaultAttributeSetProfile = (GroupLevelFunctionProfile)_GLFProfileList.FindKey(method.DefaultAttributeSetKey);
+                    // create a copy of the default class so changes do not update the default attribute set
+                    attributeSetProfile = new GroupLevelFunctionProfile(aKey: GLFProfile.Key);
+                    attributeSetProfile = defaultAttributeSetProfile.CopyTo(attributeSetProfile, SAB.ApplicationServerSession, false, true);
+                    attributeSetProfile.Default_IND = false;
+                    attributeSetProfile.Plan_IND = true;
+                    attributeSetProfile.Use_Default_IND = true;
+                }
+
+                method.AttributeSetValues = BuildAttributeSetProperties(
+                    GLFProfile: attributeSetProfile,
+                    lowLevel: roOverrideLowLevel.LowLevel
+                    );
             }
 
             if (method.AttributeSetValues == null)
@@ -6432,11 +6453,26 @@ namespace MIDRetail.Business
                 if (!_attributeChanged)
                 {
                     ROPlanningForecastMethodAttributeSetProperties item = properties.AttributeSetValues;
+
+                    GroupLevelFunctionProfile newGLFP = (GroupLevelFunctionProfile)_GLFProfileList.FindKey(item.AttributeSet.Key);
+                    // if use default attribute set has changed, only update flag
+                    if (item.IsAttributeSetToUseDefault)
                     {
-                        // remove old data for attribute set to rebuild
-                        GroupLevelFunctionProfile newGLFP = (GroupLevelFunctionProfile)_GLFProfileList.FindKey(item.AttributeSet.Key);
+                        newGLFP.Use_Default_IND = item.IsAttributeSetToUseDefault;
+                        newGLFP.Plan_IND = true;
+                    }
+                    else if (newGLFP.Use_Default_IND
+                            && !item.IsAttributeSetToUseDefault)
+                    {
+                        newGLFP.Use_Default_IND = item.IsAttributeSetToUseDefault;
+                    }
+                    else
+                    {
+                        bool isDefaultSet = false;
+						// remove old data for attribute set to rebuild
                         if (newGLFP != null)
                         {
+                            isDefaultSet = newGLFP.Default_IND;
                             GLFProfileList.Remove(newGLFP);
                         }
 
@@ -6445,6 +6481,12 @@ namespace MIDRetail.Business
                         GroupLevelNodeFunction GLNFunction = new GroupLevelNodeFunction();  //(GroupLevelNodeFunction)newGLFP.Group_Level_Nodes[Plan_HN_RID];
 
                         newGLFP.Key = item.AttributeSet.Key;
+                        // no longer the default set, so remove all use default settings
+                        if (isDefaultSet
+                            && !item.IsDefaultProperties)
+                        {
+                            SetAllUseDefaultToFalse();
+                        }
                         newGLFP.Default_IND = item.IsDefaultProperties;
                         newGLFP.Plan_IND = item.IsAttributeSetForecast;
                         newGLFP.Use_Default_IND = item.IsAttributeSetToUseDefault;
