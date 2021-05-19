@@ -6224,8 +6224,8 @@ namespace MIDRetail.Business
                 stockMinMax.Boundary = smmp.Boundary;
                 stockMinMax.Merchandise = GetName.GetMerchandiseName(smmp.HN_RID, SAB);
                 stockMinMax.DateRange = GetName.GetCalendarDateRange(smmp.DateRangeRid, SAB);
-                stockMinMax.MinimumStock = smmp.MinimumStock;
-                stockMinMax.MaximumStock = smmp.MaximumStock;
+                stockMinMax.MinimumStock = smmp.MinimumStock != (int)Include.UndefinedDouble ? smmp.MinimumStock : (int?)null;
+                stockMinMax.MaximumStock = smmp.MaximumStock != (int)Include.UndefinedDouble ? smmp.MaximumStock : (int?)null;
                 stockMinMaxes.Add(stockMinMax);
 
                 int dateRange = Convert.ToInt32(smmp.DateRangeRid, CultureInfo.CurrentUICulture);
@@ -6242,8 +6242,8 @@ namespace MIDRetail.Business
 
                         if (boundary == gradeBoundary && sglRid == gradeSglRid && gradeHnRid == hnRid)
                         {
-                            gradeRecord.Minimum = smmp.MinimumStock;
-                            gradeRecord.Maximum = smmp.MaximumStock;
+                            gradeRecord.Minimum = smmp.MinimumStock != (int)Include.UndefinedDouble ? smmp.MinimumStock : (int?)null;
+                            gradeRecord.Maximum = smmp.MaximumStock != (int)Include.UndefinedDouble ? smmp.MaximumStock : (int?)null;
                         }
                     }
                 }
@@ -6285,8 +6285,8 @@ namespace MIDRetail.Business
                 storeGrade.DateRange = new KeyValuePair<int, string>(Include.UndefinedCalendarDateRange, "(Default");
                 storeGrade.StoreGroupLevel = new KeyValuePair<int, string>(sglp.Key, sglp.Name);
                 storeGrade.Merchandise = GetName.GetMerchandiseName(glnf.HN_RID, SAB);
-                storeGrade.Minimum = Include.Undefined;
-                storeGrade.Maximum = Include.Undefined;
+                storeGrade.Minimum = null;
+                storeGrade.Maximum = null;
                 storeGrades.Add(storeGrade);
 
                 foreach (StoreGradeProfile sgp in storeGradeList.ArrayList)
@@ -6296,8 +6296,8 @@ namespace MIDRetail.Business
                     storeGrade2.DateRange = new KeyValuePair<int, string>(Include.UndefinedCalendarDateRange, "(Default)");
                     storeGrade2.StoreGroupLevel = new KeyValuePair<int, string>(sglp.Key, sglp.Name);
                     storeGrade2.Merchandise = GetName.GetMerchandiseName(glnf.HN_RID, SAB);
-                    storeGrade2.Minimum = Include.Undefined;
-                    storeGrade2.Maximum = Include.Undefined;
+                    storeGrade2.Minimum = null;
+                    storeGrade2.Maximum = null;
                     storeGrades.Add(storeGrade2);
 
                 }
@@ -6339,8 +6339,8 @@ namespace MIDRetail.Business
 
             foreach (ROPlanningStoreGrade sg in storeGrades)
             {
-                if (sg.Minimum != Include.Undefined
-                    || sg.Maximum != Include.Undefined)
+                if (sg.MinimumIsSet
+                    || sg.MaximumIsSet)
                 {
                     StockMinMaxProfile smmp = new StockMinMaxProfile(glnf.Stock_MinMax.MinValue - 1);
                     smmp.Boundary = sg.StoreGrade.Key;
@@ -6350,9 +6350,17 @@ namespace MIDRetail.Business
                     {
                         smmp.MinimumStock = (int)sg.Minimum;
                     }
+                    else
+                    {
+                        smmp.MinimumStock = (int)Include.UndefinedDouble;
+                    }
                     if (sg.MaximumIsSet)
                     {
                         smmp.MaximumStock = (int)sg.Maximum;
+                    }
+                    else
+                    {
+                        smmp.MaximumStock = (int)Include.UndefinedDouble;
                     }
                     smmp.DateRangeRid = sg.DateRange.Key;
                     glnf.Stock_MinMax.Add(smmp);
@@ -6362,15 +6370,29 @@ namespace MIDRetail.Business
                 {
                     foreach (ROStockMinMax roStockMinMax in sg.ROStockMinMaxList)
                     {
-                        if (roStockMinMax.MinimumStock != Include.Undefined
-                            || roStockMinMax.MaximumStock != Include.Undefined)
+                        if (roStockMinMax.MinimumStockIsSet
+                            || roStockMinMax.MaximumStockIsSet)
                         {
                             StockMinMaxProfile smmp2 = new StockMinMaxProfile(glnf.Stock_MinMax.MinValue - 1);
                             smmp2.Boundary = roStockMinMax.Boundary;
                             smmp2.StoreGroupLevelRid = roStockMinMax.StoreGrouplevel.Key;
                             smmp2.HN_RID = roStockMinMax.Merchandise.Key;
-                            smmp2.MinimumStock = roStockMinMax.MinimumStock;
-                            smmp2.MaximumStock = roStockMinMax.MaximumStock;
+                            if (roStockMinMax.MinimumStockIsSet)
+                            {
+                                smmp2.MinimumStock = (int)roStockMinMax.MinimumStock;
+                            }
+                            else
+                            {
+                                smmp2.MinimumStock = (int)Include.UndefinedDouble;
+                            }
+                            if (roStockMinMax.MaximumStockIsSet)
+                            {
+                                smmp2.MaximumStock = (int)roStockMinMax.MaximumStock;
+                            }
+                            else
+                            {
+                                smmp2.MaximumStock = (int)Include.UndefinedDouble;
+                            }
                             smmp2.DateRangeRid = roStockMinMax.DateRange.Key;
 
                             glnf.Stock_MinMax.Add(smmp2);

@@ -533,8 +533,12 @@ namespace Logility.ROWebSharedTypes
         public KeyValuePair<int, string> Merchandise { get; set; }
         public int Boundary { get; set; }
 
-        public int MinimumStock { get; set; }
-        public int MaximumStock { get; set; }
+        public int? MinimumStock { get; set; }
+        public int? MaximumStock { get; set; }
+
+        public bool MinimumStockIsSet { get { return MinimumStock != null; } }
+        public bool MaximumStockIsSet { get { return MaximumStock != null; } }
+
         public KeyValuePair<int, string> StoreGrade { get; set; }
         public KeyValuePair<int, string> DateRange { get; set; }
         public string Picture { get; set; }
