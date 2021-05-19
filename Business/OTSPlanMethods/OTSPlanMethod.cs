@@ -6458,10 +6458,16 @@ namespace MIDRetail.Business
                     // if use default attribute set has changed, only update flag
                     if (item.IsAttributeSetToUseDefault)
                     {
+                        if (newGLFP == null)
+                        {
+                            newGLFP = new GroupLevelFunctionProfile(item.AttributeSet.Key);
+                            GLFProfileList.Add(newGLFP);
+                        }
                         newGLFP.Use_Default_IND = item.IsAttributeSetToUseDefault;
                         newGLFP.Plan_IND = true;
                     }
-                    else if (newGLFP.Use_Default_IND
+                    else if (newGLFP != null
+                            && newGLFP.Use_Default_IND
                             && !item.IsAttributeSetToUseDefault)
                     {
                         newGLFP.Use_Default_IND = item.IsAttributeSetToUseDefault;
