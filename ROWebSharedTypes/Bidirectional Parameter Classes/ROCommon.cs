@@ -536,8 +536,8 @@ namespace Logility.ROWebSharedTypes
         public int? MinimumStock { get; set; }
         public int? MaximumStock { get; set; }
 
-        public bool MinimumStockIsSet { get { return MinimumStock != null; } }
-        public bool MaximumStockIsSet { get { return MaximumStock != null; } }
+        public bool MinimumStockIsSet { get { return MinimumStock != null && MinimumStock != (int)Include.UndefinedDouble; } }
+        public bool MaximumStockIsSet { get { return MaximumStock != null && MaximumStock != (int)Include.UndefinedDouble; } }
 
         public KeyValuePair<int, string> StoreGrade { get; set; }
         public KeyValuePair<int, string> DateRange { get; set; }

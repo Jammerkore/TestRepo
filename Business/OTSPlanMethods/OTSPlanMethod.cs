@@ -6012,6 +6012,14 @@ namespace MIDRetail.Business
             if (method.AttributeSetValues == null)
             {
                 GroupLevelFunctionProfile GLFProfile = new GroupLevelFunctionProfile(aKey: _attributeSetKey);
+                GroupLevelNodeFunction groupLevelNodeFunction = new GroupLevelNodeFunction();
+                groupLevelNodeFunction.MethodRID = this.Key;
+                groupLevelNodeFunction.SglRID = GLFProfile.Key;
+                groupLevelNodeFunction.HN_RID = Plan_HN_RID;
+                groupLevelNodeFunction.ApplyMinMaxesInd = true;
+                groupLevelNodeFunction.MinMaxInheritType = eMinMaxInheritType.None;
+                SetGroupLevelFunctionStockMinMaxProfileList(groupLevelNodeFunction);
+                GLFProfile.Group_Level_Nodes.Add(groupLevelNodeFunction.HN_RID, groupLevelNodeFunction);
                 method.AttributeSetValues = BuildAttributeSetProperties(GLFProfile, roOverrideLowLevel.LowLevel);
             }
 
@@ -6082,6 +6090,13 @@ namespace MIDRetail.Business
             if (GLNFunction == null)
             {
                 GLNFunction = new GroupLevelNodeFunction();
+                GLNFunction.MethodRID = this.Key;
+                GLNFunction.SglRID = GLFProfile.Key;
+                GLNFunction.HN_RID = Plan_HN_RID;
+                GLNFunction.ApplyMinMaxesInd = true;
+                GLNFunction.MinMaxInheritType = eMinMaxInheritType.None;
+                SetGroupLevelFunctionStockMinMaxProfileList(GLNFunction);
+                GLFProfile.Group_Level_Nodes.Add(GLNFunction.HN_RID, GLNFunction);
             }
 
             ProfileList pl = GLFProfile.Trend_Caps;
@@ -6282,7 +6297,7 @@ namespace MIDRetail.Business
                 ROPlanningStoreGrade storeGrade = new ROPlanningStoreGrade();
 
                 storeGrade.StoreGrade = new KeyValuePair<int, string>(-1, "Default");
-                storeGrade.DateRange = new KeyValuePair<int, string>(Include.UndefinedCalendarDateRange, "(Default");
+                storeGrade.DateRange = new KeyValuePair<int, string>(Include.UndefinedCalendarDateRange, "(Default)");
                 storeGrade.StoreGroupLevel = new KeyValuePair<int, string>(sglp.Key, sglp.Name);
                 storeGrade.Merchandise = GetName.GetMerchandiseName(glnf.HN_RID, SAB);
                 storeGrade.Minimum = null;
@@ -6522,12 +6537,13 @@ namespace MIDRetail.Business
                         newGLFP.GLSB_ID = item.SmoothBy.Key;
 
                         GLNFunction.HN_RID = item.StockMerchandise.Key;
+                        GLNFunction.SglRID = item.AttributeSet.Key;
                         GLNFunction.ApplyMinMaxesInd = item.ApplyMinMax;
                         GLNFunction.MinMaxInheritType = item.MinMaxInheritType;
                         //TO DO:: Stock Min Max to be assigned here.
                         //GLNFunction.Stock_MinMax
                         SetStockMinMax(item.StoreGrades, ref GLNFunction);
-                        newGLFP.Group_Level_Nodes.Add(newGLFP.Key, GLNFunction);
+                        newGLFP.Group_Level_Nodes.Add(GLNFunction.HN_RID, GLNFunction);
                         newGLFP.TY_Weight_Multiple_Basis_Ind = item.EqualizingWaitingTY;
                         newGLFP.LY_Weight_Multiple_Basis_Ind = item.EqualizingWaitingLY;
                         newGLFP.LY_Alt_IND = item.IsAlternateLY;
