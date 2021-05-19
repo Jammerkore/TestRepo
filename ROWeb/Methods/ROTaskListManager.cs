@@ -574,6 +574,11 @@ namespace Logility.ROWeb
                     );
             }
 
+            // To remove task instance from memory while tasklist is different
+            _taskListTasks = _taskListTasks.
+                                    Where(w => w.Value.TaskListKey == taskListParameters.ROTaskListProperties.TaskList.Key).
+                                    ToDictionary(d => d.Key, d => d.Value);
+
             // Get task values from database for types that have not been accessed
             // They are needed based on the way all old values are deleted for a task list
             // and then inserted.

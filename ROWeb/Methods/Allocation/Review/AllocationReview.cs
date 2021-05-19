@@ -30,6 +30,7 @@ namespace Logility.ROWeb
         internal Dictionary<eDataType, List<ROSelectedField>> _columnsList;
         private List<int> _selectedFieldKeys;
         private int _currentVisiblePosition = 0;
+        private eRORequest _selectedRequest;
 
         private void AddViewColumns(int viewRID, ArrayList builtVariables)
         {
@@ -829,11 +830,16 @@ namespace Logility.ROWeb
                         _applicationSessionTransaction.SetCriteriaHeaderList(_allocationHeaderProfileList);
                     }
                     _headersLocked = true;
+                    _selectedRequest = reviewOptionsParms.RORequest;
                 }
-                else
+                else if (_headersLocked && _selectedRequest != reviewOptionsParms.RORequest)
                 {
                     MIDEnvironment.isChangedToReadOnly = true;
                     _sROMessage = MIDText.GetTextOnly(eMIDTextCode.msg_ReadOnlyMode);
+                } else if(_headersLocked && _selectedRequest == reviewOptionsParms.RORequest &&
+                       _sROMessage == MIDText.GetTextOnly(eMIDTextCode.msg_ReadOnlyMode))
+                {
+                    _sROMessage = string.Empty;
                 }
 
                 if (_fromAssortment
