@@ -925,48 +925,27 @@ namespace Logility.ROWeb
             //foreach (RONodePropertiesSizeCurvesSimilarStoresAttributeSet attributeSet in nodePropertiesSizeCurvesData.SimilarStoresAttributeSets)
             RONodePropertiesSizeCurvesSimilarStoresAttributeSet attributeSet = nodePropertiesSizeCurvesData.SimilarStoresAttributeSetValues;
             {
-                foreach (RONodePropertiesSizeCurvesSimilarStore similarStore in attributeSet.SimilarStores)
+                if (attributeSet != null)
                 {
-                    similarStoreUpdated = false;
+                    foreach (RONodePropertiesSizeCurvesSimilarStore similarStore in attributeSet.SimilarStores)
+                    {
+                        similarStoreUpdated = false;
 
-                    if (_sizeCurveSimilarStoreList.Contains(similarStore.Store.Key))
-                    {
-                        scsp = (SizeCurveSimilarStoreProfile)_sizeCurveSimilarStoreList.FindKey(similarStore.Store.Key);
-                        scsp.SimilarStoreChangeType = eChangeType.update;
-                    }
-                    else
-                    {
-                        scsp = new SizeCurveSimilarStoreProfile(similarStore.Store.Key);
-                        scsp.SimilarStoreChangeType = eChangeType.add;
-                    }
-
-                    if (attributeSet.SimilarStoresValues.SimilarStoreIsSet
-                        && scsp.SimStoreRID != attributeSet.SimilarStoresValues.SimilarStore.Key)
-                    {
-                        StoreProfile sp = StoreMgmt.StoreProfile_Get(attributeSet.SimilarStoresValues.SimilarStore.Key);
-                        if (sp.ActiveInd)
+                        if (_sizeCurveSimilarStoreList.Contains(similarStore.Store.Key))
                         {
-                            if (sp.Key == Include.NoRID)
-                            {
-                                sp.Key = 1;
-                            }
-                            scsp.SimStoreRID = sp.Key;
-                            similarStoreUpdated = true;
-                            scsp.SimStoreIsInherited = false;
-                            scsp.SimStoreInheritedFromNodeRID = Include.NoRID;
+                            scsp = (SizeCurveSimilarStoreProfile)_sizeCurveSimilarStoreList.FindKey(similarStore.Store.Key);
+                            scsp.SimilarStoreChangeType = eChangeType.update;
                         }
                         else
                         {
-                            message = SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_StoreNotFound);
-                            setSuccessful = false;
+                            scsp = new SizeCurveSimilarStoreProfile(similarStore.Store.Key);
+                            scsp.SimilarStoreChangeType = eChangeType.add;
                         }
-                    }
-                    else if (similarStore.SimilarStoresValues.SimilarStoreIsSet
-                        && scsp.SimStoreRID != similarStore.SimilarStoresValues.SimilarStore.Key)
-                    {
-                        if (similarStore.SimilarStoresValues.SimilarStore.Key != Include.NoRID)
+
+                        if (attributeSet.SimilarStoresValues.SimilarStoreIsSet
+                            && scsp.SimStoreRID != attributeSet.SimilarStoresValues.SimilarStore.Key)
                         {
-                            StoreProfile sp = StoreMgmt.StoreProfile_Get(similarStore.SimilarStoresValues.SimilarStore.Key);
+                            StoreProfile sp = StoreMgmt.StoreProfile_Get(attributeSet.SimilarStoresValues.SimilarStore.Key);
                             if (sp.ActiveInd)
                             {
                                 if (sp.Key == Include.NoRID)
@@ -984,46 +963,70 @@ namespace Logility.ROWeb
                                 setSuccessful = false;
                             }
                         }
-                        else
+                        else if (similarStore.SimilarStoresValues.SimilarStoreIsSet
+                            && scsp.SimStoreRID != similarStore.SimilarStoresValues.SimilarStore.Key)
                         {
-                            if (scsp.SimStoreRID != Include.NoRID)
+                            if (similarStore.SimilarStoresValues.SimilarStore.Key != Include.NoRID)
                             {
-                                scsp.SimilarStoreChangeType = eChangeType.delete;
+                                StoreProfile sp = StoreMgmt.StoreProfile_Get(similarStore.SimilarStoresValues.SimilarStore.Key);
+                                if (sp.ActiveInd)
+                                {
+                                    if (sp.Key == Include.NoRID)
+                                    {
+                                        sp.Key = 1;
+                                    }
+                                    scsp.SimStoreRID = sp.Key;
+                                    similarStoreUpdated = true;
+                                    scsp.SimStoreIsInherited = false;
+                                    scsp.SimStoreInheritedFromNodeRID = Include.NoRID;
+                                }
+                                else
+                                {
+                                    message = SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_StoreNotFound);
+                                    setSuccessful = false;
+                                }
                             }
-                            scsp.SimStoreRID = Include.NoRID;
+                            else
+                            {
+                                if (scsp.SimStoreRID != Include.NoRID)
+                                {
+                                    scsp.SimilarStoreChangeType = eChangeType.delete;
+                                }
+                                scsp.SimStoreRID = Include.NoRID;
+                            }
                         }
-                    }
-                    else if (!similarStore.SimilarStoresValues.SimilarStoreIsSet
-                       && scsp.SimilarStoreChangeType == eChangeType.update)
-                    {
-                        scsp.SimilarStoreChangeType = eChangeType.delete;
-                    }
+                        else if (!similarStore.SimilarStoresValues.SimilarStoreIsSet
+                           && scsp.SimilarStoreChangeType == eChangeType.update)
+                        {
+                            scsp.SimilarStoreChangeType = eChangeType.delete;
+                        }
 
-                    if (scsp.SimStoreRID != Include.NoRID
-                        && attributeSet.SimilarStoresValues.SimilarStoreTimePeriodIsSet
-                        && scsp.SimStoreUntilDateRangeRID != similarStore.SimilarStoresValues.SimilarStoreTimePeriod.Key)
-                    {
-                        similarStoreUpdated = true;
-                        scsp.SimStoreUntilDateRangeRID = attributeSet.SimilarStoresValues.SimilarStoreTimePeriod.Key;
-                        scsp.SimStoreDisplayDate = attributeSet.SimilarStoresValues.SimilarStoreTimePeriod.Value;
-                        scsp.SimStoreIsInherited = false;
-                        scsp.SimStoreInheritedFromNodeRID = Include.NoRID;
-                    }
-                    else if (scsp.SimStoreRID != Include.NoRID
-                        && similarStore.SimilarStoresValues.SimilarStoreTimePeriodIsSet
-                        && scsp.SimStoreUntilDateRangeRID != similarStore.SimilarStoresValues.SimilarStoreTimePeriod.Key)
-                    {
-                        similarStoreUpdated = true;
-                        scsp.SimStoreUntilDateRangeRID = similarStore.SimilarStoresValues.SimilarStoreTimePeriod.Key;
-                        scsp.SimStoreDisplayDate = similarStore.SimilarStoresValues.SimilarStoreTimePeriod.Value;
-                        scsp.SimStoreIsInherited = false;
-                        scsp.SimStoreInheritedFromNodeRID = Include.NoRID;
-                    }
+                        if (scsp.SimStoreRID != Include.NoRID
+                            && attributeSet.SimilarStoresValues.SimilarStoreTimePeriodIsSet
+                            && scsp.SimStoreUntilDateRangeRID != similarStore.SimilarStoresValues.SimilarStoreTimePeriod.Key)
+                        {
+                            similarStoreUpdated = true;
+                            scsp.SimStoreUntilDateRangeRID = attributeSet.SimilarStoresValues.SimilarStoreTimePeriod.Key;
+                            scsp.SimStoreDisplayDate = attributeSet.SimilarStoresValues.SimilarStoreTimePeriod.Value;
+                            scsp.SimStoreIsInherited = false;
+                            scsp.SimStoreInheritedFromNodeRID = Include.NoRID;
+                        }
+                        else if (scsp.SimStoreRID != Include.NoRID
+                            && similarStore.SimilarStoresValues.SimilarStoreTimePeriodIsSet
+                            && scsp.SimStoreUntilDateRangeRID != similarStore.SimilarStoresValues.SimilarStoreTimePeriod.Key)
+                        {
+                            similarStoreUpdated = true;
+                            scsp.SimStoreUntilDateRangeRID = similarStore.SimilarStoresValues.SimilarStoreTimePeriod.Key;
+                            scsp.SimStoreDisplayDate = similarStore.SimilarStoresValues.SimilarStoreTimePeriod.Value;
+                            scsp.SimStoreIsInherited = false;
+                            scsp.SimStoreInheritedFromNodeRID = Include.NoRID;
+                        }
 
-                    if (similarStoreUpdated
-                        && scsp.SimilarStoreChangeType == eChangeType.add)
-                    {
-                        _sizeCurveSimilarStoreList.Add(scsp);
+                        if (similarStoreUpdated
+                            && scsp.SimilarStoreChangeType == eChangeType.add)
+                        {
+                            _sizeCurveSimilarStoreList.Add(scsp);
+                        }
                     }
                 }
             }

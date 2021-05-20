@@ -93,7 +93,7 @@ namespace Logility.ROWeb
         {
             message = null;
             bool getNewClass = false;
-            if (_nodePropertiesClass != null)
+            if (_nodePropertiesClass != null && _nodePropertiesClass.HierarchyNodeProfile != null)
             {
                 if (_nodePropertiesClass.HierarchyNodeProfile.NodeLockStatus == eLockStatus.Locked
                     && parms.ReadOnly)
