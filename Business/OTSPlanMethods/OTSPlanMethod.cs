@@ -6072,7 +6072,7 @@ namespace MIDRetail.Business
             {
                 if (merchandiseType == eMerchandiseType.LevelOffset)
                 {
-                    method.HierarchyLevels.Add(new KeyValuePair<int, string>(level.LevelIndex, level.ToString()));
+                    method.HierarchyLevels.Add(new KeyValuePair<int, string>(level.Level, level.ToString()));
                 }
                 else
                 {
@@ -6448,7 +6448,15 @@ namespace MIDRetail.Business
             foreach (ROForecastingBasisDetailsProfile forcastBasisDetailProfile in roBasisDetailProfiles)
             {
                 GroupLevelBasisProfile glbProfile = new GroupLevelBasisProfile(index);
-                glbProfile.Basis_HN_RID = forcastBasisDetailProfile.MerchandiseId;
+                if (forcastBasisDetailProfile.MerchandiseType == eMerchandiseType.SameNode
+                    || forcastBasisDetailProfile.MerchandiseId < 0)
+                {
+                    glbProfile.Basis_HN_RID = 0;
+                }
+                else
+                {
+                    glbProfile.Basis_HN_RID = forcastBasisDetailProfile.MerchandiseId;
+                }
 
                 glbProfile.Basis_FV_RID = forcastBasisDetailProfile.VersionId;
                 glbProfile.Basis_Weight = forcastBasisDetailProfile.Weight;
@@ -6458,7 +6466,16 @@ namespace MIDRetail.Business
                 glbProfile.MerchType = forcastBasisDetailProfile.MerchandiseType;
                 glbProfile.MerchPhRid = forcastBasisDetailProfile.MerchPhRId;
                 glbProfile.MerchPhlSequence = forcastBasisDetailProfile.MerchPhlSequence;
-                glbProfile.MerchOffset = forcastBasisDetailProfile.MerchOffset;
+
+                if (forcastBasisDetailProfile.MerchandiseType == eMerchandiseType.SameNode
+                    || forcastBasisDetailProfile.MerchOffset < 0)
+                {
+                    glbProfile.MerchOffset = 0;
+                }
+                else
+                {
+                    glbProfile.MerchOffset = forcastBasisDetailProfile.MerchOffset;
+                }
                 groupBasisList.Add(glbProfile);
                 index--;
             }
@@ -6558,7 +6575,14 @@ namespace MIDRetail.Business
                         newGLFP.GLFT_ID = item.ForecastMethod.Key;
                         newGLFP.GLSB_ID = item.SmoothBy.Key;
 
-                        GLNFunction.HN_RID = item.StockMerchandise.Key;
+                        if (item.StockMerchandise.Key > 0)
+                        {
+                            GLNFunction.HN_RID = item.StockMerchandise.Key;
+                        }
+                        else
+                        {
+                            GLNFunction.HN_RID = Plan_HN_RID;
+                        }
                         GLNFunction.SglRID = item.AttributeSet.Key;
                         GLNFunction.ApplyMinMaxesInd = item.ApplyMinMax;
                         GLNFunction.MinMaxInheritType = item.MinMaxInheritType;
