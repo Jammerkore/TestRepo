@@ -2751,7 +2751,8 @@ namespace MIDRetail.Business
             int nodeKey,
             bool includeHomeLevel,
             bool includeOrganizationLevelsForAlternate,
-            out eMerchandiseType merchandiseType
+            out eMerchandiseType merchandiseType,
+            out int homeHierarchyKey
             )
         {
             HierarchyNodeProfile nodeProfile;
@@ -2766,6 +2767,7 @@ namespace MIDRetail.Business
             HierarchyLevelProfile hierarchyLevelProfile;
             List<HierarchyLevelComboObject> levelList;
             merchandiseType = eMerchandiseType.Undefined;
+            homeHierarchyKey = Include.NoRID;
 
             try
             {
@@ -2774,6 +2776,7 @@ namespace MIDRetail.Business
                 {
                     nodeProfile = sessionAddressBlock.HierarchyServerSession.GetNodeData(nodeKey);
                     hierarchyProfile = sessionAddressBlock.HierarchyServerSession.GetHierarchyData(nodeProfile.HomeHierarchyRID);
+                    homeHierarchyKey = nodeProfile.HomeHierarchyRID;
 
                     // Load Level arrays
 

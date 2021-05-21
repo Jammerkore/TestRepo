@@ -6057,12 +6057,14 @@ namespace MIDRetail.Business
         private void BuildLowLevelList(ROPlanningForecastMethodProperties method)
         {
             eMerchandiseType merchandiseType;
+            int homeHierarchyKey;
             List<HierarchyLevelComboObject> levelList = HierarchyTools.GetLevelsList(
                 sessionAddressBlock: SAB,
                 nodeKey: Plan_HN_RID,
                 includeHomeLevel: false,
                 includeOrganizationLevelsForAlternate: false,
-                merchandiseType: out merchandiseType
+                merchandiseType: out merchandiseType,
+                homeHierarchyKey: out homeHierarchyKey
                 );
 
             method.HierarchyLevelsType = merchandiseType;
@@ -6077,6 +6079,26 @@ namespace MIDRetail.Business
                     method.HierarchyLevels.Add(new KeyValuePair<int, string>(level.Level, level.LevelName));
                 }
             }
+
+            // set selected as first level if not set
+            if (method.LowLevels
+                    && method.OverrideLowLevel.LowLevel.LevelType == eROLevelsType.None
+                    && method.HierarchyLevels.Count > 0)
+            {
+                if (method.HierarchyLevelsType == eMerchandiseType.HierarchyLevel)
+                {
+                    method.OverrideLowLevel.LowLevel.LevelType = eROLevelsType.HierarchyLevel;
+                    method.OverrideLowLevel.LowLevel.LevelSequence = method.HierarchyLevels[0].Key;
+                    method.OverrideLowLevel.LowLevel.LevelValue = method.HierarchyLevels[0].Value;
+                }
+                else
+                {
+                    method.OverrideLowLevel.LowLevel.LevelType = eROLevelsType.LevelOffset;
+                    method.OverrideLowLevel.LowLevel.LevelOffset = method.HierarchyLevels[0].Key;
+                    method.OverrideLowLevel.LowLevel.LevelValue = method.HierarchyLevels[0].Value;
+                }
+            }
+
         }
          
         private ROPlanningForecastMethodAttributeSetProperties BuildAttributeSetProperties(
