@@ -653,11 +653,11 @@ namespace Logility.ROWeb
 
             foreach (RONodePropertiesSizeCurveCriteria sizeCurveCriteria in nodePropertiesSizeCurvesData.SizeCurveInheritedCriteria)
             {
+                _sizeCurveDefaultCriteriaProfile.DefaultChangeType = eChangeType.update;
                 if (sizeCurveCriteria.CriteriaIsDefault == true)
                 {
                     if (_sizeCurveDefaultCriteriaProfile.DefaultRID != sizeCurveCriteria.Key)
                     {
-                        _sizeCurveDefaultCriteriaProfile.DefaultChangeType = eChangeType.update;
                         _sizeCurveDefaultCriteriaProfile.DefaultRID = sizeCurveCriteria.Key;
                         _sizeCurveDefaultCriteriaProfile.DefaultRIDIsInherited = false;
                         _sizeCurveDefaultCriteriaProfile.DefaultRIDIsInheritedFromRID = Include.NoRID;

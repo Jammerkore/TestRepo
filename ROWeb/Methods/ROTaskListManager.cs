@@ -319,7 +319,8 @@ namespace Logility.ROWeb
                     message: out message
                     );
             }
-
+            _taskListTasks.Clear();
+            _task = null;
             ROTaskListProperties taskListProperties = BuildTaskListProperties(taskListParameters);
 
             // update FunctionSecurity based on user's security
