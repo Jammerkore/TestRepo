@@ -1287,6 +1287,7 @@ namespace MIDRetail.Business
             ROMethodRollupProperties roMethodRollupProperties = (ROMethodRollupProperties)methodProperties;
             try
             {
+                Template_IND = methodProperties.IsTemplate;
                 _versionRid = roMethodRollupProperties.Version.Key;
                 _dateRangeRid = roMethodRollupProperties.DateRange.Key;
                 _hierNodeRid = roMethodRollupProperties.Merchandise.Key;

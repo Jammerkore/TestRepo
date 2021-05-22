@@ -12072,7 +12072,8 @@ namespace MIDRetail.Business.Allocation
         override public bool MethodSetData(ROMethodProperties methodProperties, ref string message, bool processingApply)
         {
             ROMethodAllocationVelocityProperties method = (ROMethodAllocationVelocityProperties)methodProperties;
-            
+
+            Template_IND = methodProperties.IsTemplate;
             CalculateAverageUsingChain = method.CalculateAverageUsing == eVelocityCalculateAverageUsing.AllStores;
             DetermineShipQtyUsingBasis = method.DetermineShipQtyUsing == eVelocityDetermineShipQtyUsing.Basis;
 

@@ -794,6 +794,7 @@ namespace MIDRetail.Business.Allocation
 
             try
             {
+                Template_IND = methodProperties.IsTemplate;
                 _Ship_To_CDR_RID = roMethodGeneralAllocationProperties.ShipTo_CDR.Key;
                 _Begin_CDR_RID = roMethodGeneralAllocationProperties.Begin_CDR.Key;
                 _Percent_Ind = roMethodGeneralAllocationProperties.PercentInd;

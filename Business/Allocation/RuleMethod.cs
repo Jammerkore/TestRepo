@@ -2929,6 +2929,7 @@ namespace MIDRetail.Business.Allocation
 
             try
             {
+                Template_IND = methodProperties.IsTemplate;
                 // update only fields with values
                 if (roMethodRuleAllocationProperties.DescriptionIsSet)
                 {

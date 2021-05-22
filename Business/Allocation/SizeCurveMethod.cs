@@ -972,6 +972,7 @@ namespace MIDRetail.Business.Allocation
 
             try
             {
+                Template_IND = methodProperties.IsTemplate;
                 Method_Description = roMethodSizeCurveProperties.Description;
                 User_RID = roMethodSizeCurveProperties.UserKey;
                 SizeGroupRid = roMethodSizeCurveProperties.SizeGroup.Key;

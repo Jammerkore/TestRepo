@@ -4163,6 +4163,7 @@ namespace MIDRetail.Business.Allocation
             ROMethodAllocationOverrideProperties roMethodAllocationOverrideProperties = (ROMethodAllocationOverrideProperties)methodProperties;
             try
             {
+                Template_IND = methodProperties.IsTemplate;
                 if (roMethodAllocationOverrideProperties.StoreGradeWeekCountIsSet)
                 {
                     _allocationCriteria.GradeWeekCount = (int)roMethodAllocationOverrideProperties.StoreGradeWeekCount;

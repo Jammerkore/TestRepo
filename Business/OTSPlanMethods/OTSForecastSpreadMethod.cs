@@ -1545,6 +1545,7 @@ namespace MIDRetail.Business
 
             try
             {
+                Template_IND = methodProperties.IsTemplate;
                 _hierNodeRid = rOMethodForecastSpreadProperties.Merchandise.Key;
                 _versionRid = rOMethodForecastSpreadProperties.Version.Key;
                 _dateRangeRid = rOMethodForecastSpreadProperties.TimePeriod.Key;

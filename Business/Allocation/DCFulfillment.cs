@@ -1204,6 +1204,7 @@ namespace MIDRetail.Business.Allocation
 
             try
             {
+                Template_IND = methodProperties.IsTemplate;
                 Method_Description = rOMethodDCFulfillmentProperties.Description;
                 SplitOption = rOMethodDCFulfillmentProperties.DCFulfillmentSplitOption;
                 ApplyMinimumsInd = rOMethodDCFulfillmentProperties.ApplyMinimumsInd;

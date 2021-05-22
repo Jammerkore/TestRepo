@@ -3384,6 +3384,7 @@ namespace MIDRetail.Business
             ROPlanningForecastExportProperties roPlanningForecastExportProperties = (ROPlanningForecastExportProperties)methodProperties;
             try
             {
+                Template_IND = methodProperties.IsTemplate;
                 ArrayList alVariableList = new ArrayList();
 
                 if (_varProfList == null)

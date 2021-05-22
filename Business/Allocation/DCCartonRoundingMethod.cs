@@ -1647,6 +1647,7 @@ namespace MIDRetail.Business.Allocation
             }
             try
             {
+                Template_IND = methodProperties.IsTemplate;
                 //_methodData.ApplyOverageTo = roMethodDCCartonRoundingProperties.AllocateOverageTo;
                 //_methodData.SG_RID = roMethodDCCartonRoundingProperties.Attribute.Key;
                 APPLY_OVERAGE_TO = roMethodDCCartonRoundingProperties.AllocateOverageTo;

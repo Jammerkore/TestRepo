@@ -826,6 +826,7 @@ namespace MIDRetail.Business.Allocation
             ROMethodCreateMasterHeadersProperties roMethodCreateMasterHeadersProperties = (ROMethodCreateMasterHeadersProperties)methodProperties;
             try
             {
+                Template_IND = methodProperties.IsTemplate;
                 _methodData.UseSelectedHeaders = roMethodCreateMasterHeadersProperties.UseSelectedHeaders;
                 UseSelectedHeaders = roMethodCreateMasterHeadersProperties.UseSelectedHeaders;
                 _methodData.Method_Name = roMethodCreateMasterHeadersProperties.Method.Value;

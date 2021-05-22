@@ -1286,6 +1286,7 @@ namespace MIDRetail.Business
 
             try
             {
+                Template_IND = methodProperties.IsTemplate;
                 HierNodeRID = roOTSGlobalUnlockProperties.Merchandise.Key;
                 VersionRID = roOTSGlobalUnlockProperties.Version.Key;
                 MultiLevel = roOTSGlobalUnlockProperties.IsMultiLevel;

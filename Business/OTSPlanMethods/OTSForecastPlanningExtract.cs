@@ -1892,6 +1892,7 @@ namespace MIDRetail.Business
             ROMethodPlanningExtractProperties roMethodPlanningExtractProperties = (ROMethodPlanningExtractProperties)methodProperties;
             try
             {
+                Template_IND = methodProperties.IsTemplate;
                 ArrayList alVariableList = new ArrayList();
                 ArrayList alTotalVariableList = new ArrayList();
 

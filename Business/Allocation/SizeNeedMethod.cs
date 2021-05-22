@@ -4885,6 +4885,7 @@ namespace MIDRetail.Business.Allocation
 
             try
             {
+                Template_IND = methodProperties.IsTemplate;
                 Method_Description = roMethodSizeNeedAllocationProperties.Description;
                 User_RID = roMethodSizeNeedAllocationProperties.UserKey;
                 _MerchPhRid = roMethodSizeNeedAllocationProperties.Merch_PH.Key;

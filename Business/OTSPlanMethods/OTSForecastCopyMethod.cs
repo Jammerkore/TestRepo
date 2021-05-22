@@ -1871,6 +1871,7 @@ namespace MIDRetail.Business
 
             try
             {
+                Template_IND = methodProperties.IsTemplate;
                 _hierNodeRid = rOMethodCopyForecastProperties.Merchandise.Key;
                 _versionRid = rOMethodCopyForecastProperties.Version.Key;
                 _dateRangeRid = rOMethodCopyForecastProperties.TimePeriod.Key;

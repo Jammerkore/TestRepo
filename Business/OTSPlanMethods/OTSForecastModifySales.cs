@@ -2556,7 +2556,7 @@ namespace MIDRetail.Business
 
             try
             {
-
+                Template_IND = methodProperties.IsTemplate;
                 Method_Description = roMethodModifySalesOtsForecastProperties.Description;
                 User_RID = roMethodModifySalesOtsForecastProperties.UserKey;
                 Filter = roMethodModifySalesOtsForecastProperties.Filter.Key;

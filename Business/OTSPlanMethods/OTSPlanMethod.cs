@@ -6114,7 +6114,12 @@ namespace MIDRetail.Business
         {
 
             GroupLevelNodeFunction GLNFunction = (GroupLevelNodeFunction)GLFProfile.Group_Level_Nodes[Plan_HN_RID];
-            GroupLevelNodeFunction defaultGLNFunction = (GroupLevelNodeFunction)defaultAttributeSetProfile.Group_Level_Nodes[Plan_HN_RID];
+            // get default set values if a default set is selected
+            GroupLevelNodeFunction defaultGLNFunction = null;
+            if (defaultAttributeSetProfile != null)
+            {
+                defaultGLNFunction = (GroupLevelNodeFunction)defaultAttributeSetProfile.Group_Level_Nodes[Plan_HN_RID];
+            }
 
             if (GLNFunction == null)
             {
@@ -6506,6 +6511,7 @@ namespace MIDRetail.Business
 
             try
             {
+                Template_IND = methodProperties.IsTemplate;
                 Plan_HN_RID = properties.Merchandise.Key;
                 HighLevelInd = properties.HighLevel;
                 LowLevelsInd = properties.LowLevels;

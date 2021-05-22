@@ -2579,6 +2579,7 @@ namespace MIDRetail.Business.Allocation
             ROMethodBuildPacksProperties rOMethodBuildPacksProperties = (ROMethodBuildPacksProperties)methodProperties;
             try
             {
+                Template_IND = methodProperties.IsTemplate;
                 Method_Description = rOMethodBuildPacksProperties.Description;
                 SetVendorName(rOMethodBuildPacksProperties.Vendor.Value, out aStatusReason);
                 SetPackMinOrder(rOMethodBuildPacksProperties.PackMinOrder, out aStatusReason);

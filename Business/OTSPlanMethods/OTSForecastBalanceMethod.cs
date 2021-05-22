@@ -1487,6 +1487,7 @@ namespace MIDRetail.Business
             ROMethodMatrixBalanceProperties roMethodMatrixBalanceProperties = (ROMethodMatrixBalanceProperties)methodProperties;
             try
             {
+                Template_IND = methodProperties.IsTemplate;
                 _highLevelVersionRID = roMethodMatrixBalanceProperties.HighLevelVersion.Key;
                 _hnRID = roMethodMatrixBalanceProperties.HighLevelMerchandise.Key;
                 _filterRID = roMethodMatrixBalanceProperties.Filter.Key;

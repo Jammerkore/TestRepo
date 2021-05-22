@@ -2479,6 +2479,7 @@ namespace MIDRetail.Business.Allocation
 
             try
             {
+                Template_IND = methodProperties.IsTemplate;
                 Method_Description = roMethodBasisSizeAllocationProperties.Description;
                 User_RID = roMethodBasisSizeAllocationProperties.UserKey;
                 _StoreFilterRid = roMethodBasisSizeAllocationProperties.Filter.Key;
