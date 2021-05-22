@@ -5979,6 +5979,8 @@ namespace MIDRetail.Business
                );
 
             method.DefaultAttributeSetKey = GetDefaultGLFRid();
+            // get default attribute set values
+            GroupLevelFunctionProfile defaultAttributeSetProfile = (GroupLevelFunctionProfile)_GLFProfileList.FindKey(method.DefaultAttributeSetKey);
 
             GroupLevelFunctionProfile attributeSetProfile;
             foreach (GroupLevelFunctionProfile GLFProfile in _GLFProfileList)
@@ -5993,8 +5995,6 @@ namespace MIDRetail.Business
                 // if attribute set is to use the default set, get the values for the default set
                 if (GLFProfile.Use_Default_IND)
                 {
-                    // get default attribute set values
-                    GroupLevelFunctionProfile defaultAttributeSetProfile = (GroupLevelFunctionProfile)_GLFProfileList.FindKey(method.DefaultAttributeSetKey);
                     // create a copy of the default class so changes do not update the default attribute set
                     attributeSetProfile = new GroupLevelFunctionProfile(aKey: GLFProfile.Key);
                     attributeSetProfile = defaultAttributeSetProfile.CopyTo(attributeSetProfile, SAB.ApplicationServerSession, false, true);
@@ -6005,6 +6005,7 @@ namespace MIDRetail.Business
 
                 method.AttributeSetValues = BuildAttributeSetProperties(
                     GLFProfile: attributeSetProfile,
+                    defaultAttributeSetProfile: defaultAttributeSetProfile,
                     lowLevel: roOverrideLowLevel.LowLevel
                     );
             }
@@ -6020,7 +6021,10 @@ namespace MIDRetail.Business
                 groupLevelNodeFunction.MinMaxInheritType = eMinMaxInheritType.None;
                 SetGroupLevelFunctionStockMinMaxProfileList(groupLevelNodeFunction);
                 GLFProfile.Group_Level_Nodes.Add(groupLevelNodeFunction.HN_RID, groupLevelNodeFunction);
-                method.AttributeSetValues = BuildAttributeSetProperties(GLFProfile, roOverrideLowLevel.LowLevel);
+                method.AttributeSetValues = BuildAttributeSetProperties(
+                    GLFProfile: GLFProfile,
+                    defaultAttributeSetProfile: defaultAttributeSetProfile,
+                    lowLevel: roOverrideLowLevel.LowLevel);
             }
 
             BuildVersionLists(method: method);
@@ -6103,11 +6107,13 @@ namespace MIDRetail.Business
          
         private ROPlanningForecastMethodAttributeSetProperties BuildAttributeSetProperties(
             GroupLevelFunctionProfile GLFProfile,
+            GroupLevelFunctionProfile defaultAttributeSetProfile,
             ROLevelInformation lowLevel
             )
         {
 
             GroupLevelNodeFunction GLNFunction = (GroupLevelNodeFunction)GLFProfile.Group_Level_Nodes[Plan_HN_RID];
+            GroupLevelNodeFunction defaultGLNFunction = (GroupLevelNodeFunction)defaultAttributeSetProfile.Group_Level_Nodes[Plan_HN_RID];
 
             if (GLNFunction == null)
             {
@@ -6164,8 +6170,18 @@ namespace MIDRetail.Business
                 lowLevel: lowLevel
                 );
 
-            List<ROPlanningStoreGrade> storeGrades = BuildStoreGrades(GLNFunction);
-            List<ROStockMinMax> stockMinMaxes = BuildDataStockMinMax(GLNFunction, ref storeGrades);
+            List<ROPlanningStoreGrade> storeGrades;
+            List<ROStockMinMax> stockMinMaxes;
+            if (GLNFunction.MinMaxInheritType == eMinMaxInheritType.Default)
+            {
+                storeGrades = BuildStoreGrades(defaultGLNFunction);
+                stockMinMaxes = BuildDataStockMinMax(defaultGLNFunction, ref storeGrades);
+            }
+            else
+            {
+                storeGrades = BuildStoreGrades(GLNFunction);
+                stockMinMaxes = BuildDataStockMinMax(GLNFunction, ref storeGrades);
+            }
             storeGrades = MergeStoreGradesWithStockMinMax(storeGrades, stockMinMaxes);
 
             ROPlanningForecastMethodAttributeSetProperties attributeSetProperties = new ROPlanningForecastMethodAttributeSetProperties(
