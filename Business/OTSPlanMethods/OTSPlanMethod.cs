@@ -5993,7 +5993,8 @@ namespace MIDRetail.Business
                 attributeSetProfile = GLFProfile;
 
                 // if attribute set is to use the default set, get the values for the default set
-                if (GLFProfile.Use_Default_IND)
+                if (GLFProfile.Use_Default_IND
+                    && defaultAttributeSetProfile != null)
                 {
                     // create a copy of the default class so changes do not update the default attribute set
                     attributeSetProfile = new GroupLevelFunctionProfile(aKey: GLFProfile.Key);
@@ -6172,7 +6173,8 @@ namespace MIDRetail.Business
 
             List<ROPlanningStoreGrade> storeGrades;
             List<ROStockMinMax> stockMinMaxes;
-            if (GLNFunction.MinMaxInheritType == eMinMaxInheritType.Default)
+            if (GLNFunction.MinMaxInheritType == eMinMaxInheritType.Default
+                && defaultGLNFunction != null)
             {
                 storeGrades = BuildStoreGrades(defaultGLNFunction);
                 stockMinMaxes = BuildDataStockMinMax(defaultGLNFunction, ref storeGrades);
