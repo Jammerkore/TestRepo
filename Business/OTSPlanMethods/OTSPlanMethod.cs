@@ -5924,6 +5924,7 @@ namespace MIDRetail.Business
 
         int _attributeSetKey = Include.NoRID;
         bool _attributeChanged = false;
+        bool _needToFixLowLevelData = true;
 
         override public ROMethodProperties MethodGetData(out bool successful, ref string message, bool processingApply = false)
         {
@@ -5985,6 +5986,20 @@ namespace MIDRetail.Business
             GroupLevelFunctionProfile attributeSetProfile;
             foreach (GroupLevelFunctionProfile GLFProfile in _GLFProfileList)
             {
+                // adjust values for basis that were set as SameNode if low level is turned off
+                if (method.LowLevels
+                    && !_needToFixLowLevelData)
+                {
+                    foreach (GroupLevelBasisProfile basis in GLFProfile.GroupLevelBasis)
+                    {
+                        if (basis.MerchType != eMerchandiseType.Node)
+                        {
+                            basis.MerchType = eMerchandiseType.Node;
+                            basis.Basis_HN_RID = Plan_HN_RID;
+                        }
+                    }
+                }
+
                 if (GLFProfile.Key != _attributeSetKey)
                 {
                     continue;
@@ -6010,6 +6025,8 @@ namespace MIDRetail.Business
                     lowLevel: roOverrideLowLevel.LowLevel
                     );
             }
+
+            _needToFixLowLevelData = false;
 
             if (method.AttributeSetValues == null)
             {
