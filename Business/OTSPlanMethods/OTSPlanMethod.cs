@@ -6566,12 +6566,6 @@ namespace MIDRetail.Business
                         newGLFP.Use_Default_IND = item.IsAttributeSetToUseDefault;
                         newGLFP.Plan_IND = true;
                     }
-                    else if (newGLFP != null
-                            && newGLFP.Use_Default_IND
-                            && !item.IsAttributeSetToUseDefault)
-                    {
-                        newGLFP.Use_Default_IND = item.IsAttributeSetToUseDefault;
-                    }
                     else
                     {
                         bool isDefaultSet = false;
