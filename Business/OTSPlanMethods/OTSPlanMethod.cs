@@ -6566,20 +6566,26 @@ namespace MIDRetail.Business
                     }
                 }
 
+                int defaultAttributeSetKey = GetDefaultGLFRid();
+
                 // only update attribute set values if attribute did not change
                 if (!_attributeChanged)
                 {
                     ROPlanningForecastMethodAttributeSetProperties item = properties.AttributeSetValues;
 
                     GroupLevelFunctionProfile newGLFP = (GroupLevelFunctionProfile)_GLFProfileList.FindKey(item.AttributeSet.Key);
-                    // if use default attribute set has changed, only update flag
-                    if (item.IsAttributeSetToUseDefault)
+                    // if use default attribute set, copy default set values to set
+                    if (item.IsAttributeSetToUseDefault
+                        && defaultAttributeSetKey > 0)
                     {
                         if (newGLFP == null)
                         {
                             newGLFP = new GroupLevelFunctionProfile(item.AttributeSet.Key);
                             GLFProfileList.Add(newGLFP);
                         }
+                        GroupLevelFunctionProfile defaultAttributeSetProfile = (GroupLevelFunctionProfile)_GLFProfileList.FindKey(defaultAttributeSetKey);
+                        newGLFP = defaultAttributeSetProfile.CopyTo(newGLFP, SAB.ApplicationServerSession, false, true);
+                        newGLFP.Default_IND = false;
                         newGLFP.Use_Default_IND = item.IsAttributeSetToUseDefault;
                         newGLFP.Plan_IND = true;
                     }
@@ -6657,6 +6663,14 @@ namespace MIDRetail.Business
                         }
 
                         GLFProfileList.Add(newGLFP);
+
+                        // Default set has changed, so copy values to all sets that use default
+                        if (newGLFP.Default_IND)
+                        {
+                            UpdateSetsUsingDefault(
+                                defaultAttributeSetProfile: newGLFP
+                                );
+                        }
                     }
                 }
 
@@ -6665,6 +6679,23 @@ namespace MIDRetail.Business
             catch (Exception ex)
             {
                 return false;
+            }
+        }
+
+        private void UpdateSetsUsingDefault(GroupLevelFunctionProfile defaultAttributeSetProfile)
+        {
+            GroupLevelFunctionProfile attributeSetProfile;
+
+            for (int i = 0; i < _GLFProfileList.Count; i++)
+            {
+                attributeSetProfile = (GroupLevelFunctionProfile)_GLFProfileList[i];
+                if (attributeSetProfile.Use_Default_IND)
+                {
+                    attributeSetProfile = defaultAttributeSetProfile.CopyTo(attributeSetProfile, SAB.ApplicationServerSession, false, true);
+                    attributeSetProfile.Default_IND = false;
+                    attributeSetProfile.Plan_IND = true;
+                    attributeSetProfile.Use_Default_IND = true;
+                }
             }
         }
 
