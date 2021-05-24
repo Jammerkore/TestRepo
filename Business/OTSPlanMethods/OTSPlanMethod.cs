@@ -5987,8 +5987,8 @@ namespace MIDRetail.Business
             foreach (GroupLevelFunctionProfile GLFProfile in _GLFProfileList)
             {
                 // adjust values for basis that were set as SameNode if low level is turned off
-                if (method.LowLevels
-                    && !_needToFixLowLevelData)
+                if (!method.LowLevels
+                    && _needToFixLowLevelData)
                 {
                     foreach (GroupLevelBasisProfile basis in GLFProfile.GroupLevelBasis)
                     {
