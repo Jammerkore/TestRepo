@@ -6584,7 +6584,10 @@ namespace MIDRetail.Business
                             GLFProfileList.Add(newGLFP);
                         }
                         GroupLevelFunctionProfile defaultAttributeSetProfile = (GroupLevelFunctionProfile)_GLFProfileList.FindKey(defaultAttributeSetKey);
-                        newGLFP = defaultAttributeSetProfile.CopyTo(newGLFP, SAB.ApplicationServerSession, false, true);
+                        if (defaultAttributeSetProfile != null)
+                        {
+                            newGLFP = defaultAttributeSetProfile.CopyTo(newGLFP, SAB.ApplicationServerSession, false, true);
+                        }
                         newGLFP.Default_IND = false;
                         newGLFP.Use_Default_IND = item.IsAttributeSetToUseDefault;
                         newGLFP.Plan_IND = true;
