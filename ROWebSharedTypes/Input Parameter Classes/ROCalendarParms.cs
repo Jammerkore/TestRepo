@@ -124,4 +124,42 @@ namespace Logility.ROWebSharedTypes
         public int iDateRangeType { get { return _iDateRangeType; } }
         public int iRelativeTo { get { return _iRelativeTo; } }
     }
+
+    [DataContract(Name = "ROCalendarDateCalculationParms", Namespace = "http://Logility.ROWeb/")]
+    public class ROCalendarDateCalculationParms : ROParms
+    {
+        [DataMember(IsRequired = true)]
+        private int _dateKey;
+        [DataMember(IsRequired = true)]
+        private int _baseDateKey;
+        [DataMember(IsRequired = true)]
+        private eDateCalculationType _dateCalculationType;
+
+        public ROCalendarDateCalculationParms(
+            string sROUserID, 
+            string sROSessionID, 
+            eROClass ROClass, 
+            eRORequest RORequest, 
+            long ROInstanceID,
+            eDateCalculationType dateCalculationType,
+            int dateKey, 
+            int baseDateKey
+            )
+            : base(
+                  sROUserID, 
+                  sROSessionID, 
+                  ROClass, 
+                  RORequest, 
+                  ROInstanceID
+                  )
+        {
+            _dateKey = dateKey;
+            _baseDateKey = baseDateKey;
+            _dateCalculationType = dateCalculationType;
+        }
+
+        public int DateKey { get { return _dateKey; } }
+        public int BaseDateKey { get { return _baseDateKey; } }
+        public eDateCalculationType DateCalculationType { get { return _dateCalculationType; } }
+    }
 }

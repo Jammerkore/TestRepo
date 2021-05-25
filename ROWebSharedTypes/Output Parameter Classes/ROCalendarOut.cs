@@ -97,4 +97,34 @@ namespace Logility.ROWebSharedTypes
 
         public IEnumerable<ROCalendarTimePeriodModel> CalendarModels {  get { return _calendarModels;  } }
     }
+
+    [DataContract(Name = "ROCalendarDate", Namespace = "http://Logility.ROWeb/")]
+    public class ROCalendarDate : ROOut
+    {
+        [DataMember(IsRequired = true)]
+        private int _dateKey;
+        [DataMember(IsRequired = true)]
+        private string _displayDate;
+
+        public int DateKey { get { return _dateKey; } }
+
+        public int DisplayDate { get { return _dateKey; } }
+
+        public ROCalendarDate(
+            eROReturnCode ROReturnCode, 
+            string sROMessage, 
+            long ROInstanceID, 
+            int dateKey, 
+            string displayDate
+            ) :
+            base(
+                ROReturnCode, 
+                sROMessage, 
+                ROInstanceID
+                )
+        {
+            _dateKey = dateKey;
+            _displayDate = displayDate;
+        }
+    }
 }

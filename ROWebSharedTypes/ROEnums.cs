@@ -146,12 +146,6 @@
         GetInUse,
         GetFunctionSecurity,
         ReleaseResources,
-        //Calendar
-        GetCalendarSelector,
-        UpdateCalendarSelector,
-        RenameDateRange,
-        DeleteDateRange,
-        GetCalendarModel,
         GetAbout,
         GetColors,
         DeleteWorkflow,
@@ -167,6 +161,14 @@
         SaveViewDetails,
         DeleteViewDetails,
         SaveViewFormat,
+
+        //Calendar
+        GetCalendarSelector,
+        UpdateCalendarSelector,
+        RenameDateRange,
+        DeleteDateRange,
+        GetCalendarModel,
+        CalculateCalendarDate,
 
         //Hierarchy
         GetHierarchies,
@@ -538,5 +540,11 @@
         HeaderReserve,
         HeaderVSW,
         HeaderWorkUpBuy
+    }
+
+    public enum eDateCalculationType
+    {
+        GetLY,
+        GetApplyTrendTo
     }
 }

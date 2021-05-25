@@ -79,10 +79,113 @@ namespace Logility.ROWeb
                     return RenameCalendarDateRange((ROCalendarSaveParms)Parms);
                 case eRORequest.DeleteDateRange:
                     return DeleteCalendarDateRange((ROCalendarSaveParms)Parms);
+                case eRORequest.CalculateCalendarDate:
+                    return CalculateCalendarDate((ROCalendarDateCalculationParms)Parms);
 
             }
 
             return new RONoDataOut(eROReturnCode.Failure, "Invalid Request", ROInstanceID);
+        }
+
+        private ROOut CalculateCalendarDate(ROCalendarDateCalculationParms parms)
+        {
+            switch (parms.DateCalculationType)
+            {
+                case eDateCalculationType.GetLY:
+                    return GetLYDate(parms);
+                case eDateCalculationType.GetApplyTrendTo:
+                    return GetApplyTrendToDate(parms);
+                default:
+                    return new RONoDataOut(eROReturnCode.Failure, "Invalid Request", ROInstanceID);
+            }
+        }
+
+        private ROOut GetLYDate(ROCalendarDateCalculationParms parms)
+        {
+            int dateKey = Include.UndefinedCalendarDateRange;
+            string displayDate = null;
+            string message = null;
+
+            DateRangeProfile dateRange = SAB.ClientServerSession.Calendar.GetDateRange(parms.DateKey);
+            DateRangeProfile lastYearDateRange = null;
+            if (parms.BaseDateKey > 0)  // contains the key to the plan date
+            {
+                int planDateRangeKey = parms.BaseDateKey;
+                if (planDateRangeKey != Include.UndefinedCalendarDateRange)
+                {
+                    WeekProfile FirstWeekOfPlan = SAB.ClientServerSession.Calendar.GetFirstWeekOfRange(planDateRangeKey);
+                    lastYearDateRange = SAB.ClientServerSession.Calendar.GetSameRangeForLastYear(dateRange, FirstWeekOfPlan);
+                }
+                else
+                {
+                    WeekProfile FirstWeekOfTY = SAB.ClientServerSession.Calendar.GetFirstWeekOfRange(parms.DateKey);
+                    lastYearDateRange = SAB.ClientServerSession.Calendar.GetSameRangeForLastYear(dateRange, FirstWeekOfTY);
+                }
+            }
+            else
+            {
+                WeekProfile FirstWeekOfTY = SAB.ClientServerSession.Calendar.GetFirstWeekOfRange(parms.DateKey);
+                lastYearDateRange = SAB.ClientServerSession.Calendar.GetSameRangeForLastYear(dateRange, FirstWeekOfTY);
+            }
+
+            if (parms.BaseDateKey > 0)
+            {
+                lastYearDateRange = SAB.ClientServerSession.Calendar.GetDateRange(lastYearDateRange.Key, parms.BaseDateKey);
+            }
+            else
+            {
+                lastYearDateRange = SAB.ClientServerSession.Calendar.GetDateRange(lastYearDateRange.Key);
+            }
+
+            dateKey = lastYearDateRange.Key;
+            displayDate = lastYearDateRange.DisplayDate;
+
+            return new ROCalendarDate(
+                ROReturnCode: eROReturnCode.Successful,
+                sROMessage: message, 
+                ROInstanceID: ROInstanceID, 
+                dateKey: dateKey, 
+                displayDate: displayDate
+                );
+        }
+
+        private ROOut GetApplyTrendToDate(ROCalendarDateCalculationParms parms)
+        {
+            int dateKey = Include.UndefinedCalendarDateRange;
+            string displayDate = null;
+            string message = null;
+
+            DateRangeProfile dateRange = null;
+            if (parms.BaseDateKey > 0)  // contains the key to the plan date
+            {
+                int planDateRangeKey = parms.BaseDateKey;
+                if (planDateRangeKey != Include.UndefinedCalendarDateRange)
+                {
+                    DateRangeProfile planDateRange = SAB.ClientServerSession.Calendar.GetDateRange(planDateRangeKey);
+                    dateRange = SAB.ClientServerSession.Calendar.GetSameRangeForLastYear(planDateRange);
+                    dateRange = SAB.ClientServerSession.Calendar.ConvertToDynamicToPlan(dateRange, planDateRange);
+                }
+                else
+                {
+                    dateRange = SAB.ClientServerSession.Calendar.GetDateRange(parms.DateKey);
+                }
+            }
+            else
+            {
+                dateRange = SAB.ClientServerSession.Calendar.GetDateRange(parms.DateKey);
+            }
+
+            DateRangeProfile trendDateRange = SAB.ClientServerSession.Calendar.GetRangeAsFirstWeekOfRange(dateRange);
+            dateKey = trendDateRange.Key;
+            displayDate = trendDateRange.DisplayDate;
+
+            return new ROCalendarDate(
+                ROReturnCode: eROReturnCode.Successful,
+                sROMessage: message,
+                ROInstanceID: ROInstanceID,
+                dateKey: dateKey,
+                displayDate: displayDate
+                );
         }
 
         private ROOut GetCalendarModel(ROParms parms)

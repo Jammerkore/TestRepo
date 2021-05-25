@@ -45,6 +45,7 @@ namespace Logility.ROWebSharedTypes
     [KnownType(typeof(ROIntOut))]
     [KnownType(typeof(ROCubeMetadata))]
     [KnownType(typeof(ROCalendarTimePeriodModels))]
+    [KnownType(typeof(ROCalendarDate))]
     [KnownType(typeof(ROListOut))]
     [KnownType(typeof(ROIntStringPairListOut))]
     [KnownType(typeof(ROCalendarDateInfo))]

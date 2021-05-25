@@ -52,6 +52,7 @@ namespace Logility.ROWebSharedTypes
     [KnownType(typeof(ROCalendarSelectorParms))]
     [KnownType(typeof(ROCalendarDeleteParams))]
     [KnownType(typeof(ROCalendarSaveParms))]
+    [KnownType(typeof(ROCalendarDateCalculationParms))]
     [KnownType(typeof(ROAllocationWorklistLastDataParms))]
     [KnownType(typeof(ROListParms))]
     [KnownType(typeof(ROIntParms))]
