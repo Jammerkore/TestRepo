@@ -6017,6 +6017,12 @@ namespace MIDRetail.Business
                     attributeSetProfile.Default_IND = false;
                     attributeSetProfile.Plan_IND = true;
                     attributeSetProfile.Use_Default_IND = true;
+                    // duplicate function class to attribute set class
+                    GroupLevelNodeFunction groupLevelNodeFunction = (GroupLevelNodeFunction)GLFProfile.Group_Level_Nodes[Plan_HN_RID];
+                    if (groupLevelNodeFunction != null)
+                    {
+                        attributeSetProfile.Group_Level_Nodes.Add(groupLevelNodeFunction.HN_RID, groupLevelNodeFunction.Copy());
+                    }
                 }
 
                 method.AttributeSetValues = BuildAttributeSetProperties(
@@ -6591,6 +6597,29 @@ namespace MIDRetail.Business
                         newGLFP.Default_IND = false;
                         newGLFP.Use_Default_IND = item.IsAttributeSetToUseDefault;
                         newGLFP.Plan_IND = true;
+
+                        GroupLevelNodeFunction GLNFunction = (GroupLevelNodeFunction)newGLFP.Group_Level_Nodes[Plan_HN_RID];
+                        if (GLNFunction == null)
+                        {
+                            GLNFunction = new GroupLevelNodeFunction();
+                        }
+                        if (item.StockMerchandise.Key > 0)
+                        {
+                            GLNFunction.HN_RID = item.StockMerchandise.Key;
+                        }
+                        else
+                        {
+                            GLNFunction.HN_RID = Plan_HN_RID;
+                        }
+                        GLNFunction.SglRID = item.AttributeSet.Key;
+                        GLNFunction.ApplyMinMaxesInd = item.ApplyMinMax;
+                        GLNFunction.MinMaxInheritType = item.MinMaxInheritType;
+
+                        SetStockMinMax(item.StoreGrades, ref GLNFunction);
+                        if (!newGLFP.Group_Level_Nodes.ContainsKey(GLNFunction.HN_RID))
+                        {
+                            newGLFP.Group_Level_Nodes.Add(GLNFunction.HN_RID, GLNFunction);
+                        }
                     }
                     else
                     {
