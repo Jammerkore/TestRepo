@@ -6209,6 +6209,7 @@ namespace MIDRetail.Business
             }
             else
             {
+                GLNFunction.MinMaxInheritType = eMinMaxInheritType.None;
                 storeGrades = BuildStoreGrades(GLNFunction);
                 stockMinMaxes = BuildDataStockMinMax(GLNFunction, ref storeGrades);
             }
