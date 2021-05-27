@@ -1732,9 +1732,12 @@ namespace MIDRetail.Business
                         if (valueCol.Count > 0
                             || stringCol.Count > 0)
                         {
-						    rowsExtracted = true;
+                            string nodeID = PlanCubeGroup.OpenParms.ChainHLPlanProfile.NodeProfile.NodeID;
+                            string qualifiedNodeID = PlanCubeGroup.OpenParms.ChainHLPlanProfile.NodeProfile.QualifiedNodeID;
+
+                            rowsExtracted = true;
                             PlanCubeGroup.ROExtractData.Planning_Chain_Insert(
-                                PlanCubeGroup.OpenParms.ChainHLPlanProfile.NodeProfile.NodeID,
+                                string.IsNullOrEmpty(qualifiedNodeID) ?  nodeID : qualifiedNodeID,
                                 weekProf.ToString(),
                                 PlanCubeGroup.OpenParms.ChainHLPlanProfile.VersionProfile.Description,
                                  valueCol,

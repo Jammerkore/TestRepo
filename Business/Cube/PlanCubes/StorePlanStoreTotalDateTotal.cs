@@ -430,8 +430,11 @@ namespace MIDRetail.Business
                     if (valueCol.Count > 0
                         || stringCol.Count > 0)
                     {
+                        string nodeID = PlanCubeGroup.OpenParms.StoreHLPlanProfile.NodeProfile.NodeID;
+                        string qualifiedNodeID = PlanCubeGroup.OpenParms.StoreHLPlanProfile.NodeProfile.QualifiedNodeID;
+
                         PlanCubeGroup.ROExtractData.Planning_Attributes_Total_Insert(
-                            PlanCubeGroup.OpenParms.StoreHLPlanProfile.NodeProfile.NodeID,
+                            string.IsNullOrEmpty(qualifiedNodeID) ? nodeID : qualifiedNodeID,
                             timePeriod,
                             aExtractOptions.Attribute,
                             string.Empty,

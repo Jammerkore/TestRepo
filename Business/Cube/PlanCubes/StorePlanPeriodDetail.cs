@@ -479,8 +479,11 @@ namespace MIDRetail.Business
                             if (valueCol.Count > 0
                                 || stringCol.Count > 0)
                             {
+                                string nodeID = PlanCubeGroup.OpenParms.StoreHLPlanProfile.NodeProfile.NodeID;
+                                string qualifiedNodeID = PlanCubeGroup.OpenParms.StoreHLPlanProfile.NodeProfile.QualifiedNodeID;
+
                                 PlanCubeGroup.ROExtractData.Planning_Stores_Insert(
-                                    PlanCubeGroup.OpenParms.StoreHLPlanProfile.NodeProfile.NodeID,
+                                    string.IsNullOrEmpty(qualifiedNodeID) ? nodeID : qualifiedNodeID,
                                     period.ToString(),
                                     storeProf.StoreId,
                                     PlanCubeGroup.OpenParms.StoreHLPlanProfile.VersionProfile.Description,

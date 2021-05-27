@@ -4,7 +4,7 @@
 --dv History: 
 --dv =============================================    
 CREATE TABLE [dbo].[Hierarchy_Data](
-	[ID] [varchar](50) NULL,
+	[ID] [varchar](100) NULL,
 	[NodeDisplay] [varchar](250) NULL,
 	[ProductType] [varchar](50) NULL,
 	[Hierarchy] [varchar](50) NULL,

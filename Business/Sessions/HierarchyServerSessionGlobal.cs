@@ -385,7 +385,28 @@ namespace MIDRetail.Business
 
 						BuildColors();
 						BuildSizes();
-						BuildHierarchies();
+
+                        if (colorSizeIDCacheSize == 0)
+                        {
+                            _colorSizesCacheUsed = false;
+                        }
+                        else
+                        {
+                            if (ColorOrSizeLevelDefined())
+                            {
+                                _colorSizesCacheUsed = true;
+                            }
+                        }
+                        if (_colorSizesCacheUsed)
+                        {
+                            //Begin TT#988 - JScott - Add Active Only indicator to Override Low Level Model
+                            //_colorSizesByID = new MIDCache(colorSizeIDCacheSize, cacheGroupSize);
+                            _colorSizesByID = new MIDCache<string, int>(colorSizeIDCacheSize, _cacheGroupSize);
+                            //End TT#988 - JScott - Add Active Only indicator to Override Low Level Model
+                        }
+                        BuildColorSizeIDs(eHierarchyLevelType.Undefined);
+
+                        BuildHierarchies();
 						//Begin TT#988 - JScott - Add Active Only indicator to Override Low Level Model
 						//BuildBaseNodes(cacheSize);
 						BuildBaseNodes(_cacheSize, _cacheGroupSize);
@@ -399,25 +420,25 @@ namespace MIDRetail.Business
 						BuildProductChars();
                         BuildFWOSMaxModels();   //TT#108 - MD - DOConnell - FWOS Max Models
 
-						if (colorSizeIDCacheSize == 0)
-						{
-							_colorSizesCacheUsed = false;
-						}
-						else
-						{
-							if (ColorOrSizeLevelDefined())
-							{
-								_colorSizesCacheUsed = true;
-							}
-						}
-						if (_colorSizesCacheUsed)
-						{
-							//Begin TT#988 - JScott - Add Active Only indicator to Override Low Level Model
-							//_colorSizesByID = new MIDCache(colorSizeIDCacheSize, cacheGroupSize);
-							_colorSizesByID = new MIDCache<string,int>(colorSizeIDCacheSize, _cacheGroupSize);
-							//End TT#988 - JScott - Add Active Only indicator to Override Low Level Model
-						}
-						BuildColorSizeIDs(eHierarchyLevelType.Undefined);
+						//if (colorSizeIDCacheSize == 0)
+						//{
+						//	_colorSizesCacheUsed = false;
+						//}
+						//else
+						//{
+						//	if (ColorOrSizeLevelDefined())
+						//	{
+						//		_colorSizesCacheUsed = true;
+						//	}
+						//}
+						//if (_colorSizesCacheUsed)
+						//{
+						//	//Begin TT#988 - JScott - Add Active Only indicator to Override Low Level Model
+						//	//_colorSizesByID = new MIDCache(colorSizeIDCacheSize, cacheGroupSize);
+						//	_colorSizesByID = new MIDCache<string,int>(colorSizeIDCacheSize, _cacheGroupSize);
+						//	//End TT#988 - JScott - Add Active Only indicator to Override Low Level Model
+						//}
+						//BuildColorSizeIDs(eHierarchyLevelType.Undefined);
 						_placeholderColorLabel = MIDText.GetTextOnly(eMIDTextCode.lbl_PhColorID);
                        
                         // Begin TT#2 - RMatelic - Assortment Planning - change Placeholder Style ID 
@@ -556,7 +577,14 @@ namespace MIDRetail.Business
                         {
                             hp = GetHierarchyData(ni.HomeHierarchyRID);
                         }
-                        hnp = GetNodeData(ni.NodeRID, false);
+                        if (ni.LevelType == eHierarchyLevelType.Color)
+                        {
+                            hnp = GetNodeData(ni.NodeRID, true, true);
+                        }
+                        else
+                        {
+                            hnp = GetNodeData(ni.NodeRID, false);
+                        }
                         if (parent == null
                             || hnp.HomeHierarchyParentRID != parent.Key)
                         {
@@ -1268,8 +1296,18 @@ namespace MIDRetail.Business
                             && ni.Purpose == ePurpose.Default)
                         {
                             nodes.Add(ni);
+                            if (ni.LevelType == eHierarchyLevelType.Style)
+                            {
+                                // add color nodes to extract list
+                                BuildColorsForStyle(
+                                    hierarchyRID: ni.HomeHierarchyRID, 
+                                    nodeRID: ni.NodeRID, 
+                                    addToCache:false, 
+                                    nodes: nodes
+                                    );
+                            }
                         }
-                        if (nodes.Count == commitLimit)
+                        if (nodes.Count >= commitLimit)
                         {
                             ExtractHierarchyNodes(nodes);
                             nodes = new List<NodeInfo>();
@@ -1628,13 +1666,29 @@ namespace MIDRetail.Business
         }
 
         //Begin TT#827-MD -jsobek -Allocation Reviews Performance
-        private static void AddToNodeInfoCacheFromDataTable(DataTable dt, nodeInfoTypeEnum nodeInfoType)
+        private static void AddToNodeInfoCacheFromDataTable(
+            DataTable dt, 
+            nodeInfoTypeEnum nodeInfoType,
+            bool addToCache = true,
+            List<NodeInfo> nodes = null)
         {
             foreach(DataRow dr in dt.Rows)
 			{
 				NodeInfo ni = new NodeInfo();
                 BuildNodeInfoFromDataRow(ref ni, dr, nodeInfoType);		            
-				SetNodeCacheByRID(ni.NodeRID, ni);
+                
+                // Do not include Unknown color
+                if (nodes != null
+                    && ni.Purpose == ePurpose.Default
+                    && !ni.IsVirtual
+                    && ni.ColorOrSizeCodeRID > 0)
+                {
+                    nodes.Add(ni);
+                }
+                if (addToCache)
+                {
+                    SetNodeCacheByRID(ni.NodeRID, ni);
+                }
 			}
         }
 
@@ -1884,10 +1938,17 @@ namespace MIDRetail.Business
 		/// </summary>
 		/// <param name="hierarchyRID">The record ID of the hierarchy</param>
 		/// <param name="nodeRID">The record ID of the node</param>
+        /// <param name="addToCache">A flag identifying if nodes are to be added to cache</param>
+        /// <param name="nodes">List of nodes being extracted</param>
 		/// <remarks>
 		/// Does not build ID cross reference since color IDs are not unique
 		/// </remarks>
-		static private void BuildColorsForStyle(int hierarchyRID, int nodeRID)
+		static private void BuildColorsForStyle(
+            int hierarchyRID, 
+            int nodeRID, 
+            bool addToCache = true, 
+            List<NodeInfo> nodes = null
+            )
 		{			
 			try
 			{
@@ -1895,7 +1956,12 @@ namespace MIDRetail.Business
 				DataTable dt = null;
 				dt = mhd.Hierarchy_ColorNode_Read(hierarchyRID, nodeRID);
 
-                AddToNodeInfoCacheFromDataTable(dt, nodeInfoTypeEnum.Color); //TT#827-MD -jsobek -Allocation Reviews Performance
+                AddToNodeInfoCacheFromDataTable(
+                    dt: dt, 
+                    nodeInfoType: nodeInfoTypeEnum.Color,
+                    addToCache: addToCache,
+                    nodes: nodes
+                    ); //TT#827-MD -jsobek -Allocation Reviews Performance
 			}
 			catch ( Exception ex )
 			{

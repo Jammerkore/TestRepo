@@ -301,7 +301,7 @@ namespace MIDRetail.Data
                 drData["ProductType"] = "P";
                 drData["Hierarchy"] = aHierarchy;
                 drData["Parent"] = aParent;
-                drData["ID"] = hnp.NodeID;
+                drData["ID"] = string.IsNullOrEmpty(hnp.QualifiedNodeID) ? hnp.NodeID : hnp.QualifiedNodeID;
                 drData["Name"] = hnp.NodeName;
                 drData["Description"] = hnp.NodeDescription;
                 drData["NodeDisplay"] = hnp.Text;

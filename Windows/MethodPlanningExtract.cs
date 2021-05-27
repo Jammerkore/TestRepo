@@ -406,7 +406,8 @@ namespace MIDRetail.Windows
 				}
 
                 HierarchyNodeProfile hnp = (HierarchyNodeProfile)((MIDTag)(txtMerchandise.Tag)).MIDTagData;
-                if (hnp == null || hnp.HomeHierarchyType != eHierarchyType.organizational || hnp.LevelType == eHierarchyLevelType.Color || hnp.LevelType == eHierarchyLevelType.Size)  // Do not allow color or size levels at this time
+                //if (hnp == null || hnp.HomeHierarchyType != eHierarchyType.organizational || hnp.LevelType == eHierarchyLevelType.Color || hnp.LevelType == eHierarchyLevelType.Size)  // Do not allow color or size levels at this time
+                if (hnp == null || hnp.HomeHierarchyType != eHierarchyType.organizational || hnp.LevelType == eHierarchyLevelType.Size)  // Do not allow size levels at this time
                 {
                     ErrorProvider.SetError(txtMerchandise, MIDText.GetTextOnly(eMIDTextCode.msg_MerchandiseInvalid));
                     retCode = false;
@@ -1058,7 +1059,8 @@ namespace MIDRetail.Windows
             {
                 cbList = (TreeNodeClipboardList)e.Data.GetData(typeof(TreeNodeClipboardList));
                 HierarchyNodeProfile hnp = SAB.HierarchyServerSession.GetNodeData(cbList.ClipboardProfile.Key, true, true);
-                if (hnp == null || hnp.HomeHierarchyType != eHierarchyType.organizational || hnp.LevelType == eHierarchyLevelType.Color || hnp.LevelType == eHierarchyLevelType.Size)  // Do not allow color or size levels at this time
+                //if (hnp == null || hnp.HomeHierarchyType != eHierarchyType.organizational || hnp.LevelType == eHierarchyLevelType.Color || hnp.LevelType == eHierarchyLevelType.Size)  // Do not allow color or size levels at this time
+                if (hnp == null || hnp.HomeHierarchyType != eHierarchyType.organizational || hnp.LevelType == eHierarchyLevelType.Size)  // Do not allow size levels at this time
                 {
                     Image_DragOver(sender, e);
                     e.Effect = DragDropEffects.None;
@@ -1727,9 +1729,11 @@ namespace MIDRetail.Windows
 						for (i = aHierarchyNodeProfile.HomeHierarchyLevel + 1; i <= hierProf.HierarchyLevels.Count; i++)
 						{
 							hlp = (HierarchyLevelProfile)hierProf.HierarchyLevels[i];
-                            // Do not allow color or size levels at this time
-                            if (hlp.LevelType != eHierarchyLevelType.Color
-                                && hlp.LevelType != eHierarchyLevelType.Size)
+                            //// Do not allow color or size levels at this time
+                            //if (hlp.LevelType != eHierarchyLevelType.Color
+                            //    && hlp.LevelType != eHierarchyLevelType.Size)
+                            // Do not allow or size levels at this time
+                            if (hlp.LevelType != eHierarchyLevelType.Size)
                             {
                                 aComboBox.Items.Add(
                                     new LowLevelCombo(eLowLevelsType.HierarchyLevel,

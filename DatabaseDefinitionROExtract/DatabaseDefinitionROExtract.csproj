@@ -37,6 +37,7 @@
     <None Remove="SQL_Types\Hierarchy_Definition_Type.SQL" />
     <None Remove="SQL_Types\Stores_Characteristics_Type.SQL" />
     <None Remove="SQL_Types\Stores_Data_Type.SQL" />
+    <None Remove="UpgradeVersions\ver21.02.0.01.SQL" />
   </ItemGroup>
 
   <ItemGroup>
@@ -70,10 +71,10 @@
     <Content Include="SQL_Types\Stores_Data_Type.SQL" />
     <Content Include="SQL_Types\Hierarchy_Definition_Type.SQL" />
     <Content Include="SQL_Types\Hierarchy_Data_Type.SQL" />
+    <Content Include="UpgradeVersions\ver21.02.0.01.SQL" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="UpgradeVersions\" />
     <Folder Include="SQL_Views\" />
     <Folder Include="SQL_Triggers\" />
     <Folder Include="SQL_Scripts\" />
