@@ -108,7 +108,7 @@ namespace Logility.ROWebSharedTypes
 
         public int DateKey { get { return _dateKey; } }
 
-        public int DisplayDate { get { return _dateKey; } }
+        public string DisplayDate { get { return _displayDate; } }
 
         public ROCalendarDate(
             eROReturnCode ROReturnCode, 
