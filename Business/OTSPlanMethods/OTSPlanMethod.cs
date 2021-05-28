@@ -6381,68 +6381,97 @@ namespace MIDRetail.Business
         }
         #endregion
 
-        public void SetStockMinMax(List<ROPlanningStoreGrade> storeGrades, ref GroupLevelNodeFunction glnf)
+        public void SetStockMinMax(
+            List<ROPlanningStoreGrade> storeGrades, 
+            ref GroupLevelNodeFunction glnf,
+            bool stockMinMaxInheritedChanged,
+            GroupLevelFunctionProfile defaultAttributeSetProfile
+            )
         {
             glnf.Stock_MinMax.Clear();
-            foreach (ROPlanningStoreGrade sg in storeGrades)
+
+            // if changed to inherit from default, copy values from default
+            if (glnf.MinMaxInheritType == eMinMaxInheritType.Default
+                && defaultAttributeSetProfile != null)
             {
-                if (sg.MinimumIsSet
-                    || sg.MaximumIsSet)
+                if (stockMinMaxInheritedChanged)
                 {
-                    StockMinMaxProfile smmp = new StockMinMaxProfile(glnf.Stock_MinMax.MinValue - 1);
-                    smmp.Boundary = sg.StoreGrade.Key;
-                    smmp.StoreGroupLevelRid = sg.StoreGroupLevel.Key;
-                    smmp.HN_RID = sg.Merchandise.Key;
-                    if (sg.MinimumIsSet)
+                    GroupLevelNodeFunction default_groupLevelNodeFunction;
+                    StockMinMaxProfile stockMinMax;
+                    default_groupLevelNodeFunction = (GroupLevelNodeFunction)defaultAttributeSetProfile.Group_Level_Nodes[glnf.HN_RID];
+                    if (default_groupLevelNodeFunction != null)
                     {
-                        smmp.MinimumStock = (int)sg.Minimum;
-                    }
-                    else
-                    {
-                        smmp.MinimumStock = (int)Include.UndefinedDouble;
-                    }
-                    if (sg.MaximumIsSet)
-                    {
-                        smmp.MaximumStock = (int)sg.Maximum;
-                    }
-                    else
-                    {
-                        smmp.MaximumStock = (int)Include.UndefinedDouble;
-                    }
-                    smmp.DateRangeRid = sg.DateRange.Key;
-                    glnf.Stock_MinMax.Add(smmp);
-                }
-
-                if (sg.ROStockMinMaxList != null && sg.ROStockMinMaxList.Count > 0)
-                {
-                    foreach (ROStockMinMax roStockMinMax in sg.ROStockMinMaxList)
-                    {
-                        if (roStockMinMax.MinimumStockIsSet
-                            || roStockMinMax.MaximumStockIsSet)
+                        foreach (StockMinMaxProfile stockMinMaxProfile in default_groupLevelNodeFunction.Stock_MinMax)
                         {
-                            StockMinMaxProfile smmp2 = new StockMinMaxProfile(glnf.Stock_MinMax.MinValue - 1);
-                            smmp2.Boundary = roStockMinMax.Boundary;
-                            smmp2.StoreGroupLevelRid = roStockMinMax.StoreGrouplevel.Key;
-                            smmp2.HN_RID = roStockMinMax.Merchandise.Key;
-                            if (roStockMinMax.MinimumStockIsSet)
-                            {
-                                smmp2.MinimumStock = (int)roStockMinMax.MinimumStock;
-                            }
-                            else
-                            {
-                                smmp2.MinimumStock = (int)Include.UndefinedDouble;
-                            }
-                            if (roStockMinMax.MaximumStockIsSet)
-                            {
-                                smmp2.MaximumStock = (int)roStockMinMax.MaximumStock;
-                            }
-                            else
-                            {
-                                smmp2.MaximumStock = (int)Include.UndefinedDouble;
-                            }
-                            smmp2.DateRangeRid = roStockMinMax.DateRange.Key;
+                            stockMinMax = stockMinMaxProfile.Copy(SAB.ApplicationServerSession, true);
+                            stockMinMax.StoreGroupLevelRid = glnf.SglRID;
+                            glnf.Stock_MinMax.Add(stockMinMax);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                foreach (ROPlanningStoreGrade sg in storeGrades)
+                {
+                    if (sg.MinimumIsSet
+                        || sg.MaximumIsSet)
+                    {
+                        StockMinMaxProfile smmp = new StockMinMaxProfile(glnf.Stock_MinMax.MinValue - 1);
+                        smmp.Boundary = sg.StoreGrade.Key;
+                        smmp.StoreGroupLevelRid = sg.StoreGroupLevel.Key;
+                        smmp.HN_RID = sg.Merchandise.Key;
+                        if (sg.MinimumIsSet)
+                        {
+                            smmp.MinimumStock = (int)sg.Minimum;
+                        }
+                        else
+                        {
+                            smmp.MinimumStock = (int)Include.UndefinedDouble;
+                        }
+                        if (sg.MaximumIsSet)
+                        {
+                            smmp.MaximumStock = (int)sg.Maximum;
+                        }
+                        else
+                        {
+                            smmp.MaximumStock = (int)Include.UndefinedDouble;
+                        }
+                        smmp.DateRangeRid = sg.DateRange.Key;
+                        glnf.Stock_MinMax.Add(smmp);
+                    }
 
-                            glnf.Stock_MinMax.Add(smmp2);
+                    if (sg.ROStockMinMaxList != null && sg.ROStockMinMaxList.Count > 0)
+                    {
+                        foreach (ROStockMinMax roStockMinMax in sg.ROStockMinMaxList)
+                        {
+                            if (roStockMinMax.MinimumStockIsSet
+                                || roStockMinMax.MaximumStockIsSet)
+                            {
+                                StockMinMaxProfile smmp2 = new StockMinMaxProfile(glnf.Stock_MinMax.MinValue - 1);
+                                smmp2.Boundary = roStockMinMax.Boundary;
+                                smmp2.StoreGroupLevelRid = roStockMinMax.StoreGrouplevel.Key;
+                                smmp2.HN_RID = roStockMinMax.Merchandise.Key;
+                                if (roStockMinMax.MinimumStockIsSet)
+                                {
+                                    smmp2.MinimumStock = (int)roStockMinMax.MinimumStock;
+                                }
+                                else
+                                {
+                                    smmp2.MinimumStock = (int)Include.UndefinedDouble;
+                                }
+                                if (roStockMinMax.MaximumStockIsSet)
+                                {
+                                    smmp2.MaximumStock = (int)roStockMinMax.MaximumStock;
+                                }
+                                else
+                                {
+                                    smmp2.MaximumStock = (int)Include.UndefinedDouble;
+                                }
+                                smmp2.DateRangeRid = roStockMinMax.DateRange.Key;
+
+                                glnf.Stock_MinMax.Add(smmp2);
+                            }
                         }
                     }
                 }
@@ -6537,10 +6566,13 @@ namespace MIDRetail.Business
                 }
 
                 int defaultAttributeSetKey = GetDefaultGLFRid();
+                bool stockMinMaxInheritedChanged = false;
 
                 // only update attribute set values if attribute did not change
                 if (!_attributeChanged)
                 {
+                    GroupLevelFunctionProfile defaultAttributeSetProfile = (GroupLevelFunctionProfile)_GLFProfileList.FindKey(defaultAttributeSetKey);
+
                     ROPlanningForecastMethodAttributeSetProperties item = properties.AttributeSetValues;
 
                     GroupLevelFunctionProfile newGLFP = (GroupLevelFunctionProfile)_GLFProfileList.FindKey(item.AttributeSet.Key);
@@ -6555,7 +6587,7 @@ namespace MIDRetail.Business
                             GLFProfileList.Add(newGLFP);
                             addedAttributeSet = true;
                         }
-                        GroupLevelFunctionProfile defaultAttributeSetProfile = (GroupLevelFunctionProfile)_GLFProfileList.FindKey(defaultAttributeSetKey);
+                        
                         // If not already set to use default, copy default values to the set
                         if (defaultAttributeSetProfile != null
                             && !newGLFP.Use_Default_IND)
@@ -6598,9 +6630,10 @@ namespace MIDRetail.Business
                         }
                         GLNFunction.SglRID = item.AttributeSet.Key;
                         GLNFunction.ApplyMinMaxesInd = item.ApplyMinMax;
+                        stockMinMaxInheritedChanged = GLNFunction.MinMaxInheritType != item.MinMaxInheritType;
                         GLNFunction.MinMaxInheritType = item.MinMaxInheritType;
 
-                        SetStockMinMax(item.StoreGrades, ref GLNFunction);
+                        SetStockMinMax(item.StoreGrades, ref GLNFunction, stockMinMaxInheritedChanged, defaultAttributeSetProfile);
                         if (!newGLFP.Group_Level_Nodes.ContainsKey(GLNFunction.HN_RID))
                         {
                             newGLFP.Group_Level_Nodes.Add(GLNFunction.HN_RID, GLNFunction);
@@ -6649,10 +6682,11 @@ namespace MIDRetail.Business
                         }
                         GLNFunction.SglRID = item.AttributeSet.Key;
                         GLNFunction.ApplyMinMaxesInd = item.ApplyMinMax;
+                        stockMinMaxInheritedChanged = GLNFunction.MinMaxInheritType != item.MinMaxInheritType;
                         GLNFunction.MinMaxInheritType = item.MinMaxInheritType;
                         //TO DO:: Stock Min Max to be assigned here.
                         //GLNFunction.Stock_MinMax
-                        SetStockMinMax(item.StoreGrades, ref GLNFunction);
+                        SetStockMinMax(item.StoreGrades, ref GLNFunction, stockMinMaxInheritedChanged, defaultAttributeSetProfile);
                         if (!newGLFP.Group_Level_Nodes.ContainsKey(GLNFunction.HN_RID))
                         {
                             newGLFP.Group_Level_Nodes.Add(GLNFunction.HN_RID, GLNFunction);

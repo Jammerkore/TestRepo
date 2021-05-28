@@ -328,10 +328,13 @@ namespace MIDRetail.Business
             Session aSession
             )
         {
+            StockMinMaxProfile newStockMinMaxProfile;
             ArrayList stockMinMaxProfiles = new ArrayList();
             foreach (StockMinMaxProfile stockMinMaxProfile in groupLevelNodeFunction.Stock_MinMax)
             {
-                stockMinMaxProfiles.Add(stockMinMaxProfile.Copy(aSession, true));
+                newStockMinMaxProfile = stockMinMaxProfile.Copy(aSession, true);
+                newStockMinMaxProfile.StoreGroupLevelRid = this.Key;
+                stockMinMaxProfiles.Add(newStockMinMaxProfile);
             }
             groupLevelNodeFunction.Stock_MinMax.Clear();
             foreach (StockMinMaxProfile stockMinMaxProfile in stockMinMaxProfiles)
