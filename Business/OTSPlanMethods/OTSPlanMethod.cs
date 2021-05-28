@@ -6388,14 +6388,13 @@ namespace MIDRetail.Business
             GroupLevelFunctionProfile defaultAttributeSetProfile
             )
         {
-            glnf.Stock_MinMax.Clear();
-
             // if changed to inherit from default, copy values from default
             if (glnf.MinMaxInheritType == eMinMaxInheritType.Default
                 && defaultAttributeSetProfile != null)
             {
                 if (stockMinMaxInheritedChanged)
                 {
+                    glnf.Stock_MinMax.Clear();
                     GroupLevelNodeFunction default_groupLevelNodeFunction;
                     StockMinMaxProfile stockMinMax;
                     default_groupLevelNodeFunction = (GroupLevelNodeFunction)defaultAttributeSetProfile.Group_Level_Nodes[glnf.HN_RID];
@@ -6412,6 +6411,7 @@ namespace MIDRetail.Business
             }
             else
             {
+                glnf.Stock_MinMax.Clear();
                 foreach (ROPlanningStoreGrade sg in storeGrades)
                 {
                     if (sg.MinimumIsSet
