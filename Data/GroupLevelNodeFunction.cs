@@ -16,6 +16,13 @@ namespace MIDRetail.Data
         private eMinMaxInheritType _minMaxInheritType;
         private bool _isHighLevel;
         private ProfileList _stock_MinMax;
+        private long _instanceID;
+
+        public long InstanceID
+        {
+            get { return _instanceID; }
+            set { _instanceID = value; }
+        }
 
         public int MethodRID
         {
@@ -64,6 +71,7 @@ namespace MIDRetail.Data
 
         public GroupLevelNodeFunction()
         {
+            _instanceID = DateTime.Now.Ticks;
             _stock_MinMax = new ProfileList(eProfileType.StockMinMax);
         }
 
@@ -134,8 +142,13 @@ namespace MIDRetail.Data
                 glnf.ApplyMinMaxesInd = ApplyMinMaxesInd;
                 glnf.MinMaxInheritType = MinMaxInheritType;
                 glnf.isHighLevel = isHighLevel;
-                glnf.Stock_MinMax = Stock_MinMax;
-
+                //glnf.Stock_MinMax = Stock_MinMax;
+                glnf.Stock_MinMax = new ProfileList(eProfileType.StockMinMax);
+                foreach (Profile stockMinMax in Stock_MinMax)
+                {
+                    glnf.Stock_MinMax.Add(stockMinMax);
+                }
+                glnf.InstanceID = DateTime.Now.Ticks;
 
                 return glnf;
             }

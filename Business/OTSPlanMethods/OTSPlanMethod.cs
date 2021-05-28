@@ -5980,10 +5980,7 @@ namespace MIDRetail.Business
                );
 
             method.DefaultAttributeSetKey = GetDefaultGLFRid();
-            // get default attribute set values
-            GroupLevelFunctionProfile defaultAttributeSetProfile = (GroupLevelFunctionProfile)_GLFProfileList.FindKey(method.DefaultAttributeSetKey);
 
-            GroupLevelFunctionProfile attributeSetProfile;
             foreach (GroupLevelFunctionProfile GLFProfile in _GLFProfileList)
             {
                 // adjust values for basis that were set as SameNode if low level is turned off
@@ -6005,29 +6002,8 @@ namespace MIDRetail.Business
                     continue;
                 }
 
-                attributeSetProfile = GLFProfile;
-
-                // if attribute set is to use the default set, get the values for the default set
-                if (GLFProfile.Use_Default_IND
-                    && defaultAttributeSetProfile != null)
-                {
-                    // create a copy of the default class so changes do not update the default attribute set
-                    attributeSetProfile = new GroupLevelFunctionProfile(aKey: GLFProfile.Key);
-                    attributeSetProfile = defaultAttributeSetProfile.CopyTo(attributeSetProfile, SAB.ApplicationServerSession, false, true);
-                    attributeSetProfile.Default_IND = false;
-                    attributeSetProfile.Plan_IND = true;
-                    attributeSetProfile.Use_Default_IND = true;
-                    // duplicate function class to attribute set class
-                    GroupLevelNodeFunction groupLevelNodeFunction = (GroupLevelNodeFunction)GLFProfile.Group_Level_Nodes[Plan_HN_RID];
-                    if (groupLevelNodeFunction != null)
-                    {
-                        attributeSetProfile.Group_Level_Nodes.Add(groupLevelNodeFunction.HN_RID, groupLevelNodeFunction.Copy());
-                    }
-                }
-
                 method.AttributeSetValues = BuildAttributeSetProperties(
-                    GLFProfile: attributeSetProfile,
-                    defaultAttributeSetProfile: defaultAttributeSetProfile,
+                    GLFProfile: GLFProfile,
                     lowLevel: roOverrideLowLevel.LowLevel
                     );
             }
@@ -6047,7 +6023,6 @@ namespace MIDRetail.Business
                 GLFProfile.Group_Level_Nodes.Add(groupLevelNodeFunction.HN_RID, groupLevelNodeFunction);
                 method.AttributeSetValues = BuildAttributeSetProperties(
                     GLFProfile: GLFProfile,
-                    defaultAttributeSetProfile: defaultAttributeSetProfile,
                     lowLevel: roOverrideLowLevel.LowLevel);
             }
 
@@ -6131,18 +6106,11 @@ namespace MIDRetail.Business
          
         private ROPlanningForecastMethodAttributeSetProperties BuildAttributeSetProperties(
             GroupLevelFunctionProfile GLFProfile,
-            GroupLevelFunctionProfile defaultAttributeSetProfile,
             ROLevelInformation lowLevel
             )
         {
 
             GroupLevelNodeFunction GLNFunction = (GroupLevelNodeFunction)GLFProfile.Group_Level_Nodes[Plan_HN_RID];
-            // get default set values if a default set is selected
-            GroupLevelNodeFunction defaultGLNFunction = null;
-            if (defaultAttributeSetProfile != null)
-            {
-                defaultGLNFunction = (GroupLevelNodeFunction)defaultAttributeSetProfile.Group_Level_Nodes[Plan_HN_RID];
-            }
 
             if (GLNFunction == null)
             {
@@ -6201,18 +6169,13 @@ namespace MIDRetail.Business
 
             List<ROPlanningStoreGrade> storeGrades;
             List<ROStockMinMax> stockMinMaxes;
-            if (GLNFunction.MinMaxInheritType == eMinMaxInheritType.Default
-                && defaultGLNFunction != null)
-            {
-                storeGrades = BuildStoreGrades(defaultGLNFunction);
-                stockMinMaxes = BuildDataStockMinMax(defaultGLNFunction, ref storeGrades);
-            }
-            else
+            // Only supports None and Default stock min/max inheritance types
+            if (GLNFunction.MinMaxInheritType != eMinMaxInheritType.Default)
             {
                 GLNFunction.MinMaxInheritType = eMinMaxInheritType.None;
-                storeGrades = BuildStoreGrades(GLNFunction);
-                stockMinMaxes = BuildDataStockMinMax(GLNFunction, ref storeGrades);
             }
+            storeGrades = BuildStoreGrades(GLNFunction);
+            stockMinMaxes = BuildDataStockMinMax(GLNFunction, ref storeGrades);
             storeGrades = MergeStoreGradesWithStockMinMax(storeGrades, stockMinMaxes);
 
             ROPlanningForecastMethodAttributeSetProperties attributeSetProperties = new ROPlanningForecastMethodAttributeSetProperties(
@@ -6420,7 +6383,7 @@ namespace MIDRetail.Business
 
         public void SetStockMinMax(List<ROPlanningStoreGrade> storeGrades, ref GroupLevelNodeFunction glnf)
         {
-
+            glnf.Stock_MinMax.Clear();
             foreach (ROPlanningStoreGrade sg in storeGrades)
             {
                 if (sg.MinimumIsSet
@@ -6581,29 +6544,50 @@ namespace MIDRetail.Business
                     ROPlanningForecastMethodAttributeSetProperties item = properties.AttributeSetValues;
 
                     GroupLevelFunctionProfile newGLFP = (GroupLevelFunctionProfile)_GLFProfileList.FindKey(item.AttributeSet.Key);
-                    // if use default attribute set, copy default set values to set
+                    // if use default attribute set, sync to default set values
                     if (item.IsAttributeSetToUseDefault
                         && defaultAttributeSetKey > 0)
                     {
+                        bool addedAttributeSet = false;
                         if (newGLFP == null)
                         {
                             newGLFP = new GroupLevelFunctionProfile(item.AttributeSet.Key);
                             GLFProfileList.Add(newGLFP);
+                            addedAttributeSet = true;
                         }
                         GroupLevelFunctionProfile defaultAttributeSetProfile = (GroupLevelFunctionProfile)_GLFProfileList.FindKey(defaultAttributeSetKey);
-                        if (defaultAttributeSetProfile != null)
+                        // If not already set to use default, copy default values to the set
+                        if (defaultAttributeSetProfile != null
+                            && !newGLFP.Use_Default_IND)
                         {
-                            newGLFP = defaultAttributeSetProfile.CopyTo(newGLFP, SAB.ApplicationServerSession, false, true);
+                            newGLFP = defaultAttributeSetProfile.CopyTo(newGLFP, SAB.ApplicationServerSession, false, true, true);
+                            newGLFP.Use_Default_IND = item.IsAttributeSetToUseDefault;
+                            newGLFP.Plan_IND = true;  // set to plan if changed to use default
+                            if (addedAttributeSet)  // copy stock min/max if new values
+                            {
+                                foreach (int Key in defaultAttributeSetProfile.Group_Level_Nodes.Keys)
+                                {
+                                    GroupLevelNodeFunction glnf = (GroupLevelNodeFunction)defaultAttributeSetProfile.Group_Level_Nodes[Key];
+                                    glnf = glnf.Copy();
+                                    glnf.SglRID = item.AttributeSet.Key;
+                                    newGLFP.Group_Level_Nodes.Add(glnf.HN_RID, glnf);
+                                }
+                            }
                         }
+						
                         newGLFP.Default_IND = false;
-                        newGLFP.Use_Default_IND = item.IsAttributeSetToUseDefault;
-                        newGLFP.Plan_IND = true;
 
-                        GroupLevelNodeFunction GLNFunction = (GroupLevelNodeFunction)newGLFP.Group_Level_Nodes[Plan_HN_RID];
-                        if (GLNFunction == null)
+                        GroupLevelNodeFunction GLNFunction;
+
+                        if (newGLFP.Group_Level_Nodes.ContainsKey(Plan_HN_RID))
+                        {
+                            GLNFunction = (GroupLevelNodeFunction)newGLFP.Group_Level_Nodes[Plan_HN_RID];
+                        }
+                        else
                         {
                             GLNFunction = new GroupLevelNodeFunction();
                         }
+
                         if (item.StockMerchandise.Key > 0)
                         {
                             GLNFunction.HN_RID = item.StockMerchandise.Key;
@@ -6624,19 +6608,25 @@ namespace MIDRetail.Business
                     }
                     else
                     {
-                        bool isDefaultSet = false;
-						// remove old data for attribute set to rebuild
-                        if (newGLFP != null)
+                        if (newGLFP == null)
                         {
-                            isDefaultSet = newGLFP.Default_IND;
-                            GLFProfileList.Remove(newGLFP);
+                            newGLFP = new GroupLevelFunctionProfile(item.AttributeSet.Key);
+                            GLFProfileList.Add(newGLFP);
                         }
 
-                        newGLFP = new GroupLevelFunctionProfile(item.AttributeSet.Key);
+                        bool isDefaultSet = newGLFP.Default_IND;
 
-                        GroupLevelNodeFunction GLNFunction = new GroupLevelNodeFunction();  //(GroupLevelNodeFunction)newGLFP.Group_Level_Nodes[Plan_HN_RID];
+                        GroupLevelNodeFunction GLNFunction;
 
-                        newGLFP.Key = item.AttributeSet.Key;
+                        if (newGLFP.Group_Level_Nodes.ContainsKey(Plan_HN_RID))
+                        {
+                            GLNFunction = (GroupLevelNodeFunction)newGLFP.Group_Level_Nodes[Plan_HN_RID];
+                        }
+                        else
+                        {
+                            GLNFunction = new GroupLevelNodeFunction();
+                        }
+
                         // no longer the default set, so remove all use default settings
                         if (isDefaultSet
                             && !item.IsDefaultProperties)
@@ -6663,7 +6653,10 @@ namespace MIDRetail.Business
                         //TO DO:: Stock Min Max to be assigned here.
                         //GLNFunction.Stock_MinMax
                         SetStockMinMax(item.StoreGrades, ref GLNFunction);
-                        newGLFP.Group_Level_Nodes.Add(GLNFunction.HN_RID, GLNFunction);
+                        if (!newGLFP.Group_Level_Nodes.ContainsKey(GLNFunction.HN_RID))
+                        {
+                            newGLFP.Group_Level_Nodes.Add(GLNFunction.HN_RID, GLNFunction);
+                        }
                         newGLFP.TY_Weight_Multiple_Basis_Ind = item.EqualizingWaitingTY;
                         newGLFP.LY_Weight_Multiple_Basis_Ind = item.EqualizingWaitingLY;
                         newGLFP.LY_Alt_IND = item.IsAlternateLY;
@@ -6695,7 +6688,7 @@ namespace MIDRetail.Business
                             //To DO:: Need to check how basis objects to be assigned.
                         }
 
-                        GLFProfileList.Add(newGLFP);
+                       
 
                         // Default set has changed, so copy values to all sets that use default
                         if (newGLFP.Default_IND)
@@ -6724,10 +6717,11 @@ namespace MIDRetail.Business
                 attributeSetProfile = (GroupLevelFunctionProfile)_GLFProfileList[i];
                 if (attributeSetProfile.Use_Default_IND)
                 {
-                    attributeSetProfile = defaultAttributeSetProfile.CopyTo(attributeSetProfile, SAB.ApplicationServerSession, false, true);
+                    attributeSetProfile = defaultAttributeSetProfile.CopyTo(attributeSetProfile, SAB.ApplicationServerSession, false, true, true);
                     attributeSetProfile.Default_IND = false;
                     attributeSetProfile.Plan_IND = true;
                     attributeSetProfile.Use_Default_IND = true;
+                    _GLFProfileList.Update(attributeSetProfile);
                 }
             }
         }

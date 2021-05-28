@@ -235,7 +235,8 @@ namespace MIDRetail.Business
         /// <returns>
         /// The object with the values of this object.
         /// </returns>
-        public GroupLevelFunctionProfile CopyTo(GroupLevelFunctionProfile glfp, Session aSession, bool blCopyKey, bool blCopyMinMax)
+        public GroupLevelFunctionProfile CopyTo(GroupLevelFunctionProfile glfp, Session aSession, bool blCopyKey, bool blCopyMinMax, 
+            bool blCopyToNewMinMax = false)
         {
             try
             {
@@ -277,9 +278,22 @@ namespace MIDRetail.Business
                         if (Group_Level_Nodes.ContainsKey(glnf.HN_RID))
                         {
                             GroupLevelNodeFunction default_glnf = ((GroupLevelNodeFunction)Group_Level_Nodes[glnf.HN_RID]).Copy();
+                            CreateNewStockMinMaxProfiles(
+                                    groupLevelNodeFunction: default_glnf,
+                                    aSession: aSession
+                                    );
                             default_glnf.MinMaxInheritType = eMinMaxInheritType.Default;
                             alNodes.Add(default_glnf);
                         }
+                    }
+                    else if (blCopyToNewMinMax)
+                    {
+                        GroupLevelNodeFunction default_glnf = glnf.Copy();
+                        CreateNewStockMinMaxProfiles(
+                                groupLevelNodeFunction: default_glnf,
+                                aSession: aSession
+                                );
+                        alNodes.Add(default_glnf);
                     }
                     else
                     {
@@ -308,6 +322,23 @@ namespace MIDRetail.Business
             }
         }
         // End TT#2647 - JSmith - Delays in OTS Method
+
+        private void CreateNewStockMinMaxProfiles(
+            GroupLevelNodeFunction groupLevelNodeFunction,
+            Session aSession
+            )
+        {
+            ArrayList stockMinMaxProfiles = new ArrayList();
+            foreach (StockMinMaxProfile stockMinMaxProfile in groupLevelNodeFunction.Stock_MinMax)
+            {
+                stockMinMaxProfiles.Add(stockMinMaxProfile.Copy(aSession, true));
+            }
+            groupLevelNodeFunction.Stock_MinMax.Clear();
+            foreach (StockMinMaxProfile stockMinMaxProfile in stockMinMaxProfiles)
+            {
+                groupLevelNodeFunction.Stock_MinMax.Add(stockMinMaxProfile);
+            }
+        }
 
 		public object Clone()
 		{
