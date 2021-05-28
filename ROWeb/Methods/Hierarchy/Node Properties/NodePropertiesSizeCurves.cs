@@ -190,7 +190,8 @@ namespace Logility.ROWeb
             {
                 nodeProperties.MerchandiseList.Add(new KeyValuePair<int, string>(level.LevelIndex, level.ToString()));
             }
-
+            BuildSizeCurveCriteriaSizeGroupList(nodeProperties);
+            BuildSizeCurveAttributeList(nodeProperties);
         }
 
         private void BuildSizeCurveCriteriaLevelList(int aStartNode)
@@ -283,6 +284,43 @@ namespace Logility.ROWeb
                 string message = exc.ToString();
                 throw;
             }
+        }
+
+        private void BuildSizeCurveCriteriaSizeGroupList(RONodePropertiesSizeCurves nodeProperties)
+        {
+            SizeGroupList _sizeCurveCriteriaGroupList = new SizeGroupList(eProfileType.SizeGroup);
+            _sizeCurveCriteriaGroupList.LoadAll(false);
+            nodeProperties.SizeGroupList.Add(new KeyValuePair<int, string>(Include.NoRID, " "));
+            SizeGroupProfile valueItem;
+            for (int i = 0; i < _sizeCurveCriteriaGroupList.Count; i++)
+            {
+                valueItem = (SizeGroupProfile)_sizeCurveCriteriaGroupList[i];
+                nodeProperties.SizeGroupList.Add(new KeyValuePair<int, string>(valueItem.Key, valueItem.SizeGroupName));
+            }
+        }
+
+        private void BuildSizeCurveAttributeList(RONodePropertiesSizeCurves nodeProperties)
+        {
+            eStoreGroupSelectType storeGroupSelectType;
+            ProfileList _storeEligibilityGroupList;
+            StoreGroupListViewProfile valueItem;
+            FunctionSecurityProfile _storeUserAttrSecLvl = SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.AdminStoreAttributesUser);
+            if (_storeUserAttrSecLvl.AccessDenied)
+            {
+                storeGroupSelectType = eStoreGroupSelectType.GlobalOnly;
+            }
+            else
+            {
+                storeGroupSelectType = eStoreGroupSelectType.All;
+            }
+            _storeEligibilityGroupList = StoreMgmt.StoreGroup_GetListViewList(storeGroupSelectType, storeGroupSelectType != eStoreGroupSelectType.GlobalOnly);
+            nodeProperties.AttributeList.Add(new KeyValuePair<int, string>(Include.NoRID, " "));
+            for (int i = 0; i < _storeEligibilityGroupList.Count; i++)
+            {
+                valueItem = (StoreGroupListViewProfile)_storeEligibilityGroupList[i];
+                nodeProperties.AttributeList.Add(new KeyValuePair<int, string>(valueItem.Key, valueItem.Name));
+            }
+
         }
 
         private void AddSizeCurveTolerance(RONodePropertiesSizeCurves nodeProperties, ref string message)

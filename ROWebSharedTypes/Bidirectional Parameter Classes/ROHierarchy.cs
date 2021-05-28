@@ -3408,6 +3408,12 @@ namespace Logility.ROWebSharedTypes
         // Criteria
         [DataMember(IsRequired = true)]
         List<KeyValuePair<int, string>> _merchandiseList;
+        
+        [DataMember(IsRequired = true)]
+        List<KeyValuePair<int, string>> _sizeGroupList;
+
+        [DataMember(IsRequired = true)]
+        List<KeyValuePair<int, string>> _attributeList;        
 
         [DataMember(IsRequired = true)]
         private List<RONodePropertiesSizeCurveCriteria> _sizeCurveInheritedCriteria;
@@ -3479,6 +3485,18 @@ namespace Logility.ROWebSharedTypes
             get { return _merchandiseList; }
         }
 
+        /// <summary>
+        /// Gets the list of merchandise level values.
+        /// </summary>
+        public List<KeyValuePair<int, string>> SizeGroupList
+        {
+            get { return _sizeGroupList; }
+        }
+
+        public List<KeyValuePair<int, string>> AttributeList
+        {
+            get { return _attributeList; }
+        }        
 
         /// <summary>
         /// Gets the list of RONodePropertiesSizeCurveCriteria objects containing the inherited size curve criteria.
@@ -3738,6 +3756,8 @@ namespace Logility.ROWebSharedTypes
             _sizeCurveInheritedCriteria = new List<RONodePropertiesSizeCurveCriteria>();
             _sizeCurveCriteria = new List<RONodePropertiesSizeCurveCriteria>();
             _merchandiseList = new List<KeyValuePair<int, string>>();
+            _sizeGroupList = new List<KeyValuePair<int, string>>();
+            _attributeList = new List<KeyValuePair<int, string>>();
 
             // Tolerance
 
