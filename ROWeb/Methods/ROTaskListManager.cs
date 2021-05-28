@@ -929,8 +929,18 @@ namespace Logility.ROWeb
         {
             eROReturnCode returnCode = eROReturnCode.Successful;
             string message = null;
-
-            
+            string name;
+            if (_taskListProfile != null)
+            {
+                name = _taskListProfile.GetUniqueName();
+                SessionAddressBlock.SchedulerServerSession.ScheduleNewJob(new ScheduleProfile(Include.NoRID, name), new JobProfile(Include.NoRID, name, true), _taskListProfile.Key, SessionAddressBlock.ClientServerSession.UserRID);
+                message = SessionAddressBlock.ClientServerSession.Audit.GetText(eMIDTextCode.msg_TaskListHasBeenSubmitted);
+            }
+            else
+            {
+                returnCode = eROReturnCode.Failure;
+                message = "Tasklist is not selected";
+            }
 
             return new RONoDataOut(returnCode, message, ROInstanceID);
         }
