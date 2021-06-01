@@ -6716,6 +6716,7 @@ namespace MIDRetail.Business
                             ProfileList groupBasisProfileListTY = GetGroupBasisProfileList(item.ROForecastBasisDetailProfilesTY);
                             ProfileList groupBasisProfileListLY = GetGroupBasisProfileList(item.ROForecastBasisDetailProfilesLY);
                             ProfileList groupBasisProfileListTrend = GetGroupBasisProfileList(item.ROForecastBasisDetailProfilesApplyTrendTo);
+                            newGLFP.GroupLevelBasis.Clear();
                             newGLFP.GroupLevelBasis.AddRange(groupBasisProfileListTY);
                             newGLFP.GroupLevelBasis.AddRange(groupBasisProfileListLY);
                             newGLFP.GroupLevelBasis.AddRange(groupBasisProfileListTrend);
