@@ -138,6 +138,15 @@ namespace Logility.ROWeb
             }
 
             dateKey = lastYearDateRange.Key;
+            if (parms.BaseDateKey > 0)
+            {
+                lastYearDateRange = SAB.ClientServerSession.Calendar.GetDateRange(lastYearDateRange.Key, parms.BaseDateKey);
+            }
+            else
+            {
+                lastYearDateRange = SAB.ClientServerSession.Calendar.GetDateRange(lastYearDateRange.Key);
+            }
+
             displayDate = lastYearDateRange.DisplayDate;
 
             return new ROCalendarDate(
@@ -177,6 +186,15 @@ namespace Logility.ROWeb
 
             DateRangeProfile trendDateRange = SAB.ClientServerSession.Calendar.GetRangeAsFirstWeekOfRange(dateRange);
             dateKey = trendDateRange.Key;
+            if (parms.BaseDateKey > 0)
+            {
+                trendDateRange = SAB.ClientServerSession.Calendar.GetDateRange(trendDateRange.Key, parms.BaseDateKey);
+            }
+            else
+            {
+                trendDateRange = SAB.ClientServerSession.Calendar.GetDateRange(trendDateRange.Key);
+            }
+        
             displayDate = trendDateRange.DisplayDate;
 
             return new ROCalendarDate(
