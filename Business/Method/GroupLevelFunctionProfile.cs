@@ -279,10 +279,12 @@ namespace MIDRetail.Business
                         {
                             GroupLevelNodeFunction default_glnf = ((GroupLevelNodeFunction)Group_Level_Nodes[glnf.HN_RID]).Copy();
                             CreateNewStockMinMaxProfiles(
-                                    groupLevelNodeFunction: default_glnf,
+                                    defaultGroupLevelNodeFunction: default_glnf,
+                                    groupLevelNodeFunction: glnf,
                                     aSession: aSession
                                     );
                             default_glnf.MinMaxInheritType = eMinMaxInheritType.Default;
+                            default_glnf.SglRID = glnf.SglRID;
                             alNodes.Add(default_glnf);
                         }
                     }
@@ -290,7 +292,8 @@ namespace MIDRetail.Business
                     {
                         GroupLevelNodeFunction default_glnf = glnf.Copy();
                         CreateNewStockMinMaxProfiles(
-                                groupLevelNodeFunction: default_glnf,
+                                defaultGroupLevelNodeFunction: default_glnf,
+                                groupLevelNodeFunction: glnf,
                                 aSession: aSession
                                 );
                         alNodes.Add(default_glnf);
@@ -324,22 +327,23 @@ namespace MIDRetail.Business
         // End TT#2647 - JSmith - Delays in OTS Method
 
         private void CreateNewStockMinMaxProfiles(
+            GroupLevelNodeFunction defaultGroupLevelNodeFunction,
             GroupLevelNodeFunction groupLevelNodeFunction,
             Session aSession
             )
         {
             StockMinMaxProfile newStockMinMaxProfile;
             ArrayList stockMinMaxProfiles = new ArrayList();
-            foreach (StockMinMaxProfile stockMinMaxProfile in groupLevelNodeFunction.Stock_MinMax)
+            foreach (StockMinMaxProfile stockMinMaxProfile in defaultGroupLevelNodeFunction.Stock_MinMax)
             {
                 newStockMinMaxProfile = stockMinMaxProfile.Copy(aSession, true);
-                newStockMinMaxProfile.StoreGroupLevelRid = this.Key;
+                newStockMinMaxProfile.StoreGroupLevelRid = groupLevelNodeFunction.SglRID;
                 stockMinMaxProfiles.Add(newStockMinMaxProfile);
             }
-            groupLevelNodeFunction.Stock_MinMax.Clear();
+            defaultGroupLevelNodeFunction.Stock_MinMax.Clear();
             foreach (StockMinMaxProfile stockMinMaxProfile in stockMinMaxProfiles)
             {
-                groupLevelNodeFunction.Stock_MinMax.Add(stockMinMaxProfile);
+                defaultGroupLevelNodeFunction.Stock_MinMax.Add(stockMinMaxProfile);
             }
         }
 
