@@ -1847,8 +1847,10 @@ namespace Logility.ROWeb
         /// <returns></returns>
         private int GetWaferCoordinateNo(int colIndex, eDataType dataType)
         {
-            List<ROColumnAttributes> columnAttributes = allocationReviewData.GetCells(dataType).Columns;
-            int intWaferNo = columnAttributes.Find(ix => ix.ColumnPosition == colIndex).WaferNo;
+            List<ROColumnAttributes> columnAttributes = allocationReviewData.GetCells(dataType).ColumnsByPosition;
+            int intWaferNo = 0;
+            if (columnAttributes.Count > 0)
+                intWaferNo = columnAttributes[colIndex].WaferNo;
             return intWaferNo;
         }
         
