@@ -50,7 +50,7 @@ namespace Logility.ROWeb
                 try
                 {
                     sab.CreateSessions( (int)eServerType.Client | (int)eServerType.Hierarchy | (int)eServerType.Store | 
-                                        (int)eServerType.Application | (int) eServerType.Header);
+                                        (int)eServerType.Application | (int) eServerType.Header | (int)eServerType.Scheduler);
                 }
                 catch (Exception exception)
                 {
