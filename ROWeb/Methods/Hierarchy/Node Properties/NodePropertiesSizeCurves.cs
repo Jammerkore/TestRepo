@@ -57,6 +57,13 @@ namespace Logility.ROWeb
         override public RONodeProperties NodePropertiesGetData(ROProfileKeyParms parms, object nodePropertiesData, ref string message, bool applyOnly = false)
         {
             _sizeCurvesCriteriaList = (SizeCurveCriteriaList)nodePropertiesData;
+            var deletedProfileList = (from SizeCurveCriteriaProfile profile in _sizeCurvesCriteriaList.ArrayList
+                                      where profile.CriteriaChangeType == eChangeType.delete
+                                      select profile).ToList();
+            if(deletedProfileList.Count > 0)
+            {
+                deletedProfileList.ForEach(p => { _sizeCurvesCriteriaList.Remove(p); });
+            }
 
             KeyValuePair<int, string> node = new KeyValuePair<int, string>(key: _hierarchyNodeProfile.Key, value: _hierarchyNodeProfile.Text);
             RONodePropertiesSizeCurves nodeProperties = new RONodePropertiesSizeCurves(node: node);
@@ -338,6 +345,7 @@ namespace Logility.ROWeb
 
             BuildSizeCurveToleranceLevelList(aStartNode: HierarchyNodeProfile.Key);
 
+            nodeProperties.ApplyMinimumToZeroTolerance = _sizeCurveToleranceProfile.ApplyMinToZeroTolerance;
             if (_sizeCurveToleranceProfile.ToleranceMinAvg > Include.Undefined)
             {
                 nodeProperties.ToleranceMinimumAverage = _sizeCurveToleranceProfile.ToleranceMinAvg;
@@ -846,7 +854,8 @@ namespace Logility.ROWeb
         /// <param name="message">The message</param>
         private bool SetSizeCurveTolerance(RONodePropertiesSizeCurves nodePropertiesSizeCurvesData, ref string message)
         {
-
+            if (nodePropertiesSizeCurvesData.ApplyMinimumToZeroToleranceIsSet)
+                _sizeCurveToleranceProfile.ApplyMinToZeroTolerance = nodePropertiesSizeCurvesData.ApplyMinimumToZeroTolerance.Value;
             if (nodePropertiesSizeCurvesData.ToleranceMinimumAverageIsSet)
             {
                 if (_sizeCurveToleranceProfile.ToleranceMinAvg != (double)nodePropertiesSizeCurvesData.ToleranceMinimumAverage)
