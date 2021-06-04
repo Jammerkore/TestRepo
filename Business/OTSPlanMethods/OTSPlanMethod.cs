@@ -6735,6 +6735,14 @@ namespace MIDRetail.Business
                     }
                 }
 
+                // If performing a save and low levels enabled
+                // copy high level stock min/maxes to all low levels
+                if (!processingApply
+                    && LowLevelsInd)
+                {
+                    CopyHighLevelStockMinimumsMaximumsToLowLevels();
+                }
+
                 return true;
             }
             catch (Exception ex)
@@ -6760,6 +6768,61 @@ namespace MIDRetail.Business
                 }
             }
         }
+
+        private void CopyHighLevelStockMinimumsMaximumsToLowLevels()
+        {
+            GroupLevelFunctionProfile attributeSetProfile;
+            GroupLevelNodeFunction highLevelGroupLevelNodeFunction;
+            GroupLevelNodeFunction lowLevelGroupLevelNodeFunction;
+            StockMinMaxProfile stockMinimumMaximumProfile;
+
+            // process all attribute sets
+            for (int i = 0; i < _GLFProfileList.Count; i++)
+            {
+                attributeSetProfile = (GroupLevelFunctionProfile)_GLFProfileList[i];
+                if (attributeSetProfile.Group_Level_Nodes.ContainsKey(Plan_HN_RID))
+                {
+                    // get the values for the high level node
+                    highLevelGroupLevelNodeFunction = (GroupLevelNodeFunction)attributeSetProfile.Group_Level_Nodes[Plan_HN_RID];
+                    // clear all node values and put the high level back
+                    attributeSetProfile.Group_Level_Nodes.Clear();
+                    attributeSetProfile.Group_Level_Nodes.Add(highLevelGroupLevelNodeFunction.HN_RID, highLevelGroupLevelNodeFunction);
+                    // build the list of all low levels
+                    PopulateOverrideList();
+                    // copy high level settings to each low level
+                    foreach (LowLevelVersionOverrideProfile lowLevel in LowlevelOverrideList)
+                    {
+                        // copy the node settings
+                        lowLevelGroupLevelNodeFunction = highLevelGroupLevelNodeFunction.Copy();
+                        // update node to low level key
+                        lowLevelGroupLevelNodeFunction.HN_RID = lowLevel.NodeProfile.Key;
+                        // copy all stock settings
+                        lowLevelGroupLevelNodeFunction.Stock_MinMax.Clear();
+                        foreach (StockMinMaxProfile stockMinMax in highLevelGroupLevelNodeFunction.Stock_MinMax)
+                        {
+                            stockMinimumMaximumProfile = new StockMinMaxProfile(stockMinMax.Key);
+                            stockMinimumMaximumProfile.HN_RID = lowLevel.NodeProfile.Key;
+                            stockMinimumMaximumProfile.MethodRid = stockMinMax.MethodRid;
+                            stockMinimumMaximumProfile.StoreGroupLevelRid = stockMinMax.StoreGroupLevelRid;
+                            stockMinimumMaximumProfile.Boundary = stockMinMax.Boundary;
+                            stockMinimumMaximumProfile.DateRangeRid = stockMinMax.DateRangeRid;
+                            stockMinimumMaximumProfile.MaximumStock = stockMinMax.MaximumStock;
+                            stockMinimumMaximumProfile.MinimumStock = stockMinMax.MinimumStock;
+                            lowLevelGroupLevelNodeFunction.Stock_MinMax.Add(stockMinimumMaximumProfile);
+                        }
+                        // add low level to attribute set node list
+                        attributeSetProfile.Group_Level_Nodes.Add(lowLevelGroupLevelNodeFunction.HN_RID, lowLevelGroupLevelNodeFunction);
+                    }
+                }
+                else
+                {
+                    // clear all node values
+                    attributeSetProfile.Group_Level_Nodes.Clear();
+                }
+            }
+        }
+
+
 
         override public ROMethodProperties MethodCopyData()
         {
