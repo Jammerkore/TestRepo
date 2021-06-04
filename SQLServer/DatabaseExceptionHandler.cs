@@ -149,14 +149,50 @@ namespace MIDRetail.Data
                 Exception err = null;
 
                 // Begin RO-2722 - AGallagher - Database Password Logged in Plain Text
-                if (aMIDCommand.Contains("Password="))
+                // if error contains the password in plain text, remove it
+                // check for different variations of the password label
+                string passwordLabel = "Password=";
+                if (aMIDCommand.Contains("password="))
                 {
+                    passwordLabel = "password=";
+                }
+                else if (aMIDCommand.Contains("Password="))
+                {
+                    passwordLabel = "Password=";
+                }
+                else if (aMIDCommand.Contains("PASSWORD="))
+                {
+                    passwordLabel = "PASSWORD=";
+                }
+                else if (aMIDCommand.Contains("pwd="))
+                {
+                    passwordLabel = "pwd=";
+                }
+                else if (aMIDCommand.Contains("PWD="))
+                {
+                    passwordLabel = "PWD=";
+                }
+
+                if (aMIDCommand.Contains(passwordLabel))
+                { 
                     string parse1 = aMIDCommand;
-                    int parsefirstStringPosition = parse1.IndexOf("Password=");
-                    parsefirstStringPosition = parsefirstStringPosition + 8;
-                    int parsesecondStringPosition = parse1.IndexOf("Error=");
-                    string result1 = parse1.Substring(1, parsefirstStringPosition);
-                    string result2 = parse1.Substring(parsesecondStringPosition, parsefirstStringPosition);
+                    // determine index of password label
+                    int parsefirstStringPosition = parse1.IndexOf(passwordLabel);
+                    // calculate to the end of the label
+                    parsefirstStringPosition = parsefirstStringPosition + passwordLabel.Length - 1;
+                    // locate delimiter after password
+                    int parsesecondStringPosition = parse1.IndexOf(";", parsefirstStringPosition);
+                    // determine the number of characters from delimiter to the end of the command
+                    int length = parse1.Length - parsesecondStringPosition;
+
+                    string result1 = parse1.Substring(0, parsefirstStringPosition + 1);
+                    string result2 = string.Empty;
+                    // Only set result2 if found starting position and length
+                    if (parsesecondStringPosition > -1
+                        && length > 0)
+                    {
+                        result2 = parse1.Substring(parsesecondStringPosition, length);
+                    }
                     string result3 = (result1 + "******** " + result2);
                     aMIDCommand = result3;
                 }

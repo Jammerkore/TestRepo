@@ -291,7 +291,14 @@ namespace MIDRetail.Business
                 if (_auditProcessRID != Include.NoRID)
                 {
                     AuditData auditData = new AuditData();
-                    auditData.CloseAuditHeaderIfUnexpected(_auditProcessRID);
+                    try
+                    {
+                        auditData.CloseAuditHeaderIfUnexpected(_auditProcessRID);
+                    }
+                    catch (Exception ex)
+                    {
+                        EventLog.WriteEntry("MIDHierarchyService", ex.Message, EventLogEntryType.Error);
+                    }
                 }
                 // End TT#739-MD - JSmith - Delete Stores
 
@@ -307,10 +314,10 @@ namespace MIDRetail.Business
 					}
 				}
 			}
-			catch
+			catch (Exception ex)
 			{
-				throw;
-			}
+                EventLog.WriteEntry("MIDHierarchyService", ex.Message, EventLogEntryType.Error);
+            }
 			finally
 			{
 				HierarchyServerGlobal.GarbageCollect();
