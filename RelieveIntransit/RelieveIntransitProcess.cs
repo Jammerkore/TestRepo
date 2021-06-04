@@ -1433,7 +1433,18 @@ namespace MIDRetail.RelieveIntransit
 				if (HeaderData.HeaderExists(headerID))
 				{
 					_apl = (AllocationProfileList)_aTrans.GetMasterProfileList(eProfileType.Allocation);
+					// release memory for previous AllocationProfile objects and transaction cache 
+                    for (int j = 0; j < _apl.Count; j++)
+                    {
+                        AllocationProfile ap = (AllocationProfile)_apl[j];
+                        ap.InitializeDataStorage();
+                        ap.Dispose();
+                        ap = null;
+                    }
+					_aTrans.InitializeDataStorage();
 					_apl.Clear();
+					// force gargage collection
+                	System.GC.Collect();
 					// Begin TT#1133-MD - stodd - Relieve IT not working with group allocation - 
                     ProfileList ampl = (ProfileList)_aTrans.GetMasterProfileList(eProfileType.AssortmentMember);
 					int[] hdrRID = new int[1];

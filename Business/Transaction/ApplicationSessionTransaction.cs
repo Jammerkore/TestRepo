@@ -551,6 +551,142 @@ namespace MIDRetail.Business
 
 		}
 
+        public void InitializeDataStorage()
+        {
+            _versionProtectedHash = new System.Collections.Hashtable();
+
+            _subtotalKeyHash = new System.Collections.Hashtable();
+            _subtotalKeyHashLastKey = null;
+            _subtotalKeyHashLastValue = 0;
+
+            _subtotalPacks = null;
+            _subtotalPacksLastPack = new PackHdr(null);
+            _subtotalPacksLastPackArray = null;
+
+            _storeRID_IndexXref = null;
+            _storeRID_ToCharArrayHash = new Hashtable(); 
+            _OTS_IT_HnRIDHash = new Hashtable(); 
+
+            _reserveStoreIndexRID = new Index_RID(0, Include.UndefinedStoreRID);
+            _grandTotalName = null;
+            _grandTotalProfile = null;
+            _inStoreReceiptDays = null;
+            _intransitRdr = null;
+            _onHandRdr = null;
+            _dailySalesRdr = null;
+            _allocationCubeGroup = null;
+            _allocationBasisCubeGroup = null;
+            _allocationCriteria = null;
+            _velocityCriteria = null;
+            _buildPacksCriteria = null;  
+            _lastBuildItemIndicators = new BuildItemIndicators(Include.NoRID); 
+            _buildItemIndicators = new Dictionary<int, BuildItemIndicators>(); 
+            _buildItemProcessOrder = new Dictionary<int, Dictionary<int, AllocationProfile[]>>(); 
+            _nodeDataHash = null;
+            _nodeDataHashLastKey = 0;
+            _nodeDataHashLastValue = null;
+
+            _planLevelDataHash = null;
+            _planLevelDataHashLastKey = 0;
+            _planLevelDataHashLastValue = null;
+
+            _salesEligibilityHashByNodeRID = new System.Collections.Hashtable();
+            _stockEligibilityHashByNodeRID = new System.Collections.Hashtable();
+            _priorityShippingHashByNodeRID = new System.Collections.Hashtable();
+            _salesWkRangeEligibilityHashByNodeRID = new System.Collections.Hashtable();  
+            _storeGradesHash = new System.Collections.Hashtable();
+            _velocityGradesHash = new System.Collections.Hashtable();
+            _sellThruPctsHash = new System.Collections.Hashtable();
+            _storeStatusHash = new System.Collections.Hashtable();
+            _storeCapacityHash = new System.Collections.Hashtable();
+            _similarStoreHash = new System.Collections.Hashtable();
+            _dailyPercentagesHashByNodeRID = new System.Collections.Hashtable();
+            _lastHeaderSizeNeedMethodKey = null;
+            _sizeNeedMethodCache = new Dictionary<HeaderSizeNeedMethodKey, SizeNeedMethod>();
+            _tempSizeNeedMethodRID = 0; 
+
+            _OTS_HorizonHash = new Hashtable();                        
+            _OTS_HorizonHashLastKey = 0;                              
+                                                                            
+            _OTS_NeedHash = null;                                      
+            _OTS_NeedHashLastKey = Include.NoRID;                    
+            _OTS_VerHash = null;                                       
+            _OTS_VerHashLastKey = Include.NoRID;                       
+            _OTS_StoreHash = null;                                    
+            _OTS_StoreHashLastKey = Include.NoRID;                     
+            _OTS_LastStoreValues = null;                              
+
+            _mainHierarchyData = null;                                
+            _colorHierarchySequence = -1;                             
+
+            _showNeedAnalysisCriteria = false;
+            _determineShowNeedAnalysis = true;
+            _needAnalysisFrom1stHeader = false;
+            _showNeedAnalysisCriteria = false;
+            _determineShowNeedAnalysis = true;
+            _currStoreGroupProfile = null;
+            _currComputationMode = string.Empty;
+            _storeStockPlanHash = new Hashtable();
+            _storeSalesPlanHash = new Hashtable();
+            _headerEnqMessage = null;
+
+            _allocationStoreFilterRID = int.MinValue;
+            _quickFilterChanged = true;
+            _selectedAllocationStores = null;
+            _grandTotalName = MIDText.GetTextOnly((int)eHeaderNode.GrandTotal);
+            _assortmentProfile = null; 
+            _velocityStorePctSellThruIdx_Chain = null;
+            _velocityStorePctSellThruIdx_Set = null;
+            _rebuildAllocationStores = false;      
+            _rebuildAllocationStoresActive = false;
+            _storeRID_CharArray_List = new ArrayList(); 
+            _parentHnHash = new Hashtable();        
+            _parentHnHashLastParent = null;          
+            _IKT_Hash = new Hashtable();            
+            _IKT_HashLast_iktHash = new Hashtable(); 
+            _IKT_HashLastKey = Include.NoRID;        
+                                                    
+            _intransitReadNodeHash = new Hashtable();
+            _lastIntransitReadPllvHash = null;
+            _lastIntransitReadNodeArray = null;
+            _lastIntransitReadNodeHashKey = Include.NoRID;
+            _lastIntransitReadNodeHashLevel = eHierarchyLevelMasterType.Undefined;
+            _storeRID_CharArray_List = new ArrayList(); 
+            _parentHnHash = new Hashtable();         
+            _parentHnHashLastParent = null;          
+            _IKT_Hash = new Hashtable();             
+            _IKT_HashLast_iktHash = new Hashtable(); 
+            _IKT_HashLastKey = Include.NoRID;        
+                                                     
+            _headerGenericNameCharacteristics = new Hashtable();
+            _lastGenericNameCharacteristicHeaderKey = int.MinValue;
+            _genericHeaderCharacteristicHash = new Hashtable();
+            _lastGenericHeaderCharacteristicKey = long.MinValue;
+            _lastGenericMerchandiseHierarchyNodeProfile = new HierarchyNodeProfile(Include.NoRID);
+            _lastGenericColorCodeRID = int.MinValue;
+            _lastGenericSizeName = string.Empty;
+            
+            _headerCharacteristicProfileList = null;
+            _lastHeaderCharacteristicGroupRID = Include.NoRID;
+            _lastHeaderCharacteristicProfile = null;
+            
+          
+            _buildStyleWaferColumns = new ArrayList();
+            _buildSizeWaferColumns = new ArrayList();
+            _storeGroupDict = new Dictionary<long, ProfileList>(); 
+
+            _sizeViewSizesAL = new ArrayList(); 
+            _allocationWaferChangeRequest = new ArrayList();  
+
+            _assmntViewSelBypass = false; 
+
+            _assortmentSelectedHdrList = new SelectedHeaderList(eProfileType.SelectedHeader);
+            _ruleBasedAllocation = null; 
+            
+            _descendantDataHash = null;
+            _sizeNeedResultsDict = null;
+        }
+
         // Begin TT#1759-MD - JSmith - GA- Velocity-> Velocity Store Detail-> Allocate and Velocity Matrix buttons gray out when selecting attribute in Matrix
         public void ReInitializeForAssortGroup()
         {
