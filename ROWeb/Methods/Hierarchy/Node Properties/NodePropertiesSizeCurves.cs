@@ -917,7 +917,7 @@ namespace Logility.ROWeb
             {
                 if (_sizeCurveToleranceProfile.ToleranceIdxUnitsInd != nodePropertiesSizeCurvesData.ToleranceSalesToleranceType)
                 {
-                    _sizeCurveToleranceProfile.ToleranceIdxUnitsInd = eNodeChainSalesType.IndexToAverage;
+                    _sizeCurveToleranceProfile.ToleranceIdxUnitsInd = nodePropertiesSizeCurvesData.ToleranceSalesToleranceType;
                     _sizeCurveToleranceProfile.ToleranceIdxUnitsIndIsInherited = false;
                 }
             }
