@@ -196,7 +196,15 @@ namespace MIDRetail.Windows
         }
 
         //TODO: rename
-        public DateRangeProfile OkButtonClicked(int cdrRID, int startDate, int endDate, eCalendarDateType dateType, eCalendarRangeType dateRangeType, eDateRangeRelativeTo relativeTo)
+        public DateRangeProfile OkButtonClicked(
+            int cdrRID, 
+            int startDate, 
+            int endDate, 
+            eCalendarDateType dateType, 
+            eCalendarRangeType dateRangeType, 
+            eDateRangeRelativeTo relativeTo,
+            int anchorDateKey
+            )
         {
             DateRangeProfile selectedDateRange = BuildDateRange(cdrRID, startDate, endDate, dateType, dateRangeType, relativeTo);
             bool anchorDateOverriden = (dateRangeType == eCalendarRangeType.Dynamic) && (relativeTo != eDateRangeRelativeTo.Current);
@@ -216,6 +224,14 @@ namespace MIDRetail.Windows
             if (selectedDateRange.DateRangeType == eCalendarRangeType.DynamicSwitch)
             {
                 selectedDateRange = _calendar.GetDateRange(selectedDateRange.Key, true);
+            }
+            else if (selectedDateRange.DateRangeType == eCalendarRangeType.Dynamic)
+            {
+                if (anchorDateOverriden
+                    && anchorDateKey != Include.Undefined)
+                {
+                    selectedDateRange = _calendar.GetDateRange(selectedDateRange.Key, anchorDateKey);
+                }
             }
 
             return selectedDateRange;

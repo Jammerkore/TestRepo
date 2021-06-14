@@ -486,7 +486,7 @@ namespace Logility.ROWeb
                 else
                 {
                     _dateRangeProfile = CalendarDateSelectorManager.OkButtonClicked(saveParms.DateRangeRID, saveParms.iStartDate, saveParms.iEndDate,
-                                                                                    dateType, rangeType, relativeTo);
+                                                                                    dateType, rangeType, relativeTo, saveParms.AnchorDateKey);
                 }
                 rowHandler = CalendarDateRangeRowHandler.GetInstance(_dateRangeProfile, CalendarDateSelectorManager);
                 AddCalendarDateRange(dt, rowHandler);
