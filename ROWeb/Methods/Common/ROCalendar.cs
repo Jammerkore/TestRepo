@@ -481,7 +481,7 @@ namespace Logility.ROWeb
                 {
                     //until we have update in the UI, the DateRangeRID will always be Include.UndefinedCalendarDateRange in this case
                     _dateRangeProfile = CalendarDateSelectorManager.SaveRangeButtonClicked(saveParms.DateRangeRID, saveParms.sDateRangeName, saveParms.iStartDate, saveParms.iEndDate,
-                                                                                            dateType, rangeType, relativeTo);
+                                                                                            dateType, rangeType, relativeTo, saveParms.AnchorDateKey);
                 }
                 else
                 {
