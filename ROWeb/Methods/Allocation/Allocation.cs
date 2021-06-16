@@ -213,7 +213,7 @@ namespace Logility.ROWeb
                 case eRORequest.SaveViewDetails:
                     return SaveViewDetails((ROAllocationReviewViewDetailsParms)Parms);
                 case eRORequest.DeleteViewDetails:
-                    return DeleteReviewViewDetails();
+                    return DeleteReviewViewDetails((ROKeyParms)Parms);
 
                 // Style Review
                 case eRORequest.AllocationStyleReviewViews:

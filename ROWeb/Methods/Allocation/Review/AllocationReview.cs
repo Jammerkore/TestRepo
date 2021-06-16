@@ -738,9 +738,9 @@ namespace Logility.ROWeb
             return success;
         }
 
-        public ROOut DeleteReviewViewDetails()
+        public ROOut DeleteReviewViewDetails(ROKeyParms param)
         {
-            return DeleteViewDetails(viewKey: _currentViewRID);
+            return DeleteViewDetails(viewKey: param.Key);
         }
 
         private ROData BuildAllocationReviewData(ROAllocationReviewOptionsParms reviewOptionsParms, eAllocationSelectionViewType selectionViewType, bool rebuildWafers = false)
