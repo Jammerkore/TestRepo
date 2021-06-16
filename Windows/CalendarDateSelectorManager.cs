@@ -173,7 +173,7 @@ namespace MIDRetail.Windows
             return _calendar.DateSmallSelectionDataTable;
         }
 
-        public DateRangeProfile GetDateRangeProfile(int iDateRangeRID)
+        public DateRangeProfile GetDateRangeProfile(int iDateRangeRID, int anchorDateKey = Include.Undefined)
         {
             DateRangeProfile dateRangeProfile = null;
 
@@ -184,6 +184,11 @@ namespace MIDRetail.Windows
             else
             {
                 dateRangeProfile = _calendar.GetDateRange(iDateRangeRID);
+                if (dateRangeProfile.RelativeTo == eDateRangeRelativeTo.Plan
+                    && anchorDateKey != Include.Undefined)
+                {
+                    dateRangeProfile = _calendar.GetDateRange(iDateRangeRID, anchorDateKey);
+                }
             }
             return dateRangeProfile;
         }

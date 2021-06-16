@@ -254,7 +254,8 @@ namespace Logility.ROWeb
             return GetCalendarSelector(calendarParms.DateRangeRID, calendarParms.AnchorDateRangeRID, (eDateRangeRelativeTo)calendarParms.AnchorDateRelativeTo,
                 calendarParms.AllowDynamicToCurrent, calendarParms.AllowDynamicToPlan,
                 calendarParms.AllowDynamicToStoreOpen, calendarParms.AllowReoccurring,
-                calendarParms.RestrictToOnlyWeeks, calendarParms.RestrictToOnlyPeriods, calendarParms.AllowDynamicSwitch);
+                calendarParms.RestrictToOnlyWeeks, calendarParms.RestrictToOnlyPeriods, calendarParms.AllowDynamicSwitch,
+                calendarParms.GetDateRangeOnly);
         }
 
         private DataTable GetCalendarDateTypeList()
@@ -352,10 +353,11 @@ namespace Logility.ROWeb
         /// <summary>
         /// Returns the list of predefined date ranges
         /// </summary>
+        /// <param name="getDateRangeOnly">Will return only the Current Date and "Calendar Date Range tables</param>
         /// <returns>A datatable</returns>
         private ROOut GetCalendarSelector(int iDateRangeRID, int iAnchorDateRangeRID, eDateRangeRelativeTo anchorDateRelativeTo,
             bool bAllowDynamicToCurrent, bool bAllowDynamicToPlan, bool bAllowDynamicToStoreOpen,
-                bool bAllowReoccurring, bool bRestrictToOnlyWeeks, bool bRestrictToOnlyPeriods, bool bAllowDynamicSwitch)
+                bool bAllowReoccurring, bool bRestrictToOnlyWeeks, bool bRestrictToOnlyPeriods, bool bAllowDynamicSwitch, bool getDateRangeOnly)
         {
             try
             {
@@ -365,35 +367,41 @@ namespace Logility.ROWeb
 
                 DataSet dsCalendarSelector = new DataSet("Calendar Selector");
 
-                // Add tables containing enum values
-                dsCalendarSelector.Tables.Add(GetCalendarDateTypeList());
-                dsCalendarSelector.Tables.Add(GetCalendarRangeTypeList(
-				    bAllowDynamic: bAllowDynamicToCurrent || bAllowDynamicToPlan || bAllowDynamicToStoreOpen,
-                    bAllowReoccurring: bAllowReoccurring,
-                    bAllowDynamicSwitch: bAllowDynamicSwitch));
-                dsCalendarSelector.Tables.Add(GetDateRangeRelativeToList(
-				    bAllowDynamicToCurrent: bAllowDynamicToCurrent,
-                    bAllowDynamicToPlan: bAllowDynamicToPlan,
-                    bAllowDynamicToStoreOpen: bAllowDynamicToStoreOpen));
-
-                // Add Predefined Date Ranges
-                DataView dv = CalendarDateSelectorManager.GetDateRangesWithNames();
-
-                if (string.IsNullOrEmpty(dv.Table.TableName))
+                if (!getDateRangeOnly)
                 {
-                    dv.Table.TableName = "Predefined Date Ranges";
-                }
+                    // Add tables containing enum values
+                    dsCalendarSelector.Tables.Add(GetCalendarDateTypeList());
+                    dsCalendarSelector.Tables.Add(GetCalendarRangeTypeList(
+                        bAllowDynamic: bAllowDynamicToCurrent || bAllowDynamicToPlan || bAllowDynamicToStoreOpen,
+                        bAllowReoccurring: bAllowReoccurring,
+                        bAllowDynamicSwitch: bAllowDynamicSwitch));
+                    dsCalendarSelector.Tables.Add(GetDateRangeRelativeToList(
+                        bAllowDynamicToCurrent: bAllowDynamicToCurrent,
+                        bAllowDynamicToPlan: bAllowDynamicToPlan,
+                        bAllowDynamicToStoreOpen: bAllowDynamicToStoreOpen));
 
-                dsCalendarSelector.Tables.Add(dv.Table);
+                    // Add Predefined Date Ranges
+                    DataView dv = CalendarDateSelectorManager.GetDateRangesWithNames();
+
+                    if (string.IsNullOrEmpty(dv.Table.TableName))
+                    {
+                        dv.Table.TableName = "Predefined Date Ranges";
+                    }
+
+                    dsCalendarSelector.Tables.Add(dv.Table);
+                }
 
                 // Add Current Date Table
                 dsCalendarSelector.Tables.Add(CalendarDateSelectorManager.GetCurrentDateTable());
 
-                // Add Calendar Selection Table
-                dsCalendarSelector.Tables.Add(CalendarDateSelectorManager.GetDateSelectionTable());
+                if (!getDateRangeOnly)
+                {
+                    // Add Calendar Selection Table
+                    dsCalendarSelector.Tables.Add(CalendarDateSelectorManager.GetDateSelectionTable());
+                }
 
                 // Add Date Criteria
-                dsCalendarSelector.Tables.Add(GetDateRange(iDateRangeRID));
+                dsCalendarSelector.Tables.Add(GetDateRange(iDateRangeRID, iAnchorDateRangeRID));
 
                 return new RODataSetOut(eROReturnCode.Successful, null, ROInstanceID, dsCalendarSelector);
 
@@ -404,9 +412,9 @@ namespace Logility.ROWeb
             }
         }
 
-        private DataTable GetDateRange(int iDateRangeRID)
+        private DataTable GetDateRange(int iDateRangeRID, int anchorDateKey = Include.Undefined)
         {
-            _dateRangeProfile = CalendarDateSelectorManager.GetDateRangeProfile(iDateRangeRID);
+            _dateRangeProfile = CalendarDateSelectorManager.GetDateRangeProfile(iDateRangeRID, anchorDateKey);
             CalendarDateRangeRowHandler rowHandler = CalendarDateRangeRowHandler.GetInstance(_dateRangeProfile, CalendarDateSelectorManager);
             DataTable dt = BuildDateRangeDataTable(rowHandler);
 

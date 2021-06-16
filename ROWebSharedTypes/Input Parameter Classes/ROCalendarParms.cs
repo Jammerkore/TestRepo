@@ -45,11 +45,35 @@ namespace Logility.ROWebSharedTypes
         private bool _bAllowDynamicToPlan;
         [DataMember(IsRequired = true)]
         private bool _bAllowDynamicToStoreOpen;
+        [DataMember(IsRequired = true)]
+        private bool _getDateRangeOnly;
 
-        public ROCalendarSelectorParms(string sROUserID, string sROSessionID, eROClass ROClass, eRORequest RORequest, long ROInstanceID,
-            int iDateRangeRID, int iAnchorDateRangeRID, int iAnchorDateRelativeTo, bool bRestrictToOnlyWeeks, bool bRestrictToOnlyPeriods, 
-            bool bAllowReoccurring, bool bAllowDynamicSwitch, bool bAllowDynamicToCurrent, bool bAllowDynamicToPlan, bool bAllowDynamicToStoreOpen)
-            : base(sROUserID, sROSessionID, ROClass, RORequest, ROInstanceID, iDateRangeRID)
+        public ROCalendarSelectorParms(
+            string sROUserID, 
+            string sROSessionID, 
+            eROClass ROClass, 
+            eRORequest RORequest, 
+            long ROInstanceID,
+            int iDateRangeRID, 
+            int iAnchorDateRangeRID, 
+            int iAnchorDateRelativeTo, 
+            bool bRestrictToOnlyWeeks, 
+            bool bRestrictToOnlyPeriods, 
+            bool bAllowReoccurring, 
+            bool bAllowDynamicSwitch, 
+            bool bAllowDynamicToCurrent, 
+            bool bAllowDynamicToPlan, 
+            bool bAllowDynamicToStoreOpen,
+            bool getDateRangeOnly = false
+            )
+            : base(
+                  sROUserID, 
+                  sROSessionID, 
+                  ROClass, 
+                  RORequest,
+                  ROInstanceID, 
+                  iDateRangeRID
+                  )
         {
             _iAnchorDateRangeRID = iAnchorDateRangeRID;
             _iAnchorDateRelativeTo = iAnchorDateRelativeTo;
@@ -60,6 +84,7 @@ namespace Logility.ROWebSharedTypes
             _bAllowDynamicToCurrent = bAllowDynamicToCurrent;
             _bAllowDynamicToPlan = bAllowDynamicToPlan;
             _bAllowDynamicToStoreOpen = bAllowDynamicToStoreOpen;
+            _getDateRangeOnly = getDateRangeOnly;
         }
 
         public int AnchorDateRangeRID { get { return _iAnchorDateRangeRID; } }
@@ -71,6 +96,7 @@ namespace Logility.ROWebSharedTypes
         public bool AllowDynamicToCurrent { get { return _bAllowDynamicToCurrent; } }
         public bool AllowDynamicToPlan { get { return _bAllowDynamicToPlan; } }
         public bool AllowDynamicToStoreOpen { get { return _bAllowDynamicToStoreOpen; } }
+        public bool GetDateRangeOnly { get { return _getDateRangeOnly; } }
     };
 
     [DataContract(Name = "ROCalendarSaveParms", Namespace = "http://Logility.ROWeb/")]
