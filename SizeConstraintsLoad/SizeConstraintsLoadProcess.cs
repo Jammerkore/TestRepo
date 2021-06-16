@@ -898,6 +898,9 @@ namespace MIDRetail.SizeConstraintsLoad
 				return eReturnCode.editErrors;
 			}
 
+            _sizeGroupRid = -1;
+            _sizeCurveGroupRid = -1;
+
 			if(conModel.SizeGroup != null)
 			{
 				if(_sizeGroupRIDs != null &&
