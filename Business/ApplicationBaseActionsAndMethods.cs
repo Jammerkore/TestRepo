@@ -112,6 +112,7 @@ namespace MIDRetail.Business
         private bool? _containsUserData = null;   // TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
         private eLockStatus _lockStatus;
         private bool _template_IND;
+        private int _workflowStep;
 
         //============
         // Constructor
@@ -146,6 +147,7 @@ namespace MIDRetail.Business
 			}
 			_virtual_IND = false;
             _template_IND = true;
+            _workflowStep = Include.Undefined;
 			_filled = false;
 			_method_Change_Type = eChangeType.none;
             _customOLL_RID = -1;    // MID Track #5530 - add CUSTOM_OLL_RID
@@ -265,6 +267,15 @@ namespace MIDRetail.Business
         {
             get { return _template_IND; }
             set { _template_IND = value; }
+        }
+
+        /// <summary>
+		/// Gets or sets the step of the method in a workflow.
+		/// </summary>
+		public int WorkflowStep
+        {
+            get { return _workflowStep; }
+            set { _workflowStep = value; }
         }
 
         /// <summary>

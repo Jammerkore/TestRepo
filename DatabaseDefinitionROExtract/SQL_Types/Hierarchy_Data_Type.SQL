@@ -1,5 +1,5 @@
 CREATE TYPE [dbo].[Hierarchy_Data_Type] AS TABLE(
-	[ID] [varchar](50),
+	[ID] [varchar](100),
 	[NodeDisplay] [varchar](250),
 	[ProductType] [varchar](50),
 	[Hierarchy] [varchar](50),

@@ -62,6 +62,9 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         protected bool _isTemplate;
 
+        [DataMember(IsRequired = true)]
+        protected int _workflowStep;
+
         public ROMethodProperties(
             eMethodType methodType, 
             KeyValuePair<int, string> method, 
@@ -75,6 +78,7 @@ namespace Logility.ROWebSharedTypes
             _userKey = userKey;
             _methodType = methodType;
             _isTemplate = isTemplate;
+			_workflowStep = Include.Undefined;
         }
 
         public KeyValuePair<int, string> Method
@@ -165,6 +169,12 @@ namespace Logility.ROWebSharedTypes
         {
             get { return _isTemplate; }
             set { _isTemplate = value; }
+        }
+
+        public int WorkflowStep
+        {
+            get { return _workflowStep; }
+            set { _workflowStep = value; }
         }
     }
 

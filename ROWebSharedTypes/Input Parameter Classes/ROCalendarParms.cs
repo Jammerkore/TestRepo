@@ -92,10 +92,12 @@ namespace Logility.ROWebSharedTypes
         private int _iDateRangeType;
         [DataMember(IsRequired = true)]
         private int _iRelativeTo;
+        [DataMember(IsRequired = true)]
+        private int _anchorDateKey;
 
         public ROCalendarSaveParms(string sROUserID, string sROSessionID, eROClass ROClass, eRORequest RORequest, long ROInstanceID,
                                     bool bSaveDateRange, string sDateRangeName, int iDateRangeRID, int iStartDate, int iEndDate, 
-                                    int iDateType, int iDateRangeType, int iRelativeTo)
+                                    int iDateType, int iDateRangeType, int iRelativeTo, int anchorDateKey = -1)
             : base(sROUserID, sROSessionID, ROClass, RORequest, ROInstanceID, iDateRangeRID)
         {
             _bSaveDateRange = bSaveDateRange;
@@ -113,6 +115,7 @@ namespace Logility.ROWebSharedTypes
             _iDateType = iDateType;
             _iDateRangeType = iDateRangeType;
             _iRelativeTo = iRelativeTo;
+            _anchorDateKey = anchorDateKey;
         }
 
         public bool bSaveDateRange { get { return _bSaveDateRange; } }
@@ -123,6 +126,7 @@ namespace Logility.ROWebSharedTypes
         public int iDateType { get { return _iDateType; } }
         public int iDateRangeType { get { return _iDateRangeType; } }
         public int iRelativeTo { get { return _iRelativeTo; } }
+        public int AnchorDateKey { get { return _anchorDateKey; } }
     }
 
     [DataContract(Name = "ROCalendarDateCalculationParms", Namespace = "http://Logility.ROWeb/")]

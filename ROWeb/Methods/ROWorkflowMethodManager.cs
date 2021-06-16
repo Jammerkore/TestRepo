@@ -35,6 +35,7 @@ namespace Logility.ROWeb
         private string _nameMessage;
 		// Collection to manage methods within the workflow
         private Dictionary<int, ApplicationBaseMethod> _workflowMethods = new Dictionary<int, ApplicationBaseMethod>();
+        int _currentMethodKey = 0;  // keeps track of current method key from FE since all method object keys must be -1
 
         /// <summary>
         /// Gets the SessionAddressBlock
@@ -384,24 +385,34 @@ namespace Logility.ROWeb
         {
             bool successful;
             string message = null;
+            int methodKey;
             eROReturnCode returnCode = eROReturnCode.Successful;
 
             // Do not obtain object during Apply since will already have one
             if (!processingApply)
             {
                 if (_ABM == null 
-                    || _ABM.MethodType != methodParm.MethodType
-                    || _ABM.Key != methodParm.Key)
+                    || _currentMethodKey != methodParm.Key)
                 {
                     // check if already have method in the collection.  If not create it.
                     if (!_workflowMethods.TryGetValue(methodParm.Key, out _ABM))
                     {
-                        _ABM = (ApplicationBaseMethod)GetMethods.GetMethod(methodParm.Key, methodParm.MethodType);
-                        if (methodParm.Key != Include.NoRID)
+                        methodKey = methodParm.Key;
+                        // if new method, always use Include.NoRID to instantiate class
+                        // since legacy code uses Include.NoRID to identify new methods
+                        // but use key from parameters to store in dictionary
+                        if (methodKey < 0)
                         {
-                            _workflowMethods[_ABM.Key] = _ABM;
+                            methodKey = Include.NoRID;
                         }
+                        _ABM = (ApplicationBaseMethod)GetMethods.GetMethod(
+                            methodKey, 
+                            methodParm.MethodType
+                            );
+                        _workflowMethods[methodParm.Key] = _ABM;
                     }
+                    // keep last key accessed in cache so will not have to retrieve from cache each time
+                    _currentMethodKey = methodParm.Key;
                     if (_ABM is VelocityMethod)
                     {
                         ((VelocityMethod)_ABM).AST = _applicationSessionTransaction;
@@ -409,14 +420,22 @@ namespace Logility.ROWeb
                 }
             }
 
-            if (methodParm.Key != Include.NoRID
+            if (methodParm.Key > 0
                 && !_ABM.AuthorizedToView(SAB.ClientServerSession, SAB.ClientServerSession.UserRID))
             {
                 message = SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_NotAuthorizedForItem);
                 return new ROMethodPropertiesOut(eROReturnCode.Failure, message, ROInstanceID, null);
             }
 
+            _ABM.WorkflowStep = methodParm.WorkflowStep;
             ROMethodProperties mp = _ABM.MethodGetData(successful: out successful, message: ref message, processingApply: processingApply);
+
+            // if new method, override the new key value in the method properties with the key from the FE
+			// since will have -1 from legacy
+            if (mp.Method.Key < 0)
+            {
+                mp.Method = new KeyValuePair<int, string>(methodParm.Key, mp.Method.Value);
+            }
 
             if (!successful)
             {
@@ -429,7 +448,7 @@ namespace Logility.ROWeb
             mp.IsReadOnly = FunctionSecurity.IsReadOnly;
             // if not read only, check based on data in the method
             if (!mp.IsReadOnly
-                 && _ABM.Key != Include.NoRID  // don't check if new method
+                 && _ABM.Key > 0  // don't check if new method
                )
             {
                 mp.IsReadOnly = !_ABM.AuthorizedToUpdate(SAB.ClientServerSession, SAB.ClientServerSession.UserRID);
@@ -440,7 +459,7 @@ namespace Logility.ROWeb
             if (!mp.IsReadOnly
                 && _ABM.LockStatus != eLockStatus.Locked
                 && !processingApply
-                && _ABM.Key != Include.NoRID
+                && _ABM.Key > 0  // only lock if existing method
                 && successful)
             {
                 message = null;
@@ -460,6 +479,8 @@ namespace Logility.ROWeb
                 }
             }
 
+            mp.WorkflowStep = _ABM.WorkflowStep;
+
             return new ROMethodPropertiesOut(returnCode, message, ROInstanceID, mp);
         }
 
@@ -468,126 +489,125 @@ namespace Logility.ROWeb
             string message = null;
             eROReturnCode returnCode = eROReturnCode.Successful;
 
-            if (_ABM == null
-                || methodParm.ROMethodProperties.MethodType != _ABM.MethodType
-                )
+            try
             {
-                // check if already have method in the collection.  If not create it.
-                if (!_workflowMethods.TryGetValue(methodParm.ROMethodProperties.Method.Key, out _ABM))
-                {
-                    int methodKey = methodParm.ROMethodProperties.Method.Key;
-                    eMethodType methodType = methodParm.ROMethodProperties.MethodType;
-                    _ABM = (ApplicationBaseMethod)GetMethods.GetMethod(methodKey, methodType);
-                    // only save if not new method
-                    if (methodParm.ROMethodProperties.Method.Key != Include.NoRID)
-                    {
-                        _workflowMethods[_ABM.Key] = _ABM;
-                    }
-                }
-                FunctionSecurity = _ABM.GetFunctionSecurity();
-                _ABM.User_RID = methodParm.ROMethodProperties.UserKey;
-                if (_ABM is VelocityMethod)
-                {
-                    ((VelocityMethod)_ABM).AST = _applicationSessionTransaction;
-                }
-            }
+                VerifyMethodObject(
+                    methodParm: methodParm,
+                    message: ref message
+                    );
 
-            bool cleanseName = false;
-            if (methodParm.ROMethodProperties.Method.Key == Include.NoRID)
-            {
-                _ABM.Method_Change_Type = eChangeType.add;
-                // unlock previous method if doing a Save As
-                if (_ABM != null
-                    && _ABM.LockStatus == eLockStatus.Locked)
+                bool cleanseName = false;
+                if (methodParm.ROMethodProperties.Method.Key < 0)  // all new methods have negative keys
                 {
-                    _ABM.LockStatus = WorkflowMethodUtilities.UnlockWorkflowMethod(
-                        SAB: SAB,
-                        workflowMethodIND: eWorkflowMethodIND.Methods,
-                        Key: _ABM.Key,
-                        message: out message
-                        );
-                    if (_ABM.LockStatus == eLockStatus.Cancel)
+                    _ABM.Method_Change_Type = eChangeType.add;
+                    // unlock previous method if doing a Save As
+                    if (_ABM != null
+                        && _ABM.LockStatus == eLockStatus.Locked)
                     {
-                        MIDEnvironment.Message = message;
-                    }
-                }
-                _ABM.Key = methodParm.ROMethodProperties.Method.Key;
-                _ABM.Name = methodParm.ROMethodProperties.Method.Value;
-                cleanseName = true;
-            }
-            else
-            {
-                _ABM.Method_Change_Type = eChangeType.update;
-                cleanseName = _ABM.Name != methodParm.ROMethodProperties.Method.Value;
-                _ABM.Name = methodParm.ROMethodProperties.Method.Value;
-            }
-
-            if (methodParm.ROMethodProperties.IsTemplate)
-            {
-                _ABM.Name = methodParm.ROMethodProperties.Method.Value;
-            }
-            else if (!methodParm.ROMethodProperties.IsTemplate
-                && _ABM.Method_Change_Type == eChangeType.add
-                && string.IsNullOrWhiteSpace(_ABM.Name))
-            {
-                _ABM.Name = Include.Custom + DateTime.Now.Ticks;
-            }
-            if (cleanseName)
-            {
-                CleanseMethodName(applicationBaseMethod: _ABM);
-            }
-            _ABM.Method_Description = methodParm.ROMethodProperties.Description;
-            _ABM.User_RID = methodParm.ROMethodProperties.UserKey;
-            _ABM.Template_IND = methodParm.ROMethodProperties.IsTemplate;
-
-            if (_ABM.MethodSetData(methodProperties: methodParm.ROMethodProperties, message: ref message, processingApply: false))
-            {
-                try
-                {
-                    if (!FunctionSecurity.AllowUpdate
-                        || !_ABM.AuthorizedToUpdate(SAB.ClientServerSession, SAB.ClientServerSession.UserRID))
-                    {
-                        message = MIDText.GetText(eMIDTextCode.msg_NotAuthorized);
-                        return new ROIListOut(eROReturnCode.Failure, message, ROInstanceID, null);
-                    }
-
-                    int folderKey = methodParm.FolderKey;
-                    if (_ABM.Method_Change_Type == eChangeType.add)
-                    {
-                        folderKey = WorkflowMethodUtilities.GetWorkflowMethodFolderRID(
-                            GetFolderProfileType(), 
-                            methodParm.FolderKey, 
-                            _ABM.User_RID, 
-                            _ABM.ProfileType, 
-                            methodParm.FolderUniqueID
+                        _ABM.LockStatus = WorkflowMethodUtilities.UnlockWorkflowMethod(
+                            SAB: SAB,
+                            workflowMethodIND: eWorkflowMethodIND.Methods,
+                            Key: _ABM.Key,
+                            message: out message
                             );
+                        if (_ABM.LockStatus == eLockStatus.Cancel)
+                        {
+                            MIDEnvironment.Message = message;
+                        }
                     }
-                    ClientTransaction.DataAccess.OpenUpdateConnection();
-                    _ABM.Update(ClientTransaction.DataAccess);
-                    if (_ABM.Method_Change_Type == eChangeType.add)
-                    {
-                        FolderDataLayer dlFolder = new FolderDataLayer(ClientTransaction.DataAccess);
-                        dlFolder.Folder_Item_Insert(folderKey, _ABM.Key, _ABM.ProfileType);
-                    }
-                    ClientTransaction.DataAccess.CommitData();
-                    // add or update the method in the collection
-                    _workflowMethods[_ABM.Key] = _ABM;
+                    _ABM.Key = Include.NoRID;  // always use NoRID (-1) as key to save new methods
+                    _ABM.Name = methodParm.ROMethodProperties.Method.Value;
+                    cleanseName = true;
                 }
-                catch (Exception ex)
+                else
                 {
-                    message = ex.Message;
+                    _ABM.Method_Change_Type = eChangeType.update;
+                    cleanseName = _ABM.Name != methodParm.ROMethodProperties.Method.Value;
+                    _ABM.Name = methodParm.ROMethodProperties.Method.Value;
+                }
+
+                if (methodParm.ROMethodProperties.IsTemplate)
+                {
+                    _ABM.Name = methodParm.ROMethodProperties.Method.Value;
+                }
+                else if (!methodParm.ROMethodProperties.IsTemplate
+                    && _ABM.Method_Change_Type == eChangeType.add
+                    && string.IsNullOrWhiteSpace(_ABM.Name))
+                {
+                    _ABM.Name = Include.Custom + DateTime.Now.Ticks;
+                }
+
+                if (cleanseName)
+                {
+                    CleanseMethodName(applicationBaseMethod: _ABM);
+                }
+
+                _ABM.Method_Description = methodParm.ROMethodProperties.Description;
+                _ABM.User_RID = methodParm.ROMethodProperties.UserKey;
+                _ABM.Template_IND = methodParm.ROMethodProperties.IsTemplate;
+                _ABM.WorkflowStep = methodParm.ROMethodProperties.WorkflowStep;
+
+                if (_ABM.MethodSetData(methodProperties: methodParm.ROMethodProperties, message: ref message, processingApply: false))
+                {
+                    try
+                    {
+                        if (!FunctionSecurity.AllowUpdate
+                            || !_ABM.AuthorizedToUpdate(SAB.ClientServerSession, SAB.ClientServerSession.UserRID))
+                        {
+                            message = MIDText.GetText(eMIDTextCode.msg_NotAuthorized);
+                            return new ROIListOut(eROReturnCode.Failure, message, ROInstanceID, null);
+                        }
+
+                        int folderKey = methodParm.FolderKey;
+                        if (_ABM.Method_Change_Type == eChangeType.add)
+                        {
+                            folderKey = WorkflowMethodUtilities.GetWorkflowMethodFolderRID(
+                                GetFolderProfileType(),
+                                methodParm.FolderKey,
+                                _ABM.User_RID,
+                                _ABM.ProfileType,
+                                methodParm.FolderUniqueID
+                                );
+                        }
+                        ClientTransaction.DataAccess.OpenUpdateConnection();
+                        _ABM.Update(ClientTransaction.DataAccess);
+                        if (_ABM.Method_Change_Type == eChangeType.add)
+                        {
+                            FolderDataLayer dlFolder = new FolderDataLayer(ClientTransaction.DataAccess);
+                            dlFolder.Folder_Item_Insert(folderKey, _ABM.Key, _ABM.ProfileType);
+                        }
+                        ClientTransaction.DataAccess.CommitData();
+                        // remove temporary entry for new method
+                        if (methodParm.ROMethodProperties.Method.Key < 0)
+                        {
+                            _workflowMethods.Remove(methodParm.ROMethodProperties.Method.Key);
+                        }
+                        // add or update the method in the cache. Object now has actual key.
+                        _workflowMethods[_ABM.Key] = _ABM;
+                        // keep last key accessed in cache so will not have to retrieve from cache each time
+                        _currentMethodKey = _ABM.Key;
+                    }
+                    catch (Exception ex)
+                    {
+                        message = ex.Message;
+                        returnCode = eROReturnCode.Failure;
+                    }
+                    finally
+                    {
+                        if (ClientTransaction.DataAccess.ConnectionIsOpen)
+                        {
+                            ClientTransaction.DataAccess.CloseUpdateConnection();
+                        }
+                    }
+                }
+                else
+                {
                     returnCode = eROReturnCode.Failure;
                 }
-                finally
-                {
-                    if (ClientTransaction.DataAccess.ConnectionIsOpen)
-                    {
-                        ClientTransaction.DataAccess.CloseUpdateConnection();
-                    }
-                }
             }
-            else
+            catch (Exception ex)
             {
+                message = ex.Message;
                 returnCode = eROReturnCode.Failure;
             }
 
@@ -601,69 +621,27 @@ namespace Logility.ROWeb
 
             try
             {
-                // If don't have method object, see if it is in dictionary cache
-                if (_ABM == null)
-                {
-                    if (methodParm.ROMethodProperties.Method.Key != Include.NoRID)
-                    {
-                        if (!_workflowMethods.TryGetValue(methodParm.ROMethodProperties.Method.Key, out _ABM))
-                        {
-                            message = SAB.ClientServerSession.Audit.GetText(
-                                        messageCode: eMIDTextCode.msg_ValueWasNotFound,
-                                        addToAuditReport: true,
-                                        args: new object[] { MIDText.GetTextOnly(eMIDTextCode.lbl_Method) }
-                                        );
-                            throw new MIDException(eErrorLevel.severe,
-                                (int)eMIDTextCode.msg_ValueWasNotFound,
-                                message);
-                        }
-                    }
-                }
-
-                // Save values to memory only
-                // Make sure method has been retrieved before it can be applied
-                if (_ABM.Key != methodParm.ROMethodProperties.Method.Key)
-                {
-                    if (methodParm.ROMethodProperties.Method.Key != Include.NoRID)
-                    {
-                        message = SAB.ClientServerSession.Audit.GetText(
-                                        messageCode: eMIDTextCode.msg_ValueWasNotFound,
-                                        addToAuditReport: true,
-                                        args: new object[] { MIDText.GetTextOnly(eMIDTextCode.lbl_Method) }
-                                        );
-                        throw new MIDException(eErrorLevel.severe,
-                            (int)eMIDTextCode.msg_ValueWasNotFound,
-                            message);
-                    }
-                    // unlock previous method if applying to new one
-                    _ABM.LockStatus = WorkflowMethodUtilities.UnlockWorkflowMethod(
-                        SAB: SAB,
-                        workflowMethodIND: eWorkflowMethodIND.Methods,
-                        Key: _ABM.Key,
-                        message: out message
-                        );
-                    if (_ABM.LockStatus == eLockStatus.Cancel)
-                    {
-                        MIDEnvironment.Message = message;
-                    }
-                    _ABM.Key = methodParm.ROMethodProperties.Method.Key;
-                }
+                VerifyMethodObject(
+                    methodParm: methodParm,
+                    message: ref message
+                    );
 
                 _ABM.Name = methodParm.ROMethodProperties.Method.Value;
                 _ABM.Method_Description = methodParm.ROMethodProperties.Description;
                 _ABM.User_RID = methodParm.ROMethodProperties.UserKey;
+                _ABM.Template_IND = methodParm.ROMethodProperties.IsTemplate;
+                _ABM.WorkflowStep = methodParm.ROMethodProperties.WorkflowStep;
                 _ABM.MethodSetData(methodProperties: methodParm.ROMethodProperties, message: ref message, processingApply: true);
 
-                // add or update the method in the collection
-                if (_ABM.Key != Include.NoRID)
-                {
-                    _workflowMethods[_ABM.Key] = _ABM;
-                }
+                // add or update the method in the cache using key from FE
+                _workflowMethods[methodParm.ROMethodProperties.Method.Key] = _ABM;
+				// keep last key accessed in cache so will not have to retrieve from cache each time
+                _currentMethodKey = methodParm.ROMethodProperties.Method.Key;
 
                 // set the readOnly flag based on the lock status of the method
                 bool readOnly = true;
                 if (_ABM.LockStatus == eLockStatus.Locked
-                    || _ABM.Key == Include.NoRID)
+                    || _ABM.Key < 0)
                 {
                     readOnly = false;
                 }
@@ -689,6 +667,83 @@ namespace Logility.ROWeb
             }
 
             return new ROMethodPropertiesOut(returnCode, message, ROInstanceID, null);
+        }
+
+        private void VerifyMethodObject(
+            ROMethodPropertiesParms methodParm,
+            ref string message
+            )
+        {
+            // If don't have method object, see if it is in dictionary cache
+            if (_ABM == null)
+            {
+                // don't allow an apply on an existing method if not read first
+                if (methodParm.ROMethodProperties.Method.Key > 0)
+                {
+                    if (!_workflowMethods.TryGetValue(methodParm.ROMethodProperties.Method.Key, out _ABM))
+                    {
+                        message = SAB.ClientServerSession.Audit.GetText(
+                                    messageCode: eMIDTextCode.msg_ValueWasNotFound,
+                                    addToAuditReport: true,
+                                    args: new object[] { MIDText.GetTextOnly(eMIDTextCode.lbl_Method) }
+                                    );
+                        throw new MIDException(eErrorLevel.severe,
+                            (int)eMIDTextCode.msg_ValueWasNotFound,
+                            message);
+                    }
+                }
+            }
+            else if (_currentMethodKey != methodParm.ROMethodProperties.Method.Key)
+            {
+                // check for an apply to replace an existing custom method
+                // must be same method type and step
+                if (_ABM.WorkflowStep != Include.Undefined
+                    && methodParm.ROMethodProperties.WorkflowStep != Include.Undefined
+                    && _ABM.WorkflowStep == methodParm.ROMethodProperties.WorkflowStep
+                    )
+                {
+                    ApplicationBaseMethod newMethod = (ApplicationBaseMethod)GetMethods.GetMethod(
+                        methodParm.ROMethodProperties.Method.Key,
+                        methodParm.ROMethodProperties.MethodType
+                        );
+                    if (newMethod != null
+                        && newMethod.Key == methodParm.ROMethodProperties.Method.Key
+                        && !newMethod.Template_IND)
+                    {
+                        // Unlock original key
+                        message = UnlockMethod();
+                        // copy the method to create new date ranges and override models
+                        _ABM = _ABM.Copy(
+                            aSession: SAB.ApplicationServerSession,
+                            aCloneDateRanges: true,
+                            aCloneCustomOverrideModels: true
+                            );
+                        // Replace the key
+                        _ABM.Key = methodParm.ROMethodProperties.Method.Key;
+                        // Lock new key
+                        message = LockMethod();
+                    }
+                    else
+                    {
+                        throw new Exception("Must be the same type custom method");
+                    }
+                }
+                // check to see if method is in cache
+                else if (!_workflowMethods.TryGetValue(methodParm.ROMethodProperties.Method.Key, out _ABM))
+                {
+                    // if not, get new method object so will not update by reference
+                    int methodKey = methodParm.ROMethodProperties.Method.Key;
+                    // if new method, always use Include.NoRID to instantiate class
+                    if (methodKey < 0)
+                    {
+                        methodKey = Include.NoRID;
+                    }
+                    _ABM = (ApplicationBaseMethod)GetMethods.GetMethod(
+                        methodKey,
+                        methodParm.ROMethodProperties.MethodType
+                        );
+                }
+            }
         }
 
         private void CleanseMethodName(ApplicationBaseMethod applicationBaseMethod)
@@ -1004,6 +1059,18 @@ namespace Logility.ROWeb
             return message;
         }
 
+        private string UnlockMethod()
+        {
+            string message = null;
+            _ABM.LockStatus = WorkflowMethodUtilities.UnlockWorkflowMethod(
+                    SAB: SAB,
+                    workflowMethodIND: eWorkflowMethodIND.Methods,
+                    Key: _ABM.Key,
+                    message: out message
+                    );
+            return message;
+        }
+
         private void SetMethodObject(ROMethodParms methodParm)
         {
             // if don't have a method or have a different method, check if need to create it
@@ -1024,6 +1091,8 @@ namespace Logility.ROWeb
                     _ABM = (ApplicationBaseMethod)GetMethods.GetMethod(methodParm.Key, methodParm.MethodType);
                     _workflowMethods[_ABM.Key] = _ABM;
                 }
+                // keep last key accessed in cache so will not have to retrieve from cache each time
+                _currentMethodKey = _ABM.Key;
                 FunctionSecurity = _ABM.GetFunctionSecurity();
                 if (_ABM is VelocityMethod)
                 {

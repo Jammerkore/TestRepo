@@ -196,9 +196,17 @@ namespace MIDRetail.Windows
         }
 
         //TODO: rename
-        public DateRangeProfile OkButtonClicked(int cdrRID, int startDate, int endDate, eCalendarDateType dateType, eCalendarRangeType dateRangeType, eDateRangeRelativeTo relativeTo)
+        public DateRangeProfile OkButtonClicked(
+            int cdrRID, 
+            int startDate, 
+            int endDate, 
+            eCalendarDateType dateType, 
+            eCalendarRangeType dateRangeType, 
+            eDateRangeRelativeTo relativeTo,
+            int anchorDateKey
+            )
         {
-            DateRangeProfile selectedDateRange = BuildDateRange(cdrRID, startDate, endDate, dateType, dateRangeType, relativeTo);
+            DateRangeProfile selectedDateRange = BuildDateRange(cdrRID, startDate, endDate, dateType, dateRangeType, relativeTo, anchorDateKey);
             bool anchorDateOverriden = (dateRangeType == eCalendarRangeType.Dynamic) && (relativeTo != eDateRangeRelativeTo.Current);
 
             // TODO: remove the side effect in GetDisplayDate 
@@ -216,6 +224,14 @@ namespace MIDRetail.Windows
             if (selectedDateRange.DateRangeType == eCalendarRangeType.DynamicSwitch)
             {
                 selectedDateRange = _calendar.GetDateRange(selectedDateRange.Key, true);
+            }
+            else if (selectedDateRange.DateRangeType == eCalendarRangeType.Dynamic)
+            {
+                if (anchorDateOverriden
+                    && anchorDateKey != Include.Undefined)
+                {
+                    selectedDateRange = _calendar.GetDateRange(selectedDateRange.Key, anchorDateKey);
+                }
             }
 
             return selectedDateRange;
@@ -248,9 +264,18 @@ namespace MIDRetail.Windows
         }
 
         //TODO: rename
-        public DateRangeProfile SaveRangeButtonClicked(int cdrRID, string dateRangeName, int startDate, int endDate, eCalendarDateType dateType, eCalendarRangeType dateRangeType, eDateRangeRelativeTo relativeTo)
+        public DateRangeProfile SaveRangeButtonClicked(
+            int cdrRID, 
+            string dateRangeName, 
+            int startDate, 
+            int endDate, 
+            eCalendarDateType dateType, 
+            eCalendarRangeType dateRangeType, 
+            eDateRangeRelativeTo relativeTo,
+            int anchorDateKey
+            )
         {
-            DateRangeProfile selectedDateRange = BuildDateRange(cdrRID, startDate, endDate, dateType, dateRangeType, relativeTo);
+            DateRangeProfile selectedDateRange = BuildDateRange(cdrRID, startDate, endDate, dateType, dateRangeType, relativeTo, anchorDateKey);
 
             //TODO: shouldn't be an "update" - rather this should always create a new date range
 
@@ -271,7 +296,15 @@ namespace MIDRetail.Windows
         /// <param name="endDate"></param>
         /// <param name="aCalendarRangeType"></param>
         /// <returns></returns>
-        private DateRangeProfile BuildDateRange(int key, int startDate, int endDate, eCalendarDateType dateType, eCalendarRangeType dateRangeType, eDateRangeRelativeTo relativeTo)
+        private DateRangeProfile BuildDateRange(
+            int key, 
+            int startDate, 
+            int endDate, 
+            eCalendarDateType dateType, 
+            eCalendarRangeType dateRangeType, 
+            eDateRangeRelativeTo relativeTo,
+            int anchorDateKey
+            )
         {
             DateRangeProfile selectedDateRange = new DateRangeProfile(key);
             int oldStartDate = startDate;
@@ -343,6 +376,12 @@ namespace MIDRetail.Windows
                     {
                         selectedDateRange.StartDateKey = _calendar.ConvertToDynamicWeek(startDate);
                         selectedDateRange.EndDateKey = _calendar.ConvertToDynamicWeek(endDate);
+                    }
+                    else if (relativeTo == eDateRangeRelativeTo.Plan)
+                    {
+                        _anchorWeek = _calendar.GetFirstWeekOfRange(anchorDateKey);
+                        selectedDateRange.StartDateKey = _calendar.ConvertToDynamicWeek(_anchorWeek, startDate);
+                        selectedDateRange.EndDateKey = _calendar.ConvertToDynamicWeek(_anchorWeek, endDate);
                     }
                     else
                     {
