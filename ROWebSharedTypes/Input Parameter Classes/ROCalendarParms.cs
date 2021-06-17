@@ -123,7 +123,7 @@ namespace Logility.ROWebSharedTypes
 
         public ROCalendarSaveParms(string sROUserID, string sROSessionID, eROClass ROClass, eRORequest RORequest, long ROInstanceID,
                                     bool bSaveDateRange, string sDateRangeName, int iDateRangeRID, int iStartDate, int iEndDate, 
-                                    int iDateType, int iDateRangeType, int iRelativeTo, int anchorDateKey = -1)
+                                    int iDateType, int iDateRangeType, int iRelativeTo, int anchorDateKey = 1)
             : base(sROUserID, sROSessionID, ROClass, RORequest, ROInstanceID, iDateRangeRID)
         {
             _bSaveDateRange = bSaveDateRange;

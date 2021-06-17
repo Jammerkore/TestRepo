@@ -185,7 +185,7 @@ namespace MIDRetail.Windows
             {
                 dateRangeProfile = _calendar.GetDateRange(iDateRangeRID);
                 if (dateRangeProfile.RelativeTo == eDateRangeRelativeTo.Plan
-                    && anchorDateKey != Include.Undefined)
+                    && anchorDateKey != Include.UndefinedCalendarDateRange)
                 {
                     dateRangeProfile = _calendar.GetDateRange(iDateRangeRID, anchorDateKey);
                 }
@@ -233,7 +233,7 @@ namespace MIDRetail.Windows
             else if (selectedDateRange.DateRangeType == eCalendarRangeType.Dynamic)
             {
                 if (anchorDateOverriden
-                    && anchorDateKey != Include.Undefined)
+                    && anchorDateKey != Include.UndefinedCalendarDateRange)
                 {
                     selectedDateRange = _calendar.GetDateRange(selectedDateRange.Key, anchorDateKey);
                 }
