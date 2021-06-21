@@ -693,6 +693,7 @@ namespace Logility.ROWeb
                     }
                 }
             }
+            // if not same as last method, check how needs to be handled
             else if (_currentMethodKey != methodParm.ROMethodProperties.Method.Key)
             {
                 // check for an apply to replace an existing custom method
@@ -700,6 +701,7 @@ namespace Logility.ROWeb
                 if (_ABM.WorkflowStep != Include.Undefined
                     && methodParm.ROMethodProperties.WorkflowStep != Include.Undefined
                     && _ABM.WorkflowStep == methodParm.ROMethodProperties.WorkflowStep
+                    && methodParm.ROMethodProperties.Method.Key > 0
                     )
                 {
                     ApplicationBaseMethod newMethod = (ApplicationBaseMethod)GetMethods.GetMethod(
@@ -728,20 +730,26 @@ namespace Logility.ROWeb
                         throw new Exception("Must be the same type custom method");
                     }
                 }
-                // check to see if method is in cache
-                else if (!_workflowMethods.TryGetValue(methodParm.ROMethodProperties.Method.Key, out _ABM))
+                // if existing method
+                else if (methodParm.ROMethodProperties.Method.Key > 0)
                 {
-                    // if not, get new method object so will not update by reference
-                    int methodKey = methodParm.ROMethodProperties.Method.Key;
-                    // if new method, always use Include.NoRID to instantiate class
-                    if (methodKey < 0)
+                    // check to see if method is in cache
+                    if (_workflowMethods.ContainsKey(methodParm.ROMethodProperties.Method.Key))
                     {
-                        methodKey = Include.NoRID;
+                        _ABM = _workflowMethods[methodParm.ROMethodProperties.Method.Key];
                     }
-                    _ABM = (ApplicationBaseMethod)GetMethods.GetMethod(
-                        methodKey,
-                        methodParm.ROMethodProperties.MethodType
-                        );
+                    // if not in cache, was never retrieved and cannot be applied to
+                    else
+                    {
+                        message = SAB.ClientServerSession.Audit.GetText(
+                                    messageCode: eMIDTextCode.msg_ValueWasNotFound,
+                                    addToAuditReport: true,
+                                    args: new object[] { MIDText.GetTextOnly(eMIDTextCode.lbl_Method) }
+                                    );
+                        throw new MIDException(eErrorLevel.severe,
+                            (int)eMIDTextCode.msg_ValueWasNotFound,
+                            message);
+                    }
                 }
             }
         }
