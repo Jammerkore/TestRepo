@@ -238,7 +238,16 @@ namespace MIDRetail.Windows
 		public bool AllowDynamic
 		{
 			get { return _allowDynamic ; }
-            set { _allowDynamic = value; }
+            set
+            {
+                _allowDynamic = value;
+                if (!_allowDynamic)
+                {
+                    _allowDynamicToCurrent = false;
+                    _allowDynamicToPlan = false;
+                    _allowDynamicToStoreOpen = false;
+                }
+            }
 		}
 		/// <summary>
 		/// when specified enables 'dynamic to current' as a date range type
