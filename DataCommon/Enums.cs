@@ -3990,6 +3990,7 @@ namespace MIDRetail.DataCommon
         BalanceSizeBilaterally = 802144,      // TT#794 New Size Balance for Wet Seal
         BreakoutSizesAsReceivedWithConstraints = 802145,  // TT#1391 - JEllis - Balance Size With Contraints Other Options
         GroupAllocation = 802146,       // TT#708-MD - Stodd - Group Allocation Prototype.
+        BalanceToVSW = 802147,
                                         // Begin TT#1224 - stodd - committed
         ChargeCommitted = 802161,
         CancelCommitted = 802162,
