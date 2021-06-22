@@ -701,33 +701,39 @@ namespace Logility.ROWeb
                 if (_ABM.WorkflowStep != Include.Undefined
                     && methodParm.ROMethodProperties.WorkflowStep != Include.Undefined
                     && _ABM.WorkflowStep == methodParm.ROMethodProperties.WorkflowStep
-                    && methodParm.ROMethodProperties.Method.Key > 0
                     )
                 {
-                    ApplicationBaseMethod newMethod = (ApplicationBaseMethod)GetMethods.GetMethod(
-                        methodParm.ROMethodProperties.Method.Key,
-                        methodParm.ROMethodProperties.MethodType
-                        );
-                    if (newMethod != null
-                        && newMethod.Key == methodParm.ROMethodProperties.Method.Key
-                        && !newMethod.Template_IND)
+                    if (methodParm.ROMethodProperties.Method.Key > 0)
                     {
-                        // Unlock original key
-                        message = UnlockMethod();
-                        // copy the method to create new date ranges and override models
-                        _ABM = _ABM.Copy(
-                            aSession: SAB.ApplicationServerSession,
-                            aCloneDateRanges: true,
-                            aCloneCustomOverrideModels: true
+                        ApplicationBaseMethod newMethod = (ApplicationBaseMethod)GetMethods.GetMethod(
+                            methodParm.ROMethodProperties.Method.Key,
+                            methodParm.ROMethodProperties.MethodType
                             );
-                        // Replace the key
-                        _ABM.Key = methodParm.ROMethodProperties.Method.Key;
-                        // Lock new key
-                        message = LockMethod();
+                        if (newMethod != null
+                            && newMethod.Key == methodParm.ROMethodProperties.Method.Key
+                            && !newMethod.Template_IND)
+                        {
+                            // Unlock original key
+                            message = UnlockMethod();
+                            // copy the method to create new date ranges and override models
+                            _ABM = _ABM.Copy(
+                                aSession: SAB.ApplicationServerSession,
+                                aCloneDateRanges: true,
+                                aCloneCustomOverrideModels: true
+                                );
+                            // Replace the key
+                            _ABM.Key = methodParm.ROMethodProperties.Method.Key;
+                            // Lock new key
+                            message = LockMethod();
+                        }
+                        else
+                        {
+                            throw new Exception("Must be the same type custom method");
+                        }
                     }
                     else
                     {
-                        throw new Exception("Must be the same type custom method");
+                        _ABM.Key = Include.NoRID;  // always use NoRID (-1) as key for new methods
                     }
                 }
                 // if existing method
