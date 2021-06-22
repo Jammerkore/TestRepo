@@ -1375,16 +1375,16 @@ namespace Logility.ROWeb
                 sequence: taskParameters.ROTaskProperties.Task.Key                
                 );
 
-            //return GetTask(
-            //    taskParameters: taskGetParameters,
-            //    processingApply: applyOnly
-            //    );
+            return GetTask(
+                taskParameters: taskGetParameters,
+                processingApply: applyOnly
+                );
 
-            return new ROTaskPropertiesOut(
-                ROReturnCode: eROReturnCode.Successful,
-                sROMessage: message,
-                ROInstanceID: ROInstanceID,
-                ROTaskProperties: taskProperties);
+            //return new ROTaskPropertiesOut(
+            //    ROReturnCode: eROReturnCode.Successful,
+            //    sROMessage: message,
+            //    ROInstanceID: ROInstanceID,
+            //    ROTaskProperties: taskProperties);
         }
 
         private void TaskUpdateData(
