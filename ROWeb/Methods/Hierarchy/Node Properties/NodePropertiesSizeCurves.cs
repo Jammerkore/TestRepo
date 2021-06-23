@@ -683,7 +683,7 @@ namespace Logility.ROWeb
                 successful = false;
             }
 
-            return _sizeCurvesCriteriaList;
+            return !applyOnly ? GetSizeCurves(key: nodePropertiesSizeCurvesData.Node.Key) : _sizeCurvesCriteriaList;
         }
 
         /// <summary>
