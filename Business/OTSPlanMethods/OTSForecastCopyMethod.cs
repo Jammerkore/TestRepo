@@ -1862,7 +1862,83 @@ namespace MIDRetail.Business
                     isTemplate: Template_IND
                 );
 
+            BuildVersionList(method: method);
+
+            if (_hierNodeRid > 0)
+            {
+                BuildLowLevelLists(method: method);
+            }
+
             return method;
+        }
+
+        private void BuildVersionList(ROMethodCopyForecastProperties method)
+        {
+            ProfileList versionList;
+            if (PlanType == ePlanType.Chain)
+            {
+                versionList = GetForecastVersionList(eSecuritySelectType.Update, eSecurityTypes.Chain, false, _versionRid, true);
+            }
+            else
+            {
+                versionList = GetForecastVersionList(eSecuritySelectType.Update, eSecurityTypes.Store, false, _versionRid, true);
+            }
+
+            foreach (VersionProfile versionProfile in versionList)
+            {
+                method.Versions.Add(new KeyValuePair<int, string>(versionProfile.Key, versionProfile.Description));
+            }
+        }
+
+        private void BuildLowLevelLists(ROMethodCopyForecastProperties method)
+        {
+            eMerchandiseType merchandiseType;
+            int homeHierarchyKey;
+            List<HierarchyLevelComboObject> levelList = HierarchyTools.GetLevelsList(
+                sessionAddressBlock: SAB,
+                nodeKey: _hierNodeRid,
+                includeHomeLevel: true,
+                includeLowestLevel: false,
+                includeOrganizationLevelsForAlternate: false,
+                merchandiseType: out merchandiseType,
+                homeHierarchyKey: out homeHierarchyKey
+                );
+
+            method.FromLevelsType = merchandiseType;
+            foreach (HierarchyLevelComboObject level in levelList)
+            {
+                if (merchandiseType == eMerchandiseType.LevelOffset)
+                {
+                    method.FromLevels.Add(new KeyValuePair<int, string>(level.Level, level.ToString()));
+                }
+                else
+                {
+                    method.FromLevels.Add(new KeyValuePair<int, string>(level.Level, level.LevelName));
+                }
+            }
+
+            levelList = HierarchyTools.GetLevelsList(
+                sessionAddressBlock: SAB,
+                nodeKey: _hierNodeRid,
+                includeHomeLevel: false,
+                includeLowestLevel: true,
+                includeOrganizationLevelsForAlternate: false,
+                merchandiseType: out merchandiseType,
+                homeHierarchyKey: out homeHierarchyKey
+                );
+
+            method.ToLevelsType = merchandiseType;
+            foreach (HierarchyLevelComboObject level in levelList)
+            {
+                if (merchandiseType == eMerchandiseType.LevelOffset)
+                {
+                    method.ToLevels.Add(new KeyValuePair<int, string>(level.Level, level.ToString()));
+                }
+                else
+                {
+                    method.ToLevels.Add(new KeyValuePair<int, string>(level.Level, level.LevelName));
+                }
+            }
         }
 
         override public bool MethodSetData(ROMethodProperties methodProperties, ref string message, bool processingApply)
@@ -1903,13 +1979,14 @@ namespace MIDRetail.Business
             DataTable dtBasis = dsBasis.Tables[0];
             DataTable dtBasisDetails = dsBasis.Tables[1];
             KeyValuePair<int, string> workKVP;
-            int basisDtlCtr = 0;
+            //int basisDtlCtr = 0;
             List<ROBasisDetailProfile> basisDetailProfiles = new List<ROBasisDetailProfile>();
 
-            for (int basisDtlRowCtr = 0; basisDtlRowCtr < dtBasisDetails.Rows.Count; basisDtlRowCtr++)
+            for (int basisDtlCtr = 0; basisDtlCtr < dtBasisDetails.Rows.Count; basisDtlCtr++)
             {
 
-                int iBasisId = Convert.ToInt32(dtBasis.Rows[basisDtlRowCtr]["SGL_RID"].ToString());
+                //int iBasisId = Convert.ToInt32(dtBasis.Rows[basisDtlRowCtr]["SGL_RID"].ToString());
+                int iBasisId = 0;
 
                 int iMerchandiseId = Convert.ToInt32(dtBasisDetails.Rows[basisDtlCtr]["HN_RID"].ToString());
                 workKVP = GetName.GetMerchandiseName(iMerchandiseId, SAB);
@@ -1929,9 +2006,11 @@ namespace MIDRetail.Business
                 string sDateRange = workKVP.Value;
                 string sPicture = string.Empty;
                 float fWeight = float.Parse(dtBasisDetails.Rows[basisDtlCtr]["Weight"] == DBNull.Value ? "0" : dtBasisDetails.Rows[basisDtlCtr]["Weight"].ToString());
-                int iIsIncluded = Convert.ToInt16(dtBasisDetails.Rows[basisDtlCtr]["INCLUDE_EXCLUDE"].ToString());
                 bool bIsIncluded = false;
-                if (iIsIncluded == 1) bIsIncluded = true;
+                if (Convert.ToInt32(dtBasisDetails.Rows[basisDtlCtr]["INCLUDE_EXCLUDE"], CultureInfo.CurrentUICulture) == (int)eBasisIncludeExclude.Include)
+                {
+                    bIsIncluded = true;
+                }
 
                 string sIncludeButton = dtBasisDetails.Rows[basisDtlCtr]["IncludeButton"].ToString();
                 ROBasisDetailProfile basisDetailProfile = new ROBasisDetailProfile(iBasisId, iMerchandiseId, sMerchandise, iVersionId, sVersion,

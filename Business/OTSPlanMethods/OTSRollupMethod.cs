@@ -1307,6 +1307,7 @@ namespace MIDRetail.Business
                 sessionAddressBlock: SAB,
                 nodeKey: _hierNodeRid,
                 includeHomeLevel: true,
+                includeLowestLevel: true,
                 includeOrganizationLevelsForAlternate: false,
                 merchandiseType: out merchandiseType,
                 homeHierarchyKey: out homeHierarchyKey
