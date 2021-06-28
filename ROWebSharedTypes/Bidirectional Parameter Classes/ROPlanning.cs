@@ -1066,9 +1066,20 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         KeyValuePair<int, string> _version;
         [DataMember(IsRequired = true)]
+        private List<KeyValuePair<int, string>> _versions;
+        
+        [DataMember(IsRequired = true)]
         KeyValuePair<int, string> _dateRange;
         [DataMember(IsRequired = true)]
         private List<ROMethodRollupOptionsBasis> _methodRollupBasisOptions;
+
+        [DataMember(IsRequired = true)]
+        private eMerchandiseType _hierarchyLevelsType;
+        
+
+        [DataMember(IsRequired = true)]
+        private List<KeyValuePair<int, string>> _hierarchyLevels;
+        
         public KeyValuePair<int, string> Merchandise
         {
             get { return _merchandise; }
@@ -1081,6 +1092,11 @@ namespace Logility.ROWebSharedTypes
             set { _version = value; }
         }
 
+        public List<KeyValuePair<int, string>> Versions
+        {
+            get { return _versions; }
+        }
+
         public KeyValuePair<int, string> DateRange
         {
             get { return _dateRange; }
@@ -1091,6 +1107,17 @@ namespace Logility.ROWebSharedTypes
         {
             get { return _methodRollupBasisOptions; }
             set { _methodRollupBasisOptions = value; }
+        }
+
+        public eMerchandiseType HierarchyLevelsType
+        {
+            get { return _hierarchyLevelsType; }
+            set { _hierarchyLevelsType = value; }
+        }
+
+        public List<KeyValuePair<int, string>> HierarchyLevels
+        {
+            get { return _hierarchyLevels; }
         }
 
         public ROMethodRollupProperties(
@@ -1115,6 +1142,9 @@ namespace Logility.ROWebSharedTypes
             _version = version;
             _dateRange = dateRange;
             _methodRollupBasisOptions = methodRollupBasisOptions;
+            _versions = new List<KeyValuePair<int, string>>();
+            _hierarchyLevelsType = eMerchandiseType.Undefined;
+            _hierarchyLevels = new List<KeyValuePair<int, string>>();
         }
     }
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Globalization;
@@ -1279,7 +1280,50 @@ namespace MIDRetail.Business
                 method.MethodRollupBasisOptions.Add(options);
             }
 
+            BuildVersionList(method: method);
+
+            if (_hierNodeRid > 0)
+            {
+                BuildLowLevelList(method: method);
+            }
+
             return method;
+        }
+
+        private void BuildVersionList(ROMethodRollupProperties method)
+        {
+            ProfileList storeVersionList = GetForecastVersionList(eSecuritySelectType.Update, eSecurityTypes.Chain | eSecurityTypes.Store, false, _versionRid, false);
+            foreach (VersionProfile versionProfile in storeVersionList)
+            {
+                method.Versions.Add(new KeyValuePair<int, string>(versionProfile.Key, versionProfile.Description));
+            }
+        }
+
+        private void BuildLowLevelList(ROMethodRollupProperties method)
+        {
+            eMerchandiseType merchandiseType;
+            int homeHierarchyKey;
+            List<HierarchyLevelComboObject> levelList = HierarchyTools.GetLevelsList(
+                sessionAddressBlock: SAB,
+                nodeKey: _hierNodeRid,
+                includeHomeLevel: true,
+                includeOrganizationLevelsForAlternate: false,
+                merchandiseType: out merchandiseType,
+                homeHierarchyKey: out homeHierarchyKey
+                );
+
+            method.HierarchyLevelsType = merchandiseType;
+            foreach (HierarchyLevelComboObject level in levelList)
+            {
+                if (merchandiseType == eMerchandiseType.LevelOffset)
+                {
+                    method.HierarchyLevels.Add(new KeyValuePair<int, string>(level.Level, level.ToString()));
+                }
+                else
+                {
+                    method.HierarchyLevels.Add(new KeyValuePair<int, string>(level.Level, level.LevelName));
+                }
+            }
         }
 
         override public bool MethodSetData(ROMethodProperties methodProperties, ref string message, bool processingApply)
