@@ -2750,6 +2750,7 @@ namespace MIDRetail.Business
             SessionAddressBlock sessionAddressBlock,
             int nodeKey,
             bool includeHomeLevel,
+            bool includeLowestLevel,
             bool includeOrganizationLevelsForAlternate,
             out eMerchandiseType merchandiseType,
             out int homeHierarchyKey
@@ -2768,6 +2769,7 @@ namespace MIDRetail.Business
             List<HierarchyLevelComboObject> levelList;
             merchandiseType = eMerchandiseType.Undefined;
             homeHierarchyKey = Include.NoRID;
+            int limitOffset = 0;
 
             try
             {
@@ -2777,6 +2779,11 @@ namespace MIDRetail.Business
                     nodeProfile = sessionAddressBlock.HierarchyServerSession.GetNodeData(nodeKey);
                     hierarchyProfile = sessionAddressBlock.HierarchyServerSession.GetHierarchyData(nodeProfile.HomeHierarchyRID);
                     homeHierarchyKey = nodeProfile.HomeHierarchyRID;
+
+                    if (!includeLowestLevel)
+                    {
+                        limitOffset = -1;
+                    }
 
                     // Load Level arrays
 
@@ -2812,7 +2819,7 @@ namespace MIDRetail.Business
                             startLevel = nodeProfile.HomeHierarchyLevel + 1;
                         }
 
-                        for (i = startLevel; i <= hierarchyProfile.HierarchyLevels.Count; i++)
+                        for (i = startLevel; i <= hierarchyProfile.HierarchyLevels.Count + limitOffset; i++)
                         {
                             levelList.Add(new HierarchyLevelComboObject(
                                 levelList.Count,
@@ -2863,7 +2870,7 @@ namespace MIDRetail.Business
 
                         offset = 0;
 
-                        for (i = 0; i < longestBranchCount; i++)
+                        for (i = 0; i < longestBranchCount + limitOffset; i++)
                         {
                             offset++;
                             levelList.Add(new HierarchyLevelComboObject(

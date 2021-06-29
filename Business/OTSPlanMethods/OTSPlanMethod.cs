@@ -6065,6 +6065,7 @@ namespace MIDRetail.Business
                 sessionAddressBlock: SAB,
                 nodeKey: Plan_HN_RID,
                 includeHomeLevel: false,
+                includeLowestLevel: true,
                 includeOrganizationLevelsForAlternate: false,
                 merchandiseType: out merchandiseType,
                 homeHierarchyKey: out homeHierarchyKey
