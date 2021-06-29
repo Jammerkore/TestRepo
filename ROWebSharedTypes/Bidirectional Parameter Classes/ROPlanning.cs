@@ -1247,8 +1247,6 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         ePlanType _planType;
         [DataMember(IsRequired = true)]
-        KeyValuePair<int, string> _storeFilter;
-        [DataMember(IsRequired = true)]
         bool _multiLevel;
         [DataMember(IsRequired = true)]
         private ROLevelInformation _fromLevel;
@@ -1264,9 +1262,8 @@ namespace Logility.ROWebSharedTypes
         private List<KeyValuePair<int, string>> _toLevels;
         [DataMember(IsRequired = true)]
         private ROOverrideLowLevel _overrideLowLevel;
-        bool _copyPreInitValues;
         [DataMember(IsRequired = true)]
-        private List<ROBasisDetailProfile> _basisProfiles;
+        bool _copyPreInitValues;
 
 
         #region Public Properties
@@ -1298,11 +1295,6 @@ namespace Logility.ROWebSharedTypes
         {
             get { return _planType; }
             set { _planType = value; }
-        }
-        public KeyValuePair<int, string> StoreFilter
-        {
-            get { return _storeFilter; }
-            set { _storeFilter = value; }
         }
         public ROLevelInformation FromLevel
         {
@@ -1342,11 +1334,6 @@ namespace Logility.ROWebSharedTypes
             get { return _copyPreInitValues; }
             set { _copyPreInitValues = value; }
         }
-        public List<ROBasisDetailProfile> BasisProfiles
-        {
-            get { return _basisProfiles; }
-            set { _basisProfiles = value; }
-        }
 
         #endregion
         public ROMethodCopyForecastProperties(
@@ -1359,12 +1346,10 @@ namespace Logility.ROWebSharedTypes
             KeyValuePair<int, string> timePeriod, 
             bool multiLevel, 
             ePlanType planType, 
-            KeyValuePair<int, string> storeFilter, 
             ROLevelInformation fromLevel, 
             ROLevelInformation toLevel,
             ROOverrideLowLevel overrideLowLevel, 
             bool copyPreInitValues, 
-            List<ROBasisDetailProfile> basisProfile,
             bool isTemplate = false
             ) 
             : base(
@@ -1382,17 +1367,197 @@ namespace Logility.ROWebSharedTypes
             _timePeriod = timePeriod;
             _multiLevel = multiLevel;
             _planType = planType;
-            _storeFilter = storeFilter;
             _fromLevel = fromLevel;
             _toLevel = toLevel;
             _overrideLowLevel = overrideLowLevel;
             _copyPreInitValues = copyPreInitValues;
-            _basisProfiles = basisProfile;
             _versions = new List<KeyValuePair<int, string>>();
             _fromLevels = new List<KeyValuePair<int, string>>();
             _toLevels = new List<KeyValuePair<int, string>>();
         }
     }
+
+    [DataContract(Name = "ROMethodCopyChainForecastProperties", Namespace = "http://Logility.ROWeb/")]
+    public class ROMethodCopyChainForecastProperties : ROMethodCopyForecastProperties
+    {
+        
+        [DataMember(IsRequired = true)]
+        private List<ROBasisDetailProfile> _basisProfiles;
+
+
+        #region Public Properties
+        public List<ROBasisDetailProfile> BasisProfiles
+        {
+            get { return _basisProfiles; }
+            set { _basisProfiles = value; }
+        }
+
+        #endregion
+        public ROMethodCopyChainForecastProperties(
+            KeyValuePair<int, string> method,
+            string description,
+            eMethodType emethodType,
+            int userKey,
+            KeyValuePair<int, string> merchandise,
+            KeyValuePair<int, string> version,
+            KeyValuePair<int, string> timePeriod,
+            bool multiLevel,
+            ePlanType planType,
+            ROLevelInformation fromLevel,
+            ROLevelInformation toLevel,
+            ROOverrideLowLevel overrideLowLevel,
+            bool copyPreInitValues,
+            List<ROBasisDetailProfile> basisProfile,
+            bool isTemplate = false
+            )
+            : base(
+                  method,
+                  description,
+                  emethodType,
+                  userKey,
+                  merchandise,
+                  version,
+                  timePeriod,
+                  multiLevel,
+                  planType,
+                  fromLevel,
+                  toLevel,
+                  overrideLowLevel,
+                  copyPreInitValues,
+                  isTemplate
+                  )
+
+        {
+            // fields specific to Copy Chain Forecast method
+            _basisProfiles = basisProfile;
+        }
+    }
+
+    [DataContract(Name = "ROMethodCopyStoreForecastProperties", Namespace = "http://Logility.ROWeb/")]
+    public class ROMethodCopyStoreForecastProperties : ROMethodCopyForecastProperties
+    {
+        [DataMember(IsRequired = true)]
+        KeyValuePair<int, string> _storeFilter;
+        [DataMember(IsRequired = true)]
+        private KeyValuePair<int, string> _attribute;
+        [DataMember(IsRequired = true)]
+        private KeyValuePair<int, string> _attributeSet;
+        [DataMember(IsRequired = true)]
+        private ROMethodCopyStoreForecastAttributeSetProperties _attributeSetValues;
+
+        #region Public Properties
+        public KeyValuePair<int, string> StoreFilter
+        {
+            get { return _storeFilter; }
+            set { _storeFilter = value; }
+        }
+        public KeyValuePair<int, string> Attribute
+        {
+            get { return _attribute; }
+            set { _attribute = value; }
+        }
+        public bool AttributeIsSet
+        {
+            get { return !_attributeSet.Equals(default(KeyValuePair<int, string>)); }
+        }
+        public KeyValuePair<int, string> AttributeSet
+        {
+            get { return _attributeSet; }
+            set { _attributeSet = value; }
+        }
+        public bool AttributeSetIsSet
+        {
+            get { return !_attributeSet.Equals(default(KeyValuePair<int, string>)); }
+        }
+
+        public ROMethodCopyStoreForecastAttributeSetProperties AttributeSetValues
+        {
+            get { return _attributeSetValues; }
+            set { _attributeSetValues = value; }
+        }
+
+        #endregion
+        public ROMethodCopyStoreForecastProperties(
+            KeyValuePair<int, string> method,
+            string description,
+            eMethodType emethodType,
+            int userKey,
+            KeyValuePair<int, string> merchandise,
+            KeyValuePair<int, string> version,
+            KeyValuePair<int, string> timePeriod,
+            bool multiLevel,
+            ePlanType planType,
+            KeyValuePair<int, string> storeFilter,
+            ROLevelInformation fromLevel,
+            ROLevelInformation toLevel,
+            ROOverrideLowLevel overrideLowLevel,
+            bool copyPreInitValues,
+            ROMethodCopyStoreForecastAttributeSetProperties attributeSetValues,
+            KeyValuePair<int, string> attribute = default(KeyValuePair<int, string>),
+            KeyValuePair<int, string> attributeSet = default(KeyValuePair<int, string>),
+            bool isTemplate = false
+            )
+            : base(
+                  method,
+                  description,
+                  emethodType,
+                  userKey,
+                  merchandise,
+                  version,
+                  timePeriod,
+                  multiLevel,
+                  planType,
+                  fromLevel,
+                  toLevel,
+                  overrideLowLevel,
+                  copyPreInitValues,
+                  isTemplate
+                  )
+
+        {
+            // fields specific to Copy Store Forecast method
+            _storeFilter = storeFilter;
+            _attribute = attribute;
+            _attributeSet = attributeSet;
+            _attributeSetValues = attributeSetValues;
+        }
+    }
+
+    [DataContract(Name = "ROMethodCopyStoreForecastAttributeSetProperties", Namespace = "http://Logility.ROWeb/")]
+    public class ROMethodCopyStoreForecastAttributeSetProperties
+    {
+        [DataMember(IsRequired = true)]
+        private KeyValuePair<int, string> _attributeSet;
+        [DataMember(IsRequired = true)]
+        private List<ROBasisDetailProfile> _basisProfiles;
+
+        public KeyValuePair<int, string> AttributeSet
+        {
+            get { return _attributeSet; }
+            set { _attributeSet = value; }
+        }
+
+        public bool AttributeSetIsSet
+        {
+            get { return !_attributeSet.Equals(default(KeyValuePair<int, string>)); }
+        }
+
+        public List<ROBasisDetailProfile> BasisProfiles
+        {
+            get { return _basisProfiles; }
+            set { _basisProfiles = value; }
+        }
+
+        public ROMethodCopyStoreForecastAttributeSetProperties(
+            KeyValuePair<int, string> attributeSet,
+            List<ROBasisDetailProfile> basisProfile
+             )
+        {
+            _attributeSet = attributeSet;
+            _basisProfiles = basisProfile;
+        }
+    }
+
     [DataContract(Name = "ROMethodMaxtrixBalanceProperties", Namespace = "http://Logility.ROWeb/")]
     public class ROMethodMatrixBalanceProperties : ROMethodProperties
     {

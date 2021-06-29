@@ -47,8 +47,8 @@ namespace MIDRetail.Business
 		private string _computationsMode = "Default";
 		private int _nodeOverrideRid = Include.NoRID;
 		private int _versionOverrideRid = Include.NoRID;
-		private int _currentSglRid;
-		private int _overrideLowLevelRid;
+		private int _currentSglRid = Include.NoRID;
+        private int _overrideLowLevelRid;
 		private LowLevelVersionOverrideProfileList _overrideLowLevelList;
         // Begin Track #6347 - JSmith - Copy Store Forecasting seems to be running extremely long
         private bool _copyPreInitValues;
@@ -1843,24 +1843,65 @@ namespace MIDRetail.Business
                SAB: SAB
                );
 
-            ROMethodCopyForecastProperties method = new ROMethodCopyForecastProperties(
-                    method: GetName.GetMethod(method: this),
-                    description: Method_Description,
-                    userKey: User_RID,
-                    merchandise: GetName.GetMerchandiseName(nodeRID: HierNodeRID, SAB: SAB),
-                    version: GetName.GetVersion(versionRID: VersionRID, SAB: SAB),
-                    timePeriod: GetName.GetCalendarDateRange(calendarDateRID: DateRangeRID, SAB: SAB),
-                    multiLevel: MultiLevelInd,
-                    planType: PlanType,
-                    storeFilter: GetName.GetStoreName(_storeFilterRid),
-                    fromLevel: fromLevel,
-                    toLevel: toLevel,
-                    overrideLowLevel: overrideLowLevel,
-                    copyPreInitValues: CopyPreInitValues,
-                    emethodType: (PlanType == ePlanType.Chain) ? eMethodType.CopyChainForecast : eMethodType.CopyStoreForecast,
-                    basisProfile: ConvertBasisDataToList(_dsForecastCopy),
-                    isTemplate: Template_IND
-                );
+            ROMethodCopyForecastProperties method;
+
+            if (PlanType == ePlanType.Chain)
+            {
+                method = new ROMethodCopyChainForecastProperties(
+                        method: GetName.GetMethod(method: this),
+                        description: Method_Description,
+                        userKey: User_RID,
+                        merchandise: GetName.GetMerchandiseName(nodeRID: HierNodeRID, SAB: SAB),
+                        version: GetName.GetVersion(versionRID: VersionRID, SAB: SAB),
+                        timePeriod: GetName.GetCalendarDateRange(calendarDateRID: DateRangeRID, SAB: SAB),
+                        multiLevel: MultiLevelInd,
+                        planType: PlanType,
+                        fromLevel: fromLevel,
+                        toLevel: toLevel,
+                        overrideLowLevel: overrideLowLevel,
+                        copyPreInitValues: CopyPreInitValues,
+                        emethodType: eMethodType.CopyChainForecast,
+                        basisProfile: ConvertChainBasisDataToList(_dsForecastCopy),
+                        isTemplate: Template_IND
+                    );
+            }
+            else
+            {
+                // get default attribute and attribute set if not set
+                if (SG_RID <= 0)
+                {
+                    SG_RID = SAB.ClientServerSession.GlobalOptions.OTSPlanStoreGroupRID;
+                }
+                if (_currentSglRid <= 0)
+                {
+                    ProfileList attributeSetList = StoreMgmt.StoreGroup_GetLevelListViewList(SG_RID, false);
+                    if (attributeSetList.Count > 0)
+                    {
+                        _currentSglRid = attributeSetList[0].Key;
+                    }
+                }
+
+                method = new ROMethodCopyStoreForecastProperties(
+                        method: GetName.GetMethod(method: this),
+                        description: Method_Description,
+                        userKey: User_RID,
+                        merchandise: GetName.GetMerchandiseName(nodeRID: HierNodeRID, SAB: SAB),
+                        version: GetName.GetVersion(versionRID: VersionRID, SAB: SAB),
+                        timePeriod: GetName.GetCalendarDateRange(calendarDateRID: DateRangeRID, SAB: SAB),
+                        multiLevel: MultiLevelInd,
+                        planType: PlanType,
+                        storeFilter: GetName.GetStoreName(_storeFilterRid),
+                        attribute: GetName.GetAttributeName(SG_RID),
+                        attributeSet: GetName.GetAttributeSetName(_currentSglRid),
+                        fromLevel: fromLevel,
+                        toLevel: toLevel,
+                        overrideLowLevel: overrideLowLevel,
+                        copyPreInitValues: CopyPreInitValues,
+                        emethodType: eMethodType.CopyStoreForecast,
+                        attributeSetValues: GetAttributeSetValues(),
+                        isTemplate: Template_IND
+                    );
+            }
 
             BuildVersionList(method: method);
 
@@ -1941,6 +1982,14 @@ namespace MIDRetail.Business
             }
         }
 
+        private ROMethodCopyStoreForecastAttributeSetProperties GetAttributeSetValues()
+        {
+            return new ROMethodCopyStoreForecastAttributeSetProperties(
+                attributeSet: GetName.GetAttributeSetName(_currentSglRid),
+                basisProfile: ConvertStoreBasisDataToList(_dsForecastCopy)
+                );
+        }
+
         override public bool MethodSetData(ROMethodProperties methodProperties, ref string message, bool processingApply)
         {
             ROMethodCopyForecastProperties rOMethodCopyForecastProperties = (ROMethodCopyForecastProperties)methodProperties;
@@ -1953,7 +2002,7 @@ namespace MIDRetail.Business
                 _dateRangeRid = rOMethodCopyForecastProperties.TimePeriod.Key;
                 _multiLevelInd = rOMethodCopyForecastProperties.MultiLevel;
                 _planType = rOMethodCopyForecastProperties.PlanType;
-                _storeFilterRid = rOMethodCopyForecastProperties.StoreFilter.Key;
+                
 
                 _fromLevelType = (eFromLevelsType)rOMethodCopyForecastProperties.FromLevel.LevelType;
                 _fromLevelOffset = rOMethodCopyForecastProperties.FromLevel.LevelOffset;
@@ -1965,7 +2014,15 @@ namespace MIDRetail.Business
 
                 _overrideLowLevelRid = rOMethodCopyForecastProperties.OverrideLowLevel.OverrideLowLevelsModel.Key;
                 _copyPreInitValues = rOMethodCopyForecastProperties.CopyPreInitValues;
-                _dsForecastCopy = ConvertBasisListDataset(rOMethodCopyForecastProperties.BasisProfiles);
+                if (rOMethodCopyForecastProperties.MethodType == eMethodType.CopyChainForecast)
+                {
+                    SetChainData((ROMethodCopyChainForecastProperties)rOMethodCopyForecastProperties);
+                }
+                else
+                {
+                    SetStoreData((ROMethodCopyStoreForecastProperties)rOMethodCopyForecastProperties);
+                }
+                
                 return true;
             }
             catch
@@ -1974,10 +2031,43 @@ namespace MIDRetail.Business
             }
         }
 
-        private List<ROBasisDetailProfile> ConvertBasisDataToList(DataSet dsBasis)
+        private bool SetChainData(ROMethodCopyChainForecastProperties rOMethodCopyChainForecastProperties)
         {
-            DataTable dtBasis = dsBasis.Tables[0];
-            DataTable dtBasisDetails = dsBasis.Tables[1];
+            _dsForecastCopy = ConvertChainBasisListDataset(rOMethodCopyChainForecastProperties.BasisProfiles);
+            return true;
+        }
+
+        private bool SetStoreData(ROMethodCopyStoreForecastProperties rOMethodCopyStoreForecastProperties)
+        {
+            // modify attribute and attribute set values if changed
+            if (SG_RID != rOMethodCopyStoreForecastProperties.Attribute.Key)
+            {
+                _dsForecastCopy.Tables["GroupLevel"].Rows.Clear();
+                _dsForecastCopy.Tables["Basis"].Rows.Clear();
+                ProfileList attributeSetList = StoreMgmt.StoreGroup_GetLevelListViewList(rOMethodCopyStoreForecastProperties.Attribute.Key, false);
+                if (attributeSetList.Count > 0)
+                {
+                    for (int i = 0; i < attributeSetList.Count; i++)
+                    {
+                        DataRow dataRow = _dsForecastCopy.Tables["GroupLevel"].NewRow();
+                        dataRow["SGL_RID"] = attributeSetList[i].Key;
+                        _dsForecastCopy.Tables["Basis"].Rows.Add(dataRow);
+                    }
+                }
+            }
+
+            // update basis values before updating attribute and set references
+            _dsForecastCopy = ConvertStoreBasisListDataset(rOMethodCopyStoreForecastProperties.AttributeSetValues.BasisProfiles);
+            SG_RID = rOMethodCopyStoreForecastProperties.Attribute.Key;
+            _currentSglRid = rOMethodCopyStoreForecastProperties.AttributeSet.Key;
+            _storeFilterRid = rOMethodCopyStoreForecastProperties.StoreFilter.Key;
+            
+            return true;
+        }
+
+        private List<ROBasisDetailProfile> ConvertChainBasisDataToList(DataSet dsBasis)
+        {
+            DataTable dtBasisDetails = dsBasis.Tables["Basis"];
             KeyValuePair<int, string> workKVP;
             //int basisDtlCtr = 0;
             List<ROBasisDetailProfile> basisDetailProfiles = new List<ROBasisDetailProfile>();
@@ -2021,35 +2111,117 @@ namespace MIDRetail.Business
             return basisDetailProfiles;
         }
 
-        private DataSet ConvertBasisListDataset(List<ROBasisDetailProfile> basisProfiles)
+        private List<ROBasisDetailProfile> ConvertStoreBasisDataToList(DataSet dsBasis)
         {
-            MIDRetail.Data.OTSPlanSelection planSelectDL = new MIDRetail.Data.OTSPlanSelection();
-            DataSet dsBasis = MIDEnvironment.CreateDataSet();
-            DataTable dtBasis = planSelectDL.SetupBasisTable();
-            dtBasis.TableName = "Basis";
+            DataTable dtBasisDetails = dsBasis.Tables["Basis"];
+            KeyValuePair<int, string> workKVP;
+            //int basisDtlCtr = 0;
+            List<ROBasisDetailProfile> basisDetailProfiles = new List<ROBasisDetailProfile>();
 
-            DataTable dtBasisDetails = planSelectDL.SetupBasisDetailsTable();
-            dtBasisDetails.TableName = "BasisDetails";
+            for (int basisDtlCtr = 0; basisDtlCtr < dtBasisDetails.Rows.Count; basisDtlCtr++)
+            {
+                if (Convert.ToInt32(dtBasisDetails.Rows[basisDtlCtr]["SGL_RID"]) != _currentSglRid)
+                {
+                    continue;
+                }
+                //int iBasisId = Convert.ToInt32(dtBasis.Rows[basisDtlRowCtr]["SGL_RID"].ToString());
+                int iBasisId = 0;
 
+                int iMerchandiseId = Convert.ToInt32(dtBasisDetails.Rows[basisDtlCtr]["HN_RID"].ToString());
+                workKVP = GetName.GetMerchandiseName(iMerchandiseId, SAB);
+                string sMerchandise = workKVP.Value;
+                int iVersionId = Convert.ToInt32(dtBasisDetails.Rows[basisDtlCtr]["FV_RID"].ToString());
+                workKVP = GetName.GetVersion(iVersionId, SAB);
+                string sVersion = workKVP.Value;
+                int iDateRangeID = Convert.ToInt32(dtBasisDetails.Rows[basisDtlCtr]["CDR_RID"].ToString());
+                if (Convert.ToInt32(dtBasisDetails.Rows[basisDtlCtr]["CDR_RID"].ToString()) != Include.UndefinedCalendarDateRange)
+                {
+                    workKVP = GetName.GetCalendarDateRange(iDateRangeID, SAB, Convert.ToInt32(dtBasisDetails.Rows[basisDtlCtr]["CDR_RID"].ToString()));
+                }
+                else
+                {
+                    workKVP = GetName.GetCalendarDateRange(iDateRangeID, SAB, SAB.ClientServerSession.Calendar.CurrentDate);
+                }
+                string sDateRange = workKVP.Value;
+                string sPicture = string.Empty;
+                float fWeight = float.Parse(dtBasisDetails.Rows[basisDtlCtr]["Weight"] == DBNull.Value ? "0" : dtBasisDetails.Rows[basisDtlCtr]["Weight"].ToString());
+                bool bIsIncluded = false;
+                if (Convert.ToInt32(dtBasisDetails.Rows[basisDtlCtr]["INCLUDE_EXCLUDE"], CultureInfo.CurrentUICulture) == (int)eBasisIncludeExclude.Include)
+                {
+                    bIsIncluded = true;
+                }
+
+                string sIncludeButton = dtBasisDetails.Rows[basisDtlCtr]["IncludeButton"].ToString();
+                ROBasisDetailProfile basisDetailProfile = new ROBasisDetailProfile(iBasisId, iMerchandiseId, sMerchandise, iVersionId, sVersion,
+                    iDateRangeID, sDateRange, sPicture, fWeight, bIsIncluded, sIncludeButton);
+                basisDetailProfiles.Add(basisDetailProfile);
+                //++basisDtlCtr;
+            }
+            return basisDetailProfiles;
+        }
+
+        private DataSet ConvertChainBasisListDataset(List<ROBasisDetailProfile> basisProfiles)
+        {
+            // clear and rebuild all rows
+            DataTable dtBasisDetails = _dsForecastCopy.Tables["Basis"];
+            dtBasisDetails.Rows.Clear();
+            int sequence = 0;
 
             foreach (var basisDetailsProfile in basisProfiles)
             {
                 DataRow rowDtlProf = dtBasisDetails.NewRow();
-                rowDtlProf["BasisID"] = basisDetailsProfile.BasisId;
+                rowDtlProf["SGL_RID"] = 1;
+                rowDtlProf["DETAIL_SEQ"] = sequence;
                 rowDtlProf["Merchandise"] = basisDetailsProfile.Merchandise;
-                rowDtlProf["MerchandiseID"] = basisDetailsProfile.MerchandiseId;
-                rowDtlProf["Version"] = basisDetailsProfile.Version;
-                rowDtlProf["VersionID"] = basisDetailsProfile.VersionId;
+                rowDtlProf["HN_RID"] = basisDetailsProfile.MerchandiseId;
+                rowDtlProf["FV_RID"] = basisDetailsProfile.VersionId;
                 rowDtlProf["DateRange"] = basisDetailsProfile.DateRange;
-                rowDtlProf["DateRangeID"] = basisDetailsProfile.DateRangeId;
-                rowDtlProf["Picture"] = basisDetailsProfile.Picture;
-                rowDtlProf["Weight"] = basisDetailsProfile.Weight;
-                rowDtlProf["IsIncluded"] = basisDetailsProfile.IsIncluded;
+                rowDtlProf["CDR_RID"] = basisDetailsProfile.DateRangeId;
+                rowDtlProf["WEIGHT"] = basisDetailsProfile.Weight;
+                rowDtlProf["INCLUDE_EXCLUDE"] = basisDetailsProfile.IsIncluded ? (int)eBasisIncludeExclude.Include : (int)eBasisIncludeExclude.Exclude;
                 rowDtlProf["IncludeButton"] = basisDetailsProfile.IncludeButton;
                 dtBasisDetails.Rows.Add(rowDtlProf);
+                sequence++;
             }
-            dsBasis.Tables.Add(dtBasisDetails);
-            return dsBasis;
+
+            return _dsForecastCopy;
+        }
+
+        private DataSet ConvertStoreBasisListDataset(List<ROBasisDetailProfile> basisProfiles)
+        {
+            // delete rows for the current set and rebuild the rows
+            DataTable dtBasisDetails = _dsForecastCopy.Tables["Basis"];
+
+            string selectString = "SGL_RID=" + _currentSglRid;
+            if (dtBasisDetails != null)
+            {
+                DataRow[] basisDataRows = dtBasisDetails.Select(selectString);
+                foreach (var taskDataRow in basisDataRows)
+                {
+                    taskDataRow.Delete();
+                }
+                dtBasisDetails.AcceptChanges();
+            }
+            int sequence = 0;
+
+            foreach (var basisDetailsProfile in basisProfiles)
+            {
+                DataRow rowDtlProf = dtBasisDetails.NewRow();
+                rowDtlProf["SGL_RID"] = _currentSglRid;
+                rowDtlProf["DETAIL_SEQ"] = sequence;
+                rowDtlProf["Merchandise"] = basisDetailsProfile.Merchandise;
+                rowDtlProf["HN_RID"] = basisDetailsProfile.MerchandiseId;
+                rowDtlProf["FV_RID"] = basisDetailsProfile.VersionId;
+                rowDtlProf["DateRange"] = basisDetailsProfile.DateRange;
+                rowDtlProf["CDR_RID"] = basisDetailsProfile.DateRangeId;
+                rowDtlProf["WEIGHT"] = basisDetailsProfile.Weight;
+                rowDtlProf["INCLUDE_EXCLUDE"] = basisDetailsProfile.IsIncluded ? (int)eBasisIncludeExclude.Include : (int)eBasisIncludeExclude.Exclude;
+                rowDtlProf["IncludeButton"] = basisDetailsProfile.IncludeButton;
+                dtBasisDetails.Rows.Add(rowDtlProf);
+                sequence++;
+            }
+
+            return _dsForecastCopy;
         }
 
         override public ROMethodProperties MethodCopyData()

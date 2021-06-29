@@ -507,7 +507,7 @@ namespace Logility.ROWeb
                         _ABM.LockStatus = WorkflowMethodUtilities.UnlockWorkflowMethod(
                             SAB: SAB,
                             workflowMethodIND: eWorkflowMethodIND.Methods,
-                            Key: _ABM.Key,
+                            Key: _currentMethodKey,
                             message: out message
                             );
                         if (_ABM.LockStatus == eLockStatus.Cancel)

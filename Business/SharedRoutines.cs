@@ -951,7 +951,8 @@ namespace MIDRetail.Business
             {
                 displayName = "+" + levelOffset.ToString();
             }
-            else if (levelType == eROLevelsType.HierarchyLevel)
+            else if (levelType == eROLevelsType.HierarchyLevel
+                && levelSequence >= 0)
             {
                 if (_mainHierProf == null)
                 {
@@ -2742,6 +2743,31 @@ namespace MIDRetail.Business
             return value;
         }
 
+        public static eROLevelsType ConverteHierarchyDescendantTypeToeROLevelsType(eHierarchyDescendantType inParam)
+        {
+            switch (inParam)
+            {
+                case eHierarchyDescendantType.offset:
+                    return eROLevelsType.LevelOffset;
+                case eHierarchyDescendantType.levelType:
+                    return eROLevelsType.HierarchyLevel;
+                default:
+                    return eROLevelsType.None;
+            }
+        }
+
+        public static eHierarchyDescendantType ConverteROLevelsTypeToeHierarchyDescendantType(eROLevelsType inParam)
+        {
+            switch (inParam)
+            {
+                case eROLevelsType.LevelOffset:
+                    return eHierarchyDescendantType.offset;
+                case eROLevelsType.HierarchyLevel:
+                    return eHierarchyDescendantType.levelType;
+                default:
+                    return eHierarchyDescendantType.masterType;
+            }
+        }
     }
 
     public class HierarchyTools

@@ -173,6 +173,9 @@ namespace Logility.ROWebSharedTypes
 
 
     [KnownType(typeof(ROMethodCopyForecastProperties))]
+    [KnownType(typeof(ROMethodCopyChainForecastProperties))]
+    [KnownType(typeof(ROMethodCopyStoreForecastProperties))]
+    [KnownType(typeof(ROMethodCopyStoreForecastAttributeSetProperties))]
     [KnownType(typeof(ROMethodRollupProperties))]
     [KnownType(typeof(ROMethodRollupOptionsBasis))]
     [KnownType(typeof(ROSelectedField))]
