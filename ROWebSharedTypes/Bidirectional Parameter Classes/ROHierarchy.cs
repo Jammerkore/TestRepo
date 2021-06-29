@@ -3408,7 +3408,10 @@ namespace Logility.ROWebSharedTypes
         // Criteria
         [DataMember(IsRequired = true)]
         List<KeyValuePair<int, string>> _merchandiseList;
-        
+
+        [DataMember(IsRequired = true)]
+        List<KeyValuePair<int, string>> _defaultMerchandiseList;
+
         [DataMember(IsRequired = true)]
         List<KeyValuePair<int, string>> _sizeGroupList;
 
@@ -3483,6 +3486,11 @@ namespace Logility.ROWebSharedTypes
         public List<KeyValuePair<int, string>> MerchandiseList
         {
             get { return _merchandiseList; }
+        }
+
+        public List<KeyValuePair<int, string>> DefaultMerchandiseList
+        {
+            get { return _defaultMerchandiseList; }
         }
 
         /// <summary>
@@ -3756,6 +3764,7 @@ namespace Logility.ROWebSharedTypes
             _sizeCurveInheritedCriteria = new List<RONodePropertiesSizeCurveCriteria>();
             _sizeCurveCriteria = new List<RONodePropertiesSizeCurveCriteria>();
             _merchandiseList = new List<KeyValuePair<int, string>>();
+            _defaultMerchandiseList = new List<KeyValuePair<int, string>>();
             _sizeGroupList = new List<KeyValuePair<int, string>>();
             _attributeList = new List<KeyValuePair<int, string>>();
 

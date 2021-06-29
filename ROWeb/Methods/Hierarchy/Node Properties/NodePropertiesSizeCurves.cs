@@ -107,10 +107,23 @@ namespace Logility.ROWeb
             if (_sizeCurveDefaultCriteriaProfile.DefaultRIDIsInheritedFromRID != Include.NoRID)
             {
                 BuildSizeCurveCriteriaLevelList(aStartNode: _sizeCurveDefaultCriteriaProfile.DefaultRIDIsInheritedFromRID);
+                foreach (HierarchyLevelComboObject level in _merchandiseLevelList)
+                {
+                    nodeProperties.DefaultMerchandiseList.Add(new KeyValuePair<int, string>(level.LevelIndex, level.ToString()));
+                }
+                BuildSizeCurveCriteriaLevelList(aStartNode: HierarchyNodeProfile.Key);
+                foreach (HierarchyLevelComboObject level in _merchandiseLevelList)
+                {
+                    nodeProperties.MerchandiseList.Add(new KeyValuePair<int, string>(level.LevelIndex, level.ToString()));
+                }
             }
             else
             {
                 BuildSizeCurveCriteriaLevelList(aStartNode: HierarchyNodeProfile.Key);
+                foreach (HierarchyLevelComboObject level in _merchandiseLevelList)
+                {
+                    nodeProperties.MerchandiseList.Add(new KeyValuePair<int, string>(level.LevelIndex, level.ToString()));
+                }
             }
 
             foreach (SizeCurveCriteriaProfile sccp in _sizeCurvesCriteriaList)
@@ -192,11 +205,6 @@ namespace Logility.ROWeb
                 }
             }
 
-            // build list for merchandise drop down
-            foreach (HierarchyLevelComboObject level in _merchandiseLevelList)
-            {
-                nodeProperties.MerchandiseList.Add(new KeyValuePair<int, string>(level.LevelIndex, level.ToString()));
-            }
             BuildSizeCurveCriteriaSizeGroupList(nodeProperties);
             BuildSizeCurveAttributeList(nodeProperties);
         }
