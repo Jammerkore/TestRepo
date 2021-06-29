@@ -1211,7 +1211,7 @@ namespace MIDRetail.Business
 
             // Begin RO-748 RDewey
             eROLevelsType levelType;
-            string strLevelType;
+            eHierarchyDescendantType hierarchyDescendantType;
 
             ROMethodRollupProperties method = new ROMethodRollupProperties(
                 method: GetName.GetMethod(method: this),
@@ -1230,8 +1230,9 @@ namespace MIDRetail.Business
 
                 ROLevelInformation fromLevelInformation = new ROLevelInformation();
                 fromLevelInformation.LevelSequence = Convert.ToInt32(row["FROM_LEVEL_SEQ"]);
-                strLevelType = Convert.ToString(row["FROM_LEVEL_TYPE"]);
-                Enum.TryParse(strLevelType, out levelType);
+                hierarchyDescendantType = (eHierarchyDescendantType)Convert.ToInt32(row["FROM_LEVEL_TYPE"]);
+                levelType = EnumTools.ConverteHierarchyDescendantTypeToeROLevelsType(hierarchyDescendantType);
+
                 if (levelType == eROLevelsType.Characteristic)
                 {
                     levelType = eROLevelsType.HierarchyLevel;
@@ -1251,8 +1252,8 @@ namespace MIDRetail.Business
                 ROLevelInformation toLevelInformation = new ROLevelInformation();
 
                 toLevelInformation.LevelSequence = Convert.ToInt32(row["TO_LEVEL_SEQ"]);
-                strLevelType = Convert.ToString(row["TO_LEVEL_TYPE"]);
-                Enum.TryParse(strLevelType, out levelType);
+                hierarchyDescendantType = (eHierarchyDescendantType)Convert.ToInt32(row["TO_LEVEL_TYPE"]);
+                levelType = EnumTools.ConverteHierarchyDescendantTypeToeROLevelsType(hierarchyDescendantType);
                 if (levelType == eROLevelsType.Characteristic)
                 {
                     levelType = eROLevelsType.HierarchyLevel;
@@ -1357,12 +1358,12 @@ namespace MIDRetail.Business
                     row["DETAIL_SEQ"] = intDetailSeq;
                     row["FromLevel"] = optionsBasis.FromROLevelInformation.LevelValue;
                     row["FROM_LEVEL_HRID"] = optionsBasis.FromMerchandise.Key;
-                    row["FROM_LEVEL_TYPE"] = optionsBasis.FromROLevelInformation.LevelType;
+                    row["FROM_LEVEL_TYPE"] = EnumTools.ConverteROLevelsTypeToeHierarchyDescendantType(optionsBasis.FromROLevelInformation.LevelType);
                     row["FROM_LEVEL_SEQ"] = optionsBasis.FromROLevelInformation.LevelSequence;
                     row["FROM_LEVEL_OFFSET"] = optionsBasis.FromROLevelInformation.LevelOffset;
                     row["ToLevel"] = optionsBasis.ToROLevelInformation.LevelValue;
                     row["TO_LEVEL_HRID"] = optionsBasis.ToMerchandise.Key;
-                    row["TO_LEVEL_TYPE"] = optionsBasis.ToROLevelInformation.LevelType;
+                    row["TO_LEVEL_TYPE"] = EnumTools.ConverteROLevelsTypeToeHierarchyDescendantType(optionsBasis.ToROLevelInformation.LevelType);
                     row["TO_LEVEL_SEQ"] = optionsBasis.ToROLevelInformation.LevelSequence;
                     row["TO_LEVEL_OFFSET"] = optionsBasis.ToROLevelInformation.LevelOffset;
                     row["Store"] = optionsBasis.IsStore;
