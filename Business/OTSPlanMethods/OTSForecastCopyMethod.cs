@@ -1903,7 +1903,7 @@ namespace MIDRetail.Business
                     );
             }
 
-            BuildVersionList(method: method);
+            BuildVersionLists(method: method);
 
             if (_hierNodeRid > 0)
             {
@@ -1913,7 +1913,7 @@ namespace MIDRetail.Business
             return method;
         }
 
-        private void BuildVersionList(ROMethodCopyForecastProperties method)
+        private void BuildVersionLists(ROMethodCopyForecastProperties method)
         {
             ProfileList versionList;
             if (PlanType == ePlanType.Chain)
@@ -1928,6 +1928,20 @@ namespace MIDRetail.Business
             foreach (VersionProfile versionProfile in versionList)
             {
                 method.Versions.Add(new KeyValuePair<int, string>(versionProfile.Key, versionProfile.Description));
+            }
+
+            if (PlanType == ePlanType.Chain)
+            {
+                versionList = GetForecastVersionList(eSecuritySelectType.View | eSecuritySelectType.Update, eSecurityTypes.Chain, false, _versionRid);
+            }
+            else
+            {
+                versionList = GetForecastVersionList(eSecuritySelectType.View | eSecuritySelectType.Update, eSecurityTypes.Store, false, _versionRid);
+            }
+
+            foreach (VersionProfile versionProfile in versionList)
+            {
+                method.BasisVersions.Add(new KeyValuePair<int, string>(versionProfile.Key, versionProfile.Description));
             }
         }
 

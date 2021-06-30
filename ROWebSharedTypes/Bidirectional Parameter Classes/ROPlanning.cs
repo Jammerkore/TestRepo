@@ -1264,6 +1264,8 @@ namespace Logility.ROWebSharedTypes
         private ROOverrideLowLevel _overrideLowLevel;
         [DataMember(IsRequired = true)]
         bool _copyPreInitValues;
+        [DataMember(IsRequired = true)]
+        private List<KeyValuePair<int, string>> _basisVersions;
 
 
         #region Public Properties
@@ -1334,6 +1336,10 @@ namespace Logility.ROWebSharedTypes
             get { return _copyPreInitValues; }
             set { _copyPreInitValues = value; }
         }
+        public List<KeyValuePair<int, string>> BasisVersions
+        {
+            get { return _basisVersions; }
+        }
 
         #endregion
         public ROMethodCopyForecastProperties(
@@ -1374,6 +1380,7 @@ namespace Logility.ROWebSharedTypes
             _versions = new List<KeyValuePair<int, string>>();
             _fromLevels = new List<KeyValuePair<int, string>>();
             _toLevels = new List<KeyValuePair<int, string>>();
+            _basisVersions = new List<KeyValuePair<int, string>>();
         }
     }
 
