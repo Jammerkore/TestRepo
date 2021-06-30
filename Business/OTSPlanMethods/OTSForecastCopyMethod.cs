@@ -1932,11 +1932,11 @@ namespace MIDRetail.Business
 
             if (PlanType == ePlanType.Chain)
             {
-                versionList = GetForecastVersionList(eSecuritySelectType.View | eSecuritySelectType.Update, eSecurityTypes.Chain, false, _versionRid);
+                versionList = GetForecastVersionList(eSecuritySelectType.View | eSecuritySelectType.Update, eSecurityTypes.Chain, false, Include.NoRID);
             }
             else
             {
-                versionList = GetForecastVersionList(eSecuritySelectType.View | eSecuritySelectType.Update, eSecurityTypes.Store, false, _versionRid);
+                versionList = GetForecastVersionList(eSecuritySelectType.View | eSecuritySelectType.Update, eSecurityTypes.Store, false, Include.NoRID);
             }
 
             foreach (VersionProfile versionProfile in versionList)
