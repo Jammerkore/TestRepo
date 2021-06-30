@@ -6765,6 +6765,19 @@ namespace MIDRetail.Business
                     attributeSetProfile.Default_IND = false;
                     attributeSetProfile.Plan_IND = true;
                     attributeSetProfile.Use_Default_IND = true;
+                    // replace the attribute set key
+                    // need to clear and rebuild Trend_Caps list since cannot directly replace key in profile
+                    ArrayList trendCaps = new ArrayList();
+                    foreach (TrendCapsProfile trendCapsProfile in attributeSetProfile.Trend_Caps)
+                    {
+                        trendCapsProfile.Key = attributeSetProfile.Key;
+                        trendCaps.Add(trendCapsProfile);
+                    }
+                    attributeSetProfile.Trend_Caps.Clear();
+                    foreach (TrendCapsProfile trendCapsProfile in trendCaps)
+                    {
+                        attributeSetProfile.Trend_Caps.Add(trendCapsProfile);
+                    }
                     _GLFProfileList.Update(attributeSetProfile);
                 }
             }
