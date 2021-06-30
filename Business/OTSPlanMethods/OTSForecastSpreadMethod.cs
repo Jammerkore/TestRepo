@@ -1498,7 +1498,83 @@ namespace MIDRetail.Business
                     isTemplate: Template_IND
                 );
 
+            BuildVersionLists(method: method);
+
+            if (_hierNodeRid > 0)
+            {
+                BuildLowLevelLists(method: method);
+            }
+
             return method;
+        }
+
+        private void BuildVersionLists(ROMethodForecastSpreadProperties method)
+        {
+            ProfileList versionList;
+            versionList = GetForecastVersionList(eSecuritySelectType.Update, eSecurityTypes.Chain, false, _versionRid, true);
+
+            foreach (VersionProfile versionProfile in versionList)
+            {
+                method.Versions.Add(new KeyValuePair<int, string>(versionProfile.Key, versionProfile.Description));
+            }
+
+            versionList = GetForecastVersionList(eSecuritySelectType.View | eSecuritySelectType.Update, eSecurityTypes.Chain, false, Include.NoRID);
+
+            foreach (VersionProfile versionProfile in versionList)
+            {
+                method.BasisVersions.Add(new KeyValuePair<int, string>(versionProfile.Key, versionProfile.Description));
+            }
+        }
+
+        private void BuildLowLevelLists(ROMethodForecastSpreadProperties method)
+        {
+            eMerchandiseType merchandiseType;
+            int homeHierarchyKey;
+            List<HierarchyLevelComboObject> levelList = HierarchyTools.GetLevelsList(
+                sessionAddressBlock: SAB,
+                nodeKey: _hierNodeRid,
+                includeHomeLevel: true,
+                includeLowestLevel: false,
+                includeOrganizationLevelsForAlternate: false,
+                merchandiseType: out merchandiseType,
+                homeHierarchyKey: out homeHierarchyKey
+                );
+
+            method.FromLevelsType = merchandiseType;
+            foreach (HierarchyLevelComboObject level in levelList)
+            {
+                if (merchandiseType == eMerchandiseType.LevelOffset)
+                {
+                    method.FromLevels.Add(new KeyValuePair<int, string>(level.Level, level.ToString()));
+                }
+                else
+                {
+                    method.FromLevels.Add(new KeyValuePair<int, string>(level.Level, level.LevelName));
+                }
+            }
+
+            levelList = HierarchyTools.GetLevelsList(
+                sessionAddressBlock: SAB,
+                nodeKey: _hierNodeRid,
+                includeHomeLevel: false,
+                includeLowestLevel: true,
+                includeOrganizationLevelsForAlternate: false,
+                merchandiseType: out merchandiseType,
+                homeHierarchyKey: out homeHierarchyKey
+                );
+
+            method.ToLevelsType = merchandiseType;
+            foreach (HierarchyLevelComboObject level in levelList)
+            {
+                if (merchandiseType == eMerchandiseType.LevelOffset)
+                {
+                    method.ToLevels.Add(new KeyValuePair<int, string>(level.Level, level.ToString()));
+                }
+                else
+                {
+                    method.ToLevels.Add(new KeyValuePair<int, string>(level.Level, level.LevelName));
+                }
+            }
         }
 
         private List<ROBasisDetailProfile> ConvertBasisDataToList(DataSet dsBasis)

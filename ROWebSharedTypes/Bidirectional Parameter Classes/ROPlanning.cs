@@ -1764,13 +1764,23 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         KeyValuePair<int, string> _version;
         [DataMember(IsRequired = true)]
+        private List<KeyValuePair<int, string>> _versions;
+        [DataMember(IsRequired = true)]
         KeyValuePair<int, string> _timePeriod;
         [DataMember(IsRequired = true)]
         bool _multiLevel;
         [DataMember(IsRequired = true)]
         private ROLevelInformation _fromLevel;
         [DataMember(IsRequired = true)]
+        private eMerchandiseType _fromLevelsType;
+        [DataMember(IsRequired = true)]
+        private List<KeyValuePair<int, string>> _fromLevels;
+        [DataMember(IsRequired = true)]
         private ROLevelInformation _toLevel;
+        [DataMember(IsRequired = true)]
+        private eMerchandiseType _toLevelsType;
+        [DataMember(IsRequired = true)]
+        private List<KeyValuePair<int, string>> _toLevels;
         [DataMember(IsRequired = true)]
         private ROOverrideLowLevel _overrideLowLevel;
         [DataMember(IsRequired = true)]
@@ -1781,6 +1791,8 @@ namespace Logility.ROWebSharedTypes
         bool _equalizeWeighting;
         [DataMember(IsRequired = true)]
         private List<ROBasisDetailProfile> _basisProfiles;
+        [DataMember(IsRequired = true)]
+        private List<KeyValuePair<int, string>> _basisVersions;
 
 
         #region Public Properties
@@ -1793,6 +1805,10 @@ namespace Logility.ROWebSharedTypes
         {
             get { return _version; }
             set { _version = value; }
+        }
+        public List<KeyValuePair<int, string>> Versions
+        {
+            get { return _versions; }
         }
         public KeyValuePair<int, string> TimePeriod
         {
@@ -1810,10 +1826,28 @@ namespace Logility.ROWebSharedTypes
             get { return _fromLevel; }
             set { _fromLevel = value; }
         }
+        public eMerchandiseType FromLevelsType
+        {
+            get { return _fromLevelsType; }
+            set { _fromLevelsType = value; }
+        }
+        public List<KeyValuePair<int, string>> FromLevels
+        {
+            get { return _fromLevels; }
+        }
         public ROLevelInformation ToLevel
         {
             get { return _toLevel; }
             set { _toLevel = value; }
+        }
+        public eMerchandiseType ToLevelsType
+        {
+            get { return _toLevelsType; }
+            set { _toLevelsType = value; }
+        }
+        public List<KeyValuePair<int, string>> ToLevels
+        {
+            get { return _toLevels; }
         }
         public ROOverrideLowLevel OverrideLowLevel
         {
@@ -1839,6 +1873,10 @@ namespace Logility.ROWebSharedTypes
         {
             get { return _basisProfiles; }
             set { _basisProfiles = value; }
+        }
+        public List<KeyValuePair<int, string>> BasisVersions
+        {
+            get { return _basisVersions; }
         }
 
         #endregion
@@ -1881,6 +1919,10 @@ namespace Logility.ROWebSharedTypes
             _overrideLowLevel = overrideLowLevel;
             _equalizeWeighting = equalizeWeighting;
             _basisProfiles = basisProfile;
+            _versions = new List<KeyValuePair<int, string>>();
+            _fromLevels = new List<KeyValuePair<int, string>>();
+            _toLevels = new List<KeyValuePair<int, string>>();
+            _basisVersions = new List<KeyValuePair<int, string>>();
         }
     }
 
