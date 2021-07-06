@@ -3030,6 +3030,8 @@ namespace Logility.ROWebSharedTypes
         private string _sizeCurve;
         [DataMember(IsRequired = true)]
         private KeyValuePair<int, string> _attribute;
+        [DataMember(IsRequired = true)]
+        private List<KeyValuePair<int, string>> _merchandiseList;
 
         #region Public Properties
 
@@ -3219,6 +3221,12 @@ namespace Logility.ROWebSharedTypes
             set { _attribute = value; }
         }
 
+        public List<KeyValuePair<int, string>> MerchandiseList
+        {
+            get { return _merchandiseList; }
+            set { _merchandiseList = value; }
+        }
+
         #endregion
 
         public RONodePropertiesSizeCurveCriteria(int key)
@@ -3240,6 +3248,7 @@ namespace Logility.ROWebSharedTypes
             _sizeGroup = default(KeyValuePair<int, string>);
             _sizeCurve = null;
             _attribute = default(KeyValuePair<int, string>);
+            _merchandiseList = new List<KeyValuePair<int, string>>();
         }
     }
     [DataContract(Name = "RONodePropertiesSizeCurvesSimilarStoreValues", Namespace = "http://Logility.ROWeb/")]
@@ -3486,6 +3495,7 @@ namespace Logility.ROWebSharedTypes
         public List<KeyValuePair<int, string>> MerchandiseList
         {
             get { return _merchandiseList; }
+            set { _merchandiseList = value; }
         }
 
         public List<KeyValuePair<int, string>> DefaultMerchandiseList
