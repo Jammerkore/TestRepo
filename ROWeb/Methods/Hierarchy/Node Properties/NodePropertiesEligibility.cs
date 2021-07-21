@@ -88,6 +88,7 @@ namespace Logility.ROWeb
             HierarchyNodeProfile hnp;
             StoreProfile sp;
             string inheritedFromText = MIDText.GetTextOnly(eMIDTextCode.lbl_Inherited_From);
+            DateTime nullDate = new DateTime(1, 1, 1);
 
             ProfileList storeEligibilityGroupLevelList = StoreMgmt.StoreGroup_GetLevelListViewList(nodeProperties.Attribute.Key, true);
             if (attributeSetKey == Include.NoRID)
@@ -108,6 +109,12 @@ namespace Logility.ROWeb
                     eligibilityStore = new RONodePropertiesEligibilityStore(store: new KeyValuePair<int, string>(storeProfile.Key, storeProfile.Text));
                     if (storeEligList.Contains(storeProfile.Key))
                     {
+                        if (storeProfile.SellingOpenDt != nullDate)
+                        {
+                            DayProfile sellingOpenDayProfile = SAB.ClientServerSession.Calendar.GetDay(storeProfile.SellingOpenDt);
+                            eligibilityStore.StoreOpenDate = sellingOpenDayProfile.Week.ToString();
+                        }
+
                         sep = (StoreEligibilityProfile)storeEligList.FindKey(storeProfile.Key);
 
                         // eligibility

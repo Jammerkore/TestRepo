@@ -1624,6 +1624,8 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         KeyValuePair<int, string> _store;
         [DataMember(IsRequired = true)]
+        string _storeOpenDate;
+        [DataMember(IsRequired = true)]
         RONodePropertiesEligibilityValues _eligibilityValues;
 
 
@@ -1632,6 +1634,22 @@ namespace Logility.ROWebSharedTypes
         public KeyValuePair<int, string> Store
         {
             get { return _store; }
+        }
+
+        /// <summary>
+        /// Gets a flag identifying if a store has an open date.
+        /// </summary>
+        public bool StoreHasOpenDate
+        {
+            get { return StoreOpenDate != null; }
+        }
+        /// <summary>
+        /// Gets or sets the open date for the store.
+        /// </summary>
+        public string StoreOpenDate
+        {
+            get { return _storeOpenDate; }
+            set { _storeOpenDate = value; }
         }
 
         public RONodePropertiesEligibilityValues EligibilityValues
@@ -1646,6 +1664,7 @@ namespace Logility.ROWebSharedTypes
         {
             _store = store;
             _eligibilityValues = new RONodePropertiesEligibilityValues();
+            _storeOpenDate = null;
         }
     }
 
