@@ -6699,13 +6699,17 @@ namespace MIDRetail.Business
                         newGLFP.Apply_Weight_Multiple_Basis_Ind = item.EqualizingWaitingApplyTrendTo;
                         newGLFP.Proj_Curr_Wk_Sales_IND = item.IsProjectCurrentWeekSales;
                         //TO DO:: All Trend Caps data need to assign here.
-                        TrendCapsProfile tcp = new TrendCapsProfile(newGLFP.Key);
+						// Update object if exists, otherwise create new one
+                        TrendCapsProfile tcp = (TrendCapsProfile)newGLFP.Trend_Caps.FindKey(newGLFP.Key);
+                        if (tcp == null)
+                        {
+                            tcp = new TrendCapsProfile(newGLFP.Key);
+                            newGLFP.Trend_Caps.Add(tcp);
+                        }
                         tcp.TrendCapID = item.TrendCapId;
                         tcp.LowLimit = item.TrendCapsLowLimit;
                         tcp.HighLimit = item.TrendCapsHighLimit;
                         tcp.TolPct = item.TrendCapsTolerance;
-                        newGLFP.Trend_Caps.Add(tcp);
-
 
                         if (item.ForecastMethod.Key == eGroupLevelFunctionType.PercentContribution)
                         {
