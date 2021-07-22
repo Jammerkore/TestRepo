@@ -494,6 +494,7 @@ namespace Logility.ROWebSharedTypes
             set { _trendCapsLowLimit = value; }
         }
 
+        [DataMember(IsRequired = true)]
         private int _trendCapsHighLimit;
 
         public int TrendCapsHighLimit
