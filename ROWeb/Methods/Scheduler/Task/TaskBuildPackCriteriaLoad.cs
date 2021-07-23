@@ -77,9 +77,9 @@ namespace Logility.ROWeb
             ROTaskProperties baseTask = null;
             eMIDMessageLevel MIDMessageLevel = eMIDMessageLevel.Severe;
             string messageLevel, name;
-
+            Sequence = taskParameters.Sequence;
             // get the values from the database if not already retrieved
-            if (TaskData == null)
+            //if (TaskData == null)
             {
                 TaskGetValues();
             }
@@ -132,7 +132,19 @@ namespace Logility.ROWeb
         /// <param name="task">The data class of the task</param>
         private void AddValues(ROTaskParms taskParameters, ROTaskBuildPackCriteriaLoad task)
         {
-            
+            if (TaskData.Rows.Count > 0)
+            {
+                string selectString;
+                selectString = "TASK_SEQUENCE=" + taskParameters.Sequence;
+                DataRow headerDataRow = TaskData.Select(selectString).First();
+                string inputDirectory = Convert.ToString(headerDataRow["INPUT_DIRECTORY"]);
+                inputDirectory = string.IsNullOrEmpty(inputDirectory) ?
+                    string.IsNullOrEmpty(MIDConfigurationManager.AppSettings["FileDirectory"]) ? @"C:\Logility\ROData\Build Pack Criteria" :
+                    string.Concat(MIDConfigurationManager.AppSettings["FileDirectory"], @"\Build Pack Criteria") : inputDirectory;
+                task.ProcessingDirection = Convert.ToInt32(headerDataRow["FILE_PROCESSING_DIRECTION"]);
+                task.Directory = inputDirectory;
+                task.FlagFileSuffix = Convert.ToString(headerDataRow["FILE_MASK"]);
+            }
         }
 
 
@@ -153,7 +165,7 @@ namespace Logility.ROWeb
         {
             successful = true;
             ROTaskBuildPackCriteriaLoad taskBuildPackCriteriaLoadData = (ROTaskBuildPackCriteriaLoad)taskData;
-
+            Sequence = taskData.Task.Key;
             // get the values from the database if not already retrieved
             if (TaskData == null)
             {
@@ -184,7 +196,16 @@ namespace Logility.ROWeb
                 sequence: taskData.Task.Key
                 );
 
-            throw new Exception("Not Implemented");
+            DataRow headerDataRow = TaskData.NewRow();
+            headerDataRow["TASKLIST_RID"] = TaskListProperties.TaskList.Key;
+            headerDataRow["TASK_SEQUENCE"] = taskData.Task.Key;
+            headerDataRow["FILE_PROCESSING_DIRECTION"] = taskData.ProcessingDirection;
+            headerDataRow["INPUT_DIRECTORY"] = taskData.Directory;
+            headerDataRow["FILE_MASK"] = taskData.FlagFileSuffix;
+            TaskData.Rows.Add(headerDataRow);
+            TaskData.AcceptChanges();
+            // order the rows in the data tables
+            TaskData = TaskData.DefaultView.ToTable();
 
             return true;
         }
@@ -248,7 +269,9 @@ namespace Logility.ROWeb
         /// </summary>
         public override void TaskGetValues()
         {
-            TaskData = ScheduleDataLayer.TaskPosting_ReadByTaskList(aTaskListRID: TaskListKey);
+            TaskData = DatabaseSchema.GetTableSchema("TASK_POSTING");
+            // Add the data row for the task
+            TaskData.ImportRow(ScheduleDataLayer.TaskPosting_Read(aTaskListRID: TaskListKey, aTaskSequence: Sequence));
         }
     }
 }

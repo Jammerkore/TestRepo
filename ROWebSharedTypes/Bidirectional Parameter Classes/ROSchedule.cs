@@ -537,7 +537,7 @@ namespace Logility.ROWebSharedTypes
     }
 
     [DataContract(Name = "ROTaskColorCodeLoad", Namespace = "http://Logility.ROWeb/")]
-    public class ROTaskColorCodeLoad : ROTaskProperties
+    public class ROTaskColorCodeLoad : ROTaskLoad
     {
 
         #region Public Properties
@@ -1341,7 +1341,7 @@ namespace Logility.ROWebSharedTypes
     }
 
     [DataContract(Name = "ROTaskBuildPackCriteriaLoad", Namespace = "http://Logility.ROWeb/")]
-    public class ROTaskBuildPackCriteriaLoad : ROTaskProperties
+    public class ROTaskBuildPackCriteriaLoad : ROTaskLoad
     {
 
         #region Public Properties
@@ -1401,7 +1401,7 @@ namespace Logility.ROWebSharedTypes
     }
 
     [DataContract(Name = "ROTaskDailyPercentagesCriteriaLoad", Namespace = "http://Logility.ROWeb/")]
-    public class ROTaskDailyPercentagesCriteriaLoad : ROTaskProperties
+    public class ROTaskDailyPercentagesCriteriaLoad : ROTaskLoad
     {
 
         #region Public Properties
