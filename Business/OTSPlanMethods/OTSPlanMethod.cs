@@ -6134,16 +6134,16 @@ namespace MIDRetail.Business
             }
 
             eTrendCapID trendCapId = eTrendCapID.None;
-            int intTrendCapsTolerance = 0;
-            int intTrendCapsLowLimit = 0;
-            int intTrendCapsHighLimit = 0;
+            double trendCapsTolerance = 0;
+            double trendCapsLowLimit = 0;
+            double trendCapsHighLimit = 0;
 
             if (trendCapsProfile != null)
             {
                 trendCapId = trendCapsProfile.TrendCapID;
-                intTrendCapsTolerance = Convert.ToInt32(trendCapsProfile.TolPct, CultureInfo.CurrentUICulture);
-                intTrendCapsLowLimit = Convert.ToInt32(trendCapsProfile.LowLimit, CultureInfo.CurrentUICulture);
-                intTrendCapsHighLimit = Convert.ToInt32(trendCapsProfile.HighLimit, CultureInfo.CurrentUICulture);
+                trendCapsTolerance = trendCapsProfile.TolPct;
+                trendCapsLowLimit = trendCapsProfile.LowLimit;
+                trendCapsHighLimit = trendCapsProfile.HighLimit;
             }
 
             ProfileList groupLevelBasis = GLFProfile.GroupLevelBasis;
@@ -6201,9 +6201,9 @@ namespace MIDRetail.Business
                    isAlternateApplyTrendTo: GLFProfile.Trend_Alt_IND,
                    isProjectCurrentWeekSales: GLFProfile.Proj_Curr_Wk_Sales_IND,
                    trendCapId: trendCapId,
-                   trendCapsTolerance: intTrendCapsTolerance,
-                   trendCapsLowLimit: intTrendCapsLowLimit,
-                   trendCapsHighLimit: intTrendCapsHighLimit
+                   trendCapsTolerance: trendCapsTolerance,
+                   trendCapsLowLimit: trendCapsLowLimit,
+                   trendCapsHighLimit: trendCapsHighLimit
                 );
 
             return attributeSetProperties;

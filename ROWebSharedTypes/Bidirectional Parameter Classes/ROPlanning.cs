@@ -477,27 +477,27 @@ namespace Logility.ROWebSharedTypes
         }
 
         [DataMember(IsRequired = true)]
-        private int _trendCapsTolerance;
+        private double _trendCapsTolerance;
 
-        public int TrendCapsTolerance
+        public double TrendCapsTolerance
         {
             get { return _trendCapsTolerance; }
             set { _trendCapsTolerance = value; }
         }
         [DataMember(IsRequired = true)]
-        private int _trendCapsLowLimit;
+        private double _trendCapsLowLimit;
 
 
-        public int TrendCapsLowLimit
+        public double TrendCapsLowLimit
         {
             get { return _trendCapsLowLimit; }
             set { _trendCapsLowLimit = value; }
         }
 
         [DataMember(IsRequired = true)]
-        private int _trendCapsHighLimit;
+        private double _trendCapsHighLimit;
 
-        public int TrendCapsHighLimit
+        public double TrendCapsHighLimit
         {
             get { return _trendCapsHighLimit; }
             set { _trendCapsHighLimit = value; }
@@ -526,9 +526,9 @@ namespace Logility.ROWebSharedTypes
             bool isAlternateApplyTrendTo, 
             bool isProjectCurrentWeekSales,
             eTrendCapID trendCapId, 
-            int trendCapsTolerance, 
-            int trendCapsLowLimit, 
-            int trendCapsHighLimit
+            double trendCapsTolerance, 
+            double trendCapsLowLimit, 
+            double trendCapsHighLimit
 
             )
         {
