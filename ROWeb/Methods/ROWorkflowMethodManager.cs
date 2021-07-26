@@ -645,6 +645,19 @@ namespace Logility.ROWeb
                     message: ref message
                     );
 
+                if (_ABM == null)
+                {
+                    // if not in cache, was never retrieved and cannot be applied to
+                    message = SAB.ClientServerSession.Audit.GetText(
+                                    messageCode: eMIDTextCode.msg_ValueWasNotFound,
+                                    addToAuditReport: true,
+                                    args: new object[] { MIDText.GetTextOnly(eMIDTextCode.lbl_Method) }
+                                    );
+                    throw new MIDException(eErrorLevel.severe,
+                        (int)eMIDTextCode.msg_ValueWasNotFound,
+                        message);
+                }
+
                 _ABM.Name = methodParm.ROMethodProperties.Method.Value;
                 _ABM.Method_Description = methodParm.ROMethodProperties.Description;
                 _ABM.User_RID = methodParm.ROMethodProperties.UserKey;
@@ -774,6 +787,20 @@ namespace Logility.ROWeb
                         throw new MIDException(eErrorLevel.severe,
                             (int)eMIDTextCode.msg_ValueWasNotFound,
                             message);
+                    }
+                }
+                // if new method
+                else
+                {
+                    // check to see if method is in cache
+                    if (_workflowMethods.ContainsKey(methodParm.ROMethodProperties.Method.Key))
+                    {
+                        _ABM = _workflowMethods[methodParm.ROMethodProperties.Method.Key];
+                    }
+                    // if not in cache return null object
+                    else
+                    {
+                        _ABM = null;
                     }
                 }
             }
