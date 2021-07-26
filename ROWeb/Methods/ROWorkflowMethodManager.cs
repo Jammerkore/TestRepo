@@ -496,6 +496,25 @@ namespace Logility.ROWeb
                     message: ref message
                     );
 
+                // Method not in the collection.  Create it.
+                if (_ABM == null)
+                {
+                    int methodKey = methodParm.ROMethodProperties.Method.Key;
+                    eMethodType methodType = methodParm.ROMethodProperties.MethodType;
+                    _ABM = (ApplicationBaseMethod)GetMethods.GetMethod(methodKey, methodType);
+                    // only update cache if not new method
+                    if (methodParm.ROMethodProperties.Method.Key > 0)
+                    {
+                        _workflowMethods[_ABM.Key] = _ABM;
+                    }
+                    FunctionSecurity = _ABM.GetFunctionSecurity();
+                    _ABM.User_RID = methodParm.ROMethodProperties.UserKey;
+                    if (_ABM is VelocityMethod)
+                    {
+                        ((VelocityMethod)_ABM).AST = _applicationSessionTransaction;
+                    }
+                }
+
                 bool cleanseName = false;
                 if (methodParm.ROMethodProperties.Method.Key < 0)  // all new methods have negative keys
                 {
