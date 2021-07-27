@@ -79,7 +79,7 @@ namespace Logility.ROWeb
             string messageLevel, name;
             Sequence = taskParameters.Sequence;
             // get the values from the database if not already retrieved
-            //if (TaskData == null)
+            if (TaskData == null)
             {
                 TaskGetValues();
             }
