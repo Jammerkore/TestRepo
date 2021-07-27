@@ -26,19 +26,19 @@ namespace Logility.ROWeb
         // CONSTRUCTORS
         //=============
         public TaskPurge(
-            SessionAddressBlock sessionAddressBlock, 
+            SessionAddressBlock sessionAddressBlock,
             ROWebTools ROWebTools,
             ROTaskListProperties taskListProperties
-            ) 
+            )
             :
             base(
-                sessionAddressBlock: sessionAddressBlock, 
-                ROWebTools: ROWebTools, 
-                taskType: eTaskType.Purge, 
+                sessionAddressBlock: sessionAddressBlock,
+                ROWebTools: ROWebTools,
+                taskType: eTaskType.Purge,
                 taskListProperties: taskListProperties
                 )
         {
-           
+
         }
 
         //===========
@@ -68,8 +68,8 @@ namespace Logility.ROWeb
         /// <param name="applyOnly">Flag identifying if apply is being processed</param>
         /// <returns></returns>
         override public ROTaskProperties TaskGetData(
-            ROTaskParms taskParameters, 
-            ref string message, 
+            ROTaskParms taskParameters,
+            ref string message,
             bool applyOnly = false
             )
         {
@@ -128,7 +128,7 @@ namespace Logility.ROWeb
         /// <param name="task">The data class of the task</param>
         private void AddValues(ROTaskParms taskParameters, ROTaskPurge task)
         {
-            
+
         }
 
 
@@ -141,9 +141,9 @@ namespace Logility.ROWeb
         /// <param name="applyOnly">Flag identifying if apply is being processed</param>
         /// <returns>The updated task data</returns>
         override public ROTaskProperties TaskUpdateData(
-            ROTaskProperties taskData, 
-            ref string message, 
-            out bool successful, 
+            ROTaskProperties taskData,
+            ref string message,
+            out bool successful,
             bool applyOnly = false
             )
         {
@@ -171,7 +171,7 @@ namespace Logility.ROWeb
         /// <param name="taskData">Input values for the task</param>
         /// <param name="message">Message to return</param>
         private bool SetTask(
-            ROTaskPurge taskData, 
+            ROTaskPurge taskData,
             ref string message
             )
         {
@@ -179,8 +179,6 @@ namespace Logility.ROWeb
             DeleteTaskRows(
                 sequence: taskData.Task.Key
                 );
-
-            throw new Exception("Not Implemented");
 
             return true;
         }
