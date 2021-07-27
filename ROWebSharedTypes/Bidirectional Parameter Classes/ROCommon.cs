@@ -97,12 +97,12 @@ namespace Logility.ROWebSharedTypes
 
         public bool AddingMethod
         {
-            get { return Method.Key == Include.NoRID; }
+            get { return Method.Key < 0; }
         }
 
         public bool UpdatingMethod
         {
-            get { return Method.Key != Include.NoRID; }
+            get { return Method.Key > 0; }
         }
 
         public string Description

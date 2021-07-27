@@ -687,6 +687,7 @@ namespace Logility.ROWeb
                     ROInstanceID: methodParm.ROInstanceID,
                     methodType: methodParm.ROMethodProperties.MethodType,
                     key: methodParm.ROMethodProperties.Method.Key,
+                    workflowStep: _ABM.WorkflowStep,
                     readOnly: readOnly
                     );
 
