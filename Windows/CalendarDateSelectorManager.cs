@@ -29,6 +29,7 @@ namespace MIDRetail.Windows
         private WeekProfile _anchorWeek = null;
         private PeriodProfile _anchorPeriod = null;
         private WeekProfile _btnDynamicSwitchTag = null;  // TODO:  FIX WHEN NEED TO HANDLE DYNAMIC DATES!
+        private DateTime _nullDate = new DateTime(1, 1, 1);
 
 
         #endregion Fields
@@ -211,6 +212,18 @@ namespace MIDRetail.Windows
             int anchorDateKey
             )
         {
+            if (relativeTo == eDateRangeRelativeTo.StoreOpen
+                && anchorDateKey > 1)  // must be store key
+            {
+                StoreProfile storeProfile = StoreMgmt.StoreProfile_Get(anchorDateKey);
+                if (storeProfile != null
+                    && storeProfile.SellingOpenDt != _nullDate)
+                {
+                    DayProfile dayProfile = _SAB.ClientServerSession.Calendar.GetDay(storeProfile.SellingOpenDt);
+                    _anchorWeek = dayProfile.Week;
+                }
+            }
+
             DateRangeProfile selectedDateRange = BuildDateRange(cdrRID, startDate, endDate, dateType, dateRangeType, relativeTo, anchorDateKey);
             bool anchorDateOverriden = (dateRangeType == eCalendarRangeType.Dynamic) && (relativeTo != eDateRangeRelativeTo.Current);
 
@@ -235,7 +248,25 @@ namespace MIDRetail.Windows
                 if (anchorDateOverriden
                     && anchorDateKey != Include.UndefinedCalendarDateRange)
                 {
-                    selectedDateRange = _calendar.GetDateRange(selectedDateRange.Key, anchorDateKey);
+                    if (relativeTo == eDateRangeRelativeTo.StoreOpen
+					    && anchorDateKey > 1)  // must be store key
+                    {
+                        StoreProfile storeProfile = StoreMgmt.StoreProfile_Get(anchorDateKey);
+                        if (storeProfile != null
+                            && storeProfile.SellingOpenDt != _nullDate)
+                        {
+                            DayProfile dayProfile = _SAB.ClientServerSession.Calendar.GetDay(storeProfile.SellingOpenDt);
+                            selectedDateRange = _calendar.GetDateRange(selectedDateRange.Key, dayProfile);
+                        }
+                        else
+                        {
+                            selectedDateRange = _calendar.GetDateRange(selectedDateRange.Key, anchorDateKey);
+                        }
+                    }
+                    else
+                    {
+                        selectedDateRange = _calendar.GetDateRange(selectedDateRange.Key, anchorDateKey);
+                    }
                 }
             }
 
@@ -280,6 +311,18 @@ namespace MIDRetail.Windows
             int anchorDateKey
             )
         {
+            if (relativeTo == eDateRangeRelativeTo.StoreOpen
+			    && anchorDateKey > 1)  // must be store key
+            {
+                StoreProfile storeProfile = StoreMgmt.StoreProfile_Get(anchorDateKey);
+                if (storeProfile != null
+                    && storeProfile.SellingOpenDt != _nullDate)
+                {
+                    DayProfile dayProfile = _SAB.ClientServerSession.Calendar.GetDay(storeProfile.SellingOpenDt);
+                    _anchorWeek = dayProfile.Week;
+                }
+            }
+
             DateRangeProfile selectedDateRange = BuildDateRange(cdrRID, startDate, endDate, dateType, dateRangeType, relativeTo, anchorDateKey);
 
             //TODO: shouldn't be an "update" - rather this should always create a new date range
