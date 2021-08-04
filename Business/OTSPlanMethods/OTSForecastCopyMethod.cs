@@ -53,7 +53,8 @@ namespace MIDRetail.Business
         // Begin Track #6347 - JSmith - Copy Store Forecasting seems to be running extremely long
         private bool _copyPreInitValues;
         // End Track #6347
-
+        private System.Data.DataTable _dtBasis;
+        private System.Data.DataTable _dtGroupLevel;
 
 		#region Properties
 		/// <summary>
@@ -1845,6 +1846,11 @@ namespace MIDRetail.Business
 
             ROMethodCopyForecastProperties method;
 
+            if (_dsForecastCopy == null)
+            {
+                LoadBasis();
+            }
+
             if (PlanType == ePlanType.Chain)
             {
                 method = new ROMethodCopyChainForecastProperties(
@@ -2028,9 +2034,16 @@ namespace MIDRetail.Business
 
                 _overrideLowLevelRid = rOMethodCopyForecastProperties.OverrideLowLevel.OverrideLowLevelsModel.Key;
                 _copyPreInitValues = rOMethodCopyForecastProperties.CopyPreInitValues;
+
+                if (_dsForecastCopy == null)
+                {
+                    LoadBasis();
+                }
+
                 if (rOMethodCopyForecastProperties.MethodType == eMethodType.CopyChainForecast)
                 {
                     SetChainData((ROMethodCopyChainForecastProperties)rOMethodCopyForecastProperties);
+                    SaveBasisForSetValues(Include.AllStoreGroupRID);
                 }
                 else
                 {
@@ -2236,6 +2249,68 @@ namespace MIDRetail.Business
             }
 
             return _dsForecastCopy;
+        }
+
+        private void LoadBasis()
+        {
+                _dtGroupLevel = MIDEnvironment.CreateDataTable("GroupLevel");
+                _dtGroupLevel.Columns.Add("SGL_RID", System.Type.GetType("System.Int32"));
+
+                _dtBasis = MIDEnvironment.CreateDataTable("Basis");
+
+                _dtBasis.Columns.Add("SGL_RID", System.Type.GetType("System.Int32")); //this column will be hidden.
+                _dtBasis.Columns.Add("DETAIL_SEQ", System.Type.GetType("System.Int32")); //this column will be hidden.
+                _dtBasis.Columns.Add("Merchandise", System.Type.GetType("System.String"));
+                _dtBasis.Columns.Add("HN_RID", System.Type.GetType("System.Int32")); //this column will be hidden.
+                _dtBasis.Columns.Add("FV_RID", System.Type.GetType("System.Int32")); //this column will be hidden.
+                _dtBasis.Columns.Add("DateRange", System.Type.GetType("System.String"));
+                _dtBasis.Columns.Add("CDR_RID", System.Type.GetType("System.Int32")); //this column will be hidden.
+                _dtBasis.Columns.Add("WEIGHT", System.Type.GetType("System.Decimal"));
+                _dtBasis.Columns.Add("INCLUDE_EXCLUDE", System.Type.GetType("System.Int32")); //this column will be hidden. We'll use the buttons column for display.
+                _dtBasis.Columns.Add("IncludeButton", System.Type.GetType("System.String")); //button column for include/exclude
+
+                if (_dsForecastCopy != null)
+                {
+                    _dtGroupLevel = _dsForecastCopy.Tables["GroupLevel"];
+                    _dtBasis = _dsForecastCopy.Tables["Basis"];
+                }
+                else
+                {
+                    _dsForecastCopy = MIDEnvironment.CreateDataSet();
+                    _dsForecastCopy.Tables.Add(_dtGroupLevel);
+                    _dsForecastCopy.Tables.Add(_dtBasis);
+                }
+
+                _dtBasis.Columns["WEIGHT"].DefaultValue = 1;
+
+        }
+
+        private void SaveBasisForSetValues(int aSetValue)
+        {
+            DataRow setRow = null;
+            foreach (DataRow row in _dtGroupLevel.Rows)
+            {
+                if ((int)row["SGL_RID"] == aSetValue)
+                {
+                    setRow = row;
+                    break;
+                }
+            }
+            if (setRow == null)
+            {
+                if (_dtBasis.DefaultView.Count > 0)
+                {
+                    setRow = _dtGroupLevel.NewRow();
+                    _dtGroupLevel.Rows.Add(setRow);
+                    setRow["SGL_RID"] = aSetValue;
+                    _dtGroupLevel.AcceptChanges();
+                }
+            }
+            else if (_dtBasis.DefaultView.Count == 0)
+            {
+                _dtGroupLevel.Rows.Remove(setRow);
+                _dtGroupLevel.AcceptChanges();
+            }
         }
 
         override public ROMethodProperties MethodCopyData()
