@@ -536,6 +536,7 @@ namespace Logility.ROWeb
                     }
                     _ABM.Key = Include.NoRID;  // always use NoRID (-1) as key to save new methods
                     _ABM.Name = methodParm.ROMethodProperties.Method.Value;
+                    _ABM.User_RID = methodParm.ROMethodProperties.UserKey;
                     cleanseName = true;
                 }
                 else
