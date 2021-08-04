@@ -163,6 +163,10 @@ namespace MIDRetail.Windows
             if (_calendarDateSelector.DateRangeRID != iDateRangeRID)
             {
                 _calendarDateSelector.DateRangeRID = iDateRangeRID;
+                if (_anchorWeek != null)
+                {
+                    _calendarDateSelector.AnchorDate = _anchorWeek;
+                }
                 _calendarDateSelector.SetUp(iDateRangeRID);
             }
 
