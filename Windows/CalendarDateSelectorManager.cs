@@ -48,7 +48,18 @@ namespace MIDRetail.Windows
         {
             _calendarDateSelector.DateRangeRID = iDateRangeRID;
 			_calendarDateSelector.AnchorDateRelativeTo = anchorDateRelativeTo;
-            if (iAnchorDateRangeRID != Include.UndefinedCalendarDateRange)
+            if (anchorDateRelativeTo == eDateRangeRelativeTo.StoreOpen
+                && iAnchorDateRangeRID > 1)  // must be store key
+            {
+                StoreProfile storeProfile = StoreMgmt.StoreProfile_Get(iAnchorDateRangeRID);
+                if (storeProfile != null
+                    && storeProfile.SellingOpenDt != _nullDate)
+                {
+                    DayProfile dayProfile = _SAB.ClientServerSession.Calendar.GetDay(storeProfile.SellingOpenDt);
+                    _calendarDateSelector.AnchorDate = dayProfile;
+                }
+            }
+            else if (iAnchorDateRangeRID != Include.UndefinedCalendarDateRange)
             {
                 _calendarDateSelector.AnchorDateRangeRID = iAnchorDateRangeRID;
             }
@@ -193,6 +204,19 @@ namespace MIDRetail.Windows
                     && anchorDateKey != Include.UndefinedCalendarDateRange)
                 {
                     dateRangeProfile = _calendar.GetDateRange(iDateRangeRID, anchorDateKey);
+                }
+                else if (dateRangeProfile.RelativeTo == eDateRangeRelativeTo.StoreOpen
+                    && anchorDateKey != Include.UndefinedCalendarDateRange)
+                {
+                    StoreProfile storeProfile = StoreMgmt.StoreProfile_Get(anchorDateKey);
+                    DayProfile dayProfile = null;
+                    if (storeProfile != null
+                        && storeProfile.SellingOpenDt != _nullDate)
+                    {
+                        dayProfile = _SAB.ClientServerSession.Calendar.GetDay(storeProfile.SellingOpenDt);
+
+                    }
+                    dateRangeProfile = _calendar.GetDateRange(iDateRangeRID, dayProfile);
                 }
             }
             return dateRangeProfile;
