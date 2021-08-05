@@ -1846,7 +1846,9 @@ namespace MIDRetail.Business
 
             ROMethodCopyForecastProperties method;
 
-            if (_dsForecastCopy == null)
+            if (_dsForecastCopy == null
+                || _dtGroupLevel == null
+                || _dtBasis == null)
             {
                 LoadBasis();
             }
@@ -2035,7 +2037,9 @@ namespace MIDRetail.Business
                 _overrideLowLevelRid = rOMethodCopyForecastProperties.OverrideLowLevel.OverrideLowLevelsModel.Key;
                 _copyPreInitValues = rOMethodCopyForecastProperties.CopyPreInitValues;
 
-                if (_dsForecastCopy == null)
+                if (_dsForecastCopy == null
+                    || _dtGroupLevel == null
+                    || _dtBasis == null)
                 {
                     LoadBasis();
                 }
