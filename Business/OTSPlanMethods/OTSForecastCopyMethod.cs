@@ -1916,6 +1916,34 @@ namespace MIDRetail.Business
             if (_hierNodeRid > 0)
             {
                 BuildLowLevelLists(method: method);
+                // remove entries in to level list that are before the selected from level
+                if (method.FromLevel != null
+                    && method.FromLevel.LevelType != eROLevelsType.None)
+                {
+                    int toOffset = -1;
+                    foreach (KeyValuePair<int, string> level in method.FromLevels)
+                    {
+                        ++toOffset;
+                        if (method.FromLevel.LevelType == eROLevelsType.HierarchyLevel)
+                        {
+                            if (method.FromLevel.LevelSequence == level.Key)
+                            {
+                                break;
+                            }
+                        }
+                        else if (method.FromLevel.LevelType == eROLevelsType.LevelOffset)
+                        {
+                            if (method.FromLevel.LevelOffset == level.Key)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    for (int i = 0; i < toOffset; i++)
+                    {
+                        method.ToLevels.RemoveAt(0);
+                    }
+                }
             }
 
             return method;
