@@ -1943,6 +1943,48 @@ namespace MIDRetail.Business
                     {
                         method.ToLevels.RemoveAt(0);
                     }
+                    // set to first level if no longer in the list
+                    if (method.ToLevel != null
+                        && method.ToLevel.LevelType != eROLevelsType.None)
+                    {
+                        bool foundToLevel = false;
+                        foreach (KeyValuePair<int, string> level in method.ToLevels)
+                        {
+                            if (method.ToLevel.LevelType == eROLevelsType.HierarchyLevel)
+                            {
+                                if (method.ToLevel.LevelSequence == level.Key)
+                                {
+                                    foundToLevel = true;
+                                    break;
+                                }
+                            }
+                            else if (method.ToLevel.LevelType == eROLevelsType.LevelOffset)
+                            {
+                                if (method.ToLevel.LevelOffset == level.Key)
+                                {
+                                    foundToLevel = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!foundToLevel)  // set to the first entry
+                        {
+                            if (method.ToLevel.LevelType == eROLevelsType.HierarchyLevel)
+                            {
+                                method.ToLevel.LevelSequence = method.ToLevels[0].Key;
+                            }
+                            else if (method.ToLevel.LevelType == eROLevelsType.LevelOffset)
+                            {
+                                method.ToLevel.LevelOffset = method.ToLevels[0].Key;
+                            }
+                            method.ToLevel.LevelValue = GetName.GetLevelName(
+                                           levelType: method.ToLevel.LevelType,
+                                           levelSequence: method.ToLevel.LevelSequence,
+                                           levelOffset: method.ToLevel.LevelOffset,
+                                           SAB: SAB
+                                           );
+                        }
+                    }
                 }
             }
 
