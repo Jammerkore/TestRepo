@@ -2869,7 +2869,8 @@ namespace MIDRetail.Business
                             ePlanLevelLevelType.HierarchyLevel,
                             hierarchyProfile.Key,
                             0,
-                            nodeProfile.NodeID
+                            //nodeProfile.NodeID
+                            "+0"
                             ));
                         }
                         startLevel = 1;
