@@ -1916,10 +1916,84 @@ namespace MIDRetail.Business
             if (_hierNodeRid > 0)
             {
                 BuildLowLevelLists(method: method);
-                // remove entries in to level list that are before the selected from level
+                
+               
                 if (method.FromLevel != null
                     && method.FromLevel.LevelType != eROLevelsType.None)
                 {
+                    // if different hierarchy types, update from level to 1st from entry
+                    if (method.FromLevel != null
+                        && !LevelTypesSame(
+                            merchandiseType: method.FromLevelsType,
+                            ROLevelType: method.FromLevel.LevelType)
+                        )
+                    {
+                        if (method.FromLevels.Count == 0)
+                        {
+                            FromLevelType = eFromLevelsType.None;
+                            FromLevelOffset = -1;
+                            FromLevelSequence = -1;
+                        }
+                        else if (method.FromLevelsType == eMerchandiseType.HierarchyLevel)
+                        {
+                            FromLevelType = eFromLevelsType.HierarchyLevel;
+                            FromLevelOffset = -1;
+                            FromLevelSequence = method.FromLevels[0].Key;
+                        }
+                        else
+                        {
+                            FromLevelType = eFromLevelsType.LevelOffset;
+                            FromLevelOffset = method.FromLevels[0].Key;
+                            FromLevelSequence = -1;
+                        }
+                        method.FromLevel = new ROLevelInformation();
+                        method.FromLevel.LevelType = (eROLevelsType)FromLevelType;
+                        method.FromLevel.LevelOffset = FromLevelOffset;
+                        method.FromLevel.LevelSequence = FromLevelSequence;
+                        method.FromLevel.LevelValue = GetName.GetLevelName(
+                            levelType: (eROLevelsType)FromLevelType,
+                            levelSequence: FromLevelSequence,
+                            levelOffset: FromLevelOffset,
+                            SAB: SAB
+                            );
+                    }
+                    if (method.ToLevel != null
+                        && !LevelTypesSame(
+                            merchandiseType: method.ToLevelsType,
+                            ROLevelType: method.ToLevel.LevelType)
+                        )
+                    {
+                        if (method.ToLevels.Count == 0)
+                        {
+                            ToLevelType = eToLevelsType.None;
+                            ToLevelOffset = -1;
+                            ToLevelSequence = -1;
+                        }
+                        else if (method.ToLevelsType == eMerchandiseType.HierarchyLevel)
+                        {
+                            ToLevelType = eToLevelsType.HierarchyLevel;
+                            ToLevelOffset = -1;
+                            ToLevelSequence = method.ToLevels[0].Key;
+                        }
+                        else
+                        {
+                            ToLevelType = eToLevelsType.LevelOffset;
+                            ToLevelOffset = method.ToLevels[0].Key;
+                            ToLevelSequence = -1;
+                        }
+                        method.ToLevel = new ROLevelInformation();
+                        method.ToLevel.LevelType = (eROLevelsType)ToLevelType;
+                        method.ToLevel.LevelOffset = ToLevelOffset;
+                        method.ToLevel.LevelSequence = ToLevelSequence;
+                        method.ToLevel.LevelValue = GetName.GetLevelName(
+                           levelType: (eROLevelsType)ToLevelType,
+                           levelSequence: ToLevelSequence,
+                           levelOffset: ToLevelOffset,
+                           SAB: SAB
+                           );
+                    }
+
+                    // remove entries in to level list that are before the selected from level
                     int toOffset = -1;
                     foreach (KeyValuePair<int, string> level in method.FromLevels)
                     {
@@ -1989,6 +2063,23 @@ namespace MIDRetail.Business
             }
 
             return method;
+        }
+
+        private bool LevelTypesSame(eMerchandiseType merchandiseType, eROLevelsType ROLevelType)
+        {
+            if (merchandiseType == eMerchandiseType.HierarchyLevel
+                && ROLevelType == eROLevelsType.HierarchyLevel)
+            {
+                return true;
+            }
+
+            if (merchandiseType == eMerchandiseType.LevelOffset
+                && ROLevelType == eROLevelsType.LevelOffset)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private void BuildVersionLists(ROMethodCopyForecastProperties method)
