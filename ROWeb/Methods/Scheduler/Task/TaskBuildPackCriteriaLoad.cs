@@ -202,7 +202,7 @@ namespace Logility.ROWeb
             headerDataRow["FILE_PROCESSING_DIRECTION"] = taskData.ProcessingDirection;
             headerDataRow["INPUT_DIRECTORY"] = taskData.Directory;
             headerDataRow["FILE_MASK"] = taskData.FlagFileSuffix;
-            headerDataRow["CONCURRENT_FILES"] = taskData.ConcurrentFiles;
+            headerDataRow["CONCURRENT_FILES"] = 1;
             headerDataRow["RUN_UNTIL_FILE_PRESENT_IND"] = taskData.EnableRunSuffix ? "1" : "0";
             headerDataRow["RUN_UNTIL_FILE_MASK"] = taskData.RunSuffix;
             TaskData.Rows.Add(headerDataRow);
