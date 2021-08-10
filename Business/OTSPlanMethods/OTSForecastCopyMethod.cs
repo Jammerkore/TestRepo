@@ -1916,8 +1916,10 @@ namespace MIDRetail.Business
             if (_hierNodeRid > 0)
             {
                 BuildLowLevelLists(method: method);
-                
-               
+
+                bool setFromToFirstEntry = false;
+                bool setToToFirstEntry = false;
+                int toOffset = -1;
                 if (method.FromLevel != null
                     && method.FromLevel.LevelType != eROLevelsType.None)
                 {
@@ -1927,6 +1929,81 @@ namespace MIDRetail.Business
                             merchandiseType: method.FromLevelsType,
                             ROLevelType: method.FromLevel.LevelType)
                         )
+                    {
+                        setFromToFirstEntry = true;
+                    }
+                    else
+                    {
+                        // set from to first entry if no longer in the list
+                        // keep track of level offset so know how many to levels to remove
+                        setFromToFirstEntry = true;
+                        foreach (KeyValuePair<int, string> level in method.FromLevels)
+                        {
+                            ++toOffset;
+                            if (method.FromLevel.LevelType == eROLevelsType.HierarchyLevel)
+                            {
+                                if (method.FromLevel.LevelSequence == level.Key)
+                                {
+                                    setFromToFirstEntry = false;
+                                    break;
+                                }
+                            }
+                            else if (method.FromLevel.LevelType == eROLevelsType.LevelOffset)
+                            {
+                                if (method.FromLevel.LevelOffset == level.Key)
+                                {
+                                    setFromToFirstEntry = false;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    // if different hierarchy types, update from level to 1st from entry
+                    if (method.ToLevel != null
+                        && !LevelTypesSame(
+                            merchandiseType: method.ToLevelsType,
+                            ROLevelType: method.ToLevel.LevelType)
+                        )
+                    {
+                        setToToFirstEntry = true;
+                    }
+                    else
+                    {
+                        // remove entries in to level list that are before the selected from level
+                        if (!setFromToFirstEntry)
+                        {
+                            for (int i = 0; i < toOffset; i++)
+                            {
+                                method.ToLevels.RemoveAt(0);
+                            }
+                        }
+
+                        // set To to first entry if no longer in the list
+                        setToToFirstEntry = true;
+                        foreach (KeyValuePair<int, string> level in method.ToLevels)
+                        {
+                            if (method.ToLevel.LevelType == eROLevelsType.HierarchyLevel)
+                            {
+                                if (method.ToLevel.LevelSequence == level.Key)
+                                {
+                                    setToToFirstEntry = false;
+                                    break;
+                                }
+                            }
+                            else if (method.ToLevel.LevelType == eROLevelsType.LevelOffset)
+                            {
+                                if (method.ToLevel.LevelOffset == level.Key)
+                                {
+                                    setToToFirstEntry = false;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    
+                    // set selected values to first entry if no longer in the list
+                    if (setFromToFirstEntry)
                     {
                         if (method.FromLevels.Count == 0)
                         {
@@ -1957,11 +2034,8 @@ namespace MIDRetail.Business
                             SAB: SAB
                             );
                     }
-                    if (method.ToLevel != null
-                        && !LevelTypesSame(
-                            merchandiseType: method.ToLevelsType,
-                            ROLevelType: method.ToLevel.LevelType)
-                        )
+
+                    if (setToToFirstEntry)
                     {
                         if (method.ToLevels.Count == 0)
                         {
@@ -1991,73 +2065,6 @@ namespace MIDRetail.Business
                            levelOffset: ToLevelOffset,
                            SAB: SAB
                            );
-                    }
-
-                    // remove entries in to level list that are before the selected from level
-                    int toOffset = -1;
-                    foreach (KeyValuePair<int, string> level in method.FromLevels)
-                    {
-                        ++toOffset;
-                        if (method.FromLevel.LevelType == eROLevelsType.HierarchyLevel)
-                        {
-                            if (method.FromLevel.LevelSequence == level.Key)
-                            {
-                                break;
-                            }
-                        }
-                        else if (method.FromLevel.LevelType == eROLevelsType.LevelOffset)
-                        {
-                            if (method.FromLevel.LevelOffset == level.Key)
-                            {
-                                break;
-                            }
-                        }
-                    }
-                    for (int i = 0; i < toOffset; i++)
-                    {
-                        method.ToLevels.RemoveAt(0);
-                    }
-                    // set to first level if no longer in the list
-                    if (method.ToLevel != null
-                        && method.ToLevel.LevelType != eROLevelsType.None)
-                    {
-                        bool foundToLevel = false;
-                        foreach (KeyValuePair<int, string> level in method.ToLevels)
-                        {
-                            if (method.ToLevel.LevelType == eROLevelsType.HierarchyLevel)
-                            {
-                                if (method.ToLevel.LevelSequence == level.Key)
-                                {
-                                    foundToLevel = true;
-                                    break;
-                                }
-                            }
-                            else if (method.ToLevel.LevelType == eROLevelsType.LevelOffset)
-                            {
-                                if (method.ToLevel.LevelOffset == level.Key)
-                                {
-                                    foundToLevel = true;
-                                    break;
-                                }
-                            }
-                        }
-                        if (!foundToLevel)  // set to the first entry
-                        {
-                            if (method.ToLevel.LevelType == eROLevelsType.HierarchyLevel)
-                            {
-                                method.ToLevel.LevelSequence = method.ToLevels[0].Key;
-                            }
-                            else if (method.ToLevel.LevelType == eROLevelsType.LevelOffset)
-                            {
-                                method.ToLevel.LevelOffset = method.ToLevels[0].Key;
-                            }
-                            method.ToLevel.LevelValue = GetName.GetLevelName(
-                                           levelType: method.ToLevel.LevelType,
-                                           levelSequence: method.ToLevel.LevelSequence,
-                                           levelOffset: method.ToLevel.LevelOffset,
-                                           SAB: SAB
-                                           );
-                        }
                     }
                 }
             }
