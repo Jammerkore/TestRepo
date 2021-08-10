@@ -249,6 +249,7 @@ namespace MIDRetail.Windows
                 {
                     DayProfile dayProfile = _SAB.ClientServerSession.Calendar.GetDay(storeProfile.SellingOpenDt);
                     _anchorWeek = dayProfile.Week;
+                    _anchorPeriod = dayProfile.Period;
                 }
             }
 
@@ -348,6 +349,7 @@ namespace MIDRetail.Windows
                 {
                     DayProfile dayProfile = _SAB.ClientServerSession.Calendar.GetDay(storeProfile.SellingOpenDt);
                     _anchorWeek = dayProfile.Week;
+                    _anchorPeriod = dayProfile.Period;
                 }
             }
 
