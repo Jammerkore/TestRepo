@@ -1,0 +1,545 @@
+﻿using Logility.ROWebCommon;
+using Logility.ROWebSharedTypes;
+using MIDRetail.Business;
+using MIDRetail.Data;
+using MIDRetail.DataCommon;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data;
+using System.Globalization;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace Logility.ROWeb.Methods.Administration.Audit
+{
+    public class ROAuditContainer
+    {
+        //=======
+        // FIELDS
+        //=======
+        private SessionAddressBlock _SAB;
+        private ROWebTools _ROWebTools;
+        private long _ROInstanceID;
+        //private CharacteristicBase _characteristicsClass;
+
+        private filterTypes filterTypes;
+
+        //=============
+        // CONSTRUCTORS
+        //=============
+        public ROAuditContainer(SessionAddressBlock SAB, ROWebTools ROWebTools, long ROInstanceID)
+        {
+            _SAB = SAB;
+            _ROWebTools = ROWebTools;
+            _ROInstanceID = ROInstanceID;
+        }
+
+        //===========
+        // PROPERTIES
+        //===========
+
+        /// <summary>
+        /// Gets the SessionAddressBlock
+        /// </summary>
+        protected SessionAddressBlock SAB
+        {
+            get { return _SAB; }
+        }
+
+        /// <summary>
+        /// Gets the ROWebTools
+        /// </summary>
+        public ROWebTools ROWebTools
+        {
+            get { return _ROWebTools; }
+        }
+
+        /// <summary>
+        /// Gets the unique function ID
+        /// </summary>
+        protected long ROInstanceID
+        {
+            get { return _ROInstanceID; }
+        }
+
+        //===========
+        // METHODS
+        //===========
+
+        public void CleanUp()
+        {
+
+
+        }
+        public ROOut GetAuditFilterOption(ROProfileKeyParms parms)
+        {
+
+
+            if (parms.ProfileType == eProfileType.AuditFilter)
+            {
+                filterType = filterTypes.AuditFilter;
+            }
+            else
+            {
+                return new ROOut(eROReturnCode.Failure, "Profile Type or Filter Type Error", ROInstanceID);
+            }
+
+            try
+            {
+                ArrayList userRIDList = new ArrayList();
+                userRIDList.Add(Include.GlobalUserRID);
+                userRIDList.Add(SAB.ClientServerSession.UserRID);
+
+                FilterData fd = new FilterData();
+                DataTable dtFilters = fd.FilterReadForUser(filterType, userRIDList);
+
+
+                if (filterType == filterTypes.AuditFilter && dtFilters.Rows.Count == 0)     //create default audit filter
+                {
+                    int defaultAuditFilteRID = fd.InsertFilterForAuditDefault(SAB.ClientServerSession.UserRID);
+                    fd.InsertConditionForAuditDefault(defaultAuditFilteRID);
+                    DataRow drDefaultFilter = dtFilters.NewRow();
+                    drDefaultFilter["FILTER_RID"] = defaultAuditFilteRID;
+                    drDefaultFilter["USER_RID"] = SAB.ClientServerSession.UserRID;
+                    drDefaultFilter["FILTER_NAME"] = "Default Audit Filter";
+                    drDefaultFilter["OWNER_USER_RID"] = SAB.ClientServerSession.UserRID;
+                    drDefaultFilter["FILTER_USER_RID"] = SAB.ClientServerSession.UserRID;
+                    dtFilters.Rows.Add(drDefaultFilter);
+                }
+                int key = 0;
+                string value = string.Empty;
+
+                if (dtFilters.Rows.Count > 0)
+                {
+                    foreach (DataRow item in dtFilters.Rows)
+                    {
+                        key = Convert.ToInt32(item["FILTER_RID"]);
+                        value = item["FILTER_NAME"].ToString();
+                    }
+                }
+                eROReturnCode returnCode = eROReturnCode.Successful;
+                string message = null;
+                return new ROAuditFilterOption(returnCode, message, ROInstanceID,
+                        auditFilterOptions: new KeyValuePair<int, string>(key, value));
+
+            }
+            catch (Exception ex)
+            {
+
+                return new ROAuditFilterOption(eROReturnCode.Failure, ex.Message, ROInstanceID,
+                      auditFilterOptions: new KeyValuePair<int, string>());
+            }
+
+
+            //  return auditFilterOption;
+
+        }
+
+
+        private filterTypes filterType;
+        public int currentFilterRID = Include.NoRID;
+        private bool auditMergeDetails;
+        private bool auditIncludeSummary;
+        private bool auditIncludeDetails;
+        public ROOut GenerateAuditReport(ROProfileKeyParms parms)
+        {
+            // Add product filter to profile type
+            if (parms.ProfileType == eProfileType.AuditFilter || parms.ProfileType == eProfileType.AuditFilter)
+            {
+                this.currentFilterRID = parms.Key;
+                filterType = filterTypes.AuditFilter;
+            }
+            else
+            {
+                return new ROOut(eROReturnCode.Failure, "Profile Type or Filter Type Error", ROInstanceID);
+
+            }
+
+            var AuditResults = new List<AuditResult>();
+            try
+            {
+                filter f = filterDataHelper.LoadExistingFilter(this.currentFilterRID);
+                string sql = string.Empty;
+
+                if (filterType == filterTypes.ProductFilter)
+                {
+                    sql = filterEngineSQLforProducts.MakeSqlForFilter(f);
+                }
+                else if (filterType == filterTypes.AuditFilter)
+                {
+                    auditMergeDetails = false;
+                    auditIncludeSummary = true;
+                    auditIncludeDetails = true;
+
+                    bool mergeDetailsInSQL = false;
+                    if (auditIncludeDetails && auditMergeDetails)
+                    {
+                        mergeDetailsInSQL = true;
+                    }
+                    sql = filterEngineSQLforAudit.MakeSqlForFilter(f, mergeDetailsInSQL);
+
+                    AuditResults = StartProcess(sql);
+                }
+
+                if (AuditResults.Count > 0)
+                {
+                    return new ROAuditResult(eROReturnCode.Successful, "", ROInstanceID, AuditResults);
+                }
+                else
+                {
+                    return new ROAuditResult(eROReturnCode.Failure, "", ROInstanceID, null);
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                return new ROAuditResult(eROReturnCode.Failure, ex.Message, ROInstanceID, null);
+            }
+
+
+
+        }
+
+        private DataSet dsResults;
+        //
+        private List<AuditResult> StartProcess(string sql)
+        {
+            FilterData fd = new FilterData();
+            DataTable dt = fd.ExecuteSQLQuery(sql, "searchResults", 0); //TT#1430-MD -jsobek -Null reference after canceling a product search
+            dsResults = new DataSet();
+            dsResults.Tables.Add(dt);
+            dsResults = AfterExecutionForAudit(dsResults);
+            return ConvertDataSetTOModel(dsResults);
+        }
+
+
+        public List<AuditResult> ConvertDataSetTOModel(DataSet dataSet)
+        {
+            List<AuditResult> auditresultList = new List<AuditResult>();
+
+            // Assigning DataSet to Indivisual table
+            DataTable result = dataSet.Tables[0];
+            DataTable summaryRow = dataSet.Tables[1];
+            DataTable summary = dataSet.Tables[2];
+            DataTable detailsRow = dataSet.Tables[3];
+            DataTable details = dataSet.Tables[4];
+
+            foreach (DataRow item in result.Rows)
+            {
+                AuditResult resultDetail = new AuditResult();
+                resultDetail.ProcessRID = Convert.ToInt32(item["ProcessRID"]);
+                resultDetail.ProcessID = Convert.ToInt32(item["ProcessID"]);
+                resultDetail.Process = item["Process"].ToString();
+                resultDetail.User = item["User"].ToString();
+                resultDetail.ExecutionStatus = item["Execution Status"].ToString();
+                resultDetail.CompletionStatus = item["Completion Status"].ToString();
+                resultDetail.StartTime = item["Start Time"] != DBNull.Value ? item["Start Time"].ToString() : null;
+                resultDetail.StopTime = item["Stop Time"] != DBNull.Value ? item["Stop Time"].ToString() : null;
+                resultDetail.Duration = item["Duration"] != DBNull.Value ? item["Duration"].ToString() : null;
+                resultDetail.HigestMessageLevel = item.ToString();
+                resultDetail.Time = item["Time"] != DBNull.Value ? item["Time"].ToString() : null;
+                resultDetail.Module = item["Module"].ToString();
+                resultDetail.MessageLevel = item["MessageLevel"] != DBNull.Value ? item["MessageLevel"].ToString() : null;
+                resultDetail.Message = item["Message"] != DBNull.Value ? item["Message"].ToString() : null;
+                resultDetail.MessageDetails = item["Message Details"] != DBNull.Value ? item["Message Details"].ToString() : null;
+                resultDetail.AuditSummaryList = GetAuditSummary(Convert.ToInt32(item["ProcessRID"]), summary);
+                resultDetail.AuditSummaryRowList = GetAuditSummaryRow(Convert.ToInt32(item["ProcessRID"]), summaryRow);
+                resultDetail.AuditDetailsList = GetAuditDetails(Convert.ToInt32(item["ProcessRID"]), details);
+                resultDetail.AuditDetailsRowsList = GetAuditDetailsRow(Convert.ToInt32(item["ProcessRID"]), detailsRow);
+                auditresultList.Add(resultDetail);
+
+            }
+
+            return auditresultList;
+        }
+
+        private List<AuditDetails> GetAuditDetails(int processRID, DataTable detailsTable)
+        {
+            List<AuditDetails> detailsList = new List<AuditDetails>();
+
+            foreach (DataRow item in detailsTable.Rows)
+            {
+                AuditDetails details = new AuditDetails();
+                if (Convert.ToInt32(item["ProcessRID"]) == processRID)
+                {
+                    details.ProcessRID = Convert.ToInt32(item["ProcessRID"]);
+                    details.Time = Convert.ToDateTime(item["Time"]).ToString();
+                    details.Module = item["Module"].ToString();
+                    details.MessageLevel = item["MessageLevel"].ToString();
+                    details.MessageLevelText = item["MessageLevelText"].ToString();
+                    details.MessageCode = item["MessageCode"].ToString();
+                    details.Message = item["Message"].ToString();
+                    details.Message2 = item["Message2"].ToString();
+                    detailsList.Add(details);
+                }
+            }
+            return detailsList;
+        }
+
+        private List<AuditSummaryRow> GetAuditSummaryRow(int processRID, DataTable summaryRowTable)
+        {
+            List<AuditSummaryRow> summaryRowList = new List<AuditSummaryRow>();
+
+            foreach (DataRow item in summaryRowTable.Rows)
+            {
+                AuditSummaryRow summaryRow = new AuditSummaryRow();
+                if (Convert.ToInt32(item["ProcessRID"]) == processRID)
+                {
+                    summaryRow.ProcessRID = Convert.ToInt32(item["ProcessRID"]);
+                    summaryRow.ProcessID = Convert.ToInt32(item["ProcessID"]);
+                    summaryRow.NeedsLoaded = Convert.ToBoolean(item["NeedsLoaded"]);
+                    summaryRow.Text = item["Text"].ToString();
+                    summaryRowList.Add(summaryRow);
+                }
+            }
+            return summaryRowList;
+        }
+
+        private List<AuditDetailsRow> GetAuditDetailsRow(int processRID, DataTable detailsRowTable)
+        {
+            List<AuditDetailsRow> detailsRowList = new List<AuditDetailsRow>();
+
+            foreach (DataRow item in detailsRowTable.Rows)
+            {
+                AuditDetailsRow detailsRow = new AuditDetailsRow();
+                if (Convert.ToInt32(item["ProcessRID"]) == processRID)
+                {
+                    detailsRow.ProcessRID = Convert.ToInt32(item["ProcessRID"]);
+                    detailsRow.ProcessID = Convert.ToInt32(item["ProcessID"]);
+                    detailsRow.NeedsLoaded = Convert.ToBoolean(item["NeedsLoaded"]);
+                    detailsRow.Text = item["Text"].ToString();
+                    detailsRowList.Add(detailsRow);
+                }
+            }
+            return detailsRowList;
+        }
+
+        public List<AuditSummary> GetAuditSummary(int processRID, DataTable summaryTable)
+        {
+            List<AuditSummary> summaryList = new List<AuditSummary>();
+
+            foreach (DataRow item in summaryTable.Rows)
+            {
+                AuditSummary summary = new AuditSummary();
+                if (Convert.ToInt32(item["ProcessRID"]) == processRID)
+                {
+                    summary.ProcessRID = Convert.ToInt32(item["ProcessRID"]);
+                    summary.Item = item["Item"].ToString();
+                    summary.Value = item["Value"].ToString();
+                    summaryList.Add(summary);
+                }
+            }
+            return summaryList;
+        }
+
+        private DataSet AfterExecutionForAudit(DataSet ds)
+        {
+            ds.Tables[0].TableName = "Headers";
+            if (auditIncludeSummary && (auditIncludeDetails == false || auditMergeDetails == false))
+            {
+                DataTable auditSummaryRow = ds.Tables.Add("SummaryRow");
+                auditSummaryRow.Locale = ds.Tables[0].Locale;
+                auditSummaryRow.CaseSensitive = ds.Tables[0].CaseSensitive;
+
+                //Create Columns and rows for datatable
+                DataColumn dataColumn = new DataColumn();
+                dataColumn.DataType = System.Type.GetType("System.Boolean");
+                dataColumn.ColumnName = "NeedsLoaded";
+                dataColumn.ReadOnly = false;
+                dataColumn.Unique = false;
+                auditSummaryRow.Columns.Add(dataColumn);
+
+                dataColumn = new DataColumn();
+                dataColumn.DataType = System.Type.GetType("System.Int32");
+                dataColumn.ColumnName = "ProcessRID";
+                dataColumn.Caption = "ProcessRID";
+                dataColumn.ReadOnly = true;
+                dataColumn.Unique = false;
+                auditSummaryRow.Columns.Add(dataColumn);
+
+                dataColumn = new DataColumn();
+                dataColumn.DataType = System.Type.GetType("System.Int32");
+                dataColumn.ColumnName = "ProcessID";
+                dataColumn.Caption = "ProcessID";
+                dataColumn.ReadOnly = true;
+                dataColumn.Unique = false;
+                auditSummaryRow.Columns.Add(dataColumn);
+
+                dataColumn = new DataColumn();
+                dataColumn.DataType = System.Type.GetType("System.String");
+                dataColumn.ColumnName = "Text";
+                dataColumn.Caption = "Text";
+                dataColumn.ReadOnly = true;
+                dataColumn.Unique = false;
+                auditSummaryRow.Columns.Add(dataColumn);
+
+                // add summary counts for load processes
+                DataTable auditSummary = ds.Tables.Add("Summary");
+                auditSummary.Locale = ds.Tables[0].Locale;
+                auditSummary.CaseSensitive = ds.Tables[0].CaseSensitive;
+
+                //Create Columns and rows for datatable
+                dataColumn = new DataColumn();
+                dataColumn.DataType = System.Type.GetType("System.Int32");
+                dataColumn.ColumnName = "ProcessRID";
+                dataColumn.Caption = "ProcessRID";
+                dataColumn.ReadOnly = true;
+                dataColumn.Unique = false;
+                auditSummary.Columns.Add(dataColumn);
+
+                dataColumn = new DataColumn();
+                dataColumn.DataType = System.Type.GetType("System.String");
+                dataColumn.ColumnName = "Item";
+                dataColumn.Caption = "Item";
+                dataColumn.ReadOnly = true;
+                dataColumn.Unique = false;
+                auditSummary.Columns.Add(dataColumn);
+
+                dataColumn = new DataColumn();
+                dataColumn.DataType = System.Type.GetType("System.Int32");
+                dataColumn.ColumnName = "Value";
+                dataColumn.Caption = "Value";
+                dataColumn.ReadOnly = true;
+                dataColumn.Unique = false;
+                auditSummary.Columns.Add(dataColumn);
+
+                ds.Relations.Add("SummaryRow", ds.Tables["Headers"].Columns["ProcessRID"], ds.Tables["SummaryRow"].Columns["ProcessRID"]);
+
+                ds.Relations.Add("Summary", ds.Tables["SummaryRow"].Columns["ProcessRID"], ds.Tables["Summary"].Columns["ProcessRID"]);
+
+                foreach (DataRow dr in ds.Tables[0].Rows)
+                {
+                    ds.Tables["SummaryRow"].Rows.Add(new object[] { true, Convert.ToInt32(dr["ProcessRID"]), Convert.ToInt32(dr["ProcessID"], CultureInfo.CurrentUICulture), "Summary" });
+                }
+            }
+
+            if (auditIncludeDetails && auditMergeDetails == false)
+            {
+                // add detail header line
+                DataTable auditDetailRow = ds.Tables.Add("DetailRow");
+                auditDetailRow.Locale = ds.Tables[0].Locale;
+                auditDetailRow.CaseSensitive = ds.Tables[0].CaseSensitive;
+
+                //Create Columns and rows for datatable
+                DataColumn dataColumn = new DataColumn();
+                dataColumn.DataType = System.Type.GetType("System.Boolean");
+                dataColumn.ColumnName = "NeedsLoaded";
+                dataColumn.ReadOnly = false;
+                dataColumn.Unique = false;
+                auditDetailRow.Columns.Add(dataColumn);
+
+                dataColumn = new DataColumn();
+                dataColumn.DataType = System.Type.GetType("System.Int32");
+                dataColumn.ColumnName = "ProcessRID";
+                dataColumn.Caption = "ProcessRID";
+                dataColumn.ReadOnly = true;
+                dataColumn.Unique = false;
+                auditDetailRow.Columns.Add(dataColumn);
+
+                dataColumn = new DataColumn();
+                dataColumn.DataType = System.Type.GetType("System.Int32");
+                dataColumn.ColumnName = "ProcessID";
+                dataColumn.Caption = "ProcessID";
+                dataColumn.ReadOnly = true;
+                dataColumn.Unique = false;
+                auditDetailRow.Columns.Add(dataColumn);
+
+                dataColumn = new DataColumn();
+                dataColumn.DataType = System.Type.GetType("System.String");
+                dataColumn.ColumnName = "Text";
+                dataColumn.Caption = "Text";
+                dataColumn.ReadOnly = true;
+                dataColumn.Unique = false;
+                auditDetailRow.Columns.Add(dataColumn);
+
+                // add detail audit messages
+                DataTable auditDetails = ds.Tables.Add("Details");
+                auditDetails.Locale = ds.Tables[0].Locale;
+                auditDetails.CaseSensitive = ds.Tables[0].CaseSensitive;
+
+                //Create Columns and rows for datatable
+                dataColumn = new DataColumn();
+                dataColumn.DataType = System.Type.GetType("System.Int32");
+                dataColumn.ColumnName = "ProcessRID";
+                dataColumn.Caption = "ProcessRID";
+                dataColumn.ReadOnly = true;
+                dataColumn.Unique = false;
+                auditDetails.Columns.Add(dataColumn);
+
+                dataColumn = new DataColumn();
+                dataColumn.DataType = System.Type.GetType("System.String");
+                dataColumn.ColumnName = "Time";
+                dataColumn.Caption = "Time";
+                dataColumn.ReadOnly = true;
+                dataColumn.Unique = false;
+                auditDetails.Columns.Add(dataColumn);
+
+                dataColumn = new DataColumn();
+                dataColumn.DataType = System.Type.GetType("System.String");
+                dataColumn.ColumnName = "Module";
+                dataColumn.Caption = "Module";
+                dataColumn.ReadOnly = true;
+                dataColumn.Unique = false;
+                auditDetails.Columns.Add(dataColumn);
+
+                dataColumn = new DataColumn();
+                dataColumn.DataType = System.Type.GetType("System.Int32");
+                dataColumn.ColumnName = "MessageLevel";
+                dataColumn.Caption = "MessageLevel";
+                dataColumn.ReadOnly = true;
+                dataColumn.Unique = false;
+                auditDetails.Columns.Add(dataColumn);
+
+                dataColumn = new DataColumn();
+                dataColumn.DataType = System.Type.GetType("System.String");
+                dataColumn.ColumnName = "MessageLevelText";
+                dataColumn.Caption = "Message Level";
+                dataColumn.ReadOnly = true;
+                dataColumn.Unique = false;
+                auditDetails.Columns.Add(dataColumn);
+
+                dataColumn = new DataColumn();
+                dataColumn.DataType = System.Type.GetType("System.Int32");
+                dataColumn.ColumnName = "MessageCode";
+                dataColumn.Caption = "MessageCode";
+                dataColumn.ReadOnly = true;
+                dataColumn.Unique = false;
+                auditDetails.Columns.Add(dataColumn);
+
+                dataColumn = new DataColumn();
+                dataColumn.DataType = System.Type.GetType("System.String");
+                dataColumn.ColumnName = "Message";
+                dataColumn.Caption = "Message";
+                dataColumn.ReadOnly = true;
+                dataColumn.Unique = false;
+                auditDetails.Columns.Add(dataColumn);
+
+                dataColumn = new DataColumn();
+                dataColumn.DataType = System.Type.GetType("System.String");
+                dataColumn.ColumnName = "Message2";
+                dataColumn.Caption = "Message Details";
+                dataColumn.ReadOnly = true;
+                dataColumn.Unique = false;
+                auditDetails.Columns.Add(dataColumn);
+
+                ds.Relations.Add("DetailRow", ds.Tables["Headers"].Columns["ProcessRID"], ds.Tables["DetailRow"].Columns["ProcessRID"]);
+                ds.Relations.Add("Details", ds.Tables["DetailRow"].Columns["ProcessRID"], ds.Tables["Details"].Columns["ProcessRID"]);
+
+                foreach (DataRow dr in ds.Tables[0].Rows)
+                {
+                    ds.Tables["DetailRow"].Rows.Add(new object[] { true, Convert.ToInt32(dr["ProcessRID"], CultureInfo.CurrentUICulture), Convert.ToInt32(dr["ProcessID"], CultureInfo.CurrentUICulture), "Details" });
+                }
+
+
+            }
+
+            return ds;
+
+        }
+
+    }
+}

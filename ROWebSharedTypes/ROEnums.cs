@@ -125,6 +125,8 @@
         CopyModel,
         DeleteModel,
         ApplyModel,
+        AuditFilterOption,
+        AuditGenerateReport,
 
         // Common
         GetFilters,

@@ -140,6 +140,16 @@ namespace Logility.ROWebSharedTypes
         public ROStoreProfile ROStoreProfile { get { return _ROStoreProfile; } }
 
     }
+    [DataContract(Name = "ROAuditFilterOption", Namespace = "http://Logility.ROWeb/")]
+    public class ROAuditFilterOption : ROOut
+    {
+        [DataMember(IsRequired = true)]
+        KeyValuePair<int, string> _auditFilterOptions;
+        public ROAuditFilterOption(eROReturnCode ROReturnCode, string sROMessage, long ROInstanceID, KeyValuePair<int, string> auditFilterOptions) : base(ROReturnCode, sROMessage, ROInstanceID)
+        {
+            _auditFilterOptions = auditFilterOptions;
+        }
+    }
 
     [DataContract(Name = "ROAllStoresProfilesOut", Namespace = "http://Logility.ROWeb/")]
     public class ROAllStoresProfilesOut : ROOut
@@ -167,5 +177,84 @@ namespace Logility.ROWebSharedTypes
 
         public List<ROStoreProfile> DeletedStores { get { return _deletedStores; } }
 
+
+
+
     }
+
+
+    [DataContract(Name = "ROAuditResult", Namespace = "http://Logility.ROWeb/")]
+    public class ROAuditResult : ROOut
+    {
+        [DataMember(IsRequired = true)]
+        public List<AuditResult> _auditResults { get; set; }
+        public ROAuditResult(eROReturnCode ROReturnCode, string sROMessage, long ROInstanceID, List<AuditResult> AuditResults) : base(ROReturnCode, sROMessage, ROInstanceID)
+        {
+            _auditResults = AuditResults;
+        }
+
+    }
+
+    public class AuditResult
+    {
+        public AuditResult()
+        {
+            AuditSummaryList = new List<AuditSummary>();
+            AuditSummaryRowList = new List<AuditSummaryRow>();
+            AuditDetailsRowsList = new List<AuditDetailsRow>();
+            AuditDetailsList = new List<AuditDetails>();
+        }
+        public int ProcessRID { get; set; }
+        public int ProcessID { get; set; }
+        public string Process { get; set; }
+        public string User { get; set; }
+        public string ExecutionStatus { get; set; }
+        public string CompletionStatus { get; set; }
+        public string StartTime { get; set; }
+        public string StopTime { get; set; } 
+        public string Duration { get; set; }
+        public string HigestMessageLevel { get; set; }
+        public string Time { get; set; }
+        public string Module { get; set; } 
+        public string MessageLevel { get; set; } 
+        public string Message { get; set; }
+        public string MessageDetails { get; set; }
+        public List<AuditSummary> AuditSummaryList { get; set; }
+        public List<AuditSummaryRow> AuditSummaryRowList { get; set; }
+        public List<AuditDetailsRow> AuditDetailsRowsList { get; set; }
+        public List<AuditDetails> AuditDetailsList { get; set; }
+    }
+    public class AuditSummaryRow
+    {
+        public bool NeedsLoaded { get; set; }
+        public int ProcessRID { get; set; }
+        public int ProcessID { get; set; }
+        public string Text { get; set; }
+    }
+
+    public class AuditSummary
+    {
+        public int ProcessRID { get; set; }
+        public string  Item { get; set; }
+        public string Value { get; set; }
+    }
+    public class AuditDetailsRow
+    {
+        public bool NeedsLoaded { get; set; }
+        public int ProcessRID { get; set; }
+        public int ProcessID { get; set; }
+        public string Text { get; set; }
+    }
+    public class AuditDetails
+    {
+        public int ProcessRID { get; set; }
+        public string Time { get; set; }
+        public string Module { get; set; }
+        public string MessageLevel { get; set; }
+        public string MessageLevelText { get; set; }
+        public string MessageCode { get; set; }
+        public string Message { get; set; }
+        public string Message2 { get; set; }
+    }
+
 }

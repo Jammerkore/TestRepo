@@ -1,4 +1,5 @@
 ﻿
+using Logility.ROWeb.Methods.Administration.Audit;
 using Logility.ROWebCommon;
 using Logility.ROWebSharedTypes;
 using MIDRetail.Business;
@@ -11,6 +12,7 @@ namespace Logility.ROWeb
     {
         private ROCharacteristicMaintenance _ROCharacteristicMaintenance = null;
         private ROModelMaintenance _ROModelMaintenance = null;
+        private ROAuditContainer _ROAuditContainer = null;
 
         /// <summary>
         /// Creates an instance of the class 
@@ -46,6 +48,18 @@ namespace Logility.ROWeb
                 return _ROModelMaintenance;
             }
         }
+        public ROAuditContainer ROAuditContainer
+        {
+            get
+            {
+                if (_ROAuditContainer == null)
+                {
+                    _ROAuditContainer = new ROAuditContainer(SAB: SAB, ROWebTools: ROWebTools, ROInstanceID: ROInstanceID);
+                }
+                return _ROAuditContainer;
+            }
+        }
+
 
         override public void CleanUp()
         {
@@ -90,6 +104,11 @@ namespace Logility.ROWeb
                 case eRORequest.DeleteCharacteristic:
                     return ROCharacteristicMaintenance.DeleteCharacteristics(parms);
 
+                //Audit 
+                case eRORequest.AuditFilterOption:
+                    return ROAuditContainer.GetAuditFilterOption((ROProfileKeyParms)parms);
+                case eRORequest.AuditGenerateReport:
+                    return ROAuditContainer.GenerateAuditReport((ROProfileKeyParms)parms);
 
                 //Models
                 case eRORequest.GetModels:

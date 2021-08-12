@@ -77,6 +77,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Methods\Administration\Administration.cs" />
+    <Compile Include="Methods\Administration\Audit\AuditContainer.cs" />
     <Compile Include="Methods\Administration\Models\ModelBase.cs" />
     <Compile Include="Methods\Administration\Models\ModelEligibility.cs" />
     <Compile Include="Methods\Administration\Models\ModelMaintenance.cs" />
