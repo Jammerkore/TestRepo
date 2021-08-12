@@ -144,7 +144,7 @@ namespace Logility.ROWebSharedTypes
     public class ROAuditFilterOption : ROOut
     {
         [DataMember(IsRequired = true)]
-        KeyValuePair<int, string> _auditFilterOptions;
+        public KeyValuePair<int, string> _auditFilterOptions;
         public ROAuditFilterOption(eROReturnCode ROReturnCode, string sROMessage, long ROInstanceID, KeyValuePair<int, string> auditFilterOptions) : base(ROReturnCode, sROMessage, ROInstanceID)
         {
             _auditFilterOptions = auditFilterOptions;
@@ -200,8 +200,6 @@ namespace Logility.ROWebSharedTypes
         public AuditResult()
         {
             AuditSummaryList = new List<AuditSummary>();
-            AuditSummaryRowList = new List<AuditSummaryRow>();
-            AuditDetailsRowsList = new List<AuditDetailsRow>();
             AuditDetailsList = new List<AuditDetails>();
         }
         public int ProcessRID { get; set; }
@@ -211,17 +209,15 @@ namespace Logility.ROWebSharedTypes
         public string ExecutionStatus { get; set; }
         public string CompletionStatus { get; set; }
         public string StartTime { get; set; }
-        public string StopTime { get; set; } 
+        public string StopTime { get; set; }
         public string Duration { get; set; }
-        public string HigestMessageLevel { get; set; }
+        public string HighestMessageLevel { get; set; }
         public string Time { get; set; }
-        public string Module { get; set; } 
-        public string MessageLevel { get; set; } 
+        public string Module { get; set; }
+        public string MessageLevel { get; set; }
         public string Message { get; set; }
         public string MessageDetails { get; set; }
         public List<AuditSummary> AuditSummaryList { get; set; }
-        public List<AuditSummaryRow> AuditSummaryRowList { get; set; }
-        public List<AuditDetailsRow> AuditDetailsRowsList { get; set; }
         public List<AuditDetails> AuditDetailsList { get; set; }
     }
     public class AuditSummaryRow
@@ -235,7 +231,7 @@ namespace Logility.ROWebSharedTypes
     public class AuditSummary
     {
         public int ProcessRID { get; set; }
-        public string  Item { get; set; }
+        public string Item { get; set; }
         public string Value { get; set; }
     }
     public class AuditDetailsRow

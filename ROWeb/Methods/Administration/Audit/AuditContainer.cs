@@ -223,10 +223,6 @@ namespace Logility.ROWeb.Methods.Administration.Audit
 
             // Assigning DataSet to Indivisual table
             DataTable result = dataSet.Tables[0];
-            DataTable summaryRow = dataSet.Tables[1];
-            DataTable summary = dataSet.Tables[2];
-            DataTable detailsRow = dataSet.Tables[3];
-            DataTable details = dataSet.Tables[4];
 
             foreach (DataRow item in result.Rows)
             {
@@ -240,16 +236,15 @@ namespace Logility.ROWeb.Methods.Administration.Audit
                 resultDetail.StartTime = item["Start Time"] != DBNull.Value ? item["Start Time"].ToString() : null;
                 resultDetail.StopTime = item["Stop Time"] != DBNull.Value ? item["Stop Time"].ToString() : null;
                 resultDetail.Duration = item["Duration"] != DBNull.Value ? item["Duration"].ToString() : null;
-                resultDetail.HigestMessageLevel = item.ToString();
+                resultDetail.HighestMessageLevel = item["Highest Message Level"].ToString();
                 resultDetail.Time = item["Time"] != DBNull.Value ? item["Time"].ToString() : null;
                 resultDetail.Module = item["Module"].ToString();
                 resultDetail.MessageLevel = item["MessageLevel"] != DBNull.Value ? item["MessageLevel"].ToString() : null;
                 resultDetail.Message = item["Message"] != DBNull.Value ? item["Message"].ToString() : null;
                 resultDetail.MessageDetails = item["Message Details"] != DBNull.Value ? item["Message Details"].ToString() : null;
-                resultDetail.AuditSummaryList = GetAuditSummary(Convert.ToInt32(item["ProcessRID"]), summary);
-                resultDetail.AuditSummaryRowList = GetAuditSummaryRow(Convert.ToInt32(item["ProcessRID"]), summaryRow);
-                resultDetail.AuditDetailsList = GetAuditDetails(Convert.ToInt32(item["ProcessRID"]), details);
-                resultDetail.AuditDetailsRowsList = GetAuditDetailsRow(Convert.ToInt32(item["ProcessRID"]), detailsRow);
+                resultDetail.AuditSummaryList = GetAuditSummary(Convert.ToInt32(item["ProcessRID"]), dataSet);
+                resultDetail.AuditDetailsList = GetAuditDetails(Convert.ToInt32(item["ProcessRID"]), dataSet);
+              
                 auditresultList.Add(resultDetail);
 
             }
@@ -257,9 +252,14 @@ namespace Logility.ROWeb.Methods.Administration.Audit
             return auditresultList;
         }
 
-        private List<AuditDetails> GetAuditDetails(int processRID, DataTable detailsTable)
+        private List<AuditDetails> GetAuditDetails(int processRID, DataSet dataSet)
         {
             List<AuditDetails> detailsList = new List<AuditDetails>();
+
+            DataTable detailsRow = dataSet.Tables["DetailRow"];
+            var detailsRowResult = GetAuditDetailsRow(processRID, detailsRow);
+            DataSet ds = GetAuditDetailsByProcessType(detailsRowResult, dataSet);
+            DataTable detailsTable = ds.Tables["Details"];
 
             foreach (DataRow item in detailsTable.Rows)
             {
@@ -280,46 +280,61 @@ namespace Logility.ROWeb.Methods.Administration.Audit
             return detailsList;
         }
 
-        private List<AuditSummaryRow> GetAuditSummaryRow(int processRID, DataTable summaryRowTable)
+        private DataSet GetAuditDetailsByProcessType(AuditDetailsRow detailsRowResult, DataSet ds)
         {
-            List<AuditSummaryRow> summaryRowList = new List<AuditSummaryRow>();
+          
+                if (detailsRowResult.NeedsLoaded)
+                {
+                    AuditUtility.AddDetail(Convert.ToInt32(detailsRowResult.ProcessRID, CultureInfo.CurrentUICulture), ds);
+                }
+            return ds;
+            
+        }
 
+        private AuditSummaryRow GetAuditSummaryRow(int processRID, DataTable summaryRowTable)
+        {
+
+            AuditSummaryRow summaryRow = new AuditSummaryRow();
             foreach (DataRow item in summaryRowTable.Rows)
             {
-                AuditSummaryRow summaryRow = new AuditSummaryRow();
+               
                 if (Convert.ToInt32(item["ProcessRID"]) == processRID)
                 {
                     summaryRow.ProcessRID = Convert.ToInt32(item["ProcessRID"]);
                     summaryRow.ProcessID = Convert.ToInt32(item["ProcessID"]);
                     summaryRow.NeedsLoaded = Convert.ToBoolean(item["NeedsLoaded"]);
                     summaryRow.Text = item["Text"].ToString();
-                    summaryRowList.Add(summaryRow);
+                    
                 }
             }
-            return summaryRowList;
+            return summaryRow;
         }
 
-        private List<AuditDetailsRow> GetAuditDetailsRow(int processRID, DataTable detailsRowTable)
+        private AuditDetailsRow GetAuditDetailsRow(int processRID, DataTable detailsRowTable)
         {
-            List<AuditDetailsRow> detailsRowList = new List<AuditDetailsRow>();
+            AuditDetailsRow detailsRow = new AuditDetailsRow();
 
             foreach (DataRow item in detailsRowTable.Rows)
             {
-                AuditDetailsRow detailsRow = new AuditDetailsRow();
+               
                 if (Convert.ToInt32(item["ProcessRID"]) == processRID)
                 {
                     detailsRow.ProcessRID = Convert.ToInt32(item["ProcessRID"]);
                     detailsRow.ProcessID = Convert.ToInt32(item["ProcessID"]);
                     detailsRow.NeedsLoaded = Convert.ToBoolean(item["NeedsLoaded"]);
                     detailsRow.Text = item["Text"].ToString();
-                    detailsRowList.Add(detailsRow);
                 }
             }
-            return detailsRowList;
+            return detailsRow;
         }
 
-        public List<AuditSummary> GetAuditSummary(int processRID, DataTable summaryTable)
+        public List<AuditSummary> GetAuditSummary(int processRID, DataSet dataSet)
         {
+            DataTable summaryRow = dataSet.Tables["SummaryRow"];
+            var summaryRowResult = GetAuditSummaryRow(processRID, summaryRow);
+            DataSet ds= GetAuditSummaryByProcessType(summaryRowResult, dataSet);
+            DataTable summaryTable = ds.Tables["Summary"];
+
             List<AuditSummary> summaryList = new List<AuditSummary>();
 
             foreach (DataRow item in summaryTable.Rows)
@@ -334,6 +349,125 @@ namespace Logility.ROWeb.Methods.Administration.Audit
                 }
             }
             return summaryList;
+        }
+
+        private DataSet GetAuditSummaryByProcessType(AuditSummaryRow summaryRowResult, DataSet ds)
+        {
+            if (summaryRowResult.NeedsLoaded)
+            {
+                eProcesses processType = (eProcesses)summaryRowResult.ProcessID;
+                switch (processType)
+                {
+                    case eProcesses.hierarchyLoad:
+                        AuditUtility.AddHierarchyLoadSummary(Convert.ToInt32(summaryRowResult.ProcessRID, CultureInfo.CurrentUICulture), ds);
+                        break;
+                    case eProcesses.storeLoad:
+                        AuditUtility.AddStoreLoadSummary(Convert.ToInt32(summaryRowResult.ProcessRID, CultureInfo.CurrentUICulture), ds);
+                        break;
+                    case eProcesses.historyPlanLoad:
+                        AuditUtility.AddHistoryPlanLoadSummary(Convert.ToInt32(summaryRowResult.ProcessRID, CultureInfo.CurrentUICulture), ds);
+                        break;
+                    case eProcesses.HeaderReconcile:
+                        AuditUtility.AddHeaderReconcileSummary(Convert.ToInt32(summaryRowResult.ProcessRID, CultureInfo.CurrentUICulture), ds);
+                        break;
+                    case eProcesses.headerLoad:
+                        AuditUtility.AddHeaderLoadSummary(Convert.ToInt32(summaryRowResult.ProcessRID, CultureInfo.CurrentUICulture), ds);
+                        break;
+                    //Begin MOD - JScott - Build Pack Criteria Load
+                    case eProcesses.buildPackCriteriaLoad:
+                        AuditUtility.AddBuildPackCriteriaLoadSummary(Convert.ToInt32(summaryRowResult.ProcessRID, CultureInfo.CurrentUICulture), ds);
+                        break;
+                    //End MOD - JScott - Build Pack Criteria Load
+                    //Begin TT#1499 - DOConnell - Chain Plan - Set Percentages Phase 2
+                    case eProcesses.ChainSetPercentCriteriaLoad:
+                        AuditUtility.AddChainSetPercentCriteriaLoadSummary(Convert.ToInt32(summaryRowResult.ProcessRID, CultureInfo.CurrentUICulture), ds);
+                        break;
+                    //End TT#1499 - DOConnell - Chain Plan - Set Percentages Phase 2
+                    //Begin TT#816 – MD – DOConnell – Node Properties Maintenance Enhancement - Phase 1 - Store Eligibility Load API
+                    case eProcesses.StoreEligibilityCriteraLoad:
+                        AuditUtility.AddStoreEligibilityCriteriaLoadSummary(Convert.ToInt32(summaryRowResult.ProcessRID, CultureInfo.CurrentUICulture), ds);
+                        break;
+                    //End TT#816 – MD – DOConnell – Node Properties Maintenance Enhancement - Phase 1 - Store Eligibility Load API
+                    //Begin TT#817 - MD - DOConnell - Node Properties Maintenance Enhancement - Phase 1 - VSW Load API
+                    case eProcesses.VSWCriteriaLoad:
+                        AuditUtility.AddVSWCriteriaLoadSummary(Convert.ToInt32(summaryRowResult.ProcessRID, CultureInfo.CurrentUICulture), ds);
+                        break;
+                    //End TT#817 - MD - DOConnell - Node Properties Maintenance Enhancement - Phase 1 - VSW Load API
+                    //Begin TT#43 - MD - DOConnell - Projected Sales Enhancement
+                    case eProcesses.DailyPercentagesCriteraLoad:
+                        AuditUtility.AddDailyPercentagesCriteriaLoadSummary(Convert.ToInt32(summaryRowResult.ProcessRID, CultureInfo.CurrentUICulture), ds);
+                        break;
+                    //End TT#43 - MD - DOConnell - Projected Sales Enhancement
+
+                    case eProcesses.purge:
+                        AuditUtility.AddPurgeSummary(Convert.ToInt32(summaryRowResult.ProcessRID, CultureInfo.CurrentUICulture), ds);
+                        break;
+                    case eProcesses.colorCodeLoad:
+                        AuditUtility.AddColorCodeLoadSummary(Convert.ToInt32(summaryRowResult.ProcessRID, CultureInfo.CurrentUICulture), ds);
+                        break;
+                    case eProcesses.sizeCodeLoad:
+                        AuditUtility.AddSizeCodeLoadSummary(Convert.ToInt32(summaryRowResult.ProcessRID, CultureInfo.CurrentUICulture), ds);
+                        break;
+                    //BEGIN TT#4183-VStuart-Size Curve Load Audit Summary should not be included in the Audit Details-MID
+                    case eProcesses.sizeCurveLoad:
+                        AuditUtility.AddSizeCurveLoadSummary(Convert.ToInt32(summaryRowResult.ProcessRID, CultureInfo.CurrentUICulture), ds);
+                        break;
+                    //END TT#4183-VStuart-Size Curve Load Audit Summary should not be included in the Audit Details-MID
+
+                    //Begin TT#707 - JScott - Size Curve process needs to multi-thread
+                    case eProcesses.sizeCurveGenerate:
+                        AuditUtility.AddSizeCurveGenerateSummary(Convert.ToInt32(summaryRowResult.ProcessRID, CultureInfo.CurrentUICulture), ds);
+                        break;
+                    //End TT#707 - JScott - Size Curve process needs to multi-thread
+                    case eProcesses.rollup:
+                        AuditUtility.AddRollupSummary(Convert.ToInt32(summaryRowResult.ProcessRID, CultureInfo.CurrentUICulture), ds);
+                        break;
+                    //Begin - Abercrombie & Fitch #4411 - JSmith - Chain Forecasting
+                    case eProcesses.computationDriver:
+                        AuditUtility.AddComputationDriverSummary(Convert.ToInt32(summaryRowResult.ProcessRID, CultureInfo.CurrentUICulture), ds);
+                        break;
+                    //End - Abercrombie & Fitch #4411
+                    case eProcesses.sizeConstraintsLoad:
+                        AuditUtility.AddSizeConstraintsSummary(Convert.ToInt32(summaryRowResult.ProcessRID, CultureInfo.CurrentUICulture), ds);
+                        break;
+                    //Begin Track #5100 - JSmith - Add counts to audit
+                    case eProcesses.relieveIntransit:
+                        AuditUtility.AddRelieveIntransitSummary(Convert.ToInt32(summaryRowResult.ProcessRID, CultureInfo.CurrentUICulture), ds);
+                        break;
+                    // End Track #5100
+                    //BEGIN issue 5117 - stodd - special request
+                    case eProcesses.specialRequest:
+                        AuditUtility.AddSpecialRequestSummary(Convert.ToInt32(summaryRowResult.ProcessRID, CultureInfo.CurrentUICulture), ds);
+                        break;
+                    //END issue 5117
+                    //BEGIN TT#465 - stodd - Size Day to Week Summary
+                    case eProcesses.SizeDayToWeekSummary:
+                        AuditUtility.AddSizeDayToWeekSummarySummary(Convert.ToInt32(summaryRowResult.ProcessRID, CultureInfo.CurrentUICulture), ds);
+                        break;
+                    //End TT#465 - stodd - Size Day to Week Summary
+                    // Begin TT#710 - JSmith - Generate relieve intransit
+                    case eProcesses.generateRelieveIntransit:
+                        AuditUtility.AddGenerateRelieveIntransitSummary(Convert.ToInt32(summaryRowResult.ProcessRID, CultureInfo.CurrentUICulture), ds);
+                        break;
+                    //End TT#710
+                    // Begin TT#988 - JSmith - Add Active Only indicator to Override Low Level Model
+                    case eProcesses.determineHierarchyActivity:
+                        AuditUtility.AddDetermineHierarchyActivitySummary(Convert.ToInt32(summaryRowResult.ProcessRID, CultureInfo.CurrentUICulture), ds);
+                        break;
+                    //End TT#988
+                    // BEGIN TT#1401 - stodd - add resevation stores (IMO)							
+                    case eProcesses.pushToBackStock:
+                        AuditUtility.AddPushToBackStock(Convert.ToInt32(summaryRowResult.ProcessRID, CultureInfo.CurrentUICulture), ds);
+                        break;
+                    //Begin TT228 - RBeck - Hierarchy Reclass message incorrectly displayed  
+                    case eProcesses.hierarchyReclass:
+                        AuditUtility.AddHierarchyReclassSummary(Convert.ToInt32(summaryRowResult.ProcessRID, CultureInfo.CurrentUICulture), ds);
+                        break;
+                        //End   TT228 - RBeck - Hierarchy Reclass message incorrectly displayed  
+
+                }
+            }
+            return ds;
         }
 
         private DataSet AfterExecutionForAudit(DataSet ds)
@@ -541,5 +675,6 @@ namespace Logility.ROWeb.Methods.Administration.Audit
 
         }
 
+     
     }
 }
