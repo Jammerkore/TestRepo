@@ -267,7 +267,7 @@ namespace Logility.ROWeb.Methods.Administration.Audit
                 if (Convert.ToInt32(item["ProcessRID"]) == processRID)
                 {
                     details.ProcessRID = Convert.ToInt32(item["ProcessRID"]);
-                    details.Time = Convert.ToDateTime(item["Time"]).ToString();
+                    details.Time = Convert.ToDateTime(item["Time"]).ToString(Include.AuditDateTimeFormat);
                     details.Module = item["Module"].ToString();
                     details.MessageLevel = item["MessageLevel"].ToString();
                     details.MessageLevelText = item["MessageLevelText"].ToString();
