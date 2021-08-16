@@ -137,9 +137,7 @@ namespace Logility.ROWeb
             DataRow headerDataRow = TaskData.Select(selectString).First();
             string inputDirectory = Convert.ToString(headerDataRow["INPUT_DIRECTORY"]);
             string outputDirectory = Convert.ToString(headerDataRow["OUTPUT_DIRECTORY"]);
-            inputDirectory = string.IsNullOrEmpty(inputDirectory) ?
-                string.IsNullOrEmpty(MIDConfigurationManager.AppSettings["FileDirectory"]) ? @"C:\Logility\ROData\Header Reconcile" :
-                string.Concat(MIDConfigurationManager.AppSettings["FileDirectory"], @"\Header Reconcile") : inputDirectory;            
+            inputDirectory = string.IsNullOrEmpty(inputDirectory) ? TaskDirectory : inputDirectory;            
             outputDirectory = string.IsNullOrEmpty(outputDirectory) ?
                 string.IsNullOrEmpty(MIDConfigurationManager.AppSettings["FileDirectory"]) ? @"C:\Logility\ROData\Headers" :
                 string.Concat(MIDConfigurationManager.AppSettings["FileDirectory"], @"\Headers") : outputDirectory;
@@ -152,6 +150,8 @@ namespace Logility.ROWeb
             task.TriggerSuffix = Convert.ToString(headerDataRow["TRIGGER_SUFFIX"]);
         }
 
+        private string TaskDirectory => string.IsNullOrEmpty(MIDConfigurationManager.AppSettings["FileDirectory"]) ? @"C:\Logility\ROData\Header Reconcile" :
+                    string.Concat(MIDConfigurationManager.AppSettings["FileDirectory"], @"\Header Reconcile");
 
         /// <summary>
         /// Accepts data, updates the memory object and conditionally updates the database if values are being saved and not applied
@@ -204,7 +204,7 @@ namespace Logility.ROWeb
             DataRow headerReconcileDataRow = TaskData.NewRow();
             headerReconcileDataRow["TASKLIST_RID"] = TaskListProperties.TaskList.Key;
             headerReconcileDataRow["TASK_SEQUENCE"] = taskData.Task.Key;
-            headerReconcileDataRow["INPUT_DIRECTORY"] = taskData.InputDirectory;
+            headerReconcileDataRow["INPUT_DIRECTORY"] = TaskDirectory;
             headerReconcileDataRow["OUTPUT_DIRECTORY"] = taskData.OutputDirectory;
             headerReconcileDataRow["TRIGGER_SUFFIX"] = taskData.TriggerSuffix;
             headerReconcileDataRow["REMOVE_TRANS_FILE_NAME"] = taskData.RemoveTransactionFileName;

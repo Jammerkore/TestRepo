@@ -138,9 +138,7 @@ namespace Logility.ROWeb
                 selectString = "TASK_SEQUENCE=" + taskParameters.Sequence;
                 DataRow headerDataRow = TaskData.Select(selectString).First();
                 string inputDirectory = Convert.ToString(headerDataRow["INPUT_DIRECTORY"]);
-                inputDirectory = string.IsNullOrEmpty(inputDirectory) ?
-                    string.IsNullOrEmpty(MIDConfigurationManager.AppSettings["FileDirectory"]) ? @"C:\Logility\ROData\Relieve Intransit" :
-                    string.Concat(MIDConfigurationManager.AppSettings["FileDirectory"], @"\Relieve Intransit") : inputDirectory;
+                inputDirectory = string.IsNullOrEmpty(inputDirectory) ? TaskDirectory : inputDirectory;
                 task.Directory = inputDirectory;
                 task.FlagFileSuffix = Convert.ToString(headerDataRow["FILE_MASK"]);
                 task.EnableRunSuffix = Convert.ToString(headerDataRow["RUN_UNTIL_FILE_PRESENT_IND"]) == "1" ? true : false;
@@ -148,6 +146,8 @@ namespace Logility.ROWeb
             }
         }
 
+        private string TaskDirectory => string.IsNullOrEmpty(MIDConfigurationManager.AppSettings["FileDirectory"]) ? @"C:\Logility\ROData\Relieve Intransit" :
+                    string.Concat(MIDConfigurationManager.AppSettings["FileDirectory"], @"\Relieve Intransit");
 
         /// <summary>
         /// Accepts data, updates the memory object and conditionally updates the database if values are being saved and not applied
@@ -201,7 +201,7 @@ namespace Logility.ROWeb
             headerDataRow["TASKLIST_RID"] = TaskListProperties.TaskList.Key;
             headerDataRow["TASK_SEQUENCE"] = taskData.Task.Key;
             headerDataRow["FILE_PROCESSING_DIRECTION"] = eAPIFileProcessingDirection.Config;
-            headerDataRow["INPUT_DIRECTORY"] = taskData.Directory;
+            headerDataRow["INPUT_DIRECTORY"] = TaskDirectory;
             headerDataRow["FILE_MASK"] = taskData.FlagFileSuffix;
             headerDataRow["CONCURRENT_FILES"] = 1;
             headerDataRow["RUN_UNTIL_FILE_PRESENT_IND"] = taskData.EnableRunSuffix ? "1" : "0";
