@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
+using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using MIDRetail.Data;
@@ -365,7 +366,13 @@ namespace MIDRetail.Windows
         /// </summary>
         /// <param name="display">This parameter is always true. It essentially is not used.</param> 
         /// <param name="inQuiry">This value is true if display of the dialog is mandatory.</param> 
-        public void ResolveInUseData(ref bool display, bool inQuiry, bool deleting, out bool showDialog)
+        public void ResolveInUseData(
+            ref bool display, 
+            bool inQuiry, 
+            bool deleting, 
+            out bool showDialog, 
+            List<string> acceptableConflicts = null
+            )
         {
             //BEGIN TT#110-MD-VStuart - In Use Tool
             try
@@ -406,6 +413,22 @@ namespace MIDRetail.Windows
                         }
                     }
                     // End TT#3630 - JSmith - Delete My Hierarchy
+                    else if (acceptableConflicts != null) // check acceptableConflicts
+                    {
+                        allowDelete = true;
+                        foreach (DataRow row in dt.Rows)
+                        {
+                            if (acceptableConflicts.Contains(Convert.ToString(row["Header2"]).Trim()))
+                            {
+                                continue;
+                            }
+                            else if (Convert.ToString(row["Header6"]).Trim() == "In Use")
+                            {
+                                allowDelete = false;
+                                break;
+                            }
+                        }
+                    }
 
                     if (!allowDelete)
                     {

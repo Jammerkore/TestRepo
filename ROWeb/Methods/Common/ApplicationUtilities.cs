@@ -72,9 +72,19 @@ namespace Logility.ROWeb
             return aMethodName;
         }
 
-        internal static bool AllowDeleteFromInUse(int key, eProfileType profileType, SessionAddressBlock SAB)
+        internal static bool AllowDeleteFromInUse(
+            int key, 
+            eProfileType profileType, 
+            SessionAddressBlock SAB, 
+            List<string> acceptableConflicts = null
+            )
         {
-            ROInUse ROInUse = InUse.CheckInUse(itemProfileType: profileType, key: key, inQuiry: false);
+            ROInUse ROInUse = InUse.CheckInUse(
+                itemProfileType: profileType, 
+                key: key, 
+                inQuiry: false,
+                acceptableConflicts: acceptableConflicts
+                );
 
             if (!ROInUse.AllowDelete)
             {

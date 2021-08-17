@@ -1419,13 +1419,14 @@ namespace Logility.ROWeb
         /// <param name="itemProfileType">The eProfileType of the item</param>
         /// <param name="key">The key of the item</param>
         /// <param name="inQuiry"></param> This value is true if the call is for display.
-        public static ROInUse CheckInUse(eProfileType itemProfileType, int key, bool inQuiry)
+        /// <param name="acceptableConflicts"> Data types to not result in an In Use condigion</param>
+        public static ROInUse CheckInUse(eProfileType itemProfileType, int key, bool inQuiry, List<string> acceptableConflicts = null)
         {
             var myInfo = new InUseInfo(key, itemProfileType);
             var myfrm = new InUseDialog(myInfo);
             bool display = false;
             bool showDialog = false;
-            myfrm.ResolveInUseData(ref display, inQuiry, true, out showDialog);
+            myfrm.ResolveInUseData(ref display, inQuiry, true, out showDialog, acceptableConflicts);
 
             string inUseTitle = InUseUtility.GetInUseTitleFromProfileType(itemProfileType);
 

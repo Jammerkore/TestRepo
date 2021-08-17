@@ -385,7 +385,7 @@ namespace Logility.ROWebSharedTypes
             {
                 _ROReturnCode = ROReturnCode;
             }
-            if (sROMessage != null)
+            if (!string.IsNullOrEmpty(sROMessage))
             {
                 _sROMessage = sROMessage;
             }

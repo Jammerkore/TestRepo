@@ -1041,10 +1041,23 @@ namespace Logility.ROWeb
                 MIDEnvironment.requestFailed = true;
                 return new RONoDataOut(eROReturnCode.Failure, MIDEnvironment.Message, ROInstanceID);
             }
+            else if (_ABM.Template_IND)
+            {
+                MIDEnvironment.Message = "Unable to delete template methods at this time";
+                MIDEnvironment.requestFailed = true;
+                return new RONoDataOut(eROReturnCode.Failure, MIDEnvironment.Message, ROInstanceID);
+            }
 
+            List<string> acceptableConflicts = new List<string>();
+            acceptableConflicts.Add("Forecast Workflow");
+            acceptableConflicts.Add("Allocation Workflow");
             if (!FunctionSecurity.AllowDelete
                 || _ABM.LockStatus == eLockStatus.ReadOnly
-                || !ApplicationUtilities.AllowDeleteFromInUse(key: _ABM.Key, profileType: _ABM.MethodProfileType, SAB: SAB))
+                || !ApplicationUtilities.AllowDeleteFromInUse(
+                    key: _ABM.Key, 
+                    profileType: _ABM.MethodProfileType,
+                    SAB: SAB,
+                    acceptableConflicts: acceptableConflicts))
             {
                 message = string.Empty;
                 if (!FunctionSecurity.AllowDelete)
