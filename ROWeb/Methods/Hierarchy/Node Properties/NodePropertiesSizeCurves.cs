@@ -33,9 +33,9 @@ namespace Logility.ROWeb
         // CONSTRUCTORS
         //=============
         public NodePropertiesSizeCurves(SessionAddressBlock SAB, ROWebTools ROWebTools) :
-            base (SAB: SAB, ROWebTools: ROWebTools, profileType: eProfileType.SizeCurve)
+            base(SAB: SAB, ROWebTools: ROWebTools, profileType: eProfileType.SizeCurve)
         {
-            
+
         }
 
         //===========
@@ -60,7 +60,7 @@ namespace Logility.ROWeb
             var deletedProfileList = (from SizeCurveCriteriaProfile profile in _sizeCurvesCriteriaList.ArrayList
                                       where profile.CriteriaChangeType == eChangeType.delete
                                       select profile).ToList();
-            if(deletedProfileList.Count > 0)
+            if (deletedProfileList.Count > 0)
             {
                 deletedProfileList.ForEach(p => { _sizeCurvesCriteriaList.Remove(p); });
             }
@@ -179,7 +179,7 @@ namespace Logility.ROWeb
                 {
                     sizeCurveCriteria.Attribute = GetName.GetAttributeName(key: sccp.CriteriaSgRID);
                 }
-    
+
                 if (sccp.CriteriaIsInherited)
                 {
                     nodeProperties.SizeCurveInheritedCriteria.Add(sizeCurveCriteria);
@@ -196,7 +196,7 @@ namespace Logility.ROWeb
             BuildSizeCurveAttributeList(nodeProperties);
         }
 
-        private List<KeyValuePair<int,string>> BuildMerchandiseList()
+        private List<KeyValuePair<int, string>> BuildMerchandiseList()
         {
             List<KeyValuePair<int, string>> list = new List<KeyValuePair<int, string>>();
             foreach (HierarchyLevelComboObject level in _merchandiseLevelList)
@@ -208,7 +208,7 @@ namespace Logility.ROWeb
 
         private void BuildSizeCurveCriteriaLevelList(int aStartNode)
         {
-            HierarchyProfile localHome;                 
+            HierarchyProfile localHome;
             HierarchyNodeProfile nodeProf;
             int startLevel;
             int i;
@@ -255,7 +255,7 @@ namespace Logility.ROWeb
                 else
                 {
                     _merchandiseLevelList.Add(new HierarchyLevelComboObject(_merchandiseLevelList.Count, ePlanLevelLevelType.HierarchyLevel, HierarchyProfile.Key, 0, nodeProf.Text));
-                    
+
                     highestGuestLevel = SAB.HierarchyServerSession.GetHighestGuestLevel(nodeProf.Key);
 
                     // add guest levels to comboBox
@@ -288,7 +288,7 @@ namespace Logility.ROWeb
                         ++offset;
                         _merchandiseLevelList.Add(new HierarchyLevelComboObject(_merchandiseLevelList.Count, ePlanLevelLevelType.LevelOffset, HierarchyProfile.Key, offset, "+" + offset.ToString()));
                     }
-                        
+
                 }
             }
             catch (Exception exc)
@@ -487,7 +487,7 @@ namespace Logility.ROWeb
 
                 _toleranceLevelList = new List<HierarchyLevelComboObject>();
                 _toleranceLevelList.Add(new HierarchyLevelComboObject(_toleranceLevelList.Count, ePlanLevelLevelType.Undefined, Include.NoRID, Include.Undefined, MIDText.GetTextOnly(eMIDTextCode.lbl_NoHigherLevel)));
-                
+
                 ancestorList = SAB.HierarchyServerSession.GetAllNodeAncestors(nodeProf.Key);
 
                 if (nodeProf.HomeHierarchyType == eHierarchyType.organizational)
@@ -619,7 +619,7 @@ namespace Logility.ROWeb
             }
         }
 
-        
+
 
         override public object NodePropertiesUpdateData(RONodeProperties nodePropertiesData, bool cloneDates, ref string message, out bool successful, bool applyOnly = false)
         {
@@ -874,28 +874,16 @@ namespace Logility.ROWeb
                 _sizeCurveToleranceProfile.ToleranceMinAvg = Include.Undefined;
             }
 
+
             if (nodePropertiesSizeCurvesData.ToleranceLevelIsSet
                 && nodePropertiesSizeCurvesData.ToleranceLevel.Key < _toleranceLevelList.Count)
             {
                 HierarchyLevelComboObject levelCombo = _toleranceLevelList[nodePropertiesSizeCurvesData.ToleranceLevel.Key];
-                if (_sizeCurveToleranceProfile.ToleranceLevelType == eLowLevelsType.HierarchyLevel
-                    && _sizeCurveToleranceProfile.ToleranceLevelSeq != levelCombo.Level)
-                {
-                    _sizeCurveToleranceProfile.ToleranceLevelType = (eLowLevelsType)levelCombo.PlanLevelLevelType;
-                    _sizeCurveToleranceProfile.ToleranceLevelRID = levelCombo.HierarchyRID;
-                    _sizeCurveToleranceProfile.ToleranceLevelSeq = levelCombo.Level;
-                    _sizeCurveToleranceProfile.ToleranceLevelOffset = Include.Undefined;
-                    _sizeCurveToleranceProfile.ToleranceLevelIsInherited = false;
-                }
-                else if (_sizeCurveToleranceProfile.ToleranceLevelType == eLowLevelsType.LevelOffset
-                    && _sizeCurveToleranceProfile.ToleranceLevelOffset != levelCombo.Level)
-                {
-                    _sizeCurveToleranceProfile.ToleranceLevelType = (eLowLevelsType)levelCombo.PlanLevelLevelType;
-                    _sizeCurveToleranceProfile.ToleranceLevelRID = levelCombo.HierarchyRID;
-                    _sizeCurveToleranceProfile.ToleranceLevelSeq = Include.Undefined;
-                    _sizeCurveToleranceProfile.ToleranceLevelOffset = levelCombo.Level;
-                    _sizeCurveToleranceProfile.ToleranceLevelIsInherited = false;
-                }
+                _sizeCurveToleranceProfile.ToleranceLevelType = (eLowLevelsType)levelCombo.PlanLevelLevelType;
+                _sizeCurveToleranceProfile.ToleranceLevelRID = levelCombo.HierarchyRID;
+                _sizeCurveToleranceProfile.ToleranceLevelSeq = _sizeCurveToleranceProfile.ToleranceLevelSeq != levelCombo.Level ? levelCombo.Level : Include.Undefined;
+                _sizeCurveToleranceProfile.ToleranceLevelOffset = _sizeCurveToleranceProfile.ToleranceLevelOffset != levelCombo.Level ? levelCombo.Level : Include.Undefined;
+                _sizeCurveToleranceProfile.ToleranceLevelIsInherited = false;
             }
             else
             {
