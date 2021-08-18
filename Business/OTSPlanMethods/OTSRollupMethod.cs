@@ -1229,7 +1229,14 @@ namespace MIDRetail.Business
                 DataRow row = _dsRollup.Tables[0].Rows[k];
 
                 ROLevelInformation fromLevelInformation = new ROLevelInformation();
-                fromLevelInformation.LevelSequence = Convert.ToInt32(row["FROM_LEVEL_SEQ"]);
+                if (row["FROM_LEVEL_SEQ"] == System.DBNull.Value)
+                {
+                    fromLevelInformation.LevelSequence = Include.Undefined;
+                }
+                else
+                {
+                    fromLevelInformation.LevelSequence = Convert.ToInt32(row["FROM_LEVEL_SEQ"]);
+                }
                 hierarchyDescendantType = (eHierarchyDescendantType)Convert.ToInt32(row["FROM_LEVEL_TYPE"]);
                 levelType = EnumTools.ConverteHierarchyDescendantTypeToeROLevelsType(hierarchyDescendantType);
 
@@ -1238,20 +1245,27 @@ namespace MIDRetail.Business
                     levelType = eROLevelsType.HierarchyLevel;
                 }
                 fromLevelInformation.LevelType = levelType;
-                try
+                if (row["FROM_LEVEL_OFFSET"] == System.DBNull.Value)
+                {
+                    fromLevelInformation.LevelOffset = Include.Undefined;
+                }
+                else
                 {
                     fromLevelInformation.LevelOffset = Convert.ToInt32(row["FROM_LEVEL_OFFSET"]);
-                }
-                catch
-                {
-                    fromLevelInformation.LevelOffset = -1;
                 }
 
                 fromLevelInformation.LevelValue = GetName.GetLevelName(levelType, fromLevelInformation.LevelSequence, fromLevelInformation.LevelOffset, SAB);
 
                 ROLevelInformation toLevelInformation = new ROLevelInformation();
 
-                toLevelInformation.LevelSequence = Convert.ToInt32(row["TO_LEVEL_SEQ"]);
+                if (row["TO_LEVEL_SEQ"] == System.DBNull.Value)
+                {
+                    toLevelInformation.LevelSequence = Include.Undefined;
+                }
+                else
+                {
+                    toLevelInformation.LevelSequence = Convert.ToInt32(row["TO_LEVEL_SEQ"]);
+                }
                 hierarchyDescendantType = (eHierarchyDescendantType)Convert.ToInt32(row["TO_LEVEL_TYPE"]);
                 levelType = EnumTools.ConverteHierarchyDescendantTypeToeROLevelsType(hierarchyDescendantType);
                 if (levelType == eROLevelsType.Characteristic)
@@ -1259,20 +1273,18 @@ namespace MIDRetail.Business
                     levelType = eROLevelsType.HierarchyLevel;
                 }
                 toLevelInformation.LevelType = levelType;
-                try
+                if (row["TO_LEVEL_OFFSET"] == System.DBNull.Value)
+                {
+                    toLevelInformation.LevelOffset = Include.Undefined;
+                }
+                else
                 {
                     toLevelInformation.LevelOffset = Convert.ToInt32(row["TO_LEVEL_OFFSET"]);
-                }
-                catch
-                {
-                    toLevelInformation.LevelOffset = -1;
                 }
                 toLevelInformation.LevelValue = GetName.GetLevelName(levelType, toLevelInformation.LevelSequence, toLevelInformation.LevelOffset, SAB);
                 ROMethodRollupOptionsBasis options = new ROMethodRollupOptionsBasis(
                     optionsDetailSeq: Convert.ToInt32(row["DETAIL_SEQ"]),
-                    fromMerchandise: GetName.GetMerchandiseName(Convert.ToInt32(row["FROM_LEVEL_HRID"]), SAB),
                     fromROLevelInformation: fromLevelInformation,
-                    toMerchandise: GetName.GetMerchandiseName(Convert.ToInt32(row["TO_LEVEL_HRID"]), SAB),
                     toROLevelInformation: toLevelInformation,
                     isStore: Convert.ToBoolean(row["Store"]),
                     isChain: Convert.ToBoolean(row["Chain"]),
@@ -1285,7 +1297,94 @@ namespace MIDRetail.Business
 
             if (_hierNodeRid > 0)
             {
-                BuildLowLevelList(method: method);
+                bool hierarchyTypeChanged = BuildLowLevelList(method: method);
+
+                if (method.MethodRollupBasisOptions != null
+                    && method.MethodRollupBasisOptions.Count > 0)
+                {
+                    if (hierarchyTypeChanged)  // if different hierarchy type, clear all entries
+                    {
+                        method.MethodRollupBasisOptions.Clear();
+                    }
+                    else
+                    {
+                        // if same hierarchy type, check if entry levels are still in list
+                        // if both are still in list, leave alone
+                        // if one is in the list, set the other to first entry in list
+                        // if neither are in list, remove entry
+                        bool fromLevelFound = false;
+                        bool toLevelFound = false;
+                        for (int i = method.MethodRollupBasisOptions.Count - 1; i > -1; i--)
+                        {
+                            fromLevelFound = false;
+                            toLevelFound = false;
+                            foreach (KeyValuePair<int, string> level in method.HierarchyLevels)
+                            {
+                                if (method.HierarchyLevelsType == eMerchandiseType.HierarchyLevel)
+                                {
+                                    if (method.MethodRollupBasisOptions[i].FromROLevelInformation.LevelSequence == level.Key)
+                                    {
+                                        fromLevelFound = true;
+                                    }
+                                    if (method.MethodRollupBasisOptions[i].ToROLevelInformation.LevelSequence == level.Key)
+                                    {
+                                        toLevelFound = true;
+                                    }
+                                }
+                                else if (method.HierarchyLevelsType == eMerchandiseType.LevelOffset)
+                                {
+                                    if (method.MethodRollupBasisOptions[i].FromROLevelInformation.LevelOffset == level.Key)
+                                    {
+                                        fromLevelFound = true;
+                                    }
+                                    if (method.MethodRollupBasisOptions[i].ToROLevelInformation.LevelOffset == level.Key)
+                                    {
+                                        toLevelFound = true;
+                                    }
+                                }
+                            }
+                            if (!fromLevelFound
+                                && !toLevelFound)
+                            {
+                                method.MethodRollupBasisOptions.RemoveAt(i);
+                            }
+                            else if (!fromLevelFound)
+                            {
+                                if (method.HierarchyLevelsType == eMerchandiseType.HierarchyLevel)
+                                {
+                                    method.MethodRollupBasisOptions[i].FromROLevelInformation.LevelSequence = method.HierarchyLevels[0].Key;
+                                }
+                                else if (method.HierarchyLevelsType == eMerchandiseType.LevelOffset)
+                                {
+                                    method.MethodRollupBasisOptions[i].FromROLevelInformation.LevelOffset = method.HierarchyLevels[0].Key;
+                                }
+                                method.MethodRollupBasisOptions[i].FromROLevelInformation.LevelValue = GetName.GetLevelName(
+                                    levelType: method.MethodRollupBasisOptions[i].FromROLevelInformation.LevelType,
+                                    levelSequence: method.MethodRollupBasisOptions[i].FromROLevelInformation.LevelSequence,
+                                    levelOffset: method.MethodRollupBasisOptions[i].FromROLevelInformation.LevelOffset,
+                                    SAB: SAB
+                                    );
+                            }
+                            else if (!toLevelFound)
+                            {
+                                if (method.HierarchyLevelsType == eMerchandiseType.HierarchyLevel)
+                                {
+                                    method.MethodRollupBasisOptions[i].ToROLevelInformation.LevelSequence = method.HierarchyLevels[0].Key;
+                                }
+                                else if (method.HierarchyLevelsType == eMerchandiseType.LevelOffset)
+                                {
+                                    method.MethodRollupBasisOptions[i].ToROLevelInformation.LevelOffset = method.HierarchyLevels[0].Key;
+                                }
+                                method.MethodRollupBasisOptions[i].ToROLevelInformation.LevelValue = GetName.GetLevelName(
+                                    levelType: method.MethodRollupBasisOptions[i].ToROLevelInformation.LevelType,
+                                    levelSequence: method.MethodRollupBasisOptions[i].ToROLevelInformation.LevelSequence,
+                                    levelOffset: method.MethodRollupBasisOptions[i].ToROLevelInformation.LevelOffset,
+                                    SAB: SAB
+                                    );
+                            }
+                        }
+                    }
+                }
             }
 
             return method;
@@ -1300,7 +1399,8 @@ namespace MIDRetail.Business
             }
         }
 
-        private void BuildLowLevelList(ROMethodRollupProperties method)
+        private eMerchandiseType _currentHierarchyType = eMerchandiseType.Undefined;
+        private bool BuildLowLevelList(ROMethodRollupProperties method)
         {
             eMerchandiseType merchandiseType;
             int homeHierarchyKey;
@@ -1314,6 +1414,12 @@ namespace MIDRetail.Business
                 homeHierarchyKey: out homeHierarchyKey
                 );
 
+            bool hierarchyTypeChanged = false;
+            if (_currentHierarchyType != eMerchandiseType.Undefined)
+            {
+                hierarchyTypeChanged = _currentHierarchyType != merchandiseType;
+            }
+            _currentHierarchyType = merchandiseType;
             method.HierarchyLevelsType = merchandiseType;
             foreach (HierarchyLevelComboObject level in levelList)
             {
@@ -1326,6 +1432,8 @@ namespace MIDRetail.Business
                     method.HierarchyLevels.Add(new KeyValuePair<int, string>(level.Level, level.LevelName));
                 }
             }
+
+            return hierarchyTypeChanged;
         }
 
         override public bool MethodSetData(ROMethodProperties methodProperties, ref string message, bool processingApply)
@@ -1350,6 +1458,7 @@ namespace MIDRetail.Business
 
                 DataRow row;
                 int intDetailSeq = -1;
+                HierarchyNodeProfile hnp = _SAB.HierarchyServerSession.GetNodeData(this.HierNodeRID, false, false);
 
                 foreach (ROMethodRollupOptionsBasis optionsBasis in roMethodRollupProperties.MethodRollupBasisOptions)
                 {
@@ -1357,12 +1466,12 @@ namespace MIDRetail.Business
                     intDetailSeq += 1;
                     row["DETAIL_SEQ"] = intDetailSeq;
                     row["FromLevel"] = optionsBasis.FromROLevelInformation.LevelValue;
-                    row["FROM_LEVEL_HRID"] = optionsBasis.FromMerchandise.Key;
+                    row["FROM_LEVEL_HRID"] = hnp.HomeHierarchyRID;
                     row["FROM_LEVEL_TYPE"] = EnumTools.ConverteROLevelsTypeToeHierarchyDescendantType(optionsBasis.FromROLevelInformation.LevelType);
                     row["FROM_LEVEL_SEQ"] = optionsBasis.FromROLevelInformation.LevelSequence;
                     row["FROM_LEVEL_OFFSET"] = optionsBasis.FromROLevelInformation.LevelOffset;
                     row["ToLevel"] = optionsBasis.ToROLevelInformation.LevelValue;
-                    row["TO_LEVEL_HRID"] = optionsBasis.ToMerchandise.Key;
+                    row["TO_LEVEL_HRID"] = hnp.HomeHierarchyRID;
                     row["TO_LEVEL_TYPE"] = EnumTools.ConverteROLevelsTypeToeHierarchyDescendantType(optionsBasis.ToROLevelInformation.LevelType);
                     row["TO_LEVEL_SEQ"] = optionsBasis.ToROLevelInformation.LevelSequence;
                     row["TO_LEVEL_OFFSET"] = optionsBasis.ToROLevelInformation.LevelOffset;

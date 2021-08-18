@@ -1155,11 +1155,7 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         int _optionsDetailSeq;
         [DataMember(IsRequired = true)]
-        KeyValuePair<int, string> _fromMerchandise;
-        [DataMember(IsRequired = true)]
         ROLevelInformation _fromROLevelInformation;
-        [DataMember(IsRequired = true)]
-        KeyValuePair<int, string> _toMerchandise;
         [DataMember(IsRequired = true)]
         ROLevelInformation _toROLevelInformation;
         [DataMember(IsRequired = true)]
@@ -1176,22 +1172,10 @@ namespace Logility.ROWebSharedTypes
             set { _optionsDetailSeq = value; }
         }
 
-        public KeyValuePair<int, string> FromMerchandise
-        {
-            get { return _fromMerchandise; }
-            set { _fromMerchandise = value; }
-        }
-
         public ROLevelInformation FromROLevelInformation
         {
             get { return _fromROLevelInformation; }
             set { _fromROLevelInformation = value; }
-        }
-
-        public KeyValuePair<int, string> ToMerchandise
-        {
-            get { return _toMerchandise; }
-            set { _toMerchandise = value; }
         }
 
         public ROLevelInformation ToROLevelInformation
@@ -1219,14 +1203,17 @@ namespace Logility.ROWebSharedTypes
         }
         #endregion
 
-        public ROMethodRollupOptionsBasis(int optionsDetailSeq, KeyValuePair<int, string> fromMerchandise, ROLevelInformation fromROLevelInformation, KeyValuePair<int, string> toMerchandise, ROLevelInformation toROLevelInformation,
-                                          bool isStore, bool isChain, bool isStoreToChain)
+        public ROMethodRollupOptionsBasis(
+            int optionsDetailSeq, 
+            ROLevelInformation fromROLevelInformation, 
+            ROLevelInformation toROLevelInformation,                   
+            bool isStore, 
+            bool isChain, 
+            bool isStoreToChain
+            )
         {
-
             _optionsDetailSeq = optionsDetailSeq;
-            _fromMerchandise = fromMerchandise;
             _fromROLevelInformation = fromROLevelInformation;
-            _toMerchandise = toMerchandise;
             _toROLevelInformation = toROLevelInformation;
             _isStore = isStore;
             _isChain = isChain;
