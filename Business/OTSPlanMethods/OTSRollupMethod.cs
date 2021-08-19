@@ -1224,6 +1224,11 @@ namespace MIDRetail.Business
                 isTemplate: Template_IND
                 );
 
+            if (_dsRollup == null)
+            {
+                LoadBasis();
+            }
+
             for (int k = 0; k < _dsRollup.Tables[0].Rows.Count; k++)
             {
                 DataRow row = _dsRollup.Tables[0].Rows[k];
