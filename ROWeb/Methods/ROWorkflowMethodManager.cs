@@ -603,6 +603,7 @@ namespace Logility.ROWeb
                             _workflowMethods.Remove(methodParm.ROMethodProperties.Method.Key);
                         }
                         // add or update the method in the cache. Object now has actual key.
+                        _ABM.SetFilled();
                         _workflowMethods[_ABM.Key] = _ABM;
                         // keep last key accessed in cache so will not have to retrieve from cache each time
                         _currentMethodKey = _ABM.Key;

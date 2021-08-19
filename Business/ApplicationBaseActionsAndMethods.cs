@@ -523,6 +523,11 @@ namespace MIDRetail.Business
 			}
 		}
 
+        public void SetFilled()
+        {
+            _filled = true;
+        }
+
         // Begin TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
         internal void DetermineIfContainsUserData()
         {
