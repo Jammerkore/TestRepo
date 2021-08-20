@@ -132,7 +132,11 @@ namespace Logility.ROWeb
         /// <param name="task">The data class of the task</param>
         private void AddValues(ROTaskParms taskParameters, ROTaskExternalProgram task)
         {
-            
+            string selectString;
+            selectString = "TASK_SEQUENCE=" + taskParameters.Sequence;
+            DataRow headerDataRow = TaskData.Select(selectString).First();
+            task.ProgramPath = Convert.ToString(headerDataRow["PROGRAM_PATH"]);
+            task.ProgramParams = Convert.ToString(headerDataRow["PROGRAM_PARMS"]);
         }
 
 
@@ -184,7 +188,15 @@ namespace Logility.ROWeb
                 sequence: taskData.Task.Key
                 );
 
-            throw new Exception("Not Implemented");
+            DataRow headerDataRow = TaskData.NewRow();
+            headerDataRow["TASKLIST_RID"] = TaskListProperties.TaskList.Key;
+            headerDataRow["TASK_SEQUENCE"] = taskData.Task.Key;
+            headerDataRow["PROGRAM_PATH"] = taskData.ProgramPath;
+            headerDataRow["PROGRAM_PARMS"] = taskData.ProgramParams;
+            TaskData.Rows.Add(headerDataRow);
+            TaskData.AcceptChanges();
+            // order the rows in the data tables
+            TaskData = TaskData.DefaultView.ToTable();
 
             return true;
         }

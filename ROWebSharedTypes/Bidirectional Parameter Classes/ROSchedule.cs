@@ -1201,9 +1201,24 @@ namespace Logility.ROWebSharedTypes
     [DataContract(Name = "ROTaskExternalProgram", Namespace = "http://Logility.ROWeb/")]
     public class ROTaskExternalProgram : ROTaskProperties
     {
+        [DataMember(IsRequired = true)]
+        private string _programPath;
+
+        [DataMember(IsRequired = true)]
+        private string _programParams;
 
         #region Public Properties
+        public string ProgramPath
+        {
+            get { return _programPath; }
+            set { _programPath = value; }
+        }
 
+        public string ProgramParams
+        {
+            get { return _programParams; }
+            set { _programParams = value; }
+        }
         #endregion
 
         public ROTaskExternalProgram(
