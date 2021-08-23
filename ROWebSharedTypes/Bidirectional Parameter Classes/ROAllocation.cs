@@ -4437,11 +4437,15 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         private string _itemField;
 
+        [DataMember(IsRequired = true)]
+        private eHeaderCharType _dataType;
+
         #endregion
 
         #region Constructor
         public ROAllocationWorklistEntry(int viewKey, string bandKey, string columnKey, int visiblePosition, bool isHidden, bool isGroupByColumn,
-               int sortDirection, int sortSequence, int width, string columnType, string headerCharacteristicGroupKey, string label, string itemField = null)
+               int sortDirection, int sortSequence, int width, string columnType, string headerCharacteristicGroupKey, string label, string itemField = null,
+               eHeaderCharType dataType = eHeaderCharType.unknown)
         {
             _viewKey = viewKey;
             _bandKey = bandKey;
@@ -4456,7 +4460,7 @@ namespace Logility.ROWebSharedTypes
             _headerCharacteristicGroupKey = headerCharacteristicGroupKey;
             _label = label;
             _itemField = itemField;
-
+            _dataType = dataType;
         }
         #endregion  
 
@@ -4542,6 +4546,12 @@ namespace Logility.ROWebSharedTypes
         {
             get { return _itemField; }
             set { _itemField = value; }
+        }
+
+        public eHeaderCharType DataType
+        {
+            get { return _dataType; }
+            set { _dataType = value; }
         }
         #endregion  
     }

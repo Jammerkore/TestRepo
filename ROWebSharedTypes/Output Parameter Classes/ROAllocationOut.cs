@@ -2074,9 +2074,11 @@ namespace Logility.ROWebSharedTypes
 
         #region Constructor
         public ROAllocationWorklistOut(int viewKey, string bandKey, string columnKey, int visiblePosition, bool isHidden, bool isGroupByColumn,
-               int sortDirection, int sortSequence, int width, string columnType, string headerCharacteristicGroupKey, string label, string itemField) :
+               int sortDirection, int sortSequence, int width, string columnType, string headerCharacteristicGroupKey, string label, string itemField,
+               eHeaderCharType dataType = eHeaderCharType.unknown) :
             base(viewKey, bandKey, columnKey, visiblePosition, isHidden, isGroupByColumn,
-               sortDirection, sortSequence, width, columnType, headerCharacteristicGroupKey, label, itemField)
+               sortDirection, sortSequence, width, columnType, headerCharacteristicGroupKey, label, itemField,
+               dataType)
         {
 
 

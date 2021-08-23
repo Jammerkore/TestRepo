@@ -929,6 +929,13 @@ namespace Logility.ROWeb
 
         internal List<ROAllocationWorklistOut> DataTableToWorklist(DataTable dataTable)
         {
+            HeaderCharGroupProfile headerCharGroupProfile;
+            eHeaderCharType dataType;
+            if (_headerCharGroupProfileList == null)
+            {
+                _headerCharGroupProfileList = SAB.HeaderServerSession.GetHeaderCharGroups();
+            }
+
             if (_dtHeaderViewFieldMapping == null)
             {
                 BuildHeaderViewFieldMapping();
@@ -958,10 +965,16 @@ namespace Logility.ROWeb
                     string hcgRid = dataTable.Rows[iCounter]["HCG_RID"].ToString();
                     string label = null;
                     string itemField = null;
+                    dataType = eHeaderCharType.unknown;
                     DataRow[] dr;
                     if (hcgRid.Trim().Length > 0)
                     {
                         dr = _dtHeaderViewFieldMapping.Select("HCG_RID='" + hcgRid + "'");
+                        headerCharGroupProfile = (HeaderCharGroupProfile)_headerCharGroupProfileList.FindKey(Convert.ToInt32(hcgRid.Trim()));
+                        if (headerCharGroupProfile != null)
+                        {
+                            dataType = headerCharGroupProfile.Type;
+                        }
                     }
                     else
                     {
@@ -978,7 +991,8 @@ namespace Logility.ROWeb
                     }
 
                     allocationWorklistOuts.Add(new ROAllocationWorklistOut(
-                         viewRID, bandKey, columnKey, visiblePos, isHidden, isGroupByCol, sortDir, sortSeq, width, columnType, hcgRid, label, itemField));
+                         viewRID, bandKey, columnKey, visiblePos, isHidden, isGroupByCol, sortDir, sortSeq, width, columnType, hcgRid, label, itemField,
+                         dataType));
                 }
             }
 
