@@ -329,7 +329,8 @@ namespace Logility.ROWebSharedTypes
     [KnownType(typeof(ROTaskHeaderReconcile))]
     [KnownType(typeof(ROTaskBatchCompute))]
     [KnownType(typeof(ROTaskChainForecasting))]
-
+    [KnownType(typeof(ROTaskJobsParms))]
+    [KnownType(typeof(ROTaskJobs))]
 
     public class ROParms
     {

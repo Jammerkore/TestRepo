@@ -23,6 +23,7 @@ namespace Logility.ROWeb
         private SessionAddressBlock _sessionAddressBlock;
         private ROWebTools _ROWebTools;
         private FunctionSecurityProfile _functionSecurity;
+        private FunctionSecurityProfile _jobFunctionSecurity;
         private ClientSessionTransaction _clientTransaction = null;
         private ApplicationSessionTransaction _applicationSessionTransaction = null;
         private long _ROInstanceID;
@@ -38,6 +39,7 @@ namespace Logility.ROWeb
         private JobProfile _jobProfile = null;
         private TaskBase _task = null;
         private DataTable _tasksDataTable;
+        private DataTable _jobTaskDataTable;
         // Collection to manage tasks within the task list.  Key is task type.
         // All tasks for a single type are contained in the same class
         private Dictionary<eTaskType, TaskBase> _taskListTasks = new Dictionary<eTaskType, TaskBase>();
@@ -149,6 +151,15 @@ namespace Logility.ROWeb
         {
             get { return _functionSecurity; }
             set { _functionSecurity = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the function security profile
+        /// </summary>
+        protected FunctionSecurityProfile JobFunctionSecurity
+        {
+            get { return _jobFunctionSecurity; }
+            set { _jobFunctionSecurity = value; }
         }
 
         protected ClientSessionTransaction ClientTransaction
@@ -1647,7 +1658,115 @@ namespace Logility.ROWeb
 
         #endregion Task Processing
 
+        #region "Task Job"
+        public ROOut GetTaskJobList(ROProfileKeyParms taskListParameters)
+        {
+            string message = null;
+            eROReturnCode returnCode = eROReturnCode.Successful;
+            JobFunctionSecurity = SessionAddressBlock.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.ToolsSchedulerSystemJobs);
+            _jobProfile = new JobProfile(ScheduleDataLayer.Job_Read(taskListParameters.Key));
+            if (!taskListParameters.ReadOnly && JobFunctionSecurity.AllowUpdate)
+            {
+                JobFunctionSecurity.SetFullControl();
+            }
+            else
+            {
+                JobFunctionSecurity.SetReadOnly();
+            }            
 
+            return new ROTaskJobOut(returnCode, message, ROInstanceID, GetTaskJobs(taskListParameters.Key));
+        }
+
+        public ROOut SaveTaskJob(ROTaskJobsParms rOTaskJobsParms)
+        {
+            if (rOTaskJobsParms.Key.Key < 0)
+                _jobProfile = new JobProfile(-1, rOTaskJobsParms.Key.Value, false);
+            ScheduleDataLayer.OpenUpdateConnection();
+            try
+            {
+                if (_jobProfile.Key == -1)
+                {
+                    _jobProfile.Key = ScheduleDataLayer.Job_Insert(_jobProfile, SessionAddressBlock.ClientServerSession.UserRID);
+                    FolderDataLayer.OpenUpdateConnection();
+                    try
+                    {
+                        FolderDataLayer.Folder_Item_Insert(rOTaskJobsParms.FolderKey, _jobProfile.Key, eProfileType.Job);
+                        FolderDataLayer.CommitData();
+                    }
+                    catch (Exception)
+                    {
+                        throw;
+                    }
+                    finally
+                    {
+                        FolderDataLayer.CloseUpdateConnection();
+                    }
+                }
+                else
+                {
+                    ScheduleDataLayer.Job_Update(_jobProfile, SessionAddressBlock.ClientServerSession.UserRID);
+                }
+
+                if(rOTaskJobsParms.Key.Key < 0)
+                {
+                    _jobTaskDataTable = new DataTable();
+                    _jobTaskDataTable.Columns.Add("JOB_RID", typeof(int));
+                    _jobTaskDataTable.Columns.Add("TASKLIST_RID", typeof(int));
+                    _jobTaskDataTable.Columns.Add("TASKLIST_SEQUENCE", typeof(int));
+                }
+                else
+                {
+                    _jobTaskDataTable.Clear();
+                }
+                
+                for (int i = 0; i < rOTaskJobsParms.ROTaskJobs.Count; i++)
+                {
+                    DataRow dataRow = _jobTaskDataTable.NewRow();
+                    dataRow["JOB_RID"] = _jobProfile.Key;
+                    dataRow["TASKLIST_RID"] = rOTaskJobsParms.ROTaskJobs[i].TaskList.Key;
+                    dataRow["TASKLIST_SEQUENCE"] = i;
+                    _jobTaskDataTable.Rows.Add(dataRow);
+                    _jobTaskDataTable.AcceptChanges();
+                }
+
+                _jobTaskDataTable = _jobTaskDataTable.DefaultView.ToTable();
+
+                ScheduleDataLayer.JobTaskListJoin_DeleteByJob(_jobProfile.Key);
+                ScheduleDataLayer.JobTaskListJoin_Insert(_jobTaskDataTable);
+
+                ScheduleDataLayer.CommitData();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                ScheduleDataLayer.CloseUpdateConnection();
+            }
+
+            return new ROTaskJobOut(eROReturnCode.Successful, null, ROInstanceID, GetTaskJobs(_jobProfile.Key));
+        }
+
+        private List<ROTaskJobs> GetTaskJobs(int key)
+        {
+            List<ROTaskJobs> listRoTaskJobs = new List<ROTaskJobs>();
+            _jobTaskDataTable = ScheduleDataLayer.TaskList_ReadByJob(key);
+            //_jobTaskDataTable.Columns.Add("DisplaySequence", typeof(int));
+            //_jobTaskDataTable.Columns.Add("User", typeof(string));
+
+            for (int i = 0; i < _jobTaskDataTable.Rows.Count; i++)
+            {
+                //_jobTaskDataTable.Rows[i]["DisplaySequence"] = i;
+                listRoTaskJobs.Add(new ROTaskJobs(new KeyValuePair<int, string>(
+                    Convert.ToInt32(_jobTaskDataTable.Rows[i]["TASKLIST_RID"]),
+                    Convert.ToString(_jobTaskDataTable.Rows[i]["TASKLIST_NAME"])),
+                    Convert.ToInt32(_jobTaskDataTable.Rows[i]["USER_RID"])));
+            }
+
+            return listRoTaskJobs;
+        }
+        #endregion
     }
 
 

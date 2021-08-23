@@ -128,7 +128,11 @@ namespace Logility.ROWeb
                     return ROTaskListManager.ApplyTask((ROTaskPropertiesParms)Parms);
                 case eRORequest.DeleteTask:
                     return ROTaskListManager.DeleteTask((ROTaskParms)Parms);
-                    // Jobs
+                // Jobs
+                case eRORequest.GetTaskJob:
+                    return ROTaskListManager.GetTaskJobList((ROProfileKeyParms)Parms);
+                case eRORequest.SaveTaskJob:
+                    return ROTaskListManager.SaveTaskJob((ROTaskJobsParms)Parms);
             }
 
             return new RONoDataOut(eROReturnCode.Failure, "Invalid Request", ROInstanceID);

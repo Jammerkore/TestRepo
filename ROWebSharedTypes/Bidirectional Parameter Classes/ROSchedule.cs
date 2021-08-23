@@ -1658,5 +1658,51 @@ namespace Logility.ROWebSharedTypes
         }
     }
 
-    
+    [DataContract(Name = "ROTaskJobs", Namespace = "http://Logility.ROWeb/")]
+    /// <summary>
+    /// Base class for all task lists
+    /// </summary>
+    public class ROTaskJobs
+    {
+        [DataMember(IsRequired = true)]
+        protected KeyValuePair<int, string> _taskList;
+
+        [DataMember(IsRequired = true)]
+        protected int _userKey;
+
+        public ROTaskJobs(KeyValuePair<int, string> taskList, int userKey)
+        {
+            _taskList = taskList;
+            _userKey = userKey;
+        }
+
+        public KeyValuePair<int, string> TaskList
+        {
+            get { return _taskList; }
+            set { _taskList = value; }
+        }
+
+        public int UserKey
+        {
+            get { return _userKey; }
+            set { _userKey = value; }
+        }
+
+
+        public eGlobalUserType GlobalUserType
+        {
+            get
+            {
+                if (UserKey == Include.GetGlobalUserRID())
+                {
+                    return eGlobalUserType.Global;
+                }
+                else
+                {
+                    return eGlobalUserType.User;
+                }
+            }
+        }
+    }
+
 }

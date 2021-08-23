@@ -219,6 +219,8 @@
         ProcessTaskList,
         CopyTaskList,
         DeleteTaskList,
+        GetTaskJob,
+        SaveTaskJob,
 
         //All Explorers
         RefreshExplorerData,

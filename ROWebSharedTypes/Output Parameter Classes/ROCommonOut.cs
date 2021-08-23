@@ -981,4 +981,30 @@ namespace Logility.ROWebSharedTypes
         public ROTaskProperties ROTaskProperties { get { return _ROTaskProperties; } }
 
     }
+
+    [DataContract(Name = "ROTaskJobOut", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskJobOut : ROOut
+    {
+        [DataMember(IsRequired = true)]
+        private List<ROTaskJobs> _ROTaskJobs;
+
+        public ROTaskJobOut(
+            eROReturnCode ROReturnCode,
+            string sROMessage,
+            long ROInstanceID,
+            List<ROTaskJobs> ROTaskJobs
+            )
+            :
+            base(
+                ROReturnCode: ROReturnCode,
+                sROMessage: sROMessage,
+                ROInstanceID: ROInstanceID
+                )
+        {
+            _ROTaskJobs = ROTaskJobs;
+        }
+
+        public List<ROTaskJobs> ROTaskJobs { get { return _ROTaskJobs; } }
+
+    }
 }

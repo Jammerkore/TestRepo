@@ -357,6 +357,8 @@ namespace Logility.ROWebSharedTypes
     [KnownType(typeof(ROTaskChainForecasting))]
     [KnownType(typeof(ROAuditFilterOption))]
     [KnownType(typeof(ROAuditResult))]
+    [KnownType(typeof(ROTaskJobOut))]
+    [KnownType(typeof(ROTaskJobs))]
     public class ROOut
     {
         public static readonly long lInvalidInstanceID = -1;

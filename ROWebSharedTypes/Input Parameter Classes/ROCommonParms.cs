@@ -945,4 +945,45 @@ namespace Logility.ROWebSharedTypes
         public int WorkflowStep { get { return _workflowStep; } }
 
     };
+
+    [DataContract(Name = "ROTaskJobsParms", Namespace = "http://Logility.ROWeb/")]
+    public class ROTaskJobsParms : ROParms
+    {
+        [DataMember(IsRequired = true)]
+        private List<ROTaskJobs> _ROTaskJobs;
+        [DataMember(IsRequired = true)]
+        private int _folderKey;
+        [DataMember(IsRequired = true)]
+        private KeyValuePair<int, string> _key;
+
+        public ROTaskJobsParms(
+            string sROUserID,
+            string sROSessionID,
+            eROClass ROClass,
+            eRORequest RORequest,
+            long ROInstanceID,
+            List<ROTaskJobs> ROTaskJobs,
+            KeyValuePair<int, string> key,
+            int folderKey = Include.NoRID
+            ) :
+            base(
+                sROUserID: sROUserID,
+                sROSessionID: sROSessionID,
+                ROClass: ROClass,
+                RORequest: RORequest,
+                ROInstanceID: ROInstanceID
+                )
+        {
+            _ROTaskJobs = ROTaskJobs;
+            _folderKey = folderKey;
+            _key = key;
+        }
+
+        public List<ROTaskJobs> ROTaskJobs { get { return _ROTaskJobs; } }
+
+        public int FolderKey { get { return _folderKey; } set { _folderKey = value; } }
+
+        public KeyValuePair<int, string> Key { get { return _key; } set { _key = value; } }
+
+    }
 }
