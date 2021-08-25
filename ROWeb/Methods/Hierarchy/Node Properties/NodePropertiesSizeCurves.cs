@@ -486,7 +486,7 @@ namespace Logility.ROWeb
                 // Load Level arrays
 
                 _toleranceLevelList = new List<HierarchyLevelComboObject>();
-                _toleranceLevelList.Add(new HierarchyLevelComboObject(_toleranceLevelList.Count, ePlanLevelLevelType.Undefined, Include.NoRID, Include.Undefined, MIDText.GetTextOnly(eMIDTextCode.lbl_NoHigherLevel)));
+                _toleranceLevelList.Add(new HierarchyLevelComboObject(_toleranceLevelList.Count, ePlanLevelLevelType.HierarchyLevel, Include.NoRID, Include.Undefined, MIDText.GetTextOnly(eMIDTextCode.lbl_NoHigherLevel)));
 
                 ancestorList = SAB.HierarchyServerSession.GetAllNodeAncestors(nodeProf.Key);
 
@@ -881,7 +881,7 @@ namespace Logility.ROWeb
                 HierarchyLevelComboObject levelCombo = _toleranceLevelList[nodePropertiesSizeCurvesData.ToleranceLevel.Key];
                 _sizeCurveToleranceProfile.ToleranceLevelType = (eLowLevelsType)levelCombo.PlanLevelLevelType;
                 _sizeCurveToleranceProfile.ToleranceLevelRID = levelCombo.HierarchyRID;
-                _sizeCurveToleranceProfile.ToleranceLevelSeq = _sizeCurveToleranceProfile.ToleranceLevelSeq != levelCombo.Level ? levelCombo.Level : Include.Undefined;
+                _sizeCurveToleranceProfile.ToleranceLevelSeq = levelCombo.Level;
                 _sizeCurveToleranceProfile.ToleranceLevelOffset = _sizeCurveToleranceProfile.ToleranceLevelOffset != levelCombo.Level ? levelCombo.Level : Include.Undefined;
                 _sizeCurveToleranceProfile.ToleranceLevelIsInherited = false;
             }
