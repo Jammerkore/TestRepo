@@ -1748,6 +1748,48 @@ namespace Logility.ROWeb
             return new ROTaskJobOut(eROReturnCode.Successful, null, ROInstanceID, GetTaskJobs(_jobProfile.Key));
         }
 
+        public RODataExplorerFolderParms GetDeleteFolderParam(RODataExplorerFolderParms param)
+        {
+            return new RODataExplorerFolderParms(
+                sROUserID: param.ROUserID,
+                    sROSessionID: param.ROSessionID,
+                    ROClass: param.ROClass,
+                    RORequest: param.RORequest,
+                    ROInstanceID: param.ROInstanceID,
+                    profileType: param.ProfileType,
+                    key: param.Key,
+                    name: string.Empty,
+                    userKey: SessionAddressBlock.ClientServerSession.UserRID,
+                    parentProfileType: param.ParentProfileType,
+                    parentKey: param.ParentKey,
+                    parentUserKey: SessionAddressBlock.ClientServerSession.UserRID,
+                    toParentProfileType: param.ToParentProfileType,
+                    toParentKey: Include.NoRID,
+                    toParentUserKey: Include.NoRID
+                );
+        }
+
+        public RODataExplorerFolderParms GetAddFolderParam(RODataExplorerFolderParms param)
+        {
+            return new RODataExplorerFolderParms(
+                sROUserID: param.ROUserID,
+                    sROSessionID: param.ROSessionID,
+                    ROClass: param.ROClass,
+                    RORequest: param.RORequest,
+                    ROInstanceID: param.ROInstanceID,
+                    profileType: param.ProfileType,
+                    key: param.Key,
+                    name: param.Name,
+                    userKey: SessionAddressBlock.ClientServerSession.UserRID,
+                    parentProfileType: param.ParentProfileType,
+                    parentKey: param.ParentKey,
+                    parentUserKey: SessionAddressBlock.ClientServerSession.UserRID,
+                    toParentProfileType: param.ToParentProfileType,
+                    toParentKey: param.ToParentKey,
+                    toParentUserKey: SessionAddressBlock.ClientServerSession.UserRID
+                );
+        }
+
         private List<ROTaskJobs> GetTaskJobs(int key)
         {
             List<ROTaskJobs> listRoTaskJobs = new List<ROTaskJobs>();

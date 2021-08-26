@@ -85,9 +85,9 @@ namespace Logility.ROWeb
                     return RefreshExplorerData(Parms: (ROTreeNodeParms)Parms);
 
                 case eRORequest.AddFolder:
-                    return AddFolder((RODataExplorerFolderParms)Parms);
+                    return AddFolder(ROTaskListManager.GetAddFolderParam((RODataExplorerFolderParms)Parms));
                 case eRORequest.DeleteFolder:
-                    return DeleteFolder((RODataExplorerFolderParms)Parms);
+                    return DeleteFolder(ROTaskListManager.GetDeleteFolderParam((RODataExplorerFolderParms)Parms));
                 case eRORequest.Rename:
                     return Rename((RODataExplorerRenameParms)Parms);
                 case eRORequest.Copy:

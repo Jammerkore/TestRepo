@@ -4151,8 +4151,8 @@ namespace MIDRetail.Windows
 								{
 									_dlSchedule.CloseUpdateConnection();
 									_dlFolder.CloseUpdateConnection();
-
-									RefreshScheduleBrowserWindow();
+									if (MIDEnvironment.isWindows)
+										RefreshScheduleBrowserWindow();
 								}
 
 								DeleteShortcuts(_favoritesNode, aNode);
