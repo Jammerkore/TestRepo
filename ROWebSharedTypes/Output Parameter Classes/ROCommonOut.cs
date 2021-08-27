@@ -986,12 +986,16 @@ namespace Logility.ROWebSharedTypes
     public class ROTaskJobOut : ROOut
     {
         [DataMember(IsRequired = true)]
+        private KeyValuePair<int,string> _job;
+
+        [DataMember(IsRequired = true)]
         private List<ROTaskJobs> _ROTaskJobs;
 
         public ROTaskJobOut(
             eROReturnCode ROReturnCode,
             string sROMessage,
             long ROInstanceID,
+            KeyValuePair<int, string> job,
             List<ROTaskJobs> ROTaskJobs
             )
             :
@@ -1002,9 +1006,11 @@ namespace Logility.ROWebSharedTypes
                 )
         {
             _ROTaskJobs = ROTaskJobs;
+            _job = job;
         }
 
         public List<ROTaskJobs> ROTaskJobs { get { return _ROTaskJobs; } }
 
+        public KeyValuePair<int, string> Job { get { return _job; } }
     }
 }

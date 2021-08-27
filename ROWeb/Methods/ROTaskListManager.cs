@@ -1674,7 +1674,7 @@ namespace Logility.ROWeb
                 JobFunctionSecurity.SetReadOnly();
             }            
 
-            return new ROTaskJobOut(returnCode, message, ROInstanceID, GetTaskJobs(taskListParameters.Key));
+            return new ROTaskJobOut(returnCode, message, ROInstanceID, new KeyValuePair<int, string>(_jobProfile.Key, _jobProfile.Name), GetTaskJobs(taskListParameters.Key));
         }
 
         public ROOut SaveTaskJob(ROTaskJobsParms rOTaskJobsParms)
@@ -1745,7 +1745,7 @@ namespace Logility.ROWeb
                 ScheduleDataLayer.CloseUpdateConnection();
             }
 
-            return new ROTaskJobOut(eROReturnCode.Successful, null, ROInstanceID, GetTaskJobs(_jobProfile.Key));
+            return new ROTaskJobOut(eROReturnCode.Successful, null, ROInstanceID, new KeyValuePair<int, string>(_jobProfile.Key,_jobProfile.Name), GetTaskJobs(_jobProfile.Key));
         }
 
         public RODataExplorerFolderParms GetDeleteFolderParam(RODataExplorerFolderParms param)
