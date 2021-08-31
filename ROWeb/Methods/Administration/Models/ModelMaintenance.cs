@@ -303,7 +303,7 @@ namespace Logility.ROWeb
             try
             {
                 _modelClass = GetModelClass(modelType: parms.ROModelProperties.ModelType);
-
+                _currentModelType = _modelClass.ModelType;
                 if (!_modelClass.FunctionSecurity.AllowUpdate)
                 {
                     message = MIDText.GetText(eMIDTextCode.msg_NotAuthorized);
