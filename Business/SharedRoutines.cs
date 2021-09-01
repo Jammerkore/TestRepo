@@ -322,7 +322,7 @@ namespace MIDRetail.Business
         public static KeyValuePair<int, string> GetFilterName(int key)
         {
             string name = string.Empty;
-            if (key > Include.NoRID)
+            if (key > Include.UndefinedStoreFilter)
             {
                 FilterData filterData = new FilterData();
                 name = filterData.FilterGetName(key);

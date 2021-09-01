@@ -1898,7 +1898,7 @@ namespace MIDRetail.Business
                         timePeriod: GetName.GetCalendarDateRange(calendarDateRID: DateRangeRID, SAB: SAB),
                         multiLevel: MultiLevelInd,
                         planType: PlanType,
-                        storeFilter: GetName.GetStoreName(_storeFilterRid),
+                        storeFilter: GetName.GetFilterName(_storeFilterRid),
                         attribute: GetName.GetAttributeName(SG_RID),
                         attributeSet: GetName.GetAttributeSetName(_currentSglRid),
                         fromLevel: fromLevel,
@@ -2250,9 +2250,15 @@ namespace MIDRetail.Business
                     {
                         DataRow dataRow = _dsForecastCopy.Tables["GroupLevel"].NewRow();
                         dataRow["SGL_RID"] = attributeSetList[i].Key;
-                        _dsForecastCopy.Tables["Basis"].Rows.Add(dataRow);
+                        _dsForecastCopy.Tables["GroupLevel"].Rows.Add(dataRow);
                     }
                 }
+                // make sure attribute set is in current attribute
+                if (attributeSetList.FindKey(rOMethodCopyStoreForecastProperties.AttributeSet.Key) == null)
+                {
+                    rOMethodCopyStoreForecastProperties.AttributeSet = new KeyValuePair<int, string>(attributeSetList[0].Key, null);
+                }
+                rOMethodCopyStoreForecastProperties.BasisVersions.Clear();
             }
 
             // update basis values before updating attribute and set references
