@@ -1890,6 +1890,7 @@ namespace Logility.ROWebSharedTypes
             _headerStatus = headerStatus;
             _headerStatusText = headerStatusText;
             _intransitStatus = intransitStatus;
+            _intransitStatusText = intransitStatusText;
             _shipStatus = shipStatus;
             _shipStatusText = shipStatusText;
             _hnp_style = hnp_Style;
