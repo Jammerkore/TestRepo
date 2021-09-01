@@ -2239,7 +2239,8 @@ namespace MIDRetail.Business
         private bool SetStoreData(ROMethodCopyStoreForecastProperties rOMethodCopyStoreForecastProperties)
         {
             // modify attribute and attribute set values if changed
-            if (SG_RID != rOMethodCopyStoreForecastProperties.Attribute.Key)
+            if (SG_RID != rOMethodCopyStoreForecastProperties.Attribute.Key
+                || _dsForecastCopy.Tables["GroupLevel"].Rows.Count == 0)
             {
                 _dsForecastCopy.Tables["GroupLevel"].Rows.Clear();
                 _dsForecastCopy.Tables["Basis"].Rows.Clear();
