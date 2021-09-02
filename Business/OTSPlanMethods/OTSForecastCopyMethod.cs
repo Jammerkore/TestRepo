@@ -2263,7 +2263,14 @@ namespace MIDRetail.Business
             }
 
             // update basis values before updating attribute and set references
-            _dsForecastCopy = ConvertStoreBasisListDataset(rOMethodCopyStoreForecastProperties.AttributeSetValues.BasisProfiles);
+            // Make sure is a valid set for the attribute
+            DataRow[] foundAttributeSet = _dsForecastCopy.Tables["GroupLevel"].Select("SGL_RID = '" + _currentSglRid + "'");
+            if (foundAttributeSet.Length != 0)
+            {
+                _dsForecastCopy = ConvertStoreBasisListDataset(
+                    rOMethodCopyStoreForecastProperties.AttributeSetValues.BasisProfiles,
+                    rOMethodCopyStoreForecastProperties.AttributeSetValues.AttributeSet.Key);
+            }
             SG_RID = rOMethodCopyStoreForecastProperties.Attribute.Key;
             _currentSglRid = rOMethodCopyStoreForecastProperties.AttributeSet.Key;
             _storeFilterRid = rOMethodCopyStoreForecastProperties.StoreFilter.Key;
@@ -2399,12 +2406,12 @@ namespace MIDRetail.Business
             return _dsForecastCopy;
         }
 
-        private DataSet ConvertStoreBasisListDataset(List<ROBasisDetailProfile> basisProfiles)
+        private DataSet ConvertStoreBasisListDataset(List<ROBasisDetailProfile> basisProfiles, int currentSetKey)
         {
             // delete rows for the current set and rebuild the rows
             DataTable dtBasisDetails = _dsForecastCopy.Tables["Basis"];
 
-            string selectString = "SGL_RID=" + _currentSglRid;
+            string selectString = "SGL_RID=" + currentSetKey;
             if (dtBasisDetails != null)
             {
                 DataRow[] basisDataRows = dtBasisDetails.Select(selectString);
@@ -2419,7 +2426,7 @@ namespace MIDRetail.Business
             foreach (var basisDetailsProfile in basisProfiles)
             {
                 DataRow rowDtlProf = dtBasisDetails.NewRow();
-                rowDtlProf["SGL_RID"] = _currentSglRid;
+                rowDtlProf["SGL_RID"] = currentSetKey;
                 rowDtlProf["DETAIL_SEQ"] = sequence;
                 rowDtlProf["Merchandise"] = basisDetailsProfile.Merchandise;
                 rowDtlProf["HN_RID"] = basisDetailsProfile.MerchandiseId;

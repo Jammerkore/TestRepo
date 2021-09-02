@@ -2492,7 +2492,11 @@ namespace Logility.ROWeb
 
             tolerancePercent = SAB.ApplicationServerSession.GlobalOptions.BalanceTolerancePercent;
 
-            storeFilter = rOWorkflow.ROWorkflow.Filter.Key;
+            if (rOWorkflow.ROWorkflow.Filter.Key > Include.UndefinedStoreFilter)
+            {
+                storeFilter = rOWorkflow.ROWorkflow.Filter.Key;
+            }
+
             foreach (ROAllocationWorkflowStep item in rOWorkflow.ROWorkflow.WorkflowSteps)
             {
                 if (Enum.IsDefined(typeof(eAllocationActionType), Convert.ToInt32((eMethodType)item.MethodAction.Key, CultureInfo.CurrentUICulture)))
@@ -2720,7 +2724,10 @@ namespace Logility.ROWeb
 
             tolerancePercent = SAB.ApplicationServerSession.GlobalOptions.BalanceTolerancePercent;
 
-            storeFilter = rOWorkflow.ROWorkflow.Filter.Key;
+            if (rOWorkflow.ROWorkflow.Filter.Key > Include.UndefinedStoreFilter)
+            {
+                storeFilter = rOWorkflow.ROWorkflow.Filter.Key;
+            }
 
             foreach (ROPlanningWorkflowStep item in rOWorkflow.ROWorkflow.WorkflowSteps)
             {
