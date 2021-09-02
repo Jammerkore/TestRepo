@@ -1110,6 +1110,10 @@ namespace MIDRetail.Data
                             eAllocationSqlAccessRequest.PackAllocation,
                             storeRID,
                              Convert.ToUInt32(dr["ALLOC_STORE_DET_AUDIT_FLAGS"], CultureInfo.CurrentUICulture));  // TT#488 - MD - Jellis - Group Allocation
+                        saqr.AddStoreGeneralAudit(
+                            eAllocationSqlAccessRequest.PackAllocation,
+                            storeRID,
+                            Convert.ToInt32(dr["ALLOC_STORE_GEN_AUDIT_FLAGS"], CultureInfo.CurrentUICulture));
                         //Convert.ToInt32(dr["ALLOC_STORE_DET_AUDIT_FLAGS"], CultureInfo.CurrentUICulture)); // TT#488 - MD - Jellis - Group Allocation
                         // begin MID Track 5694 MA Enhancement Relieve IT by Header ID (Also, fix orphan IT)
                         //saqr.AddStoreShipping(
@@ -1372,6 +1376,10 @@ namespace MIDRetail.Data
                             eAllocationSqlAccessRequest.ColorAllocation,
                             storeRID,
                              Convert.ToUInt32(dr["ALLOC_STORE_DET_AUDIT_FLAGS"], CultureInfo.CurrentUICulture));  // TT#488 - MD - Jellis - Group Allocation
+                        saqr.AddStoreGeneralAudit(
+                            eAllocationSqlAccessRequest.ColorAllocation,
+                            storeRID,
+                            Convert.ToInt32(dr["ALLOC_STORE_GEN_AUDIT_FLAGS"], CultureInfo.CurrentUICulture));
                         //Convert.ToInt32(dr["ALLOC_STORE_DET_AUDIT_FLAGS"], CultureInfo.CurrentUICulture)); // TT#488 - MD - Jellis - Group Allocation
                         // begin mID Track 5694 MA Enhancement Relieve IT by Header ID (Also fix orphan IT)
                         //saqr.AddStoreShipping(
@@ -3734,6 +3742,11 @@ namespace MIDRetail.Data
                             drPackAllocation["ALLOC_STORE_DET_AUDIT_FLAGS"] = (uint)intValue; // TT#1334 - Urban - Jellis - Balance to VSW Enhancement
                             //drPackAllocation["ALLOC_STORE_DET_AUDIT_FLAGS"] = (ushort)intValue; // TT#1334 - Urban - Jellis - Balance to VSW Enhancement
                         }
+                        intValue = saqrPack.GetStoreGeneralAudit(storeRID);
+                        if (intValue != 0)
+                        {
+                            drPackAllocation["ALLOC_STORE_GEN_AUDIT_FLAGS"] = (ushort)intValue;
+                        }
                         intValue = saqrPack.GetStoreShippingStatus(storeRID);
                         if (intValue > 0)
                         {
@@ -3904,6 +3917,11 @@ namespace MIDRetail.Data
                         {
                             drColorAllocation["ALLOC_STORE_DET_AUDIT_FLAGS"] = (uint)intValue;   // TT#1334 - Urban - Jellis - Balance to VSW Enhancement
                             //drColorAllocation["ALLOC_STORE_DET_AUDIT_FLAGS"] = (ushort)intValue; // TT#1334 - Urban - Jellis - Balance to VSW Enhancement
+                        }
+                        intValue = saqrColor.GetStoreGeneralAudit(storeRID);
+                        if (intValue != 0)
+                        {
+                            drColorAllocation["ALLOC_STORE_GEN_AUDIT_FLAGS"] = (ushort)intValue;
                         }
                         intValue = saqrColor.GetStoreShippingStatus(storeRID);
                         if (intValue > 0)

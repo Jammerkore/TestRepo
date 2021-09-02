@@ -20,6 +20,7 @@ create table [dbo].[PACK_ALLOCATION] (
     "MAXIMUM" int null, 
     "PRIMARY_MAX" int null,
     "ALLOC_STORE_DET_AUDIT_FLAGS" int null,
+	"ALLOC_STORE_GEN_AUDIT_FLAGS" int null,
     "SHIPPING_STATUS_FLAGS" int null,
     "CHOSEN_RULE_PACKS" int null,
     "ITEM_PACKS_ALLOCATED" int null		

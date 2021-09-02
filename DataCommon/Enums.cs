@@ -4801,6 +4801,18 @@ namespace MIDRetail.DataCommon
     }
     // END TT#1966-MD - AGallagher - DC Fulfillment
 
+    public enum eExternalEligibilityProductIdentifier
+    {
+        ID = 0,
+        Name = 1
+    }
+
+    public enum eExternalEligibilityChannelIdentifier
+    {
+        ID = 0,
+        Name = 1
+    }
+
     //  Allocation Rule Types      802300 - 802399
     /// <summary>
     /// Enumerates the allocation rule types.
@@ -10973,4 +10985,11 @@ namespace MIDRetail.DataCommon
         WaitingForResponse = 2,
         ResponseReceived = 3
     }
+
+    public enum eRequestingApplication
+    {
+        Allocation,
+        Forecast,
+        Assortment
+    };
 }

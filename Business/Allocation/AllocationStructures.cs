@@ -1627,6 +1627,8 @@ namespace MIDRetail.Business.Allocation
         private int _sequence;
         private List<int> _associatedPackRIDs = null;   // TT#1966-MD - JSmith - DC Fulfillment
         private string _associatedPackName;  // TT#2119-MD - JSmith - Cancelling allocation on subordinate headers on master runs forever if subordinates have same pack names with different size runs
+        private bool _storeEligibilityLoaded = false;
+        private int _planHnRID;
 		#endregion Fields
 
 		#region Constructors
@@ -1667,6 +1669,21 @@ namespace MIDRetail.Business.Allocation
 		// PROPERTIES
 		//===========
 		/// <summary>
+        /// Gets _storeEligibilityLoaded flag
+        /// </summary>
+        internal bool StoreEligibilityLoaded
+        {
+            get
+            {
+                return _storeEligibilityLoaded;
+            }
+            set
+            {
+                _storeEligibilityLoaded = value;
+            }
+        }
+
+        /// <summary>
 		/// Gets or sets IsChanged database update flag
 		/// </summary>
 		internal bool PackIsChanged
@@ -3058,7 +3075,29 @@ namespace MIDRetail.Business.Allocation
 		{
 			_storePackAllocated[aStoreIndex].AllDetailAuditFlags = aFlags;
 		}
-		#endregion AuditFlags
+
+        /// <summary>
+        /// Gets all detail audit flags simultaneously for the indicated store
+        /// </summary>
+        /// <param name="aStoreIndex">Index identifier for the store (not RID)</param>
+        /// <returns>Ushort value each of whose bits represent a single flag setting.</returns>
+        //internal ushort GetAllDetailAuditFlags(int aStoreIndex) // TT#488 - MD - Jellis - Group Allocation
+        internal ushort GetAllGeneralAuditFlags(int aStoreIndex) // TT#488 - MD - Jellis - Group Allocation
+        {
+            return _storePackAllocated[aStoreIndex].AllGeneralAudits;
+        }
+
+        /// <summary>
+        /// Sets all detail audit flags simultaneously for the indicated store.
+        /// </summary>
+        /// <param name="aStoreIndex">Index identifier for the store (not RID)</param>
+        /// <param name="aFlags">Flag values</param>
+        //internal void SetAllDetailAuditFlags (int aStoreIndex, ushort aFlags) // TT#488 - MD - Jellis - Group Allocation
+        internal void SetAllGeneralAuditFlags(int aStoreIndex, ushort aFlags)   // TT#488 - MD - Jellis - Group Allocation
+        {
+            _storePackAllocated[aStoreIndex].AllGeneralAudits = aFlags;
+        }
+        #endregion AuditFlags
 
 		#region ShipFlags
 		/// <summary>
@@ -4088,16 +4127,44 @@ namespace MIDRetail.Business.Allocation
 				}
 			}
 		}
-		#endregion PackCopy
-		#endregion Methods
-	}
-	#endregion PackHdr
-	
-	#region PackHdrCompareAscend
-	/// <summary>
-	/// Indicates the ascending sequence of two packs.
-	/// </summary>
-	public class PackHdrCompareAscend : IComparer
+        #endregion PackCopy
+
+        #region StoreEligibility
+        /// <summary>
+        /// Gets store Eligibility flag value.
+        /// </summary>
+        /// <param name="aStore">Index_RID identifier for the store</param>
+        /// <returns>True if eligible, false if not eligible.</returns>
+        internal bool GetStoreIsEligible(Index_RID aStore)
+        {
+            return _storePackAllocated[aStore.Index].StoreIsEligible;
+        }
+
+        /// <summary>
+        /// Sets a store's Eligibility flag value.
+        /// </summary>
+        /// <param name="aStore">Index_RID identifier for the store.</param>
+        /// <param name="aFlagValue">True if eligible, false if not.</param>
+        internal void SetStoreIsEligible(Index_RID aStore, bool aFlagValue)
+        {
+            if (!_storeEligibilityLoaded || GetStoreIsEligible(aStore) != aFlagValue)
+            {
+                //SetIsChanged(eAllocationSummaryNode.Total, true);
+                _storePackAllocated[aStore.Index].StoreIsEligible = aFlagValue;
+                //SetStoreIsChanged(eAllocationSummaryNode.Total, aStore, true);
+                this._sass.SetSQL_StructureChange(StoreAllocationQuickRequest.GetStoreDetailAuditFlagsStructure(), true);
+            }
+        }
+        #endregion StoreEligibility
+        #endregion Methods
+    }
+    #endregion PackHdr
+
+    #region PackHdrCompareAscend
+    /// <summary>
+    /// Indicates the ascending sequence of two packs.
+    /// </summary>
+    public class PackHdrCompareAscend : IComparer
 	{
 		/// <summary>
 		/// Compares packs x and y and inicates the ascending sequence of the two. 
@@ -5805,7 +5872,9 @@ namespace MIDRetail.Business.Allocation
 		private int _colorCodeRID;
 		private int _origColorCodeRID;
 		private int _masterOrSubordinateColorCodeRID; // MID Track 4029 ReWork MasterPO Logic
-		private HdrAllocationBin _colorBin;
+        private int _colorNodeRID;
+        private int _hdrRID;
+        private HdrAllocationBin _colorBin;
 		private int _totalSizeUnitsToAllocate;
 		private MinMaxAllocationBin _minMaxBin;
 		private int _reserveUnits;
@@ -5844,21 +5913,24 @@ namespace MIDRetail.Business.Allocation
         private eVSWSizeConstraints _vswSizeConstraints; // TT#246 - MD - JEllis - VSW Size In Store Minimums pt 2
         private ColorStatusFlags _colorStatusFlags;      // TT#246 - MD - Jellis - VSW Size In STore Minimums pt 5
         private eFillSizesToType _FillSizesToType; //TT#848-MD -jsobek -Fill to Size Plan Presentation
-		#endregion
-       
-		#region Constructors
-		//=============
-		// CONSTRUCTORS
-		//=============
-		/// <summary>
-		/// Used to construct an instance of this class.
-		/// </summary>
-		public HdrColorBin ()
+        private bool _storeEligibilityLoaded = false;
+        #endregion
+
+        #region Constructors
+        //=============
+        // CONSTRUCTORS
+        //=============
+        /// <summary>
+        /// Used to construct an instance of this class.
+        /// </summary>
+        public HdrColorBin ()
 		{
 			_colorCodeRID = Include.NoRID;
 			_origColorCodeRID = Include.NoRID;
 			_masterOrSubordinateColorCodeRID = Include.NoRID; // MID Track 4029 ReWork MasterPO Logic
-			_colorBin.SetQtyAllocated(0);
+            _colorNodeRID = Include.NoRID;
+            _hdrRID = Include.NoRID;
+            _colorBin.SetQtyAllocated(0);
 			_colorBin.SetQtyToAllocate(0);
 			_colorBin.SetUnitMultiple(1);
             // begin TT#1401 -  Urban Reservation Stores pt 1
@@ -5905,16 +5977,31 @@ namespace MIDRetail.Business.Allocation
             _vswSizeConstraints = eVSWSizeConstraints.None; // TT#246 - MD - JEllis - VSW Size In Store Minimums pt 2
             _colorStatusFlags.AllFlags = 0;                 // TT#246 - MD - Jellis - AnF VSW Size In Store MInimums pt 5
 	}
-		#endregion
+        #endregion
 
-		#region Properties
-		//===========
-		// PROPERTIES
-		//===========
-		/// <summary>
-		/// Gets or sets IsChanged database update flag
-		/// </summary>
-		internal bool ColorIsChanged
+        #region Properties
+        //===========
+        // PROPERTIES
+        //===========
+        /// <summary>
+        /// Gets _storeEligibilityLoaded flag
+        /// </summary>
+        internal bool StoreEligibilityLoaded
+        {
+            get
+            {
+                return _storeEligibilityLoaded;
+            }
+            set
+            {
+                _storeEligibilityLoaded = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets IsChanged database update flag
+        /// </summary>
+        internal bool ColorIsChanged
 		{
 			get
 			{
@@ -5976,8 +6063,36 @@ namespace MIDRetail.Business.Allocation
 			}
 		}
 
-		// begin MID Track 4029 ReWork MasterPO Logic
-		internal int MasterOrSubordinateColorCodeRID
+        internal int ColorNodeRID
+        {
+            get
+            {
+                return _colorNodeRID;
+            }
+            set
+            {
+                _colorNodeRID = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the HdrRID associated with this pack
+        /// </summary>
+        /// <remarks>Identifies the home Header for this pack</remarks>
+        public int HdrRID
+        {
+            get
+            {
+                return _hdrRID;
+            }
+            set
+            {
+                _hdrRID = value;
+            }
+        }
+
+        // begin MID Track 4029 ReWork MasterPO Logic
+        internal int MasterOrSubordinateColorCodeRID
 		{
 			get
 			{
@@ -8068,18 +8183,70 @@ namespace MIDRetail.Business.Allocation
 		{
 			_storeColorAllocated[aStoreIndex].AllDetailAuditFlags = aFlags;
 		}
-		#endregion StoreAuditFlags
 
-		#region StoreIsChanged
-		//==================//
-		// Store Is Changed //
-		//==================//
-		/// <summary>
-		/// Gets StoreIsChanged for a specified store in this color
-		/// </summary>
-		/// <param name="aStoreIndex">Index identifier for the store (not RID).</param>
-		/// <returns>True: store color information has changed; False: store color information has not changed.</returns>
-		internal bool GetStoreIsChanged (int aStoreIndex)
+        /// <summary>
+        /// Gets all detail audit flags simultaneously for the indicated store
+        /// </summary>
+        /// <param name="aStoreIndex">Index identifier for the store (not RID)</param>
+        /// <returns>Ushort value each of whose bits represent a single flag setting.</returns>
+        //internal ushort GetAllDetailAuditFlags(int aStoreIndex) // TT#488 - MD - Jellis - Group Allocation
+        internal ushort GetAllGeneralAuditFlags(int aStoreIndex) // TT#488 - MD - Jellis - Group Allocation
+        {
+            return _storeColorAllocated[aStoreIndex].AllGeneralAudits;
+        }
+
+        /// <summary>
+        /// Sets all detail audit flags simultaneously for the indicated store.
+        /// </summary>
+        /// <param name="aStoreIndex">Index identifier for the store (not RID)</param>
+        /// <param name="aFlags">Flag values</param>
+        //internal void SetAllDetailAuditFlags (int aStoreIndex, ushort aFlags) // TT#488 - MD - Jellis - Group Allocation
+        internal void SetAllGeneralAuditFlags(int aStoreIndex, ushort aFlags)   // TT#488 - MD - Jellis - Group Allocation
+        {
+            _storeColorAllocated[aStoreIndex].AllGeneralAudits = aFlags;
+        }
+        #endregion StoreAuditFlags
+
+        #region StoreEligibility
+        /// <summary>
+        /// Gets store Eligibility flag value.
+        /// </summary>
+        /// <param name="aStore">Index_RID identifier for the store</param>
+        /// <returns>True if eligible, false if not eligible.</returns>
+        internal bool GetStoreIsEligible(Index_RID aStore)
+        {
+            return _storeColorAllocated[aStore.Index].StoreIsEligible;
+        }
+
+        /// <summary>
+        /// Sets a store's Eligibility flag value.
+        /// </summary>
+        /// <param name="aStore">Index_RID identifier for the store.</param>
+        /// <param name="aFlagValue">True if eligible, false if not.</param>
+        internal void SetStoreIsEligible(Index_RID aStore, bool aFlagValue)
+        {
+            if (!_storeEligibilityLoaded || GetStoreIsEligible(aStore) != aFlagValue)
+            {
+                //SetIsChanged(eAllocationSummaryNode.Total, true);
+                _storeColorAllocated[aStore.Index].StoreIsEligible = aFlagValue;
+                //SetStoreIsChanged(aStore, true);
+                this._sass.SetSQL_StructureChange(StoreAllocationQuickRequest.GetStoreDetailAuditFlagsStructure(), true);
+            }
+        }
+        #endregion StoreEligibility
+
+        
+
+        #region StoreIsChanged
+        //==================//
+        // Store Is Changed //
+        //==================//
+        /// <summary>
+        /// Gets StoreIsChanged for a specified store in this color
+        /// </summary>
+        /// <param name="aStoreIndex">Index identifier for the store (not RID).</param>
+        /// <returns>True: store color information has changed; False: store color information has not changed.</returns>
+        internal bool GetStoreIsChanged (int aStoreIndex)
 		{
 			return _storeColorAllocated[aStoreIndex].StoreColorIsChanged;
 		}
@@ -8440,7 +8607,7 @@ namespace MIDRetail.Business.Allocation
 			this._sass.SetSQL_StructureChange(StoreAllocationQuickRequest.GetStoreDetailAuditFlagsStructure(), true); // MID Track 3994 Performance
 		}
 		#endregion StoreChosenRuleAcceptedByHeader
-
+    
         // begin TT#488 - MD - Jellis - Group Allocation
         #region StoreChosenRuleAcceptedByGroup
         //=====================================//

@@ -279,8 +279,16 @@ namespace MIDRetail.Business
 			{
 				foreach (WeekProfile weekProf in _planCubeGroup.OpenParms.GetWeekProfileList(_planCubeGroup.SAB.ApplicationServerSession))
 				{
-					if (_planCubeGroup.Transaction.GetStoreEligibilityForSales(_planCubeGroup.OpenParms.StoreHLPlanProfile.NodeProfile.Key, aStoreProf.Key, weekProf.Key) ||
-						_planCubeGroup.Transaction.GetStoreEligibilityForStock(_planCubeGroup.OpenParms.StoreHLPlanProfile.NodeProfile.Key, aStoreProf.Key, weekProf.Key))
+					if (_planCubeGroup.Transaction.GetStoreEligibilityForSales(
+                        eRequestingApplication.Forecast, 
+                        _planCubeGroup.OpenParms.StoreHLPlanProfile.NodeProfile.Key, 
+                        aStoreProf.Key, 
+                        weekProf.Key) ||
+						_planCubeGroup.Transaction.GetStoreEligibilityForStock(
+                            eRequestingApplication.Forecast, 
+                            _planCubeGroup.OpenParms.StoreHLPlanProfile.NodeProfile.Key, 
+                            aStoreProf.Key, 
+                            weekProf.Key))
 					{
 						return true;
 					}

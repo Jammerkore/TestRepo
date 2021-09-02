@@ -273,12 +273,27 @@ namespace MIDRetail.Business
 				switch (varProf.EligibilityType)
 				{
 					case eEligibilityType.Sales:
-						return !CubeGroup.Transaction.GetStoreEligibilityForSales(nodeRID, aPlanCellRef[eProfileType.Store], aPlanCellRef[eProfileType.Week]);
+						return !CubeGroup.Transaction.GetStoreEligibilityForSales(
+                            eRequestingApplication.Forecast, 
+                            nodeRID, 
+                            aPlanCellRef[eProfileType.Store], 
+                            aPlanCellRef[eProfileType.Week]);
 					case eEligibilityType.Stock:
-						return !CubeGroup.Transaction.GetStoreEligibilityForStock(nodeRID, aPlanCellRef[eProfileType.Store], aPlanCellRef[eProfileType.Week]);
+						return !CubeGroup.Transaction.GetStoreEligibilityForStock(
+                            eRequestingApplication.Forecast, 
+                            nodeRID, 
+                            aPlanCellRef[eProfileType.Store], 
+                            aPlanCellRef[eProfileType.Week]);
 					case eEligibilityType.Either:
-						return !CubeGroup.Transaction.GetStoreEligibilityForSales(nodeRID, aPlanCellRef[eProfileType.Store], aPlanCellRef[eProfileType.Week]) &&
-							!CubeGroup.Transaction.GetStoreEligibilityForStock(nodeRID, aPlanCellRef[eProfileType.Store], aPlanCellRef[eProfileType.Week]);
+						return !CubeGroup.Transaction.GetStoreEligibilityForSales(
+                            eRequestingApplication.Forecast, 
+                            nodeRID, aPlanCellRef[eProfileType.Store],
+                            aPlanCellRef[eProfileType.Week]) &&
+							!CubeGroup.Transaction.GetStoreEligibilityForStock(
+                                eRequestingApplication.Forecast, 
+                                nodeRID, 
+                                aPlanCellRef[eProfileType.Store], 
+                                aPlanCellRef[eProfileType.Week]);
 					default:
 						return false;
 				}

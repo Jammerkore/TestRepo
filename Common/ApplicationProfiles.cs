@@ -137,6 +137,7 @@ namespace MIDRetail.Common
         private eDCFulfillmentMinimums _apply_By;
         private eDCFulfillmentWithinDC _within_Dc;
         // END TT#1966-MD - AGallagher - DC Fulfillment
+        private bool _useExternalEligibility;
 		#endregion
 
 		public int OTSPlanStoreGroupRID
@@ -591,6 +592,11 @@ namespace MIDRetail.Common
         }
         // END TT#1966-MD - AGallagher - DC Fulfillment
 
+        public bool UseExternalEligibility
+        {
+            get { return _useExternalEligibility; }
+            set { _useExternalEligibility = value; }
+        }
 
 		public void LoadOptions()
 		{

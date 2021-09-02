@@ -26,7 +26,7 @@ namespace MIDRetail.Business
 	/// application to open multiple functions of the same type, yet each has its own copy of information contained in this class.
 	/// </remarks>
 
-	public class ApplicationSessionTransaction : Transaction
+	public partial class ApplicationSessionTransaction : Transaction
 	{
 		//=======
 		// FIELDS
@@ -207,11 +207,57 @@ namespace MIDRetail.Business
 		private int _currentSalesWkRangeEligibilityNodeRID = -1;  // MID Track # 2539 Grades not same in OTS and Allocation
 		private long _currentSalesEligibilityWeekRange = -1;      // MID Track #2539 Grades not same in OTS and Allocation
 
-		// To cache daily percentages, two Hashtable are required.
-		// The outermost Hashtable is keyed by nodeRID and contains a Hashtable of dates as the value.
-		// The innermost Hashtable is keyed by year/week and contains a Hashtable keyed by storeRID
-		// which contains the daily percentages values.
-		private System.Collections.Hashtable _dailyPercentagesHashByNodeRID;
+        // cache fields for color
+        private System.Collections.Hashtable _colorSalesEligibilityHashByNodeRID;
+        private System.Collections.Hashtable _colorStockEligibilityHashByNodeRID;
+        private System.Collections.Hashtable _colorPriorityShippingHashByNodeRID;
+        private System.Collections.Hashtable _colorSalesEligibilityHashByYearWeek;
+        private System.Collections.Hashtable _colorStockEligibilityHashByYearWeek;
+        private System.Collections.Hashtable _colorPriorityShippingHashByYearWeek;
+        private System.Collections.Hashtable _colorSalesWkRangeEligibilityHashByNodeRID;
+        private System.Collections.Hashtable _colorSalesEligibilityHashByWeekRange;
+        private System.Collections.BitArray _colorSalesEligibilityBitArray;
+        private System.Collections.BitArray _colorSalesWkRangeEligibilityBitArray;
+
+        private System.Collections.BitArray _colorStockEligibilityBitArray;
+        private System.Collections.BitArray _colorPriorityShippingBitArray;
+        private int _colorCurrentSalesEligibilityNodeRID = -1;
+        private int _colorCurrentSalesEligibilityYearWeek = -1;
+        private int _colorCurrentStockEligibilityNodeRID = -1;
+        private int _colorCurrentStockEligibilityYearWeek = -1;
+        private int _colorCurrentPriorityShippingNodeRID = -1;
+        private int _colorCurrentPriorityShippingYearWeek = -1;
+        private int _colorCurrentSalesWkRangeEligibilityNodeRID = -1;
+        private long _colorCurrentSalesEligibilityWeekRange = -1;
+
+        // cache fields for pack
+        private System.Collections.Hashtable _packSalesEligibilityHashByNodeRID;
+        private System.Collections.Hashtable _packStockEligibilityHashByNodeRID;
+        private System.Collections.Hashtable _packPriorityShippingHashByNodeRID;
+        private System.Collections.Hashtable _packSalesEligibilityHashByYearWeek;
+        private System.Collections.Hashtable _packStockEligibilityHashByYearWeek;
+        private System.Collections.Hashtable _packPriorityShippingHashByYearWeek;
+        private System.Collections.Hashtable _packSalesWkRangeEligibilityHashByNodeRID;
+        private System.Collections.Hashtable _packSalesEligibilityHashByWeekRange;
+        private System.Collections.BitArray _packSalesEligibilityBitArray;
+        private System.Collections.BitArray _packSalesWkRangeEligibilityBitArray;
+
+        private System.Collections.BitArray _packStockEligibilityBitArray;
+        private System.Collections.BitArray _packPriorityShippingBitArray;
+        private int _packCurrentSalesEligibilityNodeRID = -1;
+        private int _packCurrentSalesEligibilityYearWeek = -1;
+        private int _packCurrentStockEligibilityNodeRID = -1;
+        private int _packCurrentStockEligibilityYearWeek = -1;
+        private int _packCurrentPriorityShippingNodeRID = -1;
+        private int _packCurrentPriorityShippingYearWeek = -1;
+        private int _packCurrentSalesWkRangeEligibilityNodeRID = -1;
+        private long _packCurrentSalesEligibilityWeekRange = -1;
+
+        // To cache daily percentages, two Hashtable are required.
+        // The outermost Hashtable is keyed by nodeRID and contains a Hashtable of dates as the value.
+        // The innermost Hashtable is keyed by year/week and contains a Hashtable keyed by storeRID
+        // which contains the daily percentages values.
+        private System.Collections.Hashtable _dailyPercentagesHashByNodeRID;
 		private System.Collections.Hashtable _dailyPercentagesHashByYearWeek;
 		private int _currentDailyPercentagesNodeRID = Include.NoRID;
 		private int _currentDailyPercentagesYearWeek = Include.NoRID;
@@ -421,7 +467,11 @@ namespace MIDRetail.Business
 
 			_salesEligibilityHashByNodeRID = new System.Collections.Hashtable();
 			_stockEligibilityHashByNodeRID = new System.Collections.Hashtable();
-			_priorityShippingHashByNodeRID = new System.Collections.Hashtable();
+            _colorSalesEligibilityHashByNodeRID = new System.Collections.Hashtable();
+            _colorStockEligibilityHashByNodeRID = new System.Collections.Hashtable();
+            _packSalesEligibilityHashByNodeRID = new System.Collections.Hashtable();
+            _packStockEligibilityHashByNodeRID = new System.Collections.Hashtable();
+            _priorityShippingHashByNodeRID = new System.Collections.Hashtable();
 			_salesWkRangeEligibilityHashByNodeRID = new System.Collections.Hashtable();  // MID Track #2539 Grades not same in OTS and ALlocation
 			_storeGradesHash = new System.Collections.Hashtable();
 			_velocityGradesHash = new System.Collections.Hashtable();
@@ -593,6 +643,10 @@ namespace MIDRetail.Business
             _salesEligibilityHashByNodeRID = new System.Collections.Hashtable();
             _stockEligibilityHashByNodeRID = new System.Collections.Hashtable();
             _priorityShippingHashByNodeRID = new System.Collections.Hashtable();
+            _colorSalesEligibilityHashByNodeRID = new System.Collections.Hashtable();
+            _colorStockEligibilityHashByNodeRID = new System.Collections.Hashtable();
+            _packSalesEligibilityHashByNodeRID = new System.Collections.Hashtable();
+            _packStockEligibilityHashByNodeRID = new System.Collections.Hashtable();
             _salesWkRangeEligibilityHashByNodeRID = new System.Collections.Hashtable();  
             _storeGradesHash = new System.Collections.Hashtable();
             _velocityGradesHash = new System.Collections.Hashtable();
@@ -756,6 +810,22 @@ namespace MIDRetail.Business
                 _salesEligibilityHashByNodeRID = null;
                 _salesEligibilityHashByNodeRID = new Hashtable();
             }
+
+            if (_colorSalesEligibilityHashByNodeRID != null &&
+                _colorSalesEligibilityHashByNodeRID.Count > 0)
+            {
+                _colorSalesEligibilityHashByNodeRID.Clear();
+                _colorSalesEligibilityHashByNodeRID = null;
+                _colorSalesEligibilityHashByNodeRID = new Hashtable();
+            }
+
+            if (_packSalesEligibilityHashByNodeRID != null &&
+                _packSalesEligibilityHashByNodeRID.Count > 0)
+            {
+                _packSalesEligibilityHashByNodeRID.Clear();
+                _packSalesEligibilityHashByNodeRID = null;
+                _packSalesEligibilityHashByNodeRID = new Hashtable();
+            }
         }
 
         public void ClearStockEligibilityCache()
@@ -766,6 +836,22 @@ namespace MIDRetail.Business
                 _stockEligibilityHashByNodeRID.Clear();
                 _stockEligibilityHashByNodeRID = null;
                 _stockEligibilityHashByNodeRID = new Hashtable();
+            }
+
+            if (_colorStockEligibilityHashByNodeRID != null &&
+                _colorStockEligibilityHashByNodeRID.Count > 0)
+            {
+                _colorStockEligibilityHashByNodeRID.Clear();
+                _colorStockEligibilityHashByNodeRID = null;
+                _colorStockEligibilityHashByNodeRID = new Hashtable();
+            }
+
+            if (_packStockEligibilityHashByNodeRID != null &&
+                _packStockEligibilityHashByNodeRID.Count > 0)
+            {
+                _packStockEligibilityHashByNodeRID.Clear();
+                _packStockEligibilityHashByNodeRID = null;
+                _packStockEligibilityHashByNodeRID = new Hashtable();
             }
         }
 
@@ -8201,11 +8287,16 @@ namespace MIDRetail.Business
 		/// <returns>
 		/// A boolean identifying if the store is eligible
 		/// </returns>
-		public bool GetStoreEligibilityForSales(int nodeRID, int storeRID, int yearWeek)
+		public bool GetStoreEligibilityForSales(
+            eRequestingApplication requestingApplication,
+            int nodeRID, 
+            int storeRID, 
+            int yearWeek
+            )
 		{
 			try
 			{
-				return DetermineSalesEligibility(nodeRID, storeRID, yearWeek);
+				return DetermineSalesEligibility(requestingApplication, nodeRID, storeRID, yearWeek);
 			}
 			catch ( Exception err )
 			{
@@ -8318,11 +8409,15 @@ namespace MIDRetail.Business
 		/// <remarks>
 		/// This method will not set the store's priority shipping status.
 		/// </remarks>
-		public StoreWeekEligibilityList GetStoreEligibilityForSales(int nodeRID, StoreWeekEligibilityList swel)
+		public StoreWeekEligibilityList GetStoreEligibilityForSales(
+            eRequestingApplication requestingApplication,
+            int nodeRID, 
+            StoreWeekEligibilityList swel
+            )
 		{
 			try
 			{
-				return GetStoreEligibilityForSales(nodeRID, swel, false);
+				return GetStoreEligibilityForSales(requestingApplication, nodeRID, swel, false);
 			}
 			catch ( Exception err )
 			{
@@ -8346,13 +8441,18 @@ namespace MIDRetail.Business
 		/// <returns>
 		/// The StoreWeekEligibilityList object containing the eligibility settings.
 		/// </returns>
-		public StoreWeekEligibilityList GetStoreEligibilityForSales(int nodeRID, StoreWeekEligibilityList swel, bool setPriorityShipping)
+		public StoreWeekEligibilityList GetStoreEligibilityForSales(
+            eRequestingApplication requestingApplication, 
+            int nodeRID, 
+            StoreWeekEligibilityList swel, 
+            bool setPriorityShipping
+            )
 		{
 			try
 			{
 				foreach(StoreWeekEligibilityProfile swep in swel)
 				{
-					swep.StoreIsEligible = DetermineSalesEligibility(nodeRID, swep.Key, swep.YearWeek);
+					swep.StoreIsEligible = DetermineSalesEligibility(requestingApplication, nodeRID, swep.Key, swep.YearWeek);
 					if (setPriorityShipping)
 					{
 						swep.StoreIsPriorityShipper = DeterminePriorityShipping(nodeRID, swep.Key, swep.YearWeek);
@@ -8382,11 +8482,15 @@ namespace MIDRetail.Business
 		/// <remarks>
 		/// This method will not set the store's priority shipping status.
 		/// </remarks>
-		public StoreWeekEligibilityList GetStoreEligibilityForSales(int nodeRID, int yearWeek)
+		public StoreWeekEligibilityList GetStoreEligibilityForSales(
+            eRequestingApplication requestingApplication, 
+            int nodeRID, 
+            int yearWeek
+            )
 		{
 			try
 			{
-				return GetStoreEligibilityForSales(nodeRID, yearWeek, false);
+				return GetStoreEligibilityForSales(requestingApplication, nodeRID, yearWeek, false);
 			}
 			catch ( Exception err )
 			{
@@ -8410,7 +8514,12 @@ namespace MIDRetail.Business
 		/// <returns>
 		/// The StoreWeekEligibilityList object containing the eligibility settings.
 		/// </returns>
-		public StoreWeekEligibilityList GetStoreEligibilityForSales(int nodeRID, int yearWeek, bool setPriorityShipping)
+		public StoreWeekEligibilityList GetStoreEligibilityForSales(
+            eRequestingApplication requestingApplication,
+            int nodeRID, 
+            int yearWeek, 
+            bool setPriorityShipping
+            )
 		{
 			try
 			{
@@ -8421,7 +8530,7 @@ namespace MIDRetail.Business
 				{
 					swep = new StoreWeekEligibilityProfile(sp.Key);
 					swep.YearWeek = yearWeek;
-					swep.StoreIsEligible = DetermineSalesEligibility(nodeRID, swep.Key, swep.YearWeek);
+					swep.StoreIsEligible = DetermineSalesEligibility(requestingApplication, nodeRID, swep.Key, swep.YearWeek);
 					if (setPriorityShipping)
 					{
 						swep.StoreIsPriorityShipper = DeterminePriorityShipping(nodeRID, swep.Key, swep.YearWeek);
@@ -8455,11 +8564,16 @@ namespace MIDRetail.Business
 		/// <remarks>
 		/// This method will not set the store's priority shipping status.
 		/// </remarks>
-		public StoreWeekEligibilityList GetStoreEligibilityForSales(ProfileList storeList, int nodeRID, int yearWeek)
+		public StoreWeekEligibilityList GetStoreEligibilityForSales(
+            eRequestingApplication requestingApplication, 
+            ProfileList storeList, 
+            int nodeRID, 
+            int yearWeek
+            )
 		{
 			try
 			{
-				return GetStoreEligibilityForSales(storeList, nodeRID, yearWeek, false);
+				return GetStoreEligibilityForSales(requestingApplication, storeList, nodeRID, yearWeek, false);
 			}
 			catch ( Exception err )
 			{
@@ -8486,7 +8600,13 @@ namespace MIDRetail.Business
 		/// <returns>
 		/// The StoreWeekEligibilityList object containing the eligibility settings.
 		/// </returns>
-		public StoreWeekEligibilityList GetStoreEligibilityForSales(ProfileList storeList, int nodeRID, int yearWeek, bool setPriorityShipping)
+		public StoreWeekEligibilityList GetStoreEligibilityForSales(
+            eRequestingApplication requestingApplication, 
+            ProfileList storeList, 
+            int nodeRID, 
+            int yearWeek, 
+            bool setPriorityShipping
+            )
 		{
 			try
 			{
@@ -8496,7 +8616,7 @@ namespace MIDRetail.Business
 				{
 					swep = new StoreWeekEligibilityProfile(sp.Key);
 					swep.YearWeek = yearWeek;
-					swep.StoreIsEligible = DetermineSalesEligibility(nodeRID, swep.Key, swep.YearWeek);
+					swep.StoreIsEligible = DetermineSalesEligibility(requestingApplication, nodeRID, swep.Key, swep.YearWeek);
 					if (setPriorityShipping)
 					{
 						swep.StoreIsPriorityShipper = DeterminePriorityShipping(nodeRID, swep.Key, swep.YearWeek);
@@ -8528,7 +8648,12 @@ namespace MIDRetail.Business
 		/// A boolean identifying if the store is eligible
 		/// </returns>
 		/// <remarks>This routine will accept a year/week as either YYYYWW or YYYYDDD</remarks>
-		private bool DetermineSalesEligibility(int nodeRID, int storeRID, int yearWeek)
+		private bool DetermineSalesEligibility(
+            eRequestingApplication requestingApplication, 
+            int nodeRID, 
+            int storeRID, 
+            int yearWeek
+            )
 		{
 			try
 			{
@@ -8555,7 +8680,14 @@ namespace MIDRetail.Business
 					_salesEligibilityBitArray = (System.Collections.BitArray)_salesEligibilityHashByYearWeek[yearWeek];
 					if (_salesEligibilityBitArray == null)
 					{
-						_salesEligibilityBitArray = HierarchySessionTransaction.GetStoreSalesEligibilityFlags(nodeRID, yearWeek);
+                        if (this.GlobalOptions.UseExternalEligibility)
+                        {
+
+                        }
+                        else
+                        {
+                            _salesEligibilityBitArray = HierarchySessionTransaction.GetStoreSalesEligibilityFlags(nodeRID, yearWeek);
+                        }
 						_salesEligibilityHashByYearWeek.Add(yearWeek, _salesEligibilityBitArray);
 					}
 					_currentSalesEligibilityYearWeek = yearWeek;
@@ -8593,11 +8725,16 @@ namespace MIDRetail.Business
 		/// <returns>
 		/// A boolean identifying if the store is eligible
 		/// </returns>
-		public bool GetStoreEligibilityForStock(int nodeRID, int storeRID, int yearWeek)
+		public bool GetStoreEligibilityForStock(
+            eRequestingApplication requestingApplication, 
+            int nodeRID, 
+            int storeRID, 
+            int yearWeek
+            )
 		{
 			try
 			{
-				return DetermineStockEligibility(nodeRID, storeRID, yearWeek);
+				return DetermineStockEligibility(requestingApplication, nodeRID, storeRID, yearWeek);
 			}
 			catch ( Exception err )
 			{
@@ -8621,11 +8758,15 @@ namespace MIDRetail.Business
 		/// <remarks>
 		/// This method will not set the store's priority shipping status.
 		/// </remarks>
-		public StoreWeekEligibilityList GetStoreEligibilityForStock(int nodeRID, StoreWeekEligibilityList swel)
+		public StoreWeekEligibilityList GetStoreEligibilityForStock(
+            eRequestingApplication requestingApplication, 
+            int nodeRID, 
+            StoreWeekEligibilityList swel
+            )
 		{
 			try
 			{
-				return GetStoreEligibilityForStock(nodeRID, swel, false);
+				return GetStoreEligibilityForStock(requestingApplication, nodeRID, swel, false);
 			}
 			catch ( Exception err )
 			{
@@ -8649,13 +8790,18 @@ namespace MIDRetail.Business
 		/// <returns>
 		/// The StoreWeekEligibilityList object containing the eligibility settings.
 		/// </returns>
-		public StoreWeekEligibilityList GetStoreEligibilityForStock(int nodeRID, StoreWeekEligibilityList swel, bool setPriorityShipping)
+		public StoreWeekEligibilityList GetStoreEligibilityForStock(
+            eRequestingApplication requestingApplication, 
+            int nodeRID, 
+            StoreWeekEligibilityList swel, 
+            bool setPriorityShipping
+            )
 		{
 			try
 			{
 				foreach(StoreWeekEligibilityProfile swep in swel)
 				{
-					swep.StoreIsEligible = DetermineStockEligibility(nodeRID, swep.Key, swep.YearWeek);
+					swep.StoreIsEligible = DetermineStockEligibility(requestingApplication, nodeRID, swep.Key, swep.YearWeek);
 					if (setPriorityShipping)
 					{
 						swep.StoreIsPriorityShipper = DeterminePriorityShipping(nodeRID, swep.Key, swep.YearWeek);
@@ -8685,11 +8831,15 @@ namespace MIDRetail.Business
 		/// <remarks>
 		/// This method will not set the store's priority shipping status.
 		/// </remarks>
-		public StoreWeekEligibilityList GetStoreEligibilityForStock(int nodeRID, int yearWeek)
+		public StoreWeekEligibilityList GetStoreEligibilityForStock(
+            eRequestingApplication requestingApplication, 
+            int nodeRID, 
+            int yearWeek
+            )
 		{
 			try
 			{
-				return GetStoreEligibilityForStock(nodeRID, yearWeek, false);
+				return GetStoreEligibilityForStock(requestingApplication, nodeRID, yearWeek, false);
 			}
 			catch ( Exception err )
 			{
@@ -8713,7 +8863,12 @@ namespace MIDRetail.Business
 		/// <returns>
 		/// The StoreWeekEligibilityList object containing the eligibility settings.
 		/// </returns>
-		public StoreWeekEligibilityList GetStoreEligibilityForStock(int nodeRID, int yearWeek, bool setPriorityShipping)
+		public StoreWeekEligibilityList GetStoreEligibilityForStock(
+            eRequestingApplication requestingApplication, 
+            int nodeRID, 
+            int yearWeek, 
+            bool setPriorityShipping
+            )
 		{
 			try
 			{
@@ -8724,7 +8879,7 @@ namespace MIDRetail.Business
 				{
 					swep = new StoreWeekEligibilityProfile(sp.Key);
 					swep.YearWeek = yearWeek;
-					swep.StoreIsEligible = DetermineStockEligibility(nodeRID, swep.Key, swep.YearWeek);
+					swep.StoreIsEligible = DetermineStockEligibility(requestingApplication, nodeRID, swep.Key, swep.YearWeek);
 					if (setPriorityShipping)
 					{
 						swep.StoreIsPriorityShipper = DeterminePriorityShipping(nodeRID, swep.Key, swep.YearWeek);
@@ -8758,11 +8913,16 @@ namespace MIDRetail.Business
 		/// <remarks>
 		/// This method will not set the store's priority shipping status.
 		/// </remarks>
-		public StoreWeekEligibilityList GetStoreEligibilityForStock(ProfileList storeList, int nodeRID, int yearWeek)
+		public StoreWeekEligibilityList GetStoreEligibilityForStock(
+            eRequestingApplication requestingApplication, 
+            ProfileList storeList, 
+            int nodeRID, 
+            int yearWeek
+            )
 		{
 			try
 			{
-				return GetStoreEligibilityForStock(storeList, nodeRID, yearWeek, false);
+				return GetStoreEligibilityForStock(requestingApplication, storeList, nodeRID, yearWeek, false);
 			}
 			catch ( Exception err )
 			{
@@ -8789,7 +8949,13 @@ namespace MIDRetail.Business
 		/// <returns>
 		/// The StoreWeekEligibilityList object containing the eligibility settings.
 		/// </returns>
-		public StoreWeekEligibilityList GetStoreEligibilityForStock(ProfileList storeList, int nodeRID, int yearWeek, bool setPriorityShipping)
+		public StoreWeekEligibilityList GetStoreEligibilityForStock(
+            eRequestingApplication requestingApplication, 
+            ProfileList storeList, 
+            int nodeRID, 
+            int yearWeek, 
+            bool setPriorityShipping
+            )
 		{
 			try
 			{
@@ -8799,7 +8965,7 @@ namespace MIDRetail.Business
 				{
 					swep = new StoreWeekEligibilityProfile(sp.Key);
 					swep.YearWeek = yearWeek;
-					swep.StoreIsEligible = DetermineStockEligibility(nodeRID, swep.Key, swep.YearWeek);
+					swep.StoreIsEligible = DetermineStockEligibility(requestingApplication, nodeRID, swep.Key, swep.YearWeek);
 					if (setPriorityShipping)
 					{
 						swep.StoreIsPriorityShipper = DeterminePriorityShipping(nodeRID, swep.Key, swep.YearWeek);
@@ -8831,7 +8997,12 @@ namespace MIDRetail.Business
 		/// A boolean identifying if the store is eligible
 		/// </returns>
 		/// <remarks>This routine will accept a year/week as either YYYYWW or YYYYDDD</remarks>
-		private bool DetermineStockEligibility(int nodeRID, int storeRID, int yearWeek)
+		private bool DetermineStockEligibility(
+            eRequestingApplication requestingApplication, 
+            int nodeRID, 
+            int storeRID, 
+            int yearWeek
+            )
 		{
 			try
 			{
@@ -8858,7 +9029,14 @@ namespace MIDRetail.Business
 					_stockEligibilityBitArray = (System.Collections.BitArray)_stockEligibilityHashByYearWeek[yearWeek];
 					if (_stockEligibilityBitArray == null)
 					{
-						_stockEligibilityBitArray = HierarchySessionTransaction.GetStoreStockEligibilityFlags(nodeRID, yearWeek);
+                        if (this.GlobalOptions.UseExternalEligibility)
+                        {
+
+                        }
+                        else
+                        {
+                            _stockEligibilityBitArray = HierarchySessionTransaction.GetStoreStockEligibilityFlags(nodeRID, yearWeek);
+                        }
 						_stockEligibilityHashByYearWeek.Add(yearWeek, _stockEligibilityBitArray);
 					}
 					_currentStockEligibilityYearWeek = yearWeek;

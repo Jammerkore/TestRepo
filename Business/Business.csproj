@@ -929,6 +929,7 @@
     </Compile>
     <Compile Include="StoreManager\StoreManagement.cs" />
     <Compile Include="StoreManager\StoreValidation.cs" />
+    <Compile Include="Transaction\ApplicationSessionTransactionExternalEligibility.cs" />
     <Compile Include="Transaction\ApplicationSessionTransaction.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -938,6 +939,7 @@
     <Compile Include="Transaction\HeaderSessionTransaction.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Transaction\HierarchySessionTransactionExternalEligibility.cs" />
     <Compile Include="Transaction\HierarchySessionTransaction.cs">
       <SubType>Code</SubType>
     </Compile>

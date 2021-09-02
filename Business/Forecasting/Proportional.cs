@@ -204,11 +204,19 @@ namespace MIDRetail.Business
                     //_storeEligibilty = _OTSPlanMethod.ApplicationTransaction.GetStoreEligibilityForSales(_OTSPlanMethod.Plan_HN_RID,planWeek.Key);
                     if (_OTSPlanMethod.CurrentVariable.VariableProfile.EligibilityType == eEligibilityType.Sales)
                     {
-                        _storeEligibilty = _OTSPlanMethod.ApplicationTransaction.GetStoreEligibilityForSales(_OTSPlanMethod.Plan_HN_RID, planWeek.Key);
+                        _storeEligibilty = _OTSPlanMethod.ApplicationTransaction.GetStoreEligibilityForSales(
+                            eRequestingApplication.Forecast, 
+                            _OTSPlanMethod.Plan_HN_RID, 
+                            planWeek.Key
+                            );
                     }
                     else if (_OTSPlanMethod.CurrentVariable.VariableProfile.EligibilityType == eEligibilityType.Stock)
                     {
-                        _storeEligibilty = _OTSPlanMethod.ApplicationTransaction.GetStoreEligibilityForStock(_OTSPlanMethod.Plan_HN_RID, planWeek.Key);
+                        _storeEligibilty = _OTSPlanMethod.ApplicationTransaction.GetStoreEligibilityForStock(
+                            eRequestingApplication.Forecast, 
+                            _OTSPlanMethod.Plan_HN_RID, 
+                            planWeek.Key
+                            );
                     }
                     else 
                     {

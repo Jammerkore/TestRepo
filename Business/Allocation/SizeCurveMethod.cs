@@ -2441,7 +2441,12 @@ namespace MIDRetail.Business.Allocation
 					{
 						foreach (WeekProfile weekProf in aWeekList)
 						{
-							if (aAppTran.GetStoreEligibilityForSales(aHierNodeProf.Key, storeProf.Key, weekProf.Key))
+							if (aAppTran.GetStoreEligibilityForSales(
+                                eRequestingApplication.Allocation, 
+                                aHierNodeProf.Key, 
+                                storeProf.Key, 
+                                weekProf.Key
+                                ))
 							{
 								validStoreList.Add(storeProf.Key);
 								break;

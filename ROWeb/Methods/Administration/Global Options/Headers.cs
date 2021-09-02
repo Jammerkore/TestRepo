@@ -214,7 +214,14 @@ namespace Logility.ROWeb
 
             HeaderTypeProfile headerProfile = _headerProfiles.FindKey(_iRID) as HeaderTypeProfile;
 
-            _bChecked = headerProfile.ReleaseHeaderType;
+            if (headerProfile == null)
+            {
+                _bChecked = false;
+            }
+            else
+            {
+                _bChecked = headerProfile.ReleaseHeaderType;
+            }
         }
 
         protected override void ParseDataRow(DataRow dr, bool bIsDBRow)

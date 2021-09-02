@@ -175,7 +175,11 @@ namespace MIDRetail.Business
 					//************************
 					// get store eligibility
 					//************************
-					_storeEligibilty = _OTSPlanMethod.ApplicationTransaction.GetStoreEligibilityForSales(_OTSPlanMethod.Plan_HN_RID,planWeek.Key);
+					_storeEligibilty = _OTSPlanMethod.ApplicationTransaction.GetStoreEligibilityForSales(
+                        eRequestingApplication.Forecast, 
+                        _OTSPlanMethod.Plan_HN_RID,
+                        planWeek.Key
+                        );
 
 					//*************************************
 					// Read store plan values for each store

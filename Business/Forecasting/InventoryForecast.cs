@@ -187,7 +187,11 @@ namespace MIDRetail.Business
 				_storeCellRefHash.Clear();
 
 				_chainInventoryValue = _OTSPlanMethod.ReadChainValue(inventoryWeek, _OTSPlanMethod.StockVariable);
-				_storeEligibilty = _OTSPlanMethod.ApplicationTransaction.GetStoreEligibilityForStock(_OTSPlanMethod.Plan_HN_RID,inventoryWeek.YearWeek);
+				_storeEligibilty = _OTSPlanMethod.ApplicationTransaction.GetStoreEligibilityForStock(
+                    eRequestingApplication.Forecast, 
+                    _OTSPlanMethod.Plan_HN_RID,
+                    inventoryWeek.YearWeek
+                    );
 				_storeStockModifiers = _OTSPlanMethod.ApplicationTransaction.GetStoreModifierForStock(_OTSPlanMethod.Plan_HN_RID, inventoryWeek.YearWeek);
 				// BEGIN MID Track #4370 - John Smith - FWOS Models
 				_storeFWOSModifiers = _OTSPlanMethod.ApplicationTransaction.GetStoreModifierForFWOS(_OTSPlanMethod.Plan_HN_RID, inventoryWeek.YearWeek);

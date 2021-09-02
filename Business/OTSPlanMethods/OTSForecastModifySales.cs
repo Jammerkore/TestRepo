@@ -716,7 +716,11 @@ namespace MIDRetail.Business
                 }
                 // End issue 4288
 
-                _storeEligibilty = _applicationTransaction.GetStoreEligibilityForSales(this._hierNodeRid, aWeek.Key);
+                _storeEligibilty = _applicationTransaction.GetStoreEligibilityForSales(
+                    eRequestingApplication.Forecast, 
+                    this._hierNodeRid, 
+                    aWeek.Key
+                    );
 
                 //==================================
                 // Read store values for week

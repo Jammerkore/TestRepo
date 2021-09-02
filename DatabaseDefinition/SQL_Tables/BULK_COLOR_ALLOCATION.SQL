@@ -21,6 +21,7 @@ create table [dbo].[BULK_COLOR_ALLOCATION] (
 	"MAXIMUM" int null,
 	"PRIMARY_MAX" int null,
 	"ALLOC_STORE_DET_AUDIT_FLAGS" int null,
+	"ALLOC_STORE_GEN_AUDIT_FLAGS" int null,
 	"SHIPPING_STATUS_FLAGS" int null,
 	"CHOSEN_RULE_UNITS" int null,
 	"ITEM_UNITS_ALLOCATED" int null,

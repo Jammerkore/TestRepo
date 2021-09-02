@@ -4698,7 +4698,11 @@ namespace MIDRetail.Business.Allocation
 					swep.YearWeek = wp.YearWeek;
 					swel.Add(swep);
 				}
-				swel = ((ApplicationSessionTransaction)Transaction).GetStoreEligibilityForStock(this.PlanHnRID, swel);
+				swel = ((ApplicationSessionTransaction)Transaction).GetStoreEligibilityForStock(
+                    eRequestingApplication.Allocation, 
+                    this.PlanHnRID, 
+                    swel
+                    );
 				foreach (StoreWeekEligibilityProfile sep in swel)
 				{
 					this.SetStoreIsEligible(sep.Key, sep.StoreIsEligible);
@@ -4733,7 +4737,11 @@ namespace MIDRetail.Business.Allocation
                                     swel.Add(swep);
                                 }
                             }
-                            swel = ((ApplicationSessionTransaction)Transaction).GetStoreEligibilityForStock(this.PlanHnRID, swel);
+                            swel = ((ApplicationSessionTransaction)Transaction).GetStoreEligibilityForStock(
+                                eRequestingApplication.Allocation, 
+                                this.PlanHnRID, 
+                                swel
+                                );
                             foreach (StoreWeekEligibilityProfile sep in swel)
                             {
                                 this.SetStoreIsEligible(sep.Key, sep.StoreIsEligible);
@@ -4769,7 +4777,11 @@ namespace MIDRetail.Business.Allocation
 							swel.Add(swep);
 						}
 					}
-					swel = ((ApplicationSessionTransaction)Transaction).GetStoreEligibilityForStock(this.PlanHnRID, swel);
+					swel = ((ApplicationSessionTransaction)Transaction).GetStoreEligibilityForStock(
+                        eRequestingApplication.Allocation, 
+                        this.PlanHnRID, 
+                        swel
+                        );
 					foreach (StoreWeekEligibilityProfile sep in swel)
 					{
 						this.SetStoreIsEligible(sep.Key, sep.StoreIsEligible);

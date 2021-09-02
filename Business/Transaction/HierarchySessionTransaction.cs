@@ -17,7 +17,7 @@ namespace MIDRetail.Business
 	/// application to open multiple functions of the same type, yet each has its own copy of information contained in this class.
 	/// </remarks>
 
-	public class HierarchySessionTransaction : Transaction
+	public partial class HierarchySessionTransaction : Transaction
 	{
 		//=======
 		// FIELDS
@@ -25,7 +25,9 @@ namespace MIDRetail.Business
 		private System.Collections.Hashtable _profileHash;
 		private int _maxStoreRID = 0;
 		private System.Collections.Hashtable _storeEligibilityHash;
-		private System.Collections.Hashtable _salesEligibilityModelHash;
+        private System.Collections.Hashtable _colorStoreEligibilityHash;
+        private System.Collections.Hashtable _packStoreEligibilityHash;
+        private System.Collections.Hashtable _salesEligibilityModelHash;
 		private System.Collections.Hashtable _salesEligibilityModelDateHash;
 		private int _currentSalesEligibilityModelRID = Include.NoRID;
         // Begin TT#2307 - JSmith - Incorrect Stock Values
@@ -263,7 +265,39 @@ namespace MIDRetail.Business
 			}
 		}
 
-		private Hashtable SalesEligibilityModelHash 
+        private Hashtable ColorStoreEligibilityHash
+        {
+            get
+            {
+                if (_colorStoreEligibilityHash == null)
+                {
+                    _colorStoreEligibilityHash = new System.Collections.Hashtable();
+                }
+                return _colorStoreEligibilityHash;
+            }
+            set
+            {
+                _colorStoreEligibilityHash = value;
+            }
+        }
+
+        private Hashtable PackStoreEligibilityHash
+        {
+            get
+            {
+                if (_packStoreEligibilityHash == null)
+                {
+                    _packStoreEligibilityHash = new System.Collections.Hashtable();
+                }
+                return _packStoreEligibilityHash;
+            }
+            set
+            {
+                _packStoreEligibilityHash = value;
+            }
+        }
+
+        private Hashtable SalesEligibilityModelHash 
 		{
 			get 
 			{ 

@@ -5504,6 +5504,7 @@ namespace MIDRetail.Business.Allocation
 		private StoreAllocatedBin _storePack;
 		private int _packsShipped;
 		private ShippingStatusFlags _storePackShipStatus;
+        private AllocationStoreGeneralAuditFlags _storeGeneralAudit;
 		//=============
 		// CONSTRUCTORS
 		//=============
@@ -6154,6 +6155,193 @@ namespace MIDRetail.Business.Allocation
 			}
 		}
 
+        /// <summary>
+		/// Gets or sets store' general audits simultaneously.
+		/// </summary>
+		internal ushort AllGeneralAudits    // TT#1401 - JEllis - Urban Reservation Store pt 11
+        {
+            get
+            {
+                return _storeGeneralAudit.AllFlags;
+            }
+            set
+            {
+                _storeGeneralAudit.AllFlags = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the StorePercentNeedLimitReached audit flag.
+        /// </summary>
+        internal bool StorePercentNeedLimitReached
+        {
+            get
+            {
+                return _storeGeneralAudit.PercentNeedLimitReached;
+            }
+            set
+            {
+                if (StorePercentNeedLimitReached != value)
+                {
+                    _storeGeneralAudit.PercentNeedLimitReached = value;
+                    this.StorePackIsChanged = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets StoreCapacityMaximumReached general audit flag.
+        /// </summary>
+        internal bool StoreCapacityMaximumReached
+        {
+            get
+            {
+                return _storeGeneralAudit.CapacityMaximumReached;
+            }
+            set
+            {
+                if (StoreCapacityMaximumReached != value)
+                {
+                    _storeGeneralAudit.CapacityMaximumReached = value;
+                    this.StorePackIsChanged = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or set StorePrimaryMaximumReached general audit flag.
+        /// </summary>
+        internal bool StorePrimaryMaximumReached
+        {
+            get
+            {
+                return _storeGeneralAudit.PrimaryMaximumReached;
+            }
+            set
+            {
+                if (StorePrimaryMaximumReached != value)
+                {
+                    _storeGeneralAudit.PrimaryMaximumReached = value;
+                    this.StorePackIsChanged = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets StoreMayExceedMax general audit flag.
+        /// </summary>
+        internal bool StoreMayExceedMax
+        {
+            get
+            {
+                return _storeGeneralAudit.MayExceedMax;
+            }
+            set
+            {
+                if (StoreMayExceedMax != value)
+                {
+                    _storeGeneralAudit.MayExceedMax = value;
+                    this.StorePackIsChanged = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets StoreMayExceedPrimary general audit flag
+        /// </summary>
+        internal bool StoreMayExceedPrimary
+        {
+            get
+            {
+                return _storeGeneralAudit.MayExceedPrimary;
+            }
+            set
+            {
+                if (StoreMayExceedPrimary != value)
+                {
+                    _storeGeneralAudit.MayExceedPrimary = value;
+                    this.StorePackIsChanged = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets StoreMayExceedCapacity general audit flag.
+        /// </summary>
+        internal bool StoreMayExceedCapacity
+        {
+            get
+            {
+                return _storeGeneralAudit.MayExceedCapacity;
+            }
+            set
+            {
+                if (StoreMayExceedCapacity != value)
+                {
+                    _storeGeneralAudit.MayExceedCapacity = value;
+                    this.StorePackIsChanged = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets store's eligibility
+        /// </summary>
+        internal bool StoreIsEligible
+        {
+            get
+            {
+                return _storeGeneralAudit.StoreIsEligible;
+            }
+            set
+            {
+                if (StoreIsEligible != value)
+                {
+                    _storeGeneralAudit.StoreIsEligible = value;
+                    this.StorePackIsChanged = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets store's allocation priority
+        /// </summary>
+        internal bool StoreAllocationPriority
+        {
+            get
+            {
+                return _storeGeneralAudit.StoreAllocationPriority;
+            }
+            set
+            {
+                if (StoreAllocationPriority != value)
+                {
+                    _storeGeneralAudit.StoreAllocationPriority = value;
+                    this.StorePackIsChanged = true;
+                }
+            }
+        }
+
+        // begin TT#1401 - JEllis - Urban Reservation Store pt 11
+        /// <summary>
+        /// Gets or sets store's Imo Inclusion status (True: store is included in allocation of IMO Header--meaningful only when header is an IMO header)
+        /// </summary>
+        internal bool IncludeStoreInAllocation
+        {
+            get
+            {
+                return _storeGeneralAudit.IncludeStoreInAllocation;
+            }
+            set
+            {
+                if (IncludeStoreInAllocation != value)
+                {
+                    _storeGeneralAudit.IncludeStoreInAllocation = value;
+                    StorePackIsChanged = true;
+                }
+            }
+        }
+
 		//========
 		// METHODS
 		//========
@@ -6179,6 +6367,7 @@ namespace MIDRetail.Business.Allocation
 		private double _storeTotalSizePctToColorTotal;
 		private bool _recalcStoreSizePctToColorTotal;
         private int _itemIdealMinimum; // TT#246 - MD - JEllis - AnF VSW In Store Minimum pt 5
+        private AllocationStoreGeneralAuditFlags _storeGeneralAudit;
         //=============
 		// CONSTRUCTORS
 		//=============
@@ -7015,6 +7204,192 @@ namespace MIDRetail.Business.Allocation
 			}
 		}
 
+        /// <summary>
+		/// Gets or sets store' general audits simultaneously.
+		/// </summary>
+		internal ushort AllGeneralAudits    // TT#1401 - JEllis - Urban Reservation Store pt 11
+        {
+            get
+            {
+                return _storeGeneralAudit.AllFlags;
+            }
+            set
+            {
+                _storeGeneralAudit.AllFlags = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the StorePercentNeedLimitReached audit flag.
+        /// </summary>
+        internal bool StorePercentNeedLimitReached
+        {
+            get
+            {
+                return _storeGeneralAudit.PercentNeedLimitReached;
+            }
+            set
+            {
+                if (StorePercentNeedLimitReached != value)
+                {
+                    _storeGeneralAudit.PercentNeedLimitReached = value;
+                    this.StoreColorIsChanged = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets StoreCapacityMaximumReached general audit flag.
+        /// </summary>
+        internal bool StoreCapacityMaximumReached
+        {
+            get
+            {
+                return _storeGeneralAudit.CapacityMaximumReached;
+            }
+            set
+            {
+                if (StoreCapacityMaximumReached != value)
+                {
+                    _storeGeneralAudit.CapacityMaximumReached = value;
+                    this.StoreColorIsChanged = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or set StorePrimaryMaximumReached general audit flag.
+        /// </summary>
+        internal bool StorePrimaryMaximumReached
+        {
+            get
+            {
+                return _storeGeneralAudit.PrimaryMaximumReached;
+            }
+            set
+            {
+                if (StorePrimaryMaximumReached != value)
+                {
+                    _storeGeneralAudit.PrimaryMaximumReached = value;
+                    this.StoreColorIsChanged = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets StoreMayExceedMax general audit flag.
+        /// </summary>
+        internal bool StoreMayExceedMax
+        {
+            get
+            {
+                return _storeGeneralAudit.MayExceedMax;
+            }
+            set
+            {
+                if (StoreMayExceedMax != value)
+                {
+                    _storeGeneralAudit.MayExceedMax = value;
+                    this.StoreColorIsChanged = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets StoreMayExceedPrimary general audit flag
+        /// </summary>
+        internal bool StoreMayExceedPrimary
+        {
+            get
+            {
+                return _storeGeneralAudit.MayExceedPrimary;
+            }
+            set
+            {
+                if (StoreMayExceedPrimary != value)
+                {
+                    _storeGeneralAudit.MayExceedPrimary = value;
+                    this.StoreColorIsChanged = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets StoreMayExceedCapacity general audit flag.
+        /// </summary>
+        internal bool StoreMayExceedCapacity
+        {
+            get
+            {
+                return _storeGeneralAudit.MayExceedCapacity;
+            }
+            set
+            {
+                if (StoreMayExceedCapacity != value)
+                {
+                    _storeGeneralAudit.MayExceedCapacity = value;
+                    this.StoreColorIsChanged = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets store's eligibility
+        /// </summary>
+        internal bool StoreIsEligible
+        {
+            get
+            {
+                return _storeGeneralAudit.StoreIsEligible;
+            }
+            set
+            {
+                if (StoreIsEligible != value)
+                {
+                    _storeGeneralAudit.StoreIsEligible = value;
+                    this.StoreColorIsChanged = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets store's allocation priority
+        /// </summary>
+        internal bool StoreAllocationPriority
+        {
+            get
+            {
+                return _storeGeneralAudit.StoreAllocationPriority;
+            }
+            set
+            {
+                if (StoreAllocationPriority != value)
+                {
+                    _storeGeneralAudit.StoreAllocationPriority = value;
+                    this.StoreColorIsChanged = true;
+                }
+            }
+        }
+
+        // begin TT#1401 - JEllis - Urban Reservation Store pt 11
+        /// <summary>
+        /// Gets or sets store's Imo Inclusion status (True: store is included in allocation of IMO Header--meaningful only when header is an IMO header)
+        /// </summary>
+        internal bool IncludeStoreInAllocation
+        {
+            get
+            {
+                return _storeGeneralAudit.IncludeStoreInAllocation;
+            }
+            set
+            {
+                if (IncludeStoreInAllocation != value)
+                {
+                    _storeGeneralAudit.IncludeStoreInAllocation = value;
+                    StoreColorIsChanged = true;
+                }
+            }
+        }
 
 		//========
 		// METHODS

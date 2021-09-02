@@ -230,12 +230,28 @@ namespace MIDRetail.Business
 				switch (varProf.EligibilityType)
 				{
 					case eEligibilityType.Sales:
-						return !CubeGroup.Transaction.GetStoreEligibilityForSales(aPlanCellRef[eProfileType.HierarchyNode], aPlanCellRef[eProfileType.Store], aPlanCellRef[eProfileType.Week]);
+						return !CubeGroup.Transaction.GetStoreEligibilityForSales(
+                            eRequestingApplication.Forecast, 
+                            aPlanCellRef[eProfileType.HierarchyNode], 
+                            aPlanCellRef[eProfileType.Store], 
+                            aPlanCellRef[eProfileType.Week]);
 					case eEligibilityType.Stock:
-						return !CubeGroup.Transaction.GetStoreEligibilityForStock(aPlanCellRef[eProfileType.HierarchyNode], aPlanCellRef[eProfileType.Store], aPlanCellRef[eProfileType.Week]);
+						return !CubeGroup.Transaction.GetStoreEligibilityForStock(
+                            eRequestingApplication.Forecast, 
+                            aPlanCellRef[eProfileType.HierarchyNode], 
+                            aPlanCellRef[eProfileType.Store], 
+                            aPlanCellRef[eProfileType.Week]);
 					case eEligibilityType.Either:
-						return !CubeGroup.Transaction.GetStoreEligibilityForSales(aPlanCellRef[eProfileType.HierarchyNode], aPlanCellRef[eProfileType.Store], aPlanCellRef[eProfileType.Week]) &&
-							!CubeGroup.Transaction.GetStoreEligibilityForStock(aPlanCellRef[eProfileType.HierarchyNode], aPlanCellRef[eProfileType.Store], aPlanCellRef[eProfileType.Week]);
+						return !CubeGroup.Transaction.GetStoreEligibilityForSales(
+                            eRequestingApplication.Forecast, 
+                            aPlanCellRef[eProfileType.HierarchyNode], 
+                            aPlanCellRef[eProfileType.Store], 
+                            aPlanCellRef[eProfileType.Week]) &&
+							!CubeGroup.Transaction.GetStoreEligibilityForStock(
+                                eRequestingApplication.Forecast, 
+                                aPlanCellRef[eProfileType.HierarchyNode], 
+                                aPlanCellRef[eProfileType.Store], 
+                                aPlanCellRef[eProfileType.Week]);
 					default:
 						return false;
 				}
