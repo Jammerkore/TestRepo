@@ -1254,6 +1254,8 @@ namespace Logility.ROWebSharedTypes
         bool _copyPreInitValues;
         [DataMember(IsRequired = true)]
         private List<KeyValuePair<int, string>> _basisVersions;
+        [DataMember(IsRequired = true)]
+        bool _basisRowsExist;
 
 
         #region Public Properties
@@ -1328,6 +1330,11 @@ namespace Logility.ROWebSharedTypes
         {
             get { return _basisVersions; }
         }
+        public bool BasisRowsExist
+        {
+            get { return _basisRowsExist; }
+            set { _basisRowsExist = value; }
+        }
 
         #endregion
         public ROMethodCopyForecastProperties(
@@ -1369,6 +1376,7 @@ namespace Logility.ROWebSharedTypes
             _fromLevels = new List<KeyValuePair<int, string>>();
             _toLevels = new List<KeyValuePair<int, string>>();
             _basisVersions = new List<KeyValuePair<int, string>>();
+            _basisRowsExist = false;
         }
     }
 

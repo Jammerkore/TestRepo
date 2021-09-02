@@ -2069,6 +2069,8 @@ namespace MIDRetail.Business
                 }
             }
 
+            method.BasisRowsExist = _dsForecastCopy.Tables["Basis"].Rows.Count > 0;
+
             return method;
         }
 
