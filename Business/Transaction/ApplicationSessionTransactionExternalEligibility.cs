@@ -369,7 +369,9 @@ namespace MIDRetail.Business
                     {
                         _colorStockEligibilityBitArray = HierarchySessionTransaction.GetExternalStoreStockEligibilityFlags(
                             requestingApplication,
-                            aColor,
+                            aColor.ColorCodeRID,
+                            aColor.ColorName,
+                            aColor.ColorNodeRID,
                             yearWeek
                             );
                         _colorStockEligibilityHashByYearWeek.Add(yearWeek, _colorStockEligibilityBitArray);
@@ -1068,7 +1070,9 @@ namespace MIDRetail.Business
                     {
                         _packStockEligibilityBitArray = HierarchySessionTransaction.GetExternalStoreStockEligibilityFlags(
                             requestingApplication,
-                            aPack, 
+                            aPack.HdrRID,
+                            aPack.PackRID, 
+                            aPack.PackName,
                             yearWeek
                             );
                         _packStockEligibilityHashByYearWeek.Add(yearWeek, _packStockEligibilityBitArray);
@@ -1417,7 +1421,9 @@ namespace MIDRetail.Business
                     {
                         _salesEligibilityBitArray = HierarchySessionTransaction.GetExternalStoreSalesEligibilityFlags(
                             requestingApplication,
-                            aPack,
+                            aPack.HdrRID,
+                            aPack.PackRID,
+                            aPack.PackName,
                             yearWeek
                             );
                         _salesEligibilityHashByYearWeek.Add(yearWeek, _salesEligibilityBitArray);

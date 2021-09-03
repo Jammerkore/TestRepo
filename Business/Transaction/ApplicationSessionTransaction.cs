@@ -8682,7 +8682,7 @@ namespace MIDRetail.Business
 					{
                         if (this.GlobalOptions.UseExternalEligibility)
                         {
-
+                            _salesEligibilityBitArray = HierarchySessionTransaction.GetStoreSalesEligibilityFlags(nodeRID, yearWeek);
                         }
                         else
                         {
@@ -9031,7 +9031,7 @@ namespace MIDRetail.Business
 					{
                         if (this.GlobalOptions.UseExternalEligibility)
                         {
-
+                            _stockEligibilityBitArray = HierarchySessionTransaction.GetStoreStockEligibilityFlags(nodeRID, yearWeek);
                         }
                         else
                         {

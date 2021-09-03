@@ -21,7 +21,9 @@ namespace MIDRetail.Common
 		public GlobalOptionsProfile(int aKey)
 			: base(aKey)
 		{
-		}
+            // TESTING - Change to false to deploy
+            _useExternalEligibility = true;
+        }
 
 		/// <summary>
 		/// Returns the eProfileType of this profile.

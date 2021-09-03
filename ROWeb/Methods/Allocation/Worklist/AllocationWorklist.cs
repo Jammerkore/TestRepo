@@ -2803,6 +2803,31 @@ namespace Logility.ROWeb
                             worklistStyle: GetName.GetMerchandiseName(nodeRID: allocationProfile.StyleHnRID, SAB: SAB),
                             worklistDate: allocationProfile.HeaderDay.ToShortDateString()
                             );
+
+                        // Add components
+                        eligibilityWorklistItem.WorklistComponents.Add("Total");
+                        if (allocationProfile.BulkColors.Count > 0)
+                        {
+                            foreach (HdrColorBin aColor in allocationProfile.BulkColors.Values)
+                            {
+                                ColorCodeProfile colorCodeProfile = SAB.HierarchyServerSession.GetColorCodeProfile(aColor.ColorCodeRID);
+                                eligibilityWorklistItem.WorklistComponents.Add(colorCodeProfile.Text);
+                            }
+                        }
+
+                        if (allocationProfile.Packs.Count > 0)
+                        {
+                            foreach (PackHdr aPack in allocationProfile.Packs.Values)
+                            {
+                                eligibilityWorklistItem.WorklistComponents.Add(aPack.PackName);
+                            }
+                        }
+
+                        AddStoresToEligibility(
+                            eligibilityWorklistItem: eligibilityWorklistItem,
+                            allocationProfile: allocationProfile
+                            );
+
                         ROAllocationEligibilityOut.WorklistEligibilityEntries.Add(eligibilityWorklistItem);
                     }
                 }
@@ -2814,6 +2839,73 @@ namespace Logility.ROWeb
             {
 
                 throw ex;
+            }
+        }
+
+        private void AddStoresToEligibility(
+            ROAllocationEligibilityWorklistItem eligibilityWorklistItem,
+            AllocationProfile allocationProfile
+            )
+        {
+            ROAllocationEligibilityWorklistStore eligibilityWorklistStore;
+
+            //foreach (StoreProfile storeProfile in StoreMgmt.StoreProfiles_GetAllStoresList())
+            foreach (StoreProfile storeProfile in StoreMgmt.StoreProfiles_GetActiveStoresList())
+            {
+                eligibilityWorklistStore = new ROAllocationEligibilityWorklistStore(
+                    store: GetName.GetStoreName(key: storeProfile.Key)
+                    );
+
+                // add eligibility for each component in the same order as WorklistComponents list
+                bool componentElibility = false;
+                Index_RID storeIndex = new Index_RID();
+                // Add total component
+                if (storeProfile.ActiveInd)
+                {
+                    storeIndex = allocationProfile.StoreIndex(storeProfile.Key);
+                    componentElibility = allocationProfile.GetStoreIsEligible(aStoreRID: storeProfile.Key);
+                }
+                else
+                {
+                    componentElibility = false;
+                }
+                eligibilityWorklistStore.ComponentEligibility.Add(componentElibility);
+
+                // Add color components
+                if (allocationProfile.BulkColors.Count > 0)
+                {
+                    foreach (HdrColorBin aColor in allocationProfile.BulkColors.Values)
+                    {
+                        if (storeProfile.ActiveInd)
+                        {
+                            componentElibility = aColor.GetStoreIsEligible(aStore: storeIndex);
+                        }
+                        else
+                        {
+                            componentElibility = false;
+                        }
+                        eligibilityWorklistStore.ComponentEligibility.Add(componentElibility);
+                    }
+                }
+
+                // Add pack components
+                if (allocationProfile.Packs.Count > 0)
+                {
+                    foreach (PackHdr aPack in allocationProfile.Packs.Values)
+                    {
+                        if (storeProfile.ActiveInd)
+                        {
+                            componentElibility = aPack.GetStoreIsEligible(aStore: storeIndex);
+                        }
+                        else
+                        {
+                            componentElibility = false;
+                        }
+                        eligibilityWorklistStore.ComponentEligibility.Add(componentElibility);
+                    }
+                }
+
+                eligibilityWorklistItem.WorklistStores.Add(eligibilityWorklistStore);
             }
 
         }

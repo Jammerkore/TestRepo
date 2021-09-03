@@ -2448,10 +2448,10 @@ namespace Logility.ROWebSharedTypes
 
         #region Constructor
         public ROAllocationEligibilityWorklistStore(
-            KeyValuePair<int, string> _store
+            KeyValuePair<int, string> store
             )
         {
-            Store = _store;
+            Store = store;
             ComponentEligibility = new List<bool>();
         }
         #endregion

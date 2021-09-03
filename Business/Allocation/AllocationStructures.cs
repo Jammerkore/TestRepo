@@ -4135,7 +4135,7 @@ namespace MIDRetail.Business.Allocation
         /// </summary>
         /// <param name="aStore">Index_RID identifier for the store</param>
         /// <returns>True if eligible, false if not eligible.</returns>
-        internal bool GetStoreIsEligible(Index_RID aStore)
+        public bool GetStoreIsEligible(Index_RID aStore)
         {
             return _storePackAllocated[aStore.Index].StoreIsEligible;
         }
@@ -8213,7 +8213,7 @@ namespace MIDRetail.Business.Allocation
         /// </summary>
         /// <param name="aStore">Index_RID identifier for the store</param>
         /// <returns>True if eligible, false if not eligible.</returns>
-        internal bool GetStoreIsEligible(Index_RID aStore)
+        public bool GetStoreIsEligible(Index_RID aStore)
         {
             return _storeColorAllocated[aStore.Index].StoreIsEligible;
         }

@@ -285,12 +285,16 @@ namespace MIDRetail.Business
         /// <summary>
         /// Requests the transaction get the store eligibility settings for all stores for a node and week.
         /// </summary>
-        /// <param name="aColor">The color</param>
+        /// <param name="colorCodeRID">The key of the color</param>
+        /// <param name="colorName">The name of the color</param>
+        /// <param name="colorNodeRID">The key of the node for the color in the hierarchy</param>
         /// <param name="aFirstDayOfWeek">The first day of year/week for which eligibility is to be determined</param>
         /// <returns>BitArray containing eligibility settings indexed by storeRID</returns>
         public System.Collections.BitArray GetExternalStoreSalesEligibilityFlags(
             eRequestingApplication requestingApplication,
-            HdrColorBin aColor,
+            int colorCodeRID,
+            string colorName,
+            int colorNodeRID,
             int aFirstDayOfWeek
             )
         {
@@ -307,12 +311,12 @@ namespace MIDRetail.Business
                 dayProfile = (DayProfile)weekProfile.Days[weekProfile.DaysInWeek - 1];
                 DateTime lastDayOfWeek = dayProfile.Date;
 
-                sel = (StoreEligibilityList)ColorStoreEligibilityHash[aColor.ColorNodeRID];
+                sel = (StoreEligibilityList)ColorStoreEligibilityHash[colorNodeRID];
 
                 if (sel == null)
                 {
-                    sel = SAB.HierarchyServerSession.GetStoreEligibilityList(storeList, aColor.ColorNodeRID, true, false);
-                    ColorStoreEligibilityHash.Add(aColor.ColorNodeRID, sel);
+                    sel = SAB.HierarchyServerSession.GetStoreEligibilityList(storeList, colorNodeRID, true, false);
+                    ColorStoreEligibilityHash.Add(colorNodeRID, sel);
                 }
 
                 foreach (StoreProfile storeProfile in storeList)
@@ -415,12 +419,16 @@ namespace MIDRetail.Business
         /// <summary>
 		/// Requests the transaction get the store eligibility settings for all stores for a node and week.
 		/// </summary>
-		/// <param name="aColor">The color</param>
+		/// <param name="colorCodeRID">The key of the color</param>
+        /// <param name="colorName">The name of the color</param>
+        /// <param name="colorNodeRID">The key of the node for the color in the hierarchy</param>
 		/// <param name="aFirstDayOfWeek">The first day of year/week for which eligibility is to be determined</param>
 		/// <returns>BitArray containing eligibility settings indexed by storeRID</returns>
 		public System.Collections.BitArray GetExternalStoreStockEligibilityFlags(
             eRequestingApplication requestingApplication,
-            HdrColorBin aColor,
+            int colorCodeRID,
+            string colorName,
+            int colorNodeRID,
             int aFirstDayOfWeek
             )
         {
@@ -437,12 +445,12 @@ namespace MIDRetail.Business
                 dayProfile = (DayProfile)weekProfile.Days[weekProfile.DaysInWeek - 1];
                 DateTime lastDayOfWeek = dayProfile.Date;
 
-                sel = (StoreEligibilityList)ColorStoreEligibilityHash[aColor.ColorNodeRID];
+                sel = (StoreEligibilityList)ColorStoreEligibilityHash[colorNodeRID];
 
                 if (sel == null)
                 {
-                    sel = SAB.HierarchyServerSession.GetStoreEligibilityList(storeList, aColor.ColorNodeRID, true, false);
-                    ColorStoreEligibilityHash.Add(aColor.ColorNodeRID, sel);
+                    sel = SAB.HierarchyServerSession.GetStoreEligibilityList(storeList, colorNodeRID, true, false);
+                    ColorStoreEligibilityHash.Add(colorNodeRID, sel);
                 }
 
                 foreach (StoreProfile storeProfile in storeList)
@@ -551,12 +559,15 @@ namespace MIDRetail.Business
         /// <summary>
         /// Requests the transaction get the store eligibility settings for all stores for a node and week.
         /// </summary>
-        /// <param name="aPack">The pack</param>
+        /// <param name="packRID">The key of the pack</param>
+        /// <param name="packName">The name of the pack</param>
         /// <param name="aFirstDayOfWeek">The first day of year/week for which eligibility is to be determined</param>
         /// <returns>BitArray containing eligibility settings indexed by storeRID</returns>
         public System.Collections.BitArray GetExternalStoreSalesEligibilityFlags(
             eRequestingApplication requestingApplication,
-            PackHdr aPack,
+            int headerRID,
+            int packRID,
+            string packName,
             int aFirstDayOfWeek
             )
         {
@@ -573,12 +584,18 @@ namespace MIDRetail.Business
                 dayProfile = (DayProfile)weekProfile.Days[weekProfile.DaysInWeek - 1];
                 DateTime lastDayOfWeek = dayProfile.Date;
 
-                sel = (StoreEligibilityList)PackStoreEligibilityHash[aPack.PackRID];
+                sel = (StoreEligibilityList)PackStoreEligibilityHash[packRID];
 
                 if (sel == null)
                 {
-                    sel = SAB.HierarchyServerSession.GetStoreEligibilityList(storeList, 101, true, false);
-                    PackStoreEligibilityHash.Add(aPack.PackRID, sel);
+                    // TESTING - get values from node associated with header/pack
+                    int nodeRID = SetNodeForPack(
+                        headerRID: headerRID,
+                        packRID: packRID,
+                        packName: packName
+                        );
+                    sel = SAB.HierarchyServerSession.GetStoreEligibilityList(storeList, nodeRID, true, false);
+                    PackStoreEligibilityHash.Add(packRID, sel);
                 }
 
                 foreach (StoreProfile storeProfile in storeList)
@@ -684,12 +701,15 @@ namespace MIDRetail.Business
         /// <summary>
 		/// Requests the transaction get the store eligibility settings for all stores for a node and week.
 		/// </summary>
-		/// <param name="aPack">The pack</param>
+		/// <param name="packRID">The key of the pack</param>
+        /// <param name="packName">The name of the pack</param>
 		/// <param name="aFirstDayOfWeek">The first day of year/week for which eligibility is to be determined</param>
 		/// <returns>BitArray containing eligibility settings indexed by storeRID</returns>
 		public System.Collections.BitArray GetExternalStoreStockEligibilityFlags(
             eRequestingApplication requestingApplication,
-            PackHdr aPack,
+            int headerRID,
+            int packRID,
+            string packName,
             int aFirstDayOfWeek
             )
         {
@@ -706,12 +726,18 @@ namespace MIDRetail.Business
                 dayProfile = (DayProfile)weekProfile.Days[weekProfile.DaysInWeek - 1];
                 DateTime lastDayOfWeek = dayProfile.Date;
 
-                sel = (StoreEligibilityList)PackStoreEligibilityHash[aPack.PackRID];
+                sel = (StoreEligibilityList)PackStoreEligibilityHash[packRID];
 
                 if (sel == null)
                 {
-                    sel = SAB.HierarchyServerSession.GetStoreEligibilityList(storeList, 101, true, false);
-                    PackStoreEligibilityHash.Add(aPack.PackRID, sel);
+                    // TESTING - get values from node associated with header/pack
+                    int nodeRID = SetNodeForPack(
+                        headerRID: headerRID,
+                        packRID: packRID,
+                        packName: packName
+                        );
+                    sel = SAB.HierarchyServerSession.GetStoreEligibilityList(storeList, nodeRID, true, false);
+                    PackStoreEligibilityHash.Add(packRID, sel);
                 }
 
                 foreach (StoreProfile storeProfile in storeList)
@@ -811,6 +837,24 @@ namespace MIDRetail.Business
             {
                 throw;
             }
+        }
+
+        // TESTING - get values from node associated with header/pack
+        private int SetNodeForPack(
+            int headerRID,
+            int packRID,
+            string packName)
+        {
+
+            //HDR_RID   HDR_ID
+            //10009     01_PE_ELIG_1style - 1clr - 1pack
+
+            if (headerRID == 10009)
+            {
+                return 102;
+            }
+
+            return 101;
         }
 
     }
