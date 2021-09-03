@@ -2363,4 +2363,98 @@ namespace Logility.ROWebSharedTypes
 
     }
 
+    /// <summary>
+    /// Allocation Worklist Eligibility Output
+    /// </summary>
+    /// <remarks>
+    /// Contains a list of eligibility information for each worklist item
+    /// </remarks>
+    [DataContract(Name = "ROAllocationEligibilityOut", Namespace = "http://Logility.ROWeb/")]
+    public class ROAllocationEligibilityOut : ROOut
+    {
+        [DataMember(IsRequired = true)]
+        private List<ROAllocationEligibilityWorklistItem> _eligibilityWorklistItem;
+
+        public ROAllocationEligibilityOut(
+            eROReturnCode ROReturnCode, 
+            string sROMessage, 
+            long ROInstanceID
+            ) :
+            base(ROReturnCode, sROMessage, ROInstanceID)
+        {
+            _eligibilityWorklistItem = new List<ROAllocationEligibilityWorklistItem>();
+        }
+
+        public List<ROAllocationEligibilityWorklistItem> WorklistEligibilityEntries { get { return _eligibilityWorklistItem; } }
+
+    }
+
+    /// <summary>
+    /// Allocation Worklist Eligibility
+    /// </summary>
+    [DataContract(Name = "ROAllocationEligibilityWorklistItem", Namespace = "http://Logility.ROWeb/")]
+    public class ROAllocationEligibilityWorklistItem
+    {
+
+        #region MemberVariables
+        [DataMember(IsRequired = true)]
+        public KeyValuePair<int, string> WorklistItem { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public KeyValuePair<int, string> WorklistStyle { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public string WorklistDate { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public List<string> WorklistComponents { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public List<ROAllocationEligibilityWorklistStore> WorklistStores { get; set; }
+
+        #endregion
+
+        #region Constructor
+        public ROAllocationEligibilityWorklistItem(
+            KeyValuePair<int, string> worklistItem,
+            KeyValuePair<int, string> worklistStyle,
+            string worklistDate
+            )
+        {
+            WorklistItem = worklistItem;
+            WorklistStyle = worklistStyle;
+            WorklistDate = worklistDate;
+            WorklistComponents = new List<string>();
+            WorklistStores = new List<ROAllocationEligibilityWorklistStore>();
+        }
+        #endregion  
+    }
+
+    /// <summary>
+    /// Allocation Worklist Store Eligibility
+    /// </summary>
+    [DataContract(Name = "ROAllocationEligibilityWorklistStore", Namespace = "http://Logility.ROWeb/")]
+    public class ROAllocationEligibilityWorklistStore
+    {
+
+        #region MemberVariables
+        [DataMember(IsRequired = true)]
+        public KeyValuePair<int, string> Store { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public List<bool> ComponentEligibility { get; set; }
+
+        #endregion
+
+        #region Constructor
+        public ROAllocationEligibilityWorklistStore(
+            KeyValuePair<int, string> _store
+            )
+        {
+            Store = _store;
+            ComponentEligibility = new List<bool>();
+        }
+        #endregion
+    }
+
 }

@@ -286,6 +286,7 @@
         GetAllocationWorkFlowMethodActionsList,
         GetAllocationWorklistColumns,
         GetVendorList,
+        GetWorklistEligibility,
 
         //Assortment 
         AssortmentActions,

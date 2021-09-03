@@ -359,6 +359,11 @@ namespace Logility.ROWebSharedTypes
     [KnownType(typeof(ROAuditResult))]
     [KnownType(typeof(ROTaskJobOut))]
     [KnownType(typeof(ROTaskJobs))]
+
+    [KnownType(typeof(ROAllocationEligibilityWorklistStore))]
+    [KnownType(typeof(ROAllocationEligibilityWorklistItem))]
+    [KnownType(typeof(ROAllocationEligibilityOut))]
+
     public class ROOut
     {
         public static readonly long lInvalidInstanceID = -1;

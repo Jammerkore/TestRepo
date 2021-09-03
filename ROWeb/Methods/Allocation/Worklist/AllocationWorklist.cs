@@ -2775,6 +2775,50 @@ namespace Logility.ROWeb
         }
 
         #endregion        
+
+        #region "Get Worklist Eligibility"
+        public ROOut GetWorklistEligibility()
+        {
+            eROReturnCode returnCode = eROReturnCode.Successful;
+            string message = null;
+            ROAllocationEligibilityWorklistItem eligibilityWorklistItem;
+
+            try
+            {
+
+                ROAllocationEligibilityOut ROAllocationEligibilityOut = new ROAllocationEligibilityOut(
+                    returnCode, 
+                    message, 
+                    ROInstanceID
+                    );
+
+                // Build eligibility data here
+                AllocationProfileList allocationProfileList = (AllocationProfileList)_applicationSessionTransaction.GetMasterProfileList(eProfileType.Allocation);
+                if (allocationProfileList != null)
+                {
+                    foreach (AllocationProfile allocationProfile in allocationProfileList)
+                    {
+                        eligibilityWorklistItem = new ROAllocationEligibilityWorklistItem(
+                            worklistItem: new KeyValuePair<int, string>(allocationProfile.Key, allocationProfile.HeaderID),
+                            worklistStyle: GetName.GetMerchandiseName(nodeRID: allocationProfile.StyleHnRID, SAB: SAB),
+                            worklistDate: allocationProfile.HeaderDay.ToShortDateString()
+                            );
+                        ROAllocationEligibilityOut.WorklistEligibilityEntries.Add(eligibilityWorklistItem);
+                    }
+                }
+
+                return ROAllocationEligibilityOut;
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+        }
+
+        #endregion
     }
 
 }

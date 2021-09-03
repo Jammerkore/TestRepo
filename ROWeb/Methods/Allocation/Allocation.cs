@@ -202,6 +202,8 @@ namespace Logility.ROWeb
                     return GetAllocationUserLastValues();
                 case eRORequest.SaveUserLastValues:
                     return SaveUserLastValues((ROAllocationWorklistLastDataParms)Parms);
+                case eRORequest.GetWorklistEligibility:
+                    return GetWorklistEligibility();
 
                 // Selection
                 case eRORequest.GetAllocationViewSelection:
