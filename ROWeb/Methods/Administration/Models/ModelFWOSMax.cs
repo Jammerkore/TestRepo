@@ -105,10 +105,12 @@ namespace Logility.ROWeb
                     if (cloneDates)
                     {
                         modelEntry.DateRange = SAB.ClientServerSession.Calendar.GetDateRangeClone(modelValue.CalendarDateInfo.Key);
+                        modelEntry.DateRange.DisplayDate = modelValue.CalendarDateInfo.DisplayDate;
                     }
                     else
                     {
                         modelEntry.DateRange = SAB.ClientServerSession.Calendar.GetDateRange(modelValue.CalendarDateInfo.Key);
+                        modelEntry.DateRange.DisplayDate = modelValue.CalendarDateInfo.DisplayDate;
                     }
                 }
                 else
