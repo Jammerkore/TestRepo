@@ -25,6 +25,8 @@ namespace MIDRetail.Business
         /// <returns>BitArray containing eligibility settings indexed by storeRID</returns>
         public System.Collections.BitArray GetExternalStoreSalesEligibilityFlags(
             eRequestingApplication requestingApplication,
+            int headerRID,
+            string headerID,
             int aNodeRID,
             int aFirstDayOfWeek
             )
@@ -46,7 +48,12 @@ namespace MIDRetail.Business
 
                 if (sel == null)
                 {
-                    sel = SAB.HierarchyServerSession.GetStoreEligibilityList(storeList, aNodeRID, true, false);
+                    // TESTING - get values from node associated with header
+                    int nodeRID = SetNodeForHeader(
+                        headerRID,
+                        headerID
+                        );
+                    sel = SAB.HierarchyServerSession.GetStoreEligibilityList(storeList, nodeRID, true, false);
                     StoreEligibilityHash.Add(aNodeRID, sel);
                 }
 
@@ -156,8 +163,10 @@ namespace MIDRetail.Business
 		/// <param name="aNodeRID">The record id of the node</param>
 		/// <param name="aFirstDayOfWeek">The first day of year/week for which eligibility is to be determined</param>
 		/// <returns>BitArray containing eligibility settings indexed by storeRID</returns>
-		public System.Collections.BitArray GetStoreExternalStockEligibilityFlags(
+		public System.Collections.BitArray GetExternalStoreStockEligibilityFlags(
             eRequestingApplication requestingApplication,
+            int headerRID,
+            string headerID,
             int aNodeRID, 
             int aFirstDayOfWeek
             )
@@ -179,7 +188,12 @@ namespace MIDRetail.Business
 
                 if (sel == null)
                 {
-                    sel = SAB.HierarchyServerSession.GetStoreEligibilityList(storeList, aNodeRID, true, false);
+                    // TESTING - get values from node associated with header
+                    int nodeRID = SetNodeForHeader(
+                        headerRID,
+                        headerID
+                        );
+                    sel = SAB.HierarchyServerSession.GetStoreEligibilityList(storeList, nodeRID, true, false);
                     StoreEligibilityHash.Add(aNodeRID, sel);
                 }
 
@@ -286,14 +300,16 @@ namespace MIDRetail.Business
         /// Requests the transaction get the store eligibility settings for all stores for a node and week.
         /// </summary>
         /// <param name="colorCodeRID">The key of the color</param>
-        /// <param name="colorName">The name of the color</param>
+        /// <param name="colorID">The name of the color</param>
         /// <param name="colorNodeRID">The key of the node for the color in the hierarchy</param>
         /// <param name="aFirstDayOfWeek">The first day of year/week for which eligibility is to be determined</param>
         /// <returns>BitArray containing eligibility settings indexed by storeRID</returns>
         public System.Collections.BitArray GetExternalStoreSalesEligibilityFlags(
             eRequestingApplication requestingApplication,
+            int headerRID,
+            string headerID,
             int colorCodeRID,
-            string colorName,
+            string colorID,
             int colorNodeRID,
             int aFirstDayOfWeek
             )
@@ -315,7 +331,14 @@ namespace MIDRetail.Business
 
                 if (sel == null)
                 {
-                    sel = SAB.HierarchyServerSession.GetStoreEligibilityList(storeList, colorNodeRID, true, false);
+                    // TESTING - get values from node associated with header/color
+                    int nodeRID = SetNodeForColor(
+                        headerRID: headerRID,
+                        headerID: headerID,
+                        colorRID: colorCodeRID,
+                        colorID: colorID
+                        );
+                    sel = SAB.HierarchyServerSession.GetStoreEligibilityList(storeList, nodeRID, true, false);
                     ColorStoreEligibilityHash.Add(colorNodeRID, sel);
                 }
 
@@ -420,14 +443,16 @@ namespace MIDRetail.Business
 		/// Requests the transaction get the store eligibility settings for all stores for a node and week.
 		/// </summary>
 		/// <param name="colorCodeRID">The key of the color</param>
-        /// <param name="colorName">The name of the color</param>
+        /// <param name="colorID">The ID of the color</param>
         /// <param name="colorNodeRID">The key of the node for the color in the hierarchy</param>
 		/// <param name="aFirstDayOfWeek">The first day of year/week for which eligibility is to be determined</param>
 		/// <returns>BitArray containing eligibility settings indexed by storeRID</returns>
 		public System.Collections.BitArray GetExternalStoreStockEligibilityFlags(
             eRequestingApplication requestingApplication,
+            int headerRID,
+            string headerID,
             int colorCodeRID,
-            string colorName,
+            string colorID,
             int colorNodeRID,
             int aFirstDayOfWeek
             )
@@ -449,7 +474,14 @@ namespace MIDRetail.Business
 
                 if (sel == null)
                 {
-                    sel = SAB.HierarchyServerSession.GetStoreEligibilityList(storeList, colorNodeRID, true, false);
+                    // TESTING - get values from node associated with header/color
+                    int nodeRID = SetNodeForColor(
+                        headerRID: headerRID,
+                        headerID: headerID,
+                        colorRID: colorCodeRID,
+                        colorID: colorID
+                        );
+                    sel = SAB.HierarchyServerSession.GetStoreEligibilityList(storeList, nodeRID, true, false);
                     ColorStoreEligibilityHash.Add(colorNodeRID, sel);
                 }
 
@@ -566,6 +598,7 @@ namespace MIDRetail.Business
         public System.Collections.BitArray GetExternalStoreSalesEligibilityFlags(
             eRequestingApplication requestingApplication,
             int headerRID,
+            string headerID,
             int packRID,
             string packName,
             int aFirstDayOfWeek
@@ -591,6 +624,7 @@ namespace MIDRetail.Business
                     // TESTING - get values from node associated with header/pack
                     int nodeRID = SetNodeForPack(
                         headerRID: headerRID,
+                        headerID: headerID,
                         packRID: packRID,
                         packName: packName
                         );
@@ -708,6 +742,7 @@ namespace MIDRetail.Business
 		public System.Collections.BitArray GetExternalStoreStockEligibilityFlags(
             eRequestingApplication requestingApplication,
             int headerRID,
+            string headerID,
             int packRID,
             string packName,
             int aFirstDayOfWeek
@@ -733,6 +768,7 @@ namespace MIDRetail.Business
                     // TESTING - get values from node associated with header/pack
                     int nodeRID = SetNodeForPack(
                         headerRID: headerRID,
+                        headerID: headerID,
                         packRID: packRID,
                         packName: packName
                         );
@@ -839,19 +875,157 @@ namespace MIDRetail.Business
             }
         }
 
+        // TESTING - get values from node associated with header
+        private int SetNodeForHeader(
+            int headerRID,
+            string headerID
+            )
+        {
+            string lookupNodeName = null;
+            int nodeRID = Include.NoRID;
+
+            if (headerID == "01_PE_ELIG_no components")
+            {
+                lookupNodeName = "01_PE_ELIG_no components";
+            }
+
+            if (lookupNodeName != null)
+            {
+                nodeRID = SAB.HierarchyServerSession.GetNodeRID(nodeID: lookupNodeName);
+                if (nodeRID != Include.NoRID)
+                {
+                    return nodeRID;
+                }
+            }
+
+            return 101;
+        }
+
         // TESTING - get values from node associated with header/pack
         private int SetNodeForPack(
             int headerRID,
+            string headerID,
             int packRID,
             string packName)
         {
+            string lookupNodeName = null;
+            int nodeRID = Include.NoRID;
 
-            //HDR_RID   HDR_ID
-            //10009     01_PE_ELIG_1style - 1clr - 1pack
-
-            if (headerRID == 10009)
+            if (headerID == "01_PE_ELIG_1style-0clr-1packs")
             {
-                return 102;
+                lookupNodeName = "01_PE_ELIG_1style-0clr-1packs-pack-a";
+            }
+            else if (headerID == "01_PE_ELIG_1style-0clr-2packs")
+            {
+                if (packName == "a")
+                {
+                    lookupNodeName = "01_PE_ELIG_1style-0clr-2packs-pack-a";
+                }
+                else
+                {
+                    lookupNodeName = "01_PE_ELIG_1style-0clr-2packs-pack-b";
+                }
+            }
+            else if (headerID == "01_PE_ELIG_1style-1clr-0packs")
+            {
+
+            }
+            else if (headerID == "01_PE_ELIG_1style-1clr-1pack")
+            {
+                lookupNodeName = "01_PE_ELIG_1style-1clr-1pack-pack-a";
+            }
+            else if (headerID == "01_PE_ELIG_1style-1clr-2packs")
+            {
+                if (packName == "a")
+                {
+                    lookupNodeName = "01_PE_ELIG_1style-1clr-2packs-pack-a";
+                }
+                else
+                {
+                    lookupNodeName = "01_PE_ELIG_1style-1clr-2packs-pack-b";
+                }
+            }
+            else if (headerID == "01_PE_ELIG_1style-2clr-2packs")
+            {
+                if (packName == "a")
+                {
+                    lookupNodeName = "01_PE_ELIG_1style-2clr-2packs-pack-a";
+                }
+                else
+                {
+                    lookupNodeName = "01_PE_ELIG_1style-2clr-2packs-pack-b";
+                }
+            }
+            else if (headerID == "01_PE_ELIG_no components")
+            {
+
+            }
+
+            if (lookupNodeName != null)
+            {
+                nodeRID = SAB.HierarchyServerSession.GetNodeRID(nodeID: lookupNodeName);
+                if (nodeRID != Include.NoRID)
+                {
+                    return nodeRID;
+                }
+            }
+
+            return 101;
+        }
+
+        private int SetNodeForColor(
+            int headerRID,
+            string headerID,
+            int colorRID,
+            string colorID)
+        {
+
+            string lookupNodeName = null;
+            int nodeRID = Include.NoRID;
+
+            if (headerID == "01_PE_ELIG_1style-0clr-1packs")
+            {
+
+            }
+            else if (headerID == "01_PE_ELIG_1style-0clr-2packs")
+            {
+
+            }
+            else if (headerID == "01_PE_ELIG_1style-1clr-0packs")
+            {
+                lookupNodeName = "01_PE_ELIG_1style-1clr-0packs-409-DarkWash";
+            }
+            else if (headerID == "01_PE_ELIG_1style-1clr-1pack")
+            {
+                lookupNodeName = "01_PE_ELIG_1style-1clr-1pack-409-DarkWash";
+            }
+            else if (headerID == "01_PE_ELIG_1style-1clr-2packs")
+            {
+                lookupNodeName = "01_PE_ELIG_1style-1clr-2packs-409-DarkWash";
+            }
+            else if (headerID == "01_PE_ELIG_1style-2clr-2packs")
+            {
+                if (colorID == "409")
+                {
+                    lookupNodeName = "01_PE_ELIG_1style-2clr-2packs-409-DarkWash";
+                }
+                else
+                {
+                    lookupNodeName = "01_PE_ELIG_1style-2clr-2packs-005-Black";
+                }
+            }
+            else if (headerID == "01_PE_ELIG_no components")
+            {
+
+            }
+
+            if (lookupNodeName != null)
+            {
+                nodeRID = SAB.HierarchyServerSession.GetNodeRID(nodeID: lookupNodeName);
+                if (nodeRID != Include.NoRID)
+                {
+                    return nodeRID;
+                }
             }
 
             return 101;

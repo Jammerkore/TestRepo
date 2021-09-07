@@ -369,8 +369,10 @@ namespace MIDRetail.Business
                     {
                         _colorStockEligibilityBitArray = HierarchySessionTransaction.GetExternalStoreStockEligibilityFlags(
                             requestingApplication,
+                            aColor.HdrRID,
+                            aColor.HdrID,
                             aColor.ColorCodeRID,
-                            aColor.ColorName,
+                            aColor.ColorID,
                             aColor.ColorNodeRID,
                             yearWeek
                             );
@@ -702,34 +704,38 @@ namespace MIDRetail.Business
                     yearWeek = this.SAB.ApplicationServerSession.Calendar.GetWeekKey(yearWeek);
                 }
 
-                if (nodeRID != _currentSalesEligibilityNodeRID) // if not same node, get year/week Hashtable		
+                if (nodeRID != _colorCurrentSalesEligibilityNodeRID) // if not same node, get year/week Hashtable		
                 {
-                    _salesEligibilityHashByYearWeek = (System.Collections.Hashtable)_salesEligibilityHashByNodeRID[nodeRID];
-                    if (_salesEligibilityHashByYearWeek == null)
+                    _colorSalesEligibilityHashByYearWeek = (System.Collections.Hashtable)_salesEligibilityHashByNodeRID[nodeRID];
+                    if (_colorSalesEligibilityHashByYearWeek == null)
                     {
-                        _salesEligibilityHashByYearWeek = new System.Collections.Hashtable();
-                        _salesEligibilityHashByNodeRID.Add(nodeRID, _salesEligibilityHashByYearWeek);
+                        _colorSalesEligibilityHashByYearWeek = new System.Collections.Hashtable();
+                        _colorSalesEligibilityHashByNodeRID.Add(nodeRID, _colorSalesEligibilityHashByYearWeek);
                     }
-                    _currentSalesEligibilityNodeRID = nodeRID;
-                    _currentSalesEligibilityYearWeek = -1;  // reset current yearWeek since new node
+                    _colorCurrentSalesEligibilityNodeRID = nodeRID;
+                    _colorCurrentSalesEligibilityYearWeek = -1;  // reset current yearWeek since new node
                 }
 
-                if (yearWeek != _currentSalesEligibilityYearWeek)   // if not same week, get BitArray for year/week
+                if (yearWeek != _colorCurrentSalesEligibilityYearWeek)   // if not same week, get BitArray for year/week
                 {
-                    _salesEligibilityBitArray = (System.Collections.BitArray)_salesEligibilityHashByYearWeek[yearWeek];
-                    if (_salesEligibilityBitArray == null)
+                    _colorSalesEligibilityBitArray = (System.Collections.BitArray)_colorSalesEligibilityHashByYearWeek[yearWeek];
+                    if (_colorSalesEligibilityBitArray == null)
                     {
-                        _salesEligibilityBitArray = HierarchySessionTransaction.GetExternalStoreSalesEligibilityFlags(
-                            requestingApplication,
-                            nodeRID, 
-                            yearWeek
-                            );
-                        _salesEligibilityHashByYearWeek.Add(yearWeek, _salesEligibilityBitArray);
+                        _colorSalesEligibilityBitArray = HierarchySessionTransaction.GetExternalStoreSalesEligibilityFlags(
+                                requestingApplication,
+                                aColor.HdrRID,
+                                aColor.HdrID,
+                                aColor.ColorCodeRID,
+                                aColor.ColorID,
+                                aColor.ColorNodeRID,
+                                yearWeek
+                                );
+                        _colorSalesEligibilityHashByYearWeek.Add(yearWeek, _salesEligibilityBitArray);
                     }
-                    _currentSalesEligibilityYearWeek = yearWeek;
+                    _colorCurrentSalesEligibilityYearWeek = yearWeek;
                 }
 
-                return _salesEligibilityBitArray[storeRID];
+                return _colorSalesEligibilityBitArray[storeRID];
             }
             catch (System.NullReferenceException)
             {
@@ -1071,6 +1077,7 @@ namespace MIDRetail.Business
                         _packStockEligibilityBitArray = HierarchySessionTransaction.GetExternalStoreStockEligibilityFlags(
                             requestingApplication,
                             aPack.HdrRID,
+                            aPack.HdrID,
                             aPack.PackRID, 
                             aPack.PackName,
                             yearWeek
@@ -1402,36 +1409,37 @@ namespace MIDRetail.Business
                     yearWeek = this.SAB.ApplicationServerSession.Calendar.GetWeekKey(yearWeek);
                 }
 
-                if (aPack.PackRID != _currentSalesEligibilityNodeRID) // if not same node, get year/week Hashtable		
+                if (aPack.PackRID != _packCurrentSalesEligibilityNodeRID) // if not same node, get year/week Hashtable		
                 {
-                    _salesEligibilityHashByYearWeek = (System.Collections.Hashtable)_salesEligibilityHashByNodeRID[aPack.PackRID];
-                    if (_salesEligibilityHashByYearWeek == null)
+                    _packSalesEligibilityHashByYearWeek = (System.Collections.Hashtable)_salesEligibilityHashByNodeRID[aPack.PackRID];
+                    if (_packSalesEligibilityHashByYearWeek == null)
                     {
-                        _salesEligibilityHashByYearWeek = new System.Collections.Hashtable();
-                        _salesEligibilityHashByNodeRID.Add(aPack.PackRID, _salesEligibilityHashByYearWeek);
+                        _packSalesEligibilityHashByYearWeek = new System.Collections.Hashtable();
+                        _packSalesEligibilityHashByNodeRID.Add(aPack.PackRID, _salesEligibilityHashByYearWeek);
                     }
-                    _currentSalesEligibilityNodeRID = aPack.PackRID;
-                    _currentSalesEligibilityYearWeek = -1;  // reset current yearWeek since new node
+                    _packCurrentSalesEligibilityNodeRID = aPack.PackRID;
+                    _packCurrentSalesEligibilityYearWeek = -1;  // reset current yearWeek since new node
                 }
 
-                if (yearWeek != _currentSalesEligibilityYearWeek)   // if not same week, get BitArray for year/week
+                if (yearWeek != _packCurrentSalesEligibilityYearWeek)   // if not same week, get BitArray for year/week
                 {
-                    _salesEligibilityBitArray = (System.Collections.BitArray)_salesEligibilityHashByYearWeek[yearWeek];
-                    if (_salesEligibilityBitArray == null)
+                    _packSalesEligibilityBitArray = (System.Collections.BitArray)_salesEligibilityHashByYearWeek[yearWeek];
+                    if (_packSalesEligibilityBitArray == null)
                     {
-                        _salesEligibilityBitArray = HierarchySessionTransaction.GetExternalStoreSalesEligibilityFlags(
+                        _packSalesEligibilityBitArray = HierarchySessionTransaction.GetExternalStoreSalesEligibilityFlags(
                             requestingApplication,
                             aPack.HdrRID,
+                            aPack.HdrID,
                             aPack.PackRID,
                             aPack.PackName,
                             yearWeek
                             );
-                        _salesEligibilityHashByYearWeek.Add(yearWeek, _salesEligibilityBitArray);
+                        _packSalesEligibilityHashByYearWeek.Add(yearWeek, _salesEligibilityBitArray);
                     }
-                    _currentSalesEligibilityYearWeek = yearWeek;
+                    _packCurrentSalesEligibilityYearWeek = yearWeek;
                 }
 
-                return _salesEligibilityBitArray[storeRID];
+                return _packSalesEligibilityBitArray[storeRID];
             }
             catch (System.NullReferenceException)
             {

@@ -1608,6 +1608,7 @@ namespace MIDRetail.Business.Allocation
 		//=======
 		private string _packName;
         private int _hdrRID;  // TT#488 - MD - Jellis - Group Allocation
+        private string _hdrID;
 		private int _packRID;
 		private int _masterOrSubordinatePackRID; // MID Track 4029 Re-Work MasterPO Logic
 		private string _origPackName;
@@ -1643,6 +1644,7 @@ namespace MIDRetail.Business.Allocation
 		{
 			_packName = aPackName;
             _hdrRID = Include.NoRID; // TT#488 - MD - Jellis - Group Allocation
+            _hdrID = null;
 			_packRID = Include.NoRID; // MID Track 4029 Re-Work MasterPO Logic
 			_masterOrSubordinatePackRID = Include.NoRID; // MID Track 4029 Re-Work MasterPO Logic
 			_origPackName = aPackName;
@@ -1764,8 +1766,24 @@ namespace MIDRetail.Business.Allocation
         }
         // end TT#488 - MD - Jellis - Group Allocation
 
-		// begin MID Track 4029 ReWork MasterPO Logic
-		public int MasterOrSubordinatePackRID
+        /// <summary>
+        /// Gets or sets the HdrID associated with this pack
+        /// </summary>
+        /// <remarks>Identifies the home Header for this pack</remarks>
+        public string HdrID
+        {
+            get
+            {
+                return _hdrID;
+            }
+            set
+            {
+                _hdrID = value;
+            }
+        }
+
+        // begin MID Track 4029 ReWork MasterPO Logic
+        public int MasterOrSubordinatePackRID
 		{
 			get
 			{
@@ -5874,6 +5892,7 @@ namespace MIDRetail.Business.Allocation
 		private int _masterOrSubordinateColorCodeRID; // MID Track 4029 ReWork MasterPO Logic
         private int _colorNodeRID;
         private int _hdrRID;
+        private string _hdrID;
         private HdrAllocationBin _colorBin;
 		private int _totalSizeUnitsToAllocate;
 		private MinMaxAllocationBin _minMaxBin;
@@ -5906,7 +5925,8 @@ namespace MIDRetail.Business.Allocation
 		private int _firstSizeSequence;
 		// end MID track 3634 Add display sequence for size
         private int      _hdrBCRID;         // Assortment BEGIN
-        private string   _name;              
+        private string   _name;
+        private string _colorID;
         private string   _description;
         private int      _asrtBCRID;
         private int _lastBCSZ_KeyUsed;  // Assortment END
@@ -5930,6 +5950,7 @@ namespace MIDRetail.Business.Allocation
 			_masterOrSubordinateColorCodeRID = Include.NoRID; // MID Track 4029 ReWork MasterPO Logic
             _colorNodeRID = Include.NoRID;
             _hdrRID = Include.NoRID;
+            _hdrID = null;
             _colorBin.SetQtyAllocated(0);
 			_colorBin.SetQtyToAllocate(0);
 			_colorBin.SetUnitMultiple(1);
@@ -6088,6 +6109,22 @@ namespace MIDRetail.Business.Allocation
             set
             {
                 _hdrRID = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the HdrID associated with this pack
+        /// </summary>
+        /// <remarks>Identifies the home Header for this pack</remarks>
+        public string HdrID
+        {
+            get
+            {
+                return _hdrID;
+            }
+            set
+            {
+                _hdrID = value;
             }
         }
 
@@ -6513,6 +6550,22 @@ namespace MIDRetail.Business.Allocation
                 this._name = value;
             }
         }
+
+        /// <summary>
+        /// Gets or sets the color name for placeholders.
+        /// </summary>
+        public string ColorID
+        {
+            get
+            {
+                return this._colorID;
+            }
+            set
+            {
+                this._colorID = value;
+            }
+        }
+
         /// <summary>
         /// Gets or sets the color description for placeholders.
         /// </summary>

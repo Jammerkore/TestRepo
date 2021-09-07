@@ -8794,14 +8794,23 @@ namespace MIDRetail.Business
             eRequestingApplication requestingApplication, 
             int nodeRID, 
             StoreWeekEligibilityList swel, 
-            bool setPriorityShipping
+            bool setPriorityShipping,
+            int headerRID = -1,
+            string headerID = null
             )
 		{
 			try
 			{
 				foreach(StoreWeekEligibilityProfile swep in swel)
 				{
-					swep.StoreIsEligible = DetermineStockEligibility(requestingApplication, nodeRID, swep.Key, swep.YearWeek);
+					swep.StoreIsEligible = DetermineStockEligibility(
+                        requestingApplication, 
+                        nodeRID, 
+                        swep.Key, 
+                        swep.YearWeek,
+                        headerRID,
+                        headerID
+                        );
 					if (setPriorityShipping)
 					{
 						swep.StoreIsPriorityShipper = DeterminePriorityShipping(nodeRID, swep.Key, swep.YearWeek);
@@ -9001,7 +9010,9 @@ namespace MIDRetail.Business
             eRequestingApplication requestingApplication, 
             int nodeRID, 
             int storeRID, 
-            int yearWeek
+            int yearWeek,
+            int headerRID = -1,
+            string headerID = null
             )
 		{
 			try
@@ -9031,7 +9042,13 @@ namespace MIDRetail.Business
 					{
                         if (this.GlobalOptions.UseExternalEligibility)
                         {
-                            _stockEligibilityBitArray = HierarchySessionTransaction.GetStoreStockEligibilityFlags(nodeRID, yearWeek);
+                            _stockEligibilityBitArray = HierarchySessionTransaction.GetExternalStoreStockEligibilityFlags(
+                                requestingApplication,
+                                headerRID,
+                                headerID,
+                                nodeRID, 
+                                yearWeek
+                                );
                         }
                         else
                         {
