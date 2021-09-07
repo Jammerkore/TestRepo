@@ -1152,8 +1152,11 @@ namespace MIDRetail.Windows
 						aUserId);
 
 					_folderNodeHash[newFolderProf.Key] = newNode;
-					aNode.Nodes.Insert(0, newNode);
-					aNode.Expand();
+					if (MIDEnvironment.isWindows)
+					{
+						aNode.Nodes.Insert(0, newNode);
+						aNode.Expand();
+					}
 				}
 				catch (Exception exc)
 				{

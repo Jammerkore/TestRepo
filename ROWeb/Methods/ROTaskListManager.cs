@@ -1780,13 +1780,13 @@ namespace Logility.ROWeb
                     profileType: param.ProfileType,
                     key: param.Key,
                     name: param.Name,
-                    userKey: SessionAddressBlock.ClientServerSession.UserRID,
+                    userKey: 3,//SessionAddressBlock.ClientServerSession.UserRID,
                     parentProfileType: param.ParentProfileType,
                     parentKey: param.ParentKey,
-                    parentUserKey: SessionAddressBlock.ClientServerSession.UserRID,
+                    parentUserKey: 3,///SessionAddressBlock.ClientServerSession.UserRID,
                     toParentProfileType: param.ToParentProfileType,
                     toParentKey: param.ToParentKey,
-                    toParentUserKey: SessionAddressBlock.ClientServerSession.UserRID
+                    toParentUserKey: 3//SessionAddressBlock.ClientServerSession.UserRID
                 );
         }
 
