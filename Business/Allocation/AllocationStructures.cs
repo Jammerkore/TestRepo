@@ -6084,7 +6084,7 @@ namespace MIDRetail.Business.Allocation
 			}
 		}
 
-        internal int ColorNodeRID
+        public int ColorNodeRID
         {
             get
             {

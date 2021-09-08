@@ -2810,8 +2810,22 @@ namespace Logility.ROWeb
                         {
                             foreach (HdrColorBin aColor in allocationProfile.BulkColors.Values)
                             {
-                                ColorCodeProfile colorCodeProfile = SAB.HierarchyServerSession.GetColorCodeProfile(aColor.ColorCodeRID);
-                                eligibilityWorklistItem.WorklistComponents.Add(colorCodeProfile.Text);
+                                string colorName = null;
+                                if (aColor.ColorNodeRID > Include.NoRID)
+                                {
+                                    HierarchyNodeProfile hierarchyNodeProfile = SAB.HierarchyServerSession.GetNodeData(aColor.ColorNodeRID);
+                                    if (hierarchyNodeProfile != null
+                                        && hierarchyNodeProfile.NodeDescription != null)
+                                    {
+                                        colorName = hierarchyNodeProfile.NodeDescription;
+                                    }
+                                }
+                                if (colorName == null)
+                                {
+                                    ColorCodeProfile colorCodeProfile = SAB.HierarchyServerSession.GetColorCodeProfile(aColor.ColorCodeRID);
+                                    colorName = colorCodeProfile.Text;
+                                }
+                                eligibilityWorklistItem.WorklistComponents.Add(colorName);
                             }
                         }
 
@@ -2819,7 +2833,8 @@ namespace Logility.ROWeb
                         {
                             foreach (PackHdr aPack in allocationProfile.Packs.Values)
                             {
-                                eligibilityWorklistItem.WorklistComponents.Add(aPack.PackName);
+                                string packName = aPack.PackName + "(" + aPack.PackMultiple.ToString(CultureInfo.CurrentUICulture) + ")";
+                                eligibilityWorklistItem.WorklistComponents.Add(packName);
                             }
                         }
 
