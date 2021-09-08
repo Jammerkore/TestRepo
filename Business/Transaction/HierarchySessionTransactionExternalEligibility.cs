@@ -888,6 +888,10 @@ namespace MIDRetail.Business
             {
                 lookupNodeName = "01_PE_ELIG_no components";
             }
+            else
+            {
+                lookupNodeName = headerID;
+            }
 
             if (lookupNodeName != null)
             {
