@@ -2349,6 +2349,12 @@ namespace MIDRetail.Business
                 int iBasisId = 0;
 
                 int iMerchandiseId = Convert.ToInt32(dtBasisDetails.Rows[basisDtlCtr]["HN_RID"].ToString());
+                // if Multi-Level, use the name of the plan merchandise in the basis
+                if (MultiLevelInd)
+                {
+                    iMerchandiseId = HierNodeRID;
+                }
+
                 workKVP = GetName.GetMerchandiseName(iMerchandiseId, SAB);
                 string sMerchandise = workKVP.Value;
                 int iVersionId = Convert.ToInt32(dtBasisDetails.Rows[basisDtlCtr]["FV_RID"].ToString());
