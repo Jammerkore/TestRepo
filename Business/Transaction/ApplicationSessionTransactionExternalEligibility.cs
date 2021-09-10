@@ -349,16 +349,19 @@ namespace MIDRetail.Business
                     // convert to YYYYDDD
                     yearWeek = this.SAB.ApplicationServerSession.Calendar.GetWeekKey(yearWeek);
                 }
+                int colorNodeRID = aColor.ColorNodeRID;
 
-                if (aColor.ColorNodeRID != _colorCurrentStockEligibilityNodeRID) // if not same node, get year/week Hashtable		
+                colorNodeRID += aColor.HdrRID;  // TESTING - remove statement to deploy
+
+                if (colorNodeRID != _colorCurrentStockEligibilityNodeRID) // if not same node, get year/week Hashtable		
                 {
-                    _colorStockEligibilityHashByYearWeek = (System.Collections.Hashtable)_colorStockEligibilityHashByNodeRID[aColor.ColorNodeRID];
+                    _colorStockEligibilityHashByYearWeek = (System.Collections.Hashtable)_colorStockEligibilityHashByNodeRID[colorNodeRID];
                     if (_colorStockEligibilityHashByYearWeek == null)
                     {
                         _colorStockEligibilityHashByYearWeek = new System.Collections.Hashtable();
-                        _colorStockEligibilityHashByNodeRID.Add(aColor.ColorNodeRID, _colorStockEligibilityHashByYearWeek);
+                        _colorStockEligibilityHashByNodeRID.Add(colorNodeRID, _colorStockEligibilityHashByYearWeek);
                     }
-                    _colorCurrentStockEligibilityNodeRID = aColor.ColorNodeRID;
+                    _colorCurrentStockEligibilityNodeRID = colorNodeRID;
                     _colorCurrentStockEligibilityYearWeek = -1;  // reset current yearWeek since new node
                 }
 
@@ -373,7 +376,7 @@ namespace MIDRetail.Business
                             aColor.HdrID,
                             aColor.ColorCodeRID,
                             aColor.ColorID,
-                            aColor.ColorNodeRID,
+                            colorNodeRID,
                             yearWeek
                             );
                         _colorStockEligibilityHashByYearWeek.Add(yearWeek, _colorStockEligibilityBitArray);
