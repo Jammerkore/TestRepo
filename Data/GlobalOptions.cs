@@ -308,7 +308,12 @@ namespace MIDRetail.Data
             eDCFulfillmentSplitByOption split_by_option,          // TT#1966-MD - AGallagher - DC Fulfillment
             eDCFulfillmentReserve split_by_reserve,               // TT#1966-MD - AGallagher - DC Fulfillment
             eDCFulfillmentMinimums apply_by,                      // TT#1966-MD - AGallagher - DC Fulfillment
-            eDCFulfillmentWithinDC within_dc                        // TT#1966-MD - AGallagher - DC Fulfillment
+            eDCFulfillmentWithinDC within_dc,                     // TT#1966-MD - AGallagher - DC Fulfillment
+            bool useExternalEligibilityAllocation,
+            bool useExternalEligibilityPlanning,
+            eExternalEligibilityProductIdentifier externalEligibilityProductIdentifier,
+            eExternalEligibilityChannelIdentifier externalEligibilityChannelIdentifier,
+            string externalEligibilityURL
             )
         {
             try
@@ -483,6 +488,24 @@ namespace MIDRetail.Data
                 int WITHIN_DC = within_dc.GetHashCode();
                 // END TT#1966-MD - AGallagher - DC Fulfillment
 
+                char USE_EXTERNAL_ELIGIBILITY_ALLOCATION;
+                if (useExternalEligibilityAllocation)
+                    USE_EXTERNAL_ELIGIBILITY_ALLOCATION = '1';
+                else
+                    USE_EXTERNAL_ELIGIBILITY_ALLOCATION = '0';
+
+                char USE_EXTERNAL_ELIGIBILITY_PLANNING;
+                if (useExternalEligibilityPlanning)
+                    USE_EXTERNAL_ELIGIBILITY_PLANNING = '1';
+                else
+                    USE_EXTERNAL_ELIGIBILITY_PLANNING = '0';
+
+                int EXTERNAL_ELIGIBILITY_PRODUCT_IDENTIFIER = externalEligibilityProductIdentifier.GetHashCode();
+                int EXTERNAL_ELIGIBILITY_CHANNEL_IDENTIFIER = externalEligibilityChannelIdentifier.GetHashCode();
+
+                string EXTERNAL_ELIGIBILITY_URL = Include.NullForStringValue;  
+                if (externalEligibilityURL.Trim() != string.Empty) EXTERNAL_ELIGIBILITY_URL = externalEligibilityURL;
+
                 int rowsUpdated = StoredProcedures.MID_SYSTEM_OPTIONS_UPDATE.Update(_dba,
                                                                   DO_UPDATE_RESERVE_STORE: DO_UPDATE_RESERVE_STORE,
                                                                   RESERVE_ST_RID: RESERVE_ST_RID,
@@ -567,7 +590,12 @@ namespace MIDRetail.Data
                                                                   SPLIT_BY_OPTION: SPLIT_BY_OPTION,                     // TT#1966-MD - AGallagher - DC Fulfillment
                                                                   SPLIT_BY_RESERVE: SPLIT_BY_RESERVE,                   // TT#1966-MD - AGallagher - DC Fulfillment
                                                                   APPLY_BY: APPLY_BY,                                   // TT#1966-MD - AGallagher - DC Fulfillment
-                                                                  WITHIN_DC: WITHIN_DC                                  // TT#1966-MD - AGallagher - DC Fulfillment
+                                                                  WITHIN_DC: WITHIN_DC,                                 // TT#1966-MD - AGallagher - DC Fulfillment
+                                                                  USE_EXTERNAL_ELIGIBILITY_ALLOCATION: USE_EXTERNAL_ELIGIBILITY_ALLOCATION,
+                                                                  USE_EXTERNAL_ELIGIBILITY_PLANNING: USE_EXTERNAL_ELIGIBILITY_PLANNING,
+                                                                  EXTERNAL_ELIGIBILITY_PRODUCT_IDENTIFIER: EXTERNAL_ELIGIBILITY_PRODUCT_IDENTIFIER,
+                                                                  EXTERNAL_ELIGIBILITY_CHANNEL_IDENTIFIER: EXTERNAL_ELIGIBILITY_CHANNEL_IDENTIFIER,
+                                                                  EXTERNAL_ELIGIBILITY_URL: EXTERNAL_ELIGIBILITY_URL
                                                                   );
 
 

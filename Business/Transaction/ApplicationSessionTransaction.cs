@@ -8652,7 +8652,9 @@ namespace MIDRetail.Business
             eRequestingApplication requestingApplication, 
             int nodeRID, 
             int storeRID, 
-            int yearWeek
+            int yearWeek,
+            int headerRID = -1,
+            string headerID = null
             )
 		{
 			try
@@ -8662,6 +8664,16 @@ namespace MIDRetail.Business
 					// convert to YYYYDDD
 					yearWeek = this.SAB.ApplicationServerSession.Calendar.GetWeekKey(yearWeek); 
 				}
+
+                bool useExternalEligibility = false;
+                if (requestingApplication == eRequestingApplication.Forecast)
+                {
+                    useExternalEligibility = this.GlobalOptions.UseExternalEligibilityPlanning;
+                }
+                else
+                {
+                    useExternalEligibility = this.GlobalOptions.UseExternalEligibilityAllocation;
+                }
 
 				if (nodeRID != _currentSalesEligibilityNodeRID) // if not same node, get year/week Hashtable		
 				{
@@ -8680,9 +8692,15 @@ namespace MIDRetail.Business
 					_salesEligibilityBitArray = (System.Collections.BitArray)_salesEligibilityHashByYearWeek[yearWeek];
 					if (_salesEligibilityBitArray == null)
 					{
-                        if (this.GlobalOptions.UseExternalEligibility)
+                        if (useExternalEligibility)
                         {
-                            _salesEligibilityBitArray = HierarchySessionTransaction.GetStoreSalesEligibilityFlags(nodeRID, yearWeek);
+                            _salesEligibilityBitArray = HierarchySessionTransaction.GetExternalStoreSalesEligibilityFlags(
+                                requestingApplication,
+                                headerRID,
+                                headerID,
+                                nodeRID, 
+                                yearWeek
+                                );
                         }
                         else
                         {
@@ -9023,6 +9041,16 @@ namespace MIDRetail.Business
 					yearWeek = this.SAB.ApplicationServerSession.Calendar.GetWeekKey(yearWeek); 
 				}
 
+                bool useExternalEligibility = false;
+                if (requestingApplication == eRequestingApplication.Forecast)
+                {
+                    useExternalEligibility = this.GlobalOptions.UseExternalEligibilityPlanning;
+                }
+                else
+                {
+                    useExternalEligibility = this.GlobalOptions.UseExternalEligibilityAllocation;
+                }
+
 				if (nodeRID != _currentStockEligibilityNodeRID)	// if not same node, get year/week Hashtable		
 				{
 					_stockEligibilityHashByYearWeek = (System.Collections.Hashtable)_stockEligibilityHashByNodeRID[nodeRID];
@@ -9040,7 +9068,7 @@ namespace MIDRetail.Business
 					_stockEligibilityBitArray = (System.Collections.BitArray)_stockEligibilityHashByYearWeek[yearWeek];
 					if (_stockEligibilityBitArray == null)
 					{
-                        if (this.GlobalOptions.UseExternalEligibility)
+                        if (useExternalEligibility)
                         {
                             _stockEligibilityBitArray = HierarchySessionTransaction.GetExternalStoreStockEligibilityFlags(
                                 requestingApplication,

@@ -1976,4 +1976,82 @@ namespace Logility.ROWebSharedTypes
         }
     }
 
+    [DataContract(Name = "ROGlobalOptions", Namespace = "http://Logility.ROWeb/")]
+    public class ROGlobalOptions
+    {
+        [DataMember(IsRequired = true)]
+        private string _companyName;
+        [DataMember(IsRequired = true)]
+        private bool _useExternalEligibilityAllocation;
+        [DataMember(IsRequired = true)]
+        private bool _useExternalEligibilityPlanning;
+        [DataMember(IsRequired = true)]
+        private eExternalEligibilityProductIdentifier _externalEligibilityProductIdentifier;
+        [DataMember(IsRequired = true)]
+        private eExternalEligibilityChannelIdentifier _externalEligibilityChannelIdentifier;
+        [DataMember(IsRequired = true)]
+        private string _externalEligibilityURL;
+        [DataMember(IsRequired = true)]
+        private List<KeyValuePair<int, string>> _productIdentifierList;
+        [DataMember(IsRequired = true)]
+        private List<KeyValuePair<int, string>> _channelIdentifierList;
+
+        #region Public Properties
+
+        public string CompanyName
+        {
+            get { return _companyName; }
+            set { _companyName = value; }
+        }
+
+        public bool UseExternalEligibilityAllocation
+        {
+            get { return _useExternalEligibilityAllocation; }
+            set { _useExternalEligibilityAllocation = value; }
+        }
+
+        public bool UseExternalEligibilityPlanning
+        {
+            get { return _useExternalEligibilityPlanning; }
+            set { _useExternalEligibilityPlanning = value; }
+        }
+
+        public eExternalEligibilityProductIdentifier ExternalEligibilityProductIdentifier
+        {
+            get { return _externalEligibilityProductIdentifier; }
+            set { _externalEligibilityProductIdentifier = value; }
+        }
+
+        public eExternalEligibilityChannelIdentifier ExternalEligibilityChannelIdentifier
+        {
+            get { return _externalEligibilityChannelIdentifier; }
+            set { _externalEligibilityChannelIdentifier = value; }
+        }
+
+        public string ExternalEligibilityURL
+        {
+            get { return _externalEligibilityURL; }
+            set { _externalEligibilityURL = value; }
+        }
+
+        public List<KeyValuePair<int, string>> ProductIdentifierList
+        {
+            get { return _productIdentifierList; }
+        }
+
+        public List<KeyValuePair<int, string>> ChannelIdentifierList
+        {
+            get { return _channelIdentifierList; }
+        }
+
+        #endregion
+
+        public ROGlobalOptions()
+        {
+            _productIdentifierList = new List<KeyValuePair<int, string>>();
+            _channelIdentifierList = new List<KeyValuePair<int, string>>();
+        }
+
+    }
+
 }

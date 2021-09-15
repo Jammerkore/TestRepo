@@ -137,4 +137,20 @@ namespace Logility.ROWebSharedTypes
 
     }
 
+    [DataContract(Name = "ROGlobalOptionsParms", Namespace = "http://Logility.ROWeb/")]
+    public class ROGlobalOptionsParms : ROParms
+    {
+        [DataMember(IsRequired = true)]
+        private ROGlobalOptions _ROGlobalOptions;
+
+        public ROGlobalOptionsParms(string sROUserID, string sROSessionID, eROClass ROClass, eRORequest RORequest, long ROInstanceID, ROGlobalOptions ROGlobalOptions) :
+            base(sROUserID, sROSessionID, ROClass, RORequest, ROInstanceID)
+        {
+            _ROGlobalOptions = ROGlobalOptions;
+        }
+
+        public ROGlobalOptions ROGlobalOptions { get { return _ROGlobalOptions; } }
+
+    }
+
 }

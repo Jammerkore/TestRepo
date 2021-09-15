@@ -74,7 +74,13 @@ namespace MIDRetail.Windows
         private eDCFulfillmentMinimums _apply_By;
         private eDCFulfillmentWithinDC _within_Dc;
         // END TT#1966-MD - AGallagher - DC Fulfillment
-      
+        private bool _useExternalEligibilityAllocation;
+        private bool _useExternalEligibilityPlanning;
+        private eExternalEligibilityProductIdentifier _externalEligibilityProductIdentifier;
+        private eExternalEligibilityChannelIdentifier _externalEligibilityChannelIdentifier;
+        private string _externalEligibilityURL;
+
+
         private GlobalOptions_SMTP_BL SMTP_Options = new GlobalOptions_SMTP_BL(); //TT#506-MD -jsobek -Add infrastructure to allow Email to be sent from the application
 
 		private System.Windows.Forms.TabControl tabControl1;
@@ -3670,6 +3676,23 @@ namespace MIDRetail.Windows
                 if (_within_Dc == eDCFulfillmentWithinDC.Proportional)
                 { this.radWithinDCProportional.Checked = true; }
 
+                char useExternalEligibilityAllocation = Convert.ToChar(dr["USE_EXTERNAL_ELIGIBILITY_ALLOCATION"], CultureInfo.CurrentUICulture);
+                _useExternalEligibilityAllocation = Include.ConvertCharToBool(useExternalEligibilityAllocation);
+
+                char useExternalEligibilityPlanning = Convert.ToChar(dr["USE_EXTERNAL_ELIGIBILITY_PLANNING"], CultureInfo.CurrentUICulture);
+                _useExternalEligibilityPlanning = Include.ConvertCharToBool(useExternalEligibilityPlanning);
+
+                int identifierOption = (Convert.ToInt32(dr["EXTERNAL_ELIGIBILITY_PRODUCT_IDENTIFIER"]));
+                _externalEligibilityProductIdentifier = (eExternalEligibilityProductIdentifier)identifierOption;
+
+                identifierOption = (Convert.ToInt32(dr["EXTERNAL_ELIGIBILITY_CHANNEL_IDENTIFIER"]));
+                _externalEligibilityChannelIdentifier = (eExternalEligibilityChannelIdentifier)identifierOption;
+
+                if (dr["EXTERNAL_ELIGIBILITY_URL"] == DBNull.Value)
+                { _externalEligibilityURL = null; }
+                else
+                { _externalEligibilityURL = Convert.ToString(dr["EXTERNAL_ELIGIBILITY_URL"], CultureInfo.CurrentUICulture); }
+
                 //Load DCF Store Order -----------------------
                 dtdcf = opts.GetDCFStoreOrderInfo(Convert.ToInt32(dr["SYSTEM_OPTION_RID"], CultureInfo.CurrentUICulture));
                 ugOrderStoresBy.DataSource = dtdcf;
@@ -4701,7 +4724,12 @@ namespace MIDRetail.Windows
                         _split_By_Option,
                         _split_By_Reserve,
                         _apply_By,
-                        _within_Dc
+                        _within_Dc,
+                        _useExternalEligibilityAllocation,
+                        _useExternalEligibilityPlanning,
+                        _externalEligibilityProductIdentifier,
+                        _externalEligibilityChannelIdentifier,
+                        _externalEligibilityURL
                         );
 
                    	opts.DeleteHeaderReleaseTypes();

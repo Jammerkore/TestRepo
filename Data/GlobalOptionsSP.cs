@@ -598,7 +598,12 @@ namespace MIDRetail.Data
                 private intParameter SPLIT_BY_RESERVE;          // TT#1966-MD - AGallagher - DC Fulfillment
                 private intParameter APPLY_BY;                  // TT#1966-MD - AGallagher - DC Fulfillment
                 private intParameter WITHIN_DC;                  // TT#1966-MD - AGallagher - DC Fulfillment
-       
+                private charParameter USE_EXTERNAL_ELIGIBILITY_ALLOCATION;
+                private charParameter USE_EXTERNAL_ELIGIBILITY_PLANNING;
+                private intParameter EXTERNAL_ELIGIBILITY_PRODUCT_IDENTIFIER;
+                private intParameter EXTERNAL_ELIGIBILITY_CHANNEL_IDENTIFIER;
+                private stringParameter EXTERNAL_ELIGIBILITY_URL;
+
                 public MID_SYSTEM_OPTIONS_UPDATE_def()
                 {
                     base.procedureName = "MID_SYSTEM_OPTIONS_UPDATE";
@@ -688,6 +693,11 @@ namespace MIDRetail.Data
                     SPLIT_BY_RESERVE = new intParameter("@SPLIT_BY_RESERVE", base.inputParameterList);                  // TT#1966-MD - AGallagher - DC Fulfillment
                     APPLY_BY = new intParameter("@APPLY_BY", base.inputParameterList);                  // TT#1966-MD - AGallagher - DC Fulfillment
                     WITHIN_DC = new intParameter("@WITHIN_DC", base.inputParameterList);                  // TT#1966-MD - AGallagher - DC Fulfillment
+                    USE_EXTERNAL_ELIGIBILITY_ALLOCATION = new charParameter("@USE_EXTERNAL_ELIGIBILITY_ALLOCATION", base.inputParameterList);
+                    USE_EXTERNAL_ELIGIBILITY_PLANNING = new charParameter("@USE_EXTERNAL_ELIGIBILITY_PLANNING", base.inputParameterList);
+                    EXTERNAL_ELIGIBILITY_PRODUCT_IDENTIFIER = new intParameter("@EXTERNAL_ELIGIBILITY_PRODUCT_IDENTIFIER", base.inputParameterList);
+                    EXTERNAL_ELIGIBILITY_CHANNEL_IDENTIFIER = new intParameter("@EXTERNAL_ELIGIBILITY_CHANNEL_IDENTIFIER", base.inputParameterList);
+                    EXTERNAL_ELIGIBILITY_URL = new stringParameter("@EXTERNAL_ELIGIBILITY_URL", base.inputParameterList);
                 }
 
                 public int Update(DatabaseAccess _dba,
@@ -774,7 +784,12 @@ namespace MIDRetail.Data
                                   int? SPLIT_BY_OPTION,        // TT#1966-MD - AGallagher - DC Fulfillment
                                   int? SPLIT_BY_RESERVE,        // TT#1966-MD - AGallagher - DC Fulfillment
                                   int? APPLY_BY,        // TT#1966-MD - AGallagher - DC Fulfillment
-                                  int? WITHIN_DC        // TT#1966-MD - AGallagher - DC Fulfillment
+                                  int? WITHIN_DC,        // TT#1966-MD - AGallagher - DC Fulfillment
+                                  char? USE_EXTERNAL_ELIGIBILITY_ALLOCATION,
+                                  char? USE_EXTERNAL_ELIGIBILITY_PLANNING,
+                                  int? EXTERNAL_ELIGIBILITY_PRODUCT_IDENTIFIER,
+                                  int? EXTERNAL_ELIGIBILITY_CHANNEL_IDENTIFIER,
+                                  string EXTERNAL_ELIGIBILITY_URL
                                   )
                 {
                     lock (typeof(MID_SYSTEM_OPTIONS_UPDATE_def))
@@ -863,6 +878,11 @@ namespace MIDRetail.Data
                         this.SPLIT_BY_RESERVE.SetValue(SPLIT_BY_RESERVE);       // TT#1966-MD - AGallagher - DC Fulfillment
                         this.APPLY_BY.SetValue(APPLY_BY);                       // TT#1966-MD - AGallagher - DC Fulfillment
                         this.WITHIN_DC.SetValue(WITHIN_DC);                       // TT#1966-MD - AGallagher - DC Fulfillment
+                        this.USE_EXTERNAL_ELIGIBILITY_ALLOCATION.SetValue(USE_EXTERNAL_ELIGIBILITY_ALLOCATION);
+                        this.USE_EXTERNAL_ELIGIBILITY_PLANNING.SetValue(USE_EXTERNAL_ELIGIBILITY_PLANNING);
+                        this.EXTERNAL_ELIGIBILITY_PRODUCT_IDENTIFIER.SetValue(EXTERNAL_ELIGIBILITY_PRODUCT_IDENTIFIER);
+                        this.EXTERNAL_ELIGIBILITY_CHANNEL_IDENTIFIER.SetValue(EXTERNAL_ELIGIBILITY_CHANNEL_IDENTIFIER);
+                        this.EXTERNAL_ELIGIBILITY_URL.SetValue(EXTERNAL_ELIGIBILITY_URL);
                         return ExecuteStoredProcedureForUpdate(_dba);
                     }
                 }

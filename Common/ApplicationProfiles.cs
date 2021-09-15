@@ -21,9 +21,7 @@ namespace MIDRetail.Common
 		public GlobalOptionsProfile(int aKey)
 			: base(aKey)
 		{
-            // TESTING - Change to false to deploy
-            _useExternalEligibility = true;
-        }
+		}
 
 		/// <summary>
 		/// Returns the eProfileType of this profile.
@@ -139,7 +137,11 @@ namespace MIDRetail.Common
         private eDCFulfillmentMinimums _apply_By;
         private eDCFulfillmentWithinDC _within_Dc;
         // END TT#1966-MD - AGallagher - DC Fulfillment
-        private bool _useExternalEligibility;
+        private bool _useExternalEligibilityAllocation;
+        private bool _useExternalEligibilityPlanning;
+        private eExternalEligibilityProductIdentifier _externalEligibilityProductIdentifier;
+        private eExternalEligibilityChannelIdentifier _externalEligibilityChannelIdentifier;
+        private string _externalEligibilityURL;
 		#endregion
 
 		public int OTSPlanStoreGroupRID
@@ -594,10 +596,30 @@ namespace MIDRetail.Common
         }
         // END TT#1966-MD - AGallagher - DC Fulfillment
 
-        public bool UseExternalEligibility
+        public bool UseExternalEligibilityAllocation
         {
-            get { return _useExternalEligibility; }
-            set { _useExternalEligibility = value; }
+            get { return _useExternalEligibilityAllocation; }
+            set { _useExternalEligibilityAllocation = value; }
+        }
+        public bool UseExternalEligibilityPlanning
+        {
+            get { return _useExternalEligibilityPlanning; }
+            set { _useExternalEligibilityPlanning = value; }
+        }
+        public eExternalEligibilityProductIdentifier ExternalEligibilityProductIdentifier
+        {
+            get { return _externalEligibilityProductIdentifier; }
+            set { _externalEligibilityProductIdentifier = value; }
+        }
+        public eExternalEligibilityChannelIdentifier ExternalEligibilityChannelIdentifier
+        {
+            get { return _externalEligibilityChannelIdentifier; }
+            set { _externalEligibilityChannelIdentifier = value; }
+        }
+        public string ExternalEligibilityURL
+        {
+            get { return _externalEligibilityURL; }
+            set { _externalEligibilityURL = value; }
         }
 
 		public void LoadOptions()
@@ -826,7 +848,21 @@ namespace MIDRetail.Common
 
                 _within_Dc = (eDCFulfillmentWithinDC)(Convert.ToInt32(dr["APPLY_BY"]));
                 // END TT#1966-MD - AGallagher - DC Fulfillment
-			}
+
+                char useExternalEligibilityAllocation = Convert.ToChar(dr["USE_EXTERNAL_ELIGIBILITY_ALLOCATION"], CultureInfo.CurrentUICulture);
+                _useExternalEligibilityAllocation = Include.ConvertCharToBool(useExternalEligibilityAllocation);
+
+                char useExternalEligibilityPlanning = Convert.ToChar(dr["USE_EXTERNAL_ELIGIBILITY_PLANNING"], CultureInfo.CurrentUICulture);
+                _useExternalEligibilityPlanning = Include.ConvertCharToBool(useExternalEligibilityPlanning);
+
+                int identifierOption = Convert.ToInt32(dr["EXTERNAL_ELIGIBILITY_PRODUCT_IDENTIFIER"]);
+                _externalEligibilityProductIdentifier = (eExternalEligibilityProductIdentifier)identifierOption;
+
+                identifierOption = Convert.ToInt32(dr["EXTERNAL_ELIGIBILITY_CHANNEL_IDENTIFIER"]);
+                _externalEligibilityChannelIdentifier = (eExternalEligibilityChannelIdentifier)identifierOption;
+
+                _externalEligibilityURL = Convert.ToString(dr["EXTERNAL_ELIGIBILITY_URL"]);
+            }
 			catch ( Exception innerException )
 			{
 				throw new MIDException(eErrorLevel.severe,0,"Error loading global options", innerException);

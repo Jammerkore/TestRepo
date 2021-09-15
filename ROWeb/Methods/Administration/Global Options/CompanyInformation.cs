@@ -94,6 +94,11 @@ namespace Logility.ROWeb
             private TypedColumnHandler<string> _SMTPPasswordColHandler;
             private TypedColumnHandler<bool> _SMTPUseOutlookContactsColHandler;
             private TypedColumnHandler<bool> _SMTPMessageFormatInHTMLColHandler;
+            private TypedColumnHandler<bool> _useExternalEligibilityAllocationHandler;
+            private TypedColumnHandler<bool> _useExternalEligibilityPlanningHandler;
+            private TypedColumnHandler<int> _externalEligibilityProductIdentifierHandler;
+            private TypedColumnHandler<int> _externalEligibilityChannelIdentifierHandler;
+            private TypedColumnHandler<string> _externalEligibilityURLHandler;
 
 
             protected CompanyInfoRowHandler(GlobalOptionsProfile GlobalOptionsProfile, GlobalOptions_SMTP_BL SmtpOptions)
@@ -139,12 +144,29 @@ namespace Logility.ROWeb
                 _SMTPMessageFormatInHTMLColHandler =
                     new TypedColumnHandler<bool>("Message Format", eMIDTextCode.Unassigned, false, false);
 
+                _useExternalEligibilityAllocationHandler =
+                    new TypedColumnHandler<bool>("Use External Eligibility Allocation", eMIDTextCode.Unassigned, false, false);
+                _useExternalEligibilityPlanningHandler =
+                    new TypedColumnHandler<bool>("Use External Eligibility Planning", eMIDTextCode.Unassigned, false, false);
+                _externalEligibilityProductIdentifierHandler =
+                   new TypedColumnHandler<int>("Eligibility Product Identifier", eMIDTextCode.Unassigned, false, 0);
+                _externalEligibilityChannelIdentifierHandler =
+                   new TypedColumnHandler<int>("Eligibility Channel Identifier", eMIDTextCode.Unassigned, false, 0);
+                _externalEligibilityURLHandler =
+                   new TypedColumnHandler<string>("Eligibility URL", eMIDTextCode.Unassigned, false, "");
+
                 _aColumnHandlers = new ColumnHandler[] { _CompanyNameColHandler, _PhoneNumberColHandler, _FaxNumberColHandler, _StreetAddressColHandler,
                                                          _CityColHandler, _StateColHandler, _ZipCodeColHandler, _ProductLevelDelimColHandler, _RecipientEmailAddressColHandler,
                                                          _SMTPEnabledColHandler, _SMTPFromAddressColHandler, _SMTPServerColHandler, _SMTPPortColHandler, _SMTPUseSSLColHandler,
                                                          _SMTPUseDefaultCredentialsColHandler, _SMTPUsernameColHandler, _SMTPPasswordColHandler,
                                                          _SMTPUseOutlookContactsColHandler,
-                                                         _SMTPMessageFormatInHTMLColHandler };
+                                                         _SMTPMessageFormatInHTMLColHandler,
+                                                         _useExternalEligibilityAllocationHandler,
+                                                         _useExternalEligibilityPlanningHandler,
+                                                         _externalEligibilityProductIdentifierHandler,
+                                                         _externalEligibilityChannelIdentifierHandler,
+                                                         _externalEligibilityURLHandler
+                };
             }
 
             public override void ParseUIRow(DataRow dr)
@@ -168,6 +190,13 @@ namespace Logility.ROWeb
                 _SmtpOptions.SMTP_Pwd.Value = _SMTPPasswordColHandler.ParseUIColumn(dr);
                 _SmtpOptions.SMTP_Use_Outlook_Contacts.Value = _SMTPUseOutlookContactsColHandler.ParseUIColumn(dr);
                 _SmtpOptions.SMTP_MessageFormatInHTML.Value = _SMTPMessageFormatInHTMLColHandler.ParseUIColumn(dr);
+                _GlobalOptionsProfile.UseExternalEligibilityAllocation = _useExternalEligibilityAllocationHandler.ParseUIColumn(dr);
+                _GlobalOptionsProfile.UseExternalEligibilityPlanning = _useExternalEligibilityPlanningHandler.ParseUIColumn(dr);
+                _GlobalOptionsProfile.ExternalEligibilityProductIdentifier = 
+                    (eExternalEligibilityProductIdentifier)_externalEligibilityProductIdentifierHandler.ParseUIColumn(dr);
+                _GlobalOptionsProfile.ExternalEligibilityChannelIdentifier =
+                    (eExternalEligibilityChannelIdentifier)_externalEligibilityChannelIdentifierHandler.ParseUIColumn(dr);
+                _GlobalOptionsProfile.ExternalEligibilityURL = _externalEligibilityURLHandler.ParseUIColumn(dr);
             }
 
             public override void FillUIRow(DataRow dr)
@@ -191,6 +220,13 @@ namespace Logility.ROWeb
                 _SMTPPasswordColHandler.SetUIColumn(dr, _SmtpOptions.SMTP_Pwd.Value);
                 _SMTPUseOutlookContactsColHandler.SetUIColumn(dr, _SmtpOptions.SMTP_Use_Outlook_Contacts.Value);
                 _SMTPMessageFormatInHTMLColHandler.SetUIColumn(dr, _SmtpOptions.SMTP_MessageFormatInHTML.Value);
+                _useExternalEligibilityAllocationHandler.SetUIColumn(dr, _GlobalOptionsProfile.UseExternalEligibilityAllocation);
+                _useExternalEligibilityPlanningHandler.SetUIColumn(dr, _GlobalOptionsProfile.UseExternalEligibilityPlanning);
+                int identifierOption = _GlobalOptionsProfile.ExternalEligibilityProductIdentifier.GetHashCode();
+                _externalEligibilityProductIdentifierHandler.SetUIColumn(dr, identifierOption);
+                identifierOption = _GlobalOptionsProfile.ExternalEligibilityChannelIdentifier.GetHashCode();
+                _externalEligibilityChannelIdentifierHandler.SetUIColumn(dr, identifierOption);
+                _externalEligibilityURLHandler.SetUIColumn(dr, _GlobalOptionsProfile.ExternalEligibilityURL);
             }
         }
     }

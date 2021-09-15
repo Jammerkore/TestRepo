@@ -4804,7 +4804,8 @@ namespace MIDRetail.DataCommon
     public enum eExternalEligibilityProductIdentifier
     {
         ID = 0,
-        Name = 1
+        Name = 1,
+        NameConcatColorName = 2
     }
 
     public enum eExternalEligibilityChannelIdentifier

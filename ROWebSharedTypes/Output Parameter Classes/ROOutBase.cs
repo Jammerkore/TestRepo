@@ -33,6 +33,8 @@ namespace Logility.ROWebSharedTypes
     [KnownType(typeof(eVelocityDetermineShipQtyUsing))]
     [KnownType(typeof(eVelocityAction))]
     [KnownType(typeof(ePurgeDataType))]
+    [KnownType(typeof(eExternalEligibilityProductIdentifier))]
+    [KnownType(typeof(eExternalEligibilityChannelIdentifier))]
 
     [KnownType(typeof(ROMerchandiseListEntry))]
 
@@ -363,6 +365,9 @@ namespace Logility.ROWebSharedTypes
     [KnownType(typeof(ROAllocationEligibilityWorklistStore))]
     [KnownType(typeof(ROAllocationEligibilityWorklistItem))]
     [KnownType(typeof(ROAllocationEligibilityOut))]
+
+    [KnownType(typeof(ROGlobalOptions))]
+    [KnownType(typeof(ROGlobalOptionsOut))]
 
     public class ROOut
     {

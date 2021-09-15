@@ -98,4 +98,9 @@ create table [dbo].[SYSTEM_OPTIONS] (
 	"SPLIT_BY_RESERVE" int null,			/* TT#1966-MD - AGallagher - DC Fulfillment */
 	"APPLY_BY" int null,					/* TT#1966-MD - AGallagher - DC Fulfillment */
 	"WITHIN_DC" int null,					/* TT#1966-MD - AGallagher - DC Fulfillment */
+	"USE_EXTERNAL_ELIGIBILITY_ALLOCATION" char(1) null,
+	"USE_EXTERNAL_ELIGIBILITY_PLANNING" char(1) null,
+	"EXTERNAL_ELIGIBILITY_PRODUCT_IDENTIFIER" int null,
+	"EXTERNAL_ELIGIBILITY_CHANNEL_IDENTIFIER" int null,
+	"EXTERNAL_ELIGIBILITY_URL" varchar(250) null
 	)

@@ -62,8 +62,7 @@ namespace Logility.ROWeb
                     return GetGlobalOptions();
 
                 case eRORequest.UpdateGlobalOptions:
-                    RODataSetParms parms = (RODataSetParms)Parms;
-                    return UpdateGlobalDefaults(parms.dsValue);
+                    return UpdateGlobalDefaults((ROGlobalOptionsParms)Parms);
             }
 
             return new RONoDataOut(eROReturnCode.Failure, "Invalid Request", ROInstanceID);
@@ -72,35 +71,30 @@ namespace Logility.ROWeb
         /// <summary>
         /// Get the global defaults
         /// </summary>
-        /// <returns>A DataSet containing the global defaults tables</returns>
+        /// <returns>An instance of ROGlobalOptionsOut containing the global defaults</returns>
         private ROOut GetGlobalOptions()
         {
-            DataSet dsDefaults = new DataSet("Global Defaults");
-
+            Logility.ROWebSharedTypes.ROGlobalOptions globalOptions = new Logility.ROWebSharedTypes.ROGlobalOptions();
             FetchGlobalDefaultsData();
-            dsDefaults.Tables.Add(GetStoreAttributesList());
-            dsDefaults.Tables.Add(GetCompanyInfo());
-            dsDefaults.Tables.Add(GetStatesList());  
-            dsDefaults.Tables.Add(GetDisplayOptions());
-            dsDefaults.Tables.Add(GetProductDisplayList());
-            dsDefaults.Tables.Add(GetStoreDisplayList());
-            dsDefaults.Tables.Add(GetAllocationDefaults());
-            dsDefaults.Tables.Add(GetItemFWOSMaxValues());
-            dsDefaults.Tables.Add(GetForecastVersions());
-            dsDefaults.Tables.Add(GetOTSPlanList("OTS History Plans", true));
-            dsDefaults.Tables.Add(GetOTSPlanList("OTS Forecast Plans", false));
-            dsDefaults.Tables.Add(GetOTSPlanVersions());
-            dsDefaults.Tables.Add(GetHeaderTypes());
-            dsDefaults.Tables.Add(GetHeaderCharacteristics());
-            dsDefaults.Tables.Add(GetHeaders());
-            dsDefaults.Tables.Add(GetBasisLabels());
-            dsDefaults.Tables.Add(GetBasisLabelOrder());
-            dsDefaults.Tables.Add(GetOTSDefaults());
-            dsDefaults.Tables.Add(GetSystem());
 
-            LogGlobalDefaultTables(dsDefaults);
+            globalOptions.CompanyName = _GlobalOptionsProfile.CompanyName;
+            globalOptions.UseExternalEligibilityAllocation = _GlobalOptionsProfile.UseExternalEligibilityAllocation;
+            globalOptions.UseExternalEligibilityPlanning = _GlobalOptionsProfile.UseExternalEligibilityPlanning;
+            globalOptions.ExternalEligibilityProductIdentifier = _GlobalOptionsProfile.ExternalEligibilityProductIdentifier;
+            globalOptions.ExternalEligibilityChannelIdentifier = _GlobalOptionsProfile.ExternalEligibilityChannelIdentifier;
+            globalOptions.ExternalEligibilityURL = _GlobalOptionsProfile.ExternalEligibilityURL;
 
-            return new RODataSetOut(eROReturnCode.Successful, null, ROInstanceID, dsDefaults);
+            foreach (eExternalEligibilityProductIdentifier identifier in Enum.GetValues(typeof(eExternalEligibilityProductIdentifier)))
+            {
+                globalOptions.ProductIdentifierList.Add(new KeyValuePair<int, string>(identifier.GetHashCode(), identifier.ToString()));
+            }
+
+            foreach (eExternalEligibilityChannelIdentifier identifier in Enum.GetValues(typeof(eExternalEligibilityChannelIdentifier)))
+            {
+                globalOptions.ChannelIdentifierList.Add(new KeyValuePair<int, string>(identifier.GetHashCode(), identifier.ToString()));
+            }
+
+            return new ROGlobalOptionsOut(eROReturnCode.Successful, null, ROInstanceID, globalOptions);
         }
 
         private void LogGlobalDefaultTables(DataSet dsGlobalDefaults)
@@ -144,14 +138,15 @@ namespace Logility.ROWeb
 
         /// Updates the global settings in the database.  Ancillary data tables are ignored.
         /// </summary>
-        /// <param name="dsDefaults">the data set containing the global defaults tables</param>
-        public ROOut UpdateGlobalDefaults(DataSet dsDefaults)
+        /// <param name="globalOptions">the data object containing the global defaults tables
+        /// </param>
+        public ROOut UpdateGlobalDefaults(ROGlobalOptionsParms globalOptions)
         {
             GlobalOptions opts = new GlobalOptions();
 
             try
             {
-                UpdateGlobalDefaults(opts, dsDefaults);
+                UpdateGlobalDefaults(opts, globalOptions.ROGlobalOptions);
             }
             catch (Exception ex)
             {
@@ -175,40 +170,16 @@ namespace Logility.ROWeb
             return new RONoDataOut(eROReturnCode.Successful, null, ROInstanceID);
         }
 
-        private void UpdateGlobalDefaults(GlobalOptions opts, DataSet dsDefaults)
+        private void UpdateGlobalDefaults(GlobalOptions opts, Logility.ROWebSharedTypes.ROGlobalOptions globalOptions)
         {
-            DataTable dtCompanyInformation = GetDataTableFromDataSet("Company Information", dsDefaults);
-            DataTable dtDisplayOptions = GetDataTableFromDataSet("Display Options", dsDefaults);
-            DataTable dtAllocationDefaults = GetDataTableFromDataSet("Allocation Defaults", dsDefaults);
-            DataTable dtOTSPlanVersions = GetDataTableFromDataSet("OTS Plan Versions", dsDefaults);
-            DataTable dtHeaderTypes = GetDataTableFromDataSet("Header Types", dsDefaults);
-            DataTable dtHeaders = GetDataTableFromDataSet("Headers", dsDefaults);
-            DataTable dtBasisLabelsOrder = GetDataTableFromDataSet("Basis Label Order", dsDefaults);
-            DataTable dtOTSDefaults = GetDataTableFromDataSet("OTS Defaults", dsDefaults);
-            DataTable dtSystem = GetDataTableFromDataSet("System", dsDefaults);
-
-            ROWebTools.LogMessage(eROMessageLevel.Debug, "Saving Basis Labels Order data.");
-            UpdateBasisLabels(opts, dtBasisLabelsOrder);
-            ROWebTools.LogMessage(eROMessageLevel.Debug, "Saving OTS Plan Version data.");
-            UpdateOTSPlanVersions(dtOTSPlanVersions);
-
-            ROWebTools.LogMessage(eROMessageLevel.Debug, "Transferring Allocation Defaults data.");
-            UpdateAllocationDefaults(dtAllocationDefaults);
-            ROWebTools.LogMessage(eROMessageLevel.Debug, "Transferring Company data.");
-            UpdateCompanyInformation(dtCompanyInformation);
-            ROWebTools.LogMessage(eROMessageLevel.Debug, "Transferring Display Options data.");
-            UpdateDisplayOptions(dtDisplayOptions);
-            ROWebTools.LogMessage(eROMessageLevel.Debug, "Transferring Header data.");
-            UpdateHeaders(dtHeaders);
-            ROWebTools.LogMessage(eROMessageLevel.Debug, "Transferring OTS Defaults data.");
-            UpdateOTSDefaults(dtOTSDefaults);
-            ROWebTools.LogMessage(eROMessageLevel.Debug, "Transferring System Defaults data.");
-            UpdateSystemDefaults(dtSystem);
+            _GlobalOptionsProfile.CompanyName = globalOptions.CompanyName;
+            _GlobalOptionsProfile.UseExternalEligibilityAllocation = globalOptions.UseExternalEligibilityAllocation;
+            _GlobalOptionsProfile.UseExternalEligibilityPlanning = globalOptions.UseExternalEligibilityPlanning;
+            _GlobalOptionsProfile.ExternalEligibilityProductIdentifier = globalOptions.ExternalEligibilityProductIdentifier;
+            _GlobalOptionsProfile.ExternalEligibilityChannelIdentifier = globalOptions.ExternalEligibilityChannelIdentifier;
+            _GlobalOptionsProfile.ExternalEligibilityURL = globalOptions.ExternalEligibilityURL;
 
             opts.OpenUpdateConnection();
-            ROWebTools.LogMessage(eROMessageLevel.Debug, "Saving Header Types data.");
-            UpdateHeaderTypes(opts, dtHeaderTypes);
-            ROWebTools.LogMessage(eROMessageLevel.Debug, "Saving remaining global options data to DB.");
 
             SaveGlobalOptionsToDB(opts);
             opts.CommitData();
@@ -290,7 +261,12 @@ namespace Logility.ROWeb
                      split_by_option,
                      split_by_reserve,
                      apply_by,
-                     within_dc
+                     within_dc,
+                     _GlobalOptionsProfile.UseExternalEligibilityAllocation,
+                     _GlobalOptionsProfile.UseExternalEligibilityPlanning,
+                     _GlobalOptionsProfile.ExternalEligibilityProductIdentifier,
+                     _GlobalOptionsProfile.ExternalEligibilityChannelIdentifier,
+                     _GlobalOptionsProfile.ExternalEligibilityURL
                     );
         }
 

@@ -32,6 +32,8 @@ namespace Logility.ROWebSharedTypes
     [KnownType(typeof(eVelocityDetermineShipQtyUsing))]
     [KnownType(typeof(eVelocityAction))]
     [KnownType(typeof(ePurgeDataType))]
+    [KnownType(typeof(eExternalEligibilityProductIdentifier))]
+    [KnownType(typeof(eExternalEligibilityChannelIdentifier))]
 
     [KnownType(typeof(ROMerchandiseListEntry))]
 
@@ -331,6 +333,9 @@ namespace Logility.ROWebSharedTypes
     [KnownType(typeof(ROTaskChainForecasting))]
     [KnownType(typeof(ROTaskJobsParms))]
     [KnownType(typeof(ROTaskJobs))]
+
+    [KnownType(typeof(ROGlobalOptions))]
+    [KnownType(typeof(ROGlobalOptionsParms))]
 
     public class ROParms
     {
