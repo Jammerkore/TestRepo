@@ -285,7 +285,14 @@ namespace Logility.ROWeb
             {
                 // replace with update data and get model 
                 _currentModelProfile = mp;
-                return new ROModelPropertiesOut(eROReturnCode.Successful, null, _ROInstanceID, _modelClass.ModelGetData(parms: getModelParms, modelProfile: _currentModelProfile, message: ref message));
+                ROModelProperties rOModelProperties = _modelClass.ModelGetData(parms: getModelParms, modelProfile: _currentModelProfile, message: ref message);
+                if (_currentModelProfile.ModelLockStatus == eLockStatus.Locked)
+                {
+                    rOModelProperties.CanBeDeleted = _modelClass.FunctionSecurity.AllowDelete;
+                    rOModelProperties.IsReadOnly = _modelClass.FunctionSecurity.IsReadOnly;
+                    _currentLockKey = _currentModelProfile.Key;
+                }
+                return new ROModelPropertiesOut(eROReturnCode.Successful, null, _ROInstanceID, rOModelProperties);
             }
         }
 
