@@ -208,6 +208,31 @@ namespace Logility.ROWeb
                         }
                     }
                 }
+                else if (rOMethodParms.KeyIsMerchandise)
+                {
+                    int variableKey;
+                    string variableName;
+                    HierarchyNodeProfile hierarchyNodeProfile = SAB.HierarchyServerSession.GetNodeData(rOMethodParms.Key);
+                    ApplicationSessionTransaction transaction = GetApplicationSessionTransaction();
+                    if (hierarchyNodeProfile.OTSPlanLevelType == eOTSPlanLevelType.Regular)
+                    {
+                        variableKey = transaction.PlanComputations.PlanVariables.SalesRegularUnitsVariable.Key;
+                        variableName = transaction.PlanComputations.PlanVariables.SalesRegularUnitsVariable.VariableName;
+                        planningVariablesList.Add(new KeyValuePair<int, string>(variableKey, variableName));
+                        variableKey = transaction.PlanComputations.PlanVariables.InventoryRegularUnitsVariable.Key;
+                        variableName = transaction.PlanComputations.PlanVariables.InventoryRegularUnitsVariable.VariableName;
+                        planningVariablesList.Add(new KeyValuePair<int, string>(variableKey, variableName));
+                    }
+                    else
+                    {
+                        variableKey = transaction.PlanComputations.PlanVariables.SalesTotalUnitsVariable.Key;
+                        variableName = transaction.PlanComputations.PlanVariables.SalesTotalUnitsVariable.VariableName;
+                        planningVariablesList.Add(new KeyValuePair<int, string>(variableKey, variableName));
+                        variableKey = transaction.PlanComputations.PlanVariables.InventoryTotalUnitsVariable.Key;
+                        variableName = transaction.PlanComputations.PlanVariables.InventoryTotalUnitsVariable.VariableName;
+                        planningVariablesList.Add(new KeyValuePair<int, string>(variableKey, variableName));
+                    }
+                }
                 else
                 {
                     OTSPlanMethod forecastMethod = new OTSPlanMethod(SAB, rOMethodParms.Key);
