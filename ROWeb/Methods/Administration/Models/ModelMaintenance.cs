@@ -137,7 +137,7 @@ namespace Logility.ROWeb
                 && (_currentModelType != parms.ModelType
                     || _currentLockKey != parms.Key))
             {
-                _SAB.HierarchyServerSession.DequeueModel(aModelType: _currentModelType, aModelRID: _currentLockKey);
+                _SAB.HierarchyServerSession.DequeueModel(aModelType: GetModelType(_currentModelProfile.ProfileType), aModelRID: _currentLockKey);
                 _currentModelProfile.ModelLockStatus = eLockStatus.Undefined;
                 _currentLockKey = Include.NoRID;
             }
@@ -318,7 +318,7 @@ namespace Logility.ROWeb
                     MIDEnvironment.Message = message;
                     return new ROModelPropertiesOut(eROReturnCode.Failure, message, _ROInstanceID, null);
                 }
-
+               
                 modelName = CleanseModelName(parms.ROModelProperties.Model.Value);
 
                 parms.ROModelProperties.Model = new KeyValuePair<int, string>(Include.NoRID, modelName);
