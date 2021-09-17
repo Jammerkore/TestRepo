@@ -22,11 +22,29 @@ namespace MIDRetail.Business
 		//=======
 		// FIELDS
 		//=======
+        const int cStockVariable = 0;
+        const int cSalesVariable = 1;
 		private System.Collections.Hashtable _profileHash;
 		private int _maxStoreRID = 0;
+        // base cache tables
 		private System.Collections.Hashtable _storeEligibilityHash;
-        private System.Collections.Hashtable _colorStoreEligibilityHash;
-        private System.Collections.Hashtable _packStoreEligibilityHash;
+        private System.Collections.Hashtable _allocationStockStoreEligibilityHash;
+        private System.Collections.Hashtable _allocationSalesStoreEligibilityHash;
+        private System.Collections.Hashtable _planningStockStoreEligibilityHash;
+        private System.Collections.Hashtable _planningSalesStoreEligibilityHash;
+
+        // color cache tables
+        private System.Collections.Hashtable _allocationStockColorStoreEligibilityHash;
+        private System.Collections.Hashtable _allocationSalesColorStoreEligibilityHash;
+        private System.Collections.Hashtable _planningStockColorStoreEligibilityHash;
+        private System.Collections.Hashtable _planningSalesColorStoreEligibilityHash;
+
+        // pack cache tables
+        private System.Collections.Hashtable _allocationStockPackStoreEligibilityHash;
+        private System.Collections.Hashtable _allocationSalesPackStoreEligibilityHash;
+        private System.Collections.Hashtable _planningStockPackStoreEligibilityHash;
+        private System.Collections.Hashtable _planningSalesPackStoreEligibilityHash;
+
         private System.Collections.Hashtable _salesEligibilityModelHash;
 		private System.Collections.Hashtable _salesEligibilityModelDateHash;
 		private int _currentSalesEligibilityModelRID = Include.NoRID;
@@ -70,7 +88,9 @@ namespace MIDRetail.Business
         private Dictionary<int, Dictionary<int, eStoreStatus>> _storeSalesStatusHash;
         private Dictionary<int, Dictionary<int, eStoreStatus>> _storeStockStatusHash;
         // End TT#4988 - JSmith - Performance
-        
+
+        private Dictionary<int, HierarchyNodeProfile> _nodeHash;
+
 
         // Begin TT#1440 - JSmith - Memory Issues
         override public void Dispose()
@@ -85,6 +105,69 @@ namespace MIDRetail.Business
                 _storeEligibilityHash.Clear();
                 _storeEligibilityHash = null;
             }
+            if (_allocationStockStoreEligibilityHash != null)
+            {
+                _allocationStockStoreEligibilityHash.Clear();
+                _allocationStockStoreEligibilityHash = null;
+            }
+            if (_allocationSalesStoreEligibilityHash != null)
+            {
+                _allocationSalesStoreEligibilityHash.Clear();
+                _allocationSalesStoreEligibilityHash = null;
+            }
+            if (_planningStockStoreEligibilityHash != null)
+            {
+                _planningStockStoreEligibilityHash.Clear();
+                _planningStockStoreEligibilityHash = null;
+            }
+            if (_planningSalesStoreEligibilityHash != null)
+            {
+                _planningSalesStoreEligibilityHash.Clear();
+                _planningSalesStoreEligibilityHash = null;
+            }
+
+            if (_allocationStockColorStoreEligibilityHash != null)
+            {
+                _allocationStockColorStoreEligibilityHash.Clear();
+                _allocationStockColorStoreEligibilityHash = null;
+            }
+            if (_allocationSalesColorStoreEligibilityHash != null)
+            {
+                _allocationSalesColorStoreEligibilityHash.Clear();
+                _allocationSalesColorStoreEligibilityHash = null;
+            }
+            if (_planningStockColorStoreEligibilityHash != null)
+            {
+                _planningStockColorStoreEligibilityHash.Clear();
+                _planningStockColorStoreEligibilityHash = null;
+            }
+            if (_planningSalesColorStoreEligibilityHash != null)
+            {
+                _planningSalesColorStoreEligibilityHash.Clear();
+                _planningSalesColorStoreEligibilityHash = null;
+            }
+
+            if (_allocationStockPackStoreEligibilityHash != null)
+            {
+                _allocationStockPackStoreEligibilityHash.Clear();
+                _allocationStockPackStoreEligibilityHash = null;
+            }
+            if (_allocationSalesPackStoreEligibilityHash != null)
+            {
+                _allocationSalesPackStoreEligibilityHash.Clear();
+                _allocationSalesPackStoreEligibilityHash = null;
+            }
+            if (_planningStockPackStoreEligibilityHash != null)
+            {
+                _planningStockPackStoreEligibilityHash.Clear();
+                _planningStockPackStoreEligibilityHash = null;
+            }
+            if (_planningSalesPackStoreEligibilityHash != null)
+            {
+                _planningSalesPackStoreEligibilityHash.Clear();
+                _planningSalesPackStoreEligibilityHash = null;
+            }
+
             if (_salesEligibilityModelHash != null)
             {
                 _salesEligibilityModelHash.Clear();
@@ -165,6 +248,11 @@ namespace MIDRetail.Business
                 _storeStockStatusHash.Clear();
                 _storeStockStatusHash = null;
             }
+            if (_nodeHash != null)
+            {
+                _nodeHash.Clear();
+                _nodeHash = null;
+            }
 
             base.Dispose();
         }
@@ -187,6 +275,18 @@ namespace MIDRetail.Business
             // begin MID Track 4607 and 4626 Eligibility and Priority Shipping Wrong
 			_profileHash = null;
 			_storeEligibilityHash = null;
+            _allocationStockStoreEligibilityHash = null;
+            _allocationSalesStoreEligibilityHash = null;
+            _planningStockStoreEligibilityHash = null;
+            _planningSalesStoreEligibilityHash = null;
+            _allocationStockColorStoreEligibilityHash = null;
+            _allocationSalesColorStoreEligibilityHash = null;
+            _planningStockColorStoreEligibilityHash = null;
+            _planningSalesColorStoreEligibilityHash = null;
+            _allocationStockPackStoreEligibilityHash = null;
+            _allocationSalesPackStoreEligibilityHash = null;
+            _planningStockPackStoreEligibilityHash = null;
+            _planningSalesPackStoreEligibilityHash = null;
 			_salesEligibilityModelHash = null;
 			_stockEligibilityModelHash = null;
 			// BEGIN MID Track #4370 - John Smith - FWOS Models
@@ -226,6 +326,7 @@ namespace MIDRetail.Business
 			//_storeSalesStatusHash = new System.Collections.Hashtable();
 			//_storeStockStatusHash = new System.Collections.Hashtable();
 			// end MID Track 4607 and 4626 Eligibility and Priority Shipping Wrong
+            _nodeHash = null;
 		}
 
 		//===========
@@ -265,35 +366,195 @@ namespace MIDRetail.Business
 			}
 		}
 
-        private Hashtable ColorStoreEligibilityHash
+		private Hashtable AllocationStockStoreEligibilityHash
+        {
+			get 
+			{ 
+				if (_allocationStockStoreEligibilityHash == null)
+				{
+                    _allocationStockStoreEligibilityHash = new System.Collections.Hashtable();
+				}
+				return _allocationStockStoreEligibilityHash; 
+			}
+			set 
+			{
+                _allocationStockStoreEligibilityHash = value; 
+			}
+		}
+
+        private Hashtable AllocationSalesStoreEligibilityHash
         {
             get
             {
-                if (_colorStoreEligibilityHash == null)
+                if (_allocationSalesStoreEligibilityHash == null)
                 {
-                    _colorStoreEligibilityHash = new System.Collections.Hashtable();
+                    _allocationSalesStoreEligibilityHash = new System.Collections.Hashtable();
                 }
-                return _colorStoreEligibilityHash;
+                return _allocationSalesStoreEligibilityHash;
             }
             set
             {
-                _colorStoreEligibilityHash = value;
+                _allocationSalesStoreEligibilityHash = value;
             }
         }
 
-        private Hashtable PackStoreEligibilityHash
+        private Hashtable PlanningStockStoreEligibilityHash
         {
             get
             {
-                if (_packStoreEligibilityHash == null)
+                if (_planningStockStoreEligibilityHash == null)
                 {
-                    _packStoreEligibilityHash = new System.Collections.Hashtable();
+                    _planningStockStoreEligibilityHash = new System.Collections.Hashtable();
                 }
-                return _packStoreEligibilityHash;
+                return _planningStockStoreEligibilityHash;
             }
             set
             {
-                _packStoreEligibilityHash = value;
+                _planningStockStoreEligibilityHash = value;
+            }
+        }
+
+        private Hashtable PlanningSalesStoreEligibilityHash
+        {
+            get
+            {
+                if (_planningSalesStoreEligibilityHash == null)
+                {
+                    _planningSalesStoreEligibilityHash = new System.Collections.Hashtable();
+                }
+                return _planningSalesStoreEligibilityHash;
+            }
+            set
+            {
+                _planningSalesStoreEligibilityHash = value;
+            }
+        }
+
+        private Hashtable AllocationStockColorStoreEligibilityHash
+        {
+            get
+            {
+                if (_allocationStockColorStoreEligibilityHash == null)
+                {
+                    _allocationStockColorStoreEligibilityHash = new System.Collections.Hashtable();
+                }
+                return _allocationStockColorStoreEligibilityHash;
+            }
+            set
+            {
+                _allocationStockColorStoreEligibilityHash = value;
+            }
+        }
+
+        private Hashtable AllocationSalesColorStoreEligibilityHash
+        {
+            get
+            {
+                if (_allocationSalesColorStoreEligibilityHash == null)
+                {
+                    _allocationSalesColorStoreEligibilityHash = new System.Collections.Hashtable();
+                }
+                return _allocationSalesColorStoreEligibilityHash;
+            }
+            set
+            {
+                _allocationSalesColorStoreEligibilityHash = value;
+            }
+        }
+
+        private Hashtable PlanningStockColorStoreEligibilityHash
+        {
+            get
+            {
+                if (_planningStockColorStoreEligibilityHash == null)
+                {
+                    _planningStockColorStoreEligibilityHash = new System.Collections.Hashtable();
+                }
+                return _planningStockColorStoreEligibilityHash;
+            }
+            set
+            {
+                _planningStockColorStoreEligibilityHash = value;
+            }
+        }
+
+        private Hashtable PlanningSalesColorStoreEligibilityHash
+        {
+            get
+            {
+                if (_planningSalesColorStoreEligibilityHash == null)
+                {
+                    _planningSalesColorStoreEligibilityHash = new System.Collections.Hashtable();
+                }
+                return _planningSalesColorStoreEligibilityHash;
+            }
+            set
+            {
+                _planningSalesColorStoreEligibilityHash = value;
+            }
+        }
+
+        private Hashtable AllocationStockPackStoreEligibilityHash
+        {
+            get
+            {
+                if (_allocationStockPackStoreEligibilityHash == null)
+                {
+                    _allocationStockPackStoreEligibilityHash = new System.Collections.Hashtable();
+                }
+                return _allocationStockPackStoreEligibilityHash;
+            }
+            set
+            {
+                _allocationStockPackStoreEligibilityHash = value;
+            }
+        }
+
+        private Hashtable AllocationSalesPackStoreEligibilityHash
+        {
+            get
+            {
+                if (_allocationSalesPackStoreEligibilityHash == null)
+                {
+                    _allocationSalesPackStoreEligibilityHash = new System.Collections.Hashtable();
+                }
+                return _allocationSalesPackStoreEligibilityHash;
+            }
+            set
+            {
+                _allocationSalesPackStoreEligibilityHash = value;
+            }
+        }
+
+        private Hashtable PlanningStockPackStoreEligibilityHash
+        {
+            get
+            {
+                if (_planningStockPackStoreEligibilityHash == null)
+                {
+                    _planningStockPackStoreEligibilityHash = new System.Collections.Hashtable();
+                }
+                return _planningStockPackStoreEligibilityHash;
+            }
+            set
+            {
+                _planningStockPackStoreEligibilityHash = value;
+            }
+        }
+
+        private Hashtable PlanningSalesPackStoreEligibilityHash
+        {
+            get
+            {
+                if (_planningSalesPackStoreEligibilityHash == null)
+                {
+                    _planningSalesPackStoreEligibilityHash = new System.Collections.Hashtable();
+                }
+                return _planningSalesPackStoreEligibilityHash;
+            }
+            set
+            {
+                _planningSalesPackStoreEligibilityHash = value;
             }
         }
 
@@ -601,7 +862,23 @@ namespace MIDRetail.Business
 			}
 		}
         // End TT#4988 - JSmith - Performance
-		
+
+        private Dictionary<int, HierarchyNodeProfile> NodeHash
+        {
+            get
+            {
+                if (_nodeHash == null)
+                {
+                    _nodeHash = new Dictionary<int, HierarchyNodeProfile>();
+                }
+                return _nodeHash;
+            }
+            set
+            {
+                _nodeHash = value;
+            }
+        }
+
 		//========
 		// METHODS
 		//========
@@ -763,7 +1040,12 @@ namespace MIDRetail.Business
 		/// <param name="aFirstDayOfBeginWeek">The first day of the Begin year/week for which eligibility is to be determined</param>
 		/// <param name="aFirstDayOfEndWeek">The first day of the End year/week for which eligibility is to be determined</param>
 		/// <returns>BitArray containing eligibility settings indexed by storeRID</returns>
-		public System.Collections.BitArray GetStoreSalesEligibilityFlags(int aNodeRID, int aFirstDayOfBeginWeek, int aFirstDayOfEndWeek)
+		public System.Collections.BitArray GetStoreSalesEligibilityFlags(
+            eRequestingApplication requestingApplication, 
+            int aNodeRID, 
+            int aFirstDayOfBeginWeek, 
+            int aFirstDayOfEndWeek
+            )
 		{
 			try
 			{
@@ -771,12 +1053,20 @@ namespace MIDRetail.Business
 				WeekProfile endWeekProfile = this.SAB.HierarchyServerSession.Calendar.GetWeek(aFirstDayOfEndWeek);
 				ProfileList weekList = this.SAB.HierarchyServerSession.Calendar.GetWeekRange(beginWeekProfile, endWeekProfile);
 				System.Collections.BitArray rangeEligibilityBitArray = 
-					this.GetStoreSalesEligibilityFlags(aNodeRID, ((WeekProfile)weekList[0]).Key);
+					this.GetStoreSalesEligibilityFlags(
+                        requestingApplication,
+                        aNodeRID, 
+                        ((WeekProfile)weekList[0]).Key
+                        );
 				System.Collections.BitArray weekEligibilityBitArray;
 				for (int i=1; i<weekList.Count; i++)
 				{
 					weekEligibilityBitArray = 
-						this.GetStoreSalesEligibilityFlags(aNodeRID, ((WeekProfile)weekList[i]).Key);
+						this.GetStoreSalesEligibilityFlags(
+                            requestingApplication,
+                            aNodeRID, 
+                            ((WeekProfile)weekList[i]).Key
+                            );
 					for (int j=1; j<rangeEligibilityBitArray.Count; j++)
 					{
 						if (weekEligibilityBitArray[j] == true)
@@ -800,7 +1090,11 @@ namespace MIDRetail.Business
 		/// <param name="aNodeRID">The record id of the node</param>
 		/// <param name="aFirstDayOfWeek">The first day of year/week for which eligibility is to be determined</param>
 		/// <returns>BitArray containing eligibility settings indexed by storeRID</returns>
-		public System.Collections.BitArray GetStoreSalesEligibilityFlags(int aNodeRID, int aFirstDayOfWeek)
+		public System.Collections.BitArray GetStoreSalesEligibilityFlags(
+            eRequestingApplication requestingApplication, 
+            int aNodeRID, 
+            int aFirstDayOfWeek
+            )
 		{
 			try
 			{
@@ -815,12 +1109,37 @@ namespace MIDRetail.Business
 				dayProfile = (DayProfile)weekProfile.Days[weekProfile.DaysInWeek - 1];
 				DateTime lastDayOfWeek = dayProfile.Date;
 
-                sel = (StoreEligibilityList)StoreEligibilityHash[aNodeRID];
+                Hashtable storeEligibilityHash;
+                // select appropriate cache based on settings
+                if (requestingApplication == eRequestingApplication.Forecast)
+                {
+                    if (GlobalOptions.UseExternalEligibilityPlanning)
+                    {
+                        storeEligibilityHash = PlanningSalesStoreEligibilityHash;
+                    }
+                    else
+                    {
+                        storeEligibilityHash = StoreEligibilityHash;
+                    }
+                }
+                else
+                {
+                    if (GlobalOptions.UseExternalEligibilityAllocation)
+                    {
+                        storeEligibilityHash = AllocationSalesStoreEligibilityHash;
+                    }
+                    else
+                    {
+                        storeEligibilityHash = StoreEligibilityHash;
+                    }
+                }
+
+                sel = (StoreEligibilityList)storeEligibilityHash[aNodeRID];
 
 				if (sel == null)
 				{
 					sel = SAB.HierarchyServerSession.GetStoreEligibilityList(storeList, aNodeRID, true, false);
-                    StoreEligibilityHash.Add(aNodeRID, sel);
+                    storeEligibilityHash.Add(aNodeRID, sel);
 				}
 
 				foreach(StoreProfile storeProfile in storeList)
@@ -936,7 +1255,11 @@ namespace MIDRetail.Business
 		/// <param name="aNodeRID">The record id of the node</param>
 		/// <param name="aFirstDayOfWeek">The first day of year/week for which eligibility is to be determined</param>
 		/// <returns>BitArray containing eligibility settings indexed by storeRID</returns>
-		public System.Collections.BitArray GetStoreStockEligibilityFlags(int aNodeRID, int aFirstDayOfWeek)
+		public System.Collections.BitArray GetStoreStockEligibilityFlags(
+            eRequestingApplication requestingApplication,
+            int aNodeRID, 
+            int aFirstDayOfWeek
+            )
 		{
 			try
 			{
@@ -951,12 +1274,37 @@ namespace MIDRetail.Business
 				dayProfile = (DayProfile)weekProfile.Days[weekProfile.DaysInWeek - 1];
 				DateTime lastDayOfWeek = dayProfile.Date;
 
-                sel = (StoreEligibilityList)StoreEligibilityHash[aNodeRID];
+                Hashtable storeEligibilityHash;
+                // select appropriate cache based on settings
+                if (requestingApplication == eRequestingApplication.Forecast)
+                {
+                    if (GlobalOptions.UseExternalEligibilityPlanning)
+                    {
+                        storeEligibilityHash = PlanningStockStoreEligibilityHash;
+                    }
+                    else
+                    {
+                        storeEligibilityHash = StoreEligibilityHash;
+                    }
+                }
+                else
+                {
+                    if (GlobalOptions.UseExternalEligibilityAllocation)
+                    {
+                        storeEligibilityHash = AllocationStockStoreEligibilityHash;
+                    }
+                    else
+                    {
+                        storeEligibilityHash = StoreEligibilityHash;
+                    }
+                }
+
+                sel = (StoreEligibilityList)storeEligibilityHash[aNodeRID];
 
 				if (sel == null)
 				{
 					sel = SAB.HierarchyServerSession.GetStoreEligibilityList(storeList, aNodeRID, true, false);
-                    StoreEligibilityHash.Add(aNodeRID, sel);
+                    storeEligibilityHash.Add(aNodeRID, sel);
 				}
 
 				foreach(StoreProfile storeProfile in storeList)

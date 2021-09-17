@@ -349,17 +349,27 @@ namespace MIDRetail.Business
                     // convert to YYYYDDD
                     yearWeek = this.SAB.ApplicationServerSession.Calendar.GetWeekKey(yearWeek);
                 }
+
                 int colorNodeRID = aColor.ColorNodeRID;
 
-                colorNodeRID += aColor.HdrRID;  // TESTING - remove statement to deploy
+                System.Collections.Hashtable colorStockEligibilityHashByNodeRID;
+                // select appropriate cache based on settings
+                if (requestingApplication == eRequestingApplication.Forecast)
+                {
+                    colorStockEligibilityHashByNodeRID = PlanningColorStockEligibilityHashByNodeRID;
+                }
+                else
+                {
+                    colorStockEligibilityHashByNodeRID = AllocationColorStockEligibilityHashByNodeRID;
+                }
 
                 if (colorNodeRID != _colorCurrentStockEligibilityNodeRID) // if not same node, get year/week Hashtable		
                 {
-                    _colorStockEligibilityHashByYearWeek = (System.Collections.Hashtable)_colorStockEligibilityHashByNodeRID[colorNodeRID];
+                    _colorStockEligibilityHashByYearWeek = (System.Collections.Hashtable)colorStockEligibilityHashByNodeRID[colorNodeRID];
                     if (_colorStockEligibilityHashByYearWeek == null)
                     {
                         _colorStockEligibilityHashByYearWeek = new System.Collections.Hashtable();
-                        _colorStockEligibilityHashByNodeRID.Add(colorNodeRID, _colorStockEligibilityHashByYearWeek);
+                        colorStockEligibilityHashByNodeRID.Add(colorNodeRID, _colorStockEligibilityHashByYearWeek);
                     }
                     _colorCurrentStockEligibilityNodeRID = colorNodeRID;
                     _colorCurrentStockEligibilityYearWeek = -1;  // reset current yearWeek since new node
@@ -707,13 +717,24 @@ namespace MIDRetail.Business
                     yearWeek = this.SAB.ApplicationServerSession.Calendar.GetWeekKey(yearWeek);
                 }
 
+                System.Collections.Hashtable colorSalesEligibilityHashByNodeRID;
+                // select appropriate cache based on settings
+                if (requestingApplication == eRequestingApplication.Forecast)
+                {
+                    colorSalesEligibilityHashByNodeRID = PlanningColorSalesEligibilityHashByNodeRID;
+                }
+                else
+                {
+                    colorSalesEligibilityHashByNodeRID = AllocationColorSalesEligibilityHashByNodeRID;
+                }
+
                 if (nodeRID != _colorCurrentSalesEligibilityNodeRID) // if not same node, get year/week Hashtable		
                 {
-                    _colorSalesEligibilityHashByYearWeek = (System.Collections.Hashtable)_salesEligibilityHashByNodeRID[nodeRID];
+                    _colorSalesEligibilityHashByYearWeek = (System.Collections.Hashtable)colorSalesEligibilityHashByNodeRID[nodeRID];
                     if (_colorSalesEligibilityHashByYearWeek == null)
                     {
                         _colorSalesEligibilityHashByYearWeek = new System.Collections.Hashtable();
-                        _colorSalesEligibilityHashByNodeRID.Add(nodeRID, _colorSalesEligibilityHashByYearWeek);
+                        colorSalesEligibilityHashByNodeRID.Add(nodeRID, _colorSalesEligibilityHashByYearWeek);
                     }
                     _colorCurrentSalesEligibilityNodeRID = nodeRID;
                     _colorCurrentSalesEligibilityYearWeek = -1;  // reset current yearWeek since new node
@@ -776,7 +797,7 @@ namespace MIDRetail.Business
         {
             try
             {
-                return DetermineStockEligibility(requestingApplication, aPack, storeRID, yearWeek);
+                return DetermineStockEligibility(requestingApplication, nodeRID, aPack, storeRID, yearWeek);
             }
             catch (Exception err)
             {
@@ -845,7 +866,7 @@ namespace MIDRetail.Business
             {
                 foreach (StoreWeekEligibilityProfile swep in swel)
                 {
-                    swep.StoreIsEligible = DetermineStockEligibility(requestingApplication, aPack, swep.Key, swep.YearWeek);
+                    swep.StoreIsEligible = DetermineStockEligibility(requestingApplication, nodeRID, aPack, swep.Key, swep.YearWeek);
                     if (setPriorityShipping)
                     {
                         swep.StoreIsPriorityShipper = DeterminePriorityShipping(nodeRID, swep.Key, swep.YearWeek);
@@ -925,7 +946,7 @@ namespace MIDRetail.Business
                 {
                     swep = new StoreWeekEligibilityProfile(sp.Key);
                     swep.YearWeek = yearWeek;
-                    swep.StoreIsEligible = DetermineStockEligibility(requestingApplication, aPack, swep.Key, swep.YearWeek);
+                    swep.StoreIsEligible = DetermineStockEligibility(requestingApplication, nodeRID, aPack, swep.Key, swep.YearWeek);
                     if (setPriorityShipping)
                     {
                         swep.StoreIsPriorityShipper = DeterminePriorityShipping(nodeRID, swep.Key, swep.YearWeek);
@@ -1013,7 +1034,7 @@ namespace MIDRetail.Business
                 {
                     swep = new StoreWeekEligibilityProfile(sp.Key);
                     swep.YearWeek = yearWeek;
-                    swep.StoreIsEligible = DetermineStockEligibility(requestingApplication, aPack, swep.Key, swep.YearWeek);
+                    swep.StoreIsEligible = DetermineStockEligibility(requestingApplication, nodeRID, aPack, swep.Key, swep.YearWeek);
                     if (setPriorityShipping)
                     {
                         swep.StoreIsPriorityShipper = DeterminePriorityShipping(nodeRID, swep.Key, swep.YearWeek);
@@ -1047,6 +1068,7 @@ namespace MIDRetail.Business
         /// <remarks>This routine will accept a year/week as either YYYYWW or YYYYDDD</remarks>
         private bool DetermineStockEligibility(
             eRequestingApplication requestingApplication,
+            int nodeRID,
             PackHdr aPack, 
             int storeRID, 
             int yearWeek
@@ -1060,13 +1082,17 @@ namespace MIDRetail.Business
                     yearWeek = this.SAB.ApplicationServerSession.Calendar.GetWeekKey(yearWeek);
                 }
 
+                System.Collections.Hashtable packSalesEligibilityHashByNodeRID;
+                // Planning does not have packs.  So, must be Allocation
+                packSalesEligibilityHashByNodeRID = AllocationPackSalesEligibilityHashByNodeRID;
+
                 if (aPack.PackRID != _packCurrentStockEligibilityNodeRID) // if not same node, get year/week Hashtable		
                 {
-                    _packStockEligibilityHashByYearWeek = (System.Collections.Hashtable)_packStockEligibilityHashByNodeRID[aPack.PackRID];
+                    _packStockEligibilityHashByYearWeek = (System.Collections.Hashtable)packSalesEligibilityHashByNodeRID[aPack.PackRID];
                     if (_packStockEligibilityHashByYearWeek == null)
                     {
                         _packStockEligibilityHashByYearWeek = new System.Collections.Hashtable();
-                        _packStockEligibilityHashByNodeRID.Add(aPack.PackRID, _packStockEligibilityHashByYearWeek);
+                        packSalesEligibilityHashByNodeRID.Add(aPack.PackRID, _packStockEligibilityHashByYearWeek);
                     }
                     _packCurrentStockEligibilityNodeRID = aPack.PackRID;
                     _packCurrentStockEligibilityYearWeek = -1;  // reset current yearWeek since new node
@@ -1081,6 +1107,7 @@ namespace MIDRetail.Business
                             requestingApplication,
                             aPack.HdrRID,
                             aPack.HdrID,
+                            nodeRID,
                             aPack.PackRID, 
                             aPack.PackName,
                             yearWeek
@@ -1128,7 +1155,13 @@ namespace MIDRetail.Business
         {
             try
             {
-                return DetermineSalesEligibility(requestingApplication, aPack, storeRID, yearWeek);
+                return DetermineSalesEligibility(
+                    requestingApplication,
+                    nodeRID,
+                    aPack, 
+                    storeRID, 
+                    yearWeek
+                    );
             }
             catch (Exception err)
             {
@@ -1197,7 +1230,13 @@ namespace MIDRetail.Business
             {
                 foreach (StoreWeekEligibilityProfile swep in swel)
                 {
-                    swep.StoreIsEligible = DetermineSalesEligibility(requestingApplication, aPack, swep.Key, swep.YearWeek);
+                    swep.StoreIsEligible = DetermineSalesEligibility(
+                        requestingApplication,
+                        nodeRID,
+                        aPack, 
+                        swep.Key, 
+                        swep.YearWeek
+                        );
                     if (setPriorityShipping)
                     {
                         swep.StoreIsPriorityShipper = DeterminePriorityShipping(nodeRID, swep.Key, swep.YearWeek);
@@ -1277,7 +1316,13 @@ namespace MIDRetail.Business
                 {
                     swep = new StoreWeekEligibilityProfile(sp.Key);
                     swep.YearWeek = yearWeek;
-                    swep.StoreIsEligible = DetermineSalesEligibility(requestingApplication, aPack, swep.Key, swep.YearWeek);
+                    swep.StoreIsEligible = DetermineSalesEligibility(
+                        requestingApplication,
+                        nodeRID,
+                        aPack, 
+                        swep.Key, 
+                        swep.YearWeek
+                        );
                     if (setPriorityShipping)
                     {
                         swep.StoreIsPriorityShipper = DeterminePriorityShipping(nodeRID, swep.Key, swep.YearWeek);
@@ -1365,7 +1410,13 @@ namespace MIDRetail.Business
                 {
                     swep = new StoreWeekEligibilityProfile(sp.Key);
                     swep.YearWeek = yearWeek;
-                    swep.StoreIsEligible = DetermineSalesEligibility(requestingApplication, aPack, swep.Key, swep.YearWeek);
+                    swep.StoreIsEligible = DetermineSalesEligibility(
+                        requestingApplication,
+                        nodeRID,
+                        aPack, 
+                        swep.Key, 
+                        swep.YearWeek
+                        );
                     if (setPriorityShipping)
                     {
                         swep.StoreIsPriorityShipper = DeterminePriorityShipping(nodeRID, swep.Key, swep.YearWeek);
@@ -1399,6 +1450,7 @@ namespace MIDRetail.Business
         /// <remarks>This routine will accept a year/week as either YYYYWW or YYYYDDD</remarks>
         private bool DetermineSalesEligibility(
             eRequestingApplication requestingApplication,
+            int nodeRID,
             PackHdr aPack, 
             int storeRID, 
             int yearWeek
@@ -1412,13 +1464,17 @@ namespace MIDRetail.Business
                     yearWeek = this.SAB.ApplicationServerSession.Calendar.GetWeekKey(yearWeek);
                 }
 
+                System.Collections.Hashtable packStockEligibilityHashByNodeRID;
+                // Planning does not have packs.  So, must be Allocation
+                packStockEligibilityHashByNodeRID = AllocationPackStockEligibilityHashByNodeRID;
+
                 if (aPack.PackRID != _packCurrentSalesEligibilityNodeRID) // if not same node, get year/week Hashtable		
                 {
-                    _packSalesEligibilityHashByYearWeek = (System.Collections.Hashtable)_salesEligibilityHashByNodeRID[aPack.PackRID];
+                    _packSalesEligibilityHashByYearWeek = (System.Collections.Hashtable)packStockEligibilityHashByNodeRID[aPack.PackRID];
                     if (_packSalesEligibilityHashByYearWeek == null)
                     {
                         _packSalesEligibilityHashByYearWeek = new System.Collections.Hashtable();
-                        _packSalesEligibilityHashByNodeRID.Add(aPack.PackRID, _salesEligibilityHashByYearWeek);
+                        packStockEligibilityHashByNodeRID.Add(aPack.PackRID, _salesEligibilityHashByYearWeek);
                     }
                     _packCurrentSalesEligibilityNodeRID = aPack.PackRID;
                     _packCurrentSalesEligibilityYearWeek = -1;  // reset current yearWeek since new node
@@ -1433,6 +1489,7 @@ namespace MIDRetail.Business
                             requestingApplication,
                             aPack.HdrRID,
                             aPack.HdrID,
+                            nodeRID,
                             aPack.PackRID,
                             aPack.PackName,
                             yearWeek

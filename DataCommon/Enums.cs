@@ -10989,8 +10989,8 @@ namespace MIDRetail.DataCommon
 
     public enum eRequestingApplication
     {
-        Allocation,
-        Forecast,
-        Assortment
-    };
+        Allocation = 0,
+        Forecast = 1,
+        Assortment = 2
+    }; 
 }

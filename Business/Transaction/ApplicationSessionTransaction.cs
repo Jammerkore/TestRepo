@@ -187,11 +187,17 @@ namespace MIDRetail.Business
 		// which contains the eligibility settings.
 		private System.Collections.Hashtable _salesEligibilityHashByNodeRID;
 		private System.Collections.Hashtable _stockEligibilityHashByNodeRID;
+		private System.Collections.Hashtable _allocationSalesEligibilityHashByNodeRID;
+		private System.Collections.Hashtable _allocationStockEligibilityHashByNodeRID;
+        private System.Collections.Hashtable _planningSalesEligibilityHashByNodeRID;
+        private System.Collections.Hashtable _planningStockEligibilityHashByNodeRID;
 		private System.Collections.Hashtable _priorityShippingHashByNodeRID;
 		private System.Collections.Hashtable _salesEligibilityHashByYearWeek;
 		private System.Collections.Hashtable _stockEligibilityHashByYearWeek;
 		private System.Collections.Hashtable _priorityShippingHashByYearWeek;
 		private System.Collections.Hashtable _salesWkRangeEligibilityHashByNodeRID; // MID Track #2539 Grades not same in OTS and Allocation
+		private System.Collections.Hashtable _allocationSalesWkRangeEligibilityHashByNodeRID;
+        private System.Collections.Hashtable _planningSalesWkRangeEligibilityHashByNodeRID;
 		private System.Collections.Hashtable _salesEligibilityHashByWeekRange;      // MID Track #2539 Grades not same in OTS and Allocation
 		private System.Collections.BitArray _salesEligibilityBitArray;
 		private System.Collections.BitArray _salesWkRangeEligibilityBitArray;  // MID Track #2539 Grades not same in OTS and Allocation
@@ -208,50 +214,32 @@ namespace MIDRetail.Business
 		private long _currentSalesEligibilityWeekRange = -1;      // MID Track #2539 Grades not same in OTS and Allocation
 
         // cache fields for color
-        private System.Collections.Hashtable _colorSalesEligibilityHashByNodeRID;
-        private System.Collections.Hashtable _colorStockEligibilityHashByNodeRID;
-        private System.Collections.Hashtable _colorPriorityShippingHashByNodeRID;
+        private System.Collections.Hashtable _allocationColorSalesEligibilityHashByNodeRID;
+        private System.Collections.Hashtable _allocationColorStockEligibilityHashByNodeRID;
+        private System.Collections.Hashtable _planningColorSalesEligibilityHashByNodeRID;
+        private System.Collections.Hashtable _planningColorStockEligibilityHashByNodeRID;
         private System.Collections.Hashtable _colorSalesEligibilityHashByYearWeek;
         private System.Collections.Hashtable _colorStockEligibilityHashByYearWeek;
-        private System.Collections.Hashtable _colorPriorityShippingHashByYearWeek;
-        private System.Collections.Hashtable _colorSalesWkRangeEligibilityHashByNodeRID;
-        private System.Collections.Hashtable _colorSalesEligibilityHashByWeekRange;
         private System.Collections.BitArray _colorSalesEligibilityBitArray;
-        private System.Collections.BitArray _colorSalesWkRangeEligibilityBitArray;
 
         private System.Collections.BitArray _colorStockEligibilityBitArray;
-        private System.Collections.BitArray _colorPriorityShippingBitArray;
         private int _colorCurrentSalesEligibilityNodeRID = -1;
         private int _colorCurrentSalesEligibilityYearWeek = -1;
         private int _colorCurrentStockEligibilityNodeRID = -1;
         private int _colorCurrentStockEligibilityYearWeek = -1;
-        private int _colorCurrentPriorityShippingNodeRID = -1;
-        private int _colorCurrentPriorityShippingYearWeek = -1;
-        private int _colorCurrentSalesWkRangeEligibilityNodeRID = -1;
-        private long _colorCurrentSalesEligibilityWeekRange = -1;
 
         // cache fields for pack
-        private System.Collections.Hashtable _packSalesEligibilityHashByNodeRID;
-        private System.Collections.Hashtable _packStockEligibilityHashByNodeRID;
-        private System.Collections.Hashtable _packPriorityShippingHashByNodeRID;
+        private System.Collections.Hashtable _allocationPackSalesEligibilityHashByNodeRID;
+        private System.Collections.Hashtable _allocationPackStockEligibilityHashByNodeRID;
         private System.Collections.Hashtable _packSalesEligibilityHashByYearWeek;
         private System.Collections.Hashtable _packStockEligibilityHashByYearWeek;
-        private System.Collections.Hashtable _packPriorityShippingHashByYearWeek;
-        private System.Collections.Hashtable _packSalesWkRangeEligibilityHashByNodeRID;
-        private System.Collections.Hashtable _packSalesEligibilityHashByWeekRange;
         private System.Collections.BitArray _packSalesEligibilityBitArray;
-        private System.Collections.BitArray _packSalesWkRangeEligibilityBitArray;
 
         private System.Collections.BitArray _packStockEligibilityBitArray;
-        private System.Collections.BitArray _packPriorityShippingBitArray;
         private int _packCurrentSalesEligibilityNodeRID = -1;
         private int _packCurrentSalesEligibilityYearWeek = -1;
         private int _packCurrentStockEligibilityNodeRID = -1;
         private int _packCurrentStockEligibilityYearWeek = -1;
-        private int _packCurrentPriorityShippingNodeRID = -1;
-        private int _packCurrentPriorityShippingYearWeek = -1;
-        private int _packCurrentSalesWkRangeEligibilityNodeRID = -1;
-        private long _packCurrentSalesEligibilityWeekRange = -1;
 
         // To cache daily percentages, two Hashtable are required.
         // The outermost Hashtable is keyed by nodeRID and contains a Hashtable of dates as the value.
@@ -465,14 +453,12 @@ namespace MIDRetail.Business
 			_planLevelDataHashLastKey = 0;
 			_planLevelDataHashLastValue = null;
 
-			_salesEligibilityHashByNodeRID = new System.Collections.Hashtable();
-			_stockEligibilityHashByNodeRID = new System.Collections.Hashtable();
-            _colorSalesEligibilityHashByNodeRID = new System.Collections.Hashtable();
-            _colorStockEligibilityHashByNodeRID = new System.Collections.Hashtable();
-            _packSalesEligibilityHashByNodeRID = new System.Collections.Hashtable();
-            _packStockEligibilityHashByNodeRID = new System.Collections.Hashtable();
+			_salesEligibilityHashByNodeRID = null;
+			_stockEligibilityHashByNodeRID = null;
             _priorityShippingHashByNodeRID = new System.Collections.Hashtable();
-			_salesWkRangeEligibilityHashByNodeRID = new System.Collections.Hashtable();  // MID Track #2539 Grades not same in OTS and ALlocation
+			_salesWkRangeEligibilityHashByNodeRID = null;  // MID Track #2539 Grades not same in OTS and ALlocation
+			_allocationSalesWkRangeEligibilityHashByNodeRID = null;  // MID Track #2539 Grades not same in OTS and ALlocation
+            _planningSalesWkRangeEligibilityHashByNodeRID = null;
 			_storeGradesHash = new System.Collections.Hashtable();
 			_velocityGradesHash = new System.Collections.Hashtable();
 			_sellThruPctsHash = new System.Collections.Hashtable();
@@ -640,14 +626,24 @@ namespace MIDRetail.Business
             _planLevelDataHashLastKey = 0;
             _planLevelDataHashLastValue = null;
 
-            _salesEligibilityHashByNodeRID = new System.Collections.Hashtable();
-            _stockEligibilityHashByNodeRID = new System.Collections.Hashtable();
+            _salesEligibilityHashByNodeRID = null;
+            _stockEligibilityHashByNodeRID = null;
             _priorityShippingHashByNodeRID = new System.Collections.Hashtable();
-            _colorSalesEligibilityHashByNodeRID = new System.Collections.Hashtable();
-            _colorStockEligibilityHashByNodeRID = new System.Collections.Hashtable();
-            _packSalesEligibilityHashByNodeRID = new System.Collections.Hashtable();
-            _packStockEligibilityHashByNodeRID = new System.Collections.Hashtable();
-            _salesWkRangeEligibilityHashByNodeRID = new System.Collections.Hashtable();  
+            // set to null so will instantiate new on next access
+            _allocationSalesEligibilityHashByNodeRID = null;
+            _allocationStockEligibilityHashByNodeRID = null;
+            _planningSalesEligibilityHashByNodeRID = null;
+            _planningStockEligibilityHashByNodeRID = null;
+            _allocationColorSalesEligibilityHashByNodeRID = null;
+            _allocationColorStockEligibilityHashByNodeRID = null;
+            _planningColorSalesEligibilityHashByNodeRID = null;
+            _planningColorStockEligibilityHashByNodeRID = null;
+            _allocationPackSalesEligibilityHashByNodeRID = null;
+            _allocationPackStockEligibilityHashByNodeRID = null;
+
+            _salesWkRangeEligibilityHashByNodeRID = null;
+            _allocationSalesWkRangeEligibilityHashByNodeRID = null;
+            _planningSalesWkRangeEligibilityHashByNodeRID = null;
             _storeGradesHash = new System.Collections.Hashtable();
             _velocityGradesHash = new System.Collections.Hashtable();
             _sellThruPctsHash = new System.Collections.Hashtable();
@@ -808,23 +804,41 @@ namespace MIDRetail.Business
             {
                 _salesEligibilityHashByNodeRID.Clear();
                 _salesEligibilityHashByNodeRID = null;
-                _salesEligibilityHashByNodeRID = new Hashtable();
             }
 
-            if (_colorSalesEligibilityHashByNodeRID != null &&
-                _colorSalesEligibilityHashByNodeRID.Count > 0)
+            if (_allocationSalesEligibilityHashByNodeRID != null &&
+                _allocationSalesEligibilityHashByNodeRID.Count > 0)
             {
-                _colorSalesEligibilityHashByNodeRID.Clear();
-                _colorSalesEligibilityHashByNodeRID = null;
-                _colorSalesEligibilityHashByNodeRID = new Hashtable();
+                _allocationSalesEligibilityHashByNodeRID.Clear();
+                _allocationSalesEligibilityHashByNodeRID = null;
             }
 
-            if (_packSalesEligibilityHashByNodeRID != null &&
-                _packSalesEligibilityHashByNodeRID.Count > 0)
+            if (_planningSalesEligibilityHashByNodeRID != null &&
+                _planningSalesEligibilityHashByNodeRID.Count > 0)
             {
-                _packSalesEligibilityHashByNodeRID.Clear();
-                _packSalesEligibilityHashByNodeRID = null;
-                _packSalesEligibilityHashByNodeRID = new Hashtable();
+                _planningSalesEligibilityHashByNodeRID.Clear();
+                _planningSalesEligibilityHashByNodeRID = null;
+            }
+
+            if (_allocationColorSalesEligibilityHashByNodeRID != null &&
+                _allocationColorSalesEligibilityHashByNodeRID.Count > 0)
+            {
+                _allocationColorSalesEligibilityHashByNodeRID.Clear();
+                _allocationColorSalesEligibilityHashByNodeRID = null;
+            }
+
+            if (_planningColorSalesEligibilityHashByNodeRID != null &&
+                _planningColorSalesEligibilityHashByNodeRID.Count > 0)
+            {
+                _planningColorSalesEligibilityHashByNodeRID.Clear();
+                _planningColorSalesEligibilityHashByNodeRID = null;
+            }
+
+            if (_allocationPackSalesEligibilityHashByNodeRID != null &&
+                _allocationPackSalesEligibilityHashByNodeRID.Count > 0)
+            {
+                _allocationPackSalesEligibilityHashByNodeRID.Clear();
+                _allocationPackSalesEligibilityHashByNodeRID = null;
             }
         }
 
@@ -835,23 +849,41 @@ namespace MIDRetail.Business
             {
                 _stockEligibilityHashByNodeRID.Clear();
                 _stockEligibilityHashByNodeRID = null;
-                _stockEligibilityHashByNodeRID = new Hashtable();
             }
 
-            if (_colorStockEligibilityHashByNodeRID != null &&
-                _colorStockEligibilityHashByNodeRID.Count > 0)
+            if (_allocationStockEligibilityHashByNodeRID != null &&
+                _allocationStockEligibilityHashByNodeRID.Count > 0)
             {
-                _colorStockEligibilityHashByNodeRID.Clear();
-                _colorStockEligibilityHashByNodeRID = null;
-                _colorStockEligibilityHashByNodeRID = new Hashtable();
+                _allocationStockEligibilityHashByNodeRID.Clear();
+                _allocationStockEligibilityHashByNodeRID = null;
             }
 
-            if (_packStockEligibilityHashByNodeRID != null &&
-                _packStockEligibilityHashByNodeRID.Count > 0)
+            if (_planningStockEligibilityHashByNodeRID != null &&
+                _planningStockEligibilityHashByNodeRID.Count > 0)
             {
-                _packStockEligibilityHashByNodeRID.Clear();
-                _packStockEligibilityHashByNodeRID = null;
-                _packStockEligibilityHashByNodeRID = new Hashtable();
+                _planningStockEligibilityHashByNodeRID.Clear();
+                _planningStockEligibilityHashByNodeRID = null;
+            }
+
+            if (_allocationColorStockEligibilityHashByNodeRID != null &&
+                _allocationColorStockEligibilityHashByNodeRID.Count > 0)
+            {
+                _allocationColorStockEligibilityHashByNodeRID.Clear();
+                _allocationColorStockEligibilityHashByNodeRID = null;
+            }
+
+            if (_planningColorStockEligibilityHashByNodeRID != null &&
+                _planningColorStockEligibilityHashByNodeRID.Count > 0)
+            {
+                _planningColorStockEligibilityHashByNodeRID.Clear();
+                _planningColorStockEligibilityHashByNodeRID = null;
+            }
+
+            if (_allocationPackStockEligibilityHashByNodeRID != null &&
+                _allocationPackStockEligibilityHashByNodeRID.Count > 0)
+            {
+                _allocationPackStockEligibilityHashByNodeRID.Clear();
+                _allocationPackStockEligibilityHashByNodeRID = null;
             }
         }
 
@@ -873,7 +905,20 @@ namespace MIDRetail.Business
             {
                 _salesWkRangeEligibilityHashByNodeRID.Clear();
                 _salesWkRangeEligibilityHashByNodeRID = null;
-                _salesWkRangeEligibilityHashByNodeRID = new Hashtable();
+            }
+			
+			if (_allocationSalesWkRangeEligibilityHashByNodeRID != null &&
+                _allocationSalesWkRangeEligibilityHashByNodeRID.Count > 0)
+            {
+                _allocationSalesWkRangeEligibilityHashByNodeRID.Clear();
+                _allocationSalesWkRangeEligibilityHashByNodeRID = null;
+            }
+
+            if (_planningSalesWkRangeEligibilityHashByNodeRID != null &&
+                _planningSalesWkRangeEligibilityHashByNodeRID.Count > 0)
+            {
+                _planningSalesWkRangeEligibilityHashByNodeRID.Clear();
+                _planningSalesWkRangeEligibilityHashByNodeRID = null;
             }
         }
 
@@ -1017,9 +1062,249 @@ namespace MIDRetail.Business
 			}
 		}
 
-		//===========
-		// PROPERTIES
-		//===========
+        //===========
+        // PROPERTIES
+        //===========
+
+        private Hashtable SalesEligibilityHashByNodeRID
+        {
+            get
+            {
+                if (_salesEligibilityHashByNodeRID == null)
+                {
+                    _salesEligibilityHashByNodeRID = new System.Collections.Hashtable();
+                }
+                return _salesEligibilityHashByNodeRID;
+            }
+            set
+            {
+                _salesEligibilityHashByNodeRID = value;
+            }
+        }
+
+        private Hashtable StockEligibilityHashByNodeRID
+        {
+            get
+            {
+                if (_stockEligibilityHashByNodeRID == null)
+                {
+                    _stockEligibilityHashByNodeRID = new System.Collections.Hashtable();
+                }
+                return _stockEligibilityHashByNodeRID;
+            }
+            set
+            {
+                _stockEligibilityHashByNodeRID = value;
+            }
+        }
+
+        private Hashtable AllocationSalesEligibilityHashByNodeRID
+        {
+            get
+            {
+                if (_allocationSalesEligibilityHashByNodeRID == null)
+                {
+                    _allocationSalesEligibilityHashByNodeRID = new System.Collections.Hashtable();
+                }
+                return _allocationSalesEligibilityHashByNodeRID;
+            }
+            set
+            {
+                _allocationSalesEligibilityHashByNodeRID = value;
+            }
+        }
+
+        private Hashtable AllocationStockEligibilityHashByNodeRID
+        {
+            get
+            {
+                if (_allocationStockEligibilityHashByNodeRID == null)
+                {
+                    _allocationStockEligibilityHashByNodeRID = new System.Collections.Hashtable();
+                }
+                return _allocationStockEligibilityHashByNodeRID;
+            }
+            set
+            {
+                _allocationStockEligibilityHashByNodeRID = value;
+            }
+        }
+
+        private Hashtable PlanningSalesEligibilityHashByNodeRID
+        {
+            get
+            {
+                if (_planningSalesEligibilityHashByNodeRID == null)
+                {
+                    _planningSalesEligibilityHashByNodeRID = new System.Collections.Hashtable();
+                }
+                return _planningSalesEligibilityHashByNodeRID;
+            }
+            set
+            {
+                _planningSalesEligibilityHashByNodeRID = value;
+            }
+        }
+
+        private Hashtable PlanningStockEligibilityHashByNodeRID
+        {
+            get
+            {
+                if (_planningStockEligibilityHashByNodeRID == null)
+                {
+                    _planningStockEligibilityHashByNodeRID = new System.Collections.Hashtable();
+                }
+                return _planningStockEligibilityHashByNodeRID;
+            }
+            set
+            {
+                _planningStockEligibilityHashByNodeRID = value;
+            }
+        }
+
+        private Hashtable AllocationColorSalesEligibilityHashByNodeRID
+        {
+            get
+            {
+                if (_allocationColorSalesEligibilityHashByNodeRID == null)
+                {
+                    _allocationColorSalesEligibilityHashByNodeRID = new System.Collections.Hashtable();
+                }
+                return _allocationColorSalesEligibilityHashByNodeRID;
+            }
+            set
+            {
+                _allocationColorSalesEligibilityHashByNodeRID = value;
+            }
+        }
+
+        private Hashtable AllocationColorStockEligibilityHashByNodeRID
+        {
+            get
+            {
+                if (_allocationColorStockEligibilityHashByNodeRID == null)
+                {
+                    _allocationColorStockEligibilityHashByNodeRID = new System.Collections.Hashtable();
+                }
+                return _allocationColorStockEligibilityHashByNodeRID;
+            }
+            set
+            {
+                _allocationColorStockEligibilityHashByNodeRID = value;
+            }
+        }
+
+        private Hashtable PlanningColorSalesEligibilityHashByNodeRID
+        {
+            get
+            {
+                if (_planningColorSalesEligibilityHashByNodeRID == null)
+                {
+                    _planningColorSalesEligibilityHashByNodeRID = new System.Collections.Hashtable();
+                }
+                return _planningColorSalesEligibilityHashByNodeRID;
+            }
+            set
+            {
+                _planningColorSalesEligibilityHashByNodeRID = value;
+            }
+        }
+
+        private Hashtable PlanningColorStockEligibilityHashByNodeRID
+        {
+            get
+            {
+                if (_planningColorStockEligibilityHashByNodeRID == null)
+                {
+                    _planningColorStockEligibilityHashByNodeRID = new System.Collections.Hashtable();
+                }
+                return _planningColorStockEligibilityHashByNodeRID;
+            }
+            set
+            {
+                _planningColorStockEligibilityHashByNodeRID = value;
+            }
+        }
+
+        private Hashtable AllocationPackSalesEligibilityHashByNodeRID
+        {
+            get
+            {
+                if (_allocationPackSalesEligibilityHashByNodeRID == null)
+                {
+                    _allocationPackSalesEligibilityHashByNodeRID = new System.Collections.Hashtable();
+                }
+                return _allocationPackSalesEligibilityHashByNodeRID;
+            }
+            set
+            {
+                _allocationPackSalesEligibilityHashByNodeRID = value;
+            }
+        }
+
+        private Hashtable AllocationPackStockEligibilityHashByNodeRID
+        {
+            get
+            {
+                if (_allocationPackStockEligibilityHashByNodeRID == null)
+                {
+                    _allocationPackStockEligibilityHashByNodeRID = new System.Collections.Hashtable();
+                }
+                return _allocationPackStockEligibilityHashByNodeRID;
+            }
+            set
+            {
+                _allocationPackStockEligibilityHashByNodeRID = value;
+            }
+        }
+
+        private Hashtable SalesWkRangeEligibilityHashByNodeRID
+        {
+            get
+            {
+                if (_salesWkRangeEligibilityHashByNodeRID == null)
+                {
+                    _salesWkRangeEligibilityHashByNodeRID = new System.Collections.Hashtable();
+                }
+                return _salesWkRangeEligibilityHashByNodeRID;
+            }
+            set
+            {
+                _salesWkRangeEligibilityHashByNodeRID = value;
+            }
+        }
+
+        private Hashtable AllocationSalesWkRangeEligibilityHashByNodeRID
+        {
+            get
+            {
+                if (_allocationSalesWkRangeEligibilityHashByNodeRID == null)
+                {
+                    _allocationSalesWkRangeEligibilityHashByNodeRID = new System.Collections.Hashtable();
+                }
+                return _allocationSalesWkRangeEligibilityHashByNodeRID;
+            }
+            set
+            {
+                _allocationSalesWkRangeEligibilityHashByNodeRID = value;
+            }
+        }
+
+        private Hashtable PlanningSalesWkRangeEligibilityHashByNodeRID
+        {
+            get
+            {
+                if (_planningSalesWkRangeEligibilityHashByNodeRID == null)
+                {
+                    _planningSalesWkRangeEligibilityHashByNodeRID = new System.Collections.Hashtable();
+                }
+                return _planningSalesWkRangeEligibilityHashByNodeRID;
+            }
+            set
+            {
+                _planningSalesWkRangeEligibilityHashByNodeRID = value;
+            }
+        }
 
 		/// <summary>
 		/// Gets the HierarchySessionTransaction object.
@@ -8238,21 +8523,59 @@ namespace MIDRetail.Business
 		{
 			try
 			{
-				if (_salesEligibilityHashByNodeRID.Contains(nodeRID))
+				if (_salesEligibilityHashByNodeRID != null
+                    && _salesEligibilityHashByNodeRID.Contains(nodeRID))
 				{
 					_salesEligibilityHashByNodeRID.Remove(nodeRID);
 				}
 				// BEGIN MID Track # 2539 Grades not same in OTS and Allocation
-				if (_salesWkRangeEligibilityHashByNodeRID.Contains(nodeRID))
+				if (_salesWkRangeEligibilityHashByNodeRID != null
+                    && _salesWkRangeEligibilityHashByNodeRID.Contains(nodeRID))
 				{
 					_salesWkRangeEligibilityHashByNodeRID.Remove(nodeRID);
 				}
 				// END MID Track # 2539
-				if (_stockEligibilityHashByNodeRID.Contains(nodeRID))
+				if (_stockEligibilityHashByNodeRID == null
+				    && _stockEligibilityHashByNodeRID.Contains(nodeRID))
 				{
 					_stockEligibilityHashByNodeRID.Remove(nodeRID);
 				}
-				if (_priorityShippingHashByNodeRID.Contains(nodeRID))
+				
+				if (_allocationSalesEligibilityHashByNodeRID != null
+					&& _allocationSalesEligibilityHashByNodeRID.Contains(nodeRID))
+				{
+					_allocationSalesEligibilityHashByNodeRID.Remove(nodeRID);
+				}
+
+                if (_planningSalesEligibilityHashByNodeRID != null
+                    && _planningSalesEligibilityHashByNodeRID.Contains(nodeRID))
+                {
+                    _planningSalesEligibilityHashByNodeRID.Remove(nodeRID);
+                }
+
+                if (_allocationSalesWkRangeEligibilityHashByNodeRID != null
+                    && _allocationSalesWkRangeEligibilityHashByNodeRID.Contains(nodeRID))
+				{
+                    _allocationSalesWkRangeEligibilityHashByNodeRID.Remove(nodeRID);
+				}
+                if (_planningSalesWkRangeEligibilityHashByNodeRID != null
+                    && _planningSalesWkRangeEligibilityHashByNodeRID.Contains(nodeRID))
+                {
+                    _planningSalesWkRangeEligibilityHashByNodeRID.Remove(nodeRID);
+                }
+
+                if (_allocationStockEligibilityHashByNodeRID != null
+                    && _allocationStockEligibilityHashByNodeRID.Contains(nodeRID))
+				{
+					_allocationStockEligibilityHashByNodeRID.Remove(nodeRID);
+				}
+                if (_planningStockEligibilityHashByNodeRID != null
+                    && _planningStockEligibilityHashByNodeRID.Contains(nodeRID))
+                {
+                    _planningStockEligibilityHashByNodeRID.Remove(nodeRID);
+                }
+				if (_priorityShippingHashByNodeRID != null
+                    && _priorityShippingHashByNodeRID.Contains(nodeRID))
 				{
 					_priorityShippingHashByNodeRID.Remove(nodeRID);
 				}
@@ -8346,7 +8669,13 @@ namespace MIDRetail.Business
 		/// True: Store is eligible for Sales in the specified range of weeks
 		/// False: Store is not eligible for Sales in the specified range of weeks
 		/// </returns>
-		public bool GetStoreEligibilityForSalesInWeekRange(int aStoreRID, int aNodeRID, int aBeginYearWeek, int aEndYearWeek)
+		public bool GetStoreEligibilityForSalesInWeekRange(
+            eRequestingApplication requestingApplication, 
+            int aStoreRID, 
+            int aNodeRID, 
+            int aBeginYearWeek, 
+            int aEndYearWeek
+            )
 		{
 			try
 			{
@@ -8361,13 +8690,39 @@ namespace MIDRetail.Business
 					aEndYearWeek = this.SAB.ApplicationServerSession.Calendar.GetWeekKey(aEndYearWeek);
 				}
 				long weekRange = (aBeginYearWeek << 32) + aEndYearWeek;
+
+                // select appropriate cache based on settings
+                System.Collections.Hashtable salesWkRangeEligibilityHashByNodeRID;
+                if (requestingApplication == eRequestingApplication.Forecast)
+                {
+                    if (GlobalOptions.UseExternalEligibilityPlanning)
+                    {
+                        salesWkRangeEligibilityHashByNodeRID = PlanningSalesWkRangeEligibilityHashByNodeRID;
+                    }
+                    else
+                    {
+                        salesWkRangeEligibilityHashByNodeRID = SalesWkRangeEligibilityHashByNodeRID;
+                    }
+                }
+                else
+                {
+                    if (GlobalOptions.UseExternalEligibilityAllocation)
+                    {
+                        salesWkRangeEligibilityHashByNodeRID = AllocationSalesWkRangeEligibilityHashByNodeRID;
+                    }
+                    else
+                    {
+                        salesWkRangeEligibilityHashByNodeRID = SalesWkRangeEligibilityHashByNodeRID;
+                    }
+                }
+
 				if (aNodeRID != _currentSalesWkRangeEligibilityNodeRID)	// if not same node, get year/week Hashtable		
 				{
-					_salesEligibilityHashByWeekRange = (System.Collections.Hashtable)_salesWkRangeEligibilityHashByNodeRID[aNodeRID];
+					_salesEligibilityHashByWeekRange = (System.Collections.Hashtable)salesWkRangeEligibilityHashByNodeRID[aNodeRID];
 					if (_salesEligibilityHashByWeekRange == null)
 					{
 						_salesEligibilityHashByWeekRange = new System.Collections.Hashtable();
-						_salesWkRangeEligibilityHashByNodeRID.Add(aNodeRID, _salesEligibilityHashByWeekRange);
+                        salesWkRangeEligibilityHashByNodeRID.Add(aNodeRID, _salesEligibilityHashByWeekRange);
 					}
 					_currentSalesWkRangeEligibilityNodeRID = aNodeRID;
 					_currentSalesEligibilityWeekRange = -1;	// reset current yearWeek range since new node
@@ -8378,7 +8733,12 @@ namespace MIDRetail.Business
 					_salesWkRangeEligibilityBitArray = (System.Collections.BitArray)_salesEligibilityHashByWeekRange[weekRange];
 					if (_salesWkRangeEligibilityBitArray == null)
 					{
-						_salesWkRangeEligibilityBitArray = HierarchySessionTransaction.GetStoreSalesEligibilityFlags(aNodeRID, aBeginYearWeek, aEndYearWeek);
+						_salesWkRangeEligibilityBitArray = HierarchySessionTransaction.GetStoreSalesEligibilityFlags(
+                            requestingApplication, 
+                            aNodeRID, 
+                            aBeginYearWeek, 
+                            aEndYearWeek
+                            );
 						_salesEligibilityHashByWeekRange.Add(weekRange, _salesWkRangeEligibilityBitArray);
 					}
 					_currentSalesEligibilityWeekRange = weekRange;
@@ -8666,22 +9026,40 @@ namespace MIDRetail.Business
 				}
 
                 bool useExternalEligibility = false;
+                System.Collections.Hashtable salesEligibilityHashByNodeRID;
+                // select appropriate cache based on settings
                 if (requestingApplication == eRequestingApplication.Forecast)
                 {
                     useExternalEligibility = this.GlobalOptions.UseExternalEligibilityPlanning;
+                    if (useExternalEligibility)
+                    {
+                        salesEligibilityHashByNodeRID = PlanningSalesEligibilityHashByNodeRID;
+                    }
+                    else
+                    {
+                        salesEligibilityHashByNodeRID = SalesEligibilityHashByNodeRID;
+                    }
                 }
                 else
                 {
                     useExternalEligibility = this.GlobalOptions.UseExternalEligibilityAllocation;
+                    if (useExternalEligibility)
+                    {
+                        salesEligibilityHashByNodeRID = AllocationSalesEligibilityHashByNodeRID;
+                    }
+                    else
+                    {
+                        salesEligibilityHashByNodeRID = SalesEligibilityHashByNodeRID;
+                    }
                 }
 
 				if (nodeRID != _currentSalesEligibilityNodeRID) // if not same node, get year/week Hashtable		
 				{
-					_salesEligibilityHashByYearWeek = (System.Collections.Hashtable)_salesEligibilityHashByNodeRID[nodeRID];
+					_salesEligibilityHashByYearWeek = (System.Collections.Hashtable)salesEligibilityHashByNodeRID[nodeRID];
 					if (_salesEligibilityHashByYearWeek == null)
 					{
 						_salesEligibilityHashByYearWeek = new System.Collections.Hashtable();
-						_salesEligibilityHashByNodeRID.Add(nodeRID, _salesEligibilityHashByYearWeek);
+                        salesEligibilityHashByNodeRID.Add(nodeRID, _salesEligibilityHashByYearWeek);
 					}
 					_currentSalesEligibilityNodeRID = nodeRID;
 					_currentSalesEligibilityYearWeek = -1;	// reset current yearWeek since new node
@@ -8704,7 +9082,11 @@ namespace MIDRetail.Business
                         }
                         else
                         {
-                            _salesEligibilityBitArray = HierarchySessionTransaction.GetStoreSalesEligibilityFlags(nodeRID, yearWeek);
+                            _salesEligibilityBitArray = HierarchySessionTransaction.GetStoreSalesEligibilityFlags(
+                                requestingApplication, 
+                                nodeRID, 
+                                yearWeek
+                                );
                         }
 						_salesEligibilityHashByYearWeek.Add(yearWeek, _salesEligibilityBitArray);
 					}
@@ -9042,22 +9424,40 @@ namespace MIDRetail.Business
 				}
 
                 bool useExternalEligibility = false;
+                System.Collections.Hashtable stockEligibilityHashByNodeRID;
+                // select appropriate cache based on settings
                 if (requestingApplication == eRequestingApplication.Forecast)
                 {
                     useExternalEligibility = this.GlobalOptions.UseExternalEligibilityPlanning;
+                    if (useExternalEligibility)
+                    {
+                        stockEligibilityHashByNodeRID = PlanningStockEligibilityHashByNodeRID;
+                    }
+                    else
+                    {
+                        stockEligibilityHashByNodeRID = StockEligibilityHashByNodeRID;
+                    }
                 }
                 else
                 {
                     useExternalEligibility = this.GlobalOptions.UseExternalEligibilityAllocation;
+                    if (useExternalEligibility)
+                    {
+                        stockEligibilityHashByNodeRID = AllocationStockEligibilityHashByNodeRID;
+                    }
+                    else
+                    {
+                        stockEligibilityHashByNodeRID = StockEligibilityHashByNodeRID;
+                    }
                 }
 
 				if (nodeRID != _currentStockEligibilityNodeRID)	// if not same node, get year/week Hashtable		
 				{
-					_stockEligibilityHashByYearWeek = (System.Collections.Hashtable)_stockEligibilityHashByNodeRID[nodeRID];
+					_stockEligibilityHashByYearWeek = (System.Collections.Hashtable)stockEligibilityHashByNodeRID[nodeRID];
 					if (_stockEligibilityHashByYearWeek == null)
 					{
 						_stockEligibilityHashByYearWeek = new System.Collections.Hashtable();
-						_stockEligibilityHashByNodeRID.Add(nodeRID, _stockEligibilityHashByYearWeek);
+                        stockEligibilityHashByNodeRID.Add(nodeRID, _stockEligibilityHashByYearWeek);
 					}
 					_currentStockEligibilityNodeRID = nodeRID;
 					_currentStockEligibilityYearWeek = -1;	// reset current yearWeek since new node
@@ -9080,7 +9480,11 @@ namespace MIDRetail.Business
                         }
                         else
                         {
-                            _stockEligibilityBitArray = HierarchySessionTransaction.GetStoreStockEligibilityFlags(nodeRID, yearWeek);
+                            _stockEligibilityBitArray = HierarchySessionTransaction.GetStoreStockEligibilityFlags(
+                                requestingApplication,
+                                nodeRID, 
+                                yearWeek
+                                );
                         }
 						_stockEligibilityHashByYearWeek.Add(yearWeek, _stockEligibilityBitArray);
 					}

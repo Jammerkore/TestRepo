@@ -44,17 +44,30 @@ namespace MIDRetail.Business
                 dayProfile = (DayProfile)weekProfile.Days[weekProfile.DaysInWeek - 1];
                 DateTime lastDayOfWeek = dayProfile.Date;
 
+                Hashtable storeEligibilityHash;
+                // select appropriate cache based on settings
+                if (requestingApplication == eRequestingApplication.Forecast)
+                {
+                    storeEligibilityHash = PlanningSalesStoreEligibilityHash;
+                }
+                else
+                {
+                    storeEligibilityHash = AllocationSalesStoreEligibilityHash;
+                }
+
                 sel = (StoreEligibilityList)StoreEligibilityHash[aNodeRID];
 
                 if (sel == null)
                 {
-                    // TESTING - get values from node associated with header
-                    int nodeRID = SetNodeForHeader(
-                        headerRID,
-                        headerID
-                        );
-                    sel = SAB.HierarchyServerSession.GetStoreEligibilityList(storeList, nodeRID, true, false);
-                    StoreEligibilityHash.Add(aNodeRID, sel);
+                    sel = CallExternalEligibility(
+                             requestingApplication: requestingApplication,
+                             variable: cSalesVariable,
+                             merchandiseKey: aNodeRID,
+                             packName: null,
+                             yearWeek: weekProfile.YearWeek,
+                             storeList: storeList
+                            );
+                    storeEligibilityHash.Add(aNodeRID, sel);
                 }
 
                 foreach (StoreProfile storeProfile in storeList)
@@ -101,11 +114,10 @@ namespace MIDRetail.Business
                                 {
                                     SalesEligibilityModelDateHash = _salesEligibilityModifierModel.ModelDateHash;
                                 }
-                                // End TT#2307
+
                                 _currentSalesEligibilityModelRID = sep.EligModelRID;
                             }
 
-                            // Begin TT#2307 - JSmith - Incorrect Stock Values
                             if (_salesEligibilityModifierModel.ContainsValuesByStore)
                             {
                                 SalesEligibilityModelDateHash = (Hashtable)_salesEligibilityModifierModel.ModelDateHash[sep.Key];
@@ -114,7 +126,6 @@ namespace MIDRetail.Business
                                     SalesEligibilityModelDateHash = new Hashtable();
                                 }
                             }
-                            // End TT#2307
 
                             if (SalesEligibilityModelDateHash.Count == 0)       // eligible if no dates
                             {
@@ -184,17 +195,30 @@ namespace MIDRetail.Business
                 dayProfile = (DayProfile)weekProfile.Days[weekProfile.DaysInWeek - 1];
                 DateTime lastDayOfWeek = dayProfile.Date;
 
-                sel = (StoreEligibilityList)StoreEligibilityHash[aNodeRID];
+                Hashtable storeEligibilityHash;
+                // select appropriate cache based on settings
+                if (requestingApplication == eRequestingApplication.Forecast)
+                {
+                    storeEligibilityHash = PlanningStockStoreEligibilityHash;
+                }
+                else
+                {
+                    storeEligibilityHash = AllocationStockStoreEligibilityHash;
+                }
+
+                sel = (StoreEligibilityList)storeEligibilityHash[aNodeRID];
 
                 if (sel == null)
                 {
-                    // TESTING - get values from node associated with header
-                    int nodeRID = SetNodeForHeader(
-                        headerRID,
-                        headerID
-                        );
-                    sel = SAB.HierarchyServerSession.GetStoreEligibilityList(storeList, nodeRID, true, false);
-                    StoreEligibilityHash.Add(aNodeRID, sel);
+                    sel = CallExternalEligibility(
+                             requestingApplication: requestingApplication,
+                             variable: cStockVariable,
+                             merchandiseKey: aNodeRID,
+                             packName: null,
+                             yearWeek: weekProfile.YearWeek,
+                             storeList: storeList
+                            );
+                    storeEligibilityHash.Add(aNodeRID, sel);
                 }
 
                 foreach (StoreProfile storeProfile in storeList)
@@ -327,19 +351,30 @@ namespace MIDRetail.Business
                 dayProfile = (DayProfile)weekProfile.Days[weekProfile.DaysInWeek - 1];
                 DateTime lastDayOfWeek = dayProfile.Date;
 
-                sel = (StoreEligibilityList)ColorStoreEligibilityHash[colorNodeRID];
+                Hashtable storeEligibilityHash;
+                // select appropriate cache based on settings
+                if (requestingApplication == eRequestingApplication.Forecast)
+                {
+                    storeEligibilityHash = PlanningSalesColorStoreEligibilityHash;
+                }
+                else
+                {
+                    storeEligibilityHash = AllocationSalesColorStoreEligibilityHash;
+                }
+
+                sel = (StoreEligibilityList)storeEligibilityHash[colorNodeRID];
 
                 if (sel == null)
                 {
-                    // TESTING - get values from node associated with header/color
-                    int nodeRID = SetNodeForColor(
-                        headerRID: headerRID,
-                        headerID: headerID,
-                        colorRID: colorCodeRID,
-                        colorID: colorID
-                        );
-                    sel = SAB.HierarchyServerSession.GetStoreEligibilityList(storeList, nodeRID, true, false);
-                    ColorStoreEligibilityHash.Add(colorNodeRID, sel);
+                    sel = CallExternalEligibility(
+                             requestingApplication: requestingApplication,
+                             variable: cSalesVariable,
+                             merchandiseKey: colorNodeRID,
+                             packName: null,
+                             yearWeek: weekProfile.YearWeek,
+                             storeList: storeList
+                            );
+                    storeEligibilityHash.Add(colorNodeRID, sel);
                 }
 
                 foreach (StoreProfile storeProfile in storeList)
@@ -470,19 +505,30 @@ namespace MIDRetail.Business
                 dayProfile = (DayProfile)weekProfile.Days[weekProfile.DaysInWeek - 1];
                 DateTime lastDayOfWeek = dayProfile.Date;
 
-                sel = (StoreEligibilityList)ColorStoreEligibilityHash[colorNodeRID];
+                Hashtable storeEligibilityHash;
+                // select appropriate cache based on settings
+                if (requestingApplication == eRequestingApplication.Forecast)
+                {
+                    storeEligibilityHash = PlanningStockColorStoreEligibilityHash;
+                }
+                else
+                {
+                    storeEligibilityHash = AllocationStockColorStoreEligibilityHash;
+                }
+
+                sel = (StoreEligibilityList)storeEligibilityHash[colorNodeRID];
 
                 if (sel == null)
                 {
-                    // TESTING - get values from node associated with header/color
-                    int nodeRID = SetNodeForColor(
-                        headerRID: headerRID,
-                        headerID: headerID,
-                        colorRID: colorCodeRID,
-                        colorID: colorID
-                        );
-                    sel = SAB.HierarchyServerSession.GetStoreEligibilityList(storeList, nodeRID, true, false);
-                    ColorStoreEligibilityHash.Add(colorNodeRID, sel);
+                    sel = CallExternalEligibility(
+                             requestingApplication: requestingApplication,
+                             variable: cStockVariable,
+                             merchandiseKey: colorNodeRID,
+                             packName: null,
+                             yearWeek: weekProfile.YearWeek,
+                             storeList: storeList
+                            );
+                    storeEligibilityHash.Add(colorNodeRID, sel);
                 }
 
                 foreach (StoreProfile storeProfile in storeList)
@@ -585,9 +631,6 @@ namespace MIDRetail.Business
         }
 
 
-
-
-
         /// <summary>
         /// Requests the transaction get the store eligibility settings for all stores for a node and week.
         /// </summary>
@@ -599,6 +642,7 @@ namespace MIDRetail.Business
             eRequestingApplication requestingApplication,
             int headerRID,
             string headerID,
+            int aNodeRID,
             int packRID,
             string packName,
             int aFirstDayOfWeek
@@ -617,19 +661,30 @@ namespace MIDRetail.Business
                 dayProfile = (DayProfile)weekProfile.Days[weekProfile.DaysInWeek - 1];
                 DateTime lastDayOfWeek = dayProfile.Date;
 
-                sel = (StoreEligibilityList)PackStoreEligibilityHash[packRID];
+                Hashtable storeEligibilityHash;
+                // select appropriate cache based on settings
+                if (requestingApplication == eRequestingApplication.Forecast)
+                {
+                    storeEligibilityHash = PlanningSalesPackStoreEligibilityHash;
+                }
+                else
+                {
+                    storeEligibilityHash = AllocationSalesPackStoreEligibilityHash;
+                }
+
+                sel = (StoreEligibilityList)storeEligibilityHash[packRID];
 
                 if (sel == null)
                 {
-                    // TESTING - get values from node associated with header/pack
-                    int nodeRID = SetNodeForPack(
-                        headerRID: headerRID,
-                        headerID: headerID,
-                        packRID: packRID,
-                        packName: packName
-                        );
-                    sel = SAB.HierarchyServerSession.GetStoreEligibilityList(storeList, nodeRID, true, false);
-                    PackStoreEligibilityHash.Add(packRID, sel);
+                    sel = CallExternalEligibility(
+                             requestingApplication: requestingApplication,
+                             variable: cSalesVariable,
+                             merchandiseKey: aNodeRID,
+                             packName: packName,
+                             yearWeek: weekProfile.YearWeek,
+                             storeList: storeList
+                            );
+                    storeEligibilityHash.Add(packRID, sel);
                 }
 
                 foreach (StoreProfile storeProfile in storeList)
@@ -676,11 +731,10 @@ namespace MIDRetail.Business
                                 {
                                     SalesEligibilityModelDateHash = _salesEligibilityModifierModel.ModelDateHash;
                                 }
-                                // End TT#2307
+
                                 _currentSalesEligibilityModelRID = sep.EligModelRID;
                             }
 
-                            // Begin TT#2307 - JSmith - Incorrect Stock Values
                             if (_salesEligibilityModifierModel.ContainsValuesByStore)
                             {
                                 SalesEligibilityModelDateHash = (Hashtable)_salesEligibilityModifierModel.ModelDateHash[sep.Key];
@@ -689,7 +743,6 @@ namespace MIDRetail.Business
                                     SalesEligibilityModelDateHash = new Hashtable();
                                 }
                             }
-                            // End TT#2307
 
                             if (SalesEligibilityModelDateHash.Count == 0)       // eligible if no dates
                             {
@@ -743,6 +796,7 @@ namespace MIDRetail.Business
             eRequestingApplication requestingApplication,
             int headerRID,
             string headerID,
+            int aNodeRID,
             int packRID,
             string packName,
             int aFirstDayOfWeek
@@ -761,19 +815,30 @@ namespace MIDRetail.Business
                 dayProfile = (DayProfile)weekProfile.Days[weekProfile.DaysInWeek - 1];
                 DateTime lastDayOfWeek = dayProfile.Date;
 
-                sel = (StoreEligibilityList)PackStoreEligibilityHash[packRID];
+                Hashtable storeEligibilityHash;
+                // select appropriate cache based on settings
+                if (requestingApplication == eRequestingApplication.Forecast)
+                {
+                    storeEligibilityHash = PlanningStockPackStoreEligibilityHash;
+                }
+                else
+                {
+                    storeEligibilityHash = AllocationStockPackStoreEligibilityHash;
+                }
+
+                sel = (StoreEligibilityList)storeEligibilityHash[packRID];
 
                 if (sel == null)
                 {
-                    // TESTING - get values from node associated with header/pack
-                    int nodeRID = SetNodeForPack(
-                        headerRID: headerRID,
-                        headerID: headerID,
-                        packRID: packRID,
-                        packName: packName
-                        );
-                    sel = SAB.HierarchyServerSession.GetStoreEligibilityList(storeList, nodeRID, true, false);
-                    PackStoreEligibilityHash.Add(packRID, sel);
+                    sel = CallExternalEligibility(
+                             requestingApplication: requestingApplication,
+                             variable: cSalesVariable,
+                             merchandiseKey: aNodeRID,
+                             packName: packName,
+                             yearWeek: weekProfile.YearWeek,
+                             storeList: storeList
+                            );
+                    storeEligibilityHash.Add(packRID, sel);
                 }
 
                 foreach (StoreProfile storeProfile in storeList)
@@ -875,6 +940,117 @@ namespace MIDRetail.Business
             }
         }
 
+        private StoreEligibilityList CallExternalEligibility(
+            eRequestingApplication requestingApplication,
+            int variable,
+            int merchandiseKey,
+            string packName,
+            int yearWeek,
+            ProfileList storeList
+            )
+        {
+            // build request to call API
+            ROEligibilityRequest eligibilityRequest = new ROEligibilityRequest();
+            ROEligibilityStore eligibilityStore;
+            StoreEligibilityList sel = new StoreEligibilityList(eProfileType.StoreEligibility);
+            StoreEligibilityProfile sep;
+            string channel = null;
+            string merchandise = null;
+            HierarchyNodeProfile hierarchyNodeProfile;
+
+            hierarchyNodeProfile = GetHierarchyNodeProfile(merchandiseKey: merchandiseKey);
+            if (hierarchyNodeProfile != null)
+            {
+                switch (GlobalOptions.ExternalEligibilityProductIdentifier)
+                {
+                    case eExternalEligibilityProductIdentifier.Name:
+                        merchandise = hierarchyNodeProfile.NodeName;
+                        break;
+                    case eExternalEligibilityProductIdentifier.NameConcatColorName:
+                        if (hierarchyNodeProfile.LevelType == eHierarchyLevelType.Color)
+                        {
+                            merchandise = hierarchyNodeProfile.QualifiedNodeID;
+                        }
+                        else
+                        {
+                            merchandise = hierarchyNodeProfile.NodeName;
+                        }
+                        break;
+                    default:
+                        merchandise = hierarchyNodeProfile.NodeID;
+                        break;
+                }
+            }
+
+            eligibilityRequest.RequestingApplication = requestingApplication.GetHashCode();
+            eligibilityRequest.Merchandise = merchandise;
+            if (!string.IsNullOrEmpty(packName))
+            {
+                eligibilityRequest.PackName = packName;
+            }
+            eligibilityRequest.Variable = variable;
+            eligibilityRequest.YearWeek = yearWeek;
+
+            foreach (StoreProfile storeProfile in storeList)
+            {
+                // do not include the reserve store
+                if (storeProfile.Key != GlobalOptions.ReserveStoreRID)
+                {
+                    switch (GlobalOptions.ExternalEligibilityChannelIdentifier)
+                    {
+                        case eExternalEligibilityChannelIdentifier.Name:
+                            channel = storeProfile.StoreName;
+                            break;
+                        default:
+                            channel = storeProfile.StoreId;
+                            break;
+                    }
+
+                    eligibilityStore = new ROEligibilityStore(
+                        channelKey: storeProfile.Key,
+                        channel: channel
+                        );
+                    eligibilityRequest.EligibilityStores.Add(eligibilityStore);
+                }
+            }
+
+            // Make call here
+
+            foreach (ROEligibilityStore outputEligibilityStore in eligibilityRequest.EligibilityStores)
+            {
+                sep = new StoreEligibilityProfile(aKey: outputEligibilityStore.ChannelKey);
+                if (outputEligibilityStore.IsEligible)
+                {
+                    sep.StoreIneligible = false;
+                }
+                else
+                {
+                    sep.StoreIneligible = true;
+                }
+
+                sel.Add(sep);
+            }
+
+            return sel;
+        }
+
+        private HierarchyNodeProfile GetHierarchyNodeProfile(int merchandiseKey)
+        {
+            HierarchyNodeProfile hierarchyNodeProfile = null;
+
+            if (!NodeHash.TryGetValue(merchandiseKey, out hierarchyNodeProfile))
+            {
+                hierarchyNodeProfile = SAB.HierarchyServerSession.GetNodeData(
+                    aNodeRID: merchandiseKey,
+                    aChaseHierarchy: true,
+                    aBuildQualifiedID: true
+                    );
+                NodeHash.Add(merchandiseKey, hierarchyNodeProfile);
+            }
+
+            return hierarchyNodeProfile;
+        }
+
         // TESTING - get values from node associated with header
         private int SetNodeForHeader(
             int headerRID,
@@ -904,6 +1080,8 @@ namespace MIDRetail.Business
 
             return 101;
         }
+
+        
 
         // TESTING - get values from node associated with header/pack
         private int SetNodeForPack(
@@ -1035,5 +1213,136 @@ namespace MIDRetail.Business
             return 101;
         }
 
+    }
+
+    public class ROEligibilityStore
+    {
+        private int _channelKey;
+        private string _channel;
+        private bool _isEligible;
+
+        #region Public Properties
+        /// <summary>
+        /// Gets key of the channel.
+        /// </summary>
+        public int ChannelKey
+        {
+            get { return _channelKey; }
+        }
+
+        /// <summary>
+        /// Gets or sets the name of the channel.
+        /// </summary>
+        public string Channel
+        {
+            get { return _channel; }
+            set { _channel = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the flag identifying if the channel is eligible.
+        /// </summary>
+        public bool IsEligible
+        {
+            get { return _isEligible; }
+            set { _isEligible = value; }
+        }
+
+        #endregion
+
+        public ROEligibilityStore(
+            int channelKey,
+            string channel)
+        {
+            _channelKey = channelKey;
+            _channel = channel;
+            _isEligible = true;
+        }
+    }
+
+    public class ROEligibilityRequest
+    {
+        private int _requestingApplication;
+        private string _merchandise;
+        private string _packName;
+        private int _variable;
+        private int _yearWeek;
+        private List<ROEligibilityStore> _eligibilityStores;
+
+
+        #region Public Properties
+        /// <summary>
+        /// Gets or sets the requesting application.
+        /// </summary>
+        /// <remarks>
+        /// Valid values
+        ///   0: Allocation
+        ///   1: Planning
+        /// </remarks>
+        public int RequestingApplication
+        {
+            get { return _requestingApplication; }
+            set { _requestingApplication = value; }
+        }
+
+        
+        /// <summary>
+        /// Gets or sets the merchandise for which eligibility is to be determined.
+        /// </summary>
+        public string Merchandise
+        {
+            get { return _merchandise; }
+            set { _merchandise = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the pack name for which eligibility is to be determined if for a pack.
+        /// </summary>
+        public string PackName
+        {
+            get { return _packName; }
+            set { _packName = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the variable for which eligibility is to be determined.
+        /// </summary>
+        /// <remarks>
+        /// Valid values
+        ///   0: Stock
+        ///   1: Sales
+        /// </remarks>
+        public int Variable
+        {
+            get { return _variable; }
+            set { _variable = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the year and week for which eligibility is to be determined.
+        /// </summary>
+        public int YearWeek
+        {
+            get { return _yearWeek; }
+            set { _yearWeek = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the list of simlar stores identified for the store.
+        /// </summary>
+        public List<ROEligibilityStore> EligibilityStores
+        {
+            get { return _eligibilityStores; }
+        }
+
+        #endregion
+
+        public ROEligibilityRequest()
+        {
+            _packName = null;
+            _eligibilityStores = new List<ROEligibilityStore>();
+        }
+
+        
     }
 }

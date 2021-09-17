@@ -598,12 +598,26 @@ namespace MIDRetail.Common
 
         public bool UseExternalEligibilityAllocation
         {
-            get { return _useExternalEligibilityAllocation; }
+            get
+            {
+                if (string.IsNullOrEmpty(_externalEligibilityURL))
+                {
+                    return false;
+                }
+                return _useExternalEligibilityAllocation;
+            }
             set { _useExternalEligibilityAllocation = value; }
         }
         public bool UseExternalEligibilityPlanning
         {
-            get { return _useExternalEligibilityPlanning; }
+            get
+            {
+                if (string.IsNullOrEmpty(_externalEligibilityURL))
+                {
+                    return false;
+                }
+                return _useExternalEligibilityPlanning;
+            }
             set { _useExternalEligibilityPlanning = value; }
         }
         public eExternalEligibilityProductIdentifier ExternalEligibilityProductIdentifier

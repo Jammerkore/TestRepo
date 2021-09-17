@@ -5012,7 +5012,13 @@ namespace MIDRetail.Business.Allocation
 //				else
 //				{
 					_gradeStoreBin[ir.Index].StoreEligible = 
-						this.Transaction.GetStoreEligibilityForSalesInWeekRange(ir.RID, PlanHnRID, wp.YearWeek, endWeek.YearWeek);
+						this.Transaction.GetStoreEligibilityForSalesInWeekRange(
+                            eRequestingApplication.Allocation, 
+                            ir.RID, 
+                            PlanHnRID, 
+                            wp.YearWeek, 
+                            endWeek.YearWeek
+                            );
 //				}
 				_gradeStoreBin[ir.Index].StoreGradeUnits = 0;
 				_gradeStoreBin[ir.Index].StoreKey = ir.RID;
