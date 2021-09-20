@@ -1358,7 +1358,17 @@ namespace MIDRetail.Windows
 
 						if (key != -1)
 						{
-							MessageBox.Show(SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_FolderNameExists), Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            if (MIDEnvironment.isWindows)
+                            {
+								MessageBox.Show(SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_FolderNameExists), Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+							}
+                            else
+                            {
+								MIDEnvironment.Message = SAB.ClientServerSession.Audit.GetText(eMIDTextCode.msg_FolderNameExists);
+								MIDEnvironment.requestFailed = true;
+
+							}
+							
 							return false;
 						}
 
