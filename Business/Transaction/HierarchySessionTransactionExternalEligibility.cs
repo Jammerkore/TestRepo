@@ -977,7 +977,14 @@ namespace MIDRetail.Business
                         }
                         break;
                     default:
-                        merchandise = hierarchyNodeProfile.NodeID;
+                        if (hierarchyNodeProfile.LevelType == eHierarchyLevelType.Color)
+                        {
+                            merchandise = hierarchyNodeProfile.QualifiedNodeID;
+                        }
+                        else
+                        {
+                            merchandise = hierarchyNodeProfile.NodeID;
+                        }
                         break;
                 }
             }
@@ -990,6 +997,8 @@ namespace MIDRetail.Business
             }
             eligibilityRequest.Variable = variable;
             eligibilityRequest.YearWeek = yearWeek;
+
+            bool reserveStoreFound = false;
 
             foreach (StoreProfile storeProfile in storeList)
             {
@@ -1012,9 +1021,21 @@ namespace MIDRetail.Business
                         );
                     eligibilityRequest.EligibilityStores.Add(eligibilityStore);
                 }
+                else
+                {
+                    reserveStoreFound = true;
+                }
             }
 
             // Make call here
+
+            // Add reserve store back to the list.
+            if (reserveStoreFound)
+            {
+                sep = new StoreEligibilityProfile(aKey: GlobalOptions.ReserveStoreRID);
+                sep.StoreIneligible = false;
+                sel.Add(sep);
+            }
 
             foreach (ROEligibilityStore outputEligibilityStore in eligibilityRequest.EligibilityStores)
             {

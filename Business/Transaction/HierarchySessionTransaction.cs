@@ -1109,11 +1109,13 @@ namespace MIDRetail.Business
 				dayProfile = (DayProfile)weekProfile.Days[weekProfile.DaysInWeek - 1];
 				DateTime lastDayOfWeek = dayProfile.Date;
 
+                bool useExternalEligibility = false;
                 Hashtable storeEligibilityHash;
                 // select appropriate cache based on settings
                 if (requestingApplication == eRequestingApplication.Forecast)
                 {
-                    if (GlobalOptions.UseExternalEligibilityPlanning)
+                    useExternalEligibility = GlobalOptions.UseExternalEligibilityPlanning;
+                    if (useExternalEligibility)
                     {
                         storeEligibilityHash = PlanningSalesStoreEligibilityHash;
                     }
@@ -1124,7 +1126,8 @@ namespace MIDRetail.Business
                 }
                 else
                 {
-                    if (GlobalOptions.UseExternalEligibilityAllocation)
+                    useExternalEligibility = GlobalOptions.UseExternalEligibilityAllocation;
+                    if (useExternalEligibility)
                     {
                         storeEligibilityHash = AllocationSalesStoreEligibilityHash;
                     }
@@ -1138,7 +1141,21 @@ namespace MIDRetail.Business
 
 				if (sel == null)
 				{
-					sel = SAB.HierarchyServerSession.GetStoreEligibilityList(storeList, aNodeRID, true, false);
+                    if (useExternalEligibility)
+                    {
+                        sel = CallExternalEligibility(
+                             requestingApplication: requestingApplication,
+                             variable: cSalesVariable,
+                             merchandiseKey: aNodeRID,
+                             packName: null,
+                             yearWeek: weekProfile.YearWeek,
+                             storeList: storeList
+                            );
+                    }
+                    else
+                    {
+                        sel = SAB.HierarchyServerSession.GetStoreEligibilityList(storeList, aNodeRID, true, false);
+                    }
                     storeEligibilityHash.Add(aNodeRID, sel);
 				}
 
