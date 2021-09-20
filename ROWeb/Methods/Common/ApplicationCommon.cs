@@ -72,6 +72,9 @@ namespace Logility.ROWeb
                     return GetColors((RONoParms)Parms);
                 case eRORequest.GetVendorList:
                     return GetVendorList();
+                case eRORequest.ClearCache:
+                    return ClearCache(Parms);
+                    
             }
 
 
@@ -737,8 +740,38 @@ namespace Logility.ROWeb
 
             return new ROIListOut(eROReturnCode.Successful, null, parms.ROInstanceID, colorGroupList);
         }
+
+
+        #region "Method to Clear Cache - RO Refresh Data"
+        private ROBoolOut ClearCache(ROParms Parms)
+        {
+            try
+            {
+
+           
+            SAB.ClientServerSession.Refresh();
+            SAB.ApplicationServerSession.Refresh();
+            SAB.HierarchyServerSession.Refresh();
+            SAB.StoreServerSession.Refresh();
+            SAB.HeaderServerSession.Refresh();
+
+            StoreMgmt.LoadInitialStoresAndGroups(SAB, SAB.ClientServerSession, false, true);  // TT#1876-MD - JSmith - Store Load shows zero stores in sets after Tools>Refresh
+            StoreMgmt.BuildUsersAssignedToMe();  // TT#5664 - JSmith - All User Store Attributes appear in User Methods 
+            filterDataHelper.Refresh();  // TT#1909-MD - JSmith - Str_Vesioning - Interfaced Store not available for selection in the STore List for a Static Store Attribute
+            MaxStoresHelper.Refresh();
+                return new ROBoolOut(eROReturnCode.Successful,"",ROInstanceID,true) ;
+            }
+            catch (Exception ex)
+            {
+
+                return new ROBoolOut(eROReturnCode.Failure, ex.Message, ROInstanceID, false);
+            }
+        }
+
+        #endregion
+
     }
 
-    
+
 
 }

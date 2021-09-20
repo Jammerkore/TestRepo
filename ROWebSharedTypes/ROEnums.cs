@@ -163,6 +163,7 @@
         SaveViewDetails,
         DeleteViewDetails,
         SaveViewFormat,
+        ClearCache,
 
         //Calendar
         GetCalendarSelector,
