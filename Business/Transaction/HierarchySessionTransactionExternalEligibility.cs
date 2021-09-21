@@ -949,110 +949,146 @@ namespace MIDRetail.Business
             ProfileList storeList
             )
         {
-            // build request to call API
-            ROEligibilityRequest eligibilityRequest = new ROEligibilityRequest();
-            ROEligibilityStore eligibilityStore;
-            StoreEligibilityList sel = new StoreEligibilityList(eProfileType.StoreEligibility);
-            StoreEligibilityProfile sep;
-            string channel = null;
-            string merchandise = null;
-            HierarchyNodeProfile hierarchyNodeProfile;
-
-            hierarchyNodeProfile = GetHierarchyNodeProfile(merchandiseKey: merchandiseKey);
-            if (hierarchyNodeProfile != null)
+            try
             {
-                switch (GlobalOptions.ExternalEligibilityProductIdentifier)
+                // build request to call API
+                ROEligibilityRequest eligibilityRequest = new ROEligibilityRequest();
+                ROEligibilityStore eligibilityStore;
+                StoreEligibilityList sel = new StoreEligibilityList(eProfileType.StoreEligibility);
+                StoreEligibilityProfile sep;
+                string channel = null;
+                string merchandise = null;
+                HierarchyNodeProfile hierarchyNodeProfile;
+
+                hierarchyNodeProfile = GetHierarchyNodeProfile(merchandiseKey: merchandiseKey);
+                if (hierarchyNodeProfile != null)
                 {
-                    case eExternalEligibilityProductIdentifier.Name:
-                        merchandise = hierarchyNodeProfile.NodeName;
-                        break;
-                    case eExternalEligibilityProductIdentifier.NameConcatColorName:
-                        if (hierarchyNodeProfile.LevelType == eHierarchyLevelType.Color)
-                        {
-                            merchandise = hierarchyNodeProfile.QualifiedNodeID;
-                        }
-                        else
-                        {
-                            merchandise = hierarchyNodeProfile.NodeName;
-                        }
-                        break;
-                    default:
-                        if (hierarchyNodeProfile.LevelType == eHierarchyLevelType.Color)
-                        {
-                            merchandise = hierarchyNodeProfile.QualifiedNodeID;
-                        }
-                        else
-                        {
-                            merchandise = hierarchyNodeProfile.NodeID;
-                        }
-                        break;
-                }
-            }
-
-            eligibilityRequest.RequestingApplication = requestingApplication.GetHashCode();
-            eligibilityRequest.Merchandise = merchandise;
-            if (!string.IsNullOrEmpty(packName))
-            {
-                eligibilityRequest.PackName = packName;
-            }
-            eligibilityRequest.Variable = variable;
-            eligibilityRequest.YearWeek = yearWeek;
-
-            bool reserveStoreFound = false;
-
-            foreach (StoreProfile storeProfile in storeList)
-            {
-                // do not include the reserve store
-                if (storeProfile.Key != GlobalOptions.ReserveStoreRID)
-                {
-                    switch (GlobalOptions.ExternalEligibilityChannelIdentifier)
+                    switch (GlobalOptions.ExternalEligibilityProductIdentifier)
                     {
-                        case eExternalEligibilityChannelIdentifier.Name:
-                            channel = storeProfile.StoreName;
+                        case eExternalEligibilityProductIdentifier.Name:
+                            merchandise = hierarchyNodeProfile.NodeName;
+                            break;
+                        case eExternalEligibilityProductIdentifier.NameConcatColorName:
+                            if (hierarchyNodeProfile.LevelType == eHierarchyLevelType.Color)
+                            {
+                                merchandise = hierarchyNodeProfile.QualifiedNodeID;
+                            }
+                            else
+                            {
+                                merchandise = hierarchyNodeProfile.NodeName;
+                            }
                             break;
                         default:
-                            channel = storeProfile.StoreId;
+                            if (hierarchyNodeProfile.LevelType == eHierarchyLevelType.Color)
+                            {
+                                merchandise = hierarchyNodeProfile.QualifiedNodeID;
+                            }
+                            else
+                            {
+                                merchandise = hierarchyNodeProfile.NodeID;
+                            }
                             break;
                     }
-
-                    eligibilityStore = new ROEligibilityStore(
-                        channelKey: storeProfile.Key,
-                        channel: channel
-                        );
-                    eligibilityRequest.EligibilityStores.Add(eligibilityStore);
                 }
-                else
+
+                eligibilityRequest.RequestingApplication = requestingApplication.GetHashCode();
+                eligibilityRequest.Merchandise = merchandise;
+                if (!string.IsNullOrEmpty(packName))
                 {
-                    reserveStoreFound = true;
+                    eligibilityRequest.PackName = packName;
                 }
-            }
+                eligibilityRequest.Variable = variable;
+                eligibilityRequest.YearWeek = yearWeek;
 
-            // Make call here
+                bool reserveStoreFound = false;
 
-            // Add reserve store back to the list.
-            if (reserveStoreFound)
-            {
-                sep = new StoreEligibilityProfile(aKey: GlobalOptions.ReserveStoreRID);
-                sep.StoreIneligible = false;
-                sel.Add(sep);
-            }
-
-            foreach (ROEligibilityStore outputEligibilityStore in eligibilityRequest.EligibilityStores)
-            {
-                sep = new StoreEligibilityProfile(aKey: outputEligibilityStore.ChannelKey);
-                if (outputEligibilityStore.IsEligible)
+                foreach (StoreProfile storeProfile in storeList)
                 {
+                    // do not include the reserve store
+                    if (storeProfile.Key != GlobalOptions.ReserveStoreRID)
+                    {
+                        switch (GlobalOptions.ExternalEligibilityChannelIdentifier)
+                        {
+                            case eExternalEligibilityChannelIdentifier.Name:
+                                channel = storeProfile.StoreName;
+                                break;
+                            default:
+                                channel = storeProfile.StoreId;
+                                break;
+                        }
+
+                        eligibilityStore = new ROEligibilityStore(
+                            channelKey: storeProfile.Key,
+                            channel: channel
+                            );
+                        eligibilityRequest.EligibilityStores.Add(eligibilityStore);
+                    }
+                    else
+                    {
+                        reserveStoreFound = true;
+                    }
+                }
+
+                string message = "Calling External Eligibility at " + GlobalOptions.ExternalEligibilityURL
+                    + " for merchandise " + eligibilityRequest.Merchandise;
+                if (!string.IsNullOrEmpty(eligibilityRequest.PackName))
+                {
+                    message += " and pack " + eligibilityRequest.PackName;
+                }
+
+                DateTime startTime = DateTime.Now;
+                SAB.HierarchyServerSession.Audit.Add_Msg(
+                    eMIDMessageLevel.Information,
+                    message,
+                    GetType().Name
+                    );
+
+                // Make call here
+
+                TimeSpan duration = DateTime.Now.Subtract(startTime);
+                string strDuration = Convert.ToString(duration, CultureInfo.CurrentUICulture);
+
+                message = "External Eligibility responded in " + strDuration;
+                SAB.HierarchyServerSession.Audit.Add_Msg(
+                    eMIDMessageLevel.Information,
+                    message,
+                    GetType().Name
+                    );
+
+                // Add reserve store back to the list.
+                if (reserveStoreFound)
+                {
+                    sep = new StoreEligibilityProfile(aKey: GlobalOptions.ReserveStoreRID);
                     sep.StoreIneligible = false;
+                    sel.Add(sep);
                 }
-                else
+
+                foreach (ROEligibilityStore outputEligibilityStore in eligibilityRequest.EligibilityStores)
                 {
-                    sep.StoreIneligible = true;
+                    sep = new StoreEligibilityProfile(aKey: outputEligibilityStore.ChannelKey);
+                    if (outputEligibilityStore.IsEligible)
+                    {
+                        sep.StoreIneligible = false;
+                    }
+                    else
+                    {
+                        sep.StoreIneligible = true;
+                    }
+
+                    sel.Add(sep);
                 }
 
-                sel.Add(sep);
+                return sel;
             }
-
-            return sel;
+            catch (Exception ex)
+            {
+                SAB.HierarchyServerSession.Audit.Add_Msg(
+                    eMIDMessageLevel.Error,
+                    ex.Message,
+                    GetType().Name
+                    );
+                throw;
+            }
         }
 
         private HierarchyNodeProfile GetHierarchyNodeProfile(int merchandiseKey)
