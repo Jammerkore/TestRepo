@@ -90,7 +90,7 @@ namespace MIDRetail.Business
         // End TT#4988 - JSmith - Performance
 
         private Dictionary<int, HierarchyNodeProfile> _nodeHash;
-
+        private Dictionary<string, int> _storeHash;
 
         // Begin TT#1440 - JSmith - Memory Issues
         override public void Dispose()
@@ -253,6 +253,11 @@ namespace MIDRetail.Business
                 _nodeHash.Clear();
                 _nodeHash = null;
             }
+            if (_storeHash != null)
+            {
+                _storeHash.Clear();
+                _storeHash = null;
+            }
 
             base.Dispose();
         }
@@ -327,6 +332,7 @@ namespace MIDRetail.Business
 			//_storeStockStatusHash = new System.Collections.Hashtable();
 			// end MID Track 4607 and 4626 Eligibility and Priority Shipping Wrong
             _nodeHash = null;
+            _storeHash = null;
 		}
 
 		//===========
@@ -876,6 +882,22 @@ namespace MIDRetail.Business
             set
             {
                 _nodeHash = value;
+            }
+        }
+
+        private Dictionary<string, int> StoreHash
+        {
+            get
+            {
+                if (_storeHash == null)
+                {
+                    _storeHash = new Dictionary<string, int>();
+                }
+                return _storeHash;
+            }
+            set
+            {
+                _storeHash = value;
             }
         }
 

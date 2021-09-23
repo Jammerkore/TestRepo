@@ -5,7 +5,14 @@ using MIDRetail.Common;
 using MIDRetail.DataCommon;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using MIDRetail.Business.Allocation;
+
+using System.Net.Http;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Polly;
 
 namespace MIDRetail.Business
 {
@@ -55,7 +62,7 @@ namespace MIDRetail.Business
                     storeEligibilityHash = AllocationSalesStoreEligibilityHash;
                 }
 
-                sel = (StoreEligibilityList)StoreEligibilityHash[aNodeRID];
+                sel = (StoreEligibilityList)storeEligibilityHash[aNodeRID];
 
                 if (sel == null)
                 {
@@ -1017,8 +1024,13 @@ namespace MIDRetail.Business
                                 break;
                         }
 
+                        // create a store key lookup
+                        if (!StoreHash.ContainsKey(channel))
+                        {
+                            StoreHash.Add(channel, storeProfile.Key);
+                        }
+
                         eligibilityStore = new ROEligibilityStore(
-                            channelKey: storeProfile.Key,
                             channel: channel
                             );
                         eligibilityRequest.EligibilityStores.Add(eligibilityStore);
@@ -1035,6 +1047,7 @@ namespace MIDRetail.Business
                 {
                     message += " and pack " + eligibilityRequest.PackName;
                 }
+                message += " week " + eligibilityRequest.YearWeek;
 
                 DateTime startTime = DateTime.Now;
                 SAB.HierarchyServerSession.Audit.Add_Msg(
@@ -1043,7 +1056,7 @@ namespace MIDRetail.Business
                     GetType().Name
                     );
 
-                // Make call here
+                ROEligibilityRequest eligibilityResponse = MakeTheCall(eligibilityRequest: eligibilityRequest).GetAwaiter().GetResult();
 
                 TimeSpan duration = DateTime.Now.Subtract(startTime);
                 string strDuration = Convert.ToString(duration, CultureInfo.CurrentUICulture);
@@ -1063,22 +1076,44 @@ namespace MIDRetail.Business
                     sel.Add(sep);
                 }
 
-                foreach (ROEligibilityStore outputEligibilityStore in eligibilityRequest.EligibilityStores)
+                int storeKey = Include.NoRID;
+
+                foreach (ROEligibilityStore outputEligibilityStore in eligibilityResponse.EligibilityStores)
                 {
-                    sep = new StoreEligibilityProfile(aKey: outputEligibilityStore.ChannelKey);
-                    if (outputEligibilityStore.IsEligible)
+                    if (StoreHash.TryGetValue(outputEligibilityStore.Channel, out storeKey))
                     {
-                        sep.StoreIneligible = false;
+                        sep = new StoreEligibilityProfile(aKey: storeKey);
+                        if (outputEligibilityStore.IsEligible)
+                        {
+                            sep.StoreIneligible = false;
+                        }
+                        else
+                        {
+                            sep.StoreIneligible = true;
+                        }
+
+                        sel.Add(sep);
                     }
                     else
                     {
-                        sep.StoreIneligible = true;
+                        SAB.HierarchyServerSession.Audit.Add_Msg(
+                            eMIDMessageLevel.Error,
+                            "Unable to determine eligibility for store " + outputEligibilityStore.Channel,
+                            GetType().Name
+                            );
                     }
-
-                    sel.Add(sep);
                 }
 
                 return sel;
+            }
+            catch (System.Net.Http.HttpRequestException ex)
+            {
+                SAB.HierarchyServerSession.Audit.Add_Msg(
+                    eMIDMessageLevel.Error,
+                    ex.Message + " " + ex.InnerException.Message,
+                    GetType().Name
+                    );
+                throw;
             }
             catch (Exception ex)
             {
@@ -1087,6 +1122,46 @@ namespace MIDRetail.Business
                     ex.Message,
                     GetType().Name
                     );
+                throw;
+            }
+        }
+
+        private async Task<ROEligibilityRequest> MakeTheCall(ROEligibilityRequest eligibilityRequest)
+        {
+            try
+            {
+                ROEligibilityRequest eligibilityRequestResponse = null;
+                HttpClient client = new HttpClient();
+
+                var maxRetryAttempts = 3;
+                var pauseBetweenFailures = TimeSpan.FromSeconds(2);
+
+                var retryPolicy = Policy
+                    .Handle<HttpRequestException>()
+                    .WaitAndRetryAsync(maxRetryAttempts, i => pauseBetweenFailures);
+
+                var timeoutPolicy = Policy
+                    .TimeoutAsync(20);
+
+                var json = JsonConvert.SerializeObject(eligibilityRequest);
+                var data = new StringContent(json, Encoding.UTF8, "application/json");
+
+                eligibilityRequestResponse = await retryPolicy
+                    .WrapAsync(timeoutPolicy)
+                    .ExecuteAsync(async () => 
+                {
+                    using (HttpResponseMessage response = await client.PostAsync(GlobalOptions.ExternalEligibilityURL.Trim(), data)
+                        .ConfigureAwait(false))
+                    {
+                        var responseString = await response.Content.ReadAsStringAsync();
+                        return JsonConvert.DeserializeObject<ROEligibilityRequest>(responseString);
+                    }
+                }).ConfigureAwait(false);
+
+                return eligibilityRequestResponse;
+            }
+            catch
+            {
                 throw;
             }
         }
@@ -1274,19 +1349,10 @@ namespace MIDRetail.Business
 
     public class ROEligibilityStore
     {
-        private int _channelKey;
         private string _channel;
         private bool _isEligible;
 
         #region Public Properties
-        /// <summary>
-        /// Gets key of the channel.
-        /// </summary>
-        public int ChannelKey
-        {
-            get { return _channelKey; }
-        }
-
         /// <summary>
         /// Gets or sets the name of the channel.
         /// </summary>
@@ -1308,10 +1374,8 @@ namespace MIDRetail.Business
         #endregion
 
         public ROEligibilityStore(
-            int channelKey,
             string channel)
         {
-            _channelKey = channelKey;
             _channel = channel;
             _isEligible = true;
         }
