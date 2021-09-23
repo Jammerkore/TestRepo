@@ -1681,6 +1681,13 @@ namespace Logility.ROWeb
         {
             if (rOTaskJobsParms.Key.Key < 0)
                 _jobProfile = new JobProfile(-1, rOTaskJobsParms.Key.Value, false);
+
+            int key = ScheduleDataLayer.Job_GetKey(rOTaskJobsParms.Key.Value);
+            if (key != -1)
+            {
+                return new ROTaskJobOut(eROReturnCode.Failure, SessionAddressBlock.ClientServerSession.Audit.GetText(eMIDTextCode.msg_JobNameExists), ROInstanceID, rOTaskJobsParms.Key, null);
+            }
+
             ScheduleDataLayer.OpenUpdateConnection();
             try
             {
@@ -1736,9 +1743,9 @@ namespace Logility.ROWeb
 
                 ScheduleDataLayer.CommitData();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                throw ex;
             }
             finally
             {
