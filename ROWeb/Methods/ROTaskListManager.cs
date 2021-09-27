@@ -1683,7 +1683,7 @@ namespace Logility.ROWeb
                 _jobProfile = new JobProfile(-1, rOTaskJobsParms.Key.Value, false);
 
             int key = ScheduleDataLayer.Job_GetKey(rOTaskJobsParms.Key.Value);
-            if (key != -1)
+            if (rOTaskJobsParms.Key.Key == -1 && key != -1)
             {
                 return new ROTaskJobOut(eROReturnCode.Failure, SessionAddressBlock.ClientServerSession.Audit.GetText(eMIDTextCode.msg_JobNameExists), ROInstanceID, rOTaskJobsParms.Key, null);
             }
