@@ -1169,7 +1169,6 @@ namespace MIDRetail.Business
                              requestingApplication: requestingApplication,
                              variable: cSalesVariable,
                              merchandiseKey: aNodeRID,
-                             packName: null,
                              yearWeek: weekProfile.YearWeek,
                              storeList: storeList
                             );

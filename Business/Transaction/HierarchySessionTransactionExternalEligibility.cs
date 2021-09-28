@@ -70,7 +70,6 @@ namespace MIDRetail.Business
                              requestingApplication: requestingApplication,
                              variable: cSalesVariable,
                              merchandiseKey: aNodeRID,
-                             packName: null,
                              yearWeek: weekProfile.YearWeek,
                              storeList: storeList
                             );
@@ -221,7 +220,6 @@ namespace MIDRetail.Business
                              requestingApplication: requestingApplication,
                              variable: cStockVariable,
                              merchandiseKey: aNodeRID,
-                             packName: null,
                              yearWeek: weekProfile.YearWeek,
                              storeList: storeList
                             );
@@ -377,7 +375,6 @@ namespace MIDRetail.Business
                              requestingApplication: requestingApplication,
                              variable: cSalesVariable,
                              merchandiseKey: colorNodeRID,
-                             packName: null,
                              yearWeek: weekProfile.YearWeek,
                              storeList: storeList
                             );
@@ -531,7 +528,6 @@ namespace MIDRetail.Business
                              requestingApplication: requestingApplication,
                              variable: cStockVariable,
                              merchandiseKey: colorNodeRID,
-                             packName: null,
                              yearWeek: weekProfile.YearWeek,
                              storeList: storeList
                             );
@@ -687,7 +683,6 @@ namespace MIDRetail.Business
                              requestingApplication: requestingApplication,
                              variable: cSalesVariable,
                              merchandiseKey: aNodeRID,
-                             packName: packName,
                              yearWeek: weekProfile.YearWeek,
                              storeList: storeList
                             );
@@ -841,7 +836,6 @@ namespace MIDRetail.Business
                              requestingApplication: requestingApplication,
                              variable: cSalesVariable,
                              merchandiseKey: aNodeRID,
-                             packName: packName,
                              yearWeek: weekProfile.YearWeek,
                              storeList: storeList
                             );
@@ -951,13 +945,13 @@ namespace MIDRetail.Business
             eRequestingApplication requestingApplication,
             int variable,
             int merchandiseKey,
-            string packName,
             int yearWeek,
             ProfileList storeList
             )
         {
             try
             {
+                string color = null;
                 // build request to call API
                 ROEligibilityRequest eligibilityRequest = new ROEligibilityRequest();
                 ROEligibilityStore eligibilityStore;
@@ -973,22 +967,29 @@ namespace MIDRetail.Business
                     switch (GlobalOptions.ExternalEligibilityProductIdentifier)
                     {
                         case eExternalEligibilityProductIdentifier.Name:
-                            merchandise = hierarchyNodeProfile.NodeName;
-                            break;
-                        case eExternalEligibilityProductIdentifier.NameConcatColorName:
                             if (hierarchyNodeProfile.LevelType == eHierarchyLevelType.Color)
                             {
-                                merchandise = hierarchyNodeProfile.QualifiedNodeID;
+                                HierarchyNodeProfile styleHierarchyNodeProfile = GetHierarchyNodeProfile(
+                                    merchandiseKey: hierarchyNodeProfile.HomeHierarchyParentRID);
+                                merchandise = styleHierarchyNodeProfile.NodeName;
+                                color = hierarchyNodeProfile.NodeName;
                             }
                             else
                             {
                                 merchandise = hierarchyNodeProfile.NodeName;
                             }
                             break;
+                        case eExternalEligibilityProductIdentifier.NameConcatColorName:
+                            merchandise = hierarchyNodeProfile.NodeName;
+                            break;
                         default:
                             if (hierarchyNodeProfile.LevelType == eHierarchyLevelType.Color)
                             {
-                                merchandise = hierarchyNodeProfile.QualifiedNodeID;
+                                merchandise = hierarchyNodeProfile.NodeID;
+                                HierarchyNodeProfile styleHierarchyNodeProfile = GetHierarchyNodeProfile(
+                                    merchandiseKey: hierarchyNodeProfile.HomeHierarchyParentRID);
+                                merchandise = styleHierarchyNodeProfile.NodeID;
+                                color = hierarchyNodeProfile.NodeID;
                             }
                             else
                             {
@@ -1000,9 +1001,9 @@ namespace MIDRetail.Business
 
                 eligibilityRequest.RequestingApplication = requestingApplication.GetHashCode();
                 eligibilityRequest.Merchandise = merchandise;
-                if (!string.IsNullOrEmpty(packName))
+                if (!string.IsNullOrEmpty(color))
                 {
-                    eligibilityRequest.PackName = packName;
+                    eligibilityRequest.Color = color;
                 }
                 eligibilityRequest.Variable = variable;
                 eligibilityRequest.YearWeek = yearWeek;
@@ -1043,9 +1044,9 @@ namespace MIDRetail.Business
 
                 string message = "Calling External Eligibility at " + GlobalOptions.ExternalEligibilityURL
                     + " for merchandise " + eligibilityRequest.Merchandise;
-                if (!string.IsNullOrEmpty(eligibilityRequest.PackName))
+                if (!string.IsNullOrEmpty(eligibilityRequest.Color))
                 {
-                    message += " and pack " + eligibilityRequest.PackName;
+                    message += " and color " + eligibilityRequest.Color;
                 }
                 message += " week " + eligibilityRequest.YearWeek;
 
@@ -1182,169 +1183,6 @@ namespace MIDRetail.Business
 
             return hierarchyNodeProfile;
         }
-
-        // TESTING - get values from node associated with header
-        private int SetNodeForHeader(
-            int headerRID,
-            string headerID
-            )
-        {
-            string lookupNodeName = null;
-            int nodeRID = Include.NoRID;
-
-            if (headerID == "01_PE_ELIG_no components")
-            {
-                lookupNodeName = "01_PE_ELIG_no components";
-            }
-            else
-            {
-                lookupNodeName = headerID;
-            }
-
-            if (lookupNodeName != null)
-            {
-                nodeRID = SAB.HierarchyServerSession.GetNodeRID(nodeID: lookupNodeName);
-                if (nodeRID != Include.NoRID)
-                {
-                    return nodeRID;
-                }
-            }
-
-            return 101;
-        }
-
-        
-
-        // TESTING - get values from node associated with header/pack
-        private int SetNodeForPack(
-            int headerRID,
-            string headerID,
-            int packRID,
-            string packName)
-        {
-            string lookupNodeName = null;
-            int nodeRID = Include.NoRID;
-
-            if (headerID == "01_PE_ELIG_1style-0clr-1packs")
-            {
-                lookupNodeName = "01_PE_ELIG_1style-0clr-1packs-pack-a";
-            }
-            else if (headerID == "01_PE_ELIG_1style-0clr-2packs")
-            {
-                if (packName == "a")
-                {
-                    lookupNodeName = "01_PE_ELIG_1style-0clr-2packs-pack-a";
-                }
-                else
-                {
-                    lookupNodeName = "01_PE_ELIG_1style-0clr-2packs-pack-b";
-                }
-            }
-            else if (headerID == "01_PE_ELIG_1style-1clr-0packs")
-            {
-
-            }
-            else if (headerID == "01_PE_ELIG_1style-1clr-1pack")
-            {
-                lookupNodeName = "01_PE_ELIG_1style-1clr-1pack-pack-a";
-            }
-            else if (headerID == "01_PE_ELIG_1style-1clr-2packs")
-            {
-                if (packName == "a")
-                {
-                    lookupNodeName = "01_PE_ELIG_1style-1clr-2packs-pack-a";
-                }
-                else
-                {
-                    lookupNodeName = "01_PE_ELIG_1style-1clr-2packs-pack-b";
-                }
-            }
-            else if (headerID == "01_PE_ELIG_1style-2clr-2packs")
-            {
-                if (packName == "a")
-                {
-                    lookupNodeName = "01_PE_ELIG_1style-2clr-2packs-pack-a";
-                }
-                else
-                {
-                    lookupNodeName = "01_PE_ELIG_1style-2clr-2packs-pack-b";
-                }
-            }
-            else if (headerID == "01_PE_ELIG_no components")
-            {
-
-            }
-
-            if (lookupNodeName != null)
-            {
-                nodeRID = SAB.HierarchyServerSession.GetNodeRID(nodeID: lookupNodeName);
-                if (nodeRID != Include.NoRID)
-                {
-                    return nodeRID;
-                }
-            }
-
-            return 101;
-        }
-
-        private int SetNodeForColor(
-            int headerRID,
-            string headerID,
-            int colorRID,
-            string colorID)
-        {
-
-            string lookupNodeName = null;
-            int nodeRID = Include.NoRID;
-
-            if (headerID == "01_PE_ELIG_1style-0clr-1packs")
-            {
-
-            }
-            else if (headerID == "01_PE_ELIG_1style-0clr-2packs")
-            {
-
-            }
-            else if (headerID == "01_PE_ELIG_1style-1clr-0packs")
-            {
-                lookupNodeName = "01_PE_ELIG_1style-1clr-0packs-409-DarkWash";
-            }
-            else if (headerID == "01_PE_ELIG_1style-1clr-1pack")
-            {
-                lookupNodeName = "01_PE_ELIG_1style-1clr-1pack-409-DarkWash";
-            }
-            else if (headerID == "01_PE_ELIG_1style-1clr-2packs")
-            {
-                lookupNodeName = "01_PE_ELIG_1style-1clr-2packs-409-DarkWash";
-            }
-            else if (headerID == "01_PE_ELIG_1style-2clr-2packs")
-            {
-                if (colorID == "409")
-                {
-                    lookupNodeName = "01_PE_ELIG_1style-2clr-2packs-409-DarkWash";
-                }
-                else
-                {
-                    lookupNodeName = "01_PE_ELIG_1style-2clr-2packs-005-Black";
-                }
-            }
-            else if (headerID == "01_PE_ELIG_no components")
-            {
-
-            }
-
-            if (lookupNodeName != null)
-            {
-                nodeRID = SAB.HierarchyServerSession.GetNodeRID(nodeID: lookupNodeName);
-                if (nodeRID != Include.NoRID)
-                {
-                    return nodeRID;
-                }
-            }
-
-            return 101;
-        }
-
     }
 
     public class ROEligibilityStore
@@ -1385,7 +1223,7 @@ namespace MIDRetail.Business
     {
         private int _requestingApplication;
         private string _merchandise;
-        private string _packName;
+        private string _color;
         private int _variable;
         private int _yearWeek;
         private List<ROEligibilityStore> _eligibilityStores;
@@ -1417,12 +1255,12 @@ namespace MIDRetail.Business
         }
 
         /// <summary>
-        /// Gets or sets the pack name for which eligibility is to be determined if for a pack.
+        /// Gets or sets the color for which eligibility is to be determined if color is included.
         /// </summary>
-        public string PackName
+        public string Color
         {
-            get { return _packName; }
-            set { _packName = value; }
+            get { return _color; }
+            set { _color = value; }
         }
 
         /// <summary>
@@ -1460,7 +1298,7 @@ namespace MIDRetail.Business
 
         public ROEligibilityRequest()
         {
-            _packName = null;
+            _color = null;
             _eligibilityStores = new List<ROEligibilityStore>();
         }
 

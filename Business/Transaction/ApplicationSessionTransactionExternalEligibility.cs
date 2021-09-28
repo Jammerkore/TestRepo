@@ -1103,6 +1103,15 @@ namespace MIDRetail.Business
                     _packStockEligibilityBitArray = (System.Collections.BitArray)_packStockEligibilityHashByYearWeek[yearWeek];
                     if (_packStockEligibilityBitArray == null)
                     {
+                        // use style/color for eligibility if pack has colors
+                        foreach (PackColorSize aColor in aPack.PackColors.Values)
+                        {
+                            if (aColor.ColorCodeRID > 0)
+                            {
+                                nodeRID = GetColorHierarchyNodeRID(styleRID: nodeRID, colorRID: aColor.ColorCodeRID);
+                                break;
+                            }
+                        }
                         _packStockEligibilityBitArray = HierarchySessionTransaction.GetExternalStoreStockEligibilityFlags(
                             requestingApplication,
                             aPack.HdrRID,
@@ -1485,6 +1494,15 @@ namespace MIDRetail.Business
                     _packSalesEligibilityBitArray = (System.Collections.BitArray)_salesEligibilityHashByYearWeek[yearWeek];
                     if (_packSalesEligibilityBitArray == null)
                     {
+                        // use style/color for eligibility if pack has colors
+                        foreach (PackColorSize aColor in aPack.PackColors.Values)
+                        {
+                            if (aColor.ColorCodeRID > 0)
+                            {
+                                nodeRID = GetColorHierarchyNodeRID(styleRID: nodeRID, colorRID: aColor.ColorCodeRID);
+                                break;
+                            }
+                        }
                         _packSalesEligibilityBitArray = HierarchySessionTransaction.GetExternalStoreSalesEligibilityFlags(
                             requestingApplication,
                             aPack.HdrRID,
@@ -1510,6 +1528,28 @@ namespace MIDRetail.Business
                 string message = err.ToString();
                 throw;
             }
+        }
+
+        private int GetColorHierarchyNodeRID(int styleRID, int colorRID)
+        {
+            int colorHnRID = Include.NoRID;
+            try
+            {
+
+                ColorCodeProfile ccp = SAB.HierarchyServerSession.GetColorCodeProfile(colorRID);
+                HierarchyNodeProfile hnp_style = SAB.HierarchyServerSession.GetNodeData(styleRID);
+                if (!SAB.HierarchyServerSession.ColorExistsForStyle(hnp_style.HomeHierarchyRID, hnp_style.Key, ccp.ColorCodeID, ref colorHnRID))
+                { 
+                    // if color node does not exist, use the style
+                    colorHnRID = styleRID;
+                }                             
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return colorHnRID;
         }
 
     }
