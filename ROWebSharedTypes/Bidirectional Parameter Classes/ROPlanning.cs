@@ -1599,6 +1599,8 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         private int _iterationsCount;
         [DataMember(IsRequired = true)]
+        private List<int> _iterations;
+        [DataMember(IsRequired = true)]
         private eBalanceMode _balanceMode;
         [DataMember(IsRequired = true)]
         private string _computationMode;
@@ -1709,6 +1711,11 @@ namespace Logility.ROWebSharedTypes
             set { _iterationsCount = value; }
         }
 
+        public List<int> Iterations
+        {
+            get { return _iterations; }
+        }
+
         public eBalanceMode BalanceMode
         {
             get { return _balanceMode; }
@@ -1804,6 +1811,7 @@ namespace Logility.ROWebSharedTypes
             _lowLevels = new List<KeyValuePair<int, string>>();
             _variables = new List<KeyValuePair<int, string>>();
             _basisVersions = new List<KeyValuePair<int, string>>();
+            _iterations = new List<int>();
         }
     }
 

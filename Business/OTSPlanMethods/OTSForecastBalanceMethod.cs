@@ -1486,6 +1486,8 @@ namespace MIDRetail.Business
 
             BuildVariablesList(method: method);
 
+            BuildIterationsList(method: method);
+
             return method;
         }
 
@@ -1573,6 +1575,14 @@ namespace MIDRetail.Business
                 {
                     method.Variables.Add(new KeyValuePair<int, string>(variableProfile.Key, variableProfile.VariableName));
                 }
+            }
+        }
+
+        private void BuildIterationsList(ROMethodMatrixBalanceProperties method)
+        {
+            for (int i = 1; i < 10; i++)
+            {
+                method.Iterations.Add(i);
             }
         }
 
