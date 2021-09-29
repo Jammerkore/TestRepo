@@ -810,7 +810,18 @@ namespace MIDRetail.Business.Allocation
 									//return this.SAB.HierarchyServerSession.GetAncestorDataByLevel(this.Transaction.Velocity.OTSPlanPHRID, ap.StyleHnRID, this.Transaction.Velocity.OTSPlanPHLSeq).Key; // MID Change j.ellis Performance
                                     // begin TT#1154 - MD- Jellis -  Group Allocation Infinite  Loop When Going to SIze Analysis
                                     //return this.Transaction.GetAncestorDataByLevel(this.Transaction.Velocity.OTSPlanPHRID, ap.StyleHnRID, this.Transaction.Velocity.OTSPlanPHLSeq).Key;                  // MID Change j.ellis Performance
-                                    return this.Transaction.GetAncestorDataByLevel(this.Transaction.Velocity.OTSPlanPHRID, styleHnRID, this.Transaction.Velocity.OTSPlanPHLSeq).Key;                  // MID Change j.ellis Performance
+                                    if (this.Transaction.GlobalOptions.UseExternalEligibilityAllocation)
+                                    {
+                                        if (ap == null)
+                                        {
+                                            ap = (AllocationProfile)this.SubtotalMembers.ArrayList[0];
+                                        }
+                                        return ap.GetEligibilityNodeForExternalEligibility();
+                                    }
+                                    else
+                                    {
+                                        return this.Transaction.GetAncestorDataByLevel(this.Transaction.Velocity.OTSPlanPHRID, styleHnRID, this.Transaction.Velocity.OTSPlanPHLSeq).Key;                  // MID Change j.ellis Performance
+                                    }
                                     // end TT#1154 - MD- JEllis-  Group Allocation Infinite  Loop When Going to SIze Analysis
                                 }
 							}
