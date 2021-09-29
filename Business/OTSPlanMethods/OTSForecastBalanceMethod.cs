@@ -1475,11 +1475,105 @@ namespace MIDRetail.Business
                 method.MatrixBasis.Add(options);
             }
 
-            //for (int k = 0; k < _dsRollup.Tables[0].Rows.Count; k++)
-            //{
-            //}
+            BuildFilterList(method: method);
 
-                return method;
+            BuildVersionLists(method: method);
+
+            if (_hnRID > 0)
+            {
+                BuildLowLevelLists(method: method);
+            }
+
+            BuildVariablesList(method: method);
+
+            return method;
+        }
+
+        private void BuildFilterList(ROMethodMatrixBalanceProperties method)
+        {
+            FilterData storeFilterDataLayer = new FilterData();
+            FunctionSecurityProfile filterUserSecurity = SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.ToolsFiltersStoreUser);
+            FunctionSecurityProfile filterGlobalSecurity = SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.ToolsFiltersStoreGlobal);
+
+            ArrayList userRIDList = new ArrayList();
+
+            userRIDList.Add(-1);
+
+            if (filterUserSecurity.AllowUpdate || filterUserSecurity.AllowView)
+            {
+                userRIDList.Add(SAB.ClientServerSession.UserRID);
+            }
+
+            if (filterGlobalSecurity.AllowUpdate || filterGlobalSecurity.AllowView)
+            {
+                userRIDList.Add(Include.GlobalUserRID);
+            }
+
+            DataTable dtFilter = storeFilterDataLayer.FilterRead(filterTypes.StoreFilter, eProfileType.FilterStore, userRIDList);
+
+            foreach (DataRow row in dtFilter.Rows)
+            {
+                int filterKey = Convert.ToInt32(row["FILTER_RID"], CultureInfo.CurrentUICulture);
+                string filterName = Convert.ToString(row["FILTER_NAME"], CultureInfo.CurrentUICulture);
+                method.Filters.Add(new KeyValuePair<int, string>(filterKey, filterName));
+            }
+        }
+
+        private void BuildVersionLists(ROMethodMatrixBalanceProperties method)
+        {
+            ProfileList versionList;
+            versionList = GetForecastVersionList(eSecuritySelectType.View | eSecuritySelectType.Update, eSecurityTypes.Store, false, _highLevelVersionRID, true);
+
+            foreach (VersionProfile versionProfile in versionList)
+            {
+                method.HighLevelVersions.Add(new KeyValuePair<int, string>(versionProfile.Key, versionProfile.Description));
+            }
+
+            versionList = GetForecastVersionList(eSecuritySelectType.Update, eSecurityTypes.Store, false, _lowLevelVersionRID, true);
+
+            foreach (VersionProfile versionProfile in versionList)
+            {
+                method.BasisVersions.Add(new KeyValuePair<int, string>(versionProfile.Key, versionProfile.Description));
+            }
+        }
+
+        private void BuildLowLevelLists(ROMethodMatrixBalanceProperties method)
+        {
+            eMerchandiseType merchandiseType;
+            int homeHierarchyKey;
+            List<HierarchyLevelComboObject> levelList = HierarchyTools.GetLevelsList(
+                sessionAddressBlock: SAB,
+                nodeKey: _hnRID,
+                includeHomeLevel: false,
+                includeLowestLevel: true,
+                includeOrganizationLevelsForAlternate: false,
+                merchandiseType: out merchandiseType,
+                homeHierarchyKey: out homeHierarchyKey
+                );
+
+            method.LowLevelsType = merchandiseType;
+            foreach (HierarchyLevelComboObject level in levelList)
+            {
+                if (merchandiseType == eMerchandiseType.LevelOffset)
+                {
+                    method.LowLevels.Add(new KeyValuePair<int, string>(level.Level, level.ToString()));
+                }
+                else
+                {
+                    method.LowLevels.Add(new KeyValuePair<int, string>(level.Level, level.LevelName));
+                }
+            }
+        }
+
+        private void BuildVariablesList(ROMethodMatrixBalanceProperties method)
+        {
+            foreach (VariableProfile variableProfile in SAB.ApplicationServerSession.DefaultPlanComputations.PlanVariables.VariableProfileList)
+            {
+                if (variableProfile.AllowForecastBalance)
+                {
+                    method.Variables.Add(new KeyValuePair<int, string>(variableProfile.Key, variableProfile.VariableName));
+                }
+            }
         }
 
         override public bool MethodSetData(ROMethodProperties methodProperties, ref string message, bool processingApply)

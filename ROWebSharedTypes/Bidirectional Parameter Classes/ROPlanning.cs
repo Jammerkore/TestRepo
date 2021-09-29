@@ -1567,21 +1567,33 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         private KeyValuePair<int, string> _filter;
         [DataMember(IsRequired = true)]
+        private List<KeyValuePair<int, string>> _filters;
+        [DataMember(IsRequired = true)]
         private KeyValuePair<int, string> _highLevelMerchandise;
         [DataMember(IsRequired = true)]
         private KeyValuePair<int, string> _highLevelVersion;
+        [DataMember(IsRequired = true)]
+        private List<KeyValuePair<int, string>> _highLevelVersions;
         [DataMember(IsRequired = true)]
         private KeyValuePair<int, string> _dateRange;
         [DataMember(IsRequired = true)]
         private KeyValuePair<int, string> _lowLevelVersion;
         [DataMember(IsRequired = true)]
+        private List<KeyValuePair<int, string>> _lowLevelVersions;
+        [DataMember(IsRequired = true)]
         private ROLevelInformation _lowLevel;
+        [DataMember(IsRequired = true)]
+        private eMerchandiseType _lowLevelsType;
+        [DataMember(IsRequired = true)]
+        private List<KeyValuePair<int, string>> _lowLevels;
         [DataMember(IsRequired = true)]
         private bool _ineligibleStores;
         [DataMember(IsRequired = true)]
         private bool _similarStores;
         [DataMember(IsRequired = true)]
         private KeyValuePair<int, string> _variable;
+        [DataMember(IsRequired = true)]
+        private List<KeyValuePair<int, string>> _variables;
         [DataMember(IsRequired = true)]
         private eIterationType _iterationType;
         [DataMember(IsRequired = true)]
@@ -1598,11 +1610,18 @@ namespace Logility.ROWebSharedTypes
         private KeyValuePair<int, string> _model;
         [DataMember(IsRequired = true)]
         private List<ROBasisDetailProfile> _matrixBasis;
+        [DataMember(IsRequired = true)]
+        private List<KeyValuePair<int, string>> _basisVersions;
 
         public KeyValuePair<int, string> Filter
         {
             get { return _filter; }
             set { _filter = value; }
+        }
+
+        public List<KeyValuePair<int, string>> Filters
+        {
+            get { return _filters; }
         }
 
         public KeyValuePair<int, string> HighLevelMerchandise
@@ -1617,6 +1636,11 @@ namespace Logility.ROWebSharedTypes
             set { _highLevelVersion = value; }
         }
 
+        public List<KeyValuePair<int, string>> HighLevelVersions
+        {
+            get { return _highLevelVersions; }
+        }
+
         public KeyValuePair<int, string> DateRange
         {
             get { return _dateRange; }
@@ -1629,10 +1653,26 @@ namespace Logility.ROWebSharedTypes
             set { _lowLevelVersion = value; }
         }
 
+        public List<KeyValuePair<int, string>> LowLevelVersions
+        {
+            get { return _lowLevelVersions; }
+        }
+
         public ROLevelInformation LowLevel
         {
             get { return _lowLevel; }
             set { _lowLevel = value; }
+        }
+
+        public eMerchandiseType LowLevelsType
+        {
+            get { return _lowLevelsType; }
+            set { _lowLevelsType = value; }
+        }
+
+        public List<KeyValuePair<int, string>> LowLevels
+        {
+            get { return _lowLevels; }
         }
 
         public bool IneligibleStores
@@ -1653,6 +1693,10 @@ namespace Logility.ROWebSharedTypes
             set { _variable = value; }
         }
 
+        public List<KeyValuePair<int, string>> Variables
+        {
+            get { return _variables; }
+        }
         public eIterationType IterationType
         {
             get { return _iterationType; }
@@ -1699,6 +1743,11 @@ namespace Logility.ROWebSharedTypes
         {
             get { return _matrixBasis; }
             set { _matrixBasis = value; }
+        }
+
+        public List<KeyValuePair<int, string>> BasisVersions
+        {
+            get { return _basisVersions; }
         }
 
         public ROMethodMatrixBalanceProperties(
@@ -1749,8 +1798,15 @@ namespace Logility.ROWebSharedTypes
             _matrixType = matrixType;
             _model = model;
             _matrixBasis = matrixBasis;
+            _filters = new List<KeyValuePair<int, string>>();
+            _highLevelVersions = new List<KeyValuePair<int, string>>();
+            _lowLevelVersions = new List<KeyValuePair<int, string>>();
+            _lowLevels = new List<KeyValuePair<int, string>>();
+            _variables = new List<KeyValuePair<int, string>>();
+            _basisVersions = new List<KeyValuePair<int, string>>();
         }
     }
+
     #region "Data transport for Forecast Spread Method #RO-742"
     [DataContract(Name = "ROMethodForecastSpreadProperties", Namespace = "http://Logility.ROWeb/")]
     public class ROMethodForecastSpreadProperties : ROMethodProperties
