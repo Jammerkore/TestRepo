@@ -142,7 +142,7 @@ namespace Logility.ROWeb
             }
         }
 
-        
+
 
         /// <summary>
         /// Gets or sets the function security profile
@@ -196,9 +196,9 @@ namespace Logility.ROWeb
         /// <param name="ROInstanceID">The instance ID of the session</param>
         /// <param name="applicationSessionTransaction">The transaction to use for processing</param>
         public ROTaskListManager(
-            SessionAddressBlock sessionAddressBlock, 
-            ROWebTools ROWebTools, 
-            long ROInstanceID, 
+            SessionAddressBlock sessionAddressBlock,
+            ROWebTools ROWebTools,
+            long ROInstanceID,
             ApplicationSessionTransaction applicationSessionTransaction = null
             )
         {
@@ -279,9 +279,9 @@ namespace Logility.ROWeb
             List<KeyValuePair<int, string>> taskList = new List<KeyValuePair<int, string>>();
 
             ArrayList tasks = Include.GetAvailableTasks(
-               aUserSecurity: _userSecLvl, 
-                aGlobalSecurity: _globalSecLvl, 
-                aSystemSecurity: _systemSecLvl, 
+               aUserSecurity: _userSecLvl,
+                aGlobalSecurity: _globalSecLvl,
+                aSystemSecurity: _systemSecLvl,
                 aIsSizeInstalled: _sessionAddressBlock.ClientServerSession.GlobalOptions.AppConfig.SizeInstalled
                 );
 
@@ -311,7 +311,7 @@ namespace Logility.ROWeb
         /// <param name="processingApply">A flag identifyinig if an apply is being processed</param>
         /// <returns></returns>
         public ROOut GetTaskList(
-            ROProfileKeyParms taskListParameters, 
+            ROProfileKeyParms taskListParameters,
             bool processingApply = false
             )
         {
@@ -406,7 +406,7 @@ namespace Logility.ROWeb
         /// <returns></returns>
         private ROTaskListProperties BuildTaskListProperties(ROProfileKeyParms taskListParameters)
         {
-            
+
             ROTaskProperties taskProperties;
             eTaskType taskType = eTaskType.None;
             string name, messageLevel;
@@ -468,7 +468,7 @@ namespace Logility.ROWeb
                 {
                     emailSuccessFrom = Convert.ToString(dataRow["EMAIL_SUCCESS_FROM"]);
                 }
-	            if (dataRow["EMAIL_SUCCESS_TO"] != DBNull.Value)
+                if (dataRow["EMAIL_SUCCESS_TO"] != DBNull.Value)
                 {
                     emailSuccessTo = Convert.ToString(dataRow["EMAIL_SUCCESS_TO"]);
                 }
@@ -490,7 +490,7 @@ namespace Logility.ROWeb
                 }
                 if (dataRow["EMAIL_FAILURE_FROM"] != DBNull.Value)
                 {
-                    emailFailureFrom = Convert.ToString(dataRow["EMAIL_FAILURE_FROM"]); 
+                    emailFailureFrom = Convert.ToString(dataRow["EMAIL_FAILURE_FROM"]);
                 }
                 if (dataRow["EMAIL_FAILURE_TO"] != DBNull.Value)
                 {
@@ -552,7 +552,7 @@ namespace Logility.ROWeb
         {
             string message = null;
             int sequence = 0;
-            eTaskType taskType;            
+            eTaskType taskType;
             bool cloneDates = performingSaveAs;
 
             // creating new task list 
@@ -574,7 +574,7 @@ namespace Logility.ROWeb
                 return new ROIListOut(eROReturnCode.Failure, message, ROInstanceID, null);
             }
             // unlock prior task list if saving as new task list
-            else if(_taskListProfile != null
+            else if (_taskListProfile != null
                 && taskListParameters.ROTaskListProperties.TaskList.Key == Include.NoRID
                 && _taskListProfile.LockStatus == eLockStatus.Locked)
             {
@@ -605,7 +605,7 @@ namespace Logility.ROWeb
                         taskListProperties: _taskListProperties,
                         getNewClass: true
                         );
-                    
+
                     _task.TaskGetValues();
                     _taskListTasks[_task.TaskType] = _task;
                 }
@@ -715,7 +715,7 @@ namespace Logility.ROWeb
 
             // build a new task list node to update the task list explorer 
             List<ROTreeNodeOut> taskListNode = TaskListUtilities.BuildTaskListNode(
-                profileType: eProfileType.TaskList, 
+                profileType: eProfileType.TaskList,
                 taskListProfile: _taskListProfile
                 );
 
@@ -837,8 +837,8 @@ namespace Logility.ROWeb
             ScheduleDataLayer.TaskSizeDayToWeekSummary_Delete(_taskListProfile.Key);
             ScheduleDataLayer.TaskPosting_Delete(_taskListProfile.Key);
             ScheduleDataLayer.TaskProgram_Delete(_taskListProfile.Key);
-            ScheduleDataLayer.TaskBatchComp_Delete(_taskListProfile.Key);  
-            ScheduleDataLayer.TaskHeaderReconcile_Delete(_taskListProfile.Key);    
+            ScheduleDataLayer.TaskBatchComp_Delete(_taskListProfile.Key);
+            ScheduleDataLayer.TaskHeaderReconcile_Delete(_taskListProfile.Key);
             ScheduleDataLayer.Task_Delete(_taskListProfile.Key);
         }
 
@@ -867,13 +867,13 @@ namespace Logility.ROWeb
 
             // Build new object with updated values
             ROProfileKeyParms taskListGetParameters = new ROProfileKeyParms(
-                sROUserID: taskListParameters.ROUserID, 
-                sROSessionID: taskListParameters.ROSessionID, 
+                sROUserID: taskListParameters.ROUserID,
+                sROSessionID: taskListParameters.ROSessionID,
                 ROClass: taskListParameters.ROClass,
-                RORequest: eRORequest.GetTaskList, 
-                ROInstanceID: taskListParameters.ROInstanceID, 
+                RORequest: eRORequest.GetTaskList,
+                ROInstanceID: taskListParameters.ROInstanceID,
                 profileType: eProfileType.TaskList,
-                key: taskListParameters.ROTaskListProperties.TaskList.Key, 
+                key: taskListParameters.ROTaskListProperties.TaskList.Key,
                 readOnly: false
                 );
             return GetTaskList(taskListParameters: taskListGetParameters, processingApply: true);
@@ -997,7 +997,7 @@ namespace Logility.ROWeb
         }
 
         private bool TaskListDeleted(
-            ROProfileKeyParms taskListParameters, 
+            ROProfileKeyParms taskListParameters,
             ref string message
             )
         {
@@ -1039,8 +1039,8 @@ namespace Logility.ROWeb
             if (!FunctionSecurity.AllowDelete
                 || _taskListProfile.LockStatus == eLockStatus.ReadOnly
                 || !ApplicationUtilities.AllowDeleteFromInUse(
-                    key: _taskListProfile.Key, 
-                    profileType: _taskListProfile.ProfileType, 
+                    key: _taskListProfile.Key,
+                    profileType: _taskListProfile.ProfileType,
                     SAB: SessionAddressBlock)
                     )
             {
@@ -1108,9 +1108,9 @@ namespace Logility.ROWeb
                     }
                     else
                     {
-                        string selectStatement = "EXECUTION_STATUS = " 
-                            + (int)eProcessExecutionStatus.Running 
-                            + " OR EXECUTION_STATUS = " 
+                        string selectStatement = "EXECUTION_STATUS = "
+                            + (int)eProcessExecutionStatus.Running
+                            + " OR EXECUTION_STATUS = "
                             + (int)eProcessExecutionStatus.Queued;
                         runningJobs = scheduledJobsDataTable.Select(selectStatement);
 
@@ -1121,11 +1121,11 @@ namespace Logility.ROWeb
                         }
 
                         runningJobs = scheduledJobsDataTable.Select(
-                            "EXECUTION_STATUS = " 
-                            + (int)eProcessExecutionStatus.Executed 
-                            + " OR EXECUTION_STATUS = " 
-                            + (int)eProcessExecutionStatus.OnHold 
-                            + " OR EXECUTION_STATUS = " 
+                            "EXECUTION_STATUS = "
+                            + (int)eProcessExecutionStatus.Executed
+                            + " OR EXECUTION_STATUS = "
+                            + (int)eProcessExecutionStatus.OnHold
+                            + " OR EXECUTION_STATUS = "
                             + (int)eProcessExecutionStatus.Waiting);
 
                         if (runningJobs.Length > 0)
@@ -1265,7 +1265,7 @@ namespace Logility.ROWeb
             )
         {
             bool duplicateFound = false;
-            
+
             return duplicateFound;
         }
 
@@ -1279,7 +1279,7 @@ namespace Logility.ROWeb
         /// <param name="processingApply">A flag identifying if an apply is being processed</param>
         /// <returns></returns>
         public ROOut GetTask(
-            ROTaskParms taskParameters, 
+            ROTaskParms taskParameters,
             bool processingApply = false
             )
         {
@@ -1297,8 +1297,8 @@ namespace Logility.ROWeb
                     if (!_taskListTasks.TryGetValue(taskParameters.TaskType, out _task))
                     {
                         _task = GetTaskClass(
-                            taskType: taskParameters.TaskType, 
-                            taskListProperties: _taskListProperties, 
+                            taskType: taskParameters.TaskType,
+                            taskListProperties: _taskListProperties,
                             getNewClass: getNewClass
                             );
                         _taskListTasks[_task.TaskType] = _task;
@@ -1307,8 +1307,8 @@ namespace Logility.ROWeb
             }
 
             ROTaskProperties taskProperties = _task.TaskGetData(
-                parms: taskParameters, 
-                message: ref message, 
+                parms: taskParameters,
+                message: ref message,
                 applyOnly: processingApply
                 );
 
@@ -1342,6 +1342,16 @@ namespace Logility.ROWeb
             bool successful;
             bool getNewClass = true;
 
+            //Remove previous Task Data which save in the memory 
+            if (_task != null)
+            {
+                var task = taskParameters.ROTaskProperties;
+                if (task.Task.Key == _task.Sequence)
+                {
+                    DeleteTaskRows(task.Task.Key);
+                }
+            }
+
             if (_task == null
                 || _task.TaskType != taskParameters.ROTaskProperties.TaskType
                 )
@@ -1356,7 +1366,9 @@ namespace Logility.ROWeb
                         );
                     _taskListTasks[_task.TaskType] = _task;
                 }
+
             }
+
 
             // add or update task in main tasks data table
             TaskUpdateData(
@@ -1383,7 +1395,7 @@ namespace Logility.ROWeb
                 ROInstanceID: taskParameters.ROInstanceID,
                 RORequest: eRORequest.GetTask,
                 taskType: taskParameters.ROTaskProperties.TaskType,
-                sequence: taskParameters.ROTaskProperties.Task.Key                
+                sequence: taskParameters.ROTaskProperties.Task.Key
                 );
 
             return GetTask(
@@ -1398,15 +1410,31 @@ namespace Logility.ROWeb
             //    ROTaskProperties: taskProperties);
         }
 
+        private void DeleteTaskRows(int sequence)
+        {
+            string selectString = "TASK_SEQUENCE=" + sequence;
+            if (_task.TaskData != null)
+            {
+                DataRow[] taskDataRows = _task.TaskData.Select(selectString);
+                foreach (var taskDataRow in taskDataRows)
+                {
+                    taskDataRow.Delete();
+                }
+                _task.TaskData.AcceptChanges();
+            }
+        }
+
         private void TaskUpdateData(
             ROTaskProperties task,
             ref string message)
         {
+
             // remove the old task entry if one exists
             DeleteTask(
                 sequence: task.Task.Key,
                 message: ref message
                 );
+
 
             // get now data row to add task to the data table
             DataRow taskDataRow = _tasksDataTable.NewRow();
@@ -1474,7 +1502,7 @@ namespace Logility.ROWeb
         }
 
         private void DeleteTask(
-            int sequence, 
+            int sequence,
             ref string message
             )
         {
@@ -1502,8 +1530,8 @@ namespace Logility.ROWeb
             {
                 case eTaskType.Allocate:
                     return new TaskAllocate(
-                        sessionAddressBlock: _sessionAddressBlock, 
-                        ROWebTools: _ROWebTools, 
+                        sessionAddressBlock: _sessionAddressBlock,
+                        ROWebTools: _ROWebTools,
                         taskListProperties: taskListProperties
                         );
 
@@ -1672,7 +1700,7 @@ namespace Logility.ROWeb
             else
             {
                 JobFunctionSecurity.SetReadOnly();
-            }            
+            }
 
             return new ROTaskJobOut(returnCode, message, ROInstanceID, new KeyValuePair<int, string>(_jobProfile.Key, _jobProfile.Name), GetTaskJobs(taskListParameters.Key));
         }
@@ -1714,7 +1742,7 @@ namespace Logility.ROWeb
                     ScheduleDataLayer.Job_Update(_jobProfile, SessionAddressBlock.ClientServerSession.UserRID);
                 }
 
-                if(rOTaskJobsParms.Key.Key < 0)
+                if (rOTaskJobsParms.Key.Key < 0)
                 {
                     _jobTaskDataTable = new DataTable();
                     _jobTaskDataTable.Columns.Add("JOB_RID", typeof(int));
@@ -1725,7 +1753,7 @@ namespace Logility.ROWeb
                 {
                     _jobTaskDataTable.Clear();
                 }
-                
+
                 for (int i = 0; i < rOTaskJobsParms.ROTaskJobs.Count; i++)
                 {
                     DataRow dataRow = _jobTaskDataTable.NewRow();
@@ -1752,7 +1780,7 @@ namespace Logility.ROWeb
                 ScheduleDataLayer.CloseUpdateConnection();
             }
 
-            return new ROTaskJobOut(eROReturnCode.Successful, null, ROInstanceID, new KeyValuePair<int, string>(_jobProfile.Key,_jobProfile.Name), GetTaskJobs(_jobProfile.Key));
+            return new ROTaskJobOut(eROReturnCode.Successful, null, ROInstanceID, new KeyValuePair<int, string>(_jobProfile.Key, _jobProfile.Name), GetTaskJobs(_jobProfile.Key));
         }
 
         public RODataExplorerFolderParms GetDeleteFolderParam(RODataExplorerFolderParms param)
