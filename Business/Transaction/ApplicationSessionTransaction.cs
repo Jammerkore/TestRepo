@@ -205,8 +205,10 @@ namespace MIDRetail.Business
 		private System.Collections.BitArray _stockEligibilityBitArray;
 		private System.Collections.BitArray _priorityShippingBitArray;
 		private int _currentSalesEligibilityNodeRID = -1;
+        private eRequestingApplication _currentSalesEligibilityRequestingAppplication = (eRequestingApplication)(-1);
 		private int _currentSalesEligibilityYearWeek = -1;
 		private int _currentStockEligibilityNodeRID = -1;
+        private eRequestingApplication _currentStockEligibilityRequestingAppplication = (eRequestingApplication)(-1);
 		private int _currentStockEligibilityYearWeek = -1;
 		private int _currentPriorityShippingNodeRID = -1;
 		private int _currentPriorityShippingYearWeek = -1;
@@ -9053,7 +9055,8 @@ namespace MIDRetail.Business
                     }
                 }
 
-				if (nodeRID != _currentSalesEligibilityNodeRID) // if not same node, get year/week Hashtable		
+				if (nodeRID != _currentSalesEligibilityNodeRID
+                    || requestingApplication != _currentSalesEligibilityRequestingAppplication) // if not same node, get year/week Hashtable		
 				{
 					_salesEligibilityHashByYearWeek = (System.Collections.Hashtable)salesEligibilityHashByNodeRID[nodeRID];
 					if (_salesEligibilityHashByYearWeek == null)
@@ -9062,6 +9065,7 @@ namespace MIDRetail.Business
                         salesEligibilityHashByNodeRID.Add(nodeRID, _salesEligibilityHashByYearWeek);
 					}
 					_currentSalesEligibilityNodeRID = nodeRID;
+                    _currentSalesEligibilityRequestingAppplication = requestingApplication;
 					_currentSalesEligibilityYearWeek = -1;	// reset current yearWeek since new node
 				}
 	
@@ -9451,7 +9455,8 @@ namespace MIDRetail.Business
                     }
                 }
 
-				if (nodeRID != _currentStockEligibilityNodeRID)	// if not same node, get year/week Hashtable		
+				if (nodeRID != _currentStockEligibilityNodeRID
+                    || requestingApplication != _currentStockEligibilityRequestingAppplication)	// if not same node, get year/week Hashtable		
 				{
 					_stockEligibilityHashByYearWeek = (System.Collections.Hashtable)stockEligibilityHashByNodeRID[nodeRID];
 					if (_stockEligibilityHashByYearWeek == null)
@@ -9460,6 +9465,7 @@ namespace MIDRetail.Business
                         stockEligibilityHashByNodeRID.Add(nodeRID, _stockEligibilityHashByYearWeek);
 					}
 					_currentStockEligibilityNodeRID = nodeRID;
+                    _currentStockEligibilityRequestingAppplication = requestingApplication;
 					_currentStockEligibilityYearWeek = -1;	// reset current yearWeek since new node
 				}
 	
