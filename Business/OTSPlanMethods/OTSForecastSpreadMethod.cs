@@ -1479,6 +1479,11 @@ namespace MIDRetail.Business
                SAB: SAB
                );
 
+            if (_dsForecastSpread == null)
+            {
+                CreateDataset();
+            }
+
             ROMethodForecastSpreadProperties method = new ROMethodForecastSpreadProperties(
                     method: GetName.GetMethod(method: this),
                     description: Method_Description,
