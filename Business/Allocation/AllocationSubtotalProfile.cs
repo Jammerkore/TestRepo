@@ -101,6 +101,7 @@ namespace MIDRetail.Business.Allocation
 		private DateTime _beginCDR_FirstDate; // MID Change j.ellis For Performance
 		private DateTime _endCDR_Date; // MID Change j.ellis For Performance
 		private int _planHnRID;
+        private int _eligibilityHnRID;
 		private int _onHandHnRID;
 		private double _planPercentFactor;
 		private bool[] _storeIsEligible;
@@ -200,6 +201,7 @@ namespace MIDRetail.Business.Allocation
 			_beginDay = Include.UndefinedDate;
 			_endDay = Include.UndefinedDate;
 			_planHnRID = Include.NoRID;
+            _eligibilityHnRID = Include.NoRID;
 			_onHandHnRID = Include.NoRID;
 			_capacityNodes = null;
 			_buildMinMax = true; // MID Change j.ellis Delay Grades till needed
@@ -744,6 +746,31 @@ namespace MIDRetail.Business.Allocation
 			}
 		}
 
+        /// <summary>
+		/// Gets the merchandise key to use for eligibility
+		/// </summary>
+        private int EligibilityHnRID
+        {
+            get
+            {
+                if (_eligibilityHnRID == Include.NoRID)
+                {
+                    // use the plan level if not external eligibility
+                    _eligibilityHnRID = PlanHnRID;
+                    if (this.Transaction.GlobalOptions.UseExternalEligibilityAllocation)
+                    {
+                        // use the first header to determine the merchandise key
+                        if (this.SubtotalMembers.Count > 0)
+                        {
+                            AllocationProfile ap = (AllocationProfile)this.SubtotalMembers.ArrayList[0];
+                            _eligibilityHnRID = ap.GetEligibilityNodeForExternalEligibility();
+                        }
+                    }
+                }
+                return _eligibilityHnRID;
+            }
+        }
+
 		/// <summary>
 		/// Gets or sets PlanHnRID
 		/// </summary>
@@ -810,18 +837,7 @@ namespace MIDRetail.Business.Allocation
 									//return this.SAB.HierarchyServerSession.GetAncestorDataByLevel(this.Transaction.Velocity.OTSPlanPHRID, ap.StyleHnRID, this.Transaction.Velocity.OTSPlanPHLSeq).Key; // MID Change j.ellis Performance
                                     // begin TT#1154 - MD- Jellis -  Group Allocation Infinite  Loop When Going to SIze Analysis
                                     //return this.Transaction.GetAncestorDataByLevel(this.Transaction.Velocity.OTSPlanPHRID, ap.StyleHnRID, this.Transaction.Velocity.OTSPlanPHLSeq).Key;                  // MID Change j.ellis Performance
-                                    if (this.Transaction.GlobalOptions.UseExternalEligibilityAllocation)
-                                    {
-                                        if (ap == null)
-                                        {
-                                            ap = (AllocationProfile)this.SubtotalMembers.ArrayList[0];
-                                        }
-                                        return ap.GetEligibilityNodeForExternalEligibility();
-                                    }
-                                    else
-                                    {
-                                        return this.Transaction.GetAncestorDataByLevel(this.Transaction.Velocity.OTSPlanPHRID, styleHnRID, this.Transaction.Velocity.OTSPlanPHLSeq).Key;                  // MID Change j.ellis Performance
-                                    }
+                                    return this.Transaction.GetAncestorDataByLevel(this.Transaction.Velocity.OTSPlanPHRID, styleHnRID, this.Transaction.Velocity.OTSPlanPHLSeq).Key;                  // MID Change j.ellis Performance
                                     // end TT#1154 - MD- JEllis-  Group Allocation Infinite  Loop When Going to SIze Analysis
                                 }
 							}
@@ -4711,7 +4727,7 @@ namespace MIDRetail.Business.Allocation
 				}
 				swel = ((ApplicationSessionTransaction)Transaction).GetStoreEligibilityForStock(
                     eRequestingApplication.Allocation, 
-                    this.PlanHnRID, 
+                    this.EligibilityHnRID, 
                     swel
                     );
 				foreach (StoreWeekEligibilityProfile sep in swel)
@@ -4750,7 +4766,7 @@ namespace MIDRetail.Business.Allocation
                             }
                             swel = ((ApplicationSessionTransaction)Transaction).GetStoreEligibilityForStock(
                                 eRequestingApplication.Allocation, 
-                                this.PlanHnRID, 
+                                this.EligibilityHnRID, 
                                 swel
                                 );
                             foreach (StoreWeekEligibilityProfile sep in swel)
@@ -4790,7 +4806,7 @@ namespace MIDRetail.Business.Allocation
 					}
 					swel = ((ApplicationSessionTransaction)Transaction).GetStoreEligibilityForStock(
                         eRequestingApplication.Allocation, 
-                        this.PlanHnRID, 
+                        this.EligibilityHnRID, 
                         swel
                         );
 					foreach (StoreWeekEligibilityProfile sep in swel)
@@ -5026,7 +5042,7 @@ namespace MIDRetail.Business.Allocation
 						this.Transaction.GetStoreEligibilityForSalesInWeekRange(
                             eRequestingApplication.Allocation, 
                             ir.RID, 
-                            PlanHnRID, 
+                            EligibilityHnRID, 
                             wp.YearWeek, 
                             endWeek.YearWeek
                             );
