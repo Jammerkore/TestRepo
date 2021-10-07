@@ -1449,12 +1449,12 @@ namespace MIDRetail.Business
             {
                 ROBasisDetailProfile options = new ROBasisDetailProfile(
                     iBasisId: basisProfile.Key,
-                    iMerchandiseId: -1,
-                    sMerchandise: null,
+                    iMerchandiseId: method.HighLevelMerchandise.Key,
+                    sMerchandise: method.HighLevelMerchandise.Value,
                     iVersionId: basisProfile.VersionProfile.Key,
-                    sVersion: null,
+                    sVersion: basisProfile.VersionProfile.Description,
                     iDaterangeId: basisProfile.DateRangeProfile.Key,
-                    sDateRange: null,
+                    sDateRange: basisProfile.DateRangeProfile.DisplayDate,
                     sPicture: null,
                     fWeight: basisProfile.Weight,
                     bIsIncluded: false,
