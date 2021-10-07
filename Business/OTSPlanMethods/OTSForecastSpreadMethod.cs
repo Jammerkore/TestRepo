@@ -1567,6 +1567,11 @@ namespace MIDRetail.Business
             int basisDtlCtr = 0;
             List<ROBasisDetailProfile> basisDetailProfiles = new List<ROBasisDetailProfile>();
 
+            KeyValuePair<int, string> merchandise = GetName.GetMerchandiseName(
+                nodeRID: _hierNodeRid,
+                SAB: SAB
+                );
+
             for (int basisDtlRowCtr = 0; basisDtlRowCtr < dtBasis.Rows.Count; basisDtlRowCtr++)
             {
 
@@ -1590,7 +1595,7 @@ namespace MIDRetail.Business
                 bool bIsIncluded = true;
 
                 string sIncludeButton = null;
-                ROBasisDetailProfile basisDetailProfile = new ROBasisDetailProfile(iBasisId, Include.Undefined, "", iVersionId, sVersion,
+                ROBasisDetailProfile basisDetailProfile = new ROBasisDetailProfile(iBasisId, merchandise.Key, merchandise.Value, iVersionId, sVersion,
                     iDateRangeID, sDateRange, sPicture, fWeight, bIsIncluded, sIncludeButton);
                 basisDetailProfiles.Add(basisDetailProfile);
             }
