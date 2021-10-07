@@ -1502,7 +1502,41 @@ namespace MIDRetail.Business
 
             if (_hierNodeRid > 0)
             {
-                BuildLowLevelLists(method: method);
+                eMerchandiseType fromMerchandiseType = method.FromLevelsType;
+                fromLevel = method.FromLevel;
+                eMerchandiseType toMerchandiseType = method.ToLevelsType;
+                toLevel = method.ToLevel;
+
+                // build the from and to low level lists based on the selected merchandise
+                BuildLowLevelLists(
+                    hierarchyNodeRID: _hierNodeRid,
+                    fromLevels: method.FromLevels,
+                    fromMerchandiseType: ref fromMerchandiseType,
+                    toLevels: method.ToLevels,
+                    toMerchandiseType: ref toMerchandiseType
+                    );
+
+                // adjust the from and to lists along with the to level based on the selected from level
+                AdjustLevelLists(
+                    fromLevel: ref fromLevel,
+                    fromLevels: method.FromLevels,
+                    fromMerchandiseType: ref fromMerchandiseType,
+                    toLevel: ref toLevel,
+                    toLevels: method.ToLevels,
+                    toMerchandiseType: ref toMerchandiseType
+                    );
+
+                method.FromLevelsType = fromMerchandiseType;
+                method.FromLevel = fromLevel;
+                FromLevelType = (eFromLevelsType)method.FromLevel.LevelType;
+                FromLevelOffset = method.FromLevel.LevelOffset;
+                FromLevelSequence = method.FromLevel.LevelSequence;
+
+                method.ToLevelsType = toMerchandiseType;
+                method.ToLevel = toLevel;
+                ToLevelType = (eToLevelsType)method.ToLevel.LevelType;
+                ToLevelOffset = method.ToLevel.LevelOffset;
+                ToLevelSequence = method.ToLevel.LevelSequence;
             }
 
             return method;
@@ -1523,57 +1557,6 @@ namespace MIDRetail.Business
             foreach (VersionProfile versionProfile in versionList)
             {
                 method.BasisVersions.Add(new KeyValuePair<int, string>(versionProfile.Key, versionProfile.Description));
-            }
-        }
-
-        private void BuildLowLevelLists(ROMethodForecastSpreadProperties method)
-        {
-            eMerchandiseType merchandiseType;
-            int homeHierarchyKey;
-            List<HierarchyLevelComboObject> levelList = HierarchyTools.GetLevelsList(
-                sessionAddressBlock: SAB,
-                nodeKey: _hierNodeRid,
-                includeHomeLevel: true,
-                includeLowestLevel: false,
-                includeOrganizationLevelsForAlternate: false,
-                merchandiseType: out merchandiseType,
-                homeHierarchyKey: out homeHierarchyKey
-                );
-
-            method.FromLevelsType = merchandiseType;
-            foreach (HierarchyLevelComboObject level in levelList)
-            {
-                if (merchandiseType == eMerchandiseType.LevelOffset)
-                {
-                    method.FromLevels.Add(new KeyValuePair<int, string>(level.Level, level.ToString()));
-                }
-                else
-                {
-                    method.FromLevels.Add(new KeyValuePair<int, string>(level.Level, level.LevelName));
-                }
-            }
-
-            levelList = HierarchyTools.GetLevelsList(
-                sessionAddressBlock: SAB,
-                nodeKey: _hierNodeRid,
-                includeHomeLevel: false,
-                includeLowestLevel: true,
-                includeOrganizationLevelsForAlternate: false,
-                merchandiseType: out merchandiseType,
-                homeHierarchyKey: out homeHierarchyKey
-                );
-
-            method.ToLevelsType = merchandiseType;
-            foreach (HierarchyLevelComboObject level in levelList)
-            {
-                if (merchandiseType == eMerchandiseType.LevelOffset)
-                {
-                    method.ToLevels.Add(new KeyValuePair<int, string>(level.Level, level.ToString()));
-                }
-                else
-                {
-                    method.ToLevels.Add(new KeyValuePair<int, string>(level.Level, level.LevelName));
-                }
             }
         }
 

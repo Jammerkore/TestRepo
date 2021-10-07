@@ -1915,180 +1915,46 @@ namespace MIDRetail.Business
 
             if (_hierNodeRid > 0)
             {
-                BuildLowLevelLists(method: method);
+                eMerchandiseType fromMerchandiseType = method.FromLevelsType;
+                fromLevel = method.FromLevel;
+                eMerchandiseType toMerchandiseType = method.ToLevelsType;
+                toLevel = method.ToLevel;
 
-                bool setFromToFirstEntry = false;
-                bool setToToFirstEntry = false;
-                int toOffset = -1;
-                if (method.FromLevel != null
-                    && method.FromLevel.LevelType != eROLevelsType.None)
-                {
-                    // if different hierarchy types, update from level to 1st from entry
-                    if (method.FromLevel != null
-                        && !LevelTypesSame(
-                            merchandiseType: method.FromLevelsType,
-                            ROLevelType: method.FromLevel.LevelType)
-                        )
-                    {
-                        setFromToFirstEntry = true;
-                    }
-                    else
-                    {
-                        // set from to first entry if no longer in the list
-                        // keep track of level offset so know how many to levels to remove
-                        setFromToFirstEntry = true;
-                        foreach (KeyValuePair<int, string> level in method.FromLevels)
-                        {
-                            ++toOffset;
-                            if (method.FromLevel.LevelType == eROLevelsType.HierarchyLevel)
-                            {
-                                if (method.FromLevel.LevelSequence == level.Key)
-                                {
-                                    setFromToFirstEntry = false;
-                                    break;
-                                }
-                            }
-                            else if (method.FromLevel.LevelType == eROLevelsType.LevelOffset)
-                            {
-                                if (method.FromLevel.LevelOffset == level.Key)
-                                {
-                                    setFromToFirstEntry = false;
-                                    break;
-                                }
-                            }
-                        }
-                    }
+                // build the from and to low level lists based on the selected merchandise
+                BuildLowLevelLists(
+                    hierarchyNodeRID: _hierNodeRid,
+                    fromLevels: method.FromLevels,
+                    fromMerchandiseType: ref fromMerchandiseType,
+                    toLevels: method.ToLevels,
+                    toMerchandiseType: ref toMerchandiseType
+                    );
 
-                    // if different hierarchy types, update from level to 1st from entry
-                    if (method.ToLevel != null
-                        && !LevelTypesSame(
-                            merchandiseType: method.ToLevelsType,
-                            ROLevelType: method.ToLevel.LevelType)
-                        )
-                    {
-                        setToToFirstEntry = true;
-                    }
-                    else
-                    {
-                        // remove entries in to level list that are before the selected from level
-                        if (!setFromToFirstEntry)
-                        {
-                            for (int i = 0; i < toOffset; i++)
-                            {
-                                method.ToLevels.RemoveAt(0);
-                            }
-                        }
+                // adjust the from and to lists along with the to level based on the selected from level
+                AdjustLevelLists(
+                    fromLevel: ref fromLevel,
+                    fromLevels: method.FromLevels,
+                    fromMerchandiseType: ref fromMerchandiseType,
+                    toLevel: ref toLevel,
+                    toLevels: method.ToLevels,
+                    toMerchandiseType: ref toMerchandiseType
+                    );
 
-                        // set To to first entry if no longer in the list
-                        setToToFirstEntry = true;
-                        foreach (KeyValuePair<int, string> level in method.ToLevels)
-                        {
-                            if (method.ToLevel.LevelType == eROLevelsType.HierarchyLevel)
-                            {
-                                if (method.ToLevel.LevelSequence == level.Key)
-                                {
-                                    setToToFirstEntry = false;
-                                    break;
-                                }
-                            }
-                            else if (method.ToLevel.LevelType == eROLevelsType.LevelOffset)
-                            {
-                                if (method.ToLevel.LevelOffset == level.Key)
-                                {
-                                    setToToFirstEntry = false;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    
-                    // set selected values to first entry if no longer in the list
-                    if (setFromToFirstEntry)
-                    {
-                        if (method.FromLevels.Count == 0)
-                        {
-                            FromLevelType = eFromLevelsType.None;
-                            FromLevelOffset = -1;
-                            FromLevelSequence = -1;
-                        }
-                        else if (method.FromLevelsType == eMerchandiseType.HierarchyLevel)
-                        {
-                            FromLevelType = eFromLevelsType.HierarchyLevel;
-                            FromLevelOffset = -1;
-                            FromLevelSequence = method.FromLevels[0].Key;
-                        }
-                        else
-                        {
-                            FromLevelType = eFromLevelsType.LevelOffset;
-                            FromLevelOffset = method.FromLevels[0].Key;
-                            FromLevelSequence = -1;
-                        }
-                        method.FromLevel = new ROLevelInformation();
-                        method.FromLevel.LevelType = (eROLevelsType)FromLevelType;
-                        method.FromLevel.LevelOffset = FromLevelOffset;
-                        method.FromLevel.LevelSequence = FromLevelSequence;
-                        method.FromLevel.LevelValue = GetName.GetLevelName(
-                            levelType: (eROLevelsType)FromLevelType,
-                            levelSequence: FromLevelSequence,
-                            levelOffset: FromLevelOffset,
-                            SAB: SAB
-                            );
-                    }
+                method.FromLevelsType = fromMerchandiseType;
+                method.FromLevel = fromLevel;
+                FromLevelType = (eFromLevelsType)method.FromLevel.LevelType;
+                FromLevelOffset = method.FromLevel.LevelOffset;
+                FromLevelSequence = method.FromLevel.LevelSequence;
 
-                    if (setToToFirstEntry)
-                    {
-                        if (method.ToLevels.Count == 0)
-                        {
-                            ToLevelType = eToLevelsType.None;
-                            ToLevelOffset = -1;
-                            ToLevelSequence = -1;
-                        }
-                        else if (method.ToLevelsType == eMerchandiseType.HierarchyLevel)
-                        {
-                            ToLevelType = eToLevelsType.HierarchyLevel;
-                            ToLevelOffset = -1;
-                            ToLevelSequence = method.ToLevels[0].Key;
-                        }
-                        else
-                        {
-                            ToLevelType = eToLevelsType.LevelOffset;
-                            ToLevelOffset = method.ToLevels[0].Key;
-                            ToLevelSequence = -1;
-                        }
-                        method.ToLevel = new ROLevelInformation();
-                        method.ToLevel.LevelType = (eROLevelsType)ToLevelType;
-                        method.ToLevel.LevelOffset = ToLevelOffset;
-                        method.ToLevel.LevelSequence = ToLevelSequence;
-                        method.ToLevel.LevelValue = GetName.GetLevelName(
-                           levelType: (eROLevelsType)ToLevelType,
-                           levelSequence: ToLevelSequence,
-                           levelOffset: ToLevelOffset,
-                           SAB: SAB
-                           );
-                    }
-                }
+                method.ToLevelsType = toMerchandiseType;
+                method.ToLevel = toLevel;
+                ToLevelType = (eToLevelsType)method.ToLevel.LevelType;
+                ToLevelOffset = method.ToLevel.LevelOffset;
+                ToLevelSequence = method.ToLevel.LevelSequence;
             }
 
             method.BasisRowsExist = _dsForecastCopy.Tables["Basis"].Rows.Count > 0;
 
             return method;
-        }
-
-        private bool LevelTypesSame(eMerchandiseType merchandiseType, eROLevelsType ROLevelType)
-        {
-            if (merchandiseType == eMerchandiseType.HierarchyLevel
-                && ROLevelType == eROLevelsType.HierarchyLevel)
-            {
-                return true;
-            }
-
-            if (merchandiseType == eMerchandiseType.LevelOffset
-                && ROLevelType == eROLevelsType.LevelOffset)
-            {
-                return true;
-            }
-
-            return false;
         }
 
         private void BuildVersionLists(ROMethodCopyForecastProperties method)
@@ -2120,57 +1986,6 @@ namespace MIDRetail.Business
             foreach (VersionProfile versionProfile in versionList)
             {
                 method.BasisVersions.Add(new KeyValuePair<int, string>(versionProfile.Key, versionProfile.Description));
-            }
-        }
-
-        private void BuildLowLevelLists(ROMethodCopyForecastProperties method)
-        {
-            eMerchandiseType merchandiseType;
-            int homeHierarchyKey;
-            List<HierarchyLevelComboObject> levelList = HierarchyTools.GetLevelsList(
-                sessionAddressBlock: SAB,
-                nodeKey: _hierNodeRid,
-                includeHomeLevel: true,
-                includeLowestLevel: false,
-                includeOrganizationLevelsForAlternate: false,
-                merchandiseType: out merchandiseType,
-                homeHierarchyKey: out homeHierarchyKey
-                );
-
-            method.FromLevelsType = merchandiseType;
-            foreach (HierarchyLevelComboObject level in levelList)
-            {
-                if (merchandiseType == eMerchandiseType.LevelOffset)
-                {
-                    method.FromLevels.Add(new KeyValuePair<int, string>(level.Level, level.ToString()));
-                }
-                else
-                {
-                    method.FromLevels.Add(new KeyValuePair<int, string>(level.Level, level.LevelName));
-                }
-            }
-
-            levelList = HierarchyTools.GetLevelsList(
-                sessionAddressBlock: SAB,
-                nodeKey: _hierNodeRid,
-                includeHomeLevel: false,
-                includeLowestLevel: true,
-                includeOrganizationLevelsForAlternate: false,
-                merchandiseType: out merchandiseType,
-                homeHierarchyKey: out homeHierarchyKey
-                );
-
-            method.ToLevelsType = merchandiseType;
-            foreach (HierarchyLevelComboObject level in levelList)
-            {
-                if (merchandiseType == eMerchandiseType.LevelOffset)
-                {
-                    method.ToLevels.Add(new KeyValuePair<int, string>(level.Level, level.ToString()));
-                }
-                else
-                {
-                    method.ToLevels.Add(new KeyValuePair<int, string>(level.Level, level.LevelName));
-                }
             }
         }
 
