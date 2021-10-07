@@ -1781,7 +1781,7 @@ namespace Logility.ROWebSharedTypes
             bool isTemplate = false
             ) 
             : base(
-                  eMethodType.Rollup, 
+                  eMethodType.ForecastBalance, 
                   method, 
                   description,
                   userKey,

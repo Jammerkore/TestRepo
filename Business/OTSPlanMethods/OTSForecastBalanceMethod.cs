@@ -1535,6 +1535,19 @@ namespace MIDRetail.Business
 
             foreach (VersionProfile versionProfile in versionList)
             {
+                method.LowLevelVersions.Add(new KeyValuePair<int, string>(versionProfile.Key, versionProfile.Description));
+            }
+
+            versionList = GetForecastVersionList(
+                eSecuritySelectType.View | eSecuritySelectType.Update, 
+                eSecurityTypes.Store | eSecurityTypes.Chain, 
+                false, 
+                _lowLevelVersionRID, 
+                true
+                );
+
+            foreach (VersionProfile versionProfile in versionList)
+            {
                 method.BasisVersions.Add(new KeyValuePair<int, string>(versionProfile.Key, versionProfile.Description));
             }
         }
