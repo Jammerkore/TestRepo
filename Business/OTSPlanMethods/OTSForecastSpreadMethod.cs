@@ -1579,6 +1579,7 @@ namespace MIDRetail.Business
 
             for (int basisDtlRowCtr = 0; basisDtlRowCtr < dtBasis.Rows.Count; basisDtlRowCtr++)
             {
+                basisDtlCtr = basisDtlRowCtr;
 
                 int iBasisId = Convert.ToInt32(dtBasis.Rows[basisDtlRowCtr]["DETAIL_SEQ"].ToString());
 
