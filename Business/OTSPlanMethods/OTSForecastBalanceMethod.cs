@@ -1481,7 +1481,29 @@ namespace MIDRetail.Business
 
             if (_hnRID > 0)
             {
-                BuildLowLevelLists(method: method);
+                //BuildLowLevelLists(method: method);
+                eMerchandiseType lowLevelMerchandiseType = method.LowLevelsType;
+                lowLevelInformation = method.LowLevel;
+
+                // build the low level list based on the selected merchandise
+                BuildLowLevelsList(
+                    hierarchyNodeRID: _hnRID,
+                    lowLevels: method.LowLevels,
+                    lowLevelMerchandiseType: ref lowLevelMerchandiseType
+                    );
+
+                // adjust the from and to lists along with the to level based on the selected from level
+                AdjustLevelList(
+                    lowLevel: ref lowLevelInformation,
+                    lowLevels: method.LowLevels,
+                    lowLevelMerchandiseType: ref lowLevelMerchandiseType
+                    );
+
+                method.LowLevelsType = lowLevelMerchandiseType;
+                method.LowLevel = lowLevelInformation;
+                LowLevelsType = (eLowLevelsType)method.LowLevel.LevelType;
+                LowLevelsOffset = method.LowLevel.LevelOffset;
+                LowLevelsSequence = method.LowLevel.LevelSequence;
             }
 
             BuildVariablesList(method: method);
@@ -1540,43 +1562,12 @@ namespace MIDRetail.Business
 
             versionList = GetForecastVersionList(
                 eSecuritySelectType.View | eSecuritySelectType.Update, 
-                eSecurityTypes.Store | eSecurityTypes.Chain, 
-                false, 
-                _lowLevelVersionRID, 
-                true
+                eSecurityTypes.Store | eSecurityTypes.Chain
                 );
 
             foreach (VersionProfile versionProfile in versionList)
             {
                 method.BasisVersions.Add(new KeyValuePair<int, string>(versionProfile.Key, versionProfile.Description));
-            }
-        }
-
-        private void BuildLowLevelLists(ROMethodMatrixBalanceProperties method)
-        {
-            eMerchandiseType merchandiseType;
-            int homeHierarchyKey;
-            List<HierarchyLevelComboObject> levelList = HierarchyTools.GetLevelsList(
-                sessionAddressBlock: SAB,
-                nodeKey: _hnRID,
-                includeHomeLevel: false,
-                includeLowestLevel: true,
-                includeOrganizationLevelsForAlternate: false,
-                merchandiseType: out merchandiseType,
-                homeHierarchyKey: out homeHierarchyKey
-                );
-
-            method.LowLevelsType = merchandiseType;
-            foreach (HierarchyLevelComboObject level in levelList)
-            {
-                if (merchandiseType == eMerchandiseType.LevelOffset)
-                {
-                    method.LowLevels.Add(new KeyValuePair<int, string>(level.Level, level.ToString()));
-                }
-                else
-                {
-                    method.LowLevels.Add(new KeyValuePair<int, string>(level.Level, level.LevelName));
-                }
             }
         }
 
