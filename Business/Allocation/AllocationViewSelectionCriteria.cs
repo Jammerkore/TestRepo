@@ -3859,7 +3859,7 @@ namespace MIDRetail.Business.Allocation
 			_sizeColVariableCoordList.Add(new AllocationWaferCoordinate(eAllocationWaferVariable.SizeInTransit));
             _sizeColVariableCoordList.Add(new AllocationWaferCoordinate(eAllocationWaferVariable.SizeVSWOnHand));   // TT#1401 - AGallagher - VSW
 			_sizeColVariableCoordList.Add(new AllocationWaferCoordinate(eAllocationWaferVariable.SizeOnHandPlusIT));
-			_sizeColGroup1 = new AllocationWaferCoordinateListGroup();
+            _sizeColGroup1 = new AllocationWaferCoordinateListGroup();
 			_sizeColGroup2 = new AllocationWaferCoordinateListGroup();
 
 			AllocationWaferCoordinateList col;
@@ -3877,7 +3877,7 @@ namespace MIDRetail.Business.Allocation
 			// begin MID Track 3880 Add Ship Day to Style and Size Review
 			col = new AllocationWaferCoordinateList(_trans);
 			col.Add(new AllocationWaferCoordinate(eAllocationCoordinateType.None,0,""));
-			col.Add(new AllocationWaferCoordinate(eAllocationCoordinateType.None,0,""));
+			col.Add(new AllocationWaferCoordinate(eAllocationCoordinateType.None,0, "Color"));
 			col.Add(new AllocationWaferCoordinate(eAllocationWaferVariable.ShipToDay));
 			_sizeColGroup2.Add(col);
 			// end MID Track 3880 Add Ship Day to Style and Size Review
@@ -3885,7 +3885,7 @@ namespace MIDRetail.Business.Allocation
             // begin MID Track 4291 Add Fill Variables to Size Review
 			col = new AllocationWaferCoordinateList(_trans);
 			col.Add(new AllocationWaferCoordinate(eAllocationCoordinateType.None,0,""));
-			col.Add(new AllocationWaferCoordinate(eAllocationCoordinateType.None,0,""));
+			col.Add(new AllocationWaferCoordinate(eAllocationCoordinateType.None,0, "Color"));
 			col.Add(new AllocationWaferCoordinate(eAllocationWaferVariable.NeedDay));
 			_sizeColGroup2.Add(col);
 			// end MID Track 4291 Add Fill Variables to Size Review
