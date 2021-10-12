@@ -734,7 +734,7 @@ namespace MIDRetail.Data
 
         // Allocation Gets
         // begin MID Track 3994 Performance
-        public StoreAllocationQuickRequest GetTotalAllocation(int aHeaderRID)
+        public StoreAllocationQuickRequest GetTotalAllocation(int aHeaderRID, ref bool rowsFound)
         {
 
             StoreAllocationQuickRequest saqr =
@@ -749,6 +749,7 @@ namespace MIDRetail.Data
                 }
                 dt = _dsHeaderAllocation.Tables["TotalAllocation"];
                 // End TT#739-MD -JSmith - Delete Stores
+                rowsFound = dt.Rows.Count > 0;
                 if (dt.Rows.Count > 0)
                 {
                     saqr.AllocationStructureStatus = new StoreAllocationStructureStatus(true);
