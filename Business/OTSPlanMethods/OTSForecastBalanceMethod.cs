@@ -1608,7 +1608,7 @@ namespace MIDRetail.Business
                 _ineligibleStoresInd = roMethodMatrixBalanceProperties.IneligibleStores;
                 _variableNumber = roMethodMatrixBalanceProperties.Variable.Key;
                 _iterationsCount = roMethodMatrixBalanceProperties.IterationsCount;
-                _iterationType = roMethodMatrixBalanceProperties.IterationType;
+                _iterationType = eIterationType.Custom;
                 _balanceMode = roMethodMatrixBalanceProperties.BalanceMode;
                 _computationMode = roMethodMatrixBalanceProperties.ComputationMode;
                 _matrixType = roMethodMatrixBalanceProperties.MatrixType;
