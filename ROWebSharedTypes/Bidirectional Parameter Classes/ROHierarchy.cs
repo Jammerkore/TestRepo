@@ -2384,6 +2384,9 @@ namespace Logility.ROWebSharedTypes
         KeyValuePair<int, string> _attributeSet;
 
         [DataMember(IsRequired = true)]
+        private KeyValuePair<int, string> _definedAttribute;
+
+        [DataMember(IsRequired = true)]
         private KeyValuePair<int, string> _minimumMaximumsInheritedFromNode;
 
         [DataMember(IsRequired = true)]
@@ -2417,12 +2420,29 @@ namespace Logility.ROWebSharedTypes
         }
 
         /// <summary>
-        /// Gets or sets the attribut for the criteria.
+        /// Gets or sets the attribute for the criteria.
         /// </summary>
         public KeyValuePair<int, string> AttributeSet
         {
             get { return _attributeSet; }
             set { _attributeSet = value; }
+        }
+
+        /// <summary>
+        /// Gets the flag identifying if the defined attribute has been set.
+        /// </summary>
+        public bool DefinedAttributeIsSet
+        {
+            get { return !DefinedAttribute.Equals(default(KeyValuePair<int, string>)); }
+        }
+
+        /// <summary>
+        /// Gets or sets the defined attribute for the criteria.
+        /// </summary>
+        public KeyValuePair<int, string> DefinedAttribute
+        {
+            get { return _definedAttribute; }
+            set { _definedAttribute = value; }
         }
 
         /// <summary>
@@ -2450,12 +2470,15 @@ namespace Logility.ROWebSharedTypes
         #endregion
         public RONodePropertiesStockMinMax(KeyValuePair<int, string> node,
             KeyValuePair<int, string> attribute = default(KeyValuePair<int, string>),
-            KeyValuePair<int, string> attributeSet = default(KeyValuePair<int, string>)) :
+            KeyValuePair<int, string> attributeSet = default(KeyValuePair<int, string>),
+            KeyValuePair<int, string> definedAttribute = default(KeyValuePair<int, string>)
+            ):
             base(eProfileType.StockMinMax, node)
 
         {
             _attribute = attribute;
             _attributeSet = attributeSet;
+            _definedAttribute = definedAttribute;
             _minimumMaximumsInheritedFromNode = default(KeyValuePair<int, string>);
         }
     }

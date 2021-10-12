@@ -69,7 +69,8 @@ namespace Logility.ROWeb
             KeyValuePair<int, string> node = new KeyValuePair<int, string>(key: _hierarchyNodeProfile.Key, value: _hierarchyNodeProfile.Text);
             RONodePropertiesStockMinMax nodeProperties = new RONodePropertiesStockMinMax(node: node,
                 attribute: GetName.GetAttributeName(key: attributeKey),
-                attributeSet: GetName.GetAttributeSetName(key: attributeSetKey)
+                attributeSet: GetName.GetAttributeSetName(key: attributeSetKey),
+                definedAttribute: GetName.GetAttributeName(key: _nodeStockMinMaxesProfile.NodeStockStoreGroupRID)
                 );
 
             // populate modelProperties using Windows\NodeProperties.cs as a reference
@@ -89,12 +90,14 @@ namespace Logility.ROWeb
             string inheritedFromText = MIDText.GetTextOnly(eMIDTextCode.lbl_Inherited_From);
 
             int attributeKey = nodeProperties.Attribute.Key;
-            if (!_stockMinMaxIsPopulated
-                && _nodeStockMinMaxesProfile.NodeStockMinMaxFound)
-            {
-                attributeKey = _nodeStockMinMaxesProfile.NodeStockStoreGroupRID;
-            }
-            else if (attributeKey != _nodeStockMinMaxesProfile.NodeStockStoreGroupRID)
+            //if (!_stockMinMaxIsPopulated
+            //    && _nodeStockMinMaxesProfile.NodeStockMinMaxFound)
+            //{
+            //    attributeKey = _nodeStockMinMaxesProfile.NodeStockStoreGroupRID;
+            //}
+            //else if (attributeKey != _nodeStockMinMaxesProfile.NodeStockStoreGroupRID)
+            if (_stockMinMaxIsPopulated
+                && attributeKey != _nodeStockMinMaxesProfile.NodeStockStoreGroupRID)
             {
                 _nodeStockMinMaxesProfile.NodeStockStoreGroupRID = attributeKey;
                 _nodeStockMinMaxesProfile.NodeSetList.Clear();
@@ -321,7 +324,7 @@ namespace Logility.ROWeb
                 _nodeStockMinMaxesProfile.NodeSetList.Clear();
                 _nodeStockMinMaxesProfile.NodeStockMinMaxChangeType = eChangeType.delete;
             }
-            else
+            //else
             {
                 _nodeStockMinMaxesProfile.NodeStockMinMaxChangeType = eChangeType.update;
                 RONodePropertiesStockMinMaxAttributeSet attributeSet = nodePropertiesStockMinMaxData.StockMinMaxAttributeSet;
