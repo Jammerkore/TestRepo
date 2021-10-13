@@ -4718,22 +4718,35 @@ namespace MIDRetail.Business.Allocation
 			
 			if (this.EndDay != Include.UndefinedDate)
 			{
-				WeekProfile wp = this.Transaction.SAB.ApplicationServerSession.Calendar.GetWeek(this.EndDay);
-				foreach (StoreProfile sp in allStoreList)
-				{
-					swep = new StoreWeekEligibilityProfile(sp.Key);
-					swep.YearWeek = wp.YearWeek;
-					swel.Add(swep);
-				}
-				swel = ((ApplicationSessionTransaction)Transaction).GetStoreEligibilityForStock(
-                    eRequestingApplication.Allocation, 
-                    this.EligibilityHnRID, 
-                    swel
-                    );
-				foreach (StoreWeekEligibilityProfile sep in swel)
-				{
-					this.SetStoreIsEligible(sep.Key, sep.StoreIsEligible);
-				}
+                // if using external eligibility, use the eligibility of the first header selected
+                if (this.Transaction.GlobalOptions.UseExternalEligibilityAllocation
+                    && this._allocationProfileList.ArrayList.Count > 0)
+                {
+                    AllocationProfile ap = (AllocationProfile)this._allocationProfileList.ArrayList[0];
+                    foreach (StoreProfile sp in (ProfileList)this.Transaction.GetMasterProfileList(eProfileType.Store))
+                    {
+                        this.SetStoreIsEligible(sp.Key, ap.GetStoreIsEligible(sp.Key));
+                    }
+                }
+                else
+                {
+                    WeekProfile wp = this.Transaction.SAB.ApplicationServerSession.Calendar.GetWeek(this.EndDay);
+                    foreach (StoreProfile sp in allStoreList)
+                    {
+                        swep = new StoreWeekEligibilityProfile(sp.Key);
+                        swep.YearWeek = wp.YearWeek;
+                        swel.Add(swep);
+                    }
+                    swel = ((ApplicationSessionTransaction)Transaction).GetStoreEligibilityForStock(
+                        eRequestingApplication.Allocation,
+                        this.EligibilityHnRID,
+                        swel
+                        );
+                    foreach (StoreWeekEligibilityProfile sep in swel)
+                    {
+                        this.SetStoreIsEligible(sep.Key, sep.StoreIsEligible);
+                    }
+                }
 			}
 			else
 			{
