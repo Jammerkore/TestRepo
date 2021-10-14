@@ -277,16 +277,23 @@ namespace MIDRetail.Business
 		{
 			try
 			{
+				int nodeRID = _planCubeGroup.OpenParms.StoreHLPlanProfile.NodeProfile.Key;
+
+                if (_planCubeGroup.OpenParms.EligibilityNodeKey != Include.Undefined)
+                {
+                    nodeRID = _planCubeGroup.OpenParms.EligibilityNodeKey;
+                }
+
 				foreach (WeekProfile weekProf in _planCubeGroup.OpenParms.GetWeekProfileList(_planCubeGroup.SAB.ApplicationServerSession))
 				{
 					if (_planCubeGroup.Transaction.GetStoreEligibilityForSales(
-                        eRequestingApplication.Forecast, 
-                        _planCubeGroup.OpenParms.StoreHLPlanProfile.NodeProfile.Key, 
+                        _planCubeGroup.OpenParms.RequestingApplication,
+                        nodeRID, 
                         aStoreProf.Key, 
                         weekProf.Key) ||
 						_planCubeGroup.Transaction.GetStoreEligibilityForStock(
-                            eRequestingApplication.Forecast, 
-                            _planCubeGroup.OpenParms.StoreHLPlanProfile.NodeProfile.Key, 
+                            _planCubeGroup.OpenParms.RequestingApplication,
+                            nodeRID, 
                             aStoreProf.Key, 
                             weekProf.Key))
 					{

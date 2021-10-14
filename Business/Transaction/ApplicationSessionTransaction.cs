@@ -2526,7 +2526,11 @@ namespace MIDRetail.Business
 			if (_allocationBasisCubeGroup == null)
 			{
 				_allocationBasisCubeGroup = new StorePlanMaintCubeGroup(SAB, this);
-				this.OpenAllocationBasisCubeGroup(this.GetAllocationGrandTotalProfile().PlanHnRID, Include.UndefinedDate, Include.UndefinedDate);  // MID Track 2621 Period Basis not processed correctly.
+				this.OpenAllocationBasisCubeGroup(
+                    this.GetAllocationGrandTotalProfile().PlanHnRID,
+                    this.GetAllocationGrandTotalProfile().GetCubeEligibilityNode(),
+                    Include.UndefinedDate, 
+                    Include.UndefinedDate);  // MID Track 2621 Period Basis not processed correctly.
 			}
 			return _allocationBasisCubeGroup;
 		}
@@ -3674,7 +3678,11 @@ namespace MIDRetail.Business
             bool outdatedFilter = false;
             _quickFilterChanged = true;
 			AllocationSubtotalProfile grandTotal = this.GetAllocationGrandTotalProfile();
-            this.GetAllocationFilteredStoreList(grandTotal.PlanHnRID, Include.UndefinedStoreFilter, ref outdatedFilter);
+            this.GetAllocationFilteredStoreList(
+                grandTotal.PlanHnRID, 
+                grandTotal.GetCubeEligibilityNode(), 
+                Include.UndefinedStoreFilter, 
+                ref outdatedFilter);
             // End TT#4522 - stodd - Velocity Matrix incorrect 
 			grandTotal.ResetVelocity(rereadBasis); // Issue 4778
 			this._velocityCriteria = aVelocityMethod;
@@ -7896,6 +7904,7 @@ namespace MIDRetail.Business
 		public int GetStoreOTSSalesPlan(
 			int aStoreRID, 
 			int aPlanHnRID, 
+            int eligibilityHnRID,
 			DayProfile aBeginDay, 
 			DayProfile aTargetInventoryDay,
 			double aPlanFactor)
@@ -7903,7 +7912,7 @@ namespace MIDRetail.Business
 			ArrayList targetInventoryDayList = new ArrayList();
 			targetInventoryDayList.Add(aTargetInventoryDay);
 			return GetStoreOTSSalesPlan(aStoreRID, aPlanHnRID, this.GetAllocationPlanCube
-				(aPlanHnRID, aBeginDay.Date, targetInventoryDayList),
+				(aPlanHnRID, eligibilityHnRID, aBeginDay.Date, targetInventoryDayList),
 				aBeginDay,
 				aTargetInventoryDay,
 				aPlanFactor);
@@ -8098,17 +8107,19 @@ namespace MIDRetail.Business
 		/// </summary>
 		/// <param name="aStoreRID">RID of the store</param>
 		/// <param name="aPlanHnRID">RID of the Plan Hierarchy Node RID</param>
+		/// <param name="eligibilityHnRID">The eligibility hierarchy node RID</param>
 		/// <param name="aTargetInventoryDay">Day for which the stock plan is requested</param>
 		/// <param name="aPlanFactor">Percentage of the plan to return</param>
 		/// <returns>Store's stock plan on the requested day.</returns>
 		public int GetStoreOTSStockPlan(
 			int aStoreRID, 
 			int aPlanHnRID, 
+            int eligibilityHnRID,
 			DayProfile aTargetInventoryDay,
 			double aPlanFactor)
 		{
-			return GetStoreOTSStockPlan(aStoreRID, aPlanHnRID, this.GetAllocationPlanCube
-				(aPlanHnRID, aTargetInventoryDay.Date, aTargetInventoryDay.Date),
+			return GetStoreOTSStockPlan(aStoreRID, aPlanHnRID, eligibilityHnRID, this.GetAllocationPlanCube
+				(aPlanHnRID, eligibilityHnRID, aTargetInventoryDay.Date, aTargetInventoryDay.Date),
 				aTargetInventoryDay,
 				aPlanFactor);
 			//			ArrayList targetInventoryDayList = new ArrayList();
@@ -8124,6 +8135,7 @@ namespace MIDRetail.Business
 		/// </summary>
 		/// <param name="aStoreRID">RID of the store</param>
 		/// <param name="aPlanHnRID">RID of the Plan Hierarchy Node RID</param>
+        /// <param name="eligibilityHnRID">The eligibility hierarchy node RID</param>
 		/// <param name="aStorePlanCube">Plan Cube where the stock plan resides</param>
 		/// <param name="aTargetInventoryDay">Day for which the stock plan is requested</param>
 		/// <param name="aPlanFactor">Percentage of the plan to return</param>
@@ -8131,6 +8143,7 @@ namespace MIDRetail.Business
 		public int GetStoreOTSStockPlan(
 			int aStoreRID,
 			int aPlanHnRID,
+            int eligibilityHnRID,
 			PlanCube aStorePlanCube,
 			DayProfile aTargetInventoryDay,
 			double aPlanFactor)
@@ -8163,6 +8176,7 @@ namespace MIDRetail.Business
 				// end MID Track 5953 Null Reference when executing General Method
 				stockPlan = GetStoreDailyInventory(
 					aPlanHnRID,
+                    eligibilityHnRID,
 					(StoreProfile)((ProfileList)this.GetMasterProfileList(eProfileType.Store)).FindKey(storeIdxRID.RID),
 					//				this.SAB.StoreServerSession.GetStoreProfile(aStoreRID),
 					wk,
@@ -8290,7 +8304,11 @@ namespace MIDRetail.Business
 			}
 			if (planCube == null)
 			{ 
-				this.OpenAllocationBasisCubeGroup(this.GetAllocationGrandTotalProfile().PlanHnRID, Include.UndefinedDate, Include.UndefinedDate);
+				this.OpenAllocationBasisCubeGroup
+                    (this.GetAllocationGrandTotalProfile().PlanHnRID,
+                    this.GetAllocationGrandTotalProfile().GetCubeEligibilityNode(),
+                    Include.UndefinedDate, 
+                    Include.UndefinedDate);
 				if (aStoreGrpRID == Include.AllStoreFilterRID)
 				{
 					planCube = (PlanCube)this.GetAllocationBasisCubeGroup().GetCube(eCubeType.StoreBasisStoreTotalDateTotal);
@@ -8621,6 +8639,14 @@ namespace MIDRetail.Business
 		{
 			try
 			{
+                if (requestingApplication == eRequestingApplication.Allocation)
+                {
+                    bool stop = true;
+                }
+                else if (requestingApplication == eRequestingApplication.Forecast)
+                {
+                    bool stop = true;
+                }
 				return DetermineSalesEligibility(requestingApplication, nodeRID, storeRID, yearWeek);
 			}
 			catch ( Exception err )
@@ -9138,6 +9164,14 @@ namespace MIDRetail.Business
 		{
 			try
 			{
+                if (requestingApplication == eRequestingApplication.Allocation)
+                {
+                    bool stop = true;
+                }
+                else if (requestingApplication == eRequestingApplication.Forecast)
+                {
+                    bool stop = true;
+                }
 				return DetermineStockEligibility(requestingApplication, nodeRID, storeRID, yearWeek);
 			}
 			catch ( Exception err )
@@ -10788,11 +10822,16 @@ namespace MIDRetail.Business
 
 		// BEGIN TT#2225 - stodd - VSW ANF Enhancement (IMO)
 		#region ReadAllocationPlanCubeVariable
-		public PlanCellReference ReadAllocationPlanCubeVariable(int storeRid, int hnRid, WeekProfile planWeek, VariableProfile variable)
+		public PlanCellReference ReadAllocationPlanCubeVariable(
+            int storeRid, 
+            int hnRid,
+            int eligibilityHnRID,
+            WeekProfile planWeek, 
+            VariableProfile variable)
 		{
 
 			Cube storePlanCube = this.GetAllocationPlanCube
-					(hnRid, Include.UndefinedDate, ((DayProfile)planWeek.Days[6]).Date);
+					(hnRid, eligibilityHnRID, Include.UndefinedDate, ((DayProfile)planWeek.Days[6]).Date);
 
 			PlanCellReference planCellRef = new PlanCellReference((PlanCube)storePlanCube);
 			planCellRef[eProfileType.Version] = Include.FV_ActionRID;
@@ -10813,11 +10852,13 @@ namespace MIDRetail.Business
 		/// Gets an instance of the Plan Cube for allocation purposes.
 		/// </summary>
 		/// <param name="aPlanHnRID">The plan hierarchy node RID</param>
+		/// <param name="eligibilityHnRID">The eligibility hierarchy node RID</param>
 		/// <param name="aBeginDate">The begin date for the plan (Undefined Date defaults to "current" date).</param>
 		/// <param name="aTargetDateArrayList">Arraylist of inventory target day profiles</param>
 		/// <returns>Plan Cube</returns>
 		internal PlanCube GetAllocationPlanCube(
 			int aPlanHnRID,
+            int eligibilityHnRID,
 			DateTime aBeginDate,
 			ArrayList aTargetDateArrayList)
 		{
@@ -10829,18 +10870,20 @@ namespace MIDRetail.Business
 					endDate = dt.Date;
 				}
 			}
-			return GetAllocationPlanCube(aPlanHnRID, aBeginDate, endDate);
+			return GetAllocationPlanCube(aPlanHnRID, eligibilityHnRID, aBeginDate, endDate);
 		}
 
 		/// <summary>
 		/// Gets an instance of the Plan Cube for allocation purposes.
 		/// </summary>
 		/// <param name="aPlanHnRID">The plan hierarchy node RID</param>
+        /// <param name="eligibilityHnRID">The eligibility hierarchy node RID</param>
 		/// <param name="aBeginDate">The begin date for the plan (Undefined Date defaults to "current" date).</param>
 		/// <param name="aEndDate">The ending date for the plan (Undefined Date defaults to "ship" dates for stores).</param>
 		/// <returns>Plan Cube</returns>
 		internal PlanCube GetAllocationPlanCube(
 			int aPlanHnRID, 
+            int eligibilityHnRID,
 			DateTime aBeginDate, 
 			DateTime aEndDate)
 		{
@@ -10856,7 +10899,7 @@ namespace MIDRetail.Business
             // End TT#4988 - JSmith - Performance
 			if (storePlanCube == null)
 			{
-				OpenAllocationCubeGroup(aPlanHnRID, aBeginDate, aEndDate);
+				OpenAllocationCubeGroup(aPlanHnRID, eligibilityHnRID, aBeginDate, aEndDate);
 			}
 			storePlanCube = (PlanCube)acg.GetCube(eCubeType.StorePlanWeekDetail);
 			return storePlanCube;
@@ -10874,6 +10917,7 @@ namespace MIDRetail.Business
 		/// <returns>Plan Cube</returns>
 		internal PlanCube GetAllocationBasisCube(
 			int aPlanHnRID,
+            int eligibilityHnRID,
 			DateTime aBeginDate,
 			ArrayList aTargetDateArrayList)
 		{
@@ -10885,18 +10929,20 @@ namespace MIDRetail.Business
 					endDate = dt.Date;
 				}
 			}
-			return GetAllocationBasisCube(aPlanHnRID, aBeginDate, endDate);
+			return GetAllocationBasisCube(aPlanHnRID, eligibilityHnRID, aBeginDate, endDate);
 		}
 
 		/// <summary>
 		/// Gets an instance of the Basis Cube for allocation purposes.
 		/// </summary>
 		/// <param name="aPlanHnRID">The plan hierarchy node RID</param>
+        /// <param name="eligibilityHnRID">The eligibility hierarchy node RID</param>
 		/// <param name="aBeginDate">The begin date for the plan (Undefined Date defaults to "current" date).</param>
 		/// <param name="aEndDate">The ending date for the plan (Undefined Date defaults to "ship" dates for stores).</param>
 		/// <returns>Plan Cube</returns>
 		internal PlanCube GetAllocationBasisCube(
 			int aPlanHnRID,
+            int eligibilityHnRID,
 			DateTime aBeginDate,
 			DateTime aEndDate)
 		{
@@ -10904,7 +10950,7 @@ namespace MIDRetail.Business
 			PlanCube storeBasisCube = (PlanCube)acg.GetCube(eCubeType.StoreBasisWeekDetail);
 			if (storeBasisCube == null)
 			{
-				OpenAllocationCubeGroup(aPlanHnRID, aBeginDate, aEndDate);
+				OpenAllocationCubeGroup(aPlanHnRID, eligibilityHnRID, aBeginDate, aEndDate);
 			}
 			storeBasisCube = (PlanCube)acg.GetCube(eCubeType.StoreBasisWeekDetail);
 			return storeBasisCube;
@@ -10913,10 +10959,13 @@ namespace MIDRetail.Business
 		// End Track 6074
 
 		#region GetAllocationFilteredStoreList
-		private bool SetAllocationFilteredStoreList(int aHnRID, int aStoreFilterRID)	// Issue 5727
+		private bool SetAllocationFilteredStoreList(
+            int aHnRID,
+            int eligibilityHnRID,
+            int aStoreFilterRID)	// Issue 5727
 		{
 			// This makes sure the cube group is filled in
-			GetAllocationPlanCube(aHnRID, Include.UndefinedDate, Include.UndefinedDate);
+			GetAllocationPlanCube(aHnRID, eligibilityHnRID, Include.UndefinedDate, Include.UndefinedDate);
 			// This gets the cube group
 			PlanCubeGroup acg = (PlanCubeGroup)this.GetAllocationCubeGroup();
 
@@ -10945,11 +10994,19 @@ namespace MIDRetail.Business
 		// BEGIN Issue 5727 stodd 
 		internal ProfileList GetAllocationFilteredStoreList(AllocationProfile allocProfile, int storeFilterRid, ref bool outdatedFilter)
 		{
-			return GetAllocationFilteredStoreList(allocProfile.PlanHnRID, storeFilterRid, ref outdatedFilter);
+			return GetAllocationFilteredStoreList(
+                allocProfile.PlanHnRID, 
+                allocProfile.GetCubeEligibilityNode(),
+                storeFilterRid, 
+                ref outdatedFilter);
 		}
 		// END Issue 5727 stodd
 
-		internal ProfileList GetAllocationFilteredStoreList(int aHnRID, int aStoreFilterRID,ref bool outdatedFilter)	// Track 5727
+		internal ProfileList GetAllocationFilteredStoreList(
+            int aHnRID,
+            int eligibilityHnRID,
+            int aStoreFilterRID,
+            ref bool outdatedFilter)	// Track 5727
 		{
 			if (this._quickFilterChanged 
 				|| this._allocationStoreFilterRID != aStoreFilterRID)
@@ -10963,13 +11020,13 @@ namespace MIDRetail.Business
 					if (aStoreFilterRID == Include.NoRID)
 					{
 						// BEGIN Issue 5727 stodd 
-						outdatedFilter = SetAllocationFilteredStoreList(aHnRID, Include.AllStoreFilterRID);
+						outdatedFilter = SetAllocationFilteredStoreList(aHnRID, eligibilityHnRID, Include.AllStoreFilterRID);
 						// END Issue 5727 stodd 
 					}
 					else
 					{
 						// BEGIN Issue 5727 stodd 
-						outdatedFilter = SetAllocationFilteredStoreList(aHnRID, aStoreFilterRID);
+						outdatedFilter = SetAllocationFilteredStoreList(aHnRID, eligibilityHnRID, aStoreFilterRID);
 						// END Issue 5727 stodd 
 					}
 				}
@@ -11000,6 +11057,7 @@ namespace MIDRetail.Business
 			internal double _vSalesPeriod_Weight;
 		}
 		private void OpenAllocationCubeGroup(int aPlanHnRID, 
+            int eligibilityHnRID,
 			DateTime aBeginDate, 
 			DateTime aEndDate)
 		{
@@ -11104,6 +11162,12 @@ namespace MIDRetail.Business
 			openParms.OpenPeriodAsWeeks = true;  // MID Track # 2621 Period Basis not processed correctly
             openParms.IncludeLocks = false; // Begin TT#TT#739-MD - JSmith - delete stores
 
+            if (this.GlobalOptions.UseExternalEligibilityAllocation)
+            {
+                openParms.RequestingApplication = eRequestingApplication.Allocation;
+                openParms.EligibilityNodeKey = eligibilityHnRID;
+            }
+
 
 			if (this.VelocityCriteriaExists)
 			{
@@ -11201,6 +11265,7 @@ namespace MIDRetail.Business
 		}
 
 		private void OpenAllocationBasisCubeGroup(int aPlanHnRID, 
+            int eligibilityHnRID,
 			DateTime aBeginDate, 
 			DateTime aEndDate)
 		{
@@ -11270,6 +11335,12 @@ namespace MIDRetail.Business
 					ap = _velocityCriteria.AlocProfile;
 				}
 				// END Issue 4778
+
+                if (this.GlobalOptions.UseExternalEligibilityAllocation)
+                {
+                    openParms.RequestingApplication = eRequestingApplication.Allocation;
+                    openParms.EligibilityNodeKey = eligibilityHnRID;
+                }
 
 				int basisCount = 0;
 				int[] basisSalesWeekCount = new int[dtBasis.Rows.Count]; //MID Track 2923 Velocity Basis wrong if weeks not specified in descending order
@@ -11893,7 +11964,11 @@ namespace MIDRetail.Business
 			if (!storeOnHandHash.Contains(aOnHandDate))
 			{
 				ohHash = 
-					this.DetermineDailyInventory(aHnRID, (ProfileList)this.GetMasterProfileList(eProfileType.Store), startDay.Week);
+					this.DetermineDailyInventory(
+                        aHnRID,
+                        aAllocationProfile.GetCubeEligibilityNode(),
+                        (ProfileList)this.GetMasterProfileList(eProfileType.Store), 
+                        startDay.Week);
 				storeOnHandHash.Add(aOnHandDate, ohHash);
 			}
 			ohHash = (Hashtable)storeOnHandHash[aOnHandDate];
@@ -12137,11 +12212,16 @@ namespace MIDRetail.Business
 		/// <returns>Hashtable of keyed pair (store RID and Integer Array of store Inventory for the week.</returns>
 		internal Hashtable DetermineDailyInventory(
 			int aHnRID,  
+            int eligibilityHnRID,
 			ProfileList aStoreList, 
 			WeekProfile aWeekProfile)
 		{
 			Hashtable storeInventoryHash = new Hashtable();
-			PlanCube storePlanCube = this.GetAllocationPlanCube(aHnRID, aWeekProfile.Date, aWeekProfile.Date.AddDays(7));
+			PlanCube storePlanCube = this.GetAllocationPlanCube(
+                aHnRID,
+                eligibilityHnRID, 
+                aWeekProfile.Date, 
+                aWeekProfile.Date.AddDays(7));
   
 			PlanCellReference planCellRef = new PlanCellReference((PlanCube)storePlanCube);
 			planCellRef[eProfileType.Version] = Include.FV_ActionRID;
@@ -12175,7 +12255,12 @@ namespace MIDRetail.Business
 					aWeekProfile);
 				storeInventoryHash.Add(
 					storeProfile.Key,
-					this.GetStoreDailyInventory(aHnRID, storeProfile, aWeekProfile, dailySales));   //, 100.0d));
+					this.GetStoreDailyInventory(
+                        aHnRID, 
+                        eligibilityHnRID, 
+                        storeProfile, 
+                        aWeekProfile, 
+                        dailySales));   //, 100.0d));
 			}
 			return storeInventoryHash;
 		}
@@ -12190,6 +12275,7 @@ namespace MIDRetail.Business
 		/// <returns></returns>
 		internal int[] GetStoreDailyInventory(
 			int aPlanHnRID, 
+            int eligibilityHnRID,
 			StoreProfile aStoreProfile, 
 			WeekProfile aWeekProfile, 
 			double[] aDailySales)
@@ -12197,7 +12283,11 @@ namespace MIDRetail.Business
 		{
 			ArrayList dayProfileList = new ArrayList();
 			//			dayProfileList.Add(_transaction.SAB.ApplicationServerSession.Calendar.GetDay(aWeekProfile.Date));
-			PlanCube storePlanCube = GetAllocationPlanCube(aPlanHnRID, aWeekProfile.Date, aWeekProfile.Date.AddDays(7));
+			PlanCube storePlanCube = GetAllocationPlanCube(
+                aPlanHnRID, 
+                eligibilityHnRID, 
+                aWeekProfile.Date, 
+                aWeekProfile.Date.AddDays(7));
 
 			PlanCellReference planCellRef = new PlanCellReference((PlanCube)storePlanCube);
 			planCellRef[eProfileType.Version] = Include.FV_ActionRID;

@@ -2842,6 +2842,7 @@ namespace MIDRetail.Business.Allocation
                             int units = this._transaction.GetStoreOTSSalesPlan(
                                 storeIdxRID.RID,
                                 this._mdseSizeBasis.Key,
+                                _allocProfile.GetCubeEligibilityNode(),
                                 onhandDayProfile,
                                 shipDayProfile,
                                 100.00);
@@ -2849,6 +2850,7 @@ namespace MIDRetail.Business.Allocation
                             units = this._transaction.GetStoreOTSStockPlan(
                                 storeIdxRID.RID,
                                 this._mdseSizeBasis.Key,
+                                _allocProfile.GetCubeEligibilityNode(),
                                 shipDayProfile,
                                 100.00);
                             _sizeNeedResults.AddFillToPlan_StockUnits(storeIdxRID.RID, units);

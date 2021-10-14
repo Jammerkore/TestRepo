@@ -270,27 +270,32 @@ namespace MIDRetail.Business
 				varProf = (VariableProfile)MasterVariableProfileList.FindKey(aPlanCellRef[eProfileType.Variable]);
 				nodeRID = GetHierarchyNodeProfile(aPlanCellRef).Key;
 
+                if (PlanCubeGroup.OpenParms.EligibilityNodeKey != Include.Undefined)
+                {
+                    nodeRID = PlanCubeGroup.OpenParms.EligibilityNodeKey;
+                }
+
 				switch (varProf.EligibilityType)
 				{
 					case eEligibilityType.Sales:
 						return !CubeGroup.Transaction.GetStoreEligibilityForSales(
-                            eRequestingApplication.Forecast, 
+                            PlanCubeGroup.OpenParms.RequestingApplication,
                             nodeRID, 
                             aPlanCellRef[eProfileType.Store], 
                             aPlanCellRef[eProfileType.Week]);
 					case eEligibilityType.Stock:
 						return !CubeGroup.Transaction.GetStoreEligibilityForStock(
-                            eRequestingApplication.Forecast, 
+                            PlanCubeGroup.OpenParms.RequestingApplication,
                             nodeRID, 
                             aPlanCellRef[eProfileType.Store], 
                             aPlanCellRef[eProfileType.Week]);
 					case eEligibilityType.Either:
 						return !CubeGroup.Transaction.GetStoreEligibilityForSales(
-                            eRequestingApplication.Forecast, 
+                            PlanCubeGroup.OpenParms.RequestingApplication,
                             nodeRID, aPlanCellRef[eProfileType.Store],
                             aPlanCellRef[eProfileType.Week]) &&
 							!CubeGroup.Transaction.GetStoreEligibilityForStock(
-                                eRequestingApplication.Forecast, 
+                                PlanCubeGroup.OpenParms.RequestingApplication,
                                 nodeRID, 
                                 aPlanCellRef[eProfileType.Store], 
                                 aPlanCellRef[eProfileType.Week]);

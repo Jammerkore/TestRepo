@@ -1323,7 +1323,7 @@ namespace MIDRetail.Business
 				ProfileList storeFilterList = null;
 				ProfileList storeSglList = null;
 				bool outdatedFilter = false;
-				storeFilterList = _applicationTransaction.GetAllocationFilteredStoreList(_hierNodeRid, StoreFilterRID, ref outdatedFilter);
+				storeFilterList = _applicationTransaction.GetAllocationFilteredStoreList(_hierNodeRid, Include.Undefined, StoreFilterRID, ref outdatedFilter);
 				// BEGIN Issue 5727 stodd
 				if (outdatedFilter)
 				{

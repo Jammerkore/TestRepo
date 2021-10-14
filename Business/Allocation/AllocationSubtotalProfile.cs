@@ -1138,7 +1138,11 @@ namespace MIDRetail.Business.Allocation
 				// begin MID Track 5727 - J.Ellis (Fix Null Reference)
 				//ProfileList storeList = this.Transaction.GetAllocationFilteredStoreList(this.PlanHnRID, _filterStoreRID, ref outdatedFilter);
 				_filterStoreList =
-					this.Transaction.GetAllocationFilteredStoreList(this.PlanHnRID, _filterStoreRID, ref outdatedFilter);
+					this.Transaction.GetAllocationFilteredStoreList(
+                        this.PlanHnRID, 
+                        GetCubeEligibilityNode(), 
+                        _filterStoreRID, 
+                        ref outdatedFilter);
 				// end MID Track 5727 - J.Ellis (Fix Null Reference)
 				if (outdatedFilter)
 				{
@@ -4547,6 +4551,7 @@ namespace MIDRetail.Business.Allocation
 			return this.Transaction.GetStoreOTSSalesPlan(
 				aStoreRID,
 				this.PlanHnRID,
+                GetCubeEligibilityNode(),
 				startDay,
 				this.Transaction.SAB.ApplicationServerSession.Calendar.GetDay(GetStoreNeedDay(aStoreRID)),
 				this.PlanFactor);
@@ -4583,6 +4588,7 @@ namespace MIDRetail.Business.Allocation
 			return this.Transaction.GetStoreOTSStockPlan(
 				aStoreRID,
 				this.PlanHnRID,
+                GetCubeEligibilityNode(),
 				this.Transaction.SAB.ApplicationServerSession.Calendar.GetDay(this.GetStoreNeedDay(aStoreRID)),
 				this.PlanFactor);
 		}
@@ -4849,6 +4855,19 @@ namespace MIDRetail.Business.Allocation
 		{
 			_storeIsEligible[aStore.Index] = aFlagValue;
 		}
+
+        public int GetCubeEligibilityNode()
+        {
+            if (this.Transaction.GlobalOptions.UseExternalEligibilityAllocation)
+            {
+                return EligibilityHnRID;
+            }
+            // if not using external eligibility, do not set the eligibility node so it will process as before
+            else
+            {
+                return Include.Undefined;
+            }
+        }
 		#endregion StoreEligibility
 
         // begin TT#1401 - JEllis - Urban Reservation Store pt 11
@@ -5077,6 +5096,7 @@ namespace MIDRetail.Business.Allocation
 
 			PlanCube storePlanCube = ((ApplicationSessionTransaction)Transaction).GetAllocationPlanCube(
 				PlanHnRID,
+                GetCubeEligibilityNode(),
 				Include.UndefinedDate,
 				Include.UndefinedDate);
 

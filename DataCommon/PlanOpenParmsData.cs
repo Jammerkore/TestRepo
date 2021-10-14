@@ -128,6 +128,8 @@ namespace MIDRetail.DataCommon
 		private VersionProfile _lowLevelVersionDefault;
 		private ProfileList _lowLevelPlanProfileList;
 		private ProfileList _basisProfileList;
+        private int _eligibilityNodeKey = Include.Undefined;
+        private eRequestingApplication _requestingApplication = eRequestingApplication.Forecast;
 
 		private DateRangeProfile _dateRangeProfile;
 		private int _StoreGroupRID;
@@ -203,6 +205,8 @@ namespace MIDRetail.DataCommon
 //End - Abercrombie & Fitch #4411
             _includeLocks = true; // TT#TT#739-MD - JSmith - delete stores
             _setSummaryDateProfile = false;
+            _eligibilityNodeKey = Include.Undefined;
+            _requestingApplication = eRequestingApplication.Forecast;
 		}
 
 		//===========
@@ -265,6 +269,38 @@ namespace MIDRetail.DataCommon
 				}
 			}
 		}
+
+		/// <summary>
+		/// Gets or sets the requesting application
+		/// </summary>
+
+		public eRequestingApplication RequestingApplication
+        {
+            get
+            {
+                return _requestingApplication;
+            }
+            set
+            {
+                _requestingApplication = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the eligibility merchandise key
+        /// </summary>
+
+        public int EligibilityNodeKey
+        {
+            get
+            {
+                return _eligibilityNodeKey;
+            }
+            set
+            {
+                _eligibilityNodeKey = value;
+            }
+        }
 
 		/// <summary>
 		/// Gets the high-level Store PlanProfile

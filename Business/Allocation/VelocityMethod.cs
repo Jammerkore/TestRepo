@@ -10169,7 +10169,13 @@ namespace MIDRetail.Business.Allocation
 			FwdWOSTargetDay = AST.SAB.ApplicationServerSession.Calendar.GetDay(AdjustedBeginDay);
 
 			// BEGIN Issue 4778 stodd 10.19.2007
-			int FwdWeeksOfSupplyQty = AST.GetStoreOTSSalesPlan(aStoreRID, this._alocProfile.PlanHnRID, FwdWOSBeginDay, FwdWOSTargetDay, asp.PlanFactor); // MID Track 4298 integer type showing fractional value
+			int FwdWeeksOfSupplyQty = AST.GetStoreOTSSalesPlan(
+                aStoreRID, 
+                this._alocProfile.PlanHnRID,
+                this._alocProfile.GetCubeEligibilityNode(),
+                FwdWOSBeginDay, 
+                FwdWOSTargetDay, 
+                asp.PlanFactor); // MID Track 4298 integer type showing fractional value
 			// END Issue 4778
 
 			return FwdWeeksOfSupplyQty;

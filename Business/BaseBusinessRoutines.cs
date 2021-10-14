@@ -90,7 +90,12 @@ namespace MIDRetail.Business
 
 		// BEGIN TT#2225 - stodd - VSW ANF Enhancement (IMO)
 		#region VSW Methods
-		virtual public IMOProfileList GetVSW_Max(ProfileList allStoreList, int planLevelStartHnRID, StoreShipDay[] shipDayList, int planLevelHnRid)
+		virtual public IMOProfileList GetVSW_Max(
+            ProfileList allStoreList, 
+            int planLevelStartHnRID, 
+            StoreShipDay[] shipDayList, 
+            int planLevelHnRid,
+            int eligibilityHnRID)
 		{
 			//BEGIN TT#583-MD - stodd -  Add IMO Audit info
 			if (_audit.LoggingLevel == eMIDMessageLevel.Debug)
@@ -120,7 +125,12 @@ namespace MIDRetail.Business
 				{
 					if (imop.IMOStoreRID == shipDayList[i].Store.Key)
 					{
-						imop.IMOMaxValue = GetIMOMaxValue(imop, planLevelHnRid, shipDayList[i], (StoreProfile)allStoreList.FindKey(imop.IMOStoreRID));
+						imop.IMOMaxValue = GetIMOMaxValue(
+                            imop, 
+                            planLevelHnRid, 
+                            eligibilityHnRID, 
+                            shipDayList[i], 
+                            (StoreProfile)allStoreList.FindKey(imop.IMOStoreRID));
 					}
 					else // this is to catch if the IMO Profile list is out of sync with the shipDayList
 					{
@@ -134,7 +144,12 @@ namespace MIDRetail.Business
 							}
 						}
 
-						imop.IMOMaxValue = GetIMOMaxValue(imop, planLevelHnRid, storeShipDay, (StoreProfile)allStoreList.FindKey(imop.IMOStoreRID));
+						imop.IMOMaxValue = GetIMOMaxValue(
+                            imop, 
+                            planLevelHnRid, 
+                            eligibilityHnRID,
+                            storeShipDay, 
+                            (StoreProfile)allStoreList.FindKey(imop.IMOStoreRID));
 					}	
 				}
 				// BEGIN TT#2352 - stodd - zero is not holding when applied to FWOS Max field
@@ -203,7 +218,12 @@ namespace MIDRetail.Business
 		/// <param name="hnRid"></param>
 		/// <param name="storeShipDay"></param>
 		/// <returns></returns>
-		private int GetIMOMaxValue(IMOProfile imop, int hnRid, StoreShipDay storeShipDay, StoreProfile aStore)
+		private int GetIMOMaxValue(
+            IMOProfile imop, 
+            int hnRid,
+            int eligibilityHnRID, 
+            StoreShipDay storeShipDay, 
+            StoreProfile aStore)
 		{
             // Begin TT#2837 - JSmith - Invalid Calendar Data
             if (storeShipDay.ShipDay == Include.UndefinedDate)
@@ -217,7 +237,7 @@ namespace MIDRetail.Business
 			if (_storePlanCube == null)
 			{
 				_storePlanCube = this.Transaction.GetAllocationPlanCube
-					(hnRid, Include.UndefinedDate, storeShipDay.ShipDay);
+					(hnRid, eligibilityHnRID, Include.UndefinedDate, storeShipDay.ShipDay);
 			}
 
 			DayProfile startDay = SAB.ApplicationServerSession.Calendar.GetDay(storeShipDay.ShipDay);
@@ -287,7 +307,13 @@ namespace MIDRetail.Business
 			DateTime endDate = storeShipDay.ShipDay.AddDays(fullDays);
 			DayProfile endDay = SAB.ApplicationServerSession.Calendar.GetDay(endDate);
 
-			imoMaxValue = _transaction.GetStoreOTSSalesPlan(imop.IMOStoreRID, hnRid, startDay, endDay, 100);
+			imoMaxValue = _transaction.GetStoreOTSSalesPlan(
+                imop.IMOStoreRID, 
+                hnRid, 
+                eligibilityHnRID, 
+                startDay, 
+                endDay, 
+                100);
 			int fullDayValue = imoMaxValue;	// TT#583-MD - stodd -  Add IMO Audit info
 
 			double partialDayValue = 0;
@@ -296,7 +322,13 @@ namespace MIDRetail.Business
 				// BEGIN TT#2401 - stodd - wrong date sent to ModifyIMOMaxValue
 				DayProfile partialStartDay = endDay;
 				DayProfile partialEndDay = SAB.ApplicationServerSession.Calendar.Add(endDay, 1);
-				partialDayValue = _transaction.GetStoreOTSSalesPlan(imop.IMOStoreRID, hnRid, partialStartDay, partialEndDay, 100);
+				partialDayValue = _transaction.GetStoreOTSSalesPlan(
+                    imop.IMOStoreRID, 
+                    hnRid, 
+                    eligibilityHnRID, 
+                    partialStartDay, 
+                    partialEndDay, 
+                    100);
 				// END TT#2401 - stodd - wrong date sent to ModifyIMOMaxValue
 				partialDayValue = partialDayValue * partialDay;
 			}
