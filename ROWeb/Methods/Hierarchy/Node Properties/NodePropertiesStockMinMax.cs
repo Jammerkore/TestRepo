@@ -49,6 +49,7 @@ namespace Logility.ROWeb
             return true;
         }
 
+        bool attributeChanged = false;
 
         override public RONodeProperties NodePropertiesGetData(ROProfileKeyParms parms, object nodePropertiesData, ref string message, bool applyOnly = false)
         {
@@ -66,11 +67,19 @@ namespace Logility.ROWeb
                 }
             }
 
+            int definedAttribute = _nodeStockMinMaxesProfile.NodeStockStoreGroupRID;
+            if (attributeChanged
+                || (_stockMinMaxIsPopulated && _nodeStockMinMaxesProfile.NodeStockStoreGroupRID != attributeKey)
+                )
+            {
+                definedAttribute = Include.NoRID;
+            }
+
             KeyValuePair<int, string> node = new KeyValuePair<int, string>(key: _hierarchyNodeProfile.Key, value: _hierarchyNodeProfile.Text);
             RONodePropertiesStockMinMax nodeProperties = new RONodePropertiesStockMinMax(node: node,
                 attribute: GetName.GetAttributeName(key: attributeKey),
                 attributeSet: GetName.GetAttributeSetName(key: attributeSetKey),
-                definedAttribute: GetName.GetAttributeName(key: _nodeStockMinMaxesProfile.NodeStockStoreGroupRID)
+                definedAttribute: GetName.GetAttributeName(key: definedAttribute)
                 );
 
             // populate modelProperties using Windows\NodeProperties.cs as a reference
@@ -323,6 +332,7 @@ namespace Logility.ROWeb
                 _nodeStockMinMaxesProfile.NodeStockStoreGroupRID = nodePropertiesStockMinMaxData.Attribute.Key;
                 _nodeStockMinMaxesProfile.NodeSetList.Clear();
                 _nodeStockMinMaxesProfile.NodeStockMinMaxChangeType = eChangeType.delete;
+                attributeChanged = true;
             }
             //else
             {
