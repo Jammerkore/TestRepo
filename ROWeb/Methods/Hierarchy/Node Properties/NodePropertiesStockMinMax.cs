@@ -49,7 +49,7 @@ namespace Logility.ROWeb
             return true;
         }
 
-        bool attributeChanged = false;
+        int _definedAttribute = Include.Undefined;
 
         override public RONodeProperties NodePropertiesGetData(ROProfileKeyParms parms, object nodePropertiesData, ref string message, bool applyOnly = false)
         {
@@ -67,19 +67,16 @@ namespace Logility.ROWeb
                 }
             }
 
-            int definedAttribute = _nodeStockMinMaxesProfile.NodeStockStoreGroupRID;
-            if (attributeChanged
-                || (_stockMinMaxIsPopulated && _nodeStockMinMaxesProfile.NodeStockStoreGroupRID != attributeKey)
-                )
+            if (_definedAttribute == Include.Undefined)
             {
-                definedAttribute = Include.NoRID;
+                _definedAttribute = _nodeStockMinMaxesProfile.NodeStockStoreGroupRID;
             }
 
             KeyValuePair<int, string> node = new KeyValuePair<int, string>(key: _hierarchyNodeProfile.Key, value: _hierarchyNodeProfile.Text);
             RONodePropertiesStockMinMax nodeProperties = new RONodePropertiesStockMinMax(node: node,
                 attribute: GetName.GetAttributeName(key: attributeKey),
                 attributeSet: GetName.GetAttributeSetName(key: attributeSetKey),
-                definedAttribute: GetName.GetAttributeName(key: definedAttribute)
+                definedAttribute: GetName.GetAttributeName(key: _definedAttribute)
                 );
 
             // populate modelProperties using Windows\NodeProperties.cs as a reference
@@ -99,20 +96,7 @@ namespace Logility.ROWeb
             string inheritedFromText = MIDText.GetTextOnly(eMIDTextCode.lbl_Inherited_From);
 
             int attributeKey = nodeProperties.Attribute.Key;
-            //if (!_stockMinMaxIsPopulated
-            //    && _nodeStockMinMaxesProfile.NodeStockMinMaxFound)
-            //{
-            //    attributeKey = _nodeStockMinMaxesProfile.NodeStockStoreGroupRID;
-            //}
-            //else if (attributeKey != _nodeStockMinMaxesProfile.NodeStockStoreGroupRID)
-            if (_stockMinMaxIsPopulated
-                && attributeKey != _nodeStockMinMaxesProfile.NodeStockStoreGroupRID)
-            {
-                _nodeStockMinMaxesProfile.NodeStockStoreGroupRID = attributeKey;
-                _nodeStockMinMaxesProfile.NodeSetList.Clear();
-                _nodeStockMinMaxesProfile.NodeStockMinMaxsIsInherited = false;
-            }
-
+            
             if (_storeGradeList == null)
             {
                 _storeGradeList = SAB.HierarchyServerSession.GetStoreGradeList(nodeProperties.Node.Key, false, true);
@@ -305,6 +289,7 @@ namespace Logility.ROWeb
                     if (!UpdateMinMaxes(message: ref message))
                     {
                         successful = false;
+                        _definedAttribute = Include.Undefined;
                     }
                 }
             }
@@ -332,7 +317,6 @@ namespace Logility.ROWeb
                 _nodeStockMinMaxesProfile.NodeStockStoreGroupRID = nodePropertiesStockMinMaxData.Attribute.Key;
                 _nodeStockMinMaxesProfile.NodeSetList.Clear();
                 _nodeStockMinMaxesProfile.NodeStockMinMaxChangeType = eChangeType.delete;
-                attributeChanged = true;
             }
             //else
             {
