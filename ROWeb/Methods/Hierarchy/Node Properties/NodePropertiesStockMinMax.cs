@@ -289,6 +289,9 @@ namespace Logility.ROWeb
                     if (!UpdateMinMaxes(message: ref message))
                     {
                         successful = false;
+                    }
+                    else
+                    {
                         _definedAttribute = Include.Undefined;
                     }
                 }
