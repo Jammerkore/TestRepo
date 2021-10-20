@@ -225,6 +225,9 @@ namespace Logility.ROWeb
         {
             SAB.HierarchyServerSession.StoreCapacityUpdate(nodeKey, _storeCapacityList, false);
 
+            // set global list to updated values including inheritance for values removed
+            _storeCapacityList = GetStoreCapacity(key: nodeKey);
+
             return true;
         }
 
