@@ -1615,6 +1615,13 @@ namespace MIDRetail.Business
                 _overrideLowLevelRid = roMethodMatrixBalanceProperties.OverrideLowLevel.Key;
                 _modelRID = roMethodMatrixBalanceProperties.Model.Key;
 
+                // matrix type is forecast, override to required values
+                if (_matrixType == eMatrixType.Forecast)
+                {
+                    _balanceMode = eBalanceMode.Store;
+                    _iterationsCount = 1;
+                }
+
 
                 BasisProfile.BasisDetailProfileList.Clear();
                 BasisDetailProfile basisDetailProfile;
