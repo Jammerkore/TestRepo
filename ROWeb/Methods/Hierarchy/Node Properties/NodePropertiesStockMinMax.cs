@@ -85,6 +85,53 @@ namespace Logility.ROWeb
                 attributeSetKey: attributeSetKey,
                 message: ref message);
 
+            // set flag to identify if other sets have values so the appropriate message can be displayed when values are cleared
+            nodeProperties.OtherSetsRowsExist = false;
+            if (!_nodeStockMinMaxesProfile.NodeStockMinMaxsIsInherited)
+            {
+                if (_nodeStockMinMaxesProfile.NodeSetList != null)
+                {
+                    foreach (NodeStockMinMaxSetProfile minMaxSetProfile in _nodeStockMinMaxesProfile.NodeSetList)
+                    {
+                        if (minMaxSetProfile.Key != attributeSetKey)
+                        {
+                            if (minMaxSetProfile.Defaults != null
+                                && minMaxSetProfile.Defaults.MinMaxList != null)
+                            {
+                                foreach (NodeStockMinMaxProfile MMProfile in minMaxSetProfile.Defaults.MinMaxList)
+                                {
+                                    if (MMProfile.Minimum != int.MinValue
+                                        || MMProfile.Maximum != int.MaxValue)
+                                    {
+                                        nodeProperties.OtherSetsRowsExist = true;
+                                    }
+                                }
+                            }
+                            if (!nodeProperties.OtherSetsRowsExist)
+                            {
+                                if (minMaxSetProfile.BoundaryList != null)
+                                {
+                                    foreach (NodeStockMinMaxBoundaryProfile minMaxBoundaryProfile in minMaxSetProfile.BoundaryList)
+                                    {
+                                        if (minMaxBoundaryProfile.MinMaxList != null)
+                                        {
+                                            foreach (NodeStockMinMaxProfile MMProfile in minMaxBoundaryProfile.MinMaxList)
+                                            {
+                                                if (MMProfile.Minimum != int.MinValue
+                                                    || MMProfile.Maximum != int.MaxValue)
+                                                {
+                                                    nodeProperties.OtherSetsRowsExist = true;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             _stockMinMaxIsPopulated = true;
             return nodeProperties;
         }
@@ -414,6 +461,9 @@ namespace Logility.ROWeb
         private bool UpdateMinMaxes(ref string message)
         {
             SAB.HierarchyServerSession.StockMinMaxUpdate(HierarchyNodeProfile.Key, _nodeStockMinMaxesProfile);
+
+            // set global list to updated values including inheritance for values removed
+            _nodeStockMinMaxesProfile = GetStockMinMaxes(key: HierarchyNodeProfile.Key);
 
             return true;
         }

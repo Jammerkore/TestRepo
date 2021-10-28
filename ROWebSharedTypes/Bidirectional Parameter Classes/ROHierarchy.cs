@@ -2392,6 +2392,9 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         private RONodePropertiesStockMinMaxAttributeSet _stockMinMaxAttributeSet = null;
 
+        [DataMember(IsRequired = true)]
+        private bool _otherSetsRowsExist;
+
         #region Public Properties
 
         /// <summary>
@@ -2467,6 +2470,13 @@ namespace Logility.ROWebSharedTypes
             set { _stockMinMaxAttributeSet = value; }
         }
 
+        public bool OtherSetsRowsExist
+        {
+            get { return _otherSetsRowsExist; }
+            set { _otherSetsRowsExist = value; }
+        }
+
+
         #endregion
         public RONodePropertiesStockMinMax(KeyValuePair<int, string> node,
             KeyValuePair<int, string> attribute = default(KeyValuePair<int, string>),
@@ -2480,6 +2490,7 @@ namespace Logility.ROWebSharedTypes
             _attributeSet = attributeSet;
             _definedAttribute = definedAttribute;
             _minimumMaximumsInheritedFromNode = default(KeyValuePair<int, string>);
+            _otherSetsRowsExist = true;
         }
     }
 
