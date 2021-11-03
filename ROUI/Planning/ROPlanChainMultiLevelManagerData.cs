@@ -440,9 +440,8 @@ namespace Logility.ROUI
                 {
                     cont = false;
 
-                    if ( qVarProf.isLowLevel && qVarProf.isChainDetailCube)
-                    ////////if (qVarProf.isChainSingleView && qVarProf.isHighLevel &&
-                    ////////qVarProf.isChainDetailCube)
+                    if (qVarProf.isChainMultiView &&
+                        (qVarProf.isChainDetailCube))
                     {
                         cont = true;
                     }
@@ -1405,10 +1404,8 @@ namespace Logility.ROUI
                 {
                     cont = false;
 
-
-                    if (qVarProf.isLowLevel && qVarProf.isChainDetailCube)
-                    ////////if (qVarProf.isChainSingleView && qVarProf.isHighLevel &&
-                    ////////qVarProf.isChainDetailCube)
+                    if (qVarProf.isChainMultiView &&
+                        (qVarProf.isChainDetailCube))
                     {
                         cont = true;
                     }
@@ -2542,10 +2539,8 @@ namespace Logility.ROUI
                 {
                     cont = false;
 
-
-                    if (qVarProf.isLowLevel && qVarProf.isChainDetailCube)
-                    ////////if (qVarProf.isChainSingleView && qVarProf.isHighLevel &&
-                    ////////qVarProf.isChainDetailCube)
+                    if (qVarProf.isChainMultiView &&
+                        (qVarProf.isChainDetailCube))
                     {
                         cont = true;
                     }
