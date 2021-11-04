@@ -250,6 +250,10 @@ namespace Logility.ROWeb
                 {
                     hierarchyLevelSequence = Convert.ToInt32(dataRow["FROM_PHL_SEQUENCE"]);
                 }
+                else
+                {
+                    hierarchyLevelSequence = 0;
+                }
 
                 // this will be set for an alternate hierarchy entry
                 if (dataRow["FROM_OFFSET"] != DBNull.Value)
@@ -301,6 +305,10 @@ namespace Logility.ROWeb
                 if (dataRow["TO_PHL_SEQUENCE"] != DBNull.Value)
                 {
                     hierarchyLevelSequence = Convert.ToInt32(dataRow["TO_PHL_SEQUENCE"]);
+                }
+                else
+                {
+                    hierarchyLevelSequence = 0;
                 }
 
                 // this will be set for an alternate hierarchy entry
