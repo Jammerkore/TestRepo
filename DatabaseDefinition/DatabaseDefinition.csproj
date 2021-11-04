@@ -3766,6 +3766,7 @@
     <Content Include="UpgradeVersions\ver18.01.0.03.SQL" />
     <Content Include="UpgradeVersions\ver18.01.0.02.SQL" />
     <Content Include="UpgradeVersions\ver19.03.0.02.SQL" />
+    <Content Include="UpgradeVersions\ver21.03.0.01.SQL" />
     <Content Include="UpgradeVersions\ver20.02.0.02.SQL" />
     <Content Include="UpgradeVersions\ver5.0.0.33.SQL" />
     <Content Include="UpgradeVersions\ver5.2.1.19.SQL" />
