@@ -6861,7 +6861,7 @@ namespace MIDRetail.Windows
                                     ((valItem.LevelType == eHierarchyDescendantType.levelType && valItem.HierarchyRID == Convert.ToInt32(aRow.Cells["TO_PH_RID"].Value) && valItem.LevelRID == Convert.ToInt32(aRow.Cells["TO_PHL_SEQUENCE"].Value)) ||
                                     (valItem.LevelType == eHierarchyDescendantType.offset && valItem.Offset == Convert.ToInt32(aRow.Cells["TO_OFFSET"].Value)))))
                                 {
-                                    aRow.Cells["To Level"].Value = i;
+                                    aRow.Cells["To Level"].Value = valItem.LevelName;
                                     break;
                                 }
                             }
