@@ -1105,6 +1105,19 @@ namespace MIDRetail.Business
                     }
                 }
 
+                // set all stores not returned from call to eligible
+
+                foreach (StoreProfile storeProfile in storeList)
+                {
+                    if (sel.FindKey(aKey: storeProfile.Key) == null)
+                    {
+                        sep = new StoreEligibilityProfile(aKey: storeProfile.Key);
+                        sep.StoreIneligible = false;
+
+                        sel.Add(sep);
+                    }
+                }
+
                 return sel;
             }
             catch (System.Net.Http.HttpRequestException ex)
