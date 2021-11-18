@@ -577,7 +577,7 @@ namespace Logility.ROWeb
                     try
                     {
                         if (!FunctionSecurity.AllowUpdate
-                            || _ABM.LockStatus != eLockStatus.Locked
+                            || (_ABM.Key > 0 && _ABM.LockStatus != eLockStatus.Locked)  // check lock status for existing methods
                             || !_ABM.AuthorizedToUpdate(SAB.ClientServerSession, SAB.ClientServerSession.UserRID))
                         {
                             message = MIDText.GetText(eMIDTextCode.msg_NotAuthorized);
