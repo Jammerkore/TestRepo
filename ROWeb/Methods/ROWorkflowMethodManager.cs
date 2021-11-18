@@ -488,11 +488,13 @@ namespace Logility.ROWeb
         {
             string message = null;
             eROReturnCode returnCode = eROReturnCode.Successful;
+            bool copyMethod = false;
 
             try
             {
                 VerifyMethodObject(
                     methodParm: methodParm,
+                    copyMethod: ref copyMethod,
                     message: ref message
                     );
 
@@ -542,7 +544,10 @@ namespace Logility.ROWeb
                 else
                 {
                     _ABM.Method_Change_Type = eChangeType.update;
-                    cleanseName = _ABM.Name != methodParm.ROMethodProperties.Method.Value;
+                    if (!copyMethod)
+                    {
+                        cleanseName = _ABM.Name != methodParm.ROMethodProperties.Method.Value;
+                    }
                     _ABM.Name = methodParm.ROMethodProperties.Method.Value;
                 }
 
@@ -572,10 +577,24 @@ namespace Logility.ROWeb
                     try
                     {
                         if (!FunctionSecurity.AllowUpdate
+                            || _ABM.LockStatus != eLockStatus.Locked
                             || !_ABM.AuthorizedToUpdate(SAB.ClientServerSession, SAB.ClientServerSession.UserRID))
                         {
                             message = MIDText.GetText(eMIDTextCode.msg_NotAuthorized);
                             return new ROIListOut(eROReturnCode.Failure, message, ROInstanceID, null);
+                        }
+
+                        if (copyMethod)
+                        {
+                            // copy the method to create unique date ranges and override models
+                            // if updated from a template
+                            eChangeType saveChangeType = _ABM.Method_Change_Type;
+                            _ABM = _ABM.Copy(
+                                aSession: SAB.ApplicationServerSession,
+                                aCloneDateRanges: true,
+                                aCloneCustomOverrideModels: true
+                                );
+                            _ABM.Method_Change_Type = saveChangeType;
                         }
 
                         int folderKey = methodParm.FolderKey;
@@ -639,11 +658,13 @@ namespace Logility.ROWeb
         {
             string message = null;
             eROReturnCode returnCode = eROReturnCode.Successful;
+            bool copyMethod = false;
 
             try
             {
                 VerifyMethodObject(
                     methodParm: methodParm,
+                    copyMethod: ref copyMethod,
                     message: ref message
                     );
 
@@ -706,9 +727,11 @@ namespace Logility.ROWeb
 
         private void VerifyMethodObject(
             ROMethodPropertiesParms methodParm,
+            ref bool copyMethod,
             ref string message
             )
         {
+            copyMethod = false;
             // If don't have method object, see if it is in dictionary cache
             if (_ABM == null)
             {
@@ -748,6 +771,7 @@ namespace Logility.ROWeb
                             && newMethod.Key == methodParm.ROMethodProperties.Method.Key
                             && !newMethod.Template_IND)
                         {
+                            copyMethod = true;
                             // Unlock original key
                             message = UnlockMethod();
                             // copy the method to create new date ranges and override models
@@ -759,7 +783,19 @@ namespace Logility.ROWeb
                             // Replace the key
                             _ABM.Key = methodParm.ROMethodProperties.Method.Key;
                             // Lock new key
-                            message = LockMethod();
+                            // first check if already locked in the collection
+                            ApplicationBaseMethod lockMethod;
+                            if (_workflowMethods.TryGetValue(_ABM.Key, out lockMethod))
+                            {
+                                if (lockMethod.LockStatus == eLockStatus.Locked)
+                                {
+                                    _ABM.LockStatus = eLockStatus.Locked;
+                                }
+                            }
+                            if (_ABM.LockStatus != eLockStatus.Locked)
+                            {
+                                message = LockMethod(changeType: eChangeType.update);
+                            }
                         }
                         else
                         {
@@ -1078,7 +1114,7 @@ namespace Logility.ROWeb
 
             if (_ABM.LockStatus != eLockStatus.Locked)
             {
-                message = LockMethod();
+                message = LockMethod(changeType: eChangeType.delete);
             }
 
             if (_ABM.LockStatus != eLockStatus.Locked)
@@ -1120,13 +1156,13 @@ namespace Logility.ROWeb
             return new RONoDataOut(eROReturnCode.Successful, message, ROInstanceID);
         }
 
-        private string LockMethod()
+        private string LockMethod(eChangeType changeType)
         {
             string message = null;
             _ABM.LockStatus = WorkflowMethodUtilities.LockWorkflowMethod(
                    SAB: SAB,
                    workflowMethodIND: eWorkflowMethodIND.Methods,
-                   aChangeType: eChangeType.delete,
+                   aChangeType: changeType,
                    Key: _ABM.Key,
                    Name: _ABM.Name,
                    allowReadOnly: false,

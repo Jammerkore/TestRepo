@@ -11963,10 +11963,15 @@ namespace MIDRetail.Business
 			int onHandDayInWeek = startDay.DayInWeek - 1;
 			if (!storeOnHandHash.Contains(aOnHandDate))
 			{
+                int eligibilityNodeRID = aHnRID;
+                if (aAllocationProfile != null)
+                {
+                    eligibilityNodeRID = aAllocationProfile.GetCubeEligibilityNode();
+                }
 				ohHash = 
 					this.DetermineDailyInventory(
                         aHnRID,
-                        aAllocationProfile.GetCubeEligibilityNode(),
+                        eligibilityNodeRID,
                         (ProfileList)this.GetMasterProfileList(eProfileType.Store), 
                         startDay.Week);
 				storeOnHandHash.Add(aOnHandDate, ohHash);

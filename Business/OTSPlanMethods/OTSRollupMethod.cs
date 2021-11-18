@@ -174,6 +174,8 @@ namespace MIDRetail.Business
                         break;
                     case eChangeType.update:
                         base.Update(td);
+                        // make sure the key in the data layer is the same
+                        _rollupData.MethodRid = base.Key;
                         _rollupData.UpdateMethod(base.Key, td);
                         break;
                     case eChangeType.delete:

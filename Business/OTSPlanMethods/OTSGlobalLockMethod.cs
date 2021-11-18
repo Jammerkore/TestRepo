@@ -287,6 +287,8 @@ namespace MIDRetail.Business
                         break;
                     case eChangeType.update:
                         base.Update(td);
+                        // make sure the key in the data layer is the same
+                        _globalLockData.MethodRid = base.Key;
                         _globalLockData.UpdateMethod(base.Key, td);
                         break;
                     case eChangeType.delete:

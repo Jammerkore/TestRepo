@@ -303,6 +303,8 @@ namespace MIDRetail.Business
                         break;
                     case eChangeType.update:
                         base.Update(td);
+                        // make sure the key in the data layer is the same
+                        _forecastSpreadData.MethodRid = base.Key;
                         _forecastSpreadData.UpdateMethod(base.Key, td);
                         break;
                     case eChangeType.delete:

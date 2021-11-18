@@ -317,6 +317,8 @@ namespace MIDRetail.Business
 						break;
 					case eChangeType.update:
 						base.Update(td);
+                        // make sure the key in the data layer is the same
+                        _ForecastCopyData.ForecastCopy_Method_RID = base.Key;
 						_ForecastCopyData.UpdateMethod(base.Key, td);
 						break;
 					case eChangeType.delete:

@@ -6241,6 +6241,8 @@ namespace MIDRetail.Business.Allocation
 						break;
 					case eChangeType.update:
 						base.Update(td);
+                        // make sure the key in the data layer is the same
+                        _VMD.Velocity_Method_RID = base.Key;
 						_VMD.UpdateMethod(base.Key, td);
 						break;
 					case eChangeType.delete:

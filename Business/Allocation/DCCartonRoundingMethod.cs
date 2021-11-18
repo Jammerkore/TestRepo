@@ -1531,6 +1531,8 @@ namespace MIDRetail.Business.Allocation
                         break;
                     case eChangeType.update:
                         base.Update(td);
+                        // make sure the key in the data layer is the same
+                        _methodData.MethodRid = base.Key;
                         _methodData.UpdateMethod(base.Key, td);
                         break;
                     case eChangeType.delete:
