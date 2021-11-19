@@ -10083,7 +10083,8 @@ namespace MIDRetail.DataCommon
         LoadImoCriteria = 15,
         NotUsed = 16,                                                         // TT#327 - Header Allocated befor VSW Gets VSW Allocation // TT#246 - MD - JEllis - AnF VSW In Store Minimums pt 5
         CalcVswColorIdealItemMin = 17,                                                        // TT#246 - MD - JEllis - AnF VSW In STore Minimums pt 5  // TT#1334 - Urban - Jellis - Balance to VSW Enhancement
-        BalanceToVSW_Performed = 18
+        BalanceToVSW_Performed = 18,
+        EligibilityLoaded = 19
     }
 
     // begin TT#246 - MD - Jellis - AnF VSW In Store Minimums pt 5

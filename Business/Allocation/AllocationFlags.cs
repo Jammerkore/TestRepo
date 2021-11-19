@@ -1034,7 +1034,22 @@ namespace MIDRetail.Business.Allocation
                 _flags = MIDFlag.SetFlagValue(_flags, (int)eAllocationStatusFlag.BalanceToVSW_Performed, value);
             }
         }
-	}
+
+        /// <summary>
+        /// Gets or sets EligibilityLoaded
+        /// </summary>
+        public bool EligibilityLoaded
+        {
+            get
+            {
+                return MIDFlag.GetFlagValue(_flags, (int)eAllocationStatusFlag.EligibilityLoaded);
+            }
+            set
+            {
+                _flags = MIDFlag.SetFlagValue(_flags, (int)eAllocationStatusFlag.EligibilityLoaded, value);
+            }
+        }
+    }
 
     // begin TT#246 - MD - Jellis - AnF VSW In Store Minimums pt 5
     /// <summary>
