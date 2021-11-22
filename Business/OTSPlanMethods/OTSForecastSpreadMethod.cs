@@ -1460,6 +1460,23 @@ namespace MIDRetail.Business
             ROOverrideLowLevel overrideLowLevel = new ROOverrideLowLevel();
             overrideLowLevel.OverrideLowLevelsModel = GetName.GetOverrideLowLevelsModel(OverrideLowLevelRid, SAB);
 
+            // if from level is not set, default to the level of the merchandise
+            if (FromLevelType == eFromLevelsType.None
+                && HierNodeRID > 0)
+            {
+                HierarchyNodeProfile hierarchyNodeProfile = SAB.HierarchyServerSession.GetNodeData(nodeRID: HierNodeRID);
+                if (hierarchyNodeProfile.HomeHierarchyType == eHierarchyType.organizational)
+                {
+                    FromLevelType = eFromLevelsType.HierarchyLevel;
+                    FromLevelSequence = hierarchyNodeProfile.HomeHierarchyLevel;
+                }
+                else if (hierarchyNodeProfile.HomeHierarchyType == eHierarchyType.alternate)
+                {
+                    FromLevelType = eFromLevelsType.LevelOffset;
+                    FromLevelSequence = hierarchyNodeProfile.HomeHierarchyLevel;
+                }
+            }
+
             ROLevelInformation fromLevel = new ROLevelInformation();
             fromLevel.LevelType = (eROLevelsType)FromLevelType;
             fromLevel.LevelOffset = FromLevelOffset;
