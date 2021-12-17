@@ -60,7 +60,7 @@ namespace Logility.ROWeb
             List<KeyValuePair<int, string>> keyValueList = new List<KeyValuePair<int, string>>();
 
             GetSizeModels();
-            keyValueList.Add(new KeyValuePair<int, string>(-1, MIDText.GetTextOnly((int)eMIDTextCode.msg_NewSizeGroup)));
+            //keyValueList.Add(new KeyValuePair<int, string>(-1, MIDText.GetTextOnly((int)eMIDTextCode.msg_NewSizeGroup)));
             foreach (SizeGroupProfile sgp in _sizeGroupList.ArrayList)
             {
                 keyValueList.Add(new KeyValuePair<int, string>(sgp.Key, sgp.SizeGroupName.Trim()));

@@ -242,13 +242,12 @@ namespace Logility.ROWebSharedTypes
     [KnownType(typeof(ROSizeConstraintColor))]
     [KnownType(typeof(ROSizeConstraints))]
     [KnownType(typeof(ROSizeConstraintAttributeSet))]
-    [KnownType(typeof(ROSizeConstraintDimensionSizes))]
+    [KnownType(typeof(ROSizeDimension))]
     [KnownType(typeof(ROModelSizeConstraintProperties))]
 
     [KnownType(typeof(ROModelSizeAlternateProperties))]
-    [KnownType(typeof(ROSizeAlternatePrimarySet))]
-    [KnownType(typeof(ROSizeAlternateSecondarySets))]
-    [KnownType(typeof(ROSizeAlternateSecondaryValues))]
+    [KnownType(typeof(ROSizeAlternatePrimarySize))]
+    [KnownType(typeof(ROSizeAlternateAlternateSize))]
     [KnownType(typeof(ROModelSizeGroupProperties))]
 
     [KnownType(typeof(ROSize))]

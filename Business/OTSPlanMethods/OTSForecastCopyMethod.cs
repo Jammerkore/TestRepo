@@ -1923,7 +1923,8 @@ namespace MIDRetail.Business
                 toLevel = method.ToLevel;
 
                 // build the from and to low level lists based on the selected merchandise
-                BuildLowLevelLists(
+                HierarchyTools.BuildLowLevelLists(
+                    sessionAddressBlock: SAB,
                     hierarchyNodeRID: _hierNodeRid,
                     fromLevels: method.FromLevels,
                     fromMerchandiseType: ref fromMerchandiseType,
@@ -1932,7 +1933,8 @@ namespace MIDRetail.Business
                     );
 
                 // adjust the from and to lists along with the to level based on the selected from level
-                AdjustLevelLists(
+                HierarchyTools.AdjustLevelLists(
+                    sessionAddressBlock: SAB,
                     fromLevel: ref fromLevel,
                     fromLevels: method.FromLevels,
                     fromMerchandiseType: ref fromMerchandiseType,

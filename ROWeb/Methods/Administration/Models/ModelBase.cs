@@ -228,7 +228,73 @@ namespace Logility.ROWeb
             return lockStatus;
         }
 
-        
+        /// <summary>
+		/// Fills a KeyValuePair List with colors.
+		/// </summary>
+		/// <param name="colorList">KeyValuePair object to fill</param>
+		protected void FillColorList(List<KeyValuePair<int, string>> colorList)
+        {
+            ColorData colorData = new ColorData();
+            DataTable dataTableColors = colorData.Colors_Read();
+
+            foreach (DataRow dataRow in dataTableColors.Rows)
+            {
+                colorList.Add(new KeyValuePair<int, string>(
+                    Convert.ToInt32(dataRow["COLOR_CODE_RID"],  CultureInfo.CurrentUICulture),
+                    dataRow["COLOR_CODE_ID"].ToString() + " - " + dataRow["COLOR_CODE_NAME"].ToString())
+                    );
+            }
+
+        }
+
+        /// <summary>
+        /// Fills class with size dimensions.
+        /// </summary>
+        /// <remarks>Method must be overridden</remarks>
+        protected void FillDimensionSizeList(List<ROSizeDimension> sizeDimensionSizes, int Key, eGetDimensions getDimensions, eGetSizes getSizes)
+        {
+            ROSizeDimension dimensionSizes;
+            int dimensionKey;
+            string dimension;
+            SizeModelData sizeModelData = new SizeModelData();
+            MaintainSizeConstraints maint = new MaintainSizeConstraints(sizeModelData);
+            DataTable dtDimensions = maint.FillSizeDimensionList(Key, getDimensions);
+            DataTable dtSizes = maint.FillSizesList(Key, getSizes);
+
+            foreach (DataRow dr in dtDimensions.Rows)
+            {
+                dimensionKey = Convert.ToInt32(dr["DIMENSIONS_RID"]);
+                dimension = dr["SIZE_CODE_SECONDARY"].ToString();
+                dimensionSizes = new ROSizeDimension(dimension: new KeyValuePair<int, string>(
+                    dimensionKey,
+                    dimension)
+                    );
+                FillSizesList(dimensionSizes: dimensionSizes, dtSizes: dtSizes, dimensionKey: dimensionKey);
+                sizeDimensionSizes.Add(dimensionSizes);
+
+            }
+        }
+
+        /// <summary>
+		/// Fills class with sizes based on a selected Size Group
+		/// </summary>
+		protected void FillSizesList(ROSizeDimension dimensionSizes, DataTable dtSizes, int dimensionKey)
+        {
+            int sizeKey;
+            string size;
+
+            DataRow[] SelectRows = dtSizes.Select("DIMENSIONS_RID = '" + dimensionKey.ToString() + "'");
+
+            foreach (DataRow dr in SelectRows)
+            {
+                sizeKey = Convert.ToInt32(dr["SIZE_CODE_RID"]);
+                size = dr["SIZE_CODE_PRIMARY"].ToString();
+                dimensionSizes.Sizes.Add(new KeyValuePair<int, string>(
+                    sizeKey,
+                    size)
+                    );
+            }
+        }
 
     }
 }

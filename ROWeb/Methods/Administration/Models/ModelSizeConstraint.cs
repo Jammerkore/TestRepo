@@ -681,7 +681,7 @@ namespace Logility.ROWeb
         /// <remarks>Method must be overridden</remarks>
         private void FillDimensionSizeList(ROModelSizeConstraintProperties modelProperties, int Key, eGetDimensions getDimensions, eGetSizes getSizes)
         {
-            ROSizeConstraintDimensionSizes dimensionSizes;
+            ROSizeDimension dimensionSizes;
             int dimensionKey;
             string dimension;
             MaintainSizeConstraints maint = new MaintainSizeConstraints(_sizeModelData);
@@ -692,12 +692,12 @@ namespace Logility.ROWeb
             {
                 dimensionKey = Convert.ToInt32(dr["DIMENSIONS_RID"]);
                 dimension = dr["SIZE_CODE_SECONDARY"].ToString();
-                dimensionSizes = new ROSizeConstraintDimensionSizes(dimension: new KeyValuePair<int, string>(
+                dimensionSizes = new ROSizeDimension(dimension: new KeyValuePair<int, string>(
                     dimensionKey,
                     dimension)
                     );
                 FillSizesList(dimensionSizes: dimensionSizes, dtSizes: dtSizes, dimensionKey: dimensionKey);
-                modelProperties.SizeConstraintDimensionSizes.Add(dimensionSizes);
+                //modelProperties.SizeConstraintDimensionSizes.Add(dimensionSizes);
 
             }
         }
@@ -705,23 +705,23 @@ namespace Logility.ROWeb
         /// <summary>
 		/// Fills class with sizes based on a selected Size Group
 		/// </summary>
-		private void FillSizesList(ROSizeConstraintDimensionSizes dimensionSizes, DataTable dtSizes, int dimensionKey)
-        {
-            int sizeKey;
-            string size;
+		//private void FillSizesList(ROSizeDimensionSizes dimensionSizes, DataTable dtSizes, int dimensionKey)
+  //      {
+  //          int sizeKey;
+  //          string size;
 
-            DataRow[] SelectRows = dtSizes.Select("DIMENSIONS_RID = '" + dimensionKey.ToString() + "'");
+  //          DataRow[] SelectRows = dtSizes.Select("DIMENSIONS_RID = '" + dimensionKey.ToString() + "'");
 
-            foreach (DataRow dr in SelectRows)
-            {
-                sizeKey = Convert.ToInt32(dr["SIZE_CODE_RID"]);
-                size = dr["SIZE_CODE_PRIMARY"].ToString();
-                dimensionSizes.Sizes.Add(new KeyValuePair<int, string>(
-                    sizeKey,
-                    size)
-                    );
-            }
-        }
+  //          foreach (DataRow dr in SelectRows)
+  //          {
+  //              sizeKey = Convert.ToInt32(dr["SIZE_CODE_RID"]);
+  //              size = dr["SIZE_CODE_PRIMARY"].ToString();
+  //              dimensionSizes.Sizes.Add(new KeyValuePair<int, string>(
+  //                  sizeKey,
+  //                  size)
+  //                  );
+  //          }
+  //      }
 
         private void FillCollections(int sizeConstraintModelKey, int attributeKey, int sizeGroupKey, int sizeCurveGroupKey)
         {

@@ -539,9 +539,9 @@ namespace Logility.ROWebSharedTypes
 
         public ROModelOverrideLowLevel(
             KeyValuePair<int, string> merchandise,
-            KeyValuePair<int, string> version,
-            bool exclude,
-            bool inactive
+            KeyValuePair<int, string> version = default(KeyValuePair<int, string>),
+            bool exclude = false, 
+            bool inactive = false 
             )
         {
             _merchandise = merchandise;
@@ -1173,8 +1173,8 @@ namespace Logility.ROWebSharedTypes
         }
     }
 
-    [DataContract(Name = "ROSizeConstraintDimensionSizes", Namespace = "http://Logility.ROWeb/")]
-    public class ROSizeConstraintDimensionSizes
+    [DataContract(Name = "ROSizeDimension", Namespace = "http://Logility.ROWeb/")]
+    public class ROSizeDimension
     {
         [DataMember(IsRequired = true)]
         KeyValuePair<int, string> _dimension;
@@ -1197,7 +1197,7 @@ namespace Logility.ROWebSharedTypes
 
         #endregion
 
-        public ROSizeConstraintDimensionSizes(KeyValuePair<int, string> dimension)
+        public ROSizeDimension(KeyValuePair<int, string> dimension)
         {
             _dimension = dimension;
             _sizes = new List<KeyValuePair<int, string>>();
@@ -1226,7 +1226,7 @@ namespace Logility.ROWebSharedTypes
         List<ROSizeConstraintAttributeSet> _sizeConstraintAttributeSet;
 
         [DataMember(IsRequired = true)]
-        List<ROSizeConstraintDimensionSizes> _sizeConstraintDimensionSizes;
+        List<ROSizeDimension> _sizeConstraintDimensionSizes;
 
         #region Public Properties
         public KeyValuePair<int, string> Attribute
@@ -1264,7 +1264,7 @@ namespace Logility.ROWebSharedTypes
             get { return _sizeConstraintAttributeSet; }
         }
 
-        public List<ROSizeConstraintDimensionSizes> SizeConstraintDimensionSizes
+        public List<ROSizeDimension> SizeConstraintDimensionSizes
         {
             get { return _sizeConstraintDimensionSizes; }
         }
@@ -1282,7 +1282,7 @@ namespace Logility.ROWebSharedTypes
             _sizeCurveGroup = sizeCurveGroup;
             _sizeGroup = sizeGroup;
             _sizeConstraintAttributeSet = new List<ROSizeConstraintAttributeSet>();
-            _sizeConstraintDimensionSizes = new List<ROSizeConstraintDimensionSizes>();
+            _sizeConstraintDimensionSizes = new List<ROSizeDimension>();
         }
     }
 
@@ -1296,43 +1296,60 @@ namespace Logility.ROWebSharedTypes
         KeyValuePair<int, string> _alternateSizeCurve;
 
         [DataMember(IsRequired = true)]
-        List<ROSizeAlternatePrimarySet> _sizeAlternatePrimarySet;
+        List<ROSizeAlternatePrimarySize> _sizeAlternatePrimarySizes;
 
-    #region Public Properties
+        [DataMember(IsRequired = true)]
+        List<ROSizeDimension> _primarySizeCurveDimensions;
 
-    public KeyValuePair<int, string> PrimarySizeCurve
-    {
-        get { return _primarySizeCurve; }
-        set { _primarySizeCurve = value; }
-    }
+        [DataMember(IsRequired = true)]
+        List<ROSizeDimension> _alternateSizeCurveDimensions;
 
-    public KeyValuePair<int, string> AlternateSizeCurve
-    {
-        get { return _alternateSizeCurve; }
-        set { _alternateSizeCurve = value; }
-    } 
+        #region Public Properties
 
-    public List<ROSizeAlternatePrimarySet> SizeAlternatePrimarySet
+        public KeyValuePair<int, string> PrimarySizeCurve
         {
-        get { return _sizeAlternatePrimarySet; }
-    }
+            get { return _primarySizeCurve; }
+            set { _primarySizeCurve = value; }
+        }
 
-    #endregion
+        public KeyValuePair<int, string> AlternateSizeCurve
+        {
+            get { return _alternateSizeCurve; }
+            set { _alternateSizeCurve = value; }
+        } 
 
-    public ROModelSizeAlternateProperties(KeyValuePair<int, string> model,
-        KeyValuePair<int, string> primarySizeCurve,
-        KeyValuePair<int, string> alternateSizeCurve)
-        //int sizeCurveKeyToCopyToDefault = Include.NoRID)
-        : base(eModelType.SizeAlternates, model)
+        public List<ROSizeAlternatePrimarySize> SizeAlternatePrimarySizes
+        {
+            get { return _sizeAlternatePrimarySizes; }
+        }
 
-    {
-        _primarySizeCurve = primarySizeCurve;
-        _alternateSizeCurve = alternateSizeCurve;
-        _sizeAlternatePrimarySet = new List<ROSizeAlternatePrimarySet>();
-    }
+        public List<ROSizeDimension> PrimarySizeCurveDimensions
+        {
+            get { return _primarySizeCurveDimensions; }
+        }
+
+        public List<ROSizeDimension> AlternateSizeCurveDimensions
+        {
+            get { return _alternateSizeCurveDimensions; }
+        }
+
+        #endregion
+
+        public ROModelSizeAlternateProperties(KeyValuePair<int, string> model,
+        	KeyValuePair<int, string> primarySizeCurve,
+        	KeyValuePair<int, string> alternateSizeCurve)
+        	: base(eModelType.SizeAlternates, model)
+
+        {
+            _primarySizeCurve = primarySizeCurve;
+            _alternateSizeCurve = alternateSizeCurve;
+            _sizeAlternatePrimarySizes = new List<ROSizeAlternatePrimarySize>();
+            _primarySizeCurveDimensions = new List<ROSizeDimension>();
+            _alternateSizeCurveDimensions = new List<ROSizeDimension>();
+        }
 }
-    [DataContract(Name = "ROSizeAlternatePrimarySet", Namespace = "http://Logility.ROWeb/")]
-    public class ROSizeAlternatePrimarySet
+    [DataContract(Name = "ROSizeAlternatePrimarySize", Namespace = "http://Logility.ROWeb/")]
+    public class ROSizeAlternatePrimarySize
     {
         [DataMember(IsRequired = true)]
         int _seq;
@@ -1344,7 +1361,7 @@ namespace Logility.ROWebSharedTypes
         KeyValuePair<int, string> _dimension;
 
         [DataMember(IsRequired = true)]
-        ROSizeAlternateSecondarySets _sizeAlternateSecondarySets;
+        List<ROSizeAlternateAlternateSize> _sizeAlternateAlternateSizes;
 
         #region Public Properties
 
@@ -1363,47 +1380,28 @@ namespace Logility.ROWebSharedTypes
             get { return _dimension; }
             set { _dimension = value; }
         }
-        public ROSizeAlternateSecondarySets SizeAlternateSecondarySets
+        public List<ROSizeAlternateAlternateSize> SizeAlternateAlternateSizes
         {
-            get { return _sizeAlternateSecondarySets; }
-            set { _sizeAlternateSecondarySets = value; }
+            get { return _sizeAlternateAlternateSizes; }
         }
 
         #endregion
 
-        public ROSizeAlternatePrimarySet(int seq, KeyValuePair<int, string> size, KeyValuePair<int, string> dimension, ROSizeAlternateSecondarySets sizeAlternateSecondarySets)
+        public ROSizeAlternatePrimarySize(
+            int seq, 
+            KeyValuePair<int, string> size, 
+            KeyValuePair<int, string> dimension
+            )
         {
             _seq = seq;
             _size = size;
             _dimension = dimension;
-            _sizeAlternateSecondarySets = sizeAlternateSecondarySets;
+            _sizeAlternateAlternateSizes = new List<ROSizeAlternateAlternateSize>();
         }
     }
 
-    [DataContract(Name = "ROSizeAlternateSecondarySets", Namespace = "http://Logility.ROWeb/")]
-    public class ROSizeAlternateSecondarySets
-    {
-        [DataMember(IsRequired = true)]
-        public List<ROSizeAlternateSecondaryValues> _sizeAlternateSecondarySets;
-
-
-        public List<ROSizeAlternateSecondaryValues> SizeAlternateSecondarySets
-        {
-            get
-            {
-                if (_sizeAlternateSecondarySets == null)
-                {
-                    _sizeAlternateSecondarySets = new List<ROSizeAlternateSecondaryValues>();
-                }
-                return _sizeAlternateSecondarySets;
-            }
-            set { _sizeAlternateSecondarySets = value; }
-        }
-
-    }
-
-    [DataContract(Name = "ROSizeAlternateSecondaryValues", Namespace = "http://Logility.ROWeb/")]
-    public class ROSizeAlternateSecondaryValues
+    [DataContract(Name = "ROSizeAlternateAlternateSize", Namespace = "http://Logility.ROWeb/")]
+    public class ROSizeAlternateAlternateSize
     {
         [DataMember(IsRequired = true)]
         int _seq;
@@ -1435,7 +1433,11 @@ namespace Logility.ROWebSharedTypes
         
         #endregion
 
-        public ROSizeAlternateSecondaryValues(int seq, KeyValuePair<int, string> size, KeyValuePair<int, string> dimension)
+        public ROSizeAlternateAlternateSize(
+            int seq,
+            KeyValuePair<int, string> size, 
+            KeyValuePair<int, string> dimension
+            )
         {
             _seq = seq;
             _size = size;

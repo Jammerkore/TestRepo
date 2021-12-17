@@ -83,26 +83,93 @@ namespace Logility.ROWebSharedTypes
         private int _attributeKey;
 
         [DataMember(IsRequired = true)]
+        private int _attributeSetKey;
+
+        [DataMember(IsRequired = true)]
         private int _sizeGroupKey;
 
         [DataMember(IsRequired = true)]
         private int _sizeCurveGroupKey;
 
-        public ROSizeConstraintModelParms(string sROUserID, string sROSessionID, eROClass ROClass, eRORequest RORequest, long ROInstanceID,
-                                        eModelType modelType, int key = Include.Undefined, bool readOnly = false,
-                                        int attributeKey = Include.NoRID, int sizeGroupKey = Include.NoRID, int sizeCurveGroupKey = Include.NoRID)
-            : base(sROUserID, sROSessionID, ROClass, RORequest, ROInstanceID, modelType, key, readOnly)
+        public ROSizeConstraintModelParms(
+            string sROUserID, 
+            string sROSessionID, 
+            eROClass ROClass, 
+            eRORequest RORequest, 
+            long ROInstanceID,              
+            eModelType modelType, 
+            int key = Include.Undefined, 
+            bool readOnly = false,
+            int attributeKey = Include.NoRID, 
+            int attributeSetKey = Include.NoRID, 
+            int sizeGroupKey = Include.NoRID, 
+            int sizeCurveGroupKey = Include.NoRID
+            )
+            : base(
+                  sROUserID, 
+                  sROSessionID, 
+                  ROClass, 
+                  RORequest, 
+                  ROInstanceID, 
+                  modelType, 
+                  key, 
+                  readOnly
+                  )
         {
             _attributeKey = attributeKey;
+            _attributeSetKey = attributeSetKey;
             _sizeGroupKey = sizeGroupKey;
             _sizeCurveGroupKey = sizeCurveGroupKey;
         }
 
         public int AttributeKey { get { return _attributeKey; } }
 
+        public int AttributeSetKey { get { return _attributeSetKey; } }
+
         public int SizeGroupKey { get { return _sizeGroupKey; } }
 
         public int SizeCurveGroupKey { get { return _sizeCurveGroupKey; } }
+    }
+
+    [DataContract(Name = "ROSizeAlternateModelParms", Namespace = "http://Logility.ROWeb/")]
+    public class ROSizeAlternateModelParms : ROModelParms
+    {
+        [DataMember(IsRequired = true)]
+        private int _primarySizeCurveKey;
+
+        [DataMember(IsRequired = true)]
+        private int _alternateSizeCurveKey;
+
+        public ROSizeAlternateModelParms(
+            string sROUserID,
+            string sROSessionID,
+            eROClass ROClass,
+            eRORequest RORequest,
+            long ROInstanceID,
+            eModelType modelType,
+            int key = Include.Undefined,
+            bool readOnly = false,
+            int primarySizeCurveKey = Include.NoRID,
+            int alternateSizeCurveKey = Include.NoRID
+            )
+            : base(
+                  sROUserID,
+                  sROSessionID,
+                  ROClass,
+                  RORequest,
+                  ROInstanceID,
+                  modelType,
+                  key,
+                  readOnly
+                  )
+        {
+            _primarySizeCurveKey = primarySizeCurveKey;
+            _alternateSizeCurveKey = alternateSizeCurveKey;
+        }
+
+        public int PrimarySizeCurveKey { get { return _primarySizeCurveKey; } }
+
+        public int AlternateSizeCurveKey { get { return _alternateSizeCurveKey; } }
     }
 
     [DataContract(Name = "ROModelPropertiesParms", Namespace = "http://Logility.ROWeb/")]
