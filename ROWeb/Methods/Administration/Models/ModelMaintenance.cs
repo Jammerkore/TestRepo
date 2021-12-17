@@ -206,12 +206,12 @@ namespace Logility.ROWeb
 
             getModelParms = _modelClass.GetModelParms(parms: parms, modelType: _currentModelType, key: mp.Key);
 
-            if (parms.ROModelProperties.Model.Key == Include.NoRID)
-            {
-                // get model and lock since new model
-                return GetModel(parms: getModelParms);
-            }
-            else
+            //if (parms.ROModelProperties.Model.Key == Include.NoRID)
+            //{
+            //    // get model and lock since new model
+            //    return GetModel(parms: getModelParms);
+            //}
+            //else
             {
                 // replace with update data and get model 
                 _currentModelProfile = mp;

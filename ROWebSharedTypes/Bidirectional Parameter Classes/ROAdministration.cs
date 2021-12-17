@@ -493,21 +493,241 @@ namespace Logility.ROWebSharedTypes
         }
     }
 
-    [DataContract(Name = "ROModelOverrideLowLevelsProperties", Namespace = "http://Logility.ROWeb/")]
-    public class ROModelOverrideLowLevelsProperties : ROModelProperties
+    [DataContract(Name = "ROModelOverrideLowLevel", Namespace = "http://Logility.ROWeb/")]
+    public class ROModelOverrideLowLevel : IComparable<ROModelOverrideLowLevel>
     {
-        // fields specific to Model
+        [DataMember(IsRequired = true)]
+        KeyValuePair<int, string> _merchandise;
+
+        [DataMember(IsRequired = true)]
+        KeyValuePair<int, string> _version;
+
+        [DataMember(IsRequired = true)]
+        bool _exclude;
+
+        [DataMember(IsRequired = true)]
+        bool _inactive;
 
 
         #region Public Properties
 
+        public KeyValuePair<int, string> Merchandise
+        {
+            get { return _merchandise; }
+            set { _merchandise = value; }
+        }
+
+        public KeyValuePair<int, string> Version
+        {
+            get { return _version; }
+            set { _version = value; }
+        }
+
+        public bool Exclude
+        {
+            get { return _exclude; }
+            set { _exclude = value; }
+        }
+
+        public bool Inactive
+        {
+            get { return _inactive; }
+            set { _inactive = value; }
+        }
+
         #endregion
-        public ROModelOverrideLowLevelsProperties(KeyValuePair<int, string> model) :
-            base(eModelType.OverrideLowLevel, model)
+
+        public ROModelOverrideLowLevel(
+            KeyValuePair<int, string> merchandise,
+            KeyValuePair<int, string> version,
+            bool exclude,
+            bool inactive
+            )
+        {
+            _merchandise = merchandise;
+            _version = version;
+            _exclude = exclude;
+            _inactive = inactive;
+        }
+
+        public int CompareTo(ROModelOverrideLowLevel lowLevel)
+        {
+            // A null value means that this object is greater.
+            if (lowLevel == null)
+                return 1;
+
+            else
+                return this.Merchandise.Value.CompareTo(lowLevel.Merchandise.Value);
+        }
+    }
+
+    [DataContract(Name = "ROModelOverrideLowLevelsProperties", Namespace = "http://Logility.ROWeb/")]
+    public class ROModelOverrideLowLevelsProperties : ROModelProperties
+    {
+        // fields specific to Model
+        [DataMember(IsRequired = true)]
+        private int _userKey;
+
+        [DataMember(IsRequired = true)]
+        private bool _activeOnly;
+
+        [DataMember(IsRequired = true)]
+        private KeyValuePair<int, string> _merchandise;
+
+        [DataMember(IsRequired = true)]
+        private eMerchandiseType _highLevelType;
+
+        [DataMember(IsRequired = true)]
+        private ROLevelInformation _highLevel;
+
+        [DataMember(IsRequired = true)]
+        List<KeyValuePair<int, string>> _highLevels;
+
+        [DataMember(IsRequired = true)]
+        private KeyValuePair<int, string> _highLevelMerchandise;
+
+        [DataMember(IsRequired = true)]
+        List<KeyValuePair<int, string>> _highLevelMerchandiseList;
+
+        [DataMember(IsRequired = true)]
+        private eMerchandiseType _lowLevelType;
+
+        [DataMember(IsRequired = true)]
+        private ROLevelInformation _lowLevel;
+
+        [DataMember(IsRequired = true)]
+        List<KeyValuePair<int, string>> _lowLevels;
+
+        [DataMember(IsRequired = true)]
+        List<ROModelOverrideLowLevel> _lowLevelMerchandise;
+
+        [DataMember(IsRequired = true)]
+        List<KeyValuePair<int, string>> _versions;
+
+        #region Public Properties
+
+        public int UserKey
+        {
+            get { return _userKey; }
+            set { _userKey = value; }
+        }
+
+        public bool ActiveOnly
+        {
+            get { return _activeOnly; }
+            set { _activeOnly = value; }
+        }
+
+        public KeyValuePair<int, string> Merchandise
+        {
+            get { return _merchandise; }
+            set { _merchandise = value; }
+        }
+
+        public bool MerchandiseIsSet
+        {
+            get { return !Merchandise.Equals(default(KeyValuePair<int, string>)); }
+        }
+
+        public eMerchandiseType HighLevelType
+        {
+            get { return _highLevelType; }
+            set { _highLevelType = value; }
+        }
+
+        public ROLevelInformation HighLevel
+        {
+            get { return _highLevel; }
+            set { _highLevel = value; }
+        }
+
+        public bool HighLevelIsSet
+        {
+            get { return HighLevel != null; }
+        }
+
+        public List<KeyValuePair<int, string>> HighLevels
+        {
+            get { return _highLevels; }
+        }
+
+        public KeyValuePair<int, string> HighLevelMerchandise
+        {
+            get { return _highLevelMerchandise; }
+            set { _highLevelMerchandise = value; }
+        }
+
+        public bool HighLevelMerchandiseIsSet
+        {
+            get { return !HighLevelMerchandise.Equals(default(KeyValuePair<int, string>)); }
+        }
+
+        public List<KeyValuePair<int, string>> HighLevelMerchandiseList
+        {
+            get { return _highLevelMerchandiseList; }
+        }
+
+        public eMerchandiseType LowLevelType
+        {
+            get { return _lowLevelType; }
+            set { _lowLevelType = value; }
+        }
+
+        public ROLevelInformation LowLevel
+        {
+            get { return _lowLevel; }
+            set { _lowLevel = value; }
+        }
+
+        public bool LowLevelIsSet
+        {
+            get { return LowLevel != null; }
+        }
+
+        public List<KeyValuePair<int, string>> LowLevels
+        {
+            get { return _lowLevels; }
+        }
+
+        public List<ROModelOverrideLowLevel> LowLevelMerchandise
+        {
+            get { return _lowLevelMerchandise; }
+        }
+
+        public List<KeyValuePair<int, string>> Versions
+        {
+            get { return _versions; }
+        }
+
+        #endregion
+        public ROModelOverrideLowLevelsProperties(
+            KeyValuePair<int, string> model,
+            int userKey = Include.GlobalUserRID,
+            bool activeOnly = false,
+            KeyValuePair<int, string> merchandise = default(KeyValuePair<int, string>),
+            eMerchandiseType highLevelType = eMerchandiseType.Undefined,
+            ROLevelInformation highLevel = null,
+            KeyValuePair<int, string> highLevelMerchandise = default(KeyValuePair<int, string>),
+            eMerchandiseType lowLevelType = eMerchandiseType.Undefined,
+            ROLevelInformation lowLevel = null
+            )
+            : base(eModelType.OverrideLowLevel, model)
 
         {
             // fields specific to Model
-
+            _userKey = userKey;
+            _activeOnly = activeOnly;
+            _merchandise = merchandise;
+            _highLevelType = highLevelType;
+            _highLevel = highLevel;
+            _highLevelMerchandise = highLevelMerchandise;
+            _lowLevelType = lowLevelType;
+            _lowLevel = lowLevel;
+            _highLevels = new List<KeyValuePair<int, string>>();
+            _highLevelMerchandiseList = new List<KeyValuePair<int, string>>();
+            _lowLevels = new List<KeyValuePair<int, string>>();
+            _lowLevelMerchandise = new List<ROModelOverrideLowLevel>();
+            _versions = new List<KeyValuePair<int, string>>();
         }
     }
 

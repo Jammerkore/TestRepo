@@ -1699,6 +1699,17 @@ namespace MIDRetail.Common
             {
                 if (_modelsData == null) _modelsData = new ModelsData();
 
+                //==========================================
+                // Determine whether to INSERT or UPDATE
+                //==========================================
+                if (ModelChangeType == eChangeType.update)
+                {
+                    foreach (OverrideLowLevelDetailProfile olldp in DetailList)
+                    {
+                        olldp.ModelChangeType = _modelsData.OverrideLowLevelsDetail_Action(Key, olldp.Key, olldp.Version_RID, olldp.Exclude_Ind);
+                    }
+                }
+
                 _modelsData.OpenUpdateConnection();
                 if (ModelChangeType == eChangeType.add)
                 {
@@ -1758,7 +1769,7 @@ namespace MIDRetail.Common
                     //foreach(OverrideLowLevelDetailProfile olldp in _detailList)
                     //    _modelsData.OverrideLowLevelsDetail_Add(Key, olldp.Key, olldp.Version_RID, olldp.Exclude_Ind);
                     foreach (OverrideLowLevelDetailProfile olldp in DetailList)
-                        _modelsData.OverrideLowLevelsDetail_Add(Key, olldp.Key, olldp.Version_RID, olldp.Exclude_Ind);
+                        _modelsData.OverrideLowLevelsDetail_Add(eChangeType.add, Key, olldp.Key, olldp.Version_RID, olldp.Exclude_Ind);
                     // End TT#1168
                 }
                 else if (ModelChangeType == eChangeType.update)
@@ -1777,7 +1788,7 @@ namespace MIDRetail.Common
                     //}
                     foreach (OverrideLowLevelDetailProfile olldp in DetailList)
                     {
-                        _modelsData.OverrideLowLevelsDetail_Add(Key, olldp.Key, olldp.Version_RID, olldp.Exclude_Ind);
+                        _modelsData.OverrideLowLevelsDetail_Add(olldp.ModelChangeType, Key, olldp.Key, olldp.Version_RID, olldp.Exclude_Ind);
                     }
                     // End TT#1168
                 }

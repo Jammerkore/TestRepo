@@ -745,19 +745,48 @@ namespace MIDRetail.Data
             }
         }
 
-        public void OverrideLowLevelsDetail_Add(int aModelRID, int aHN_RID, int aVersionRID, bool aExcludeInd)
+        public eChangeType OverrideLowLevelsDetail_Action(int aModelRID, int aHN_RID, int aVersionRID, bool aExcludeInd)
         {
             try
             {
-				//==========================================
-				// Determine whether to INSERT or UPDATE
-				//==========================================
+                //==========================================
+                // Determine whether to INSERT or UPDATE
+                //==========================================
                 int OVERRIDE_LL_MODEL_DETAIL_COUNT = StoredProcedures.MID_OVERRIDE_LL_MODEL_DETAIL_READ_COUNT.ReadRecordCount(_dba,
                                                                                          OLL_RID: aModelRID,
                                                                                          HN_RID: aHN_RID
                                                                                          );
-				// UPDATE
+                // UPDATE
                 if (OVERRIDE_LL_MODEL_DETAIL_COUNT > 0)
+                {
+                    return eChangeType.update;
+                }
+                else // INSERT
+                {
+                    return eChangeType.add;
+                }
+            }
+            catch (Exception err)
+            {
+                string message = err.ToString();
+                throw;
+            }
+        }
+
+        public void OverrideLowLevelsDetail_Add(eChangeType changeType, int aModelRID, int aHN_RID, int aVersionRID, bool aExcludeInd)
+        {
+            try
+            {
+				////==========================================
+				//// Determine whether to INSERT or UPDATE
+				////==========================================
+    //            int OVERRIDE_LL_MODEL_DETAIL_COUNT = StoredProcedures.MID_OVERRIDE_LL_MODEL_DETAIL_READ_COUNT.ReadRecordCount(_dba,
+    //                                                                                     OLL_RID: aModelRID,
+    //                                                                                     HN_RID: aHN_RID
+    //                                                                                     );
+				// UPDATE
+                //if (OVERRIDE_LL_MODEL_DETAIL_COUNT > 0)
+                if (changeType == eChangeType.update)
 				{
               
 

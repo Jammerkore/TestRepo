@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,6 +26,8 @@ namespace Logility.ROWeb
         private ROWebTools _ROWebTools;
         private eModelType _modelType;
         protected FunctionSecurityProfile _functionSecurity;
+        protected FunctionSecurityProfile _userSecurity = null;
+        protected FunctionSecurityProfile _globalSecurity = null;
 
         //=============
         // CONSTRUCTORS
@@ -73,11 +76,27 @@ namespace Logility.ROWeb
             }
         }
 
+        public FunctionSecurityProfile UserSecurity
+        {
+            get
+            {
+                return _userSecurity;
+            }
+        }
+
+        public FunctionSecurityProfile GlobalSecurity
+        {
+            get
+            {
+                return _globalSecurity;
+            }
+        }
+
         //========
         // METHODS
         //========
 
-        
+
         abstract public List<KeyValuePair<int, string>> ModelGetList();
 
         abstract public ROModelProperties ModelGetData(ROModelParms parms, ModelProfile modelProfile, ref string message, bool applyOnly = false);
@@ -95,7 +114,8 @@ namespace Logility.ROWeb
             ModelProfile modelProfile;
 
             if (parms.ReadOnly
-                || !FunctionSecurity.AllowUpdate)
+                || !FunctionSecurity.AllowUpdate
+                || parms.Key < 0)
             {
                 modelProfile = _SAB.HierarchyServerSession.GetModelData(aModelType: parms.ModelType, aModelRID: parms.Key);
             }
@@ -168,6 +188,11 @@ namespace Logility.ROWeb
         {
             message = null;
             eLockStatus lockStatus = eLockStatus.Undefined;
+
+            if (key == Include.NoRID)
+            {
+                return lockStatus;
+            }
 
             ModelEnqueue modelEnqueue = new ModelEnqueue(
                     modelType,

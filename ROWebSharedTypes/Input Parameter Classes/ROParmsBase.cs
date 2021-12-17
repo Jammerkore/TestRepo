@@ -194,6 +194,7 @@ namespace Logility.ROWebSharedTypes
     [KnownType(typeof(ROModelStockModifierProperties))]
     [KnownType(typeof(ROModelSalesModifierProperties))]
     [KnownType(typeof(ROModelOverrideLowLevelsProperties))]
+    [KnownType(typeof(ROModelOverrideLowLevel))]
     [KnownType(typeof(ROModelFWOSModifierProperties))]
     [KnownType(typeof(ROModelFWOSMaxProperties))]
 
