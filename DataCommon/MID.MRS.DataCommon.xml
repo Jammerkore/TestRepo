@@ -4655,6 +4655,16 @@
             Gets the high-level Chain PlanProfile
             </summary>
         </member>
+        <member name="P:MIDRetail.DataCommon.PlanOpenParmsData.RequestingApplication">
+            <summary>
+            Gets or sets the requesting application
+            </summary>
+        </member>
+        <member name="P:MIDRetail.DataCommon.PlanOpenParmsData.EligibilityNodeKey">
+            <summary>
+            Gets or sets the eligibility merchandise key
+            </summary>
+        </member>
         <member name="P:MIDRetail.DataCommon.PlanOpenParmsData.StoreHLPlanProfile">
             <summary>
             Gets the high-level Store PlanProfile

@@ -316,7 +316,7 @@ namespace MIDRetail.Windows
                 string assemblyName = Path.GetDirectoryName(Application.ExecutablePath) + @"\" + "MIDRetail.Windows.dll";
 				System.Diagnostics.FileVersionInfo fvi = System.Diagnostics.FileVersionInfo.GetVersionInfo(assemblyName);
 
-                label2.Text = "Copyright © Logility, Inc. 2020";
+                label2.Text = "Copyright © Logility, Inc. 2022";
 				lblVersion.Text = "Version " + fvi.FileVersion;	
 			}
 			catch( Exception exception )

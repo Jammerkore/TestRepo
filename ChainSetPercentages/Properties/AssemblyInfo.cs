@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("Base")]
 [assembly: AssemblyCompany("Logility, Inc.")]
 [assembly: AssemblyProduct("Logility - RO")]
-[assembly: AssemblyCopyright("Copyright © Logility, Inc. 2020")]
+[assembly: AssemblyCopyright("Copyright © Logility, Inc. 2022")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -33,5 +33,5 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 
 
-[assembly: AssemblyVersion("21.03.*")]
+[assembly: AssemblyVersion("22.01.*")]
 

@@ -34,7 +34,7 @@ namespace MIDRetail.Data
                 public string assemblyName = "MIDRetail.exe";
                 public string productName = "MID Retail";
                 public string productVersion = MIDText.GetTextOnly(eMIDTextCode.lbl_EnvUnavailable);
-                public string legalCopyright = "Copyright © Logility, Inc. 2020";
+                public string legalCopyright = "Copyright © Logility, Inc. 2022";
                 public string companyName = "MIDRetail, Inc.";
                 public string lastUpdate = MIDText.GetTextOnly(eMIDTextCode.lbl_EnvUnavailable);
                 public string systemVersion = MIDText.GetTextOnly(eMIDTextCode.lbl_EnvUnavailable);
@@ -105,7 +105,7 @@ namespace MIDRetail.Data
                         productName = fvi.ProductName;
                         productVersion = fvi.ProductVersion;
                         //legalCopyright = fvi.LegalCopyright;
-                        legalCopyright = "Copyright © Logility, Inc. 2020";
+                        legalCopyright = "Copyright © Logility, Inc. 2022";
 
                         companyName = fvi.CompanyName;
                     }
