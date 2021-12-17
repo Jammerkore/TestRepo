@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Linq;
 using MIDRetail.DataCommon;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
@@ -783,22 +784,22 @@ namespace Logility.ROWebSharedTypes
     public class ROSizeConstraintValues
     {
         [DataMember(IsRequired = true)]
-        int _minimum;
+        int? _minimum;
 
         [DataMember(IsRequired = true)]
-        int _maximum;
+        int? _maximum;
 
         [DataMember(IsRequired = true)]
-        int _multiple;
+        int? _multiple;
 
         #region Public Properties
 
         public bool MinimumSet
         {
-            get { return _minimum != 0; }
+            get { return _minimum != null; }
         }
 
-        public int Minimum
+        public int? Minimum
         {
             get { return _minimum; }
             set { _minimum = value; }
@@ -806,10 +807,10 @@ namespace Logility.ROWebSharedTypes
 
         public bool MaximumSet
         {
-            get { return _maximum != int.MaxValue; }
+            get { return _maximum != null; }
         }
 
-        public int Maximum
+        public int? Maximum
         {
             get { return _maximum; }
             set { _maximum = value; }
@@ -817,10 +818,10 @@ namespace Logility.ROWebSharedTypes
 
         public bool MultipleSet
         {
-            get { return _multiple != Include.Undefined; }
+            get { return _multiple != null; }
         }
 
-        public int Multiple
+        public int? Multiple
         {
             get { return _multiple; }
             set { _multiple = value; }
@@ -828,9 +829,10 @@ namespace Logility.ROWebSharedTypes
 
         #endregion
 
-        public ROSizeConstraintValues(int minimum = Include.UndefinedMinimum,
-            int maximum = Include.UndefinedMaximum,
-            int multiple = Include.UndefinedMultiple)
+        public ROSizeConstraintValues(
+            int? minimum = null,
+            int? maximum = null,
+            int? multiple = null)
         {
             _minimum = minimum;
             _maximum = maximum;
@@ -866,7 +868,7 @@ namespace Logility.ROWebSharedTypes
             get { return _constraintValues.MinimumSet; }
         }
 
-        public int Minimum
+        public int? Minimum
         {
             get { return _constraintValues.Minimum; }
         }
@@ -876,7 +878,7 @@ namespace Logility.ROWebSharedTypes
             get { return _constraintValues.MaximumSet; }
         }
 
-        public int Maximum
+        public int? Maximum
         {
             get { return _constraintValues.Maximum; }
         }
@@ -886,17 +888,18 @@ namespace Logility.ROWebSharedTypes
             get { return _constraintValues.MultipleSet; }
         }
 
-        public int Multiple
+        public int? Multiple
         {
             get { return _constraintValues.Multiple; }
         }
 
         #endregion
 
-        public ROSizeConstraintSize(KeyValuePair<int, string> size,
-            int minimum = Include.UndefinedMinimum,
-            int maximum = Include.UndefinedMaximum,
-            int multiple = Include.UndefinedMultiple)
+        public ROSizeConstraintSize(
+            KeyValuePair<int, string> size,
+            int? minimum = null,
+            int? maximum = null,
+            int? multiple = null)
         {
             _size = size;
             _constraintValues = new ROSizeConstraintValues(minimum: minimum, maximum: maximum, multiple: multiple);
@@ -933,7 +936,7 @@ namespace Logility.ROWebSharedTypes
             get { return _constraintValues.MinimumSet; }
         }
 
-        public int Minimum
+        public int? Minimum
         {
             get { return _constraintValues.Minimum; }
         }
@@ -943,7 +946,7 @@ namespace Logility.ROWebSharedTypes
             get { return _constraintValues.MaximumSet; }
         }
 
-        public int Maximum
+        public int? Maximum
         {
             get { return _constraintValues.Maximum; }
         }
@@ -953,7 +956,7 @@ namespace Logility.ROWebSharedTypes
             get { return _constraintValues.MultipleSet; }
         }
 
-        public int Multiple
+        public int? Multiple
         {
             get { return _constraintValues.Multiple; }
         }
@@ -965,10 +968,11 @@ namespace Logility.ROWebSharedTypes
 
         #endregion
 
-        public ROSizeConstraintDimension(KeyValuePair<int, string> dimension,
-            int minimum = Include.UndefinedMinimum,
-            int maximum = Include.UndefinedMaximum,
-            int multiple = Include.UndefinedMultiple)
+        public ROSizeConstraintDimension(
+            KeyValuePair<int, string> dimension,
+            int? minimum = null,
+            int? maximum = null,
+            int? multiple = null)
         {
             _dimension = dimension;
             _constraintValues = new ROSizeConstraintValues(minimum: minimum, maximum: maximum, multiple: multiple);
@@ -1006,7 +1010,7 @@ namespace Logility.ROWebSharedTypes
             get { return _constraintValues.MinimumSet; }
         }
 
-        public int Minimum
+        public int? Minimum
         {
             get { return _constraintValues.Minimum; }
         }
@@ -1016,7 +1020,7 @@ namespace Logility.ROWebSharedTypes
             get { return _constraintValues.MaximumSet; }
         }
 
-        public int Maximum
+        public int? Maximum
         {
             get { return _constraintValues.Maximum; }
         }
@@ -1026,7 +1030,7 @@ namespace Logility.ROWebSharedTypes
             get { return _constraintValues.MultipleSet; }
         }
 
-        public int Multiple
+        public int? Multiple
         {
             get { return _constraintValues.Multiple; }
         }
@@ -1038,10 +1042,11 @@ namespace Logility.ROWebSharedTypes
 
         #endregion
 
-        public ROSizeConstraintColor(KeyValuePair<int, string> color,
-            int minimum = Include.UndefinedMinimum,
-            int maximum = Include.UndefinedMaximum,
-            int multiple = Include.UndefinedMultiple)
+        public ROSizeConstraintColor(
+            KeyValuePair<int, string> color,
+            int? minimum = null,
+            int? maximum = null,
+            int? multiple = null)
         {
             _color = color;
             _constraintValues = new ROSizeConstraintValues(minimum: minimum, maximum: maximum, multiple: multiple);
@@ -1070,7 +1075,7 @@ namespace Logility.ROWebSharedTypes
             get { return _constraintValues.MinimumSet; }
         }
 
-        public int Minimum
+        public int? Minimum
         {
             get { return _constraintValues.Minimum; }
         }
@@ -1080,7 +1085,7 @@ namespace Logility.ROWebSharedTypes
             get { return _constraintValues.MaximumSet; }
         }
 
-        public int Maximum
+        public int? Maximum
         {
             get { return _constraintValues.Maximum; }
         }
@@ -1090,7 +1095,7 @@ namespace Logility.ROWebSharedTypes
             get { return _constraintValues.MultipleSet; }
         }
 
-        public int Multiple
+        public int? Multiple
         {
             get { return _constraintValues.Multiple; }
         }
@@ -1102,9 +1107,10 @@ namespace Logility.ROWebSharedTypes
 
         #endregion
 
-        public ROSizeConstraints(int minimum = Include.UndefinedMinimum,
-            int maximum = Include.UndefinedMaximum,
-            int multiple = Include.UndefinedMultiple)
+        public ROSizeConstraints(
+            int? minimum = null,
+            int? maximum = null,
+            int? multiple = null)
         {
             _constraintValues = new ROSizeConstraintValues(minimum: minimum, maximum: maximum, multiple: multiple);
             _sizeConstraintColor = new List<ROSizeConstraintColor>();
@@ -1138,7 +1144,7 @@ namespace Logility.ROWebSharedTypes
             get { return _sizeConstraints.MinimumSet; }
         }
 
-        public int Minimum
+        public int? Minimum
         {
             get { return _sizeConstraints.Minimum; }
         }
@@ -1148,7 +1154,7 @@ namespace Logility.ROWebSharedTypes
             get { return _sizeConstraints.MaximumSet; }
         }
 
-        public int Maximum
+        public int? Maximum
         {
             get { return _sizeConstraints.Maximum; }
         }
@@ -1158,7 +1164,7 @@ namespace Logility.ROWebSharedTypes
             get { return _sizeConstraints.MultipleSet; }
         }
 
-        public int Multiple
+        public int? Multiple
         {
             get { return _sizeConstraints.Multiple; }
         }
@@ -1211,6 +1217,12 @@ namespace Logility.ROWebSharedTypes
         KeyValuePair<int, string> _attribute;
 
         [DataMember(IsRequired = true)]
+        KeyValuePair<int, string> _attributeSet;
+
+        [DataMember(IsRequired = true)]
+        private KeyValuePair<int, string> _definedAttribute;
+
+        [DataMember(IsRequired = true)]
         KeyValuePair<int, string> _sizeCurveGroup;
 
         [DataMember(IsRequired = true)]
@@ -1220,20 +1232,66 @@ namespace Logility.ROWebSharedTypes
         string _defaultLabel;
 
         [DataMember(IsRequired = true)]
-        ROSizeConstraints _defaultSizeConstraints;
+        ROSizeConstraintAttributeSet _sizeConstraintAttributeSet;
 
         [DataMember(IsRequired = true)]
-        List<ROSizeConstraintAttributeSet> _sizeConstraintAttributeSet;
+        List<ROSizeDimension> _sizeConstraintDimensions;
 
         [DataMember(IsRequired = true)]
-        List<ROSizeDimension> _sizeConstraintDimensionSizes;
+        List<KeyValuePair<int, string>> _colors;
 
         #region Public Properties
+        /// <summary>
+        /// Gets the flag identifying if the attribute has been set.
+        /// </summary>
+        public bool AttributeIsSet
+        {
+            get { return !Attribute.Equals(default(KeyValuePair<int, string>)); }
+        }
+
+        /// <summary>
+        /// Gets or sets the attribute for the criteria.
+        /// </summary>
         public KeyValuePair<int, string> Attribute
         {
             get { return _attribute; }
             set { _attribute = value; }
         }
+
+        /// <summary>
+        /// Gets the flag identifying if the attribute has been set.
+        /// </summary>
+        public bool AttributeSetIsSet
+        {
+            get { return !AttributeSet.Equals(default(KeyValuePair<int, string>)); }
+        }
+
+        /// <summary>
+        /// Gets or sets the attribute for the criteria.
+        /// </summary>
+        public KeyValuePair<int, string> AttributeSet
+        {
+            get { return _attributeSet; }
+            set { _attributeSet = value; }
+        }
+
+        /// <summary>
+        /// Gets the flag identifying if the defined attribute has been set.
+        /// </summary>
+        public bool DefinedAttributeIsSet
+        {
+            get { return !DefinedAttribute.Equals(default(KeyValuePair<int, string>)); }
+        }
+
+        /// <summary>
+        /// Gets or sets the defined attribute for the criteria.
+        /// </summary>
+        public KeyValuePair<int, string> DefinedAttribute
+        {
+            get { return _definedAttribute; }
+            set { _definedAttribute = value; }
+        }
+
 
         public KeyValuePair<int, string> SizeCurveGroup
         {
@@ -1253,36 +1311,41 @@ namespace Logility.ROWebSharedTypes
             set { _defaultLabel = value; }
         }
 
-        public ROSizeConstraints DefaultSizeConstraints
-        {
-            get { return _defaultSizeConstraints; }
-            set { _defaultSizeConstraints = value; }
-        }
-
-        public List<ROSizeConstraintAttributeSet> SizeConstraintAttributeSet
+        public ROSizeConstraintAttributeSet SizeConstraintAttributeSet
         {
             get { return _sizeConstraintAttributeSet; }
+            set { _sizeConstraintAttributeSet = value; }
         }
 
-        public List<ROSizeDimension> SizeConstraintDimensionSizes
+        public List<ROSizeDimension> SizeConstraintDimensions
         {
-            get { return _sizeConstraintDimensionSizes; }
+            get { return _sizeConstraintDimensions; }
+        }
+
+        public List<KeyValuePair<int, string>> Colors
+        {
+            get { return _colors; }
         }
 
         #endregion
 
         public ROModelSizeConstraintProperties(KeyValuePair<int, string> model,
             KeyValuePair<int, string> attribute,
+            KeyValuePair<int, string> attributeSet,
             KeyValuePair<int, string> sizeCurveGroup,
-            KeyValuePair<int, string> sizeGroup)
+            KeyValuePair<int, string> sizeGroup,
+            KeyValuePair<int, string> definedAttribute = default(KeyValuePair<int, string>)
+            )
             : base(eModelType.SizeConstraints, model)
 
         {
             _attribute = attribute;
+            _attributeSet = attributeSet;
+            _definedAttribute = definedAttribute;
             _sizeCurveGroup = sizeCurveGroup;
             _sizeGroup = sizeGroup;
-            _sizeConstraintAttributeSet = new List<ROSizeConstraintAttributeSet>();
-            _sizeConstraintDimensionSizes = new List<ROSizeDimension>();
+            _sizeConstraintDimensions = new List<ROSizeDimension>();
+            _colors = new List<KeyValuePair<int, string>>();
         }
     }
 

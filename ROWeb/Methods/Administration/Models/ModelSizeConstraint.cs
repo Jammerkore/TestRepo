@@ -126,6 +126,8 @@ namespace Logility.ROWeb
             return ApplicationUtilities.DataTableToKeyValues(dtSizeModel, "SIZE_CONSTRAINT_RID", "SIZE_CONSTRAINT_NAME");
         }
 
+        int _definedAttribute = Include.Undefined;
+
         override public ROModelProperties ModelGetData(ROModelParms parms, ModelProfile modelProfile, ref string message, bool applyOnly = false)
         {
             // populate modelProperties using Windows\SizeConstraintsMaint.cs as a reference
@@ -141,6 +143,7 @@ namespace Logility.ROWeb
             _sizeConstraintProfile = (SizeConstraintModelProfile)modelProfile;
 
             int attributeKey = _sizeConstraintProfile.StoreGroupRid;
+            int attributeSetKey = Include.NoRID;
             int sizeGroupKey = _sizeConstraintProfile.SizeGroupRid;
             int sizeCurveGroupKey = _sizeConstraintProfile.SizeCurveGroupRid;
 
@@ -150,6 +153,10 @@ namespace Logility.ROWeb
                 if (sizeConstraintModelParms.AttributeKey != Include.NoRID)
                 {
                     attributeKey = sizeConstraintModelParms.AttributeKey;
+                }
+                if (sizeConstraintModelParms.AttributeSetKey != Include.NoRID)
+                {
+                    attributeSetKey = sizeConstraintModelParms.AttributeSetKey;
                 }
                 if (sizeConstraintModelParms.SizeGroupKey != Include.NoRID)
                 {
@@ -161,11 +168,18 @@ namespace Logility.ROWeb
                 }
             }
 
+            if (_definedAttribute == Include.Undefined)
+            {
+                _definedAttribute = _sizeConstraintProfile.StoreGroupRid;
+            }
+
             KeyValuePair<int, string> model = new KeyValuePair<int, string>(_sizeConstraintProfile.Key, _sizeConstraintProfile.SizeConstraintName);
             ROModelSizeConstraintProperties modelProperties = new ROModelSizeConstraintProperties(model: model,
                 attribute: GetName.GetAttributeName(key: attributeKey),
+                attributeSet: GetName.GetAttributeSetName(key: attributeSetKey),
                 sizeCurveGroup: GetName.GetSizeCurveGroupName(sizeCurveGroupRID: sizeCurveGroupKey),
-                sizeGroup: GetName.GetSizeGroup(key: sizeGroupKey)
+                sizeGroup: GetName.GetSizeGroup(key: sizeGroupKey),
+                definedAttribute: GetName.GetAttributeName(key: _definedAttribute)
                 );
 
             modelProperties.DefaultLabel = MIDText.GetTextOnly(eMIDTextCode.lbl_Default);
@@ -180,6 +194,8 @@ namespace Logility.ROWeb
             }
 
             BuildConstraints(modelProperties: modelProperties, sizeGroupKey: sizeGroupKey, sizeCurveGroupKey: sizeCurveGroupKey, message: ref message);
+
+            FillColorList(modelProperties.Colors);
 
             return modelProperties;
         }
@@ -253,8 +269,6 @@ namespace Logility.ROWeb
 
         }
 
-        
-
         private bool BuildConstraintDataSet(ROModelSizeConstraintProperties sizeConstraintProperties, ref string message)
         {
             if (_sizeConstraints == null)
@@ -269,55 +283,74 @@ namespace Logility.ROWeb
             {
                 // clear table bottom up because of constraints
                 //if (_sizeConstraints.Relations.Contains("AllColorSizeDimension"))
+                string selectString = "SGL_RID=" + sizeConstraintProperties.SizeConstraintAttributeSet.AttributeSet.Key;
+
                 if (_sizeConstraints.Tables.Contains(C_TABLE_ALL_CLR_SZ))
                 {
-                    _sizeConstraints.Tables[C_TABLE_ALL_CLR_SZ].Rows.Clear();
+                    //_sizeConstraints.Tables[C_TABLE_ALL_CLR_SZ].Rows.Clear();
+                    ClearSetRows(tableName: C_TABLE_ALL_CLR_SZ, selectString: selectString);
                 }
                 if (_sizeConstraints.Tables.Contains(C_TABLE_ALL_CLR_SZ_DIM))
                 {
-                    _sizeConstraints.Tables[C_TABLE_ALL_CLR_SZ_DIM].Rows.Clear();
+                    //_sizeConstraints.Tables[C_TABLE_ALL_CLR_SZ_DIM].Rows.Clear();
+                    ClearSetRows(tableName: C_TABLE_ALL_CLR_SZ_DIM, selectString: selectString);
                 }
                 if (_sizeConstraints.Tables.Contains(C_TABLE_ALL_CLR))
                 {
-                    _sizeConstraints.Tables[C_TABLE_ALL_CLR].Rows.Clear();
+                    //_sizeConstraints.Tables[C_TABLE_ALL_CLR].Rows.Clear();
+                    ClearSetRows(tableName: C_TABLE_ALL_CLR, selectString: selectString);
                 }
                 if (_sizeConstraints.Relations.Contains(C_TABLE_CLR_SZ))
                 {
-                    _sizeConstraints.Tables[C_TABLE_CLR_SZ].Rows.Clear();
+                    //_sizeConstraints.Tables[C_TABLE_CLR_SZ].Rows.Clear();
+                    ClearSetRows(tableName: C_TABLE_CLR_SZ, selectString: selectString);
                 }
                 if (_sizeConstraints.Relations.Contains(C_TABLE_CLR_SZ_DIM))
                 {
-                    _sizeConstraints.Tables[C_TABLE_CLR_SZ_DIM].Rows.Clear();
+                    //_sizeConstraints.Tables[C_TABLE_CLR_SZ_DIM].Rows.Clear();
+                    ClearSetRows(tableName: C_TABLE_CLR_SZ_DIM, selectString: selectString);
                 }
                 if (_sizeConstraints.Tables.Contains(C_TABLE_CLR))
                 {
-                    _sizeConstraints.Tables[C_TABLE_CLR].Rows.Clear();
+                    //_sizeConstraints.Tables[C_TABLE_CLR].Rows.Clear();
+                    ClearSetRows(tableName: C_TABLE_CLR, selectString: selectString);
                 }
                 if (_sizeConstraints.Tables.Contains(C_TABLE_SET))
                 {
-                    _sizeConstraints.Tables[C_TABLE_SET].Rows.Clear();
+                    //_sizeConstraints.Tables[C_TABLE_SET].Rows.Clear();
+                    ClearSetRows(tableName: C_TABLE_SET, selectString: selectString);
                 }
             }
 
-            if (sizeConstraintProperties.DefaultSizeConstraints != null)
-            {
-                BuildConstraint(sizeConstraintModelKey: sizeConstraintProperties.Model.Key, 
-                    attributeSetKey: Include.NoRID, 
-                    attributeSetName: "Default", 
-                    sizeConstraints: sizeConstraintProperties.DefaultSizeConstraints, 
-                    message: ref message);
-            }
+            //if (sizeConstraintProperties.DefaultSizeConstraints != null)
+            //{
+            //    BuildConstraint(sizeConstraintModelKey: sizeConstraintProperties.Model.Key,
+            //        attributeSetKey: Include.NoRID,
+            //        attributeSetName: "Default",
+            //        sizeConstraints: sizeConstraintProperties.DefaultSizeConstraints,
+            //        message: ref message);
+            //}
 
-            foreach (ROSizeConstraintAttributeSet sizeConstraintAttributeSet in sizeConstraintProperties.SizeConstraintAttributeSet)
-            {
-                BuildConstraint(sizeConstraintModelKey: sizeConstraintProperties.Model.Key, 
-                    attributeSetKey: sizeConstraintAttributeSet.AttributeSet.Key, 
-                    attributeSetName: sizeConstraintAttributeSet.AttributeSet.Value, 
-                    sizeConstraints: sizeConstraintAttributeSet.SizeConstraints, 
-                    message: ref message);
-            }
+            //foreach (ROSizeConstraintAttributeSet sizeConstraintAttributeSet in sizeConstraintProperties.SizeConstraintAttributeSet)
+            //{
+            BuildConstraint(sizeConstraintModelKey: sizeConstraintProperties.Model.Key,
+                attributeSetKey: sizeConstraintProperties.SizeConstraintAttributeSet.AttributeSet.Key,
+                attributeSetName: sizeConstraintProperties.SizeConstraintAttributeSet.AttributeSet.Value,
+                sizeConstraints: sizeConstraintProperties.SizeConstraintAttributeSet.SizeConstraints,
+                message: ref message);
+            //}
 
             return true;
+        }
+
+        private void ClearSetRows(string tableName, string selectString)
+        {
+            DataRow[] constraintDataRows = _sizeConstraints.Tables[tableName].Select(selectString);
+            foreach (var constraintDataRow in constraintDataRows)
+            {
+                constraintDataRow.Delete();
+            }
+            _sizeConstraints.Tables[tableName].AcceptChanges();
         }
 
         private bool BuildConstraint(int sizeConstraintModelKey,
@@ -675,37 +708,37 @@ namespace Logility.ROWeb
 
         }
 
-        /// <summary>
-        /// Fills class with size dimensions.
-        /// </summary>
-        /// <remarks>Method must be overridden</remarks>
-        private void FillDimensionSizeList(ROModelSizeConstraintProperties modelProperties, int Key, eGetDimensions getDimensions, eGetSizes getSizes)
-        {
-            ROSizeDimension dimensionSizes;
-            int dimensionKey;
-            string dimension;
-            MaintainSizeConstraints maint = new MaintainSizeConstraints(_sizeModelData);
-            DataTable dtDimensions = maint.FillSizeDimensionList(Key, getDimensions);
-            DataTable dtSizes = maint.FillSizesList(Key, getSizes);
+  //      /// <summary>
+  //      /// Fills class with size dimensions.
+  //      /// </summary>
+  //      /// <remarks>Method must be overridden</remarks>
+  //      private void FillDimensionSizeList(ROModelSizeConstraintProperties modelProperties, int Key, eGetDimensions getDimensions, eGetSizes getSizes)
+  //      {
+  //          ROSizeDimension dimensionSizes;
+  //          int dimensionKey;
+  //          string dimension;
+  //          MaintainSizeConstraints maint = new MaintainSizeConstraints(_sizeModelData);
+  //          DataTable dtDimensions = maint.FillSizeDimensionList(Key, getDimensions);
+  //          DataTable dtSizes = maint.FillSizesList(Key, getSizes);
 
-            foreach (DataRow dr in dtDimensions.Rows)
-            {
-                dimensionKey = Convert.ToInt32(dr["DIMENSIONS_RID"]);
-                dimension = dr["SIZE_CODE_SECONDARY"].ToString();
-                dimensionSizes = new ROSizeDimension(dimension: new KeyValuePair<int, string>(
-                    dimensionKey,
-                    dimension)
-                    );
-                FillSizesList(dimensionSizes: dimensionSizes, dtSizes: dtSizes, dimensionKey: dimensionKey);
-                //modelProperties.SizeConstraintDimensionSizes.Add(dimensionSizes);
+  //          foreach (DataRow dr in dtDimensions.Rows)
+  //          {
+  //              dimensionKey = Convert.ToInt32(dr["DIMENSIONS_RID"]);
+  //              dimension = dr["SIZE_CODE_SECONDARY"].ToString();
+  //              dimensionSizes = new ROSizeDimension(dimension: new KeyValuePair<int, string>(
+  //                  dimensionKey,
+  //                  dimension)
+  //                  );
+  //              FillSizesList(dimensionSizes: dimensionSizes, dtSizes: dtSizes, dimensionKey: dimensionKey);
+  //              modelProperties.SizeConstraintDimensionSizes.Add(dimensionSizes);
 
-            }
-        }
+  //          }
+  //      }
 
-        /// <summary>
-		/// Fills class with sizes based on a selected Size Group
-		/// </summary>
-		//private void FillSizesList(ROSizeDimensionSizes dimensionSizes, DataTable dtSizes, int dimensionKey)
+  //      /// <summary>
+		///// Fills class with sizes based on a selected Size Group
+		///// </summary>
+		//private void FillSizesList(ROSizeDimension dimensionSizes, DataTable dtSizes, int dimensionKey)
   //      {
   //          int sizeKey;
   //          string size;
@@ -892,7 +925,8 @@ namespace Logility.ROWeb
             ROSizeConstraintColor sizeConstraintColor;
             ROSizeConstraintDimension sizeConstraintDimension;
             ROSizeConstraintSize sizeConstraintSize;
-            int sizeOrderKey, attributeSetKey, minimum, maximum, multiple, colorKey, dimensionsKey, sizeKey;
+            int sizeOrderKey, attributeSetKey, colorKey, dimensionsKey, sizeKey;
+            int? minimum, maximum, multiple;
 
             eGetSizes getSizesUsing = eGetSizes.SizeGroupRID;
             eGetDimensions getDimensionsUsing = eGetDimensions.SizeGroupRID;
@@ -911,9 +945,16 @@ namespace Logility.ROWeb
             }
             //PROCESS SETS AND ALL DESCENDANTS
 
+            KeyValuePair<int, string> selectedAttributeSet;
             foreach (DataRow drSet in _sizeConstraints.Tables[C_TABLE_SET].Rows)
             {
                 attributeSetKey = Convert.ToInt32(drSet["SGL_RID"]);
+
+                if (modelProperties.AttributeSet.Key != attributeSetKey)
+                {
+                    continue;
+                }
+
                 GetConstraintValues(dr: drSet, minimum: out minimum, maximum: out maximum, multiple: out multiple);
                 sizeConstraints = new ROSizeConstraints(minimum: minimum, maximum: maximum, multiple: multiple);
 
@@ -1030,34 +1071,57 @@ namespace Logility.ROWeb
                     sizeConstraints.SizeConstraintColor.Add(sizeConstraintColor);
                 }
 
+                
                 if (attributeSetKey == Include.NoRID)
                 {
-                    modelProperties.DefaultSizeConstraints = sizeConstraints;
+                    selectedAttributeSet = new KeyValuePair<int, string>(attributeSetKey, modelProperties.DefaultLabel);
                 }
                 else
                 {
-                    sizeConstraintAttributeSet = new ROSizeConstraintAttributeSet(attributeSet: GetName.GetAttributeSetName(key: attributeSetKey), sizeConstraints: sizeConstraints);
-                    modelProperties.SizeConstraintAttributeSet.Add(sizeConstraintAttributeSet);
+                    selectedAttributeSet = GetName.GetAttributeSetName(key: attributeSetKey);
                 }
+                sizeConstraintAttributeSet = new ROSizeConstraintAttributeSet(attributeSet: selectedAttributeSet, sizeConstraints: sizeConstraints);
+                modelProperties.SizeConstraintAttributeSet = sizeConstraintAttributeSet;
             }
 
-            FillDimensionSizeList(modelProperties: modelProperties, Key: sizeOrderKey, getDimensions: getDimensionsUsing, getSizes: getSizesUsing);
+            // create empty instance for set when data is not found
+            if (modelProperties.SizeConstraintAttributeSet == null)
+            {
+                selectedAttributeSet = GetName.GetAttributeSetName(key: modelProperties.AttributeSet.Key);
+                sizeConstraints = new ROSizeConstraints(minimum: null, maximum: null, multiple: null);
+                sizeConstraintColor = new ROSizeConstraintColor(color: GetName.GetColor(colorCodeRID: Include.UndefinedColor, SAB: SAB),
+                        minimum: null,
+                        maximum: null,
+                        multiple: null
+                        );
+
+                sizeConstraints.SizeConstraintColor.Add(sizeConstraintColor);
+                sizeConstraintAttributeSet = new ROSizeConstraintAttributeSet(attributeSet: selectedAttributeSet, sizeConstraints: sizeConstraints);
+                modelProperties.SizeConstraintAttributeSet = sizeConstraintAttributeSet;
+            }
+
+            FillDimensionSizeList(
+                sizeDimensionSizes: modelProperties.SizeConstraintDimensions, 
+                Key: sizeOrderKey, 
+                getDimensions: getDimensionsUsing, 
+                getSizes: getSizesUsing
+                );
 
             return true;
         }
 
-        private void GetConstraintValues(DataRow dr, out int minimum, out int maximum, out int multiple)
+        private void GetConstraintValues(DataRow dr, out int? minimum, out int? maximum, out int? multiple)
         {
-            minimum = (dr["SIZE_MIN"].ToString().Trim() != string.Empty) ? Convert.ToInt32(dr["SIZE_MIN"], CultureInfo.CurrentUICulture) : Include.UndefinedMinimum;
-            maximum = (dr["SIZE_MAX"].ToString().Trim() != string.Empty) ? Convert.ToInt32(dr["SIZE_MAX"], CultureInfo.CurrentUICulture) : Include.UndefinedMaximum;
-            multiple = (dr["SIZE_MULT"].ToString().Trim() != string.Empty) ? Convert.ToInt32(dr["SIZE_MULT"], CultureInfo.CurrentUICulture) : Include.UndefinedMultiple;
+            minimum = (dr["SIZE_MIN"].ToString().Trim() != string.Empty) ? Convert.ToInt32(dr["SIZE_MIN"], CultureInfo.CurrentUICulture) : (int?)null;
+            maximum = (dr["SIZE_MAX"].ToString().Trim() != string.Empty) ? Convert.ToInt32(dr["SIZE_MAX"], CultureInfo.CurrentUICulture) : (int?)null;
+            multiple = (dr["SIZE_MULT"].ToString().Trim() != string.Empty) ? Convert.ToInt32(dr["SIZE_MULT"], CultureInfo.CurrentUICulture) : (int?)null;
         }
 
-        private void GetConstraintValues(DataRowView drv, out int minimum, out int maximum, out int multiple)
+        private void GetConstraintValues(DataRowView drv, out int? minimum, out int? maximum, out int? multiple)
         {
-            minimum = (drv["SIZE_MIN"].ToString().Trim() != string.Empty) ? Convert.ToInt32(drv["SIZE_MIN"], CultureInfo.CurrentUICulture) : Include.UndefinedMinimum;
-            maximum = (drv["SIZE_MAX"].ToString().Trim() != string.Empty) ? Convert.ToInt32(drv["SIZE_MAX"], CultureInfo.CurrentUICulture) : Include.UndefinedMaximum;
-            multiple = (drv["SIZE_MULT"].ToString().Trim() != string.Empty) ? Convert.ToInt32(drv["SIZE_MULT"], CultureInfo.CurrentUICulture) : Include.UndefinedMultiple;
+            minimum = (drv["SIZE_MIN"].ToString().Trim() != string.Empty) ? Convert.ToInt32(drv["SIZE_MIN"], CultureInfo.CurrentUICulture) : (int?)null;
+            maximum = (drv["SIZE_MAX"].ToString().Trim() != string.Empty) ? Convert.ToInt32(drv["SIZE_MAX"], CultureInfo.CurrentUICulture) : (int?)null;
+            multiple = (drv["SIZE_MULT"].ToString().Trim() != string.Empty) ? Convert.ToInt32(drv["SIZE_MULT"], CultureInfo.CurrentUICulture) : (int?)null;
         }
 
         override public ModelProfile ModelUpdateData(ROModelProperties modelsProperties, bool cloneDates, ref string message, out bool successful, bool applyOnly = false)
@@ -1083,7 +1147,6 @@ namespace Logility.ROWeb
                     _sizeConstraintProfile.SizeCurveGroupRid = sizeConstraintProperties.SizeCurveGroup.Key;
                 }
             }
-
             else if (BuildConstraintDataSet(sizeConstraintProperties: sizeConstraintProperties, message: ref message))
             {
                 DetermineSizeSequence(attributeKey: sizeConstraintProperties.Attribute.Key, sizeGroupKey: sizeConstraintProperties.SizeGroup.Key, sizeCurveGroupKey: sizeConstraintProperties.SizeCurveGroup.Key);
@@ -1218,6 +1281,27 @@ namespace Logility.ROWeb
             ModelProfile checkExists = SAB.HierarchyServerSession.GetModelData(aModelType: eModelType.SizeConstraints, modelID: name);
 
             return checkExists.Key != Include.NoRID;
+        }
+
+        override public ROModelParms GetModelParms(ROModelPropertiesParms parms, eModelType modelType, int key, bool readOnly = false)
+        {
+            ROModelSizeConstraintProperties sizeConstraintProperties = (ROModelSizeConstraintProperties)parms.ROModelProperties;
+
+            ROModelParms modelParms = new ROSizeConstraintModelParms(sROUserID: parms.ROUserID,
+                sROSessionID: parms.ROSessionID,
+                ROClass: parms.ROClass,
+                RORequest: eRORequest.GetModel,
+                ROInstanceID: parms.ROInstanceID,
+                modelType: modelType,
+                key: key,
+                readOnly: readOnly,
+                attributeKey: sizeConstraintProperties.Attribute.Key,
+                attributeSetKey: sizeConstraintProperties.AttributeSet.Key,
+                sizeGroupKey: sizeConstraintProperties.SizeGroup.Key,
+                sizeCurveGroupKey: sizeConstraintProperties.SizeCurveGroup.Key
+                );
+
+            return modelParms;
         }
     }
 }
