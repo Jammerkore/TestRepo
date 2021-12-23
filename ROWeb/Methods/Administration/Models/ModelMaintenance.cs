@@ -97,7 +97,8 @@ namespace Logility.ROWeb
                 if (_modelClass.FunctionSecurity.AllowView)
                 {
                     ROModelProperties modelProperties = _modelClass.ModelGetData(parms: parms, modelProfile: _currentModelProfile, message: ref message);
-                    if (_currentModelProfile.ModelLockStatus == eLockStatus.Locked)
+                    if (_currentModelProfile.ModelLockStatus == eLockStatus.Locked
+                        || _currentModelProfile.Key == Include.NoRID)
                     {
                         modelProperties.CanBeDeleted = _modelClass.FunctionSecurity.AllowDelete;
                         modelProperties.IsReadOnly = _modelClass.FunctionSecurity.IsReadOnly;
