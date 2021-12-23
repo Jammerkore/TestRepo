@@ -562,7 +562,14 @@ namespace Logility.ROWeb
             else
             {
                 _overrideLowLevelProfile.HN_RID = lowLevelsProperties.Merchandise.Key;
-                _overrideLowLevelProfile.High_Level_HN_RID = lowLevelsProperties.HighLevelMerchandise.Key;
+                if (lowLevelsProperties.HighLevelMerchandiseIsSet)
+                {
+                    _overrideLowLevelProfile.High_Level_HN_RID = lowLevelsProperties.HighLevelMerchandise.Key;
+                }
+                else
+                {
+                    _overrideLowLevelProfile.High_Level_HN_RID = lowLevelsProperties.Merchandise.Key;
+                }
                 _overrideLowLevelProfile.ActiveOnlyInd = lowLevelsProperties.ActiveOnly;
                 if (_overrideLowLevelProfile.User_RID == Include.NoRID)
                 {
@@ -573,6 +580,22 @@ namespace Logility.ROWeb
                     _overrideLowLevelProfile.HighLevelSeq = lowLevelsProperties.HighLevel.LevelSequence;
                     _overrideLowLevelProfile.HighLevelOffset = lowLevelsProperties.HighLevel.LevelOffset;
                     _overrideLowLevelProfile.HighLevelType = (eHighLevelsType)lowLevelsProperties.HighLevel.LevelType;
+                }
+                else if (_overrideLowLevelProfile.HN_RID > 0)
+                {
+                    HierarchyNodeProfile hierarchyNodeProfile = SAB.HierarchyServerSession.GetNodeData(nodeRID: _overrideLowLevelProfile.HN_RID);
+                    if (hierarchyNodeProfile.HomeHierarchyType == eHierarchyType.organizational)
+                    {
+                        _overrideLowLevelProfile.HighLevelType = eHighLevelsType.HierarchyLevel;
+                        _overrideLowLevelProfile.HighLevelSeq = hierarchyNodeProfile.HomeHierarchyLevel;
+                        _overrideLowLevelProfile.HighLevelOffset = 0;
+                    }
+                    else
+                    {
+                        _overrideLowLevelProfile.HighLevelType = eHighLevelsType.LevelOffset;
+                        _overrideLowLevelProfile.HighLevelSeq = 0;
+                        _overrideLowLevelProfile.HighLevelOffset = hierarchyNodeProfile.HomeHierarchyLevel;
+                    }
                 }
                 if (lowLevelsProperties.LowLevel != null)
                 {
