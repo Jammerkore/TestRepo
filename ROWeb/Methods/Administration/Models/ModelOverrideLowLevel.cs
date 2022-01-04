@@ -151,6 +151,22 @@ namespace Logility.ROWeb
                 modelProperties.Merchandise = GetName.GetMerchandiseName(nodeRID: _overrideLowLevelProfile.HN_RID,
                     SAB: SAB);
 
+                if (_overrideLowLevelProfile.HighLevelType == eHighLevelsType.None)
+                {
+                    HierarchyNodeProfile hierarchyNodeProfile = SAB.HierarchyServerSession.GetNodeData(nodeRID: _overrideLowLevelProfile.HN_RID);
+                    if (hierarchyNodeProfile.HomeHierarchyType == eHierarchyType.organizational)
+                    {
+                        _overrideLowLevelProfile.HighLevelType = eHighLevelsType.HierarchyLevel;
+                        _overrideLowLevelProfile.HighLevelSeq = hierarchyNodeProfile.HomeHierarchyLevel;
+                        _overrideLowLevelProfile.HighLevelOffset = 0;
+                    }
+                    else
+                    {
+                        _overrideLowLevelProfile.HighLevelType = eHighLevelsType.LevelOffset;
+                        _overrideLowLevelProfile.HighLevelSeq = 0;
+                        _overrideLowLevelProfile.HighLevelOffset = 0;
+                    }
+                }
 
                 ROLevelInformation highLevel = new ROLevelInformation();
                 highLevel.LevelType = (eROLevelsType)_overrideLowLevelProfile.HighLevelType;
@@ -551,6 +567,7 @@ namespace Logility.ROWeb
             {
                 _overrideLowLevelProfile.DeleteModelWork(_overrideLowLevelProfile.Key);
                 _overrideLowLevelProfile.HN_RID = lowLevelsProperties.Merchandise.Key;
+                _overrideLowLevelProfile.High_Level_HN_RID = lowLevelsProperties.Merchandise.Key;
                 // clear level information so the first entry will be used
                 _overrideLowLevelProfile.HighLevelType = eHighLevelsType.None;
                 _overrideLowLevelProfile.HighLevelSeq = 0;
@@ -558,9 +575,16 @@ namespace Logility.ROWeb
                 _overrideLowLevelProfile.LowLevelType = eLowLevelsType.None;
                 _overrideLowLevelProfile.LowLevelSeq = 0;
                 _overrideLowLevelProfile.LowLevelOffset = 0;
+                lowLevelsProperties.HighLevel = null;
+                lowLevelsProperties.LowLevel = null;
             }
             else
             {
+                if (_overrideLowLevelProfile.HN_RID != lowLevelsProperties.Merchandise.Key)
+                {
+                    lowLevelsProperties.HighLevel = null;
+                    lowLevelsProperties.LowLevel = null;
+                }
                 _overrideLowLevelProfile.HN_RID = lowLevelsProperties.Merchandise.Key;
                 if (lowLevelsProperties.HighLevelMerchandiseIsSet)
                 {
@@ -594,7 +618,7 @@ namespace Logility.ROWeb
                     {
                         _overrideLowLevelProfile.HighLevelType = eHighLevelsType.LevelOffset;
                         _overrideLowLevelProfile.HighLevelSeq = 0;
-                        _overrideLowLevelProfile.HighLevelOffset = hierarchyNodeProfile.HomeHierarchyLevel;
+                        _overrideLowLevelProfile.HighLevelOffset = 0;
                     }
                 }
                 if (lowLevelsProperties.LowLevel != null)
