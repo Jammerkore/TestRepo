@@ -54,7 +54,7 @@ namespace Logility.ROWeb
         {
             if (_overrideLowLevelProfile != null)
             {
-                _overrideLowLevelProfile.DeleteModelDetailsWork(_overrideLowLevelProfile.Key);
+                _overrideLowLevelProfile.DeleteModelWork(_overrideLowLevelProfile.Key);
             }
             return true;
         }
@@ -400,7 +400,7 @@ namespace Logility.ROWeb
 
             }
 
-            overrideList = hierarchyTransaction.GetOverrideList(modelProperties.Model.Key,
+            overrideList = hierarchyTransaction.GetOverrideList(_overrideLowLevelProfile.Key,
                                                                   _overrideLowLevelProfile.HN_RID,
                                                                   Include.NoRID,
                                                                   lowLevelOffset + highLevelOffset + 1,
@@ -475,20 +475,35 @@ namespace Logility.ROWeb
                 //if either new model or copy as model
                 if (lowLevelsModelRid == Include.NoRID)
                 {
-                    bool checkExists = GetLowLevelModel(saveName);
-                    if (!checkExists) //new model name does not exist
+                    if (!applyOnly)
                     {
-                        _overrideLowLevelProfile.Key = lowLevelsModelRid;
-                        _overrideLowLevelProfile.ModelID = saveName;
-                        _overrideLowLevelProfile.Name = saveName;
-                        _overrideLowLevelProfile.ModelChangeType = eChangeType.add;
-                        continueSave = true;
+                        bool checkExists = GetLowLevelModel(saveName);
+                        if (!checkExists) //new model name does not exist
+                        {
+                            _overrideLowLevelProfile.Key = lowLevelsModelRid;
+                            _overrideLowLevelProfile.ModelID = saveName;
+                            _overrideLowLevelProfile.Name = saveName;
+                            _overrideLowLevelProfile.ModelChangeType = eChangeType.add;
+                            continueSave = true;
+                        }
+                        else //new model name does exist
+                        {
+                            message = eMIDTextCode.msg_DuplicateName.ToString();
+                            continueSave = false;
+                            successful = false;
+                        }
                     }
-                    else //new model name does exist
+                    else
                     {
-                        message = eMIDTextCode.msg_DuplicateName.ToString();
-                        continueSave = false;
-                        successful = false;
+                        if (_overrideLowLevelProfile.Key > 0)
+                        {
+                            _overrideLowLevelProfile.ModelChangeType = eChangeType.update;
+                        }
+                        else
+                        {
+                            _overrideLowLevelProfile.ModelChangeType = eChangeType.add;
+                        }
+                        continueSave = true;
                     }
                 }
                 //model is update of existing 
@@ -511,6 +526,8 @@ namespace Logility.ROWeb
                     }
                 }
 
+                _copiedToWorkTables = true;
+
                 if (continueSave)
                 {
                     //move changes from properties to model profile
@@ -522,6 +539,9 @@ namespace Logility.ROWeb
                         if (!applyOnly)
                         {
                             _current_Model_Key = _overrideLowLevelProfile.CopyToPermanentTable(_overrideLowLevelProfile.Key);
+                            _overrideLowLevelProfile.DeleteModelWork(_overrideLowLevelProfile.Key);
+                            _overrideLowLevelProfile.Key = _current_Model_Key;
+                            _copiedToWorkTables = false;
                         }
                         if (successful)
                         {
@@ -548,8 +568,6 @@ namespace Logility.ROWeb
             {
 
             }
-
-            _copiedToWorkTables = true;
 
             return _overrideLowLevelProfile;
         }
@@ -655,11 +673,22 @@ namespace Logility.ROWeb
                         overrideLowLevelDetailProfile.Version_RID = lowLevelMerchandise.Version.Key;
                         overrideLowLevelDetailProfile.Exclude_Ind = lowLevelMerchandise.Exclude;
 
+                        RemoveOriginalDetail(overrideLowLevelDetailProfile);
+
                         _overrideLowLevelProfile.DetailList.Add(overrideLowLevelDetailProfile);
                     }
                 }
 
                 _overrideLowLevelProfile.WriteProfileWork(ref _last_custom_model_RID, SAB.ClientServerSession.UserRID);
+            }
+        }
+
+        private void RemoveOriginalDetail (OverrideLowLevelDetailProfile overrideLowLevelDetailProfile)
+        {
+            if (_overrideLowLevelProfile.DetailList.FindKey(overrideLowLevelDetailProfile.Key) != null)
+            {
+                OverrideLowLevelDetailProfile removeProfile = (OverrideLowLevelDetailProfile)_overrideLowLevelProfile.DetailList.FindKey(overrideLowLevelDetailProfile.Key);
+                _overrideLowLevelProfile.DetailList.Remove(removeProfile);
             }
         }
 
