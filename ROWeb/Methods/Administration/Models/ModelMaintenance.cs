@@ -28,6 +28,7 @@ namespace Logility.ROWeb
         private eModelType _currentModelType = eModelType.None;
         private int _currentLockKey = Include.NoRID;
         private ModelProfile _currentModelProfile = null;
+        private Dictionary<eModelType, ModelBase> _modelClasses;
 
         //=============
         // CONSTRUCTORS
@@ -37,21 +38,30 @@ namespace Logility.ROWeb
             _SAB = SAB;
             _ROWebTools = ROWebTools;
             _ROInstanceID = ROInstanceID;
+            _modelClasses = new Dictionary<eModelType, ModelBase>();
         }
 
         public void CleanUp()
         {
-            if (_currentModelProfile != null
-                && _currentModelProfile.ModelLockStatus == eLockStatus.Locked)
+            // release locks for all models retrieved
+            foreach (KeyValuePair<eModelType, ModelBase> entry in _modelClasses)
             {
-                _modelClass.UnlockModel(modelType: _currentModelType, key: _currentLockKey);
-                _currentLockKey = Include.NoRID;
-            }
+                _modelClass = entry.Value;
 
-            if (_modelClass != null)
-            {
-                _modelClass.OnClosing();
+                if (_modelClass != null
+                    && _modelClass.CurrentModelProfile != null)
+                {
+                    if (_modelClass.CurrentModelProfile.ModelLockStatus == eLockStatus.Locked)
+                    {
+                        _modelClass.UnlockModel(
+                            modelType: _modelClass.ModelType,
+                            key: _modelClass.CurrentModelProfile.Key
+                        );
+                    }
+                    _modelClass.OnClosing();
+                }
             }
+            _modelClasses.Clear();
         }
 
         /// <summary>
@@ -149,6 +159,7 @@ namespace Logility.ROWeb
                 )
             {
                 _currentModelProfile = _modelClass.GetModelProfile(parms: parms);
+                _modelClass.CurrentModelProfile = _currentModelProfile;
                 _currentModelType = parms.ModelType;
             }
 
@@ -216,6 +227,7 @@ namespace Logility.ROWeb
             {
                 // replace with update data and get model 
                 _currentModelProfile = mp;
+                _modelClass.CurrentModelProfile = _currentModelProfile;
                 ROModelProperties modelProperties = _modelClass.ModelGetData(parms: getModelParms, modelProfile: _currentModelProfile, message: ref message, applyOnly: true);
                 if (_currentModelProfile.ModelLockStatus == eLockStatus.Locked)
                 {
@@ -286,6 +298,7 @@ namespace Logility.ROWeb
             {
                 // replace with update data and get model 
                 _currentModelProfile = mp;
+                _modelClass.CurrentModelProfile = _currentModelProfile;
                 ROModelProperties rOModelProperties = _modelClass.ModelGetData(parms: getModelParms, modelProfile: _currentModelProfile, message: ref message);
                 if (_currentModelProfile.ModelLockStatus == eLockStatus.Locked)
                 {
@@ -474,31 +487,48 @@ namespace Logility.ROWeb
                 return _modelClass;
             }
 
-            switch (modelType)
+            ModelBase modelBase = null;
+
+            if (!_modelClasses.TryGetValue(modelType, out modelBase))
             {
-                case eModelType.Eligibility:
-                   return new ModelEligibility(SAB: _SAB, ROWebTools: _ROWebTools);
-                case eModelType.StockModifier:
-                    return new ModelStockModifier(SAB: _SAB, ROWebTools: _ROWebTools);
-                case eModelType.SalesModifier:
-                    return new ModelSalesModifier(SAB: _SAB, ROWebTools: _ROWebTools);
-                case eModelType.OverrideLowLevel:
-                    return new ModelOverrideLowLevel(SAB: _SAB, ROWebTools: _ROWebTools);
-                case eModelType.FWOSModifier:
-                    return new ModelFWOSModifier(SAB: _SAB, ROWebTools: _ROWebTools);
-                case eModelType.FWOSMax:
-                    return new ModelFWOSMax(SAB: _SAB, ROWebTools: _ROWebTools);
-                case eModelType.SizeConstraints:
-                    return new ModelSizeConstraint(SAB: _SAB, ROWebTools: _ROWebTools);
-                case eModelType.SizeAlternates:
-                    return new ModelSizeAlternate(SAB: _SAB, ROWebTools: _ROWebTools);
-                case eModelType.SizeGroup:
-                    return new ModelSizeGroup(SAB: _SAB, ROWebTools: _ROWebTools);
-                case eModelType.SizeCurve:
-                    return new ModelSizeCurveGroup(SAB: _SAB, ROWebTools: _ROWebTools);
+                switch (modelType)
+                {
+                    case eModelType.Eligibility:
+                        modelBase = new ModelEligibility(SAB: _SAB, ROWebTools: _ROWebTools);
+                        break;
+                    case eModelType.StockModifier:
+                        modelBase = new ModelStockModifier(SAB: _SAB, ROWebTools: _ROWebTools);
+                        break;
+                    case eModelType.SalesModifier:
+                        modelBase = new ModelSalesModifier(SAB: _SAB, ROWebTools: _ROWebTools);
+                        break;
+                    case eModelType.OverrideLowLevel:
+                        modelBase = new ModelOverrideLowLevel(SAB: _SAB, ROWebTools: _ROWebTools);
+                        break;
+                    case eModelType.FWOSModifier:
+                        modelBase = new ModelFWOSModifier(SAB: _SAB, ROWebTools: _ROWebTools);
+                        break;
+                    case eModelType.FWOSMax:
+                        modelBase = new ModelFWOSMax(SAB: _SAB, ROWebTools: _ROWebTools);
+                        break;
+                    case eModelType.SizeConstraints:
+                        modelBase = new ModelSizeConstraint(SAB: _SAB, ROWebTools: _ROWebTools);
+                        break;
+                    case eModelType.SizeAlternates:
+                        modelBase = new ModelSizeAlternate(SAB: _SAB, ROWebTools: _ROWebTools);
+                        break;
+                    case eModelType.SizeGroup:
+                        modelBase = new ModelSizeGroup(SAB: _SAB, ROWebTools: _ROWebTools);
+                        break;
+                    case eModelType.SizeCurve:
+                        modelBase = new ModelSizeCurveGroup(SAB: _SAB, ROWebTools: _ROWebTools);
+                        break;
+                }
+
+                _modelClasses.Add(modelType, modelBase);
             }
 
-            return null;
+            return modelBase;
         }
 
         private eProfileType GetProfileType(eModelType modelType)

@@ -28,6 +28,7 @@ namespace Logility.ROWeb
         protected FunctionSecurityProfile _functionSecurity;
         protected FunctionSecurityProfile _userSecurity = null;
         protected FunctionSecurityProfile _globalSecurity = null;
+        private ModelProfile _currentModelProfile = null;
 
         //=============
         // CONSTRUCTORS
@@ -89,6 +90,18 @@ namespace Logility.ROWeb
             get
             {
                 return _globalSecurity;
+            }
+        }
+
+        public ModelProfile CurrentModelProfile
+        {
+            get
+            {
+                return _currentModelProfile;
+            }
+            set
+            {
+                _currentModelProfile = value;
             }
         }
 

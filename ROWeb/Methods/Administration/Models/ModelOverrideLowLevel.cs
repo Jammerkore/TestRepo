@@ -480,10 +480,8 @@ namespace Logility.ROWeb
                         bool checkExists = GetLowLevelModel(saveName);
                         if (!checkExists) //new model name does not exist
                         {
-                            _overrideLowLevelProfile.Key = lowLevelsModelRid;
                             _overrideLowLevelProfile.ModelID = saveName;
                             _overrideLowLevelProfile.Name = saveName;
-                            _overrideLowLevelProfile.ModelChangeType = eChangeType.add;
                             continueSave = true;
                         }
                         else //new model name does exist
@@ -495,14 +493,7 @@ namespace Logility.ROWeb
                     }
                     else
                     {
-                        if (_overrideLowLevelProfile.Key > 0)
-                        {
-                            _overrideLowLevelProfile.ModelChangeType = eChangeType.update;
-                        }
-                        else
-                        {
-                            _overrideLowLevelProfile.ModelChangeType = eChangeType.add;
-                        }
+
                         continueSave = true;
                     }
                 }
@@ -512,10 +503,8 @@ namespace Logility.ROWeb
                     //current model equals saveing model
                     if (_overrideLowLevelProfile.Key == lowLevelsModelRid)
                     {
-                        _overrideLowLevelProfile.Key = lowLevelsModelRid;
                         _overrideLowLevelProfile.ModelID = saveName;
                         _overrideLowLevelProfile.Name = saveName;
-                        _overrideLowLevelProfile.ModelChangeType = eChangeType.update;
                         continueSave = true;
                     }
                     else
@@ -527,6 +516,14 @@ namespace Logility.ROWeb
                 }
 
                 _copiedToWorkTables = true;
+                if (_overrideLowLevelProfile.Key > 0)
+                {
+                    _overrideLowLevelProfile.ModelChangeType = eChangeType.update;
+                }
+                else
+                {
+                    _overrideLowLevelProfile.ModelChangeType = eChangeType.add;
+                }
 
                 if (continueSave)
                 {
