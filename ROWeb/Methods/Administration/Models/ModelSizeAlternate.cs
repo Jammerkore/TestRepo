@@ -241,23 +241,26 @@ namespace Logility.ROWeb
                     //move changes from properties to model profile
                     SaveToProfile(sizeAlternateProperties);
 
-                    if (!string.IsNullOrEmpty(_sizeAltModelProfile.SizeAlternateName))
+                    if (!applyOnly)
                     {
-                        // Save file alternate model data
-                        if (!applyOnly)
+                        if (!string.IsNullOrEmpty(_sizeAltModelProfile.SizeAlternateName))
                         {
+                            // Save file alternate model data
                             successful = InsertUpdateSizeAlternates(sizeAlternateModelRid);
-
+                            if (successful)
+                            {
+                                message = eMIDTextCode.msg_ProcessCompletedSuccessfully.ToString();
+                            }
+                            else
+                            {
+                                successful = false;
+                            }
                         }
-                        if (successful)
+                        else
                         {
-                            message = eMIDTextCode.msg_ProcessCompletedSuccessfully.ToString();
+                            message = eMIDTextCode.msg_NameRequiredToSave.ToString();
+                            successful = false;
                         }
-                    }
-                    else
-                    {
-                        message = eMIDTextCode.msg_NameRequiredToSave.ToString();
-                        successful = false;
                     }
                 }
                 else
@@ -286,8 +289,8 @@ namespace Logility.ROWeb
         {
             try
             {
-                //_dsAlt = BuildAlternateDataSet();
-                ////DataTable dt = _sizeModelData.SizeAlternateModel_Read(_sizeAltModelProfile.Key);
+                _promptSizeChange = false;
+
                 if (sizeAlternateProperties.PrimarySizeCurve.Key != _sizeAltModelProfile.PrimarySizeCurveRid)
                 {
                     _sizeAltModelProfile.PrimarySizeCurveRid = sizeAlternateProperties.PrimarySizeCurve.Key;
@@ -316,14 +319,33 @@ namespace Logility.ROWeb
                         aPrimary.Sequence = 1;
                         aPrimary.SizeRid = Convert.ToInt32(_sizeKeyList[0]);
                         aPrimary.DimensionRid =  Convert.ToInt32(_dimKeyList[0]);
-                        sizeAlternateProperties.SizeAlternatePrimarySizes[0].Size = GetName.GetSizeAlternateModelSize(
-                            sizeCurveRID: sizeAlternateProperties.PrimarySizeCurve.Key, 
-                            sizeCodeRID: Convert.ToInt32(_sizeKeyList[0])
-                            );
-                        sizeAlternateProperties.SizeAlternatePrimarySizes[0].Dimension = GetName.GetSizeAlternateModelDimension(
-                            sizeCurveRID: sizeAlternateProperties.PrimarySizeCurve.Key,
-                            dimensionRID: Convert.ToInt32(_dimKeyList[0])
-                            );
+                        if (sizeAlternateProperties.SizeAlternatePrimarySizes.Count == 0)
+                        {
+                            KeyValuePair<int, string> size = GetName.GetSizeAlternateModelSize(
+                                sizeCurveRID: sizeAlternateProperties.PrimarySizeCurve.Key,
+                                sizeCodeRID: Convert.ToInt32(_sizeKeyList[0])
+                                );
+                            KeyValuePair<int, string> dimension = GetName.GetSizeAlternateModelDimension(
+                                sizeCurveRID: sizeAlternateProperties.PrimarySizeCurve.Key,
+                                dimensionRID: Convert.ToInt32(_dimKeyList[0])
+                                );
+                            sizeAlternateProperties.SizeAlternatePrimarySizes.Add(new ROSizeAlternatePrimarySize(
+                                seq: 0,
+                                size: size,
+                                dimension: dimension)
+                                );
+                        }
+                        else
+                        {
+                            sizeAlternateProperties.SizeAlternatePrimarySizes[0].Size = GetName.GetSizeAlternateModelSize(
+                                sizeCurveRID: sizeAlternateProperties.PrimarySizeCurve.Key,
+                                sizeCodeRID: Convert.ToInt32(_sizeKeyList[0])
+                                );
+                            sizeAlternateProperties.SizeAlternatePrimarySizes[0].Dimension = GetName.GetSizeAlternateModelDimension(
+                                sizeCurveRID: sizeAlternateProperties.PrimarySizeCurve.Key,
+                                dimensionRID: Convert.ToInt32(_dimKeyList[0])
+                                );
+                        }
                     }
                     else
                     {
