@@ -289,7 +289,7 @@ namespace Logility.ROWeb
         }
 
         /// <summary>
-		/// Fills class with sizes based on a selected Size Group
+		/// Fills class with sizes based on a selected Size Group or Size Curve
 		/// </summary>
 		protected void FillSizesList(ROSizeDimension dimensionSizes, DataTable dtSizes, int dimensionKey)
         {
@@ -300,7 +300,7 @@ namespace Logility.ROWeb
 
             foreach (DataRow dr in SelectRows)
             {
-                sizeKey = Convert.ToInt32(dr["SIZE_CODE_RID"]);
+                sizeKey = Convert.ToInt32(dr["SIZES_RID"]);
                 size = dr["SIZE_CODE_PRIMARY"].ToString();
                 dimensionSizes.Sizes.Add(new KeyValuePair<int, string>(
                     sizeKey,
