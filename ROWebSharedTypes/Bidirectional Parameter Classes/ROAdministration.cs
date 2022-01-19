@@ -1240,6 +1240,12 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         List<KeyValuePair<int, string>> _colors;
 
+        [DataMember(IsRequired = true)]
+        List<KeyValuePair<int, string>> _sizeGroups;
+
+        [DataMember(IsRequired = true)]
+        List<KeyValuePair<int, string>> _sizeCurveGroups;
+
         #region Public Properties
         /// <summary>
         /// Gets the flag identifying if the attribute has been set.
@@ -1299,10 +1305,26 @@ namespace Logility.ROWebSharedTypes
             set { _sizeCurveGroup = value; }
         }
 
+        /// <summary>
+        /// Gets the flag identifying if the SizeCurveGroup has been set.
+        /// </summary>
+        public bool SizeCurveGroupIsSet
+        {
+            get { return !SizeCurveGroup.Equals(default(KeyValuePair<int, string>)); }
+        }
+
         public KeyValuePair<int, string> SizeGroup
         {
             get { return _sizeGroup; }
             set { _sizeGroup = value; }
+        }
+
+        /// <summary>
+        /// Gets the flag identifying if the SizeGroup has been set.
+        /// </summary>
+        public bool SizeGroupIsSet
+        {
+            get { return !SizeGroup.Equals(default(KeyValuePair<int, string>)); }
         }
 
         public string DefaultLabel
@@ -1327,13 +1349,23 @@ namespace Logility.ROWebSharedTypes
             get { return _colors; }
         }
 
+        public List<KeyValuePair<int, string>> SizeGroups
+        {
+            get { return _sizeGroups; }
+        }
+
+        public List<KeyValuePair<int, string>> SizeCurveGroups
+        {
+            get { return _sizeCurveGroups; }
+        }
+
         #endregion
 
         public ROModelSizeConstraintProperties(KeyValuePair<int, string> model,
-            KeyValuePair<int, string> attribute,
-            KeyValuePair<int, string> attributeSet,
-            KeyValuePair<int, string> sizeCurveGroup,
-            KeyValuePair<int, string> sizeGroup,
+            KeyValuePair<int, string> attribute = default(KeyValuePair<int, string>),
+            KeyValuePair<int, string> attributeSet = default(KeyValuePair<int, string>),
+            KeyValuePair<int, string> sizeCurveGroup = default(KeyValuePair<int, string>),
+            KeyValuePair<int, string> sizeGroup = default(KeyValuePair<int, string>),
             KeyValuePair<int, string> definedAttribute = default(KeyValuePair<int, string>)
             )
             : base(eModelType.SizeConstraints, model)
@@ -1346,6 +1378,8 @@ namespace Logility.ROWebSharedTypes
             _sizeGroup = sizeGroup;
             _sizeConstraintDimensions = new List<ROSizeDimension>();
             _colors = new List<KeyValuePair<int, string>>();
+            _sizeGroups = new List<KeyValuePair<int, string>>();
+            _sizeCurveGroups = new List<KeyValuePair<int, string>>();
         }
     }
 

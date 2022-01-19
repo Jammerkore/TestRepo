@@ -309,5 +309,28 @@ namespace Logility.ROWeb
             }
         }
 
+        /// <summary>
+		/// Fills a KeyValuePair List with size groups.
+		/// </summary>
+		/// <param name="sizeGroups">KeyValuePair object to fill</param>
+		protected void FillSizeGroupList(List<KeyValuePair<int, string>> sizeGroups)
+        {
+            SizeGroup dataLayersizeGroupData = new SizeGroup();
+            DataTable dataTableSizeGroups = dataLayersizeGroupData.GetSizeGroups(false);
+            sizeGroups.AddRange(ApplicationUtilities.DataTableToKeyValues(dataTableSizeGroups, "SIZE_GROUP_RID", "SIZE_GROUP_NAME"));
+        }
+
+        /// <summary>
+		/// Fills a KeyValuePair List with size curve groups.
+		/// </summary>
+		/// <param name="sizeCurveGroups">KeyValuePair object to fill</param>
+		protected void FillSizeCurveGroupList(List<KeyValuePair<int, string>> sizeCurveGroups)
+        {
+            SizeCurve dataLayerSizeCurve = new SizeCurve();
+            DataTable dataTableSizeCurveGroups = dataLayerSizeCurve.GetSizeCurveGroups();
+            sizeCurveGroups.AddRange(ApplicationUtilities.DataTableToKeyValues(dataTableSizeCurveGroups, "SIZE_CURVE_GROUP_RID", "SIZE_CURVE_GROUP_NAME"));
+
+        }
+
     }
 }

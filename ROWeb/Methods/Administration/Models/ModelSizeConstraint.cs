@@ -197,6 +197,10 @@ namespace Logility.ROWeb
 
             FillColorList(modelProperties.Colors);
 
+            FillSizeGroupList(modelProperties.SizeGroups);
+
+            FillSizeCurveGroupList(modelProperties.SizeCurveGroups);
+
             return modelProperties;
         }
 
