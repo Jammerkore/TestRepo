@@ -245,10 +245,31 @@ namespace Logility.ROWeb
 		/// Fills a KeyValuePair List with colors.
 		/// </summary>
 		/// <param name="colorList">KeyValuePair object to fill</param>
-		protected void FillColorList(List<KeyValuePair<int, string>> colorList)
+		protected void FillColorList(
+            List<KeyValuePair<int, string>> colorList,
+            bool addDefaultColor = false,
+            bool addAllColors = false
+            )
         {
             ColorData colorData = new ColorData();
             DataTable dataTableColors = colorData.Colors_Read();
+
+            if (addDefaultColor)
+            {
+                colorList.Add(new KeyValuePair<int, string>(
+                        -2,
+                        "Default")
+                        );
+            }
+
+            if (addAllColors)
+            {
+                colorList.Add(new KeyValuePair<int, string>(
+                        -1,
+                        "All Colors")
+                        );
+            }
+
 
             foreach (DataRow dataRow in dataTableColors.Rows)
             {
@@ -264,7 +285,15 @@ namespace Logility.ROWeb
         /// Fills class with size dimensions.
         /// </summary>
         /// <remarks>Method must be overridden</remarks>
-        protected void FillDimensionSizeList(List<ROSizeDimension> sizeDimensionSizes, int Key, eGetDimensions getDimensions, eGetSizes getSizes)
+        protected void FillDimensionSizeList(
+            List<ROSizeDimension> sizeDimensionSizes, 
+            int Key, 
+            eGetDimensions getDimensions, 
+            eGetSizes getSizes,
+            bool includeDefaultDimension = false,
+            bool includeDefaultSize = false,
+            bool useSizeCodeKey = false
+            )
         {
             ROSizeDimension dimensionSizes;
             int dimensionKey;
@@ -274,6 +303,16 @@ namespace Logility.ROWeb
             DataTable dtDimensions = maint.FillSizeDimensionList(Key, getDimensions);
             DataTable dtSizes = maint.FillSizesList(Key, getSizes);
 
+            if (includeDefaultDimension)
+            {
+                dimensionSizes = new ROSizeDimension(dimension: new KeyValuePair<int, string>(
+                    -1,
+                    "Default")
+                    );
+                sizeDimensionSizes.Add(dimensionSizes
+                    );
+            }
+
             foreach (DataRow dr in dtDimensions.Rows)
             {
                 dimensionKey = Convert.ToInt32(dr["DIMENSIONS_RID"]);
@@ -282,8 +321,15 @@ namespace Logility.ROWeb
                     dimensionKey,
                     dimension)
                     );
-                FillSizesList(dimensionSizes: dimensionSizes, dtSizes: dtSizes, dimensionKey: dimensionKey);
-                sizeDimensionSizes.Add(dimensionSizes);
+                FillSizesList(
+                    dimensionSizes: dimensionSizes, 
+                    dtSizes: dtSizes, 
+                    dimensionKey: dimensionKey,
+                    includeDefaultSize: includeDefaultSize,
+                    useSizeCodeKey: useSizeCodeKey
+                    );
+                sizeDimensionSizes.Add(dimensionSizes
+                    );
 
             }
         }
@@ -291,16 +337,35 @@ namespace Logility.ROWeb
         /// <summary>
 		/// Fills class with sizes based on a selected Size Group or Size Curve
 		/// </summary>
-		protected void FillSizesList(ROSizeDimension dimensionSizes, DataTable dtSizes, int dimensionKey)
+		protected void FillSizesList(
+            ROSizeDimension dimensionSizes, 
+            DataTable dtSizes, int dimensionKey,
+            bool includeDefaultSize = false,
+            bool useSizeCodeKey = false)
         {
             int sizeKey;
             string size;
 
             DataRow[] SelectRows = dtSizes.Select("DIMENSIONS_RID = '" + dimensionKey.ToString() + "'");
 
+            if (includeDefaultSize)
+            {
+                dimensionSizes.Sizes.Add(new KeyValuePair<int, string>(
+                    -1,
+                    "Default")
+                    );
+            }
+
             foreach (DataRow dr in SelectRows)
             {
-                sizeKey = Convert.ToInt32(dr["SIZES_RID"]);
+                if (useSizeCodeKey)
+                {
+                    sizeKey = Convert.ToInt32(dr["SIZE_CODE_RID"]);
+                }
+                else
+                {
+                    sizeKey = Convert.ToInt32(dr["SIZES_RID"]);
+                }
                 size = dr["SIZE_CODE_PRIMARY"].ToString();
                 dimensionSizes.Sizes.Add(new KeyValuePair<int, string>(
                     sizeKey,

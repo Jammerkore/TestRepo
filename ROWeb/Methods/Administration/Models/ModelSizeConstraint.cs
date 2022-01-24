@@ -195,7 +195,11 @@ namespace Logility.ROWeb
 
             BuildConstraints(modelProperties: modelProperties, sizeGroupKey: sizeGroupKey, sizeCurveGroupKey: sizeCurveGroupKey, message: ref message);
 
-            FillColorList(modelProperties.Colors);
+            FillColorList(
+                colorList: modelProperties.Colors,
+                addDefaultColor: true,
+                addAllColors: true
+                );
 
             FillSizeGroupList(modelProperties.SizeGroups);
 
@@ -1108,7 +1112,10 @@ namespace Logility.ROWeb
                 sizeDimensionSizes: modelProperties.SizeConstraintDimensions, 
                 Key: sizeOrderKey, 
                 getDimensions: getDimensionsUsing, 
-                getSizes: getSizesUsing
+                getSizes: getSizesUsing,
+                includeDefaultDimension: true,
+                includeDefaultSize: true,
+                useSizeCodeKey: true
                 );
 
             return true;
