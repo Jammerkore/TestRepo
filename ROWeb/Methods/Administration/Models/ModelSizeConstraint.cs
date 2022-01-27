@@ -203,8 +203,8 @@ namespace Logility.ROWeb
 
             FillColorList(
                 colorList: modelProperties.Colors,
-                addDefaultColor: true,
-                addAllColors: true
+                addDefaultColor: false,
+                addAllColors: false
                 );
 
             FillSizeGroupList(modelProperties.SizeGroups);
@@ -1051,8 +1051,8 @@ namespace Logility.ROWeb
                 Key: sizeOrderKey, 
                 getDimensions: getDimensionsUsing, 
                 getSizes: getSizesUsing,
-                includeDefaultDimension: true,
-                includeDefaultSize: true,
+                includeDefaultDimension: false,
+                includeDefaultSize: false,
                 useSizeCodeKey: true
                 );
 

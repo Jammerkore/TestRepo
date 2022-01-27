@@ -270,6 +270,8 @@ namespace Logility.ROWeb
                         );
             }
 
+            // sort colors by ID
+            dataTableColors = ApplicationUtilities.SortDataTable(dataTable: dataTableColors, sColName: "COLOR_CODE_ID", bAscending: true);
 
             foreach (DataRow dataRow in dataTableColors.Rows)
             {
