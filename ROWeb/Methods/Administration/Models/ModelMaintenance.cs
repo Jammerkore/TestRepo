@@ -28,7 +28,8 @@ namespace Logility.ROWeb
         private eModelType _currentModelType = eModelType.None;
         private int _currentLockKey = Include.NoRID;
         private ModelProfile _currentModelProfile = null;
-        private Dictionary<eModelType, ModelBase> _modelClasses;
+        private Dictionary<eModelType, Dictionary<int, ModelBase>> _modelTypes;
+        private Dictionary<int, ModelBase> _modelClasses;
 
         //=============
         // CONSTRUCTORS
@@ -38,30 +39,29 @@ namespace Logility.ROWeb
             _SAB = SAB;
             _ROWebTools = ROWebTools;
             _ROInstanceID = ROInstanceID;
-            _modelClasses = new Dictionary<eModelType, ModelBase>();
+            _modelTypes = new Dictionary<eModelType, Dictionary<int, ModelBase>>();
         }
 
         public void CleanUp()
         {
             // release locks for all models retrieved
-            foreach (KeyValuePair<eModelType, ModelBase> entry in _modelClasses)
+            foreach (KeyValuePair<eModelType, Dictionary<int, ModelBase>> classEntry in _modelTypes)
             {
-                _modelClass = entry.Value;
-
-                if (_modelClass != null
-                    && _modelClass.CurrentModelProfile != null)
+                if (classEntry.Value != null)
                 {
-                    if (_modelClass.CurrentModelProfile.ModelLockStatus == eLockStatus.Locked)
+                    Dictionary<int, ModelBase> modelClass = classEntry.Value;
+                    List<int> keys = new List<int>();
+                    foreach (KeyValuePair<int, ModelBase> modelEntry in modelClass)
                     {
-                        _modelClass.UnlockModel(
-                            modelType: _modelClass.ModelType,
-                            key: _modelClass.CurrentModelProfile.Key
-                        );
+                       keys.Add(modelEntry.Key);
                     }
-                    _modelClass.OnClosing();
+                    foreach (int key in keys)
+                    {
+                        CloseModel(key: key);
+                    }
                 }
             }
-            _modelClasses.Clear();
+            _modelTypes.Clear();
         }
 
         /// <summary>
@@ -73,7 +73,10 @@ namespace Logility.ROWeb
         {
             string message;
 
-            _modelClass = GetModelClass(modelType: parms.ModelType);
+            _modelClass = GetModelClass(
+                modelType: parms.ModelType,
+                key: parms.Key
+                );
 
             if (_modelClass == null)
             {
@@ -134,7 +137,10 @@ namespace Logility.ROWeb
         {
             message = null;
 
-            _modelClass = GetModelClass(modelType: parms.ModelType);
+            _modelClass = GetModelClass(
+                modelType: parms.ModelType,
+                key: parms.Key
+                );
 
             if (_modelClass == null)
             {
@@ -190,7 +196,10 @@ namespace Logility.ROWeb
             ROModelParms getModelParms;
             eROReturnCode returnCode = eROReturnCode.Successful;
 
-            _modelClass = GetModelClass(modelType: parms.ROModelProperties.ModelType);
+            _modelClass = GetModelClass(
+                modelType: parms.ROModelProperties.ModelType,
+                key: parms.ROModelProperties.Model.Key
+                );
 
             if (!_modelClass.FunctionSecurity.AllowUpdate)
             {
@@ -249,7 +258,10 @@ namespace Logility.ROWeb
             string modelName;
             ROModelParms getModelParms;
 
-            _modelClass = GetModelClass(modelType: parms.ROModelProperties.ModelType);
+            _modelClass = GetModelClass(
+                modelType: parms.ROModelProperties.ModelType,
+                key: parms.ROModelProperties.Model.Key
+                );
             if (_currentModelProfile == null
                 || _currentModelType != parms.ROModelProperties.ModelType
                 || _currentModelProfile.Key != parms.ROModelProperties.Model.Key)
@@ -323,7 +335,10 @@ namespace Logility.ROWeb
 
             try
             {
-                _modelClass = GetModelClass(modelType: parms.ROModelProperties.ModelType);
+                _modelClass = GetModelClass(
+                    modelType: parms.ROModelProperties.ModelType,
+                    key: parms.ROModelProperties.Model.Key
+                    );
                 _currentModelType = _modelClass.ModelType;
                 if (!_modelClass.FunctionSecurity.AllowUpdate)
                 {
@@ -363,7 +378,10 @@ namespace Logility.ROWeb
 
             try
             {
-                _modelClass = GetModelClass(modelType: parms.ModelType);
+                _modelClass = GetModelClass(
+                    modelType: parms.ModelType,
+                    key: parms.Key
+                    );
 
                 if (!_modelClass.FunctionSecurity.AllowUpdate)
                 {
@@ -411,7 +429,10 @@ namespace Logility.ROWeb
         {
             string message = null;
 
-            _modelClass = GetModelClass(modelType: parms.ModelType);
+            _modelClass = GetModelClass(
+                modelType: parms.ModelType,
+                key: parms.Key
+                );
             if (_currentModelProfile == null
                 || _currentModelType != parms.ModelType
                 || _currentModelProfile.Key != parms.Key)
@@ -459,6 +480,32 @@ namespace Logility.ROWeb
             return new ROBoolOut(eROReturnCode.Successful, null, _ROInstanceID, success);
         }
 
+        /// <summary>
+        /// Closes are model resources and removes from the cache
+        /// </summary>
+        /// <param name="key">The key of the model to be closed</param>
+        private void CloseModel(int key)
+        {
+            ModelBase modelBase = null;
+            if (_modelClasses.TryGetValue(key, out modelBase))
+            {
+                if (modelBase != null
+                            && modelBase.CurrentModelProfile != null)
+                {
+                    if (modelBase.CurrentModelProfile.ModelLockStatus == eLockStatus.Locked)
+                    {
+                        modelBase.UnlockModel(
+                            modelType: modelBase.ModelType,
+                            key: modelBase.CurrentModelProfile.Key
+                        );
+                    }
+                    modelBase.OnClosing();
+
+                    _modelClasses.Remove(key: key);
+                }
+            }
+        }
+
         private string CleanseModelName(string name)
         {
             string newName = name;
@@ -479,17 +526,35 @@ namespace Logility.ROWeb
             return newName;
         }
 
-        private ModelBase GetModelClass(eModelType modelType)
+        private ModelBase GetModelClass(
+            eModelType modelType,
+            int key)
         {
             if (_modelClass != null
-                && _modelClass.ModelType == modelType)
+                && _modelClass.ModelType == modelType
+                && _modelClass.CurrentModelProfile != null
+                && _modelClass.CurrentModelProfile.Key == key)
             {
                 return _modelClass;
             }
 
+            if (!_modelTypes.TryGetValue(modelType, out _modelClasses))
+            {
+                _modelClasses = new Dictionary<int, ModelBase>();
+                _modelTypes.Add(modelType, _modelClasses);
+            }
+
+            // will close and remove any previous models of the same type
+            // remove this code if multiple models of the same type can be open
+            if (_modelClasses.Count > 0)
+            {
+                CloseModel(_modelClasses.Keys.First());
+                _currentModelProfile = null;
+            }
+
             ModelBase modelBase = null;
 
-            if (!_modelClasses.TryGetValue(modelType, out modelBase))
+            if (!_modelClasses.TryGetValue(key, out modelBase))
             {
                 switch (modelType)
                 {
@@ -525,7 +590,7 @@ namespace Logility.ROWeb
                         break;
                 }
 
-                _modelClasses.Add(modelType, modelBase);
+                _modelClasses.Add(key, modelBase);
             }
 
             return modelBase;

@@ -1088,13 +1088,20 @@ namespace Logility.ROWeb
                 _createConstraintData = true;
                 ClearConstraints(key: sizeConstraintProperties.Model.Key);
                 _sizeConstraintProfile.StoreGroupRid = sizeConstraintProperties.Attribute.Key;
-                if (sizeConstraintProperties.SizeGroup.Key != _sizeConstraintProfile.SizeGroupRid)
+                if (sizeConstraintProperties.SizeGroupIsSet)
                 {
                     _sizeConstraintProfile.SizeGroupRid = sizeConstraintProperties.SizeGroup.Key;
+                    _sizeConstraintProfile.SizeCurveGroupRid = Include.NoRID;
                 }
-                else if (sizeConstraintProperties.SizeCurveGroup.Key != _sizeConstraintProfile.SizeCurveGroupRid)
+                else if (sizeConstraintProperties.SizeCurveGroupIsSet)
                 {
                     _sizeConstraintProfile.SizeCurveGroupRid = sizeConstraintProperties.SizeCurveGroup.Key;
+                    _sizeConstraintProfile.SizeGroupRid = Include.NoRID;
+                }
+                else
+                {
+                    _sizeConstraintProfile.SizeGroupRid = Include.NoRID;
+                    _sizeConstraintProfile.SizeCurveGroupRid = Include.NoRID;
                 }
             }
             else if (BuildConstraintDataSet(sizeConstraintProperties: sizeConstraintProperties, message: ref message))
