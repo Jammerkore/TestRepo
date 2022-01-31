@@ -262,7 +262,8 @@ namespace Logility.ROWeb
 
             _modelClass = GetModelClass(
                 modelType: parms.ROModelProperties.ModelType,
-                key: parms.ROModelProperties.Model.Key
+                key: parms.ROModelProperties.Model.Key,
+                performingSave: true
                 );
             if (_currentModelProfile == null
                 || _currentModelType != parms.ROModelProperties.ModelType
@@ -357,7 +358,8 @@ namespace Logility.ROWeb
             {
                 _modelClass = GetModelClass(
                     modelType: parms.ROModelProperties.ModelType,
-                    key: parms.ROModelProperties.Model.Key
+                    key: parms.ROModelProperties.Model.Key,
+                    performingSave: true
                     );
                 _currentModelType = _modelClass.ModelType;
                 if (!_modelClass.FunctionSecurity.AllowUpdate)
@@ -570,12 +572,14 @@ namespace Logility.ROWeb
 
         private ModelBase GetModelClass(
             eModelType modelType,
-            int key)
+            int key,
+            bool performingSave = false
+            )
         {
             if (_modelClass != null
                 && _modelClass.ModelType == modelType
                 && _modelClass.CurrentModelProfile != null
-                && ( _modelClass.CurrentModelProfile.Key == key || key == Include.NoRID)
+                && (_modelClass.CurrentModelProfile.Key == key || (key == Include.NoRID && performingSave))
                 )
             {
                 return _modelClass;
