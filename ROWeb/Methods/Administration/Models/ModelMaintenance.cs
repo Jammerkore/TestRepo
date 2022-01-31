@@ -254,9 +254,11 @@ namespace Logility.ROWeb
         public ROOut SaveModel(ROModelPropertiesParms parms)
         {
             string message = null;
-            bool successful;
+            bool successful = true;
+            bool applyOnly = false;
             string modelName;
             ROModelParms getModelParms;
+            eROReturnCode returnCode = eROReturnCode.Successful;
 
             _modelClass = GetModelClass(
                 modelType: parms.ROModelProperties.ModelType,
@@ -293,11 +295,19 @@ namespace Logility.ROWeb
             if (parms.ROModelProperties.Model.Key == Include.NoRID
                 && _modelClass.ModelNameExists(parms.ROModelProperties.Model.Value))
             {
-                modelName = CleanseModelName(parms.ROModelProperties.Model.Value);
-                parms.ROModelProperties.Model = new KeyValuePair<int, string>(parms.ROModelProperties.Model.Key, modelName);
+                message = "Models must be unique.";
+                MIDEnvironment.Message = message;
+                MIDEnvironment.requestFailed = true;
+                returnCode = eROReturnCode.Failure;
+                applyOnly = true;
             }
 
-            ModelProfile mp = _modelClass.ModelUpdateData(modelsProperties: parms.ROModelProperties, cloneDates: false, message: ref message, successful: out successful);
+            ModelProfile mp = _modelClass.ModelUpdateData(modelsProperties: parms.ROModelProperties, cloneDates: false, message: ref message, successful: out successful, applyOnly: applyOnly);
+
+            if (!successful)
+            {
+                returnCode = eROReturnCode.Failure;
+            }
 
             // remove undefined model from cache and add new key
 			if (parms.ROModelProperties.Model.Key < 0)
@@ -326,7 +336,7 @@ namespace Logility.ROWeb
                     rOModelProperties.IsReadOnly = _modelClass.FunctionSecurity.IsReadOnly;
                     _currentLockKey = _currentModelProfile.Key;
                 }
-                return new ROModelPropertiesOut(eROReturnCode.Successful, null, _ROInstanceID, rOModelProperties);
+                return new ROModelPropertiesOut(returnCode, null, _ROInstanceID, rOModelProperties);
             }
         }
 
@@ -338,8 +348,10 @@ namespace Logility.ROWeb
         public ROOut SaveAsModel(ROModelPropertiesParms parms)
         {
             string message = null;
-            bool successful;
-            string modelName;
+            bool successful = true;
+            bool applyOnly = false;
+            string modelName;;
+            eROReturnCode returnCode = eROReturnCode.Successful;
 
             try
             {
@@ -356,11 +368,25 @@ namespace Logility.ROWeb
                     return new ROModelPropertiesOut(eROReturnCode.Failure, message, _ROInstanceID, null);
                 }
                
-                modelName = CleanseModelName(parms.ROModelProperties.Model.Value);
+                modelName = parms.ROModelProperties.Model.Value;
+                if (parms.ROModelProperties.Model.Key == Include.NoRID
+                    && _modelClass.ModelNameExists(parms.ROModelProperties.Model.Value))
+                {
+                    message = "Models must be unique.";
+					MIDEnvironment.Message = message;
+                    MIDEnvironment.requestFailed = true;
+                    returnCode = eROReturnCode.Failure;
+                    applyOnly = true;
+                }
 
                 parms.ROModelProperties.Model = new KeyValuePair<int, string>(Include.NoRID, modelName);
 
-                ModelProfile mp = _modelClass.ModelUpdateData(modelsProperties: parms.ROModelProperties, cloneDates: true, message: ref message, successful: out successful);
+                ModelProfile mp = _modelClass.ModelUpdateData(modelsProperties: parms.ROModelProperties, cloneDates: true, message: ref message, successful: out successful, applyOnly: applyOnly);
+
+                if (!successful)
+                {
+                    returnCode = eROReturnCode.Failure;
+                }
 
                 // remove undefined model from cache and add new key
 				if (parms.ROModelProperties.Model.Key < 0)
@@ -549,7 +575,8 @@ namespace Logility.ROWeb
             if (_modelClass != null
                 && _modelClass.ModelType == modelType
                 && _modelClass.CurrentModelProfile != null
-                && _modelClass.CurrentModelProfile.Key == key)
+                && ( _modelClass.CurrentModelProfile.Key == key || key == Include.NoRID)
+                )
             {
                 return _modelClass;
             }
