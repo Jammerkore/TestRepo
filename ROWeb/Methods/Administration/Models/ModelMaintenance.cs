@@ -299,6 +299,14 @@ namespace Logility.ROWeb
 
             ModelProfile mp = _modelClass.ModelUpdateData(modelsProperties: parms.ROModelProperties, cloneDates: false, message: ref message, successful: out successful);
 
+            // remove undefined model from cache and add new key
+			if (parms.ROModelProperties.Model.Key < 0)
+            {
+                _modelClasses.Remove(parms.ROModelProperties.Model.Key);
+            }
+
+            _modelClasses[mp.Key] = _modelClass;
+
             getModelParms = _modelClass.GetModelParms(parms: parms, modelType: _currentModelType, key: mp.Key);
 
             if (parms.ROModelProperties.Model.Key == Include.NoRID)
@@ -353,6 +361,14 @@ namespace Logility.ROWeb
                 parms.ROModelProperties.Model = new KeyValuePair<int, string>(Include.NoRID, modelName);
 
                 ModelProfile mp = _modelClass.ModelUpdateData(modelsProperties: parms.ROModelProperties, cloneDates: true, message: ref message, successful: out successful);
+
+                // remove undefined model from cache and add new key
+				if (parms.ROModelProperties.Model.Key < 0)
+                {
+                    _modelClasses.Remove(parms.ROModelProperties.Model.Key);
+                }
+
+                _modelClasses[mp.Key] = _modelClass;
 
                 // unlock original model and get new model and lock
                 ROModelParms getModelParms = _modelClass.GetModelParms(parms: parms, modelType: _currentModelType, key: mp.Key);
