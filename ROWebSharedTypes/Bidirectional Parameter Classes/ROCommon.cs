@@ -502,12 +502,16 @@ namespace Logility.ROWebSharedTypes
 
     public class ROOverrideLowLevel
     {
+        [DataMember(IsRequired = true)]
         public ROLevelInformation LowLevel { get; set; }
 
+        [DataMember(IsRequired = true)]
         public KeyValuePair<int, string> OverrideLowLevelsModel { get; set; }
 
+        [DataMember(IsRequired = true)]
         public bool IsCustomModel { get; set; }
 
+        [DataMember(IsRequired = true)]
         public List<KeyValuePair<int, string>> OverrideLowLevelsModelList { get; set; }
 
         public ROOverrideLowLevel()
