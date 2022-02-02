@@ -5947,6 +5947,16 @@ namespace MIDRetail.Business
             ROOverrideLowLevel roOverrideLowLevel = new ROOverrideLowLevel();
             roOverrideLowLevel.LowLevel = lowLevel;
             roOverrideLowLevel.OverrideLowLevelsModel = GetName.GetOverrideLowLevelsModel(OverrideLowLevelRid, SAB);
+            roOverrideLowLevel.OverrideLowLevelsModelList = BuildOverrideLowLevelList(
+                overrideLowLevelRid: OverrideLowLevelRid,
+                customOverrideLowLevelRid: CustomOLL_RID
+                );
+
+            if (CustomOLL_RID > Include.NoRID
+                && CustomOLL_RID == OverrideLowLevelRid)
+            {
+                roOverrideLowLevel.IsCustomModel = true;
+            }
 
             // get key of first set in attribute
             if (_attributeSetKey == Include.NoRID)
@@ -6533,7 +6543,6 @@ namespace MIDRetail.Business
                 HighLevelInd = properties.HighLevel;
                 LowLevelsInd = properties.LowLevels;
                 Plan_FV_RID = properties.Version.Key;
-                CustomOLL_RID = properties.OverrideLowLevel.OverrideLowLevelsModel.Key;
                 CDR_RID = properties.DateRange.Key;
 
                 LowLevelsOffset = properties.OverrideLowLevel.LowLevel.LevelOffset;
@@ -6541,6 +6550,14 @@ namespace MIDRetail.Business
                 LowLevelsType = (eLowLevelsType)properties.OverrideLowLevel.LowLevel.LevelType;
 
                 OverrideLowLevelRid = properties.OverrideLowLevel.OverrideLowLevelsModel.Key;
+                if (properties.OverrideLowLevel.IsCustomModel)
+                {
+                    CustomOLL_RID = properties.OverrideLowLevel.OverrideLowLevelsModel.Key;
+                }
+                else
+                {
+                    CustomOLL_RID = Include.NoRID; 
+                }
                 Chain_FV_RID = properties.ChainVersion.Key;
                 Bal_Sales_Ind = properties.SalesBalance;
                 Bal_Stock_Ind = properties.StockBalance;

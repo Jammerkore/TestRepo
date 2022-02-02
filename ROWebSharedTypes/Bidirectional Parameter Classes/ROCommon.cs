@@ -505,6 +505,16 @@ namespace Logility.ROWebSharedTypes
         public ROLevelInformation LowLevel { get; set; }
 
         public KeyValuePair<int, string> OverrideLowLevelsModel { get; set; }
+
+        public bool IsCustomModel { get; set; }
+
+        public List<KeyValuePair<int, string>> OverrideLowLevelsModelList { get; set; }
+
+        public ROOverrideLowLevel()
+        {
+            OverrideLowLevelsModelList = new List<KeyValuePair<int, string>>();
+            IsCustomModel = false;
+        }
     }
 
     [DataContract(Name = "ROStoreGrade", Namespace = "http://Logility.ROWeb/")]
