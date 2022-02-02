@@ -198,7 +198,8 @@ namespace Logility.ROWeb
 
             _modelClass = GetModelClass(
                 modelType: parms.ROModelProperties.ModelType,
-                key: parms.ROModelProperties.Model.Key
+                key: parms.ROModelProperties.Model.Key,
+                performingSave: true
                 );
 
             if (!_modelClass.FunctionSecurity.AllowUpdate)
