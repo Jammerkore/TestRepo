@@ -72,18 +72,22 @@ namespace Logility.ROWeb
         public ROOut GetModels(ROModelParms parms)
         {
             string message;
+            ModelBase modelClass;
 
-            _modelClass = GetModelClass(
+            // Do not add class object used to get model list to the cache
+			// and do not update the global field used to save values across calls
+			modelClass = GetModelClass(
                 modelType: parms.ModelType,
-                key: parms.Key
+                key: parms.Key,
+                addToCache: false
                 );
 
-            if (_modelClass == null)
+            if (modelClass == null)
             {
                 return new ROIntStringPairListOut(eROReturnCode.Failure, "Invalid model type", parms.ROInstanceID, null);
             }
 
-            if (!_modelClass.FunctionSecurity.AllowView)
+            if (!modelClass.FunctionSecurity.AllowView)
             {
                 message = MIDText.GetText(eMIDTextCode.msg_NotAuthorized);
                 _ROWebTools.LogMessage(eROMessageLevel.Information, message);
@@ -91,7 +95,7 @@ namespace Logility.ROWeb
                 return new ROIntStringPairListOut(eROReturnCode.Failure, message, parms.ROInstanceID, null);
             }
 
-            return new ROIntStringPairListOut(eROReturnCode.Successful, null, _ROInstanceID, _modelClass.ModelGetList());
+            return new ROIntStringPairListOut(eROReturnCode.Successful, null, _ROInstanceID, modelClass.ModelGetList());
         }
 
         /// <summary>
@@ -574,7 +578,8 @@ namespace Logility.ROWeb
         private ModelBase GetModelClass(
             eModelType modelType,
             int key,
-            bool performingSave = false
+            bool performingSave = false,
+            bool addToCache = true
             )
         {
             if (_modelClass != null
@@ -594,7 +599,8 @@ namespace Logility.ROWeb
 
             // will close and remove any previous models of the same type
             // remove this code if multiple models of the same type can be open
-            if (_modelClasses.Count > 0)
+            if (_modelClasses.Count > 0
+                && addToCache)
             {
                 CloseModel(_modelClasses.Keys.First());
                 _currentModelProfile = null;
@@ -638,7 +644,10 @@ namespace Logility.ROWeb
                         break;
                 }
 
-                _modelClasses.Add(key, modelBase);
+                if (addToCache)
+                {
+                    _modelClasses.Add(key, modelBase);
+                }
             }
 
             return modelBase;
