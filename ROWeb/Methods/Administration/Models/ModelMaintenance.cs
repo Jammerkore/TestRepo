@@ -103,13 +103,13 @@ namespace Logility.ROWeb
         /// </summary>
         /// <param name="parms">The ROModelParms containing the model type and key</param>
         /// <returns>A ROModelPropertiesOut instance with the properties of the model</returns>
-        public ROOut GetModel(ROModelParms parms)
+        public ROOut GetModel(ROModelParms parms, bool loadData = true)
         {
             string message;
 
             ROModelPropertiesOut ROModelsOut = null;
 
-            if (InitializeModelData(parms: parms, message: out message))
+            if (InitializeModelData(parms: parms, loadData: loadData, message: out message))
             {
                 if (_modelClass.FunctionSecurity.AllowView)
                 {
@@ -137,9 +137,19 @@ namespace Logility.ROWeb
             return ROModelsOut;
         }
 
-        private bool InitializeModelData(ROModelParms parms, out string message)
+        private bool InitializeModelData(
+            ROModelParms parms,
+            bool loadData,
+            out string message)
         {
             message = null;
+
+            // already have the data, so just return
+			if (_modelClass != null
+                && !loadData)
+            {
+                return true;
+            }
 
             _modelClass = GetModelClass(
                 modelType: parms.ModelType,
@@ -232,24 +242,17 @@ namespace Logility.ROWeb
 
             getModelParms = _modelClass.GetModelParms(parms: parms, modelType: _currentModelType, key: mp.Key);
 
-            //if (parms.ROModelProperties.Model.Key == Include.NoRID)
-            //{
-            //    // get model and lock since new model
-            //    return GetModel(parms: getModelParms);
-            //}
-            //else
+
+            // replace with update data and get model 
+            _currentModelProfile = mp;
+            _modelClass.CurrentModelProfile = _currentModelProfile;
+            ROModelProperties modelProperties = _modelClass.ModelGetData(parms: getModelParms, modelProfile: _currentModelProfile, message: ref message, applyOnly: true);
+            if (_currentModelProfile.ModelLockStatus == eLockStatus.Locked)
             {
-                // replace with update data and get model 
-                _currentModelProfile = mp;
-                _modelClass.CurrentModelProfile = _currentModelProfile;
-                ROModelProperties modelProperties = _modelClass.ModelGetData(parms: getModelParms, modelProfile: _currentModelProfile, message: ref message, applyOnly: true);
-                if (_currentModelProfile.ModelLockStatus == eLockStatus.Locked)
-                {
-                    modelProperties.CanBeDeleted = _modelClass.FunctionSecurity.AllowDelete;
-                    modelProperties.IsReadOnly = _modelClass.FunctionSecurity.IsReadOnly;
-                }
-                return new ROModelPropertiesOut(returnCode, message, _ROInstanceID, modelProperties);
+                modelProperties.CanBeDeleted = _modelClass.FunctionSecurity.AllowDelete;
+                modelProperties.IsReadOnly = _modelClass.FunctionSecurity.IsReadOnly;
             }
+            return new ROModelPropertiesOut(returnCode, message, _ROInstanceID, modelProperties);
         }
 
         /// <summary>
@@ -261,6 +264,7 @@ namespace Logility.ROWeb
             string message = null;
             bool successful = true;
             bool applyOnly = false;
+            bool loadData = true;
             string modelName;
             ROModelParms getModelParms;
             eROReturnCode returnCode = eROReturnCode.Successful;
@@ -275,7 +279,7 @@ namespace Logility.ROWeb
                 || _currentModelProfile.Key != parms.ROModelProperties.Model.Key)
             {
                 getModelParms = _modelClass.GetModelParms(parms: parms, modelType: parms.ROModelProperties.ModelType, key: parms.ROModelProperties.Model.Key);
-                if (!InitializeModelData(parms: getModelParms, message: out message))
+                if (!InitializeModelData(parms: getModelParms, loadData: loadData, message: out message))
                 {
                     return new ROModelPropertiesOut(eROReturnCode.Failure, message, _ROInstanceID, null);
                 }
@@ -315,20 +319,28 @@ namespace Logility.ROWeb
                 returnCode = eROReturnCode.Failure;
             }
 
-            // remove undefined model from cache and add new key
-			if (parms.ROModelProperties.Model.Key < 0)
+            // do not load new data if failure
+			if (returnCode == eROReturnCode.Failure)
             {
-                _modelClasses.Remove(parms.ROModelProperties.Model.Key);
+                loadData = false;
             }
+            else
+            {
+                // remove undefined model from cache and add new key
+                if (parms.ROModelProperties.Model.Key < 0)
+                {
+                    _modelClasses.Remove(parms.ROModelProperties.Model.Key);
+                }
 
-            _modelClasses[mp.Key] = _modelClass;
+                _modelClasses[mp.Key] = _modelClass;
+            }
 
             getModelParms = _modelClass.GetModelParms(parms: parms, modelType: _currentModelType, key: mp.Key);
 
             if (parms.ROModelProperties.Model.Key == Include.NoRID)
             {
                 // get model and lock since new model
-                return GetModel(parms: getModelParms);
+                return GetModel(parms: getModelParms, loadData: loadData);
             }
             else
             {
@@ -356,7 +368,8 @@ namespace Logility.ROWeb
             string message = null;
             bool successful = true;
             bool applyOnly = false;
-            string modelName;;
+            bool loadData = true;
+            string modelName;
             eROReturnCode returnCode = eROReturnCode.Successful;
 
             try
@@ -395,17 +408,25 @@ namespace Logility.ROWeb
                     returnCode = eROReturnCode.Failure;
                 }
 
-                // remove undefined model from cache and add new key
-				if (parms.ROModelProperties.Model.Key < 0)
+                // do not load new data if failure
+				if (returnCode == eROReturnCode.Failure)
                 {
-                    _modelClasses.Remove(parms.ROModelProperties.Model.Key);
+                    loadData = false;
                 }
+                else
+                {
+                    // remove undefined model from cache and add new key
+                    if (parms.ROModelProperties.Model.Key < 0)
+                    {
+                        _modelClasses.Remove(parms.ROModelProperties.Model.Key);
+                    }
 
-                _modelClasses[mp.Key] = _modelClass;
+                    _modelClasses[mp.Key] = _modelClass;
+                }
 
                 // unlock original model and get new model and lock
                 ROModelParms getModelParms = _modelClass.GetModelParms(parms: parms, modelType: _currentModelType, key: mp.Key);
-                return GetModel(parms: getModelParms);
+                return GetModel(parms: getModelParms, loadData: loadData);
             }
             catch
             {
@@ -487,7 +508,7 @@ namespace Logility.ROWeb
                 || _currentModelProfile.Key != parms.Key)
             {
                 ROModelParms getModelParms = _modelClass.GetModelParms(parms: parms, modelType: parms.ModelType, key: parms.Key);
-                if (!InitializeModelData(parms: getModelParms, message: out message))
+                if (!InitializeModelData(parms: getModelParms, loadData: true, message: out message))
                 {
                     return new ROBoolOut(eROReturnCode.Failure, message, _ROInstanceID, false);
                 }
