@@ -216,23 +216,6 @@ namespace Logility.ROWeb
                 performingSave: true
                 );
 
-            if (!_modelClass.FunctionSecurity.AllowUpdate)
-            {
-                message = MIDText.GetText(eMIDTextCode.msg_NotAuthorized);
-                _ROWebTools.LogMessage(eROMessageLevel.Information, message);
-                MIDEnvironment.Message = message;
-                return new ROModelPropertiesOut(eROReturnCode.Failure, message, _ROInstanceID, null);
-            }
-
-            if (parms.ROModelProperties.Model.Key != Include.NoRID
-                && _currentModelProfile.ModelLockStatus != eLockStatus.Locked)
-            {
-                message = MIDText.GetText(eMIDTextCode.msg_DataNotLocked);
-                _ROWebTools.LogMessage(eROMessageLevel.Information, message);
-                MIDEnvironment.Message = message;
-                return new ROModelPropertiesOut(eROReturnCode.Failure, message, _ROInstanceID, null);
-            }
-
             ModelProfile mp = _modelClass.ModelUpdateData(modelsProperties: parms.ROModelProperties, cloneDates: false, message: ref message, successful: out successful, applyOnly: true);
 
             if (!successful)
