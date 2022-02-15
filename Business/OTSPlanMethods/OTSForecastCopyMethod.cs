@@ -1824,6 +1824,16 @@ namespace MIDRetail.Business
 
             ROOverrideLowLevel overrideLowLevel = new ROOverrideLowLevel();
             overrideLowLevel.OverrideLowLevelsModel = GetName.GetOverrideLowLevelsModel(OverrideLowLevelRid, SAB);
+            overrideLowLevel.OverrideLowLevelsModelList = BuildOverrideLowLevelList(
+                overrideLowLevelRid: OverrideLowLevelRid,
+                customOverrideLowLevelRid: CustomOLL_RID
+                );
+
+            if (CustomOLL_RID > Include.NoRID
+                && CustomOLL_RID == OverrideLowLevelRid)
+            {
+                overrideLowLevel.IsCustomModel = true;
+            }
 
             ROLevelInformation fromLevel = new ROLevelInformation();
             fromLevel.LevelType = (eROLevelsType)FromLevelType;
