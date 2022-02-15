@@ -117,7 +117,14 @@ namespace Logility.ROWeb
                     if (_currentModelProfile.ModelLockStatus == eLockStatus.Locked
                         || _currentModelProfile.Key == Include.NoRID)
                     {
-                        modelProperties.CanBeDeleted = _modelClass.FunctionSecurity.AllowDelete;
+                        if (_currentModelProfile.Key == Include.NoRID)
+                        {
+                            modelProperties.CanBeDeleted = false;
+                        }
+                        else
+                        {
+                            modelProperties.CanBeDeleted = _modelClass.FunctionSecurity.AllowDelete;
+                        }
                         modelProperties.IsReadOnly = _modelClass.FunctionSecurity.IsReadOnly;
                         _currentLockKey = _currentModelProfile.Key;
                     }
@@ -233,6 +240,12 @@ namespace Logility.ROWeb
             if (_currentModelProfile.ModelLockStatus == eLockStatus.Locked)
             {
                 modelProperties.CanBeDeleted = _modelClass.FunctionSecurity.AllowDelete;
+                modelProperties.IsReadOnly = _modelClass.FunctionSecurity.IsReadOnly;
+            }
+            // new model
+            else if (_currentModelProfile.Key == Include.NoRID)
+            {
+                modelProperties.CanBeDeleted = false;  // can not delete a model that has not been saved
                 modelProperties.IsReadOnly = _modelClass.FunctionSecurity.IsReadOnly;
             }
             return new ROModelPropertiesOut(returnCode, message, _ROInstanceID, modelProperties);
@@ -384,7 +397,11 @@ namespace Logility.ROWeb
 
                 parms.ROModelProperties.Model = new KeyValuePair<int, string>(Include.NoRID, modelName);
 
-                ModelProfile mp = _modelClass.ModelUpdateData(modelsProperties: parms.ROModelProperties, cloneDates: true, message: ref message, successful: out successful, applyOnly: applyOnly);
+                // save the model key if error because it will need restored
+                int saveModelKey = _modelClass.CurrentModelProfile.Key;
+
+                // update model data even if failure above if user changes presentation value like attribute set before trying to save as again
+				ModelProfile mp = _modelClass.ModelUpdateData(modelsProperties: parms.ROModelProperties, cloneDates: true, message: ref message, successful: out successful, applyOnly: applyOnly);
 
                 if (!successful)
                 {
@@ -395,6 +412,8 @@ namespace Logility.ROWeb
 				if (returnCode == eROReturnCode.Failure)
                 {
                     loadData = false;
+                    // restore previous model key so will be unlocked if successful save as to a new key
+                    _modelClass.CurrentModelProfile.Key = saveModelKey;
                 }
                 else
                 {
