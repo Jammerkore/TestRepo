@@ -1409,6 +1409,19 @@ namespace MIDRetail.Business
         {
             successful = true;
 
+            ROOverrideLowLevel overrideLowLevel = new ROOverrideLowLevel();
+            overrideLowLevel.OverrideLowLevelsModel = GetName.GetOverrideLowLevelsModel(OverrideLowLevelRid, SAB);
+            overrideLowLevel.OverrideLowLevelsModelList = BuildOverrideLowLevelList(
+                overrideLowLevelRid: OverrideLowLevelRid,
+                customOverrideLowLevelRid: CustomOLL_RID
+                );
+
+            if (CustomOLL_RID > Include.NoRID
+                && CustomOLL_RID == OverrideLowLevelRid)
+            {
+                overrideLowLevel.IsCustomModel = true;
+            }
+
             // Begin RO-740 RDewey
             ROLevelInformation lowLevelInformation = new ROLevelInformation();
             eROLevelsType levelType;
@@ -1436,7 +1449,7 @@ namespace MIDRetail.Business
                 iterationsCount: _iterationsCount,
                 balanceMode: _balanceMode,
                 computationMode: _computationMode,
-                overrideLowLevel: GetName.GetOverrideLowLevelsModel(modelRID: _overrideLowLevelRid, SAB: SAB),
+                overrideLowLevel: overrideLowLevel,
                 matrixType: _matrixType,
                 model: GetName.GetForecastBalanceModel(modelRID: _modelRID, SAB: SAB),
                 matrixBasis: new System.Collections.Generic.List<ROBasisDetailProfile>(),
@@ -1612,7 +1625,7 @@ namespace MIDRetail.Business
                 _balanceMode = roMethodMatrixBalanceProperties.BalanceMode;
                 _computationMode = roMethodMatrixBalanceProperties.ComputationMode;
                 _matrixType = roMethodMatrixBalanceProperties.MatrixType;
-                _overrideLowLevelRid = roMethodMatrixBalanceProperties.OverrideLowLevel.Key;
+                _overrideLowLevelRid = roMethodMatrixBalanceProperties.OverrideLowLevel.OverrideLowLevelsModel.Key;
                 _modelRID = roMethodMatrixBalanceProperties.Model.Key;
 
                 // matrix type is forecast, override to required values

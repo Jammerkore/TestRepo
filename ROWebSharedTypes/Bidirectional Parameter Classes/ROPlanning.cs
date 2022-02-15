@@ -1605,7 +1605,7 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         private string _computationMode;
         [DataMember(IsRequired = true)]
-        private KeyValuePair<int, string> _overrideLowLevel;
+        private ROOverrideLowLevel _overrideLowLevel;
         [DataMember(IsRequired = true)]
         private eMatrixType _matrixType;
         [DataMember(IsRequired = true)]
@@ -1728,7 +1728,7 @@ namespace Logility.ROWebSharedTypes
             set { _computationMode = value; }
         }
 
-        public KeyValuePair<int, string> OverrideLowLevel
+        public ROOverrideLowLevel OverrideLowLevel
         {
             get { return _overrideLowLevel; }
             set { _overrideLowLevel = value; }
@@ -1773,8 +1773,8 @@ namespace Logility.ROWebSharedTypes
             eIterationType iterationType, 
             int iterationsCount, 
             eBalanceMode balanceMode, 
-            string computationMode, 
-            KeyValuePair<int, string> overrideLowLevel,
+            string computationMode,
+            ROOverrideLowLevel overrideLowLevel,
             eMatrixType matrixType, 
             KeyValuePair<int, string> model, 
             List<ROBasisDetailProfile> matrixBasis,

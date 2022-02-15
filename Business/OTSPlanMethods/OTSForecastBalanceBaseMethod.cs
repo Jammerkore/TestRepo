@@ -234,5 +234,60 @@ namespace MIDRetail.Business
 
             return false;
         }
+
+        protected List<KeyValuePair<int, string>> BuildOverrideLowLevelList(
+            int overrideLowLevelRid,
+            int customOverrideLowLevelRid)
+        {
+            string ROOVERRIDELOWLEVELNAME = " (Custom)";
+
+            List<KeyValuePair<int, string>> outOverrideLowLevelList = new List<KeyValuePair<int, string>>();
+
+            FunctionSecurityProfile userSecurity;
+            FunctionSecurityProfile globalSecurity;
+            ProfileList overrideLowLevelList;
+            string overrideLowLevelName;
+
+            try
+            {
+                userSecurity = SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.AdminModelsUserOverrideLowLevels);
+                globalSecurity = SAB.ClientServerSession.GetMyUserFunctionSecurityAssignment(eSecurityFunctions.AdminModelsGlobalOverrideLowLevels);
+
+                overrideLowLevelList = OverrideLowLevelProfile.LoadAllProfiles(
+                    aOllRID: overrideLowLevelRid,
+                    aUserRID: SAB.ClientServerSession.UserRID,
+                    globalAllowView: globalSecurity.AllowView,
+                    userAllowView: userSecurity.AllowView,
+                    customOllRID: customOverrideLowLevelRid
+                    );
+
+                foreach (OverrideLowLevelProfile ollp in overrideLowLevelList)
+                {
+                    overrideLowLevelName = ollp.Name;
+
+                    switch (ollp.User_RID)
+                    {
+                        case Include.GlobalUserRID:
+                            break;
+
+                        case Include.CustomUserRID:
+                            overrideLowLevelName = overrideLowLevelName + ROOVERRIDELOWLEVELNAME;
+                            break;
+
+                        default:
+                            overrideLowLevelName = overrideLowLevelName + " (" + UserNameStorage.GetUserName(ollp.User_RID) + ")";
+                            break;
+                    }
+
+                    outOverrideLowLevelList.Add(new KeyValuePair<int, string>(ollp.Key, overrideLowLevelName));
+                }
+
+                return outOverrideLowLevelList;
+            }
+            catch
+            {
+                throw;
+            }
+        }
     }
 }
