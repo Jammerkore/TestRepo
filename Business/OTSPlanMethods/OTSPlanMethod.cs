@@ -5951,6 +5951,7 @@ namespace MIDRetail.Business
                 overrideLowLevelRid: OverrideLowLevelRid,
                 customOverrideLowLevelRid: CustomOLL_RID
                 );
+            roOverrideLowLevel.AssociatedCustomModelId = CustomOLL_RID;
 
             if (CustomOLL_RID > Include.NoRID
                 && CustomOLL_RID == OverrideLowLevelRid)
@@ -6069,6 +6070,7 @@ namespace MIDRetail.Business
                 overrideLowLevelRid: OverrideLowLevelRid,
                 customOverrideLowLevelRid: CustomOLL_RID
                 );
+            overrideLowLevel.AssociatedCustomModelId = CustomOLL_RID;
 
             if (CustomOLL_RID > Include.NoRID
                 && CustomOLL_RID == OverrideLowLevelRid)

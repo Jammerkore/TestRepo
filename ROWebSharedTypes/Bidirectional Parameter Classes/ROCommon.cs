@@ -509,6 +509,9 @@ namespace Logility.ROWebSharedTypes
         public KeyValuePair<int, string> OverrideLowLevelsModel { get; set; }
 
         [DataMember(IsRequired = true)]
+        public int AssociatedCustomModelId { get; set; }
+
+        [DataMember(IsRequired = true)]
         public bool IsCustomModel { get; set; }
 
         [DataMember(IsRequired = true)]
