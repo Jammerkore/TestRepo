@@ -147,6 +147,7 @@ namespace Logility.ROWebSharedTypes
     [KnownType(typeof(ROBaseProperties))]
     [KnownType(typeof(ROMethodProperties))]
     [KnownType(typeof(ROMethodPropertiesOut))]
+    [KnownType(typeof(ROMethodOverrideModelListOut))]
     [KnownType(typeof(ROAboutProperties))]
     [KnownType(typeof(ROAboutOut))]
 

@@ -2573,6 +2573,13 @@ namespace MIDRetail.Business.Allocation
 
         }
 
+        override public ROOverrideLowLevel MethodGetOverrideModelList(ROOverrideLowLevel overrideLowLevel, out bool successful, ref string message)
+        {
+            successful = true;
+
+            throw new NotImplementedException("MethodGetOverrideModelList is not implemented");
+        }
+
         override public bool MethodSetData(ROMethodProperties methodProperties, ref string message, bool processingApply)
         {
             MIDException aStatusReason;

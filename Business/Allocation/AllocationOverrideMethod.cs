@@ -4045,6 +4045,13 @@ namespace MIDRetail.Business.Allocation
             return method;
         }
 
+        override public ROOverrideLowLevel MethodGetOverrideModelList(ROOverrideLowLevel overrideLowLevel, out bool successful, ref string message)
+        {
+            successful = true;
+
+            throw new NotImplementedException("MethodGetOverrideModelList is not implemented");
+        }
+
         /// <summary>
 		/// Populates store grade values when the Merchandise Node changes
 		/// </summary>

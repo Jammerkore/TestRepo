@@ -2488,6 +2488,17 @@ namespace MIDRetail.Business
               );
             return method;
         }
+
+        override public ROOverrideLowLevel MethodGetOverrideModelList(
+            ROOverrideLowLevel overrideLowLevel,
+            out bool successful,
+            ref string message
+            )
+        {
+            successful = true;
+
+            throw new NotImplementedException("MethodGetOverrideModelList is not implemented");
+        }
         #region private methods related to MethodGetData
 
         private List<ROMatrixRuleList> DataTableToMatrixRule(DataTable dataTable)

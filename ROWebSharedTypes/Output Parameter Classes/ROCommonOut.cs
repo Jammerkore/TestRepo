@@ -346,6 +346,22 @@ namespace Logility.ROWebSharedTypes
 
     }
 
+    [DataContract(Name = "ROMethodOverrideModelListOut", Namespace = "http://Logility.ROWeb/")]
+    public class ROMethodOverrideModelListOut : ROOut
+    {
+        [DataMember(IsRequired = true)]
+        private ROOverrideLowLevel _overrideLowLevel;
+
+        public ROMethodOverrideModelListOut(eROReturnCode ROReturnCode, string sROMessage, long ROInstanceID, ROOverrideLowLevel overrideLowLevel) :
+            base(ROReturnCode, sROMessage, ROInstanceID)
+        {
+            _overrideLowLevel = overrideLowLevel;
+        }
+
+        public ROOverrideLowLevel OverrideLowLevel { get { return _overrideLowLevel; } }
+
+    }
+
     [DataContract(Name = "ROLowLevelsOut", Namespace = "http://Logility.RoWeb/")]
     public class ROLowLevelsOut : ROModelProfile
     {

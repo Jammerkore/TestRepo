@@ -93,6 +93,41 @@ namespace Logility.ROWebSharedTypes
         public bool KeyIsMerchandise { get { return _keyIsMerchandise; } set { _keyIsMerchandise = value; } }
     }
 
+    [DataContract(Name = "ROMethodOverrideModelListParms", Namespace = "http://Logility.ROWeb/")]
+    public class ROMethodOverrideModelListParms : ROMethodParms
+    {
+        [DataMember(IsRequired = true)]
+        private ROOverrideLowLevel _overrideLowLevel;
+
+        public ROMethodOverrideModelListParms(
+            string sROUserID,
+            string sROSessionID,
+            eROClass ROClass,
+            eRORequest RORequest,
+            long ROInstanceID,
+            eMethodType methodType,
+            int key = Include.Undefined,
+            int workflowStep = Include.Undefined,
+            ROOverrideLowLevel overrideLowLevel = null
+            )
+            : base(
+                  sROUserID: sROUserID, 
+                  sROSessionID: sROSessionID, 
+                  ROClass: ROClass, 
+                  RORequest: RORequest, 
+                  ROInstanceID: ROInstanceID,
+                  methodType: methodType, 
+                  key: key, 
+                  readOnly: false,
+                  workflowStep: workflowStep
+                  )
+        {
+            _overrideLowLevel = overrideLowLevel;
+        }
+
+        public ROOverrideLowLevel OverrideLowLevel { get { return _overrideLowLevel; } set { _overrideLowLevel = value; } }
+    }
+
     [DataContract(Name = "ROMethodPropertiesParms", Namespace = "http://Logility.ROWeb/")]
     public class ROMethodPropertiesParms : ROParms
     {

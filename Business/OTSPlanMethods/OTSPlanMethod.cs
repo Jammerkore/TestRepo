@@ -6046,6 +6046,39 @@ namespace MIDRetail.Business
             return method;
         }
 
+        override public ROOverrideLowLevel MethodGetOverrideModelList(
+            ROOverrideLowLevel overrideLowLevel,
+            out bool successful,
+            ref string message
+            )
+        {
+            successful = true;
+
+            OverrideLowLevelRid = overrideLowLevel.OverrideLowLevelsModel.Key;
+            if (overrideLowLevel.IsCustomModel)
+            {
+                CustomOLL_RID = overrideLowLevel.OverrideLowLevelsModel.Key;
+            }
+            else
+            {
+                CustomOLL_RID = Include.NoRID;
+            }
+
+            overrideLowLevel.OverrideLowLevelsModel = GetName.GetOverrideLowLevelsModel(OverrideLowLevelRid, SAB);
+            overrideLowLevel.OverrideLowLevelsModelList = BuildOverrideLowLevelList(
+                overrideLowLevelRid: OverrideLowLevelRid,
+                customOverrideLowLevelRid: CustomOLL_RID
+                );
+
+            if (CustomOLL_RID > Include.NoRID
+                && CustomOLL_RID == OverrideLowLevelRid)
+            {
+                overrideLowLevel.IsCustomModel = true;
+            }
+
+            return overrideLowLevel;
+        }
+
         private void BuildVersionLists(ROPlanningForecastMethodProperties method)
         {
             ProfileList storeVersionList = GetForecastVersionList(eSecuritySelectType.Update, eSecurityTypes.Store, true, Plan_FV_RID, true);

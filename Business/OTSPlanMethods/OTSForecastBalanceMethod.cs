@@ -1526,6 +1526,39 @@ namespace MIDRetail.Business
             return method;
         }
 
+        override public ROOverrideLowLevel MethodGetOverrideModelList(
+            ROOverrideLowLevel overrideLowLevel,
+            out bool successful,
+            ref string message
+            )
+        {
+            successful = true;
+
+            _overrideLowLevelRid = overrideLowLevel.OverrideLowLevelsModel.Key;
+            if (overrideLowLevel.IsCustomModel)
+            {
+                CustomOLL_RID = overrideLowLevel.OverrideLowLevelsModel.Key;
+            }
+            else
+            {
+                CustomOLL_RID = Include.NoRID;
+            }
+
+            overrideLowLevel.OverrideLowLevelsModel = GetName.GetOverrideLowLevelsModel(OverrideLowLevelRid, SAB);
+            overrideLowLevel.OverrideLowLevelsModelList = BuildOverrideLowLevelList(
+                overrideLowLevelRid: OverrideLowLevelRid,
+                customOverrideLowLevelRid: CustomOLL_RID
+                );
+
+            if (CustomOLL_RID > Include.NoRID
+                && CustomOLL_RID == OverrideLowLevelRid)
+            {
+                overrideLowLevel.IsCustomModel = true;
+            }
+
+            return overrideLowLevel;
+        }
+
         private void BuildFilterList(ROMethodMatrixBalanceProperties method)
         {
             FilterData storeFilterDataLayer = new FilterData();
@@ -1626,6 +1659,14 @@ namespace MIDRetail.Business
                 _computationMode = roMethodMatrixBalanceProperties.ComputationMode;
                 _matrixType = roMethodMatrixBalanceProperties.MatrixType;
                 _overrideLowLevelRid = roMethodMatrixBalanceProperties.OverrideLowLevel.OverrideLowLevelsModel.Key;
+                if (roMethodMatrixBalanceProperties.OverrideLowLevel.IsCustomModel)
+                {
+                    CustomOLL_RID = roMethodMatrixBalanceProperties.OverrideLowLevel.OverrideLowLevelsModel.Key;
+                }
+                else
+                {
+                    CustomOLL_RID = Include.NoRID;
+                }
                 _modelRID = roMethodMatrixBalanceProperties.Model.Key;
 
                 // matrix type is forecast, override to required values

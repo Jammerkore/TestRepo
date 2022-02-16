@@ -1348,6 +1348,39 @@ namespace MIDRetail.Business
             return method;
         }
 
+        override public ROOverrideLowLevel MethodGetOverrideModelList(
+            ROOverrideLowLevel overrideLowLevel,
+            out bool successful,
+            ref string message
+            )
+        {
+            successful = true;
+
+            _overrideLowLevelRid = overrideLowLevel.OverrideLowLevelsModel.Key;
+            if (overrideLowLevel.IsCustomModel)
+            {
+                CustomOLL_RID = overrideLowLevel.OverrideLowLevelsModel.Key;
+            }
+            else
+            {
+                CustomOLL_RID = Include.NoRID;
+            }
+
+            overrideLowLevel.OverrideLowLevelsModel = GetName.GetOverrideLowLevelsModel(OverrideLowLevelRid, SAB);
+            overrideLowLevel.OverrideLowLevelsModelList = BuildOverrideLowLevelList(
+                overrideLowLevelRid: OverrideLowLevelRid,
+                customOverrideLowLevelRid: CustomOLL_RID
+                );
+
+            if (CustomOLL_RID > Include.NoRID
+                && CustomOLL_RID == OverrideLowLevelRid)
+            {
+                overrideLowLevel.IsCustomModel = true;
+            }
+
+            return overrideLowLevel;
+        }
+
         override public bool MethodSetData(ROMethodProperties methodProperties, ref string message, bool processingApply)
         {
             ROPlanningGlobalLockUnlockProperties roOTSGlobalUnlockProperties = (ROPlanningGlobalLockUnlockProperties)methodProperties;
@@ -1369,6 +1402,14 @@ namespace MIDRetail.Business
 
                 DateRangeRID = roOTSGlobalUnlockProperties.TimePeriod.Key;
                 OverrideLowLevelRid = roOTSGlobalUnlockProperties.OverrideLowLevel.OverrideLowLevelsModel.Key;
+                if (roOTSGlobalUnlockProperties.OverrideLowLevel.IsCustomModel)
+                {
+                    CustomOLL_RID = roOTSGlobalUnlockProperties.OverrideLowLevel.OverrideLowLevelsModel.Key;
+                }
+                else
+                {
+                    CustomOLL_RID = Include.NoRID;
+                }
                 Stores = roOTSGlobalUnlockProperties.IsStoreOptions;
                 Chain = roOTSGlobalUnlockProperties.IsChainOptions;
                 SG_RID = roOTSGlobalUnlockProperties.StoreAttribute.Key;

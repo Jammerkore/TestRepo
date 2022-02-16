@@ -72,6 +72,7 @@ namespace Logility.ROWebSharedTypes
 
     [KnownType(typeof(ROBaseProperties))]
     [KnownType(typeof(ROMethodParms))]
+    [KnownType(typeof(ROMethodOverrideModelListParms))]
     [KnownType(typeof(ROMethodPropertiesParms))]
     [KnownType(typeof(ROMethodGeneralAllocationProperties))]
     [KnownType(typeof(ROMethodRuleProperties))]

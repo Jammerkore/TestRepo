@@ -2066,6 +2066,13 @@ namespace MIDRetail.Business.Allocation
             return method;
         }
 
+        override public ROOverrideLowLevel MethodGetOverrideModelList(ROOverrideLowLevel overrideLowLevel, out bool successful, ref string message)
+        {
+            successful = true;
+
+            throw new NotImplementedException("MethodGetOverrideModelList is not implemented");
+        }
+
         override public bool MethodSetData(ROMethodProperties methodProperties, ref string message, bool processingApply)
         {
             //RO-3884 Data Transport for Fill Size Method

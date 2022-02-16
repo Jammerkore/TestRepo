@@ -484,6 +484,40 @@ namespace Logility.ROWeb
             return new ROMethodPropertiesOut(returnCode, message, ROInstanceID, mp);
         }
 
+        public ROOut GetMethodOverrideModelList(ROMethodOverrideModelListParms methodParm, bool processingApply = false)
+        {
+            bool successful;
+            string message = null;
+            bool copyMethod = false;
+            eROReturnCode returnCode = eROReturnCode.Successful;
+
+            VerifyMethodObject(
+                    methodType: methodParm.MethodType,
+                    key: methodParm.Key,
+                    workflowStep: methodParm.WorkflowStep,
+                    copyMethod: ref copyMethod,
+                    message: ref message
+                    ); 
+
+            if (methodParm.OverrideLowLevel.OverrideLowLevelsModelList == null)
+            {
+                methodParm.OverrideLowLevel.OverrideLowLevelsModelList = new List<KeyValuePair<int, string>>();
+            }
+
+            ROOverrideLowLevel overrideLowLevel = _ABM.MethodGetOverrideModelList(
+                overrideLowLevel: methodParm.OverrideLowLevel,
+                successful: out successful, 
+                message: ref message
+                );
+
+            if (!successful)
+            {
+                returnCode = eROReturnCode.Failure;
+            }
+
+            return new ROMethodOverrideModelListOut(returnCode, message, ROInstanceID, overrideLowLevel);
+        }
+
         public ROOut SaveMethod(ROMethodPropertiesParms methodParm)
         {
             string message = null;
@@ -493,7 +527,9 @@ namespace Logility.ROWeb
             try
             {
                 VerifyMethodObject(
-                    methodParm: methodParm,
+                    methodType: methodParm.ROMethodProperties.MethodType,
+                    key: methodParm.ROMethodProperties.Method.Key,
+                    workflowStep: methodParm.ROMethodProperties.WorkflowStep,
                     copyMethod: ref copyMethod,
                     message: ref message
                     );
@@ -663,7 +699,9 @@ namespace Logility.ROWeb
             try
             {
                 VerifyMethodObject(
-                    methodParm: methodParm,
+                    methodType: methodParm.ROMethodProperties.MethodType,
+                    key: methodParm.ROMethodProperties.Method.Key,
+                    workflowStep: methodParm.ROMethodProperties.WorkflowStep,
                     copyMethod: ref copyMethod,
                     message: ref message
                     );
@@ -726,7 +764,9 @@ namespace Logility.ROWeb
         }
 
         private void VerifyMethodObject(
-            ROMethodPropertiesParms methodParm,
+            eMethodType methodType,
+            int key,
+            int workflowStep,
             ref bool copyMethod,
             ref string message
             )
@@ -736,9 +776,9 @@ namespace Logility.ROWeb
             if (_ABM == null)
             {
                 // don't allow an apply on an existing method if not read first
-                if (methodParm.ROMethodProperties.Method.Key > 0)
+                if (key > 0)
                 {
-                    if (!_workflowMethods.TryGetValue(methodParm.ROMethodProperties.Method.Key, out _ABM))
+                    if (!_workflowMethods.TryGetValue(key, out _ABM))
                     {
                         message = SAB.ClientServerSession.Audit.GetText(
                                     messageCode: eMIDTextCode.msg_ValueWasNotFound,
@@ -752,23 +792,23 @@ namespace Logility.ROWeb
                 }
             }
             // if not same as last method, check how needs to be handled
-            else if (_currentMethodKey != methodParm.ROMethodProperties.Method.Key)
+            else if (_currentMethodKey != key)
             {
                 // check for an apply to replace an existing custom method
                 // must be same method type and step
                 if (_ABM.WorkflowStep != Include.Undefined
-                    && methodParm.ROMethodProperties.WorkflowStep != Include.Undefined
-                    && _ABM.WorkflowStep == methodParm.ROMethodProperties.WorkflowStep
+                    && workflowStep != Include.Undefined
+                    && _ABM.WorkflowStep == workflowStep
                     )
                 {
-                    if (methodParm.ROMethodProperties.Method.Key > 0)
+                    if (key > 0)
                     {
                         ApplicationBaseMethod newMethod = (ApplicationBaseMethod)GetMethods.GetMethod(
-                            methodParm.ROMethodProperties.Method.Key,
-                            methodParm.ROMethodProperties.MethodType
+                            key,
+                            methodType
                             );
                         if (newMethod != null
-                            && newMethod.Key == methodParm.ROMethodProperties.Method.Key
+                            && newMethod.Key == key
                             && !newMethod.Template_IND)
                         {
                             copyMethod = true;
@@ -781,7 +821,7 @@ namespace Logility.ROWeb
                                 aCloneCustomOverrideModels: true
                                 );
                             // Replace the key
-                            _ABM.Key = methodParm.ROMethodProperties.Method.Key;
+                            _ABM.Key = key;
                             // Lock new key
                             // first check if already locked in the collection
                             ApplicationBaseMethod lockMethod;
@@ -808,12 +848,12 @@ namespace Logility.ROWeb
                     }
                 }
                 // if existing method
-                else if (methodParm.ROMethodProperties.Method.Key > 0)
+                else if (key > 0)
                 {
                     // check to see if method is in cache
-                    if (_workflowMethods.ContainsKey(methodParm.ROMethodProperties.Method.Key))
+                    if (_workflowMethods.ContainsKey(key))
                     {
-                        _ABM = _workflowMethods[methodParm.ROMethodProperties.Method.Key];
+                        _ABM = _workflowMethods[key];
                     }
                     // if not in cache, was never retrieved and cannot be applied to
                     else
@@ -832,9 +872,9 @@ namespace Logility.ROWeb
                 else
                 {
                     // check to see if method is in cache
-                    if (_workflowMethods.ContainsKey(methodParm.ROMethodProperties.Method.Key))
+                    if (_workflowMethods.ContainsKey(key))
                     {
-                        _ABM = _workflowMethods[methodParm.ROMethodProperties.Method.Key];
+                        _ABM = _workflowMethods[key];
                     }
                     // if not in cache return null object
                     else

@@ -140,6 +140,7 @@
         GetSizeCurveGroupList,
         GetOtsPlanningOverrideLowLevelList,
         GetMethod,
+        GetMethodOverrideModelList,
         SaveMethod,
         ProcessMethod,
         CopyMethod,

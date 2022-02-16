@@ -115,6 +115,8 @@ namespace Logility.ROWeb
                 //Methods
                 case eRORequest.GetMethod:
                     return ROWorkflowMethodManager.GetMethod((ROMethodParms)Parms);
+                case eRORequest.GetMethodOverrideModelList:
+                    return ROWorkflowMethodManager.GetMethodOverrideModelList((ROMethodOverrideModelListParms)Parms);
                 case eRORequest.SaveMethod:
                     return ROWorkflowMethodManager.SaveMethod((ROMethodPropertiesParms)Parms);
                 case eRORequest.ApplyMethod:

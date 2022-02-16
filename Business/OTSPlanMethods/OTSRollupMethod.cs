@@ -1397,6 +1397,17 @@ namespace MIDRetail.Business
             return method;
         }
 
+        override public ROOverrideLowLevel MethodGetOverrideModelList(
+            ROOverrideLowLevel overrideLowLevel,
+            out bool successful,
+            ref string message
+            )
+        {
+            successful = true;
+
+            throw new NotImplementedException("MethodGetOverrideModelList is not implemented");
+        }
+
         private void BuildVersionList(ROMethodRollupProperties method)
         {
             ProfileList storeVersionList = GetForecastVersionList(eSecuritySelectType.Update, eSecurityTypes.Chain | eSecurityTypes.Store, false, _versionRid, false);

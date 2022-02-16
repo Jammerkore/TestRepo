@@ -691,6 +691,8 @@ namespace MIDRetail.Business
 
         abstract public ROMethodProperties MethodGetData(out bool successful, ref string message, bool processingApply);
 
+        abstract public ROOverrideLowLevel MethodGetOverrideModelList(ROOverrideLowLevel overrideLowLevel, out bool successful, ref string message);
+
         abstract public bool MethodSetData(ROMethodProperties methodProperties, ref string message, bool processingApply);
 
         abstract public ROMethodProperties MethodCopyData();

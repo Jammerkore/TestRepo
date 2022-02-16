@@ -3389,6 +3389,39 @@ namespace MIDRetail.Business
             return method;
         }
 
+        override public ROOverrideLowLevel MethodGetOverrideModelList(
+            ROOverrideLowLevel overrideLowLevel,
+            out bool successful,
+            ref string message
+            )
+        {
+            successful = true;
+
+            _overrideLowLevelRid = overrideLowLevel.OverrideLowLevelsModel.Key;
+            if (overrideLowLevel.IsCustomModel)
+            {
+                CustomOLL_RID = overrideLowLevel.OverrideLowLevelsModel.Key;
+            }
+            else
+            {
+                CustomOLL_RID = Include.NoRID;
+            }
+
+            overrideLowLevel.OverrideLowLevelsModel = GetName.GetOverrideLowLevelsModel(OverrideLowLevelRid, SAB);
+            overrideLowLevel.OverrideLowLevelsModelList = BuildOverrideLowLevelList(
+                overrideLowLevelRid: OverrideLowLevelRid,
+                customOverrideLowLevelRid: CustomOLL_RID
+                );
+
+            if (CustomOLL_RID > Include.NoRID
+                && CustomOLL_RID == OverrideLowLevelRid)
+            {
+                overrideLowLevel.IsCustomModel = true;
+            }
+
+            return overrideLowLevel;
+        }
+
         override public bool MethodSetData(ROMethodProperties methodProperties, ref string message, bool processingApply)
         {
             ROPlanningForecastExportProperties roPlanningForecastExportProperties = (ROPlanningForecastExportProperties)methodProperties;
@@ -3429,6 +3462,14 @@ namespace MIDRetail.Business
                 LowLevelOffset = roPlanningForecastExportProperties.LowLevel.LevelOffset;
                 LowLevelSequence = roPlanningForecastExportProperties.LowLevel.LevelSequence;
                 OverrideLowLevelRid = roPlanningForecastExportProperties.OverrideLowLevel.OverrideLowLevelsModel.Key;
+                if (roPlanningForecastExportProperties.OverrideLowLevel.IsCustomModel)
+                {
+                    CustomOLL_RID = roPlanningForecastExportProperties.OverrideLowLevel.OverrideLowLevelsModel.Key;
+                }
+                else
+                {
+                    CustomOLL_RID = Include.NoRID;
+                }
                 ShowIneligible = roPlanningForecastExportProperties.IsExtractIneligibleStores;
                 SelectableVariableList = alVariableList;                //variable list to be added.
                 UseDefaultSettings = roPlanningForecastExportProperties.UseDefaultSettings;
