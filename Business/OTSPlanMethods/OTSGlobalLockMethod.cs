@@ -1239,12 +1239,6 @@ namespace MIDRetail.Business
                 );
             overrideLowLevel.AssociatedCustomModelId = CustomOLL_RID;
 
-            if (CustomOLL_RID > Include.NoRID
-                && CustomOLL_RID == OverrideLowLevelRid)
-            {
-                overrideLowLevel.IsCustomModel = true;
-            }
-
             ROLevelInformation fromLevel = new ROLevelInformation();
             fromLevel.LevelType = (eROLevelsType)FromLevelType;
             fromLevel.LevelOffset = FromLevelOffset;
@@ -1304,7 +1298,7 @@ namespace MIDRetail.Business
             _overrideLowLevelRid = overrideLowLevel.OverrideLowLevelsModel.Key;
             if (overrideLowLevel.IsCustomModel)
             {
-                CustomOLL_RID = overrideLowLevel.OverrideLowLevelsModel.Key;
+                CustomOLL_RID = overrideLowLevel.AssociatedCustomModelId;
             }
             else
             {
@@ -1317,12 +1311,6 @@ namespace MIDRetail.Business
                 customOverrideLowLevelRid: CustomOLL_RID
                 );
             overrideLowLevel.AssociatedCustomModelId = CustomOLL_RID;
-
-            if (CustomOLL_RID > Include.NoRID
-                && CustomOLL_RID == OverrideLowLevelRid)
-            {
-                overrideLowLevel.IsCustomModel = true;
-            }
 
             return overrideLowLevel;
         }
@@ -1348,14 +1336,7 @@ namespace MIDRetail.Business
 
                 DateRangeRID = roOTSGlobalUnlockProperties.TimePeriod.Key;
                 OverrideLowLevelRid = roOTSGlobalUnlockProperties.OverrideLowLevel.OverrideLowLevelsModel.Key;
-                if (roOTSGlobalUnlockProperties.OverrideLowLevel.IsCustomModel)
-                {
-                    CustomOLL_RID = roOTSGlobalUnlockProperties.OverrideLowLevel.OverrideLowLevelsModel.Key;
-                }
-                else
-                {
-                    CustomOLL_RID = Include.NoRID;
-                }
+                CustomOLL_RID = roOTSGlobalUnlockProperties.OverrideLowLevel.AssociatedCustomModelId;
                 Stores = roOTSGlobalUnlockProperties.IsStoreOptions;
                 Chain = roOTSGlobalUnlockProperties.IsChainOptions;
                 SG_RID = roOTSGlobalUnlockProperties.StoreAttribute.Key;

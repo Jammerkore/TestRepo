@@ -1465,12 +1465,6 @@ namespace MIDRetail.Business
                 );
             overrideLowLevel.AssociatedCustomModelId = CustomOLL_RID;
 
-            if (CustomOLL_RID > Include.NoRID
-                && CustomOLL_RID == OverrideLowLevelRid)
-            {
-                overrideLowLevel.IsCustomModel = true;
-            }
-
             // if from level is not set, default to the level of the merchandise
             if (FromLevelType == eFromLevelsType.None
                 && HierNodeRID > 0)
@@ -1590,7 +1584,7 @@ namespace MIDRetail.Business
             _overrideLowLevelRid = overrideLowLevel.OverrideLowLevelsModel.Key;
             if (overrideLowLevel.IsCustomModel)
             {
-                CustomOLL_RID = overrideLowLevel.OverrideLowLevelsModel.Key;
+                CustomOLL_RID = overrideLowLevel.AssociatedCustomModelId;
             }
             else
             {
@@ -1603,12 +1597,6 @@ namespace MIDRetail.Business
                 customOverrideLowLevelRid: CustomOLL_RID
                 );
             overrideLowLevel.AssociatedCustomModelId = CustomOLL_RID;
-
-            if (CustomOLL_RID > Include.NoRID
-                && CustomOLL_RID == OverrideLowLevelRid)
-            {
-                overrideLowLevel.IsCustomModel = true;
-            }
 
             return overrideLowLevel;
         }
@@ -1696,14 +1684,7 @@ namespace MIDRetail.Business
                 _toLevelSequence = rOMethodForecastSpreadProperties.ToLevel.LevelSequence;
 
                 _overrideLowLevelRid = rOMethodForecastSpreadProperties.OverrideLowLevel.OverrideLowLevelsModel.Key;
-                if (rOMethodForecastSpreadProperties.OverrideLowLevel.IsCustomModel)
-                {
-                    CustomOLL_RID = rOMethodForecastSpreadProperties.OverrideLowLevel.OverrideLowLevelsModel.Key;
-                }
-                else
-                {
-                    CustomOLL_RID = Include.NoRID;
-                }
+                CustomOLL_RID = rOMethodForecastSpreadProperties.OverrideLowLevel.AssociatedCustomModelId;
                 SpreadOption = rOMethodForecastSpreadProperties.SpreadOption;
                 IgnoreLocks = rOMethodForecastSpreadProperties.IgnoreLocks;
                 EqualizeWeighting = rOMethodForecastSpreadProperties.EqualizeWeighting;

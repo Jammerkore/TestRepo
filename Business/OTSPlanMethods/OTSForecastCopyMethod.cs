@@ -1830,12 +1830,6 @@ namespace MIDRetail.Business
                 );
             overrideLowLevel.AssociatedCustomModelId = CustomOLL_RID;
 
-            if (CustomOLL_RID > Include.NoRID
-                && CustomOLL_RID == OverrideLowLevelRid)
-            {
-                overrideLowLevel.IsCustomModel = true;
-            }
-
             ROLevelInformation fromLevel = new ROLevelInformation();
             fromLevel.LevelType = (eROLevelsType)FromLevelType;
             fromLevel.LevelOffset = FromLevelOffset;
@@ -1983,7 +1977,7 @@ namespace MIDRetail.Business
             _overrideLowLevelRid = overrideLowLevel.OverrideLowLevelsModel.Key;
             if (overrideLowLevel.IsCustomModel)
             {
-                CustomOLL_RID = overrideLowLevel.OverrideLowLevelsModel.Key;
+                CustomOLL_RID = overrideLowLevel.AssociatedCustomModelId;
             }
             else
             {
@@ -1996,12 +1990,6 @@ namespace MIDRetail.Business
                 customOverrideLowLevelRid: CustomOLL_RID
                 );
             overrideLowLevel.AssociatedCustomModelId = CustomOLL_RID;
-
-            if (CustomOLL_RID > Include.NoRID
-                && CustomOLL_RID == OverrideLowLevelRid)
-            {
-                overrideLowLevel.IsCustomModel = true;
-            }
 
             return overrideLowLevel;
         }
@@ -2069,14 +2057,7 @@ namespace MIDRetail.Business
                 _toLevelSequence = rOMethodCopyForecastProperties.ToLevel.LevelSequence;
 
                 _overrideLowLevelRid = rOMethodCopyForecastProperties.OverrideLowLevel.OverrideLowLevelsModel.Key;
-                if (rOMethodCopyForecastProperties.OverrideLowLevel.IsCustomModel)
-                {
-                    CustomOLL_RID = rOMethodCopyForecastProperties.OverrideLowLevel.OverrideLowLevelsModel.Key;
-                }
-                else
-                {
-                    CustomOLL_RID = Include.NoRID;
-                }
+                CustomOLL_RID = rOMethodCopyForecastProperties.OverrideLowLevel.AssociatedCustomModelId;
                 _copyPreInitValues = rOMethodCopyForecastProperties.CopyPreInitValues;
 
                 if (_dsForecastCopy == null

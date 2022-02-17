@@ -1810,12 +1810,6 @@ namespace MIDRetail.Business
                 );
 			overrideLowLevel.AssociatedCustomModelId = CustomOLL_RID;
 
-			if (CustomOLL_RID > Include.NoRID
-                && CustomOLL_RID == OverrideLowLevelRid)
-            {
-                overrideLowLevel.IsCustomModel = true;
-            }
-
             ROLevelInformation lowLevel = new ROLevelInformation();
             lowLevel.LevelType = (eROLevelsType)_dlPlanningExtractMethod.LowLevelsType;
             lowLevel.LevelOffset = _dlPlanningExtractMethod.LowLevelOffset;
@@ -1909,8 +1903,8 @@ namespace MIDRetail.Business
             _overrideLowLevelRid = overrideLowLevel.OverrideLowLevelsModel.Key;
             if (overrideLowLevel.IsCustomModel)
             {
-                CustomOLL_RID = overrideLowLevel.OverrideLowLevelsModel.Key;
-            }
+				CustomOLL_RID = overrideLowLevel.AssociatedCustomModelId;
+			}
             else
             {
                 CustomOLL_RID = Include.NoRID;
@@ -1922,12 +1916,6 @@ namespace MIDRetail.Business
                 customOverrideLowLevelRid: CustomOLL_RID
                 );
 			overrideLowLevel.AssociatedCustomModelId = CustomOLL_RID;
-
-			if (CustomOLL_RID > Include.NoRID
-                && CustomOLL_RID == OverrideLowLevelRid)
-            {
-                overrideLowLevel.IsCustomModel = true;
-            }
 
             return overrideLowLevel;
         }
@@ -1993,15 +1981,8 @@ namespace MIDRetail.Business
                 _lowLevelOffset = roMethodPlanningExtractProperties.LowLevel.LevelOffset;
                 _lowLevelSequence = roMethodPlanningExtractProperties.LowLevel.LevelSequence;
                 _dlPlanningExtractMethod.OverrideLowLevelRid = roMethodPlanningExtractProperties.OverrideLowLevel.OverrideLowLevelsModel.Key;
-                if (roMethodPlanningExtractProperties.OverrideLowLevel.IsCustomModel)
-                {
-                    CustomOLL_RID = roMethodPlanningExtractProperties.OverrideLowLevel.OverrideLowLevelsModel.Key;
-                }
-                else
-                {
-                    CustomOLL_RID = Include.NoRID;
-                }
-                _chain = roMethodPlanningExtractProperties.ChainIndicator;
+				CustomOLL_RID = roMethodPlanningExtractProperties.OverrideLowLevel.AssociatedCustomModelId;
+				_chain = roMethodPlanningExtractProperties.ChainIndicator;
                 _store = roMethodPlanningExtractProperties.StoreIndicator;
                 _attributeSet = roMethodPlanningExtractProperties.AttributeSetIndicator;
                 _attributeRID = roMethodPlanningExtractProperties.Attribute.Key;
@@ -2009,15 +1990,7 @@ namespace MIDRetail.Business
                 _excludeZeroValues = roMethodPlanningExtractProperties.ExcludeZeroValuesIndicator;
                 _concurrentProcesses = roMethodPlanningExtractProperties.NumberOfConcurrentProcesses;
                 _overrideLowLevelRid = roMethodPlanningExtractProperties.OverrideLowLevel.OverrideLowLevelsModel.Key;
-                if (roMethodPlanningExtractProperties.OverrideLowLevel.IsCustomModel)
-                {
-                    CustomOLL_RID = roMethodPlanningExtractProperties.OverrideLowLevel.OverrideLowLevelsModel.Key;
-                }
-                else
-                {
-                    CustomOLL_RID = Include.NoRID;
-                }
-                _selectableVariableList = alVariableList;
+				_selectableVariableList = alVariableList;
                 _selectableTimetimeTotalVariableList = alTotalVariableList;
                 //_dlPlanningExtractMethod.VariableList = roMethodPlanningExtractProperties.VariableList;
                 //_dlPlanningExtractMethod.TimeTotalVariableList = roMethodPlanningExtractProperties.TotalVariableList;

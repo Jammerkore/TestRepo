@@ -3332,12 +3332,6 @@ namespace MIDRetail.Business
                 );
             overrideLowLevel.AssociatedCustomModelId = CustomOLL_RID;
 
-            if (CustomOLL_RID > Include.NoRID
-                && CustomOLL_RID == OverrideLowLevelRid)
-            {
-                overrideLowLevel.IsCustomModel = true;
-            }
-
             ROLevelInformation lowLevel = new ROLevelInformation();
             lowLevel.LevelType = (eROLevelsType)LowLevelsType;
             lowLevel.LevelOffset = LowLevelOffset;
@@ -3401,7 +3395,7 @@ namespace MIDRetail.Business
             _overrideLowLevelRid = overrideLowLevel.OverrideLowLevelsModel.Key;
             if (overrideLowLevel.IsCustomModel)
             {
-                CustomOLL_RID = overrideLowLevel.OverrideLowLevelsModel.Key;
+                CustomOLL_RID = overrideLowLevel.AssociatedCustomModelId;
             }
             else
             {
@@ -3414,12 +3408,6 @@ namespace MIDRetail.Business
                 customOverrideLowLevelRid: CustomOLL_RID
                 );
             overrideLowLevel.AssociatedCustomModelId = CustomOLL_RID;
-
-            if (CustomOLL_RID > Include.NoRID
-                && CustomOLL_RID == OverrideLowLevelRid)
-            {
-                overrideLowLevel.IsCustomModel = true;
-            }
 
             return overrideLowLevel;
         }
@@ -3464,14 +3452,7 @@ namespace MIDRetail.Business
                 LowLevelOffset = roPlanningForecastExportProperties.LowLevel.LevelOffset;
                 LowLevelSequence = roPlanningForecastExportProperties.LowLevel.LevelSequence;
                 OverrideLowLevelRid = roPlanningForecastExportProperties.OverrideLowLevel.OverrideLowLevelsModel.Key;
-                if (roPlanningForecastExportProperties.OverrideLowLevel.IsCustomModel)
-                {
-                    CustomOLL_RID = roPlanningForecastExportProperties.OverrideLowLevel.OverrideLowLevelsModel.Key;
-                }
-                else
-                {
-                    CustomOLL_RID = Include.NoRID;
-                }
+                CustomOLL_RID = roPlanningForecastExportProperties.OverrideLowLevel.AssociatedCustomModelId;
                 ShowIneligible = roPlanningForecastExportProperties.IsExtractIneligibleStores;
                 SelectableVariableList = alVariableList;                //variable list to be added.
                 UseDefaultSettings = roPlanningForecastExportProperties.UseDefaultSettings;

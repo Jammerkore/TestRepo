@@ -5953,12 +5953,6 @@ namespace MIDRetail.Business
                 );
             roOverrideLowLevel.AssociatedCustomModelId = CustomOLL_RID;
 
-            if (CustomOLL_RID > Include.NoRID
-                && CustomOLL_RID == OverrideLowLevelRid)
-            {
-                roOverrideLowLevel.IsCustomModel = true;
-            }
-
             // get key of first set in attribute
             if (_attributeSetKey == Include.NoRID)
             {
@@ -6058,7 +6052,7 @@ namespace MIDRetail.Business
             OverrideLowLevelRid = overrideLowLevel.OverrideLowLevelsModel.Key;
             if (overrideLowLevel.IsCustomModel)
             {
-                CustomOLL_RID = overrideLowLevel.OverrideLowLevelsModel.Key;
+                CustomOLL_RID = overrideLowLevel.AssociatedCustomModelId;
             }
             else
             {
@@ -6071,12 +6065,6 @@ namespace MIDRetail.Business
                 customOverrideLowLevelRid: CustomOLL_RID
                 );
             overrideLowLevel.AssociatedCustomModelId = CustomOLL_RID;
-
-            if (CustomOLL_RID > Include.NoRID
-                && CustomOLL_RID == OverrideLowLevelRid)
-            {
-                overrideLowLevel.IsCustomModel = true;
-            }
 
             return overrideLowLevel;
         }
@@ -6585,14 +6573,7 @@ namespace MIDRetail.Business
                 LowLevelsType = (eLowLevelsType)properties.OverrideLowLevel.LowLevel.LevelType;
 
                 OverrideLowLevelRid = properties.OverrideLowLevel.OverrideLowLevelsModel.Key;
-                if (properties.OverrideLowLevel.IsCustomModel)
-                {
-                    CustomOLL_RID = properties.OverrideLowLevel.OverrideLowLevelsModel.Key;
-                }
-                else
-                {
-                    CustomOLL_RID = Include.NoRID; 
-                }
+                CustomOLL_RID = properties.OverrideLowLevel.AssociatedCustomModelId;
                 Chain_FV_RID = properties.ChainVersion.Key;
                 Bal_Sales_Ind = properties.SalesBalance;
                 Bal_Stock_Ind = properties.StockBalance;

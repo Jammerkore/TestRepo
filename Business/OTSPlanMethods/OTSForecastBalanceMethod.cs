@@ -1417,12 +1417,6 @@ namespace MIDRetail.Business
                 );
 			overrideLowLevel.AssociatedCustomModelId = CustomOLL_RID;
 
-			if (CustomOLL_RID > Include.NoRID
-                && CustomOLL_RID == OverrideLowLevelRid)
-            {
-                overrideLowLevel.IsCustomModel = true;
-            }
-
             // Begin RO-740 RDewey
             ROLevelInformation lowLevelInformation = new ROLevelInformation();
             eROLevelsType levelType;
@@ -1538,8 +1532,8 @@ namespace MIDRetail.Business
             _overrideLowLevelRid = overrideLowLevel.OverrideLowLevelsModel.Key;
             if (overrideLowLevel.IsCustomModel)
             {
-                CustomOLL_RID = overrideLowLevel.OverrideLowLevelsModel.Key;
-            }
+				CustomOLL_RID = overrideLowLevel.AssociatedCustomModelId;
+			}
             else
             {
                 CustomOLL_RID = Include.NoRID;
@@ -1551,12 +1545,6 @@ namespace MIDRetail.Business
                 customOverrideLowLevelRid: CustomOLL_RID
                 );
 			overrideLowLevel.AssociatedCustomModelId = CustomOLL_RID;
-
-			if (CustomOLL_RID > Include.NoRID
-                && CustomOLL_RID == OverrideLowLevelRid)
-            {
-                overrideLowLevel.IsCustomModel = true;
-            }
 
             return overrideLowLevel;
         }
@@ -1661,15 +1649,8 @@ namespace MIDRetail.Business
                 _computationMode = roMethodMatrixBalanceProperties.ComputationMode;
                 _matrixType = roMethodMatrixBalanceProperties.MatrixType;
                 _overrideLowLevelRid = roMethodMatrixBalanceProperties.OverrideLowLevel.OverrideLowLevelsModel.Key;
-                if (roMethodMatrixBalanceProperties.OverrideLowLevel.IsCustomModel)
-                {
-                    CustomOLL_RID = roMethodMatrixBalanceProperties.OverrideLowLevel.OverrideLowLevelsModel.Key;
-                }
-                else
-                {
-                    CustomOLL_RID = Include.NoRID;
-                }
-                _modelRID = roMethodMatrixBalanceProperties.Model.Key;
+				CustomOLL_RID = roMethodMatrixBalanceProperties.OverrideLowLevel.AssociatedCustomModelId;
+				_modelRID = roMethodMatrixBalanceProperties.Model.Key;
 
                 // matrix type is forecast, override to required values
                 if (_matrixType == eMatrixType.Forecast)

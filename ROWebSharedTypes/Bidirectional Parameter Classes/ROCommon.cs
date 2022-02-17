@@ -512,15 +512,13 @@ namespace Logility.ROWebSharedTypes
         public int AssociatedCustomModelId { get; set; }
 
         [DataMember(IsRequired = true)]
-        public bool IsCustomModel { get; set; }
-
-        [DataMember(IsRequired = true)]
         public List<KeyValuePair<int, string>> OverrideLowLevelsModelList { get; set; }
+
+        public bool IsCustomModel { get { return AssociatedCustomModelId > Include.NoRID && AssociatedCustomModelId == OverrideLowLevelsModel.Key; } }
 
         public ROOverrideLowLevel()
         {
             OverrideLowLevelsModelList = new List<KeyValuePair<int, string>>();
-            IsCustomModel = false;
         }
     }
 
