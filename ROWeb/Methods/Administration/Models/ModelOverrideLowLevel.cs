@@ -718,8 +718,14 @@ namespace Logility.ROWeb
             return true;
         }
 
-        override public bool ModelNameExists(string name)
+        override public bool ModelNameExists(string name, int userKey)
         {
+            // all custom model names are the same
+            if (userKey == Include.CustomUserRID)
+            {
+                return false;
+            }
+
             ModelsData modelsData = new ModelsData();
             return modelsData.OverrideLowLevelsModelName_Exist(aModelName: name, aUserRID: Include.GlobalUserRID);
         }

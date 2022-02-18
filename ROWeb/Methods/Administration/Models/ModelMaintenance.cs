@@ -298,8 +298,13 @@ namespace Logility.ROWeb
                 return new ROModelPropertiesOut(eROReturnCode.Failure, message, _ROInstanceID, null);
             }
 
+            int userKey = Include.GlobalUserRID;
+            if (parms.ROModelProperties.ModelType == eModelType.OverrideLowLevel)
+            {
+                userKey = ((ROModelOverrideLowLevelsProperties)parms.ROModelProperties).UserKey;
+            }
             if (parms.ROModelProperties.Model.Key == Include.NoRID
-                && _modelClass.ModelNameExists(parms.ROModelProperties.Model.Value))
+                && _modelClass.ModelNameExists(parms.ROModelProperties.Model.Value, userKey))
             {
                 message = "Models must be unique.";
                 MIDEnvironment.Message = message;
@@ -385,15 +390,20 @@ namespace Logility.ROWeb
                 }
                
                 modelName = parms.ROModelProperties.Model.Value;
+                int userKey = Include.GlobalUserRID;
+                if (parms.ROModelProperties.ModelType == eModelType.OverrideLowLevel)
+                {
+                    userKey = ((ROModelOverrideLowLevelsProperties)parms.ROModelProperties).UserKey;
+                }
                 if (parms.ROModelProperties.Model.Key == Include.NoRID
-                    && _modelClass.ModelNameExists(parms.ROModelProperties.Model.Value))
+                    && _modelClass.ModelNameExists(parms.ROModelProperties.Model.Value, userKey))
                 {
                     message = "Models must be unique.";
 					MIDEnvironment.Message = message;
                     MIDEnvironment.requestFailed = true;
                     returnCode = eROReturnCode.Failure;
                     applyOnly = true;
-                }
+                } 
 
                 parms.ROModelProperties.Model = new KeyValuePair<int, string>(Include.NoRID, modelName);
 
@@ -578,13 +588,16 @@ namespace Logility.ROWeb
             }
         }
 
-        private string CleanseModelName(string name)
+        private string CleanseModelName(
+            string name,
+            int userKey = Include.GlobalUserRID
+        )
         {
             string newName = name;
             int nameCntr = 0;
             while (true)
             {
-                if (!_modelClass.ModelNameExists(newName))
+                if (!_modelClass.ModelNameExists(newName, userKey))
                 {
                     break;
                 }

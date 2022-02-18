@@ -591,7 +591,7 @@ namespace Logility.ROWeb
             return true;
         }
 
-        override public bool ModelNameExists(string name)
+        override public bool ModelNameExists(string name, int userKey)
         {
             if (_sizeGroupList == null)
             {

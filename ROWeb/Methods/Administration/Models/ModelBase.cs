@@ -118,7 +118,7 @@ namespace Logility.ROWeb
 
         abstract public bool ModelDelete(int key, ref string message);
 
-        abstract public bool ModelNameExists(string name);
+        abstract public bool ModelNameExists(string name, int userKey);
 
         abstract public bool OnClosing();
 

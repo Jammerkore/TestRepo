@@ -604,7 +604,7 @@ namespace Logility.ROWeb
             return true;
         }
         
-        override public bool ModelNameExists(string name)
+        override public bool ModelNameExists(string name, int userKey)
         {
             ModelProfile checkExists = SAB.HierarchyServerSession.GetModelData(aModelType: eModelType.SizeAlternates, modelID: name);
 
