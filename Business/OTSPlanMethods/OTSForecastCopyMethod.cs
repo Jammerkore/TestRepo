@@ -2108,6 +2108,10 @@ namespace MIDRetail.Business
                         dataRow["SGL_RID"] = attributeSetList[i].Key;
                         _dsForecastCopy.Tables["GroupLevel"].Rows.Add(dataRow);
                     }
+                    if (_currentSglRid <= 0)
+                    {
+                        _currentSglRid = attributeSetList[0].Key;
+                    }
                 }
                 // make sure attribute set is in current attribute
                 if (attributeSetList.FindKey(rOMethodCopyStoreForecastProperties.AttributeSet.Key) == null)
