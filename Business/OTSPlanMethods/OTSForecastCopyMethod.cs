@@ -2110,13 +2110,14 @@ namespace MIDRetail.Business
                     }
                     if (_currentSglRid <= 0)
                     {
-                        _currentSglRid = attributeSetList[0].Key;
+                        _currentSglRid = rOMethodCopyStoreForecastProperties.AttributeSet.Key;
                     }
                 }
                 // make sure attribute set is in current attribute
                 if (attributeSetList.FindKey(rOMethodCopyStoreForecastProperties.AttributeSet.Key) == null)
                 {
                     rOMethodCopyStoreForecastProperties.AttributeSet = new KeyValuePair<int, string>(attributeSetList[0].Key, null);
+                    _currentSglRid = attributeSetList[0].Key;
                 }
                 rOMethodCopyStoreForecastProperties.BasisVersions.Clear();
             }
