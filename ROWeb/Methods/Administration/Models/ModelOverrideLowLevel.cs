@@ -127,7 +127,8 @@ namespace Logility.ROWeb
             string name = _overrideLowLevelProfile.Name == null ? string.Empty : _overrideLowLevelProfile.Name;
 
             KeyValuePair<int, string> model = new KeyValuePair<int, string>(_current_Model_Key, name);
-            ROModelOverrideLowLevelsProperties modelProperties = new ROModelOverrideLowLevelsProperties(model: model);
+            ROModelOverrideLowLevelsProperties modelProperties = new ROModelOverrideLowLevelsProperties(model: model, 
+                userKey: _overrideLowLevelProfile.User_RID <= Include.NoRID ? Include.GlobalUserRID : _overrideLowLevelProfile.User_RID);
 
             FillOverrideModel(
                 modelProperties: modelProperties,
@@ -610,10 +611,12 @@ namespace Logility.ROWeb
                     _overrideLowLevelProfile.High_Level_HN_RID = lowLevelsProperties.Merchandise.Key;
                 }
                 _overrideLowLevelProfile.ActiveOnlyInd = lowLevelsProperties.ActiveOnly;
-                if (_overrideLowLevelProfile.User_RID == Include.NoRID)
+                if (lowLevelsProperties.UserKey == Include.NoRID)
                 {
-                    _overrideLowLevelProfile.User_RID = lowLevelsProperties.UserKey;
+                    lowLevelsProperties.UserKey = Include.GlobalUserRID;
                 }
+                _overrideLowLevelProfile.User_RID = lowLevelsProperties.UserKey;
+
                 if (lowLevelsProperties.HighLevel != null)
                 {
                     _overrideLowLevelProfile.HighLevelSeq = lowLevelsProperties.HighLevel.LevelSequence;
