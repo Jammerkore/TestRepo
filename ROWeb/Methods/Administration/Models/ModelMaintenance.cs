@@ -408,7 +408,11 @@ namespace Logility.ROWeb
                 parms.ROModelProperties.Model = new KeyValuePair<int, string>(Include.NoRID, modelName);
 
                 // save the model key if error because it will need restored
-                int saveModelKey = _modelClass.CurrentModelProfile.Key;
+                int saveModelKey = Include.NoRID;
+                if (_modelClass.CurrentModelProfile != null)
+                {
+                    saveModelKey = _modelClass.CurrentModelProfile.Key;
+                }
 
                 // update model data even if failure above if user changes presentation value like attribute set before trying to save as again
 				ModelProfile mp = _modelClass.ModelUpdateData(modelsProperties: parms.ROModelProperties, cloneDates: true, message: ref message, successful: out successful, applyOnly: applyOnly);
@@ -423,7 +427,10 @@ namespace Logility.ROWeb
                 {
                     loadData = false;
                     // restore previous model key so will be unlocked if successful save as to a new key
-                    _modelClass.CurrentModelProfile.Key = saveModelKey;
+                    if (_modelClass.CurrentModelProfile != null)
+                    {
+                        _modelClass.CurrentModelProfile.Key = saveModelKey;
+                    }
                 }
                 else
                 {
