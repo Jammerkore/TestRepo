@@ -478,7 +478,8 @@ namespace Logility.ROWeb
                 {
                     if (!applyOnly)
                     {
-                        bool checkExists = GetLowLevelModel(saveName);
+                        //bool checkExists = GetLowLevelModel(saveName);
+                        bool checkExists = ModelNameExists(name: saveName, userKey: lowLevelsProperties.UserKey);
                         if (!checkExists) //new model name does not exist
                         {
                             _overrideLowLevelProfile.ModelID = saveName;
@@ -517,7 +518,8 @@ namespace Logility.ROWeb
                 }
 
                 _copiedToWorkTables = true;
-                if (_overrideLowLevelProfile.Key > 0)
+                if (_overrideLowLevelProfile.Key > 0
+                    && _overrideLowLevelProfile.Key == modelsProperties.Model.Key)
                 {
                     _overrideLowLevelProfile.ModelChangeType = eChangeType.update;
                 }
@@ -570,10 +572,10 @@ namespace Logility.ROWeb
             return _overrideLowLevelProfile;
         }
 
-        private bool GetLowLevelModel(string modelName)
-        {
-            return _overrideLowLevelProfile.ModelNameExists(modelName, Include.GlobalUserRID);
-        }
+        //private bool GetLowLevelModel(string modelName)
+        //{
+        //    return _overrideLowLevelProfile.ModelNameExists(modelName, Include.GlobalUserRID);
+        //}
 
         private void SaveToProfile(ROModelOverrideLowLevelsProperties lowLevelsProperties)
         {

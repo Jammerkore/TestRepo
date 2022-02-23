@@ -243,7 +243,8 @@ namespace Logility.ROWeb
                 modelProperties.IsReadOnly = _modelClass.FunctionSecurity.IsReadOnly;
             }
             // new model
-            else if (_currentModelProfile.Key == Include.NoRID)
+            else if (_currentModelProfile.Key == Include.NoRID
+                || _modelClass.CurrentModelProfile.ModelChangeType == eChangeType.add)
             {
                 modelProperties.CanBeDeleted = false;  // can not delete a model that has not been saved
                 modelProperties.IsReadOnly = _modelClass.FunctionSecurity.IsReadOnly;
