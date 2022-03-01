@@ -523,9 +523,20 @@ namespace Logility.ROWeb
             string message = null;
             eROReturnCode returnCode = eROReturnCode.Successful;
             bool copyMethod = false;
+            ApplicationBaseMethod saveABM = null;
 
             try
             {
+                // save a copy of the method to restore cache from by reference update
+                if (_ABM != null)
+                {
+                    saveABM = _ABM.Copy(
+                                aSession: SAB.ApplicationServerSession,
+                                aCloneDateRanges: false,
+                                aCloneCustomOverrideModels: false
+                                );
+                }
+
                 VerifyMethodObject(
                     methodType: methodParm.ROMethodProperties.MethodType,
                     key: methodParm.ROMethodProperties.Method.Key,
@@ -624,6 +635,7 @@ namespace Logility.ROWeb
                         {
                             // copy the method to create unique date ranges and override models
                             // if updated from a template
+                            // must occur after the set data to change any keys not updated in the current data
                             eChangeType saveChangeType = _ABM.Method_Change_Type;
                             _ABM = _ABM.Copy(
                                 aSession: SAB.ApplicationServerSession,
@@ -631,6 +643,10 @@ namespace Logility.ROWeb
                                 aCloneCustomOverrideModels: true
                                 );
                             _ABM.Method_Change_Type = saveChangeType;
+
+                            // replace the original template method values updated by save
+                            _workflowMethods.Remove(saveABM.Key);
+                            _workflowMethods[saveABM.Key] = saveABM;
                         }
 
                         int folderKey = methodParm.FolderKey;
@@ -695,9 +711,20 @@ namespace Logility.ROWeb
             string message = null;
             eROReturnCode returnCode = eROReturnCode.Successful;
             bool copyMethod = false;
+            ApplicationBaseMethod saveABM = null;
 
             try
             {
+                // save a copy of the method to restore cache from by reference update
+                if (_ABM != null)
+                {
+                    saveABM = _ABM.Copy(
+                                aSession: SAB.ApplicationServerSession,
+                                aCloneDateRanges: false,
+                                aCloneCustomOverrideModels: false
+                                );
+                }
+
                 VerifyMethodObject(
                     methodType: methodParm.ROMethodProperties.MethodType,
                     key: methodParm.ROMethodProperties.Method.Key,
@@ -730,6 +757,14 @@ namespace Logility.ROWeb
                 _workflowMethods[methodParm.ROMethodProperties.Method.Key] = _ABM;
 				// keep last key accessed in cache so will not have to retrieve from cache each time
                 _currentMethodKey = methodParm.ROMethodProperties.Method.Key;
+
+                if (saveABM != null
+                    && saveABM.Key != _currentMethodKey)
+                {
+                    // replace the original template method values updated by apply
+                    _workflowMethods.Remove(saveABM.Key);
+                    _workflowMethods[saveABM.Key] = saveABM;
+                }
 
                 // set the readOnly flag based on the lock status of the method
                 bool readOnly = true;
@@ -844,6 +879,12 @@ namespace Logility.ROWeb
                     }
                     else
                     {
+                        if (_currentMethodKey > 0
+                            && _ABM.Template_IND
+                            )
+                        {
+                            copyMethod = true;
+                        }
                         _ABM.Key = Include.NoRID;  // always use NoRID (-1) as key for new methods
                     }
                 }
