@@ -4261,7 +4261,7 @@ namespace Logility.ROWeb
                 }
             }
             _bindingView = false;
-            return ApplicationUtilities.DataTableToKeyValues(dtView, "VIEW_RID", "VIEW_ID");
+            return DataTableTools.DataTableToKeyValues(dtView, "VIEW_RID", "VIEW_ID");
         }
 
         #endregion

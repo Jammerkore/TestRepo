@@ -1041,8 +1041,8 @@ namespace Logility.ROWeb
 
                 _applicationSessionTransaction.CreateAssortmentViewSelectionCriteria();
 
-                var basisData = ApplicationUtilities.ToDataTable(rOAssortmentProperties.AssortmentPropertiesBasis);
-                var storeGradeData = ApplicationUtilities.ToDataTable(rOAssortmentProperties.AssortmentPropertiesStoreGrades);
+                var basisData = DataTableTools.ToDataTable(rOAssortmentProperties.AssortmentPropertiesBasis);
+                var storeGradeData = DataTableTools.ToDataTable(rOAssortmentProperties.AssortmentPropertiesStoreGrades);
 
                 if (rOAssortmentProperties.viewType == eAssortViewType.Selection)
                 {

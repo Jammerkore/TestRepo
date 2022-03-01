@@ -122,9 +122,9 @@ namespace Logility.ROWeb
 
             DataTable dtSizeModel = sizeModelData.SizeConstraintModel_Read();
 
-            dtSizeModel = ApplicationUtilities.SortDataTable(dataTable: dtSizeModel, sColName: "SIZE_CONSTRAINT_NAME", bAscending: true);
+            dtSizeModel = DataTableTools.SortDataTable(dataTable: dtSizeModel, sColName: "SIZE_CONSTRAINT_NAME", bAscending: true);
 
-            return ApplicationUtilities.DataTableToKeyValues(dtSizeModel, "SIZE_CONSTRAINT_RID", "SIZE_CONSTRAINT_NAME");
+            return DataTableTools.DataTableToKeyValues(dtSizeModel, "SIZE_CONSTRAINT_RID", "SIZE_CONSTRAINT_NAME");
         }
 
         int _definedAttribute = Include.Undefined;
@@ -201,15 +201,15 @@ namespace Logility.ROWeb
 
             BuildConstraints(modelProperties: modelProperties, sizeGroupKey: sizeGroupKey, sizeCurveGroupKey: sizeCurveGroupKey, message: ref message);
 
-            FillColorList(
+            ListGenerator.FillColorList(
                 colorList: modelProperties.Colors,
                 addDefaultColor: false,
                 addAllColors: false
                 );
 
-            FillSizeGroupList(modelProperties.SizeGroups);
+            ListGenerator.FillSizeGroupList(modelProperties.SizeGroups);
 
-            FillSizeCurveGroupList(modelProperties.SizeCurveGroups);
+            ListGenerator.FillSizeCurveGroupList(modelProperties.SizeCurveGroups);
 
             return modelProperties;
         }
@@ -1046,7 +1046,7 @@ namespace Logility.ROWeb
                 modelProperties.SizeConstraintAttributeSet = sizeConstraintAttributeSet;
             }
 
-            FillDimensionSizeList(
+            ListGenerator.FillDimensionSizeList(
                 sizeDimensionSizes: modelProperties.SizeConstraintDimensions, 
                 Key: sizeOrderKey, 
                 getDimensions: getDimensionsUsing, 

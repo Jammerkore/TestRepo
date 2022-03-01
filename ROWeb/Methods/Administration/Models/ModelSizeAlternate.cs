@@ -68,9 +68,9 @@ namespace Logility.ROWeb
             _sizeModelData = new SizeModelData();
             DataTable dtSizeModels = _sizeModelData.SizeAlternateModel_Read();
 
-            dtSizeModels = ApplicationUtilities.SortDataTable(dataTable: dtSizeModels, sColName: "SIZE_ALTERNATE_NAME", bAscending: true);
+            dtSizeModels = DataTableTools.SortDataTable(dataTable: dtSizeModels, sColName: "SIZE_ALTERNATE_NAME", bAscending: true);
 
-            return ApplicationUtilities.DataTableToKeyValues(dtSizeModels, "SIZE_ALTERNATE_RID", "SIZE_ALTERNATE_NAME");
+            return DataTableTools.DataTableToKeyValues(dtSizeModels, "SIZE_ALTERNATE_RID", "SIZE_ALTERNATE_NAME");
         }
 
         override public ROModelProperties ModelGetData(ROModelParms parms, ModelProfile modelProfile, ref string message, bool applyOnly = false)
@@ -141,7 +141,7 @@ namespace Logility.ROWeb
 
             if (primarySizeCurveKey > Include.NoRID)
             {
-                FillDimensionSizeList(
+                ListGenerator.FillDimensionSizeList(
                     sizeDimensionSizes: _modelProperties.PrimarySizeCurveDimensions,
                     Key: primarySizeCurveKey,
                     getDimensions: getDimensionsUsing,
@@ -151,7 +151,7 @@ namespace Logility.ROWeb
 
             if (alternateSizeCurveKey > Include.NoRID)
             {
-                FillDimensionSizeList(
+                ListGenerator.FillDimensionSizeList(
                     sizeDimensionSizes: _modelProperties.AlternateSizeCurveDimensions,
                     Key: alternateSizeCurveKey,
                     getDimensions: getDimensionsUsing,

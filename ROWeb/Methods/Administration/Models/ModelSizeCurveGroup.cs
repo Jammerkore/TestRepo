@@ -57,9 +57,9 @@ namespace Logility.ROWeb
 
             dtSizeCurveGroups = dlSizeCurve.GetSizeCurveGroups();
 
-            dtSizeCurveGroups = ApplicationUtilities.SortDataTable(dataTable: dtSizeCurveGroups, sColName: "SIZE_CURVE_GROUP_NAME", bAscending: true);
+            dtSizeCurveGroups = DataTableTools.SortDataTable(dataTable: dtSizeCurveGroups, sColName: "SIZE_CURVE_GROUP_NAME", bAscending: true);
 
-            return ApplicationUtilities.DataTableToKeyValues(dtSizeCurveGroups, "SIZE_CURVE_GROUP_RID", "SIZE_CURVE_GROUP_NAME");
+            return DataTableTools.DataTableToKeyValues(dtSizeCurveGroups, "SIZE_CURVE_GROUP_RID", "SIZE_CURVE_GROUP_NAME");
         }
 
         override public ROModelProperties ModelGetData(ROModelParms parms, ModelProfile modelProfile, ref string message, bool applyOnly = false)

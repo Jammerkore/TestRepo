@@ -565,13 +565,15 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         KeyValuePair<int, string> _sizeAlternateModel;
         [DataMember(IsRequired = true)]
+        eGenericSizeCurveNameType _genericSizeCurveNameType;
+        [DataMember(IsRequired = true)]
         ROSizeCurveProperties _rOSizeCurveProperties;
         [DataMember(IsRequired = true)]
         ROSizeConstraintProperties _rOSizeConstraintProperties;
         [DataMember(IsRequired = true)]
         bool _overrideVSWSizeConstraints;
         [DataMember(IsRequired = true)]
-        eVSWSizeConstraints _vSWSizeConstraints;
+        KeyValuePair<int, string> _vSWSizeConstraints;
         [DataMember(IsRequired = true)]
         bool _overrideAvgPackDevTolerance;
         [DataMember(IsRequired = true)]
@@ -584,6 +586,29 @@ namespace Logility.ROWebSharedTypes
         bool _packToleranceNoMaxStep;
         [DataMember(IsRequired = true)]
         double _maxPackNeedTolerance;
+        [DataMember(IsRequired = true)]
+        List<KeyValuePair<int, string>> _merchandiseBasis;
+        [DataMember(IsRequired = true)]
+        List<KeyValuePair<int, string>> _sizeGroups;
+        [DataMember(IsRequired = true)]
+        List<KeyValuePair<int, string>> _sizeCurveGroups;
+        [DataMember(IsRequired = true)]
+        List<KeyValuePair<int, string>> _sizeGenericHierarchyLevels;
+        [DataMember(IsRequired = true)]
+        List<KeyValuePair<int, string>> _sizeGenericHeaderCharacteristicsOrNameExtensions;
+        [DataMember(IsRequired = true)]
+        List<KeyValuePair<int, string>> _vSWSizeConstraintRules;
+        [DataMember(IsRequired = true)]
+        List<KeyValuePair<int, string>> _sizeAlternateModels;
+        [DataMember(IsRequired = true)]
+        List<KeyValuePair<int, string>> _sizeConstraintInventoryBasis;
+        [DataMember(IsRequired = true)]
+        List<KeyValuePair<int, string>> _sizeConstraints;
+        [DataMember(IsRequired = true)]
+        List<KeyValuePair<int, string>> _sizeConstraintHeaderCharacteristics;
+        [DataMember(IsRequired = true)]
+        List<KeyValuePair<int, string>> _sizeConstraintHierarchyLevels;
+
         //Rule tab properties
         [DataMember(IsRequired = true)]
         KeyValuePair<int, string> _attribute;
@@ -635,6 +660,11 @@ namespace Logility.ROWebSharedTypes
             get { return _sizeAlternateModel; }
             set { _sizeAlternateModel = value; }
         }
+        public eGenericSizeCurveNameType GenericSizeCurveNameType
+        {
+            get { return _genericSizeCurveNameType; }
+            set { _genericSizeCurveNameType = value; }
+        }
         public ROSizeCurveProperties ROSizeCurveProperties
         {
             get { return _rOSizeCurveProperties; }
@@ -650,7 +680,7 @@ namespace Logility.ROWebSharedTypes
             get { return _overrideVSWSizeConstraints; }
             set { _overrideVSWSizeConstraints = value; }
         }
-        public eVSWSizeConstraints VSWSizeConstraints
+        public KeyValuePair<int, string> VSWSizeConstraints
         {
             get { return _vSWSizeConstraints; }
             set
@@ -688,6 +718,50 @@ namespace Logility.ROWebSharedTypes
             get { return _maxPackNeedTolerance; }
             set { _maxPackNeedTolerance = value; }
         }
+        public List<KeyValuePair<int, string>> MerchandiseBasis
+        {
+            get { return _merchandiseBasis; }
+        }
+        public List<KeyValuePair<int, string>> SizeGroups
+        {
+            get { return _sizeGroups; }
+        }
+        public List<KeyValuePair<int, string>> SizeCurveGroups
+        {
+            get { return _sizeCurveGroups; }
+        }
+        public List<KeyValuePair<int, string>> SizeGenericHierarchyLevels
+        {
+            get { return _sizeGenericHierarchyLevels; }
+        }
+        public List<KeyValuePair<int, string>> SizeGenericHeaderCharacteristicsOrNameExtensions
+        {
+            get { return _sizeGenericHeaderCharacteristicsOrNameExtensions; }
+        }
+        public List<KeyValuePair<int, string>> VSWSizeConstraintRules
+        {
+            get { return _vSWSizeConstraintRules; }
+        }
+        public List<KeyValuePair<int, string>> SizeAlternateModels
+        {
+            get { return _sizeAlternateModels; }
+        }
+        public List<KeyValuePair<int, string>> SizeConstraintInventoryBasis
+        {
+            get { return _sizeConstraintInventoryBasis; }
+        }
+        public List<KeyValuePair<int, string>> SizeConstraints
+        {
+            get { return _sizeConstraints; }
+        }
+        public List<KeyValuePair<int, string>> SizeConstraintHeaderCharacteristics
+        {
+            get { return _sizeConstraintHeaderCharacteristics; }
+        }
+        public List<KeyValuePair<int, string>> SizeConstraintHierarchyLevels
+        {
+            get { return _sizeConstraintHierarchyLevels; }
+        }
         public KeyValuePair<int, string> Attribute
         {
             get { return _attribute; }
@@ -711,11 +785,12 @@ namespace Logility.ROWebSharedTypes
             bool normalizeSizeCurvesDefaultIsOverridden, 
             bool normalizeSizeCurves, 
             KeyValuePair<int, string> sizeGroup,
-            KeyValuePair<int, string> sizeAlternateModel, 
+            KeyValuePair<int, string> sizeAlternateModel,
+            eGenericSizeCurveNameType genericSizeCurveNameType,
             ROSizeCurveProperties rOSizeCurveProperties, 
             ROSizeConstraintProperties rOSizeConstraintProperties,
-            bool overrideVSWSizeConstraints, 
-            eVSWSizeConstraints vSWSizeConstraints, 
+            bool overrideVSWSizeConstraints,
+            KeyValuePair<int, string> vSWSizeConstraints, 
             bool overrideAvgPackDevTolerance, 
             double avgPackDeviationTolerance,
             bool overrideMaxPackNeedTolerance, 
@@ -743,6 +818,7 @@ namespace Logility.ROWebSharedTypes
             _normalizeSizeCurves = normalizeSizeCurves;
             _sizeGroup = sizeGroup;
             _sizeAlternateModel = sizeAlternateModel;
+            _genericSizeCurveNameType = genericSizeCurveNameType;
             _rOSizeCurveProperties = rOSizeCurveProperties;
             _rOSizeConstraintProperties = rOSizeConstraintProperties;
             _overrideVSWSizeConstraints = overrideVSWSizeConstraints;
@@ -755,6 +831,17 @@ namespace Logility.ROWebSharedTypes
             _maxPackNeedTolerance = maxPackNeedTolerance;
             _attribute = attribute;
             _sizeRuleAttributeSet = sizeRuleAttributeSet;
+            _merchandiseBasis = new List<KeyValuePair<int, string>>();
+            _sizeGroups = new List<KeyValuePair<int, string>>();
+            _sizeCurveGroups = new List<KeyValuePair<int, string>>();
+            _sizeGenericHierarchyLevels = new List<KeyValuePair<int, string>>();
+            _sizeGenericHeaderCharacteristicsOrNameExtensions = new List<KeyValuePair<int, string>>();
+            _vSWSizeConstraintRules = new List<KeyValuePair<int, string>>();
+            _sizeAlternateModels = new List<KeyValuePair<int, string>>();
+            _sizeConstraintInventoryBasis = new List<KeyValuePair<int, string>>();
+            _sizeConstraints = new List<KeyValuePair<int, string>>();
+            _sizeConstraintHeaderCharacteristics = new List<KeyValuePair<int, string>>();
+            _sizeConstraintHierarchyLevels = new List<KeyValuePair<int, string>>();
         }
     }
     [DataContract(Name = "ROMethodBasisSizeProperties", Namespace = "http://Logility.ROWeb/")]

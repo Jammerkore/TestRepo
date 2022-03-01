@@ -324,9 +324,9 @@ namespace Logility.ROWeb
                 filteredDataTable = filteredDataRows.CopyToDataTable();
             }
 
-            methodsDataTable = ApplicationUtilities.SortDataTable(dataTable: filteredDataTable, sColName: "METHOD_NAME", bAscending: true);
+            methodsDataTable = DataTableTools.SortDataTable(dataTable: filteredDataTable, sColName: "METHOD_NAME", bAscending: true);
             
-            methodList =  ApplicationUtilities.DataTableToKeyValues(methodsDataTable, "METHOD_RID", "METHOD_NAME", true);
+            methodList = DataTableTools.DataTableToKeyValues(methodsDataTable, "METHOD_RID", "METHOD_NAME", true);
 
             int customKey = Include.Undefined;
 
@@ -1317,9 +1317,9 @@ namespace Logility.ROWeb
             // Add shared workflows
             CopyDataRows(dtWorkflows, workflowData.GetSharedWorkflows(SAB.ClientServerSession.UserRID));
 
-            dtWorkflows = ApplicationUtilities.SortDataTable(dataTable: dtWorkflows, sColName: "WORKFLOW_NAME", bAscending: true);
+            dtWorkflows = DataTableTools.SortDataTable(dataTable: dtWorkflows, sColName: "WORKFLOW_NAME", bAscending: true);
 
-            return ApplicationUtilities.DataTableToKeyValues(dtWorkflows, "WORKFLOW_RID", "WORKFLOW_NAME");
+            return DataTableTools.DataTableToKeyValues(dtWorkflows, "WORKFLOW_RID", "WORKFLOW_NAME");
 
         }
         #endregion Get WorkFlows
@@ -2558,7 +2558,7 @@ namespace Logility.ROWeb
                 if (Enum.IsDefined(typeof(eMethodTypeUI), methodType))
                 {
                     abm = (ApplicationBaseMethod)aws.Method;
-                    methodName = ApplicationUtilities.Adjust_Name(abm.Name, abm.User_RID);
+                    methodName = DataTableTools.Adjust_Name(abm.Name, abm.User_RID);
                 }
 
                 componentType = Convert.ToInt32(aws.Component.ComponentType, CultureInfo.CurrentUICulture);
@@ -2791,7 +2791,7 @@ namespace Logility.ROWeb
                 if (Enum.IsDefined(typeof(eMethodTypeUI), methodType))
                 {
                     abm = (ApplicationBaseMethod)otspws.Method;
-                    methodName = ApplicationUtilities.Adjust_Name(abm.Name, abm.User_RID);
+                    methodName = DataTableTools.Adjust_Name(abm.Name, abm.User_RID);
                 }
 
                 if (!otspws.UsedSystemTolerancePercent)

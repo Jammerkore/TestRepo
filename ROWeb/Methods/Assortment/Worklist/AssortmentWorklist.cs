@@ -163,9 +163,9 @@ namespace Logility.ROWeb
             dtActions.Rows.InsertAt(selectRow, 0);
             dtActions.PrimaryKey = new DataColumn[] { dtActions.Columns["TEXT_CODE"] };
 
-            dtActions = ApplicationUtilities.SortDataTable(dataTable: dtActions, sColName: "TEXT_ORDER", bAscending: true);
+            dtActions = DataTableTools.SortDataTable(dataTable: dtActions, sColName: "TEXT_ORDER", bAscending: true);
 
-            return ApplicationUtilities.DataTableToKeyValues(dtActions, "TEXT_CODE", "TEXT_VALUE"); ;
+            return DataTableTools.DataTableToKeyValues(dtActions, "TEXT_CODE", "TEXT_VALUE"); ;
         }
 
         internal bool AllowAction(int aAction, bool bAssortmentAction)
@@ -232,7 +232,7 @@ namespace Logility.ROWeb
 
             DataTable dtAssortmentFilters = _filterData.FilterRead(filterTypes.AssortmentFilter, eProfileType.FilterAssortment, userRIDList);
 
-            return ApplicationUtilities.DataTableToKeyValues(dtAssortmentFilters, "FILTER_RID", "FILTER_NAME");
+            return DataTableTools.DataTableToKeyValues(dtAssortmentFilters, "FILTER_RID", "FILTER_NAME");
         }
         #endregion
 

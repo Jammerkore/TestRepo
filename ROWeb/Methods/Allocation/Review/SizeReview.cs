@@ -73,7 +73,7 @@ namespace Logility.ROWeb
                 throw ex;
             }
 
-            return ApplicationUtilities.DataTableToKeyValues(dtViews, "VIEW_RID", "VIEW_ID");
+            return DataTableTools.DataTableToKeyValues(dtViews, "VIEW_RID", "VIEW_ID");
         }
         #endregion
 

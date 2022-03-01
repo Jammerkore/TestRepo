@@ -319,6 +319,15 @@ namespace MIDRetail.Business
     {
         private static HierarchyProfile _mainHierProf = null;
         private static DataTable _merchandiseDataTable = null;
+		
+        public static KeyValuePair<int, string> GetText(int key)
+        {
+            string name = string.Empty;
+
+            name = MIDText.GetTextOnly((eMIDTextCode)key);
+            return new KeyValuePair<int, string>(key, name);
+        }
+
         public static KeyValuePair<int, string> GetFilterName(int key)
         {
             string name = string.Empty;
@@ -3189,6 +3198,208 @@ namespace MIDRetail.Business
                     return eLowLevelsType.None;
             }
         }
+
+    }
+
+    public class ListGenerator
+    {
+        /// <summary>
+		/// Fills a KeyValuePair List with colors.
+		/// </summary>
+		/// <param name="colorList">KeyValuePair object to fill</param>
+        /// <remarks>
+        /// -1: All Colors
+        /// -2: Default
+        /// </remarks>
+		public static void FillColorList(
+            List<KeyValuePair<int, string>> colorList,
+            bool addDefaultColor = false,
+            bool addAllColors = false
+            )
+        {
+            ColorData colorData = new ColorData();
+            DataTable dataTableColors = colorData.Colors_Read();
+
+            if (addDefaultColor)
+            {
+                colorList.Add(new KeyValuePair<int, string>(
+                        -2,
+                        "Default")
+                        );
+            }
+
+            if (addAllColors)
+            {
+                colorList.Add(new KeyValuePair<int, string>(
+                        -1,
+                        "All Colors")
+                        );
+            }
+
+            // sort colors by ID
+            dataTableColors = DataTableTools.SortDataTable(dataTable: dataTableColors, sColName: "COLOR_CODE_ID", bAscending: true);
+
+            foreach (DataRow dataRow in dataTableColors.Rows)
+            {
+                colorList.Add(new KeyValuePair<int, string>(
+                    Convert.ToInt32(dataRow["COLOR_CODE_RID"], CultureInfo.CurrentUICulture),
+                    dataRow["COLOR_CODE_ID"].ToString() + " - " + dataRow["COLOR_CODE_NAME"].ToString())
+                    );
+            }
+
+        }
+
+        /// <summary>
+        /// Fills class with size dimensions.
+        /// </summary>
+        /// <remarks>Method must be overridden</remarks>
+        public static void FillDimensionSizeList(
+            List<ROSizeDimension> sizeDimensionSizes,
+            int Key,
+            eGetDimensions getDimensions,
+            eGetSizes getSizes,
+            bool includeDefaultDimension = false,
+            bool includeDefaultSize = false,
+            bool useSizeCodeKey = false
+            )
+        {
+            ROSizeDimension dimensionSizes;
+            int dimensionKey;
+            string dimension;
+            SizeModelData sizeModelData = new SizeModelData();
+            MaintainSizeConstraints maint = new MaintainSizeConstraints(sizeModelData);
+            DataTable dtDimensions = maint.FillSizeDimensionList(Key, getDimensions);
+            DataTable dtSizes = maint.FillSizesList(Key, getSizes);
+
+            if (includeDefaultDimension)
+            {
+                dimensionSizes = new ROSizeDimension(dimension: new KeyValuePair<int, string>(
+                    -1,
+                    "Default")
+                    );
+                sizeDimensionSizes.Add(dimensionSizes
+                    );
+            }
+
+            foreach (DataRow dr in dtDimensions.Rows)
+            {
+                dimensionKey = Convert.ToInt32(dr["DIMENSIONS_RID"]);
+                dimension = dr["SIZE_CODE_SECONDARY"].ToString();
+                dimensionSizes = new ROSizeDimension(dimension: new KeyValuePair<int, string>(
+                    dimensionKey,
+                    dimension)
+                    );
+                FillSizesList(
+                    dimensionSizes: dimensionSizes,
+                    dtSizes: dtSizes,
+                    dimensionKey: dimensionKey,
+                    includeDefaultSize: includeDefaultSize,
+                    useSizeCodeKey: useSizeCodeKey
+                    );
+                sizeDimensionSizes.Add(dimensionSizes
+                    );
+
+            }
+        }
+
+        /// <summary>
+		/// Fills class with sizes based on a selected Size Group or Size Curve
+		/// </summary>
+		private static void FillSizesList(
+            ROSizeDimension dimensionSizes,
+            DataTable dtSizes, int dimensionKey,
+            bool includeDefaultSize = false,
+            bool useSizeCodeKey = false)
+        {
+            int sizeKey;
+            string size;
+
+            DataRow[] SelectRows = dtSizes.Select("DIMENSIONS_RID = '" + dimensionKey.ToString() + "'");
+
+            if (includeDefaultSize)
+            {
+                dimensionSizes.Sizes.Add(new KeyValuePair<int, string>(
+                    -1,
+                    "Default")
+                    );
+            }
+
+            foreach (DataRow dr in SelectRows)
+            {
+                if (useSizeCodeKey)
+                {
+                    sizeKey = Convert.ToInt32(dr["SIZE_CODE_RID"]);
+                }
+                else
+                {
+                    sizeKey = Convert.ToInt32(dr["SIZES_RID"]);
+                }
+                size = dr["SIZE_CODE_PRIMARY"].ToString();
+                dimensionSizes.Sizes.Add(new KeyValuePair<int, string>(
+                    sizeKey,
+                    size)
+                    );
+            }
+        }
+
+        /// <summary>
+		/// Fills a KeyValuePair List with size groups.
+		/// </summary>
+		/// <param name="sizeGroups">KeyValuePair object to fill</param>
+		public static void FillSizeGroupList(
+            List<KeyValuePair<int, string>> sizeGroups,
+            bool includeUndefinedGroup = false)
+
+        {
+            SizeGroup dataLayersizeGroupData = new SizeGroup();
+            DataTable dataTableSizeGroups = dataLayersizeGroupData.GetSizeGroups(includeUndefinedGroup);
+            sizeGroups.AddRange(DataTableTools.DataTableToKeyValues(dataTableSizeGroups, "SIZE_GROUP_RID", "SIZE_GROUP_NAME"));
+        }
+
+        /// <summary>
+		/// Fills a KeyValuePair List with size curve groups.
+		/// </summary>
+		/// <param name="sizeCurveGroups">KeyValuePair object to fill</param>
+		public static void FillSizeCurveGroupList(List<KeyValuePair<int, string>> sizeCurveGroups)
+        {
+            SizeCurve dataLayerSizeCurve = new SizeCurve();
+            DataTable dataTableSizeCurveGroups = dataLayerSizeCurve.GetSizeCurveGroups();
+            sizeCurveGroups.AddRange(DataTableTools.DataTableToKeyValues(dataTableSizeCurveGroups, "SIZE_CURVE_GROUP_RID", "SIZE_CURVE_GROUP_NAME"));
+
+        }
+
+        /// <summary>
+		/// Fills class with hierarchy levels
+		/// </summary>
+		public static void FillOrganizationalHierarchyLevelList(
+            List<KeyValuePair<int, string>> hierarchyLevels,
+            SessionAddressBlock sessionAddressBlock,
+            bool includeSizeLevel = false
+            )
+        {
+            if (hierarchyLevels == null)
+            {
+                hierarchyLevels = new List<KeyValuePair<int, string>>();
+            }
+
+            HierarchyProfile hierarchyProfile = sessionAddressBlock.HierarchyServerSession.GetMainHierarchyData();
+
+            for (int levelIndex = 1; levelIndex <= hierarchyProfile.HierarchyLevels.Count; levelIndex++)
+            {
+                HierarchyLevelProfile hlp = (HierarchyLevelProfile)hierarchyProfile.HierarchyLevels[levelIndex];
+
+                if (hlp.LevelType != eHierarchyLevelType.Size
+                    || includeSizeLevel
+                    )
+                {
+                    hierarchyLevels.Add(new KeyValuePair<int, string>(
+                        hlp.Key,
+                        hlp.LevelID)
+                        );
+                }
+            }
+        }
+
 
     }
 }

@@ -4841,8 +4841,8 @@ namespace MIDRetail.Business.Allocation
         {
             successful = true;
 
-            //RO-3885 Data Transport for Size Need Method
-            //throw new NotImplementedException("MethodGetData is not implemented");
+            
+
             KeyValuePair<int, string> keyValuePair = new KeyValuePair<int, string>();
             ROMethodSizeNeedProperties method = new ROMethodSizeNeedProperties(  
                 method: GetName.GetMethod(method: this),
@@ -4856,6 +4856,7 @@ namespace MIDRetail.Business.Allocation
                 normalizeSizeCurves: _methodData.NormalizeSizeCurves,
                 sizeGroup: GetName.GetSizeGroup(_methodData.SizeGroupRid),
                 sizeAlternateModel: GetName.GetSizeAlternateModel(_methodData.SizeAlternateRid),
+                genericSizeCurveNameType: SAB.ClientServerSession.GlobalOptions.GenericSizeCurveNameType,
                 rOSizeCurveProperties: SizeCurveProperties.BuildSizeCurveProperties(_methodData.SizeCurveGroupRid, _methodData.GenCurveNsccdRID, _methodData.GenCurveHcgRID,
                     _methodData.GenCurveHnRID, _methodData.GenCurvePhRID, _methodData.GenCurvePhlSequence, _methodData.GenCurveMerchType,
                     _methodData.UseDefaultCurve, _methodData.ApplyRulesOnly, keyValuePair, keyValuePair, keyValuePair, SAB),
@@ -4863,7 +4864,7 @@ namespace MIDRetail.Business.Allocation
                     _methodData.SizeConstraintRid, _methodData.GenConstraintHcgRID, _methodData.GenConstraintHnRID, _methodData.GenConstraintPhRID, _methodData.GenConstraintPhlSequence, _methodData.GenConstraintMerchType,
                     _methodData.GenConstraintColorInd, keyValuePair, keyValuePair, keyValuePair, keyValuePair, SAB),
                 overrideVSWSizeConstraints: _methodData.OverrideVSWSizeConstraints,
-                vSWSizeConstraints: EnumTools.VerifyEnumValue(_methodData.VSWSizeConstraints),
+                vSWSizeConstraints: GetName.GetText(EnumTools.VerifyEnumValue(_methodData.VSWSizeConstraints).GetHashCode()),
                 overrideAvgPackDevTolerance: _methodData.OverrideAvgPackDevTolerance,
                 avgPackDeviationTolerance: _methodData.AvgPackDeviationTolerance,
                 overrideMaxPackNeedTolerance: _methodData.OverrideMaxPackNeedTolerance,
@@ -4874,6 +4875,16 @@ namespace MIDRetail.Business.Allocation
                 sizeRuleAttributeSet: SizeRuleAttributeSet.BuildSizeRuleAttributeSet(_methodData.Method_RID, eMethodType.SizeNeedAllocation, _methodData.SG_RID , _methodData.SizeGroupRid, _methodData.SizeCurveGroupRid, GetSizesUsing, GetDimensionsUsing, MethodConstraints, SAB),
                 isTemplate: Template_IND
             );
+
+            ListGenerator.FillOrganizationalHierarchyLevelList(
+                    hierarchyLevels: method.MerchandiseBasis,
+                    sessionAddressBlock: SAB,
+                    includeSizeLevel: false
+                    );
+
+            ListGenerator.FillSizeGroupList(method.SizeGroups);
+
+            ListGenerator.FillSizeCurveGroupList(method.SizeCurveGroups);
 
             return method;
         }
@@ -4961,7 +4972,7 @@ namespace MIDRetail.Business.Allocation
                 GenConstraintColorInd = roMethodSizeNeedAllocationProperties.ROSizeConstraintProperties.GenConstraintColorInd;
                 //VSW 
                 _overrideVSWSizeConstraints = roMethodSizeNeedAllocationProperties.OverrideVSWSizeConstraints;
-                _vSWSizeConstraints = roMethodSizeNeedAllocationProperties.VSWSizeConstraints;
+                _vSWSizeConstraints = (eVSWSizeConstraints)roMethodSizeNeedAllocationProperties.VSWSizeConstraints.Key;
                 _overrideAvgPackDevTolerance = roMethodSizeNeedAllocationProperties.OverrideAvgPackDevTolerance;
                 if (roMethodSizeNeedAllocationProperties.OverrideAvgPackDevTolerance)
                 {

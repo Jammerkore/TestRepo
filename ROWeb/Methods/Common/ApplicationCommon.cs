@@ -334,7 +334,7 @@ namespace Logility.ROWeb
 
             dlSizeCurve = new SizeCurve();
             dtSizeCurveGroups = dlSizeCurve.GetSizeCurveGroups();
-            lstSizeCurveGroupsComboData = ApplicationUtilities.DataTableToKeyValues(dtSizeCurveGroups, "SIZE_CURVE_GROUP_RID", "SIZE_CURVE_GROUP_NAME");
+            lstSizeCurveGroupsComboData = DataTableTools.DataTableToKeyValues(dtSizeCurveGroups, "SIZE_CURVE_GROUP_RID", "SIZE_CURVE_GROUP_NAME");
 
             return lstSizeCurveGroupsComboData;
         }

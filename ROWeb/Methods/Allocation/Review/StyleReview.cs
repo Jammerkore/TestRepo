@@ -2,6 +2,7 @@
 using Logility.ROWebSharedTypes;
 using MIDRetail.Business;
 using MIDRetail.Business.Allocation;
+using MIDRetail.Common;
 using MIDRetail.Data;
 using MIDRetail.DataCommon;
 using System;
@@ -91,7 +92,7 @@ namespace Logility.ROWeb
 
             dtViews.PrimaryKey = new DataColumn[] { dtViews.Columns["VIEW_RID"] };
 
-            return ApplicationUtilities.DataTableToKeyValues(dtViews, "VIEW_RID", "VIEW_ID");
+            return DataTableTools.DataTableToKeyValues(dtViews, "VIEW_RID", "VIEW_ID");
 
         }
         #endregion
@@ -121,7 +122,7 @@ namespace Logility.ROWeb
 
             dtRules.PrimaryKey = new DataColumn[] { dtRules.Columns["TEXT_CODE"] };
 
-            return ApplicationUtilities.DataTableToKeyValues(dtRules, "TEXT_CODE", "TEXT_VALUE");
+            return DataTableTools.DataTableToKeyValues(dtRules, "TEXT_CODE", "TEXT_VALUE");
 
         }
         #endregion
