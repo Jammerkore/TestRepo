@@ -2114,6 +2114,15 @@ namespace MIDRetail.DataCommon
             return newName;
         }
         // End TT#4106 - JSmith - Task List Explorer - Allows users to copy/paste read only system task lists.
+
+        public static string Adjust_Name(string aMethodName, int aUserRID)
+        {
+            if (aUserRID != GlobalUserRID)
+            {
+                aMethodName += " (" + UserNameStorage.GetUserName(aUserRID) + ")";
+            }
+            return aMethodName;
+        }
     }
 
     // begin TT#41 - MD - Jellis - Size Inventory Min Max pt 1

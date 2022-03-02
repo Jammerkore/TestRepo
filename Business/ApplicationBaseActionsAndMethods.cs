@@ -707,7 +707,7 @@ namespace MIDRetail.Business
                 string value = Convert.ToString(aRow[valueColName]);
                 if (includeusername)
                 {
-                    value = Adjust_Name(aRow["METHOD_NAME"].ToString(), Convert.ToInt32(aRow["USER_RID"]));
+                    value = Include.Adjust_Name(aRow["METHOD_NAME"].ToString(), Convert.ToInt32(aRow["USER_RID"]));
                 }
                 else
                 {
@@ -732,15 +732,6 @@ namespace MIDRetail.Business
             }
 
             return dv.ToTable();
-        }
-
-        internal static string Adjust_Name(string aMethodName, int aUserRID)
-        {
-            if (aUserRID != Include.GlobalUserRID)
-            {
-                aMethodName += " (" + UserNameStorage.GetUserName(aUserRID) + ")";
-            }
-            return aMethodName;
         }
 
         /// <summary>

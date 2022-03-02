@@ -2044,12 +2044,41 @@ namespace MIDRetail.Business.Allocation
                 fillSizesToType: EnumTools.VerifyEnumValue(_methodData.FillSizesToType),
                 sizeGroup: GetName.GetSizeGroup(_methodData.SizeGroupRid),
                 sizeAlternateModel: GetName.GetSizeAlternateModel(_methodData.SizeAlternateRid),
-                rOSizeCurveProperties: SizeCurveProperties.BuildSizeCurveProperties(_methodData.SizeCurveGroupRid, _methodData.GenCurveNsccdRID, _methodData.GenCurveHcgRID,
-                    _methodData.GenCurveHnRID, _methodData.GenCurvePhRID, _methodData.GenCurvePhlSequence, _methodData.GenCurveMerchType,
-                    _methodData.UseDefaultCurve, _methodData.ApplyRulesOnly, keyValuePair, keyValuePair, keyValuePair, SAB),
-                rOSizeConstraintProperties: SizeConstraintProperties.BuildSizeConstraintProperties(_methodData.IB_MERCH_HN_RID, _methodData.IB_MERCH_PH_RID, _methodData.IB_MERCH_PHL_SEQ, _methodData.IB_MerchandiseType,
-                    _methodData.SizeConstraintRid, _methodData.GenConstraintHcgRID, _methodData.GenConstraintHnRID, _methodData.GenConstraintPhRID, _methodData.GenConstraintPhlSequence, _methodData.GenConstraintMerchType,
-                    _methodData.GenConstraintColorInd, keyValuePair, keyValuePair, keyValuePair, keyValuePair, SAB),
+                rOSizeCurveProperties: SizeCurveProperties.BuildSizeCurveProperties(
+                    sizeCurveGroupRID: _methodData.SizeCurveGroupRid,
+                    genCurveNsccdRID: _methodData.GenCurveNsccdRID,
+                    genCurveHcgRID: _methodData.GenCurveHcgRID,
+                    genCurveHnRID: _methodData.GenCurveHnRID,
+                    genCurvePhRID: _methodData.GenCurvePhRID,
+                    genCurvePhlSequence: _methodData.GenCurvePhlSequence,
+                    genCurveMerchType: _methodData.GenCurveMerchType,
+                    isUseDefault: _methodData.UseDefaultCurve,
+                    isApplyRulesOnly: _methodData.ApplyRulesOnly,
+                    isColorSelected: _methodData.GenConstraintColorInd,
+                    sizeCurve: keyValuePair,
+                    sizeCurveGenericHierarchy: keyValuePair,
+                    sizeCurveGenericNameExtension: keyValuePair,
+                    sizeCurveGenericHeaderCharacteristic: keyValuePair,
+                    SAB: SAB
+                    ),
+                rOSizeConstraintProperties: SizeConstraintProperties.BuildSizeConstraintProperties(
+                    inventoryBasisMerchHnRID: _methodData.IB_MERCH_HN_RID,
+                    inventoryBasisMerchPhRID: _methodData.IB_MERCH_PH_RID,
+                    inventoryBasisMerchPhlSequence: _methodData.IB_MERCH_PHL_SEQ,
+                    inventoryBasisMerchType: _methodData.IB_MerchandiseType,
+                    sizeConstraintRID: _methodData.SizeConstraintRid,
+                    genConstraintHcgRID: _methodData.GenConstraintHcgRID,
+                    genConstraintHnRID: _methodData.GenConstraintHnRID,
+                    genConstraintPhRID: _methodData.GenConstraintPhRID,
+                    genConstraintPhlSequence: _methodData.GenConstraintPhlSequence,
+                    genConstraintMerchType: _methodData.GenConstraintMerchType,
+                    genConstraintColorInd: _methodData.GenConstraintColorInd,
+                    inventoryBasis: keyValuePair,
+                    sizeConstraint: keyValuePair,
+                    sizeConstraintGenericHierarchy: keyValuePair,
+                    sizeConstraintGenericHeaderChar: keyValuePair,
+                    SAB: SAB
+                    ),
                 overrideVSWSizeConstraints: _methodData.OverrideVSWSizeConstraints,
                 vSWSizeConstraints: EnumTools.VerifyEnumValue(_methodData.VSWSizeConstraints),
                 overrideAvgPackDevTolerance: _methodData.OverrideAvgPackDevTolerance,
@@ -2059,7 +2088,17 @@ namespace MIDRetail.Business.Allocation
                 packToleranceNoMaxStep: _methodData.PackToleranceNoMaxStep,
                 maxPackNeedTolerance: _methodData.MaxPackNeedTolerance,
                 attribute: GetName.GetAttributeName(_methodData.SG_RID),
-                sizeRuleAttributeSet: SizeRuleAttributeSet.BuildSizeRuleAttributeSet(_methodData.Method_RID, eMethodType.FillSizeHolesAllocation, _methodData.SG_RID, _methodData.SizeGroupRid, _methodData.SizeCurveGroupRid, GetSizesUsing, GetDimensionsUsing, MethodConstraints, SAB),
+                sizeRuleAttributeSet: SizeRuleAttributeSet.BuildSizeRuleAttributeSet(
+                    methodRID: _methodData.Method_RID,
+                    methodType: eMethodType.FillSizeHolesAllocation,
+                    attributeRID: _methodData.SG_RID,
+                    sizeGroupRID: _methodData.SizeGroupRid,
+                    sizeCurveGroupRID: _methodData.SizeCurveGroupRid,
+                    getSizesUsing: GetSizesUsing,
+                    getDimensionsUsing: GetDimensionsUsing,
+                    methodConstraints: MethodConstraints,
+                    SAB: SAB
+                    ),
                 isTemplate: Template_IND
                 );
 
@@ -2106,9 +2145,12 @@ namespace MIDRetail.Business.Allocation
                 SizeGroupRid = roMethodFillSizeAllocationProperties.SizeGroup.Key;
                 _sizeAlternateRid = roMethodFillSizeAllocationProperties.SizeAlternateModel.Key;
                 //Size Curve Group Box 
-                SizeCurveGroupRid = roMethodFillSizeAllocationProperties.ROSizeCurveProperties.SizeCurve.Key;
-                GenCurveNsccdRID = roMethodFillSizeAllocationProperties.ROSizeCurveProperties.SizeCurveGenericNameExtension.Key;
-                GenCurveMerchType = roMethodFillSizeAllocationProperties.ROSizeCurveProperties.GenCurveMerchType;
+                SizeCurveGroupRid = roMethodFillSizeAllocationProperties.ROSizeCurveProperties.SizeCurveGroupKey;
+                if (SAB.ClientServerSession.GlobalOptions.GenericSizeCurveNameType == eGenericSizeCurveNameType.NodePropertiesName)
+                {
+                    GenCurveNsccdRID = roMethodFillSizeAllocationProperties.ROSizeCurveProperties.HeaderCharacteristicsOrNameExtensionKey;
+                }
+                GenCurveMerchType = roMethodFillSizeAllocationProperties.ROSizeCurveProperties.MerchandiseType;
                 switch (GenCurveMerchType)
                 {
                     case eMerchandiseType.HierarchyLevel:
@@ -2117,7 +2159,7 @@ namespace MIDRetail.Business.Allocation
                         GenCurveHnRID = Include.NoRID; 
                         break;
                     default: //eMerchandiseType.Node
-                        GenCurveHnRID = roMethodFillSizeAllocationProperties.ROSizeCurveProperties.SizeCurveGenericHierarchy.Key;
+                        GenCurveHnRID = Include.NoRID;
                         break;
                 }
                 

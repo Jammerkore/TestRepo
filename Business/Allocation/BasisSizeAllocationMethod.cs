@@ -2451,12 +2451,41 @@ namespace MIDRetail.Business.Allocation
                 userKey: User_RID,
                 filter: GetName.GetFilterName(_methodData.StoreFilterRid),
                 sizeGroup: GetName.GetSizeGroup(_methodData.SizeGroupRid),
-                rOSizeCurveProperties: SizeCurveProperties.BuildSizeCurveProperties(_methodData.SizeCurveGroupRid, _methodData.GenCurveNsccdRID, _methodData.GenCurveHcgRID,
-                    _methodData.GenCurveHnRID, _methodData.GenCurvePhRID, _methodData.GenCurvePhlSequence, _methodData.GenCurveMerchType,
-                    _methodData.UseDefaultCurve, _methodData.ApplyRulesOnly, keyValuePair, keyValuePair, keyValuePair, SAB),
-                rOSizeConstraintProperties: SizeConstraintProperties.BuildSizeConstraintProperties(-1, -1, 0, 0, //inventory basis not used for this method
-                    _methodData.SizeConstraintRid, _methodData.GenConstraintHcgRID, _methodData.GenConstraintHnRID, _methodData.GenConstraintPhRID, _methodData.GenConstraintPhlSequence, _methodData.GenConstraintMerchType,
-                    _methodData.GenConstraintColorInd, keyValuePair, keyValuePair, keyValuePair, keyValuePair, SAB),
+                rOSizeCurveProperties: SizeCurveProperties.BuildSizeCurveProperties(
+                    sizeCurveGroupRID: _methodData.SizeCurveGroupRid,
+                    genCurveNsccdRID: _methodData.GenCurveNsccdRID,
+                    genCurveHcgRID: _methodData.GenCurveHcgRID,
+                    genCurveHnRID: _methodData.GenCurveHnRID,
+                    genCurvePhRID: _methodData.GenCurvePhRID,
+                    genCurvePhlSequence: _methodData.GenCurvePhlSequence,
+                    genCurveMerchType: _methodData.GenCurveMerchType,
+                    isUseDefault: _methodData.UseDefaultCurve,
+                    isApplyRulesOnly: _methodData.ApplyRulesOnly,
+                    isColorSelected: _methodData.GenConstraintColorInd,
+                    sizeCurve: keyValuePair,
+                    sizeCurveGenericHierarchy: keyValuePair,
+                    sizeCurveGenericNameExtension: keyValuePair,
+                    sizeCurveGenericHeaderCharacteristic: keyValuePair,
+                    SAB: SAB
+                    ),
+                rOSizeConstraintProperties: SizeConstraintProperties.BuildSizeConstraintProperties(
+                    inventoryBasisMerchHnRID: -1,   //inventory basis not used for this method
+                    inventoryBasisMerchPhRID: -1,
+                    inventoryBasisMerchPhlSequence: 0,
+                    inventoryBasisMerchType: 0,
+                    sizeConstraintRID: _methodData.SizeConstraintRid,
+                    genConstraintHcgRID: _methodData.GenConstraintHcgRID,
+                    genConstraintHnRID: _methodData.GenConstraintHnRID,
+                    genConstraintPhRID: _methodData.GenConstraintPhRID,
+                    genConstraintPhlSequence: _methodData.GenConstraintPhlSequence,
+                    genConstraintMerchType: _methodData.GenConstraintMerchType,
+                    genConstraintColorInd: _methodData.GenConstraintColorInd,
+                    inventoryBasis: keyValuePair,
+                    sizeConstraint: keyValuePair,
+                    sizeConstraintGenericHierarchy: keyValuePair,
+                    sizeConstraintGenericHeaderChar: keyValuePair,
+                    SAB: SAB
+                    ),
                 header:GetName.GetHeader(_methodData.BasisHdrRid, SAB),
                 includeReserve: _methodData.IncludeReserveInd, 
                 colorComponent: GetName.GetColorOrSizeComponent(_methodData.HeaderComponent),
@@ -2464,8 +2493,28 @@ namespace MIDRetail.Business.Allocation
                 rule: GetName.GetBasisSizeMethodRuleType(_methodData.Rule),
                 ruleQuantity: _methodData.RuleQuantity,
                 attribute: GetName.GetAttributeName(_methodData.SG_RID),
-                sizeRuleAttributeSet: SizeRuleAttributeSet.BuildSizeRuleAttributeSet(_methodData.Method_RID, eMethodType.BasisSizeAllocation, _methodData.SG_RID,  _methodData.SizeGroupRid, _methodData.SizeCurveGroupRid, GetSizesUsing, GetDimensionsUsing, MethodConstraints, SAB),
-                basisSizeSubstituteSet: BasisSizeSubstituteSet.BuildBasisSizeSubstituteSet(_methodData.Method_RID, eMethodType.BasisSizeAllocation, _methodData.SG_RID, _methodData.SizeGroupRid, _methodData.SizeCurveGroupRid, GetSizesUsing, GetDimensionsUsing, _methodData.SubstituteList, SAB),
+                sizeRuleAttributeSet: SizeRuleAttributeSet.BuildSizeRuleAttributeSet(
+                    methodRID: _methodData.Method_RID,
+                    methodType: eMethodType.BasisSizeAllocation,
+                    attributeRID: _methodData.SG_RID,
+                    sizeGroupRID: _methodData.SizeGroupRid,
+                    sizeCurveGroupRID: _methodData.SizeCurveGroupRid,
+                    getSizesUsing: GetSizesUsing,
+                    getDimensionsUsing: GetDimensionsUsing,
+                    methodConstraints: MethodConstraints,
+                    SAB: SAB
+                    ),
+                basisSizeSubstituteSet: BasisSizeSubstituteSet.BuildBasisSizeSubstituteSet(
+                    methodRID: _methodData.Method_RID,
+                    methodType: eMethodType.BasisSizeAllocation,
+                    attributeRID: _methodData.SG_RID,
+                    sizeGroupRID: _methodData.SizeGroupRid,
+                    sizeCurveGroupRID: _methodData.SizeCurveGroupRid,
+                    getSizesUsing: GetSizesUsing,
+                    getDimensionsUsing: GetDimensionsUsing,
+                    substituteList: _methodData.SubstituteList,
+                    SAB: SAB
+                    ),
                 isTemplate: Template_IND
             );
 
@@ -2492,9 +2541,13 @@ namespace MIDRetail.Business.Allocation
                 _StoreFilterRid = roMethodBasisSizeAllocationProperties.Filter.Key;
                 SizeGroupRid = roMethodBasisSizeAllocationProperties.SizeGroup.Key;
                 //Size Curve Group Box 
-                SizeCurveGroupRid = roMethodBasisSizeAllocationProperties.ROSizeCurveProperties.SizeCurve.Key;
-                GenCurveNsccdRID = roMethodBasisSizeAllocationProperties.ROSizeCurveProperties.SizeCurveGenericNameExtension.Key;
-                GenCurveMerchType = roMethodBasisSizeAllocationProperties.ROSizeCurveProperties.GenCurveMerchType;
+                SizeCurveGroupRid = roMethodBasisSizeAllocationProperties.ROSizeCurveProperties.SizeCurveGroupKey;
+
+                if (SAB.ClientServerSession.GlobalOptions.GenericSizeCurveNameType == eGenericSizeCurveNameType.NodePropertiesName)
+                {
+                    GenCurveNsccdRID = roMethodBasisSizeAllocationProperties.ROSizeCurveProperties.HeaderCharacteristicsOrNameExtensionKey;
+                }
+                GenCurveMerchType = roMethodBasisSizeAllocationProperties.ROSizeCurveProperties.MerchandiseType;
                 switch (GenCurveMerchType)
                 {
                     case eMerchandiseType.HierarchyLevel:
@@ -2503,7 +2556,7 @@ namespace MIDRetail.Business.Allocation
                         GenCurveHnRID = Include.NoRID;
                         break;
                     default: //eMerchandiseType.Node
-                        GenCurveHnRID = roMethodBasisSizeAllocationProperties.ROSizeCurveProperties.SizeCurveGenericHierarchy.Key;
+                        GenCurveHnRID = Include.NoRID;
                         break;
                 }
 

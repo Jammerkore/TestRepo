@@ -2558,7 +2558,7 @@ namespace Logility.ROWeb
                 if (Enum.IsDefined(typeof(eMethodTypeUI), methodType))
                 {
                     abm = (ApplicationBaseMethod)aws.Method;
-                    methodName = DataTableTools.Adjust_Name(abm.Name, abm.User_RID);
+                    methodName = Include.Adjust_Name(abm.Name, abm.User_RID);
                 }
 
                 componentType = Convert.ToInt32(aws.Component.ComponentType, CultureInfo.CurrentUICulture);
@@ -2791,7 +2791,7 @@ namespace Logility.ROWeb
                 if (Enum.IsDefined(typeof(eMethodTypeUI), methodType))
                 {
                     abm = (ApplicationBaseMethod)otspws.Method;
-                    methodName = DataTableTools.Adjust_Name(abm.Name, abm.User_RID);
+                    methodName = Include.Adjust_Name(abm.Name, abm.User_RID);
                 }
 
                 if (!otspws.UsedSystemTolerancePercent)

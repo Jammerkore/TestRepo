@@ -1324,21 +1324,76 @@ namespace MIDRetail.Business
         /// <param name="genCurveMerchType"></param> 
         /// <param name="isUseDefault"></param> 
         /// <param name="isApplyRulesOnly"></param> 
+        /// <param name="isColorSelected"></param> 
         /// output parameters
         /// <param name="sizeCurve"></param> 
         /// <param name="sizeCurveGenericHierarchy"></param> 
         /// <param name="sizeCurveGenericNameExtension"></param> 
         /// <param name="SAB"></param>
 
-        public static ROSizeCurveProperties BuildSizeCurveProperties(int sizeCurveGroupRID, int genCurveNsccdRID, int genCurveHcgRID, int genCurveHnRID, int genCurvePhRID, int genCurvePhlSequence, eMerchandiseType genCurveMerchType,
-        bool isUseDefault, bool isApplyRulesOnly, KeyValuePair<int, string> sizeCurve, KeyValuePair<int, string> sizeCurveGenericHierarchy, KeyValuePair<int, string> sizeCurveGenericNameExtension, SessionAddressBlock SAB)
+        public static ROSizeCurveProperties BuildSizeCurveProperties(
+            int sizeCurveGroupRID, 
+            int genCurveNsccdRID, 
+            int genCurveHcgRID, 
+            int genCurveHnRID, 
+            int genCurvePhRID, 
+            int genCurvePhlSequence, 
+            eMerchandiseType genCurveMerchType,
+            bool isUseDefault, 
+            bool isApplyRulesOnly, 
+            bool isColorSelected,
+            KeyValuePair<int, string> sizeCurve,
+            KeyValuePair<int, string> sizeCurveGenericHierarchy,
+            KeyValuePair<int, string> sizeCurveGenericNameExtension,
+            KeyValuePair<int, string> sizeCurveGenericHeaderCharacteristic,
+            SessionAddressBlock SAB
+            )
         {
             sizeCurve =  GetName.GetSizeCurveGroupName(sizeCurveGroupRID);
             sizeCurveGenericHierarchy = GetName.GetLevelKeyValuePair(genCurveMerchType, genCurveHnRID, genCurvePhRID, genCurvePhlSequence, SAB);
             sizeCurveGenericNameExtension = GetName.GetSizeCurveName(genCurveNsccdRID);
-            
-            ROSizeCurveProperties sizeCurveProperties = new ROSizeCurveProperties(sizeCurveGroupRID, genCurveNsccdRID, genCurveHcgRID, genCurveHnRID, genCurvePhRID, genCurvePhlSequence, EnumTools.VerifyEnumValue(genCurveMerchType),
-            isUseDefault, isApplyRulesOnly, sizeCurve,sizeCurveGenericHierarchy, sizeCurveGenericNameExtension);
+            int headerCharacteristicsOrNameExtensionKey = Include.Undefined;
+            if (SAB.ClientServerSession.GlobalOptions.GenericSizeCurveNameType == eGenericSizeCurveNameType.HeaderCharacteristic)
+            {
+                headerCharacteristicsOrNameExtensionKey = sizeCurveGenericNameExtension.Key;
+            }
+            else if (SAB.ClientServerSession.GlobalOptions.GenericSizeCurveNameType == eGenericSizeCurveNameType.NodePropertiesName)
+            {
+                headerCharacteristicsOrNameExtensionKey = sizeCurveGenericNameExtension.Key;
+            }
+
+            ROSizeCurveProperties sizeCurveProperties = new ROSizeCurveProperties(
+                sizeCurveGroupKey: sizeCurveGroupRID,
+                genericSizeCurveNameType: SAB.ClientServerSession.GlobalOptions.GenericSizeCurveNameType,
+                merchandiseType: EnumTools.VerifyEnumValue(genCurveMerchType),
+                hierarchyLevelKey: genCurvePhlSequence,
+                isUseDefault: isUseDefault,
+                isApplyRulesOnly: isApplyRulesOnly,
+                isColorSelected: isColorSelected,
+                headerCharacteristicsOrNameExtensionKey: headerCharacteristicsOrNameExtensionKey
+                );
+
+            ListGenerator.FillSizeCurveGroupList(
+                sizeCurveGroups: sizeCurveProperties.SizeCurveGroups
+                );
+            ListGenerator.FillOrganizationalHierarchyLevelList(
+                hierarchyLevels: sizeCurveProperties.HierarchyLevels,
+                sessionAddressBlock: SAB
+                );
+            if (SAB.ClientServerSession.GlobalOptions.GenericSizeCurveNameType == eGenericSizeCurveNameType.HeaderCharacteristic)
+            {
+                ListGenerator.FillHeaderCharacteristicList(
+                    headerCharacteristics: sizeCurveProperties.HeaderCharacteristicsOrNameExtensions,
+                    sessionAddressBlock: SAB
+                    );
+            }
+            else if (SAB.ClientServerSession.GlobalOptions.GenericSizeCurveNameType == eGenericSizeCurveNameType.NodePropertiesName)
+            {
+                ListGenerator.FillNameExtensionList(
+                    nameExtensions: sizeCurveProperties.HeaderCharacteristicsOrNameExtensions,
+                    sessionAddressBlock: SAB
+                    );
+            }
 
             return sizeCurveProperties;
         }
@@ -1350,18 +1405,53 @@ namespace MIDRetail.Business
         /// Builds the variables for the Size Constraint Group box
         /// </summary>
         
-        public static ROSizeConstraintProperties BuildSizeConstraintProperties(int inventoryBasisMerchHnRID, int inventoryBasisMerchPhRID, int inventoryBasisMerchPhlSequence, eMerchandiseType inventoryBasisMerchType,
-            int sizeConstraintRID, int genConstraintHcgRID, int genConstraintHnRID, int genConstraintPhRID, int genConstraintPhlSequence, eMerchandiseType genConstraintMerchType,
-            bool genConstraintColorInd, KeyValuePair<int, string> inventoryBasis, KeyValuePair<int, string> sizeConstraint, KeyValuePair<int, string> sizeConstraintGenericHierarchy, KeyValuePair<int, string> sizeConstraintGenericHeaderChar, SessionAddressBlock SAB)
+        public static ROSizeConstraintProperties BuildSizeConstraintProperties(
+            int inventoryBasisMerchHnRID, 
+            int inventoryBasisMerchPhRID, 
+            int inventoryBasisMerchPhlSequence, 
+            eMerchandiseType inventoryBasisMerchType,
+            int sizeConstraintRID, 
+            int genConstraintHcgRID, 
+            int genConstraintHnRID, 
+            int genConstraintPhRID, 
+            int genConstraintPhlSequence, 
+            eMerchandiseType genConstraintMerchType,
+            bool genConstraintColorInd, 
+            KeyValuePair<int, string> inventoryBasis, 
+            KeyValuePair<int, string> sizeConstraint, 
+            KeyValuePair<int, string> sizeConstraintGenericHierarchy, 
+            KeyValuePair<int, string> sizeConstraintGenericHeaderChar, 
+            SessionAddressBlock SAB
+            )
         {
-            inventoryBasis = GetName.GetLevelKeyValuePair(inventoryBasisMerchType, nodeRID: inventoryBasisMerchHnRID, merchPhRID: inventoryBasisMerchPhRID, merchPhlSequence: inventoryBasisMerchPhlSequence, SAB: SAB);
+            inventoryBasis = GetName.GetLevelKeyValuePair(
+                merchandiseType: inventoryBasisMerchType, 
+                nodeRID: inventoryBasisMerchHnRID, 
+                merchPhRID: inventoryBasisMerchPhRID, 
+                merchPhlSequence: inventoryBasisMerchPhlSequence, 
+                SAB: SAB
+                );
             sizeConstraint  = GetName.GetSizeConstraint(sizeConstraintRID);
             sizeConstraintGenericHierarchy = GetName.GetLevelKeyValuePair(genConstraintMerchType, genConstraintHnRID, genConstraintPhRID, genConstraintPhlSequence, SAB);
             sizeConstraintGenericHeaderChar = GetName.GetHeaderCharGroupProfile(genConstraintHcgRID);
             
-            ROSizeConstraintProperties sizeConstraintProperties = new ROSizeConstraintProperties(inventoryBasisMerchHnRID, inventoryBasisMerchPhRID, inventoryBasisMerchPhlSequence, EnumTools.VerifyEnumValue(inventoryBasisMerchType),
-            sizeConstraintRID, genConstraintHcgRID, genConstraintHnRID, genConstraintPhRID, genConstraintPhlSequence, EnumTools.VerifyEnumValue(genConstraintMerchType),
-            genConstraintColorInd, inventoryBasis, sizeConstraint, sizeConstraintGenericHierarchy, sizeConstraintGenericHeaderChar);
+            ROSizeConstraintProperties sizeConstraintProperties = new ROSizeConstraintProperties(
+                inventoryBasisMerchHnRID, 
+                inventoryBasisMerchPhRID, 
+                inventoryBasisMerchPhlSequence, 
+                EnumTools.VerifyEnumValue(inventoryBasisMerchType),
+                sizeConstraintRID, 
+                genConstraintHcgRID, 
+                genConstraintHnRID, 
+                genConstraintPhRID, 
+                genConstraintPhlSequence, 
+                EnumTools.VerifyEnumValue(genConstraintMerchType),
+                genConstraintColorInd, 
+                inventoryBasis, 
+                sizeConstraint, 
+                sizeConstraintGenericHierarchy, 
+                sizeConstraintGenericHeaderChar
+                );
 
             return sizeConstraintProperties;
         }
@@ -1373,8 +1463,17 @@ namespace MIDRetail.Business
         /// Builds the RO Size Rule Attribute Set lists for the Size Methods' Rule Tab from the Dataset MethodConstraints
         /// </summary>
 
-        public static ROMethodSizeRuleAttributeSet BuildSizeRuleAttributeSet(int methodRID, eMethodType methodType, int attributeRID, int sizeGroupRID, int sizeCurveGroupRID, eGetSizes getSizesUsing, eGetDimensions getDimensionsUsing , DataSet methodConstraints,
-            SessionAddressBlock SAB)
+        public static ROMethodSizeRuleAttributeSet BuildSizeRuleAttributeSet(
+            int methodRID, 
+            eMethodType methodType, 
+            int attributeRID, 
+            int sizeGroupRID, 
+            int sizeCurveGroupRID, 
+            eGetSizes getSizesUsing, 
+            eGetDimensions getDimensionsUsing, 
+            DataSet methodConstraints,
+            SessionAddressBlock SAB
+            )
         {
             
             DataTable combinedMethodConstrints = new DataTable();
@@ -2027,8 +2126,17 @@ namespace MIDRetail.Business
         /// Builds the RO Basis Size Substitute List for the Basis Size Substitute Tab from the _substituteList
         /// </summary>
 
-        public static ROMethodBasisSizeSubstituteSet BuildBasisSizeSubstituteSet(int methodRID, eMethodType methodType, int attributeRID, int sizeGroupRID, int sizeCurveGroupRID, eGetSizes getSizesUsing, eGetDimensions getDimensionsUsing
-            , ArrayList substituteList, SessionAddressBlock SAB)
+        public static ROMethodBasisSizeSubstituteSet BuildBasisSizeSubstituteSet(
+            int methodRID, 
+            eMethodType methodType, 
+            int attributeRID, 
+            int sizeGroupRID, 
+            int sizeCurveGroupRID, 
+            eGetSizes getSizesUsing, 
+            eGetDimensions getDimensionsUsing, 
+            ArrayList substituteList, 
+            SessionAddressBlock SAB
+            )
         {
             List<ROMethodBasisSizeSubstituteProperties> rOMethodBasisSizeSubstitutes = new List<ROMethodBasisSizeSubstituteProperties>();
             KeyValuePair<int, string> sizeType = new KeyValuePair<int, string>();
@@ -3400,6 +3508,68 @@ namespace MIDRetail.Business
             }
         }
 
+        /// <summary>
+		/// Fills a KeyValuePair List with size alternate models.
+		/// </summary>
+		/// <param name="sizeAlternateModels">KeyValuePair object to fill</param>
+		public static void FillSizeAlternateModelsList(
+            List<KeyValuePair<int, string>> sizeAlternateModels)
 
+        {
+            SizeModelData sizeModelData = new SizeModelData();
+            DataTable dataTableSizeAlternates = sizeModelData.SizeAlternateModel_Read();
+            sizeAlternateModels.AddRange(DataTableTools.DataTableToKeyValues(dataTableSizeAlternates, "SIZE_ALTERNATE_RID", "SIZE_ALTERNATE_NAME"));
+        }
+
+        /// <summary>
+		/// Fills class with header characteristics
+		/// </summary>
+		public static void FillHeaderCharacteristicList(
+            List<KeyValuePair<int, string>> headerCharacteristics,
+            SessionAddressBlock sessionAddressBlock
+            )
+        {
+            if (headerCharacteristics == null)
+            {
+                headerCharacteristics = new List<KeyValuePair<int, string>>();
+            }
+
+            HeaderCharGroupProfileList headerCharGroupProfileList = sessionAddressBlock.HeaderServerSession.GetHeaderCharGroups();
+            foreach (HeaderCharGroupProfile hcgp in headerCharGroupProfileList)
+            {
+                headerCharacteristics.Add(new KeyValuePair<int, string>(
+                        hcgp.Key,
+                        hcgp.ID)
+                        );
+            }
+        }
+
+        /// <summary>
+		/// Fills class with header characteristics
+		/// </summary>
+		public static void FillNameExtensionList(
+            List<KeyValuePair<int, string>> nameExtensions,
+            SessionAddressBlock sessionAddressBlock
+            )
+        {
+            if (nameExtensions == null)
+            {
+                nameExtensions = new List<KeyValuePair<int, string>>();
+            }
+
+            MerchandiseHierarchyData merchandiseHierarchyData = new MerchandiseHierarchyData();
+            DataTable dataTableNodeSizeCurves = merchandiseHierarchyData.SizeCurveNames_Read();
+            if (dataTableNodeSizeCurves.Rows.Count > 0)
+            {
+                for (int i = 0; i < dataTableNodeSizeCurves.Rows.Count; i++)
+                {
+                    DataRow dr = dataTableNodeSizeCurves.Rows[i];
+                    nameExtensions.Add(new KeyValuePair<int, string>(
+                        Convert.ToInt32(dr["NSCCD_RID"]),
+                        Convert.ToString(dr["CURVE_NAME"]))
+                        );
+                }
+            }
+        }
     }
 }

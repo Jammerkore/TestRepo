@@ -551,9 +551,9 @@ namespace Logility.ROWebSharedTypes
     {
         // fields specific to Size Need Method
         [DataMember(IsRequired = true)]
-        KeyValuePair<int, string> _merch_HN;
+        KeyValuePair<int, string> _merchandise;
         [DataMember(IsRequired = true)]
-        KeyValuePair<int, int> _merch_PH;
+        KeyValuePair<int, int> _merchandiseHierarchy;
         [DataMember(IsRequired = true)]
         eMerchandiseType _merchandiseType;
         [DataMember(IsRequired = true)]
@@ -564,8 +564,6 @@ namespace Logility.ROWebSharedTypes
         KeyValuePair<int, string> _sizeGroup;
         [DataMember(IsRequired = true)]
         KeyValuePair<int, string> _sizeAlternateModel;
-        [DataMember(IsRequired = true)]
-        eGenericSizeCurveNameType _genericSizeCurveNameType;
         [DataMember(IsRequired = true)]
         ROSizeCurveProperties _rOSizeCurveProperties;
         [DataMember(IsRequired = true)]
@@ -591,23 +589,9 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         List<KeyValuePair<int, string>> _sizeGroups;
         [DataMember(IsRequired = true)]
-        List<KeyValuePair<int, string>> _sizeCurveGroups;
-        [DataMember(IsRequired = true)]
-        List<KeyValuePair<int, string>> _sizeGenericHierarchyLevels;
-        [DataMember(IsRequired = true)]
-        List<KeyValuePair<int, string>> _sizeGenericHeaderCharacteristicsOrNameExtensions;
-        [DataMember(IsRequired = true)]
         List<KeyValuePair<int, string>> _vSWSizeConstraintRules;
         [DataMember(IsRequired = true)]
         List<KeyValuePair<int, string>> _sizeAlternateModels;
-        [DataMember(IsRequired = true)]
-        List<KeyValuePair<int, string>> _sizeConstraintInventoryBasis;
-        [DataMember(IsRequired = true)]
-        List<KeyValuePair<int, string>> _sizeConstraints;
-        [DataMember(IsRequired = true)]
-        List<KeyValuePair<int, string>> _sizeConstraintHeaderCharacteristics;
-        [DataMember(IsRequired = true)]
-        List<KeyValuePair<int, string>> _sizeConstraintHierarchyLevels;
 
         //Rule tab properties
         [DataMember(IsRequired = true)]
@@ -617,15 +601,15 @@ namespace Logility.ROWebSharedTypes
 
 
         #region Public Properties
-        public KeyValuePair<int, string> Merch_HN
+        public KeyValuePair<int, string> Merchandise
         {
-            get { return _merch_HN; }
-            set { _merch_HN = value; }
+            get { return _merchandise; }
+            set { _merchandise = value; }
         }
-        public KeyValuePair<int, int> Merch_PH
+        public KeyValuePair<int, int> MerchandiseHierarchy
         {
-            get { return _merch_PH; }
-            set { _merch_PH = value; }
+            get { return _merchandiseHierarchy; }
+            set { _merchandiseHierarchy = value; }
         }
 
         public eMerchandiseType MerchandiseType
@@ -659,11 +643,6 @@ namespace Logility.ROWebSharedTypes
         {
             get { return _sizeAlternateModel; }
             set { _sizeAlternateModel = value; }
-        }
-        public eGenericSizeCurveNameType GenericSizeCurveNameType
-        {
-            get { return _genericSizeCurveNameType; }
-            set { _genericSizeCurveNameType = value; }
         }
         public ROSizeCurveProperties ROSizeCurveProperties
         {
@@ -726,18 +705,6 @@ namespace Logility.ROWebSharedTypes
         {
             get { return _sizeGroups; }
         }
-        public List<KeyValuePair<int, string>> SizeCurveGroups
-        {
-            get { return _sizeCurveGroups; }
-        }
-        public List<KeyValuePair<int, string>> SizeGenericHierarchyLevels
-        {
-            get { return _sizeGenericHierarchyLevels; }
-        }
-        public List<KeyValuePair<int, string>> SizeGenericHeaderCharacteristicsOrNameExtensions
-        {
-            get { return _sizeGenericHeaderCharacteristicsOrNameExtensions; }
-        }
         public List<KeyValuePair<int, string>> VSWSizeConstraintRules
         {
             get { return _vSWSizeConstraintRules; }
@@ -746,22 +713,7 @@ namespace Logility.ROWebSharedTypes
         {
             get { return _sizeAlternateModels; }
         }
-        public List<KeyValuePair<int, string>> SizeConstraintInventoryBasis
-        {
-            get { return _sizeConstraintInventoryBasis; }
-        }
-        public List<KeyValuePair<int, string>> SizeConstraints
-        {
-            get { return _sizeConstraints; }
-        }
-        public List<KeyValuePair<int, string>> SizeConstraintHeaderCharacteristics
-        {
-            get { return _sizeConstraintHeaderCharacteristics; }
-        }
-        public List<KeyValuePair<int, string>> SizeConstraintHierarchyLevels
-        {
-            get { return _sizeConstraintHierarchyLevels; }
-        }
+
         public KeyValuePair<int, string> Attribute
         {
             get { return _attribute; }
@@ -786,7 +738,6 @@ namespace Logility.ROWebSharedTypes
             bool normalizeSizeCurves, 
             KeyValuePair<int, string> sizeGroup,
             KeyValuePair<int, string> sizeAlternateModel,
-            eGenericSizeCurveNameType genericSizeCurveNameType,
             ROSizeCurveProperties rOSizeCurveProperties, 
             ROSizeConstraintProperties rOSizeConstraintProperties,
             bool overrideVSWSizeConstraints,
@@ -811,14 +762,13 @@ namespace Logility.ROWebSharedTypes
 
         {
             // fields specific to Size Need method
-            _merch_HN = merch_HN;
-            _merch_PH = new KeyValuePair<int, int>(merch_PH_RID, merch_PHL_SEQ);
+            _merchandise = merch_HN;
+            _merchandiseHierarchy = new KeyValuePair<int, int>(merch_PH_RID, merch_PHL_SEQ);
             _merchandiseType = merchandiseType;
             _normalizeSizeCurvesDefaultIsOverridden = normalizeSizeCurvesDefaultIsOverridden;
             _normalizeSizeCurves = normalizeSizeCurves;
             _sizeGroup = sizeGroup;
             _sizeAlternateModel = sizeAlternateModel;
-            _genericSizeCurveNameType = genericSizeCurveNameType;
             _rOSizeCurveProperties = rOSizeCurveProperties;
             _rOSizeConstraintProperties = rOSizeConstraintProperties;
             _overrideVSWSizeConstraints = overrideVSWSizeConstraints;
@@ -833,15 +783,8 @@ namespace Logility.ROWebSharedTypes
             _sizeRuleAttributeSet = sizeRuleAttributeSet;
             _merchandiseBasis = new List<KeyValuePair<int, string>>();
             _sizeGroups = new List<KeyValuePair<int, string>>();
-            _sizeCurveGroups = new List<KeyValuePair<int, string>>();
-            _sizeGenericHierarchyLevels = new List<KeyValuePair<int, string>>();
-            _sizeGenericHeaderCharacteristicsOrNameExtensions = new List<KeyValuePair<int, string>>();
             _vSWSizeConstraintRules = new List<KeyValuePair<int, string>>();
             _sizeAlternateModels = new List<KeyValuePair<int, string>>();
-            _sizeConstraintInventoryBasis = new List<KeyValuePair<int, string>>();
-            _sizeConstraints = new List<KeyValuePair<int, string>>();
-            _sizeConstraintHeaderCharacteristics = new List<KeyValuePair<int, string>>();
-            _sizeConstraintHierarchyLevels = new List<KeyValuePair<int, string>>();
         }
     }
     [DataContract(Name = "ROMethodBasisSizeProperties", Namespace = "http://Logility.ROWeb/")]
@@ -1750,29 +1693,18 @@ namespace Logility.ROWebSharedTypes
     [DataContract(Name = "ROSizeCurveProperties", Namespace = "http://Logility.ROWeb/")]
     public class ROSizeCurveProperties
     {
-        // input parameters
         [DataMember(IsRequired = true)]
-        private int _sizeCurveGroupRID;
+        private int _sizeCurveGroupKey;
 
         [DataMember(IsRequired = true)]
-        private int _genCurveNsccdRID;
+        eGenericSizeCurveNameType _genericSizeCurveNameType;
 
         [DataMember(IsRequired = true)]
-        private int _genCurveHcgRID;
+        private eMerchandiseType _merchandiseType;
 
         [DataMember(IsRequired = true)]
-        private int _genCurveHnRID;
+        private int _hierarchyLevelKey;
 
-        [DataMember(IsRequired = true)]
-        private int _genCurvePhRID;
-
-        [DataMember(IsRequired = true)]
-        private int _genCurvePhlSequence;
-
-        [DataMember(IsRequired = true)]
-        private eMerchandiseType _genCurveMerchType;
-
-        //output parameters
         [DataMember(IsRequired = true)]
         private bool _isUseDefault;
 
@@ -1780,52 +1712,68 @@ namespace Logility.ROWebSharedTypes
         private bool _isApplyRulesOnly;
 
         [DataMember(IsRequired = true)]
-        private KeyValuePair<int, string> _sizeCurve;
+        private bool _isColorSelected;
 
         [DataMember(IsRequired = true)]
-        private KeyValuePair<int, string> _sizeCurveGenericHierarchy;
+        private int _headerCharacteristicsOrNameExtensionKey;
 
         [DataMember(IsRequired = true)]
-        private KeyValuePair<int, string> _sizeCurveGenericNameExtension;
+        List<KeyValuePair<int, string>> _sizeCurveGroups;
 
+        [DataMember(IsRequired = true)]
+        List<KeyValuePair<int, string>> _hierarchyLevels;
 
+        [DataMember(IsRequired = true)]
+        List<KeyValuePair<int, string>> _headerCharacteristicsOrNameExtensions;
 
-        public ROSizeCurveProperties(int sizeCurveGroupRID, int genCurveNsccdRID, int genCurveHcgRID, int genCurveHnRID, int genCurvePhRID, int genCurvePhlSequence, eMerchandiseType genCurveMerchType,
-            bool isUseDefault, bool isApplyRulesOnly, KeyValuePair<int, string> sizeCurve, KeyValuePair<int, string> sizeCurveGenericHierarchy, KeyValuePair<int, string> sizeCurveGenericNameExtension)
+        public ROSizeCurveProperties(
+            int sizeCurveGroupKey,
+            eGenericSizeCurveNameType genericSizeCurveNameType,
+            eMerchandiseType merchandiseType,
+            int hierarchyLevelKey,
+            bool isUseDefault, 
+            bool isApplyRulesOnly, 
+            bool isColorSelected,
+            int headerCharacteristicsOrNameExtensionKey
+            )
         {
-            _sizeCurveGroupRID = sizeCurveGroupRID;
-            _genCurveNsccdRID = genCurveNsccdRID;
-            _genCurveHcgRID = genCurveHcgRID;
-            _genCurveHnRID = genCurveHnRID;
-            _genCurvePhRID = genCurvePhRID;
-            _genCurvePhlSequence = genCurvePhlSequence;
-            _genCurveMerchType = genCurveMerchType;
+            _sizeCurveGroupKey = sizeCurveGroupKey;
+            _merchandiseType = merchandiseType;
+            _hierarchyLevelKey = hierarchyLevelKey;
+            _genericSizeCurveNameType = genericSizeCurveNameType;
             _isUseDefault = isUseDefault;
             _isApplyRulesOnly = isApplyRulesOnly;
-            _sizeCurve = sizeCurve;
-            _sizeCurveGenericHierarchy = sizeCurveGenericHierarchy;
-            _sizeCurveGenericNameExtension = sizeCurveGenericNameExtension;
+            _isColorSelected = isColorSelected;
+            _headerCharacteristicsOrNameExtensionKey = headerCharacteristicsOrNameExtensionKey;
+            _sizeCurveGroups = new List<KeyValuePair<int, string>>();
+            _hierarchyLevels = new List<KeyValuePair<int, string>>();
+            _headerCharacteristicsOrNameExtensions = new List<KeyValuePair<int, string>>();
         }
 
-        public int SizeCurveGroupRID { get { return _sizeCurveGroupRID; } set { _sizeCurveGroupRID = value; } }
-        public int GenCurveNsccdRID { get { return _genCurveNsccdRID; } set { _genCurveNsccdRID = value; } }
-        public int GenCurveHcgRID { get { return _genCurveHcgRID; } set { _genCurveHcgRID = value; } }
-        public int GenCurveHnRID { get { return _genCurveHnRID; } set { _genCurveHnRID = value; } }
-        public int GenCurvePhRID { get { return _genCurvePhRID; } set { _genCurvePhRID = value; } }
-        public int GenCurvePhlSequence { get { return _genCurvePhlSequence; } set { _genCurvePhlSequence = value; } }
-        public eMerchandiseType GenCurveMerchType
+        public int SizeCurveGroupKey { get { return _sizeCurveGroupKey; } set { _sizeCurveGroupKey = value; } }
+        public int HierarchyLevelKey { get { return _hierarchyLevelKey; } set { _hierarchyLevelKey = value; } }
+
+        public eGenericSizeCurveNameType GenericSizeCurveNameType
         {
-            get { return _genCurveMerchType; }
-            set
-            {
-                _genCurveMerchType = value;
-            }
+            get { return _genericSizeCurveNameType; }
+            set { _genericSizeCurveNameType = value; }
+        }
+        public eMerchandiseType MerchandiseType
+        {
+            get { return _merchandiseType; }
+            set { _merchandiseType = value; }
         }
         public bool IsUseDefault { get { return _isUseDefault; } set { _isUseDefault = value; } }
         public bool IsApplyRulesOnly { get { return _isApplyRulesOnly; } set { _isApplyRulesOnly = value; } }
-        public KeyValuePair<int, string> SizeCurve { get { return _sizeCurve; } set { _sizeCurve = value; } }
-        public KeyValuePair<int, string> SizeCurveGenericHierarchy { get { return _sizeCurveGenericHierarchy; } set { _sizeCurveGenericHierarchy = value; } }
-        public KeyValuePair<int, string> SizeCurveGenericNameExtension { get { return _sizeCurveGenericNameExtension; } set { _sizeCurveGenericNameExtension = value; } }
+        public bool IsColorSelected { get { return _isColorSelected; } set { _isColorSelected = value; } }
+        public int HeaderCharacteristicsOrNameExtensionKey
+        {
+            get { return _headerCharacteristicsOrNameExtensionKey; }
+            set { _headerCharacteristicsOrNameExtensionKey = value; }
+        }
+        public List<KeyValuePair<int, string>> SizeCurveGroups { get { return _sizeCurveGroups; } }
+        public List<KeyValuePair<int, string>> HierarchyLevels { get { return _hierarchyLevels; } }
+        public List<KeyValuePair<int, string>> HeaderCharacteristicsOrNameExtensions { get { return _headerCharacteristicsOrNameExtensions; } }
 
     }
 
@@ -1881,6 +1829,18 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         private KeyValuePair<int, string> _sizeConstraintGenericHeaderChar;
 
+        [DataMember(IsRequired = true)]
+        List<KeyValuePair<int, string>> _sizeConstraintInventoryBasis;
+
+        [DataMember(IsRequired = true)]
+        List<KeyValuePair<int, string>> _sizeConstraints;
+
+        [DataMember(IsRequired = true)]
+        List<KeyValuePair<int, string>> _sizeConstraintHeaderCharacteristics;
+
+        [DataMember(IsRequired = true)]
+        List<KeyValuePair<int, string>> _sizeConstraintHierarchyLevels;
+
 
 
         public ROSizeConstraintProperties(int inventoryBasisMerchHnRID, int inventoryBasisMerchPhRID, int inventoryBasisMerchPhlSequence, eMerchandiseType inventoryBasisMerchType,
@@ -1902,6 +1862,10 @@ namespace Logility.ROWebSharedTypes
             _sizeConstraint = sizeConstraint;
             _sizeConstraintGenericHierarchy = sizeConstraintGenericHierarchy;
             _sizeConstraintGenericHeaderChar = sizeConstraintGenericHeaderChar;
+            _sizeConstraintInventoryBasis = new List<KeyValuePair<int, string>>();
+            _sizeConstraints = new List<KeyValuePair<int, string>>();
+            _sizeConstraintHeaderCharacteristics = new List<KeyValuePair<int, string>>();
+            _sizeConstraintHierarchyLevels = new List<KeyValuePair<int, string>>();
         }
         public int InventoryBasisMerchHnRID { get { return _inventoryBasisMerchHnRID; } set { _inventoryBasisMerchHnRID = value; } }
         public int InventoryBasisMerchPhRID { get { return _inventoryBasisMerchPhRID; } set { _inventoryBasisMerchPhRID = value; } }
@@ -1932,6 +1896,10 @@ namespace Logility.ROWebSharedTypes
         public KeyValuePair<int, string> SizeConstraint { get { return _sizeConstraint; } set { _sizeConstraint = value; } }
         public KeyValuePair<int, string> SizeConstraintGenericHierarchy { get { return _sizeConstraintGenericHierarchy; } set { _sizeConstraintGenericHierarchy = value; } }
         public KeyValuePair<int, string> SizeConstraintGenericHeaderChar { get { return _sizeConstraintGenericHeaderChar; } set { _sizeConstraintGenericHeaderChar = value; } }
+        public List<KeyValuePair<int, string>> SizeConstraintInventoryBasis { get { return _sizeConstraintInventoryBasis; } }
+        public List<KeyValuePair<int, string>> SizeConstraints { get { return _sizeConstraints; } }
+        public List<KeyValuePair<int, string>> SizeConstraintHeaderCharacteristics { get { return _sizeConstraintHeaderCharacteristics; } }
+        public List<KeyValuePair<int, string>> SizeConstraintHierarchyLevels { get { return _sizeConstraintHierarchyLevels; } }
 
     }
     [DataContract(Name = "ROMethodSizeRuleAttributeSet", Namespace = "http://Logility.ROWeb/")]
