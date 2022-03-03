@@ -113,6 +113,7 @@ namespace MIDRetail.Business
         private eLockStatus _lockStatus;
         private bool _template_IND;
         private int _workflowStep;
+        private HierarchyProfile _mainHierarchyProfile;
 
         //============
         // Constructor
@@ -156,7 +157,9 @@ namespace MIDRetail.Business
 				Populate(aMethodRID);
 			}
             _lockStatus = eLockStatus.Undefined;
-		}
+            _mainHierarchyProfile = SAB.HierarchyServerSession.GetMainHierarchyData();
+
+        }
 
 		//===========
 		// PROPERTIES
@@ -420,16 +423,27 @@ namespace MIDRetail.Business
 
             return false;
         }
-		// End TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
+        // End TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
 
-		//========
-		// METHODS
-		//========
+        /// <summary>
+        /// Gets SessionAddressBlock associated with this method.
+        /// </summary>
+        public HierarchyProfile MainHierarchyProfile
+        {
+            get
+            {
+                return _mainHierarchyProfile;
+            }
+        }
+
+        //========
+        // METHODS
+        //========
         /// <summary>
         /// Override of the Hash Code generator.
         /// </summary>
         /// <returns>Hash code for this object</returns>
-		public override int GetHashCode()
+        public override int GetHashCode()
 		{
 			return this.Key;
 		}

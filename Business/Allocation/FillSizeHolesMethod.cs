@@ -2148,9 +2148,9 @@ namespace MIDRetail.Business.Allocation
                 SizeCurveGroupRid = roMethodFillSizeAllocationProperties.ROSizeCurveProperties.SizeCurveGroupKey;
                 if (SAB.ClientServerSession.GlobalOptions.GenericSizeCurveNameType == eGenericSizeCurveNameType.NodePropertiesName)
                 {
-                    GenCurveNsccdRID = roMethodFillSizeAllocationProperties.ROSizeCurveProperties.HeaderCharacteristicsOrNameExtensionKey;
+                    GenCurveNsccdRID = roMethodFillSizeAllocationProperties.ROSizeCurveProperties.GenericHeaderCharacteristicsOrNameExtensionKey;
                 }
-                GenCurveMerchType = roMethodFillSizeAllocationProperties.ROSizeCurveProperties.MerchandiseType;
+                GenCurveMerchType = roMethodFillSizeAllocationProperties.ROSizeCurveProperties.GenericMerchandiseType;
                 switch (GenCurveMerchType)
                 {
                     case eMerchandiseType.HierarchyLevel:
@@ -2166,33 +2166,37 @@ namespace MIDRetail.Business.Allocation
                 UseDefaultCurve = roMethodFillSizeAllocationProperties.ROSizeCurveProperties.IsUseDefault;
                 ApplyRulesOnly = roMethodFillSizeAllocationProperties.ROSizeCurveProperties.IsApplyRulesOnly;
                 // Constraints Group Box
-                IB_MerchandiseType = roMethodFillSizeAllocationProperties.ROSizeConstraintProperties.InventoryBasisMerchType;
+                IB_MerchandiseType = roMethodFillSizeAllocationProperties.ROSizeConstraintProperties.InventoryBasisMerchandiseType;
                 switch (IB_MerchandiseType)
                 {
                     case eMerchandiseType.HierarchyLevel:
+                        _IB_MERCH_PHL_SEQUENCE = roMethodFillSizeAllocationProperties.ROSizeConstraintProperties.InventoryBasisHierarchyLevelKey;
+                        break;
                     case eMerchandiseType.LevelOffset:
                     case eMerchandiseType.OTSPlanLevel:
-                        _IB_MERCH_HN_RID = roMethodFillSizeAllocationProperties.ROSizeConstraintProperties.InventoryBasis.Key;
+                        _IB_MERCH_HN_RID = roMethodFillSizeAllocationProperties.ROSizeConstraintProperties.InventoryBasisMerchandise.Key;
                         break;
                     default: //eMerchandiseType.Node
-                        _IB_MERCH_HN_RID = Include.NoRID; 
-                        break;
+                        _IB_MERCH_HN_RID = roMethodFillSizeAllocationProperties.ROSizeConstraintProperties.InventoryBasisMerchandise.Key;
+                        break; 
                 }
-                _sizeConstraintRid = roMethodFillSizeAllocationProperties.ROSizeConstraintProperties.SizeConstraint.Key;
-                GenConstraintMerchType = roMethodFillSizeAllocationProperties.ROSizeConstraintProperties.GenConstraintMerchType;
+                _sizeConstraintRid = roMethodFillSizeAllocationProperties.ROSizeConstraintProperties.SizeConstraintKey;
+                GenConstraintMerchType = roMethodFillSizeAllocationProperties.ROSizeConstraintProperties.GenericMerchandiseType;
                 switch (GenConstraintMerchType)
                 {
                     case eMerchandiseType.HierarchyLevel:
+                        GenConstraintPhlSequence = roMethodFillSizeAllocationProperties.ROSizeConstraintProperties.GenericHierarchyLevelKey;
+                        break;
                     case eMerchandiseType.LevelOffset:
                     case eMerchandiseType.OTSPlanLevel:
                         GenConstraintHnRID = Include.NoRID; 
                         break;
                     default: //eMerchandiseType.Node
-                        GenConstraintHnRID = roMethodFillSizeAllocationProperties.ROSizeConstraintProperties.SizeConstraintGenericHierarchy.Key;
+                        GenConstraintHnRID = Include.NoRID;
                         break;
                 }
-                GenConstraintCharGroupRID = roMethodFillSizeAllocationProperties.ROSizeConstraintProperties.SizeConstraintGenericHeaderChar.Key;
-                GenConstraintColorInd = roMethodFillSizeAllocationProperties.ROSizeConstraintProperties.GenConstraintColorInd;
+                GenConstraintCharGroupRID = roMethodFillSizeAllocationProperties.ROSizeConstraintProperties.GenericHeaderCharacteristicsKey;
+                GenConstraintColorInd = roMethodFillSizeAllocationProperties.ROSizeConstraintProperties.IsColorSelected;
                 //VSW 
                 _overrideVSWSizeConstraints = roMethodFillSizeAllocationProperties.OverrideVSWSizeConstraints;
                 _vSWSizeConstraints = roMethodFillSizeAllocationProperties.VSWSizeConstraints;

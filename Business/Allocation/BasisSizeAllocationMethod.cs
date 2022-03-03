@@ -2545,9 +2545,9 @@ namespace MIDRetail.Business.Allocation
 
                 if (SAB.ClientServerSession.GlobalOptions.GenericSizeCurveNameType == eGenericSizeCurveNameType.NodePropertiesName)
                 {
-                    GenCurveNsccdRID = roMethodBasisSizeAllocationProperties.ROSizeCurveProperties.HeaderCharacteristicsOrNameExtensionKey;
+                    GenCurveNsccdRID = roMethodBasisSizeAllocationProperties.ROSizeCurveProperties.GenericHeaderCharacteristicsOrNameExtensionKey;
                 }
-                GenCurveMerchType = roMethodBasisSizeAllocationProperties.ROSizeCurveProperties.MerchandiseType;
+                GenCurveMerchType = roMethodBasisSizeAllocationProperties.ROSizeCurveProperties.GenericMerchandiseType;
                 switch (GenCurveMerchType)
                 {
                     case eMerchandiseType.HierarchyLevel:
@@ -2564,8 +2564,8 @@ namespace MIDRetail.Business.Allocation
                 ApplyRulesOnly = roMethodBasisSizeAllocationProperties.ROSizeCurveProperties.IsApplyRulesOnly;
                 // Constraints Group Box
                 // Note Inventory Basis is not used for this method               
-                _sizeConstraintRid = roMethodBasisSizeAllocationProperties.ROSizeConstraintProperties.SizeConstraint.Key;
-                GenConstraintMerchType = roMethodBasisSizeAllocationProperties.ROSizeConstraintProperties.GenConstraintMerchType;
+                _sizeConstraintRid = roMethodBasisSizeAllocationProperties.ROSizeConstraintProperties.SizeConstraintKey;
+                GenConstraintMerchType = roMethodBasisSizeAllocationProperties.ROSizeConstraintProperties.GenericMerchandiseType;
                 switch (GenConstraintMerchType)
                 {
                     case eMerchandiseType.HierarchyLevel:
@@ -2574,11 +2574,11 @@ namespace MIDRetail.Business.Allocation
                         GenConstraintHnRID = Include.NoRID;
                         break;
                     default: //eMerchandiseType.Node
-                        GenConstraintHnRID = roMethodBasisSizeAllocationProperties.ROSizeConstraintProperties.SizeConstraintGenericHierarchy.Key;
+                        GenConstraintHnRID = Include.NoRID;
                         break;
                 }
-                GenConstraintCharGroupRID = roMethodBasisSizeAllocationProperties.ROSizeConstraintProperties.SizeConstraintGenericHeaderChar.Key;
-                GenConstraintColorInd = roMethodBasisSizeAllocationProperties.ROSizeConstraintProperties.GenConstraintColorInd;
+                GenConstraintCharGroupRID = roMethodBasisSizeAllocationProperties.ROSizeConstraintProperties.GenericHeaderCharacteristicsKey;
+                GenConstraintColorInd = roMethodBasisSizeAllocationProperties.ROSizeConstraintProperties.IsColorSelected;
                 _methodData.HeaderComponent = roMethodBasisSizeAllocationProperties.ColorComponent.Key;
                 _methodData.IncludeReserveInd = roMethodBasisSizeAllocationProperties.IncludeReserve;
                 _methodData.BasisHdrRid = roMethodBasisSizeAllocationProperties.Header.Key;

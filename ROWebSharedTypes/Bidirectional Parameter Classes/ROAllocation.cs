@@ -592,6 +592,8 @@ namespace Logility.ROWebSharedTypes
         List<KeyValuePair<int, string>> _vSWSizeConstraintRules;
         [DataMember(IsRequired = true)]
         List<KeyValuePair<int, string>> _sizeAlternateModels;
+        [DataMember(IsRequired = true)]
+        List<KeyValuePair<int, string>> _sizeConstraintRules;
 
         //Rule tab properties
         [DataMember(IsRequired = true)]
@@ -725,6 +727,11 @@ namespace Logility.ROWebSharedTypes
             set { _sizeRuleAttributeSet = value; }
         }
 
+        public List<KeyValuePair<int, string>> SizeConstraintRules
+        {
+            get { return _sizeConstraintRules; }
+        }
+
         #endregion
         public ROMethodSizeNeedProperties(
             KeyValuePair<int, string> method, 
@@ -785,6 +792,7 @@ namespace Logility.ROWebSharedTypes
             _sizeGroups = new List<KeyValuePair<int, string>>();
             _vSWSizeConstraintRules = new List<KeyValuePair<int, string>>();
             _sizeAlternateModels = new List<KeyValuePair<int, string>>();
+            _sizeConstraintRules = new List<KeyValuePair<int, string>>();
         }
     }
     [DataContract(Name = "ROMethodBasisSizeProperties", Namespace = "http://Logility.ROWeb/")]
@@ -1697,15 +1705,6 @@ namespace Logility.ROWebSharedTypes
         private int _sizeCurveGroupKey;
 
         [DataMember(IsRequired = true)]
-        eGenericSizeCurveNameType _genericSizeCurveNameType;
-
-        [DataMember(IsRequired = true)]
-        private eMerchandiseType _merchandiseType;
-
-        [DataMember(IsRequired = true)]
-        private int _hierarchyLevelKey;
-
-        [DataMember(IsRequired = true)]
         private bool _isUseDefault;
 
         [DataMember(IsRequired = true)]
@@ -1715,193 +1714,174 @@ namespace Logility.ROWebSharedTypes
         private bool _isColorSelected;
 
         [DataMember(IsRequired = true)]
-        private int _headerCharacteristicsOrNameExtensionKey;
+        eGenericSizeCurveNameType _genericSizeCurveNameType;
+
+        [DataMember(IsRequired = true)]
+        private eMerchandiseType _genericMerchandiseType;
+
+        [DataMember(IsRequired = true)]
+        private int _genericHierarchyLevelKey;
+
+        [DataMember(IsRequired = true)]
+        private int _genericHeaderCharacteristicsOrNameExtensionKey;
 
         [DataMember(IsRequired = true)]
         List<KeyValuePair<int, string>> _sizeCurveGroups;
 
         [DataMember(IsRequired = true)]
-        List<KeyValuePair<int, string>> _hierarchyLevels;
+        List<KeyValuePair<int, string>> _genericHierarchyLevels;
 
         [DataMember(IsRequired = true)]
-        List<KeyValuePair<int, string>> _headerCharacteristicsOrNameExtensions;
+        List<KeyValuePair<int, string>> _genericHeaderCharacteristicsOrNameExtensions;
 
         public ROSizeCurveProperties(
             int sizeCurveGroupKey,
             eGenericSizeCurveNameType genericSizeCurveNameType,
-            eMerchandiseType merchandiseType,
-            int hierarchyLevelKey,
+            eMerchandiseType genericMerchandiseType,
+            int genericHierarchyLevelKey,
             bool isUseDefault, 
             bool isApplyRulesOnly, 
             bool isColorSelected,
-            int headerCharacteristicsOrNameExtensionKey
+            int genericHeaderCharacteristicsOrNameExtensionKey
             )
         {
             _sizeCurveGroupKey = sizeCurveGroupKey;
-            _merchandiseType = merchandiseType;
-            _hierarchyLevelKey = hierarchyLevelKey;
+            _genericMerchandiseType = genericMerchandiseType;
+            _genericHierarchyLevelKey = genericHierarchyLevelKey;
             _genericSizeCurveNameType = genericSizeCurveNameType;
             _isUseDefault = isUseDefault;
             _isApplyRulesOnly = isApplyRulesOnly;
             _isColorSelected = isColorSelected;
-            _headerCharacteristicsOrNameExtensionKey = headerCharacteristicsOrNameExtensionKey;
+            _genericHeaderCharacteristicsOrNameExtensionKey = genericHeaderCharacteristicsOrNameExtensionKey;
             _sizeCurveGroups = new List<KeyValuePair<int, string>>();
-            _hierarchyLevels = new List<KeyValuePair<int, string>>();
-            _headerCharacteristicsOrNameExtensions = new List<KeyValuePair<int, string>>();
+            _genericHierarchyLevels = new List<KeyValuePair<int, string>>();
+            _genericHeaderCharacteristicsOrNameExtensions = new List<KeyValuePair<int, string>>();
         }
 
         public int SizeCurveGroupKey { get { return _sizeCurveGroupKey; } set { _sizeCurveGroupKey = value; } }
-        public int HierarchyLevelKey { get { return _hierarchyLevelKey; } set { _hierarchyLevelKey = value; } }
+        public int GenericHierarchyLevelKey { get { return _genericHierarchyLevelKey; } set { _genericHierarchyLevelKey = value; } }
 
         public eGenericSizeCurveNameType GenericSizeCurveNameType
         {
             get { return _genericSizeCurveNameType; }
             set { _genericSizeCurveNameType = value; }
         }
-        public eMerchandiseType MerchandiseType
+        public eMerchandiseType GenericMerchandiseType
         {
-            get { return _merchandiseType; }
-            set { _merchandiseType = value; }
+            get { return _genericMerchandiseType; }
+            set { _genericMerchandiseType = value; }
         }
         public bool IsUseDefault { get { return _isUseDefault; } set { _isUseDefault = value; } }
         public bool IsApplyRulesOnly { get { return _isApplyRulesOnly; } set { _isApplyRulesOnly = value; } }
         public bool IsColorSelected { get { return _isColorSelected; } set { _isColorSelected = value; } }
-        public int HeaderCharacteristicsOrNameExtensionKey
+        public int GenericHeaderCharacteristicsOrNameExtensionKey
         {
-            get { return _headerCharacteristicsOrNameExtensionKey; }
-            set { _headerCharacteristicsOrNameExtensionKey = value; }
+            get { return _genericHeaderCharacteristicsOrNameExtensionKey; }
+            set { _genericHeaderCharacteristicsOrNameExtensionKey = value; }
         }
         public List<KeyValuePair<int, string>> SizeCurveGroups { get { return _sizeCurveGroups; } }
-        public List<KeyValuePair<int, string>> HierarchyLevels { get { return _hierarchyLevels; } }
-        public List<KeyValuePair<int, string>> HeaderCharacteristicsOrNameExtensions { get { return _headerCharacteristicsOrNameExtensions; } }
+        public List<KeyValuePair<int, string>> GenericHierarchyLevels { get { return _genericHierarchyLevels; } }
+        public List<KeyValuePair<int, string>> GenericHeaderCharacteristicsOrNameExtensions { get { return _genericHeaderCharacteristicsOrNameExtensions; } }
 
     }
 
     [DataContract(Name = "ROSizeConstraintProperties", Namespace = "http://Logility.ROWeb/")]
     public class ROSizeConstraintProperties
     {
-        // input parameters
+        [DataMember(IsRequired = true)]
+        private int _sizeConstraintKey;
 
         [DataMember(IsRequired = true)]
-        private int _inventoryBasisMerchHnRID;
+        private eMerchandiseType _inventoryBasisMerchandiseType;
 
         [DataMember(IsRequired = true)]
-        private int _inventoryBasisMerchPhRID;
+        private KeyValuePair<int, string> _inventoryBasisMerchandise;
 
         [DataMember(IsRequired = true)]
-        private int _inventoryBasisMerchPhlSequence;
+        private int _inventoryBasisHierarchyLevelKey;
 
         [DataMember(IsRequired = true)]
-        private eMerchandiseType _inventoryBasisMerchType;
+        private eMerchandiseType _genericMerchandiseType;
 
         [DataMember(IsRequired = true)]
-        private int _sizeConstraintRID;
+        private int _genericHierarchyLevelKey;
 
         [DataMember(IsRequired = true)]
-        private int _genConstraintHcgRID;
+        private int _genericHeaderCharacteristicsKey;
 
         [DataMember(IsRequired = true)]
-        private int _genConstraintHnRID;
-
-        [DataMember(IsRequired = true)]
-        private int _genConstraintPhRID;
-
-        [DataMember(IsRequired = true)]
-        private int _genConstraintPhlSequence;
-
-        [DataMember(IsRequired = true)]
-        private eMerchandiseType _genConstraintMerchType;
-
-        [DataMember(IsRequired = true)]
-        private bool _genConstraintColorInd;
-
-        //output parameters
-
-        [DataMember(IsRequired = true)]
-        private KeyValuePair<int, string> _inventoryBasis;
-
-        [DataMember(IsRequired = true)]
-        private KeyValuePair<int, string> _sizeConstraint;
-
-        [DataMember(IsRequired = true)]
-        private KeyValuePair<int, string> _sizeConstraintGenericHierarchy;
-
-        [DataMember(IsRequired = true)]
-        private KeyValuePair<int, string> _sizeConstraintGenericHeaderChar;
-
-        [DataMember(IsRequired = true)]
-        List<KeyValuePair<int, string>> _sizeConstraintInventoryBasis;
+        private bool _isColorSelected;
 
         [DataMember(IsRequired = true)]
         List<KeyValuePair<int, string>> _sizeConstraints;
 
         [DataMember(IsRequired = true)]
-        List<KeyValuePair<int, string>> _sizeConstraintHeaderCharacteristics;
+        List<KeyValuePair<int, string>> _inventoryBasisHierarchyLevels;
 
         [DataMember(IsRequired = true)]
-        List<KeyValuePair<int, string>> _sizeConstraintHierarchyLevels;
+        List<KeyValuePair<int, string>> _genericHeaderCharacteristics;
+
+        [DataMember(IsRequired = true)]
+        List<KeyValuePair<int, string>> _genericHierarchyLevels;
 
 
-
-        public ROSizeConstraintProperties(int inventoryBasisMerchHnRID, int inventoryBasisMerchPhRID, int inventoryBasisMerchPhlSequence, eMerchandiseType inventoryBasisMerchType,
-            int sizeConstraintRID, int genConstraintHcgRID, int genConstraintHnRID, int genConstraintPhRID, int genConstraintPhlSequence, eMerchandiseType genConstraintMerchType,
-            bool genConstraintColorInd, KeyValuePair<int, string> inventoryBasis, KeyValuePair<int, string> sizeConstraint, KeyValuePair<int, string> sizeConstraintGenericHierarchy, KeyValuePair<int, string> sizeConstraintGenericHeaderChar)
+        public ROSizeConstraintProperties(
+            int sizeConstraintKey,
+            eMerchandiseType inventoryBasisMerchandiseType,
+            KeyValuePair<int, string> inventoryBasisMerchandise,
+            int inventoryBasisHierarchyLevelKey,
+            eMerchandiseType genericMerchandiseType,
+            int genericHierarchyLevelKey,
+            int genericHeaderCharacteristicsKey,
+            bool isColorSelected
+            )
         {
-            _inventoryBasisMerchHnRID = inventoryBasisMerchHnRID;
-            _inventoryBasisMerchPhRID = inventoryBasisMerchPhRID;
-            _inventoryBasisMerchPhlSequence = inventoryBasisMerchPhlSequence;
-            _inventoryBasisMerchType = inventoryBasisMerchType;
-            _sizeConstraintRID = sizeConstraintRID;
-            _genConstraintHcgRID = genConstraintHcgRID;
-            _genConstraintHnRID = genConstraintHnRID;
-            _genConstraintPhRID = genConstraintPhRID;
-            _genConstraintPhlSequence = genConstraintPhlSequence;
-            _genConstraintMerchType = genConstraintMerchType;
-            _genConstraintColorInd = genConstraintColorInd;
-            _inventoryBasis = inventoryBasis;
-            _sizeConstraint = sizeConstraint;
-            _sizeConstraintGenericHierarchy = sizeConstraintGenericHierarchy;
-            _sizeConstraintGenericHeaderChar = sizeConstraintGenericHeaderChar;
-            _sizeConstraintInventoryBasis = new List<KeyValuePair<int, string>>();
+            _sizeConstraintKey = sizeConstraintKey;
+            _inventoryBasisMerchandiseType = inventoryBasisMerchandiseType;
+            _inventoryBasisMerchandise = inventoryBasisMerchandise;
+            _inventoryBasisHierarchyLevelKey = inventoryBasisHierarchyLevelKey;
+            _inventoryBasisHierarchyLevelKey = inventoryBasisHierarchyLevelKey;
+            _genericMerchandiseType = genericMerchandiseType;
+            _genericHierarchyLevelKey = genericHierarchyLevelKey;
+            _genericHeaderCharacteristicsKey = genericHeaderCharacteristicsKey;
+            _isColorSelected = isColorSelected;
+
             _sizeConstraints = new List<KeyValuePair<int, string>>();
-            _sizeConstraintHeaderCharacteristics = new List<KeyValuePair<int, string>>();
-            _sizeConstraintHierarchyLevels = new List<KeyValuePair<int, string>>();
+            _inventoryBasisHierarchyLevels = new List<KeyValuePair<int, string>>();
+            _genericHierarchyLevels = new List<KeyValuePair<int, string>>();
+            _genericHeaderCharacteristics = new List<KeyValuePair<int, string>>();
         }
-        public int InventoryBasisMerchHnRID { get { return _inventoryBasisMerchHnRID; } set { _inventoryBasisMerchHnRID = value; } }
-        public int InventoryBasisMerchPhRID { get { return _inventoryBasisMerchPhRID; } set { _inventoryBasisMerchPhRID = value; } }
-        public int InventoryBasisMerchPhlSequence { get { return _inventoryBasisMerchPhlSequence; } set { _inventoryBasisMerchPhlSequence = value; } }
-        public eMerchandiseType InventoryBasisMerchType
-            {
-            get { return _inventoryBasisMerchType; }
-            set
-            {
-                _inventoryBasisMerchType = value;
-            }
-        }
-        public int SizeConstraintRID { get { return _sizeConstraintRID; } set { _sizeConstraintRID = value; } }
-        public int GenConstraintHcgRID { get { return _genConstraintHcgRID; } set { _genConstraintHcgRID = value; } }
-        public int GenConstraintHnRID { get { return _genConstraintHnRID; } set { _genConstraintHnRID = value; } }
-        public int GenConstraintPhRID { get { return _genConstraintPhRID; } set { _genConstraintPhRID = value; } }
-        public int GenConstraintPhlSequence { get { return _genConstraintPhlSequence; } set { _genConstraintPhlSequence = value; } }
-        public eMerchandiseType GenConstraintMerchType
+
+        public int SizeConstraintKey { get { return _sizeConstraintKey; } set { _sizeConstraintKey = value; } }
+        public eMerchandiseType InventoryBasisMerchandiseType
         {
-            get { return _genConstraintMerchType; }
+            get { return _inventoryBasisMerchandiseType; }
             set
             {
-                _genConstraintMerchType = value;
+                _inventoryBasisMerchandiseType = value;
             }
         }
-        public bool GenConstraintColorInd { get { return _genConstraintColorInd; } set { _genConstraintColorInd = value; } }
-        public KeyValuePair<int, string> InventoryBasis { get { return _inventoryBasis; } set { _inventoryBasis = value; } }
-        public KeyValuePair<int, string> SizeConstraint { get { return _sizeConstraint; } set { _sizeConstraint = value; } }
-        public KeyValuePair<int, string> SizeConstraintGenericHierarchy { get { return _sizeConstraintGenericHierarchy; } set { _sizeConstraintGenericHierarchy = value; } }
-        public KeyValuePair<int, string> SizeConstraintGenericHeaderChar { get { return _sizeConstraintGenericHeaderChar; } set { _sizeConstraintGenericHeaderChar = value; } }
-        public List<KeyValuePair<int, string>> SizeConstraintInventoryBasis { get { return _sizeConstraintInventoryBasis; } }
+        public KeyValuePair<int, string> InventoryBasisMerchandise { get { return _inventoryBasisMerchandise; } set { _inventoryBasisMerchandise = value; } }
+        public int InventoryBasisHierarchyLevelKey { get { return _inventoryBasisHierarchyLevelKey; } set { _inventoryBasisHierarchyLevelKey = value; } }
+        public eMerchandiseType GenericMerchandiseType
+        {
+            get { return _genericMerchandiseType; }
+            set
+            {
+                _genericMerchandiseType = value;
+            }
+        }
+        public int GenericHierarchyLevelKey { get { return _genericHierarchyLevelKey; } set { _genericHierarchyLevelKey = value; } }
+        public int GenericHeaderCharacteristicsKey { get { return _genericHeaderCharacteristicsKey; } set { _genericHeaderCharacteristicsKey = value; } }
+        public bool IsColorSelected { get { return _isColorSelected; } set { _isColorSelected = value; } }
+        
         public List<KeyValuePair<int, string>> SizeConstraints { get { return _sizeConstraints; } }
-        public List<KeyValuePair<int, string>> SizeConstraintHeaderCharacteristics { get { return _sizeConstraintHeaderCharacteristics; } }
-        public List<KeyValuePair<int, string>> SizeConstraintHierarchyLevels { get { return _sizeConstraintHierarchyLevels; } }
+        public List<KeyValuePair<int, string>> InventoryBasisHierarchyLevels { get { return _inventoryBasisHierarchyLevels; } }
+        public List<KeyValuePair<int, string>> GenericHierarchyLevels { get { return _genericHierarchyLevels; } }
+        public List<KeyValuePair<int, string>> GenericHeaderCharacteristics { get { return _genericHeaderCharacteristics; } }
 
     }
+
     [DataContract(Name = "ROMethodSizeRuleAttributeSet", Namespace = "http://Logility.ROWeb/")]
     public class ROMethodSizeRuleAttributeSet
     {

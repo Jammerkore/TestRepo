@@ -1365,32 +1365,32 @@ namespace MIDRetail.Business
             ROSizeCurveProperties sizeCurveProperties = new ROSizeCurveProperties(
                 sizeCurveGroupKey: sizeCurveGroupRID,
                 genericSizeCurveNameType: SAB.ClientServerSession.GlobalOptions.GenericSizeCurveNameType,
-                merchandiseType: EnumTools.VerifyEnumValue(genCurveMerchType),
-                hierarchyLevelKey: genCurvePhlSequence,
+                genericMerchandiseType: EnumTools.VerifyEnumValue(genCurveMerchType),
+                genericHierarchyLevelKey: genCurvePhlSequence,
                 isUseDefault: isUseDefault,
                 isApplyRulesOnly: isApplyRulesOnly,
                 isColorSelected: isColorSelected,
-                headerCharacteristicsOrNameExtensionKey: headerCharacteristicsOrNameExtensionKey
+                genericHeaderCharacteristicsOrNameExtensionKey: headerCharacteristicsOrNameExtensionKey
                 );
 
             ListGenerator.FillSizeCurveGroupList(
                 sizeCurveGroups: sizeCurveProperties.SizeCurveGroups
                 );
             ListGenerator.FillOrganizationalHierarchyLevelList(
-                hierarchyLevels: sizeCurveProperties.HierarchyLevels,
+                hierarchyLevels: sizeCurveProperties.GenericHierarchyLevels,
                 sessionAddressBlock: SAB
                 );
             if (SAB.ClientServerSession.GlobalOptions.GenericSizeCurveNameType == eGenericSizeCurveNameType.HeaderCharacteristic)
             {
                 ListGenerator.FillHeaderCharacteristicList(
-                    headerCharacteristics: sizeCurveProperties.HeaderCharacteristicsOrNameExtensions,
+                    headerCharacteristics: sizeCurveProperties.GenericHeaderCharacteristicsOrNameExtensions,
                     sessionAddressBlock: SAB
                     );
             }
             else if (SAB.ClientServerSession.GlobalOptions.GenericSizeCurveNameType == eGenericSizeCurveNameType.NodePropertiesName)
             {
                 ListGenerator.FillNameExtensionList(
-                    nameExtensions: sizeCurveProperties.HeaderCharacteristicsOrNameExtensions,
+                    nameExtensions: sizeCurveProperties.GenericHeaderCharacteristicsOrNameExtensions,
                     sessionAddressBlock: SAB
                     );
             }
@@ -1424,35 +1424,51 @@ namespace MIDRetail.Business
             SessionAddressBlock SAB
             )
         {
-            inventoryBasis = GetName.GetLevelKeyValuePair(
-                merchandiseType: inventoryBasisMerchType, 
-                nodeRID: inventoryBasisMerchHnRID, 
-                merchPhRID: inventoryBasisMerchPhRID, 
-                merchPhlSequence: inventoryBasisMerchPhlSequence, 
-                SAB: SAB
-                );
+            if (genConstraintMerchType == eMerchandiseType.Node)
+            {
+                inventoryBasis = GetName.GetLevelKeyValuePair(
+                    merchandiseType: inventoryBasisMerchType,
+                    nodeRID: inventoryBasisMerchHnRID,
+                    merchPhRID: inventoryBasisMerchPhRID,
+                    merchPhlSequence: inventoryBasisMerchPhlSequence,
+                    SAB: SAB
+                    );
+            }
+            else
+            {
+                inventoryBasis = new KeyValuePair<int, string>(-1, "");
+            }
             sizeConstraint  = GetName.GetSizeConstraint(sizeConstraintRID);
             sizeConstraintGenericHierarchy = GetName.GetLevelKeyValuePair(genConstraintMerchType, genConstraintHnRID, genConstraintPhRID, genConstraintPhlSequence, SAB);
             sizeConstraintGenericHeaderChar = GetName.GetHeaderCharGroupProfile(genConstraintHcgRID);
             
             ROSizeConstraintProperties sizeConstraintProperties = new ROSizeConstraintProperties(
-                inventoryBasisMerchHnRID, 
-                inventoryBasisMerchPhRID, 
-                inventoryBasisMerchPhlSequence, 
-                EnumTools.VerifyEnumValue(inventoryBasisMerchType),
-                sizeConstraintRID, 
-                genConstraintHcgRID, 
-                genConstraintHnRID, 
-                genConstraintPhRID, 
-                genConstraintPhlSequence, 
-                EnumTools.VerifyEnumValue(genConstraintMerchType),
-                genConstraintColorInd, 
-                inventoryBasis, 
-                sizeConstraint, 
-                sizeConstraintGenericHierarchy, 
-                sizeConstraintGenericHeaderChar
+                sizeConstraintKey: sizeConstraintRID,
+                inventoryBasisMerchandiseType: EnumTools.VerifyEnumValue(inventoryBasisMerchType),
+                inventoryBasisMerchandise: inventoryBasis,
+                inventoryBasisHierarchyLevelKey: inventoryBasisMerchPhlSequence,
+                genericMerchandiseType: EnumTools.VerifyEnumValue(genConstraintMerchType),
+                genericHierarchyLevelKey: genConstraintPhlSequence,
+                genericHeaderCharacteristicsKey: genConstraintHcgRID,
+                isColorSelected: genConstraintColorInd
                 );
 
+            ListGenerator.FillSizeConstraintList(
+                sizeConstraints: sizeConstraintProperties.SizeConstraints
+                );
+            ListGenerator.FillOrganizationalHierarchyLevelList(
+                hierarchyLevels: sizeConstraintProperties.InventoryBasisHierarchyLevels,
+                sessionAddressBlock: SAB
+                );
+            ListGenerator.FillOrganizationalHierarchyLevelList(
+                hierarchyLevels: sizeConstraintProperties.GenericHierarchyLevels,
+                sessionAddressBlock: SAB
+                );
+            ListGenerator.FillHeaderCharacteristicList(
+                headerCharacteristics: sizeConstraintProperties.GenericHeaderCharacteristics,
+                sessionAddressBlock: SAB
+                );
+ 
             return sizeConstraintProperties;
         }
     }
@@ -3468,12 +3484,72 @@ namespace MIDRetail.Business
 		/// Fills a KeyValuePair List with size curve groups.
 		/// </summary>
 		/// <param name="sizeCurveGroups">KeyValuePair object to fill</param>
-		public static void FillSizeCurveGroupList(List<KeyValuePair<int, string>> sizeCurveGroups)
+        /// <param name="sizeCurveGroupKey">key if for a specific size curve group</param>
+		public static void FillSizeCurveGroupList(
+            List<KeyValuePair<int, string>> sizeCurveGroups,
+            int sizeCurveGroupKey = Include.NoRID
+            )
         {
-            SizeCurve dataLayerSizeCurve = new SizeCurve();
-            DataTable dataTableSizeCurveGroups = dataLayerSizeCurve.GetSizeCurveGroups();
+            SizeCurve sizeCurveData = new SizeCurve();
+            DataTable dataTableSizeCurveGroups;
+            if (sizeCurveGroupKey != Include.NoRID)
+            {
+                dataTableSizeCurveGroups = sizeCurveData.GetSpecificSizeCurveGroup(sizeCurveGroupKey);
+            }
+            else
+            {
+                dataTableSizeCurveGroups = sizeCurveData.GetSizeCurveGroups();
+            }
             sizeCurveGroups.AddRange(DataTableTools.DataTableToKeyValues(dataTableSizeCurveGroups, "SIZE_CURVE_GROUP_RID", "SIZE_CURVE_GROUP_NAME"));
 
+        }
+
+        /// <summary>
+		/// Fills a KeyValuePair List with size constraints.
+		/// </summary>
+		/// <param name="sizeConstraints">KeyValuePair object to fill</param>
+        /// <param name="sizeConstraintKey">key if for a specific constraint model</param>
+		public static void FillSizeConstraintList(
+            List<KeyValuePair<int, string>> sizeConstraints,
+            int sizeConstraintKey = Include.NoRID
+            )
+        {
+            SizeModelData sizeModelData = new SizeModelData();
+            DataTable dataTableSizeConstraints;
+            if (sizeConstraintKey != Include.NoRID)
+            {
+                dataTableSizeConstraints = sizeModelData.SizeConstraintModel_Read(Include.NoRID);
+            }
+            else
+            {
+                dataTableSizeConstraints = sizeModelData.SizeConstraintModel_Read();
+            }
+            sizeConstraints.AddRange(DataTableTools.DataTableToKeyValues(dataTableSizeConstraints, "SIZE_CONSTRAINT_RID", "SIZE_CONSTRAINT_NAME"));
+
+        }
+
+        /// <summary>
+		/// Fills a KeyValuePair List with size alternate models.
+		/// </summary>
+		/// <param name="sizeAlternateModels">KeyValuePair object to fill</param>
+        /// <param name="sizeAlternateKey">key if for a specific constraint model</param>
+		public static void FillSizeAlternateModelsList(
+            List<KeyValuePair<int, string>> sizeAlternateModels,
+            int sizeAlternateKey = Include.NoRID
+            )
+
+        {
+            SizeModelData sizeModelData = new SizeModelData();
+            DataTable dataTableSizeAlternates;
+            if (sizeAlternateKey != Include.NoRID)
+            {
+                dataTableSizeAlternates = sizeModelData.SizeAlternateModel_Read(sizeAlternateKey);
+            }
+            else
+            {
+                dataTableSizeAlternates = sizeModelData.SizeAlternateModel_Read();
+            }
+            sizeAlternateModels.AddRange(DataTableTools.DataTableToKeyValues(dataTableSizeAlternates, "SIZE_ALTERNATE_RID", "SIZE_ALTERNATE_NAME"));
         }
 
         /// <summary>
@@ -3506,19 +3582,6 @@ namespace MIDRetail.Business
                         );
                 }
             }
-        }
-
-        /// <summary>
-		/// Fills a KeyValuePair List with size alternate models.
-		/// </summary>
-		/// <param name="sizeAlternateModels">KeyValuePair object to fill</param>
-		public static void FillSizeAlternateModelsList(
-            List<KeyValuePair<int, string>> sizeAlternateModels)
-
-        {
-            SizeModelData sizeModelData = new SizeModelData();
-            DataTable dataTableSizeAlternates = sizeModelData.SizeAlternateModel_Read();
-            sizeAlternateModels.AddRange(DataTableTools.DataTableToKeyValues(dataTableSizeAlternates, "SIZE_ALTERNATE_RID", "SIZE_ALTERNATE_NAME"));
         }
 
         /// <summary>
@@ -3569,6 +3632,74 @@ namespace MIDRetail.Business
                         Convert.ToString(dr["CURVE_NAME"]))
                         );
                 }
+            }
+        }
+
+        /// <summary>
+		/// Fills class with VSW size constraint rules
+		/// </summary>
+		public static void FillVSWSizeConstraintRuleList(
+            List<KeyValuePair<int, string>> VSWSizeConstraintRules
+            )
+        {
+            if (VSWSizeConstraintRules == null)
+            {
+                VSWSizeConstraintRules = new List<KeyValuePair<int, string>>();
+            }
+
+            DataTable dataTableVSWSizeConstraintRules = MIDText.GetTextType(eMIDTextType.eVSWSizeConstraints, eMIDTextOrderBy.TextCode);
+
+            VSWSizeConstraintRules.AddRange(DataTableTools.DataTableToKeyValues(dataTableVSWSizeConstraintRules, "TEXT_CODE", "TEXT_VALUE"));
+        }
+
+        /// <summary>
+		/// Fills class with size constraint rules
+		/// </summary>
+		public static void FillSizeConstraintRuleList(
+            List<KeyValuePair<int, string>> sizeConstraintRules,
+            bool withQuantity = true
+            )
+        {
+            if (sizeConstraintRules == null)
+            {
+                sizeConstraintRules = new List<KeyValuePair<int, string>>();
+            }
+
+            if (withQuantity) 
+            {
+                DataTable dataTableRules = MIDText.GetLabels((int)eSizeRuleType.Exclude, (int)eSizeRuleType.AbsoluteQuantity);
+                sizeConstraintRules.AddRange(DataTableTools.DataTableToKeyValues(dataTableRules, "TEXT_CODE", "TEXT_VALUE"));
+                //foreach (DataRow row in dtRules.Rows)
+                //{
+                //    int textCode = Convert.ToInt32(row["TEXT_CODE"], CultureInfo.CurrentUICulture);
+                //    sizeConstraintRules.Add(
+                //        new KeyValuePair<int, string>(textCode, row["TEXT_VALUE"].ToString())
+                //        );
+                //}
+
+                dataTableRules = MIDText.GetLabels((int)eSizeRuleType.SizeMinimum, (int)eSizeRuleType.SizeMaximum);
+                sizeConstraintRules.AddRange(DataTableTools.DataTableToKeyValues(dataTableRules, "TEXT_CODE", "TEXT_VALUE"));
+                //foreach (DataRow row in dtRules.Rows)
+                //{
+                //    int textCode = Convert.ToInt32(row["TEXT_CODE"], CultureInfo.CurrentUICulture);
+                //    sizeConstraintRules.Add(
+                //        new KeyValuePair<int, string>(textCode, row["TEXT_VALUE"].ToString())
+                //        );
+                //}
+
+            }
+            else
+            {
+                DataTable dataTableRules = MIDText.GetLabels((int)eSizeRuleType.Exclude, (int)eSizeRuleType.Exclude);
+                sizeConstraintRules.AddRange(DataTableTools.DataTableToKeyValues(dataTableRules, "TEXT_CODE", "TEXT_VALUE"));
+                //foreach (DataRow row in dtRules.Rows)
+                //{
+                //    int textCode = Convert.ToInt32(row["TEXT_CODE"], CultureInfo.CurrentUICulture);
+                //    sizeConstraintRules.Add(
+                //        new KeyValuePair<int, string>(textCode, row["TEXT_VALUE"].ToString())
+                //        );
+                //}
+
             }
         }
     }

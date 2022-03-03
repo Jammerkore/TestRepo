@@ -4926,6 +4926,14 @@ namespace MIDRetail.Business.Allocation
                 sizeAlternateModels: method.SizeAlternateModels
                 );
 
+            ListGenerator.FillVSWSizeConstraintRuleList(
+                VSWSizeConstraintRules: method.VSWSizeConstraintRules
+                );
+
+            ListGenerator.FillSizeConstraintRuleList(
+                sizeConstraintRules: method.SizeConstraintRules
+                );
+
             return method;
         }
 
@@ -4946,7 +4954,14 @@ namespace MIDRetail.Business.Allocation
                 Template_IND = methodProperties.IsTemplate;
                 Method_Description = roMethodSizeNeedAllocationProperties.Description;
                 User_RID = roMethodSizeNeedAllocationProperties.UserKey;
-                _MerchPhRid = roMethodSizeNeedAllocationProperties.MerchandiseHierarchy.Key;
+                if (roMethodSizeNeedAllocationProperties.MerchandiseType == eMerchandiseType.HierarchyLevel)
+                {
+                    _MerchPhRid = MainHierarchyProfile.Key; 
+                }
+                else
+                {
+                    _MerchPhRid = Include.NoRID;
+                }
                 _MerchPhlSequence = roMethodSizeNeedAllocationProperties.MerchandiseHierarchy.Value;
                 MerchType = roMethodSizeNeedAllocationProperties.MerchandiseType;
                 switch (MerchType)
@@ -4968,9 +4983,9 @@ namespace MIDRetail.Business.Allocation
                 SizeCurveGroupRid = roMethodSizeNeedAllocationProperties.ROSizeCurveProperties.SizeCurveGroupKey;
                 if (SAB.ClientServerSession.GlobalOptions.GenericSizeCurveNameType == eGenericSizeCurveNameType.NodePropertiesName)
                 {
-                    GenCurveNsccdRID = roMethodSizeNeedAllocationProperties.ROSizeCurveProperties.HeaderCharacteristicsOrNameExtensionKey;
+                    GenCurveNsccdRID = roMethodSizeNeedAllocationProperties.ROSizeCurveProperties.GenericHeaderCharacteristicsOrNameExtensionKey;
                 }
-                GenCurveMerchType = roMethodSizeNeedAllocationProperties.ROSizeCurveProperties.MerchandiseType;
+                GenCurveMerchType = roMethodSizeNeedAllocationProperties.ROSizeCurveProperties.GenericMerchandiseType;
                 switch (GenCurveMerchType)
                 {
                     case eMerchandiseType.HierarchyLevel:
@@ -4987,7 +5002,7 @@ namespace MIDRetail.Business.Allocation
                 ApplyRulesOnly = roMethodSizeNeedAllocationProperties.ROSizeCurveProperties.IsApplyRulesOnly;
                 GenCurveColorInd = roMethodSizeNeedAllocationProperties.ROSizeCurveProperties.IsColorSelected;
                 // Constraints Group Box
-                IB_MerchandiseType = roMethodSizeNeedAllocationProperties.ROSizeConstraintProperties.InventoryBasisMerchType;
+                IB_MerchandiseType = roMethodSizeNeedAllocationProperties.ROSizeConstraintProperties.InventoryBasisMerchandiseType;
                 switch (IB_MerchandiseType)
                 {
                     case eMerchandiseType.HierarchyLevel:
@@ -4996,11 +5011,11 @@ namespace MIDRetail.Business.Allocation
                         _IB_MERCH_HN_RID = Include.NoRID;
                         break;
                     default: //eMerchandiseType.Node
-                        _IB_MERCH_HN_RID = roMethodSizeNeedAllocationProperties.ROSizeConstraintProperties.InventoryBasis.Key;
+                        _IB_MERCH_HN_RID = roMethodSizeNeedAllocationProperties.ROSizeConstraintProperties.InventoryBasisMerchandise.Key;
                         break;
                 }
-                _sizeConstraintRid = roMethodSizeNeedAllocationProperties.ROSizeConstraintProperties.SizeConstraint.Key;
-                GenConstraintMerchType = roMethodSizeNeedAllocationProperties.ROSizeConstraintProperties.GenConstraintMerchType;
+                _sizeConstraintRid = roMethodSizeNeedAllocationProperties.ROSizeConstraintProperties.SizeConstraintKey;
+                GenConstraintMerchType = roMethodSizeNeedAllocationProperties.ROSizeConstraintProperties.GenericMerchandiseType;
                 switch (GenConstraintMerchType)
                 {
                     case eMerchandiseType.HierarchyLevel:
@@ -5009,11 +5024,11 @@ namespace MIDRetail.Business.Allocation
                         GenConstraintHnRID = Include.NoRID; 
                         break;
                     default: //eMerchandiseType.Node
-                        GenConstraintHnRID = roMethodSizeNeedAllocationProperties.ROSizeConstraintProperties.SizeConstraintGenericHierarchy.Key;
+                        GenConstraintHnRID = Include.NoRID;
                         break;
                 }
-                GenConstraintCharGroupRID = roMethodSizeNeedAllocationProperties.ROSizeConstraintProperties.SizeConstraintGenericHeaderChar.Key;
-                GenConstraintColorInd = roMethodSizeNeedAllocationProperties.ROSizeConstraintProperties.GenConstraintColorInd;
+                GenConstraintCharGroupRID = roMethodSizeNeedAllocationProperties.ROSizeConstraintProperties.GenericHeaderCharacteristicsKey;
+                GenConstraintColorInd = roMethodSizeNeedAllocationProperties.ROSizeConstraintProperties.IsColorSelected;
                 //VSW 
                 _overrideVSWSizeConstraints = roMethodSizeNeedAllocationProperties.OverrideVSWSizeConstraints;
                 _vSWSizeConstraints = (eVSWSizeConstraints)roMethodSizeNeedAllocationProperties.VSWSizeConstraints.Key;
@@ -5031,8 +5046,13 @@ namespace MIDRetail.Business.Allocation
                 }
                 //Rules Tab
                 SG_RID = roMethodSizeNeedAllocationProperties.Attribute.Key;
-                MethodConstraints = SizeRuleAttributeSet.BuildMethodConstrainst( roMethodSizeNeedAllocationProperties.Method.Key, roMethodSizeNeedAllocationProperties.Attribute.Key, 
-                    roMethodSizeNeedAllocationProperties.SizeRuleAttributeSet, MethodConstraints, SAB); // MethodConstraints will be regenerated based on above changes
+                MethodConstraints = SizeRuleAttributeSet.BuildMethodConstrainst(
+                    methodRID: roMethodSizeNeedAllocationProperties.Method.Key,
+                    attributeRID: roMethodSizeNeedAllocationProperties.Attribute.Key,
+                    rOMethodSizeRuleAttributeSet: roMethodSizeNeedAllocationProperties.SizeRuleAttributeSet,
+                    methodConstraintsSV: MethodConstraints,
+                    SAB: SAB
+                    ); // MethodConstraints will be regenerated based on above changes
                 
                 return true;
             }
