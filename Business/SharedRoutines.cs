@@ -1479,7 +1479,7 @@ namespace MIDRetail.Business
         /// Builds the RO Size Rule Attribute Set lists for the Size Methods' Rule Tab from the Dataset MethodConstraints
         /// </summary>
 
-        public static ROMethodSizeRuleProperties BuildSizeRuleProperties(
+        public static List<ROMethodSizeRuleProperties> BuildSizeRuleProperties(
             int methodRID, 
             eMethodType methodType, 
             int attributeRID, 
@@ -1869,7 +1869,7 @@ namespace MIDRetail.Business
             //ROMethodSizeRuleAttributeSet sizeRuleAttributeSet = new ROMethodSizeRuleAttributeSet();
             //sizeRuleAttributeSet.SizeRuleRowsValues = rOMethodSizeRules;
             //return sizeRuleAttributeSet;
-            return null;
+            return new List<ROMethodSizeRuleProperties>();
             
         }
         /// <summary>

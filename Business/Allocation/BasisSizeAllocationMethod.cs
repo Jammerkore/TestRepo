@@ -2493,7 +2493,7 @@ namespace MIDRetail.Business.Allocation
                 rule: GetName.GetBasisSizeMethodRuleType(_methodData.Rule),
                 ruleQuantity: _methodData.RuleQuantity,
                 attribute: GetName.GetAttributeName(_methodData.SG_RID),
-                sizeRuleProperties: SizeRuleProperties.BuildSizeRuleProperties(
+                sizeRuleAttributeSets: SizeRuleProperties.BuildSizeRuleProperties(
                     methodRID: _methodData.Method_RID,
                     methodType: eMethodType.BasisSizeAllocation,
                     attributeRID: _methodData.SG_RID,

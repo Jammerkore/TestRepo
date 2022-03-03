@@ -2088,7 +2088,7 @@ namespace MIDRetail.Business.Allocation
                 packToleranceNoMaxStep: _methodData.PackToleranceNoMaxStep,
                 maxPackNeedTolerance: _methodData.MaxPackNeedTolerance,
                 attribute: GetName.GetAttributeName(_methodData.SG_RID),
-                sizeRuleProperties: SizeRuleProperties.BuildSizeRuleProperties(
+                sizeRuleAttributeSets: SizeRuleProperties.BuildSizeRuleProperties(
                     methodRID: _methodData.Method_RID,
                     methodType: eMethodType.FillSizeHolesAllocation,
                     attributeRID: _methodData.SG_RID,
