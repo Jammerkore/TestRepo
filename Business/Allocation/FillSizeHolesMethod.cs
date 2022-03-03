@@ -2088,7 +2088,7 @@ namespace MIDRetail.Business.Allocation
                 packToleranceNoMaxStep: _methodData.PackToleranceNoMaxStep,
                 maxPackNeedTolerance: _methodData.MaxPackNeedTolerance,
                 attribute: GetName.GetAttributeName(_methodData.SG_RID),
-                sizeRuleAttributeSet: SizeRuleAttributeSet.BuildSizeRuleAttributeSet(
+                sizeRuleProperties: SizeRuleProperties.BuildSizeRuleProperties(
                     methodRID: _methodData.Method_RID,
                     methodType: eMethodType.FillSizeHolesAllocation,
                     attributeRID: _methodData.SG_RID,
@@ -2214,8 +2214,8 @@ namespace MIDRetail.Business.Allocation
                 }
                 //Rules Tab
                 SG_RID = roMethodFillSizeAllocationProperties.Attribute.Key;
-                MethodConstraints = SizeRuleAttributeSet.BuildMethodConstrainst(roMethodFillSizeAllocationProperties.Method.Key, roMethodFillSizeAllocationProperties.Attribute.Key,
-                    roMethodFillSizeAllocationProperties.SizeRuleAttributeSet, MethodConstraints, SAB);
+                //MethodConstraints = SizeRuleAttributeSet.BuildMethodConstrainst(roMethodFillSizeAllocationProperties.Method.Key, roMethodFillSizeAllocationProperties.Attribute.Key,
+                //    roMethodFillSizeAllocationProperties.SizeRuleAttributeSet, MethodConstraints, SAB);
                 return true;
             }
             catch (Exception e)

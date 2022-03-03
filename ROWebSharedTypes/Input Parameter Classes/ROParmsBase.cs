@@ -82,7 +82,6 @@ namespace Logility.ROWebSharedTypes
     [KnownType(typeof(ROSizeDimension))]
     [KnownType(typeof(ROSizeConstraintProperties))]
     [KnownType(typeof(ROSizeCurveProperties))]
-    [KnownType(typeof(ROMethodSizeRuleAttributeSet))]
     [KnownType(typeof(ROMethodSizeRuleProperties))]
     [KnownType(typeof(ROMethodDCFulfillmentProperties))]
     [KnownType(typeof(ROMethodDCStoreCharacteristicSet))]

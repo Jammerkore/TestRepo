@@ -4898,7 +4898,7 @@ namespace MIDRetail.Business.Allocation
                 packToleranceNoMaxStep: _methodData.PackToleranceNoMaxStep,
                 maxPackNeedTolerance: _methodData.MaxPackNeedTolerance,
                 attribute: GetName.GetAttributeName(_methodData.SG_RID),
-                sizeRuleAttributeSet: SizeRuleAttributeSet.BuildSizeRuleAttributeSet(
+                sizeRuleProperties: SizeRuleProperties.BuildSizeRuleProperties(
                     methodRID: _methodData.Method_RID,
                     methodType: eMethodType.SizeNeedAllocation,
                     attributeRID: _methodData.SG_RID,
@@ -5046,13 +5046,13 @@ namespace MIDRetail.Business.Allocation
                 }
                 //Rules Tab
                 SG_RID = roMethodSizeNeedAllocationProperties.Attribute.Key;
-                MethodConstraints = SizeRuleAttributeSet.BuildMethodConstrainst(
-                    methodRID: roMethodSizeNeedAllocationProperties.Method.Key,
-                    attributeRID: roMethodSizeNeedAllocationProperties.Attribute.Key,
-                    rOMethodSizeRuleAttributeSet: roMethodSizeNeedAllocationProperties.SizeRuleAttributeSet,
-                    methodConstraintsSV: MethodConstraints,
-                    SAB: SAB
-                    ); // MethodConstraints will be regenerated based on above changes
+                //MethodConstraints = SizeRuleAttributeSet.BuildMethodConstrainst(
+                //    methodRID: roMethodSizeNeedAllocationProperties.Method.Key,
+                //    attributeRID: roMethodSizeNeedAllocationProperties.Attribute.Key,
+                //    rOMethodSizeRuleAttributeSet: roMethodSizeNeedAllocationProperties.SizeRuleAttributeSet,
+                //    methodConstraintsSV: MethodConstraints,
+                //    SAB: SAB
+                //    ); // MethodConstraints will be regenerated based on above changes
                 
                 return true;
             }

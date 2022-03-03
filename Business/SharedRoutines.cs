@@ -1473,13 +1473,13 @@ namespace MIDRetail.Business
         }
     }
 
-    public class SizeRuleAttributeSet
+    public class SizeRuleProperties
     {
         /// <summary>
         /// Builds the RO Size Rule Attribute Set lists for the Size Methods' Rule Tab from the Dataset MethodConstraints
         /// </summary>
 
-        public static ROMethodSizeRuleAttributeSet BuildSizeRuleAttributeSet(
+        public static ROMethodSizeRuleProperties BuildSizeRuleProperties(
             int methodRID, 
             eMethodType methodType, 
             int attributeRID, 
@@ -1862,21 +1862,27 @@ namespace MIDRetail.Business
                     sizeSEQ = 0;
                 }
 
-                ROMethodSizeRuleProperties rOMethodSizeRulesProperties = new ROMethodSizeRuleProperties(false,false,false, row["BAND_DSC"].ToString(), sgl, colorCode, sizes, dimensions, sizeCode, sizeRule, sizeQuantity, EnumTools.VerifyEnumValue(methodRowType), sizeSEQ);
-                rOMethodSizeRules.Add(rOMethodSizeRulesProperties);
+                //ROMethodSizeRuleProperties rOMethodSizeRulesProperties = new ROMethodSizeRuleProperties(false,false,false, row["BAND_DSC"].ToString(), sgl, colorCode, sizes, dimensions, sizeCode, sizeRule, sizeQuantity, EnumTools.VerifyEnumValue(methodRowType), sizeSEQ);
+                //rOMethodSizeRules.Add(rOMethodSizeRulesProperties);
             }
 
-            ROMethodSizeRuleAttributeSet sizeRuleAttributeSet = new ROMethodSizeRuleAttributeSet();
-            sizeRuleAttributeSet.SizeRuleRowsValues = rOMethodSizeRules;
-            return sizeRuleAttributeSet;
+            //ROMethodSizeRuleAttributeSet sizeRuleAttributeSet = new ROMethodSizeRuleAttributeSet();
+            //sizeRuleAttributeSet.SizeRuleRowsValues = rOMethodSizeRules;
+            //return sizeRuleAttributeSet;
+            return null;
             
         }
         /// <summary>
         /// Builds the MethodConstraints Dataset from the  RO Size Rule Attribute Set lists for the Size Methods' Rule Tab 
         /// </summary>
 
-        public static DataSet BuildMethodConstrainst(int methodRID, int attributeRID, ROMethodSizeRuleAttributeSet rOMethodSizeRuleAttributeSet, DataSet methodConstraintsSV,
-            SessionAddressBlock SAB)
+        public static DataSet BuildMethodConstrainst(
+            int methodRID, 
+            int attributeRID, 
+            ROMethodSizeRuleProperties rOMethodSizeRuleAttributeSet, 
+            DataSet methodConstraintsSV,
+            SessionAddressBlock SAB
+            )
         {
 
             DataSet methodConstraints = new DataSet();
@@ -1891,248 +1897,248 @@ namespace MIDRetail.Business
             int number = 0;
 
             //Create dataset from saved RO Size Rule Attribute Set
-            if (rOMethodSizeRuleAttributeSet.SizeRuleRowsValues.Count > 0)
-            {
-                //create table from list
-                try
-                {
-                    foreach (ROMethodSizeRuleProperties rOMethodSizeRules in rOMethodSizeRuleAttributeSet.SizeRuleRowsValues)
-                    {
-                        sizeMethodRowType = rOMethodSizeRules.RowTypeID;
-                        newColumnName = "ROW_TYPE_ID";
-                        switch (sizeMethodRowType)
-                        {
-                            case eSizeMethodRowType.Set:
-                                dataTable = methodConstraints.Tables["SetLevel"];
-                                dataRow = methodConstraints.Tables["SetLevel"].NewRow();
-                                if (rOMethodSizeRules.BandDsc.ToString() == "Default")
-                                {
-                                    dataRow[newColumnName] = 8; // for default row type id
-                                }
-                                else
-                                {
-                                    dataRow[newColumnName] = 1;
-                                }
-                                break;
-                            case eSizeMethodRowType.AllColor:
-                                dataTable = methodConstraints.Tables["AllColor"];
-                                dataRow = methodConstraints.Tables["AllColor"].NewRow();
-                                dataRow[newColumnName] = 2;
-                                break;
-                            case eSizeMethodRowType.AllColorSize:
-                                dataTable = methodConstraints.Tables["AllColorSize"];
-                                dataRow = methodConstraints.Tables["AllColorSize"].NewRow();
-                                dataRow[newColumnName] = 4;
-                                break;
-                            case eSizeMethodRowType.AllColorSizeDimension:
-                                dataTable = methodConstraints.Tables["AllColorSizeDimension"];
-                                dataRow = methodConstraints.Tables["AllColorSizeDimension"].NewRow();
-                                dataRow[newColumnName] = 6;
-                                break;
-                            case eSizeMethodRowType.AllSize:
-                                dataTable = methodConstraints.Tables["AllSize"];
-                                dataRow = methodConstraints.Tables["AllSize"].NewRow();
-                                dataRow[newColumnName] = 0;
-                                break;
-                            case eSizeMethodRowType.Color:
-                                dataTable = methodConstraints.Tables["Color"];
-                                dataRow = methodConstraints.Tables["Color"].NewRow();
-                                dataRow[newColumnName] = 3;
-                                break;
-                            case eSizeMethodRowType.ColorSize:
-                                dataTable = methodConstraints.Tables["ColorSize"];
-                                dataRow = methodConstraints.Tables["ColorSize"].NewRow();
-                                dataRow[newColumnName] = 5;
-                                break;
-                            case eSizeMethodRowType.ColorSizeDimension:
-                                dataTable = methodConstraints.Tables["ColorSizeDimension"];
-                                dataRow = methodConstraints.Tables["ColorSizeDimension"].NewRow();
-                                dataRow[newColumnName] = 7;
-                                break;
-                            default:
-                                dataTable = methodConstraints.Tables["SetLevel"];
-                                dataRow = methodConstraints.Tables["SetLevel"].NewRow();
-                                dataRow[newColumnName] = 1;
-                                break;
-                        }
+            //if (rOMethodSizeRuleAttributeSet.SizeRuleRowsValues.Count > 0)
+            //{
+            //    //create table from list
+            //    try
+            //    {
+            //        foreach (ROMethodSizeRuleProperties rOMethodSizeRules in rOMethodSizeRuleAttributeSet.SizeRuleRowsValues)
+            //        {
+            //            sizeMethodRowType = rOMethodSizeRules.RowTypeID;
+            //            newColumnName = "ROW_TYPE_ID";
+            //            switch (sizeMethodRowType)
+            //            {
+            //                case eSizeMethodRowType.Set:
+            //                    dataTable = methodConstraints.Tables["SetLevel"];
+            //                    dataRow = methodConstraints.Tables["SetLevel"].NewRow();
+            //                    if (rOMethodSizeRules.BandDsc.ToString() == "Default")
+            //                    {
+            //                        dataRow[newColumnName] = 8; // for default row type id
+            //                    }
+            //                    else
+            //                    {
+            //                        dataRow[newColumnName] = 1;
+            //                    }
+            //                    break;
+            //                case eSizeMethodRowType.AllColor:
+            //                    dataTable = methodConstraints.Tables["AllColor"];
+            //                    dataRow = methodConstraints.Tables["AllColor"].NewRow();
+            //                    dataRow[newColumnName] = 2;
+            //                    break;
+            //                case eSizeMethodRowType.AllColorSize:
+            //                    dataTable = methodConstraints.Tables["AllColorSize"];
+            //                    dataRow = methodConstraints.Tables["AllColorSize"].NewRow();
+            //                    dataRow[newColumnName] = 4;
+            //                    break;
+            //                case eSizeMethodRowType.AllColorSizeDimension:
+            //                    dataTable = methodConstraints.Tables["AllColorSizeDimension"];
+            //                    dataRow = methodConstraints.Tables["AllColorSizeDimension"].NewRow();
+            //                    dataRow[newColumnName] = 6;
+            //                    break;
+            //                case eSizeMethodRowType.AllSize:
+            //                    dataTable = methodConstraints.Tables["AllSize"];
+            //                    dataRow = methodConstraints.Tables["AllSize"].NewRow();
+            //                    dataRow[newColumnName] = 0;
+            //                    break;
+            //                case eSizeMethodRowType.Color:
+            //                    dataTable = methodConstraints.Tables["Color"];
+            //                    dataRow = methodConstraints.Tables["Color"].NewRow();
+            //                    dataRow[newColumnName] = 3;
+            //                    break;
+            //                case eSizeMethodRowType.ColorSize:
+            //                    dataTable = methodConstraints.Tables["ColorSize"];
+            //                    dataRow = methodConstraints.Tables["ColorSize"].NewRow();
+            //                    dataRow[newColumnName] = 5;
+            //                    break;
+            //                case eSizeMethodRowType.ColorSizeDimension:
+            //                    dataTable = methodConstraints.Tables["ColorSizeDimension"];
+            //                    dataRow = methodConstraints.Tables["ColorSizeDimension"].NewRow();
+            //                    dataRow[newColumnName] = 7;
+            //                    break;
+            //                default:
+            //                    dataTable = methodConstraints.Tables["SetLevel"];
+            //                    dataRow = methodConstraints.Tables["SetLevel"].NewRow();
+            //                    dataRow[newColumnName] = 1;
+            //                    break;
+            //            }
 
-                        if (sizeMethodRowType == eSizeMethodRowType.Set || sizeMethodRowType == eSizeMethodRowType.Default)
-                        {
-                            newColumnName = "BAND_DSC";
-                            if (rOMethodSizeRules.BandDsc == null)
-                            {
-                                dataRow[newColumnName] = " ";
-                            }
-                            else
-                            {
-                                dataRow[newColumnName] = rOMethodSizeRules.BandDsc.ToString();
-                            }
-                            newColumnName = "METHOD_RID";
-                            success = Int32.TryParse(methodRID.ToString(), out number);
-                            if (success && number > 0)
-                            {
-                                dataRow[newColumnName] = Convert.ToInt32(methodRID);
-                            }
-                            else
-                            {
-                                dataRow[newColumnName] = Include.NoRID;
-                            }
+            //            if (sizeMethodRowType == eSizeMethodRowType.Set || sizeMethodRowType == eSizeMethodRowType.Default)
+            //            {
+            //                newColumnName = "BAND_DSC";
+            //                if (rOMethodSizeRules.BandDsc == null)
+            //                {
+            //                    dataRow[newColumnName] = " ";
+            //                }
+            //                else
+            //                {
+            //                    dataRow[newColumnName] = rOMethodSizeRules.BandDsc.ToString();
+            //                }
+            //                newColumnName = "METHOD_RID";
+            //                success = Int32.TryParse(methodRID.ToString(), out number);
+            //                if (success && number > 0)
+            //                {
+            //                    dataRow[newColumnName] = Convert.ToInt32(methodRID);
+            //                }
+            //                else
+            //                {
+            //                    dataRow[newColumnName] = Include.NoRID;
+            //                }
 
-                            newColumnName = "SGL_RID";
-                            success = Int32.TryParse(rOMethodSizeRules.Sgl.Key.ToString(), out number);
-                            if (success && number > 0)
-                            {
-                                dataRow[newColumnName] = Convert.ToInt32(rOMethodSizeRules.Sgl.Key);
-                            }
-                            else
-                            {
-                                dataRow[newColumnName] = Include.NoRID;
-                            }
+            //                newColumnName = "SGL_RID";
+            //                success = Int32.TryParse(rOMethodSizeRules.Sgl.Key.ToString(), out number);
+            //                if (success && number > 0)
+            //                {
+            //                    dataRow[newColumnName] = Convert.ToInt32(rOMethodSizeRules.Sgl.Key);
+            //                }
+            //                else
+            //                {
+            //                    dataRow[newColumnName] = Include.NoRID;
+            //                }
 
-                            newColumnName = "SIZE_RULE"; // THIE IS EITHER NULL OR NUMERIC BUT TABLE IS VARCHAR
-                            success = Int32.TryParse(rOMethodSizeRules.SizeRule.ToString(), out number);
-                            if (success && number > 0)
-                            {
-                                dataRow[newColumnName] = rOMethodSizeRules.SizeRule;
-                            }
-                            else
-                            {
-                                dataRow[newColumnName] = string.Empty; 
-                            }
+            //                newColumnName = "SIZE_RULE"; // THIE IS EITHER NULL OR NUMERIC BUT TABLE IS VARCHAR
+            //                success = Int32.TryParse(rOMethodSizeRules.SizeRule.ToString(), out number);
+            //                if (success && number > 0)
+            //                {
+            //                    dataRow[newColumnName] = rOMethodSizeRules.SizeRule;
+            //                }
+            //                else
+            //                {
+            //                    dataRow[newColumnName] = string.Empty; 
+            //                }
 
-                            newColumnName = "SIZE_QUANTITY";
-                            success = Int32.TryParse(rOMethodSizeRules.SizeQuantity.ToString(), out number);
-                            if (success && number > 0)
-                            {
-                                dataRow[newColumnName] = Convert.ToInt32(rOMethodSizeRules.SizeQuantity);
-                            }
-                            else
-                            {
-                                dataRow[newColumnName] = Include.UndefinedQuantity;
-                            }
-                            methodConstraints.Tables[dataTable.TableName.ToString()].Rows.Add(dataRow);
-                            //dataTable.Rows.Add(dataRow);
-                        }
-                        else
-                        {
-                            newColumnName = "BAND_DSC";
-                            if (rOMethodSizeRules.BandDsc == null)
-                            {
-                                dataRow[newColumnName] = " ";
-                            }
-                            else
-                            {
-                                dataRow[newColumnName] = rOMethodSizeRules.BandDsc.ToString();
-                            }
+            //                newColumnName = "SIZE_QUANTITY";
+            //                success = Int32.TryParse(rOMethodSizeRules.SizeQuantity.ToString(), out number);
+            //                if (success && number > 0)
+            //                {
+            //                    dataRow[newColumnName] = Convert.ToInt32(rOMethodSizeRules.SizeQuantity);
+            //                }
+            //                else
+            //                {
+            //                    dataRow[newColumnName] = Include.UndefinedQuantity;
+            //                }
+            //                methodConstraints.Tables[dataTable.TableName.ToString()].Rows.Add(dataRow);
+            //                //dataTable.Rows.Add(dataRow);
+            //            }
+            //            else
+            //            {
+            //                newColumnName = "BAND_DSC";
+            //                if (rOMethodSizeRules.BandDsc == null)
+            //                {
+            //                    dataRow[newColumnName] = " ";
+            //                }
+            //                else
+            //                {
+            //                    dataRow[newColumnName] = rOMethodSizeRules.BandDsc.ToString();
+            //                }
 
-                            newColumnName = "METHOD_RID";
-                            success = Int32.TryParse(methodRID.ToString(), out number);
-                            if (success && number > 0)
-                            {
-                                dataRow[newColumnName] = Convert.ToInt32(methodRID);
-                            }
-                            else
-                            {
-                                dataRow[newColumnName] = Include.NoRID;
-                            }
+            //                newColumnName = "METHOD_RID";
+            //                success = Int32.TryParse(methodRID.ToString(), out number);
+            //                if (success && number > 0)
+            //                {
+            //                    dataRow[newColumnName] = Convert.ToInt32(methodRID);
+            //                }
+            //                else
+            //                {
+            //                    dataRow[newColumnName] = Include.NoRID;
+            //                }
 
-                            newColumnName = "SGL_RID";
-                            success = Int32.TryParse(rOMethodSizeRules.Sgl.Key.ToString(), out number);
-                            if (success && number > 0)
-                            {
-                                dataRow[newColumnName] = Convert.ToInt32(rOMethodSizeRules.Sgl.Key);
-                            }
-                            else
-                            {
-                                dataRow[newColumnName] = Include.NoRID;
-                            }
+            //                newColumnName = "SGL_RID";
+            //                success = Int32.TryParse(rOMethodSizeRules.Sgl.Key.ToString(), out number);
+            //                if (success && number > 0)
+            //                {
+            //                    dataRow[newColumnName] = Convert.ToInt32(rOMethodSizeRules.Sgl.Key);
+            //                }
+            //                else
+            //                {
+            //                    dataRow[newColumnName] = Include.NoRID;
+            //                }
 
-                            newColumnName = "COLOR_CODE_RID";
-                            success = Int32.TryParse(rOMethodSizeRules.ColorCode.Key.ToString(), out number);
-                            if (success && number > 0)
-                            {
-                                dataRow[newColumnName] = Convert.ToInt32(rOMethodSizeRules.ColorCode.Key);
-                            }
-                            else
-                            {
-                                dataRow[newColumnName] = Include.NoRID;
-                            }
+            //                newColumnName = "COLOR_CODE_RID";
+            //                success = Int32.TryParse(rOMethodSizeRules.ColorCode.Key.ToString(), out number);
+            //                if (success && number > 0)
+            //                {
+            //                    dataRow[newColumnName] = Convert.ToInt32(rOMethodSizeRules.ColorCode.Key);
+            //                }
+            //                else
+            //                {
+            //                    dataRow[newColumnName] = Include.NoRID;
+            //                }
 
-                            newColumnName = "SIZES_RID";
-                            success = Int32.TryParse(rOMethodSizeRules.Sizes.Key.ToString(), out number);
-                            if (success && number > 0)
-                            {
-                                dataRow[newColumnName] = Convert.ToInt32(rOMethodSizeRules.Sizes.Key);
-                            }
-                            else
-                            {
-                                dataRow[newColumnName] = Include.NoRID;
-                            }
+            //                newColumnName = "SIZES_RID";
+            //                success = Int32.TryParse(rOMethodSizeRules.Sizes.Key.ToString(), out number);
+            //                if (success && number > 0)
+            //                {
+            //                    dataRow[newColumnName] = Convert.ToInt32(rOMethodSizeRules.Sizes.Key);
+            //                }
+            //                else
+            //                {
+            //                    dataRow[newColumnName] = Include.NoRID;
+            //                }
 
-                            newColumnName = "DIMENSIONS_RID";
-                            success = Int32.TryParse(rOMethodSizeRules.Dimensions.Key.ToString(), out number);
-                            if (success && number > 0)
-                            {
-                                dataRow[newColumnName] = Convert.ToInt32(rOMethodSizeRules.Dimensions.Key);
-                            }
-                            else
-                            {
-                                dataRow[newColumnName] = Include.NoRID;
-                            }
+            //                newColumnName = "DIMENSIONS_RID";
+            //                success = Int32.TryParse(rOMethodSizeRules.Dimensions.Key.ToString(), out number);
+            //                if (success && number > 0)
+            //                {
+            //                    dataRow[newColumnName] = Convert.ToInt32(rOMethodSizeRules.Dimensions.Key);
+            //                }
+            //                else
+            //                {
+            //                    dataRow[newColumnName] = Include.NoRID;
+            //                }
 
-                            newColumnName = "SIZE_CODE_RID";
-                            success = Int32.TryParse(rOMethodSizeRules.SizeCode.Key.ToString(), out number);
-                            if (success && number > 0)
-                            {
-                                dataRow[newColumnName] = Convert.ToInt32(rOMethodSizeRules.SizeCode.Key);
-                            }
-                            else
-                            {
-                                dataRow[newColumnName] = Include.NoRID;
-                            }
+            //                newColumnName = "SIZE_CODE_RID";
+            //                success = Int32.TryParse(rOMethodSizeRules.SizeCode.Key.ToString(), out number);
+            //                if (success && number > 0)
+            //                {
+            //                    dataRow[newColumnName] = Convert.ToInt32(rOMethodSizeRules.SizeCode.Key);
+            //                }
+            //                else
+            //                {
+            //                    dataRow[newColumnName] = Include.NoRID;
+            //                }
 
-                            newColumnName = "SIZE_RULE"; // THIE IS EITHER NULL OR NUMERIC BUT TABLE IS VARCHAR
-                            success = Int32.TryParse(rOMethodSizeRules.SizeRule.ToString(), out number);
-                            if (success && number > 0)
-                            {
-                                dataRow[newColumnName] = rOMethodSizeRules.SizeRule;
-                            }
-                            else
-                            {
-                                dataRow[newColumnName] = string.Empty;
-                            }
+            //                newColumnName = "SIZE_RULE"; // THIE IS EITHER NULL OR NUMERIC BUT TABLE IS VARCHAR
+            //                success = Int32.TryParse(rOMethodSizeRules.SizeRule.ToString(), out number);
+            //                if (success && number > 0)
+            //                {
+            //                    dataRow[newColumnName] = rOMethodSizeRules.SizeRule;
+            //                }
+            //                else
+            //                {
+            //                    dataRow[newColumnName] = string.Empty;
+            //                }
 
-                            newColumnName = "SIZE_QUANTITY";
-                            success = Int32.TryParse(rOMethodSizeRules.SizeQuantity.ToString(), out number);
-                            if (success && number > 0)
-                            {
-                                dataRow[newColumnName] = Convert.ToInt32(rOMethodSizeRules.SizeQuantity);
-                            }
-                            else
-                            {
-                                dataRow[newColumnName] = Include.UndefinedQuantity;
-                            }
+            //                newColumnName = "SIZE_QUANTITY";
+            //                success = Int32.TryParse(rOMethodSizeRules.SizeQuantity.ToString(), out number);
+            //                if (success && number > 0)
+            //                {
+            //                    dataRow[newColumnName] = Convert.ToInt32(rOMethodSizeRules.SizeQuantity);
+            //                }
+            //                else
+            //                {
+            //                    dataRow[newColumnName] = Include.UndefinedQuantity;
+            //                }
 
-                            newColumnName = "SIZE_SEQ";
-                            success = Int32.TryParse(rOMethodSizeRules.SizeSeq.ToString(), out number);
-                            if (success)
-                            {
-                                dataRow[newColumnName] = Convert.ToInt32(rOMethodSizeRules.SizeSeq);
-                            }
-                            else
-                            {
-                                dataRow[newColumnName] = 0;
-                            }
+            //                newColumnName = "SIZE_SEQ";
+            //                success = Int32.TryParse(rOMethodSizeRules.SizeSeq.ToString(), out number);
+            //                if (success)
+            //                {
+            //                    dataRow[newColumnName] = Convert.ToInt32(rOMethodSizeRules.SizeSeq);
+            //                }
+            //                else
+            //                {
+            //                    dataRow[newColumnName] = 0;
+            //                }
 
-                            methodConstraints.Tables[dataTable.TableName.ToString()].Rows.Add(dataRow);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                { 
+            //                methodConstraints.Tables[dataTable.TableName.ToString()].Rows.Add(dataRow);
+            //            }
+            //        }
+            //    }
+            //    catch (Exception ex)
+            //    { 
                     
-                }
-            }
+            //    }
+            //}
             return methodConstraints;
         }
     }

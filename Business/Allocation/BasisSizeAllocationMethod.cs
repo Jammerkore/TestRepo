@@ -2493,7 +2493,7 @@ namespace MIDRetail.Business.Allocation
                 rule: GetName.GetBasisSizeMethodRuleType(_methodData.Rule),
                 ruleQuantity: _methodData.RuleQuantity,
                 attribute: GetName.GetAttributeName(_methodData.SG_RID),
-                sizeRuleAttributeSet: SizeRuleAttributeSet.BuildSizeRuleAttributeSet(
+                sizeRuleProperties: SizeRuleProperties.BuildSizeRuleProperties(
                     methodRID: _methodData.Method_RID,
                     methodType: eMethodType.BasisSizeAllocation,
                     attributeRID: _methodData.SG_RID,
@@ -2587,8 +2587,8 @@ namespace MIDRetail.Business.Allocation
                 _methodData.RuleQuantity = roMethodBasisSizeAllocationProperties.RuleQuantity;
                 //Rules Tab
                 SG_RID = roMethodBasisSizeAllocationProperties.Attribute.Key;
-                MethodConstraints = SizeRuleAttributeSet.BuildMethodConstrainst(roMethodBasisSizeAllocationProperties.Method.Key, roMethodBasisSizeAllocationProperties.Attribute.Key,
-                roMethodBasisSizeAllocationProperties.SizeRuleAttributeSet, MethodConstraints, SAB); // MethodConstraints will be regenerated based on above changes
+                //MethodConstraints = SizeRuleAttributeSet.BuildMethodConstrainst(roMethodBasisSizeAllocationProperties.Method.Key, roMethodBasisSizeAllocationProperties.Attribute.Key,
+                //roMethodBasisSizeAllocationProperties.SizeRuleAttributeSet, MethodConstraints, SAB); // MethodConstraints will be regenerated based on above changes
                 _methodData.SubstituteList = BasisSizeSubstituteSet.BuildBasisSizeSubstituteList(roMethodBasisSizeAllocationProperties.Method.Key, roMethodBasisSizeAllocationProperties.Attribute.Key, roMethodBasisSizeAllocationProperties.BasisSizeSubstituteSet);
                 return true;
             }

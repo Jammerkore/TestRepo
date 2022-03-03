@@ -340,7 +340,7 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         KeyValuePair<int, string> _attribute;
         [DataMember(IsRequired = true)]
-        ROMethodSizeRuleAttributeSet _sizeRuleAttributeSet;
+        ROMethodSizeRuleProperties _sizeRuleProperties;
 
 
         #region Public Properties
@@ -474,10 +474,10 @@ namespace Logility.ROWebSharedTypes
             get { return _attribute; }
             set { _attribute = value; }
         }
-        public ROMethodSizeRuleAttributeSet SizeRuleAttributeSet
+        public ROMethodSizeRuleProperties SizeRuleProperties
         {
-            get { return _sizeRuleAttributeSet; }
-            set { _sizeRuleAttributeSet = value; }
+            get { return _sizeRuleProperties; }
+            set { _sizeRuleProperties = value; }
         }
 
         #endregion
@@ -508,7 +508,7 @@ namespace Logility.ROWebSharedTypes
             bool packToleranceNoMaxStep, 
             double maxPackNeedTolerance,
             KeyValuePair<int, string> attribute, 
-            ROMethodSizeRuleAttributeSet sizeRuleAttributeSet,
+            ROMethodSizeRuleProperties sizeRuleProperties,
             bool isTemplate = false
             ) 
             : base(
@@ -543,7 +543,7 @@ namespace Logility.ROWebSharedTypes
             _packToleranceNoMaxStep = packToleranceNoMaxStep;
             _maxPackNeedTolerance = maxPackNeedTolerance;
             _attribute = attribute;
-            _sizeRuleAttributeSet = sizeRuleAttributeSet;
+            _sizeRuleProperties = sizeRuleProperties;
         }
     }
     [DataContract(Name = "ROMethodSizeNeedProperties", Namespace = "http://Logility.ROWeb/")]
@@ -599,7 +599,7 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         KeyValuePair<int, string> _attribute;
         [DataMember(IsRequired = true)]
-        ROMethodSizeRuleAttributeSet _sizeRuleAttributeSet;
+        ROMethodSizeRuleProperties _sizeRuleProperties;
 
 
         #region Public Properties
@@ -721,10 +721,10 @@ namespace Logility.ROWebSharedTypes
             get { return _attribute; }
             set { _attribute = value; }
         }
-        public ROMethodSizeRuleAttributeSet SizeRuleAttributeSet
+        public ROMethodSizeRuleProperties SizeRuleProperties
         {
-            get { return _sizeRuleAttributeSet; }
-            set { _sizeRuleAttributeSet = value; }
+            get { return _sizeRuleProperties; }
+            set { _sizeRuleProperties = value; }
         }
 
         public List<KeyValuePair<int, string>> SizeConstraintRules
@@ -756,7 +756,7 @@ namespace Logility.ROWebSharedTypes
             bool packToleranceNoMaxStep, 
             double maxPackNeedTolerance,
             KeyValuePair<int, string> attribute, 
-            ROMethodSizeRuleAttributeSet sizeRuleAttributeSet,
+            ROMethodSizeRuleProperties sizeRuleProperties,
             bool isTemplate = false
             ) 
             : base(
@@ -787,7 +787,7 @@ namespace Logility.ROWebSharedTypes
             _packToleranceNoMaxStep = packToleranceNoMaxStep;
             _maxPackNeedTolerance = maxPackNeedTolerance;
             _attribute = attribute;
-            _sizeRuleAttributeSet = sizeRuleAttributeSet;
+            _sizeRuleProperties = sizeRuleProperties;
             _merchandiseBasis = new List<KeyValuePair<int, string>>();
             _sizeGroups = new List<KeyValuePair<int, string>>();
             _vSWSizeConstraintRules = new List<KeyValuePair<int, string>>();
@@ -823,7 +823,7 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         KeyValuePair<int, string> _attribute;
         [DataMember(IsRequired = true)]
-        ROMethodSizeRuleAttributeSet _sizeRuleAttributeSet;
+        ROMethodSizeRuleProperties _sizeRuleProperties;
         //basis substitute list
         [DataMember(IsRequired = true)]
         ROMethodBasisSizeSubstituteSet _basisSizeSubstituteSet;
@@ -890,10 +890,10 @@ namespace Logility.ROWebSharedTypes
             get { return _attribute; }
             set { _attribute = value; }
         }
-        public ROMethodSizeRuleAttributeSet SizeRuleAttributeSet
+        public ROMethodSizeRuleProperties SizeRuleProperties
         {
-            get { return _sizeRuleAttributeSet; }
-            set { _sizeRuleAttributeSet = value; }
+            get { return _sizeRuleProperties; }
+            set { _sizeRuleProperties = value; }
         }
 
         public ROMethodBasisSizeSubstituteSet BasisSizeSubstituteSet
@@ -917,7 +917,7 @@ namespace Logility.ROWebSharedTypes
             KeyValuePair<int, string> rule, 
             int ruleQuantity,
             KeyValuePair<int, string> attribute, 
-            ROMethodSizeRuleAttributeSet sizeRuleAttributeSet, 
+            ROMethodSizeRuleProperties sizeRuleProperties, 
             ROMethodBasisSizeSubstituteSet basisSizeSubstituteSet,
             bool isTemplate = false
             ) 
@@ -941,7 +941,7 @@ namespace Logility.ROWebSharedTypes
             _rule = rule;
             _ruleQuantity = ruleQuantity;
             _attribute = attribute;
-            _sizeRuleAttributeSet = sizeRuleAttributeSet;
+            _sizeRuleProperties = sizeRuleProperties;
             _basisSizeSubstituteSet = basisSizeSubstituteSet;
         }
     }
@@ -1882,102 +1882,23 @@ namespace Logility.ROWebSharedTypes
 
     }
 
-    [DataContract(Name = "ROMethodSizeRuleAttributeSet", Namespace = "http://Logility.ROWeb/")]
-    public class ROMethodSizeRuleAttributeSet
-    {
-        [DataMember(IsRequired = true)]
-        public List<ROMethodSizeRuleProperties> _sizeRuleRowsValues;
-
-
-        public List<ROMethodSizeRuleProperties> SizeRuleRowsValues
-        {
-            get
-            {
-                if (_sizeRuleRowsValues == null)
-                {
-                    _sizeRuleRowsValues = new List<ROMethodSizeRuleProperties>();
-                }
-                return _sizeRuleRowsValues;
-            }
-            set { _sizeRuleRowsValues = value; }
-        }
-
-    }
-
     [DataContract(Name = "ROMethodSizeRuleProperties", Namespace = "http://Logility.ROWeb/")]
     public class ROMethodSizeRuleProperties
     {
         [DataMember(IsRequired = true)]
-        bool _updated;
+        private KeyValuePair<int, string> _sizeRuleItem;
         [DataMember(IsRequired = true)]
-        bool _inserted;
+        private KeyValuePair<int, string> _sizeRule;
         [DataMember(IsRequired = true)]
-        bool _deleted;
+        private double _sizeQuantity;
         [DataMember(IsRequired = true)]
-        string _bandDsc;
-        [DataMember(IsRequired = true)]
-        KeyValuePair<int, string> _sgl;
-        [DataMember(IsRequired = true)]
-        KeyValuePair<int, string> _colorCode;
-        [DataMember(IsRequired = true)]
-        KeyValuePair<int, string> _sizes;
-        [DataMember(IsRequired = true)]
-        KeyValuePair<int, string> _dimensions;
-        [DataMember(IsRequired = true)]
-        KeyValuePair<int, string> _sizeCode;
-        [DataMember(IsRequired = true)]
-        KeyValuePair<int, string> _sizeRule;
-        [DataMember(IsRequired = true)]
-        double _sizeQuantity;
-        [DataMember(IsRequired = true)]
-        eSizeMethodRowType _rowTypeID;
-        [DataMember(IsRequired = true)]
-        int _sizeSeq;
+        private List<ROMethodSizeRuleProperties> _children;
 
-        public bool Updated
+
+        public KeyValuePair<int, string> SizeRuleItem
         {
-            get { return _updated; }
-            set { _updated = value; }
-        }
-        public bool Inserted
-        {
-            get { return _inserted; }
-            set { _inserted = value; }
-        }
-        public bool Deleted
-        {
-            get { return _deleted; }
-            set { _deleted = value; }
-        }
-        public string BandDsc
-        {
-            get { return _bandDsc; }
-            set { _bandDsc = value; }
-        }
-        public KeyValuePair<int, string> Sgl
-        {
-            get { return _sgl; }
-            set { _sgl = value; }
-        }
-        public KeyValuePair<int, string> ColorCode
-        {
-            get { return _colorCode; }
-            set { _colorCode = value; }
-        }
-        public KeyValuePair<int, string> Sizes
-        {
-            get { return _sizes; }
-            set { _sizes = value; }
-        }
-        public KeyValuePair<int, string> Dimensions
-        {
-            get { return _dimensions; }
-            set { _dimensions = value; }
-        }
-        public KeyValuePair<int, string> SizeCode
-        {
-            get { return _sizeCode; }
-            set { _sizeCode = value; }
+            get { return _sizeRuleItem; }
+            set { _sizeRuleItem = value; }
         }
         public KeyValuePair<int, string> SizeRule
         {
@@ -1989,38 +1910,22 @@ namespace Logility.ROWebSharedTypes
             get { return _sizeQuantity; }
             set { _sizeQuantity = value; }
         }
-        public eSizeMethodRowType RowTypeID
+        public List<ROMethodSizeRuleProperties> Children
         {
-            get { return _rowTypeID; }
-            set
-            {
-                _rowTypeID = value;
-            }
-        }
-        public int SizeSeq
-        {
-            get { return _sizeSeq; }
-            set { _sizeSeq = value; }
+            get { return _children; }
         }
 
-        public ROMethodSizeRuleProperties(bool updated, bool inserted, bool deleted, string bandDsc, KeyValuePair<int, string> sgl, KeyValuePair<int, string> colorCode,
-            KeyValuePair<int, string> sizes, KeyValuePair<int, string> dimensions, KeyValuePair<int, string> sizeCode, KeyValuePair<int, string> sizeRule,
-            double sizeQuantity, eSizeMethodRowType rowTypeID, int sizeSeq)
+        public ROMethodSizeRuleProperties( 
+            KeyValuePair<int, string> sizeRuleItem, 
+            KeyValuePair<int, string> sizeRule,
+            double sizeQuantity,
+            List<ROMethodSizeRuleProperties> children = null
+            )
         {
-            // fields specific to Size Rule Method Constraints
-            _updated = updated;
-            _inserted = inserted;
-            _deleted = deleted;
-            _bandDsc = bandDsc;
-            _sgl = sgl;
-            _colorCode = colorCode;
-            _sizes = sizes;
-            _dimensions = dimensions;
-            _sizeCode = sizeCode;
+            _sizeRuleItem = sizeRuleItem;;
             _sizeRule = sizeRule;
             _sizeQuantity = sizeQuantity;
-            _rowTypeID = rowTypeID;
-            _sizeSeq = sizeSeq;
+            _children = children;
         }
     }
 
