@@ -1888,9 +1888,9 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         private KeyValuePair<int, string> _sizeRuleItem;
         [DataMember(IsRequired = true)]
-        private KeyValuePair<int, string> _sizeRule;
+        private int? _sizeRule;
         [DataMember(IsRequired = true)]
-        private double _sizeQuantity;
+        private int? _sizeQuantity;
         [DataMember(IsRequired = true)]
         private List<ROMethodSizeRuleProperties> _children;
 
@@ -1900,12 +1900,12 @@ namespace Logility.ROWebSharedTypes
             get { return _sizeRuleItem; }
             set { _sizeRuleItem = value; }
         }
-        public KeyValuePair<int, string> SizeRule
+        public int? SizeRule
         {
             get { return _sizeRule; }
             set { _sizeRule = value; }
         }
-        public double SizeQuantity
+        public int? SizeQuantity
         {
             get { return _sizeQuantity; }
             set { _sizeQuantity = value; }
@@ -1917,8 +1917,8 @@ namespace Logility.ROWebSharedTypes
 
         public ROMethodSizeRuleProperties( 
             KeyValuePair<int, string> sizeRuleItem, 
-            KeyValuePair<int, string> sizeRule,
-            double sizeQuantity,
+            int? sizeRule,
+            int? sizeQuantity,
             List<ROMethodSizeRuleProperties> children = null
             )
         {

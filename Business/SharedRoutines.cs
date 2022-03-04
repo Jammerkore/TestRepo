@@ -1488,390 +1488,264 @@ namespace MIDRetail.Business
             eGetSizes getSizesUsing, 
             eGetDimensions getDimensionsUsing, 
             DataSet methodConstraints,
-            SessionAddressBlock SAB
+            SessionAddressBlock SAB,
+            bool addColorDimensionSizes = true
             )
         {
-            
-            DataTable combinedMethodConstrints = new DataTable();
-            DataColumn dataColumn;
-            bool success = false;
-            int number = 0;
-            eSizeMethodRowType sizeMethodRowType = eSizeMethodRowType.Set;
-            string newColumnName = string.Empty;     
 
-            //Create Columns and rows for datatable
-            dataColumn = new DataColumn();
-            dataColumn.DataType = System.Type.GetType("System.String");
-            dataColumn.ColumnName = "BAND_DSC";
-            dataColumn.ReadOnly = false;
-            dataColumn.Unique = false;
-            combinedMethodConstrints.Columns.Add(dataColumn);
+            List<ROMethodSizeRuleProperties> attributeSetRuleProperties = new List<ROMethodSizeRuleProperties>();
 
-            dataColumn = new DataColumn();
-            dataColumn.DataType = System.Type.GetType("System.Int32");
-            dataColumn.ColumnName = "METHOD_RID";
-            dataColumn.ReadOnly = false;
-            dataColumn.Unique = false;
-            combinedMethodConstrints.Columns.Add(dataColumn);
+            ROMethodSizeRuleProperties attributeSetSizeRule;
 
-            dataColumn = new DataColumn();
-            dataColumn.DataType = System.Type.GetType("System.Int32");
-            dataColumn.ColumnName = "SGL_RID";
-            dataColumn.ReadOnly = false;
-            dataColumn.Unique = false;
-            combinedMethodConstrints.Columns.Add(dataColumn);
-
-            dataColumn = new DataColumn();
-            dataColumn.DataType = System.Type.GetType("System.Int32");
-            dataColumn.ColumnName = "COLOR_CODE_RID";
-            dataColumn.ReadOnly = false;
-            dataColumn.Unique = false;
-            combinedMethodConstrints.Columns.Add(dataColumn);
-
-            dataColumn = new DataColumn();
-            dataColumn.DataType = System.Type.GetType("System.Int32");
-            dataColumn.ColumnName = "SIZES_RID";
-            dataColumn.ReadOnly = false;
-            dataColumn.Unique = false;
-            combinedMethodConstrints.Columns.Add(dataColumn);
-
-            dataColumn = new DataColumn();
-            dataColumn.DataType = System.Type.GetType("System.Int32");
-            dataColumn.ColumnName = "SIZE_CODE_RID";
-            dataColumn.ReadOnly = false;
-            dataColumn.Unique = false;
-            combinedMethodConstrints.Columns.Add(dataColumn);
-
-            dataColumn = new DataColumn();
-            dataColumn.DataType = System.Type.GetType("System.Int32");
-            dataColumn.ColumnName = "DIMENSIONS_RID";
-            dataColumn.ReadOnly = false;
-            dataColumn.Unique = false;
-            combinedMethodConstrints.Columns.Add(dataColumn);
-
-            dataColumn = new DataColumn();
-            dataColumn.DataType = System.Type.GetType("System.String");
-            dataColumn.ColumnName = "SIZE_RULE";
-            dataColumn.ReadOnly = false;
-            dataColumn.Unique = false;
-            combinedMethodConstrints.Columns.Add(dataColumn);
-
-            dataColumn = new DataColumn();
-            dataColumn.DataType = System.Type.GetType("System.Int32");
-            dataColumn.ColumnName = "SIZE_QUANTITY";
-            dataColumn.ReadOnly = false;
-            dataColumn.Unique = false;
-            combinedMethodConstrints.Columns.Add(dataColumn);
-
-            dataColumn = new DataColumn();
-            dataColumn.DataType = System.Type.GetType("System.Int32");
-            dataColumn.ColumnName = "ROW_TYPE_ID";
-            dataColumn.ReadOnly = false;
-            dataColumn.Unique = false;
-            combinedMethodConstrints.Columns.Add(dataColumn);
-
-            dataColumn = new DataColumn();
-            dataColumn.DataType = System.Type.GetType("System.Int32");
-            dataColumn.ColumnName = "SIZE_SEQ";
-            dataColumn.ReadOnly = false;
-            dataColumn.Unique = false;
-            combinedMethodConstrints.Columns.Add(dataColumn);
-
-            if (methodConstraints.Tables.Count > 0)
+            // build attribute sets
+            foreach (DataRow row in methodConstraints.Tables["SetLevel"].Rows)
             {
-                for (int t = 0; t < methodConstraints.Tables.Count; t++)
+                attributeSetSizeRule = new ROMethodSizeRuleProperties(
+                    sizeRuleItem: new KeyValuePair<int, string>(
+                        GetKeyValue(row: row, columnName: "SGL_RID"),  // attribute set key
+                        GetStringValue(row: row, columnName: "BAND_DSC")  // attribute name
+                        ),
+                    sizeRule: GetIntegerValue(row: row, columnName: "SIZE_RULE"),
+                    sizeQuantity: GetIntegerValue(row: row, columnName: "SIZE_QUANTITY"),
+                    children: new List<ROMethodSizeRuleProperties>()
+                    );
+
+                if (addColorDimensionSizes)
                 {
-                    for (int r = 0; r < methodConstraints.Tables[t].Rows.Count; r++)
-                    {
-                        DataRow drIn = methodConstraints.Tables[t].Rows[r];
-                        DataRow dr = combinedMethodConstrints.NewRow();
+                    // Get All Colors for attribute set
+                    BuildSizeRuleColorProperties(
+                        tableName: "AllColor",
+                        attributeSetKey: attributeSetSizeRule.SizeRuleItem.Key,
+                        colorRuleProperties: attributeSetSizeRule.Children,
+                        methodConstraints: methodConstraints
+                        );
 
-                        for (int c = 0; c < methodConstraints.Tables[t].Columns.Count; c++)
-                        {
-                            newColumnName = methodConstraints.Tables[t].Columns[c].ColumnName.ToString();
-
-                            switch (newColumnName)
-                            {
-                                case "BAND_DSC":
-                                    if (drIn[c] == null)
-                                    {
-                                        dr[newColumnName] = " ";
-                                    }
-                                    else
-                                    {
-                                        dr[newColumnName] = drIn[c].ToString();
-                                    }
-
-                                    break;
-
-                                case "METHOD_RID":
-                                case "SGL_RID":
-                                case "COLOR_CODE_RID":
-                                case "SIZES_RID":
-                                case "DIMENSIONS_RID":
-                                case "SIZE_CODE_RID":
-                                    if (drIn[c] == null)
-                                    {
-                                        dr[newColumnName] = Include.NoRID;
-                                    }
-                                    else
-                                    {
-                                        dr[newColumnName] = Convert.ToInt32(drIn[c]);
-                                    }
-
-                                    break;
-
-                                case "SIZE_RULE": // THIE IS EITHER NULL OR NUMERIC BUT TABLE IS VARCHAR
-                                    if (drIn[c] == null)
-                                    {
-                                        dr[newColumnName] = " ";
-                                    }
-                                    else
-                                    {
-                                        dr[newColumnName] = drIn[c].ToString();
-                                    }
-                                    break;
-
-                                case "SIZE_QUANTITY": // theis column should be numeric
-                                    if (drIn[c] == null)
-                                    {
-                                        dr[newColumnName] = " ";
-                                    }
-                                    else
-                                    {
-                                        success = Int32.TryParse(drIn[c].ToString(), out number);
-                                        if (success)
-                                        {
-                                            dr[newColumnName] = Convert.ToInt32(drIn[c]);
-                                        }
-                                        else
-                                        {
-                                            dr[newColumnName] = 0;
-                                        }
-                                    }
-                                    break;
-
-                                case "SIZE_SEQ":
-                                    if (drIn[c] == null) //default the seq to be = 0 for the sorting of the list (this would be the set records)
-                                    {
-                                        dr[newColumnName] = 0;
-                                    }
-                                    else
-                                    {
-                                        success = Int32.TryParse(drIn[c].ToString(), out number);
-                                        if (success)
-                                        {
-                                            dr[newColumnName] = Convert.ToInt32(drIn[c]);
-                                        }
-                                        else
-                                        {
-                                            dr[newColumnName] = 0;
-                                        }
-                                    }
-                                    break;
-
-                                case "ROW_TYPE_ID": // type 8 = default but should sequence to a 1 for the sort
-                                    if (drIn[c] == null)
-                                    {
-                                        dr[newColumnName] = eSizeMethodRowType.Set; //default
-                                    }
-                                    else
-                                    {
-                                        success = Enum.TryParse((drIn[c].ToString()), out sizeMethodRowType);
-                                        if (success)
-                                        {
-                                            if (sizeMethodRowType == eSizeMethodRowType.Default)
-                                            {
-                                                dr[newColumnName] = eSizeMethodRowType.Set; // set row type id to 1 for sort
-                                            }
-                                            else
-                                            {
-                                                dr[newColumnName] = sizeMethodRowType;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            dr[newColumnName] = eSizeMethodRowType.Set; //default
-                                        }
-                                    }
-
-                                    break;
-                            
-                                default:
-                                    if (drIn[c] == null)
-                                    {
-                                        dr[newColumnName] = " ";
-                                    }
-                                    else
-                                    {
-                                        if (dr[newColumnName].GetType() == System.Type.GetType("System.Int32"))
-                                        {
-                                            success = Int32.TryParse(drIn[c].ToString(), out number);
-                                            if (success)
-                                            {
-                                                dr[newColumnName] = Convert.ToInt32(drIn[c]);
-                                            }
-                                            else
-                                            {
-                                                dr[newColumnName] = drIn[c].ToString();
-                                            }
-                                        }
-                                        else
-                                        {
-                                            dr[newColumnName] = drIn[c].ToString();
-                                        }
-                                    }
-                                    break;
-                            }
-                        }
-                        combinedMethodConstrints.Rows.Add(dr);
-                    }
+                    // Get Colors for attribute set
+                    BuildSizeRuleColorProperties(
+                        tableName: "Color",
+                        attributeSetKey: attributeSetSizeRule.SizeRuleItem.Key,
+                        colorRuleProperties: attributeSetSizeRule.Children,
+                        methodConstraints: methodConstraints
+                        );
                 }
+
+                // Add attribute set to rule list
+                attributeSetRuleProperties.Add(attributeSetSizeRule);
             }
 
-            DataTable sortedMethodConstrints = new DataTable();
-
-            if (combinedMethodConstrints.Rows.Count > 0)
-            {
-                combinedMethodConstrints.DefaultView.Sort = "METHOD_RID, SGL_RID, ROW_TYPE_ID, SIZE_SEQ";
-                sortedMethodConstrints = combinedMethodConstrints.DefaultView.ToTable();
-            }
-
-            List<ROMethodSizeRuleProperties> rOMethodSizeRules = new List<ROMethodSizeRuleProperties>();
-            KeyValuePair<int, string> sgl = new KeyValuePair<int, string>();
-            KeyValuePair<int, string> colorCode = new KeyValuePair<int, string>();
-            KeyValuePair<int, string> sizes = new KeyValuePair<int, string>();
-            KeyValuePair<int, string> dimensions = new KeyValuePair<int, string>();
-            KeyValuePair<int, string> sizeCode = new KeyValuePair<int, string>();
-            KeyValuePair<int, string> sizeRule= new KeyValuePair<int, string>();
-            eSizeMethodRowType methodRowType = eSizeMethodRowType.Set; //default
-            double sizeQuantity = 0;
-            Int32 sizeSEQ = 0;
-            eSizeRuleType eSizeRuleType = eSizeRuleType.None;
-            
-            //make output list from storted dataset
-            foreach (DataRow row in sortedMethodConstrints.Rows)
-            {
-                //reset values
-                sgl = GetName.GetAttributeSetName(Convert.ToInt32(row["SGL_RID"]));
-                colorCode = new KeyValuePair<int, string>();
-                sizes = new KeyValuePair<int, string>();
-                dimensions = new KeyValuePair<int, string>();
-                sizeCode = new KeyValuePair<int, string>();
-                sizeRule = new KeyValuePair<int, string>();
-                methodRowType = eSizeMethodRowType.Set; //default
-                sizeQuantity = 0;
-                sizeSEQ = 0;
-                
-                if (row["COLOR_CODE_RID"] != null && row["COLOR_CODE_RID"].ToString() != "")
-                {
-                    if (Convert.ToInt32(row["COLOR_CODE_RID"]) > Include.NoRID)
-                    {
-                        colorCode = GetName.GetColor(Convert.ToInt32(row["COLOR_CODE_RID"]), SAB);
-                    }
-                    else
-                    {
-                        colorCode = new KeyValuePair<int, string>(Include.NoRID, "");
-                    }
-                }
-                if (row["SIZES_RID"] != null && row["SIZES_RID"].ToString() != "")
-                {
-                    if (Convert.ToInt32(row["SIZES_RID"]) > Include.NoRID)
-                    {
-                        sizes = GetName.GetSize(Convert.ToInt32(row["SIZES_RID"]), SAB);
-                    }
-                    else
-                    {
-                        sizes = new KeyValuePair<int, string>(Include.NoRID, "");
-                    }
-                }
-                if (row["DIMENSIONS_RID"] != null && row["DIMENSIONS_RID"].ToString() != "")
-                {
-                    if (Convert.ToInt32(row["DIMENSIONS_RID"]) > Include.NoRID)
-                    {
-                        dimensions = GetName.GetDimension(Convert.ToInt32(row["DIMENSIONS_RID"]), sizeGroupRID, sizeCurveGroupRID,
-                            getSizesUsing, getDimensionsUsing, SAB);
-                    }
-                    else
-                    {
-                        dimensions = new KeyValuePair<int, string>(Include.NoRID, "");
-                    }
-                }
-                if (row["SIZE_CODE_RID"] != null && row["SIZE_CODE_RID"].ToString() != "")
-                {
-                    if (Convert.ToInt32(row["SIZE_CODE_RID"]) > Include.NoRID)
-                    {
-                        sizeCode = GetName.GetSize(Convert.ToInt32(row["SIZE_CODE_RID"]), SAB);
-                    }
-                    else
-                    {
-                        sizeCode = new KeyValuePair<int, string>(Include.NoRID, "");
-                    }
-                }
-
-                
-                if (row["SIZE_RULE"] == null)
-                {
-                    sizeRule = new KeyValuePair<int, string>(Include.NoRID, "");
-                }
-                else
-                {
-                    success = Enum.TryParse((row["SIZE_RULE"].ToString()), out eSizeRuleType);
-                    if (success)
-                    {
-                        sizeRule = new KeyValuePair<int, string>(Convert.ToInt32(row["SIZE_RULE"]), eSizeRuleType.ToString());
-                    }
-                    else
-                    {
-                        sizeRule = new KeyValuePair<int, string>(Include.NoRID, "");
-                    }
-                }
-                
-                if (row["SIZE_QUANTITY"] != null && row["SIZE_QUANTITY"].ToString() != "")
-                {
-                    sizeQuantity = Convert.ToDouble(row["SIZE_QUANTITY"]);
-                }
-                else
-                {
-                    sizeQuantity = 0;
-                }
-
-                success = Enum.TryParse((row["ROW_TYPE_ID"].ToString()), out sizeMethodRowType);
-                if (success)
-                {
-                    if (sizeMethodRowType == eSizeMethodRowType.Default)
-                    {
-                        methodRowType = eSizeMethodRowType.Set; // set row type id to 1 for sort
-                    }
-                    else
-                    {
-                        methodRowType = sizeMethodRowType;
-                    }
-                }
-                else
-                {
-                    methodRowType = eSizeMethodRowType.Set; //default
-                }
-                
-                if (row["SIZE_SEQ"] != null && row["SIZE_SEQ"].ToString() != "")
-                {
-                    sizeSEQ = Convert.ToInt32(row["SIZE_SEQ"]);
-                }
-                else
-                {
-                    sizeSEQ = 0;
-                }
-
-                //ROMethodSizeRuleProperties rOMethodSizeRulesProperties = new ROMethodSizeRuleProperties(false,false,false, row["BAND_DSC"].ToString(), sgl, colorCode, sizes, dimensions, sizeCode, sizeRule, sizeQuantity, EnumTools.VerifyEnumValue(methodRowType), sizeSEQ);
-                //rOMethodSizeRules.Add(rOMethodSizeRulesProperties);
-            }
-
-            //ROMethodSizeRuleAttributeSet sizeRuleAttributeSet = new ROMethodSizeRuleAttributeSet();
-            //sizeRuleAttributeSet.SizeRuleRowsValues = rOMethodSizeRules;
-            //return sizeRuleAttributeSet;
-            return new List<ROMethodSizeRuleProperties>();
+            return attributeSetRuleProperties;
             
         }
+
+        private static void BuildSizeRuleColorProperties(
+            string tableName,
+            int attributeSetKey,
+            List<ROMethodSizeRuleProperties> colorRuleProperties,
+            DataSet methodConstraints
+            )
+        {
+            ROMethodSizeRuleProperties colorSizeRule;
+            int ruleAttributeSetKey;
+            string dimensionTableName;
+            if (tableName == "AllColor")
+            {
+                dimensionTableName = "AllColorSizeDimension";
+            }
+            else
+            {
+                dimensionTableName = "ColorSizeDimension";
+            }
+
+            foreach (DataRow row in methodConstraints.Tables[tableName].Rows)
+            {
+                ruleAttributeSetKey = GetKeyValue(row: row, columnName: "SGL_RID");
+                if (ruleAttributeSetKey == attributeSetKey)
+                {
+                    colorSizeRule = new ROMethodSizeRuleProperties(
+                        sizeRuleItem: new KeyValuePair<int, string>(
+                            GetKeyValue(row: row, columnName: "COLOR_CODE_RID"),  // Color key
+                            " "  // name determined from list at presentation
+                            ),
+                        sizeRule: GetIntegerValue(row: row, columnName: "SIZE_RULE"),
+                        sizeQuantity: GetIntegerValue(row: row, columnName: "SIZE_QUANTITY"),
+                        children: new List<ROMethodSizeRuleProperties>()
+                        );
+
+                    BuildSizeRuleDimensionProperties(
+                        tableName: dimensionTableName,
+                        attributeSetKey: attributeSetKey,
+                        colorKey: colorSizeRule.SizeRuleItem.Key,
+                        dimensionRuleProperties: colorSizeRule.Children,
+                        methodConstraints: methodConstraints
+                        );
+
+                    colorRuleProperties.Add(colorSizeRule);
+                }
+            }
+        }
+
+        private static void BuildSizeRuleDimensionProperties(
+            string tableName,
+            int attributeSetKey,
+            int colorKey,
+            List<ROMethodSizeRuleProperties> dimensionRuleProperties,
+            DataSet methodConstraints
+            )
+        {
+            ROMethodSizeRuleProperties dimensionSizeRule;
+            int ruleAttributeSetKey, ruleColorKey;
+            string sizeTableName;
+            if (tableName == "AllColorSizeDimension")
+            {
+                sizeTableName = "AllColorSize";
+            }
+            else
+            {
+                sizeTableName = "ColorSize";
+            }
+
+            foreach (DataRow row in methodConstraints.Tables[tableName].Rows)
+            {
+                ruleAttributeSetKey = GetKeyValue(row: row, columnName: "SGL_RID");
+                ruleColorKey = GetKeyValue(row: row, columnName: "COLOR_CODE_RID");
+                if (ruleAttributeSetKey == attributeSetKey
+                    && ruleColorKey == colorKey)
+                {
+                    dimensionSizeRule = new ROMethodSizeRuleProperties(
+                        sizeRuleItem: new KeyValuePair<int, string>(
+                            GetKeyValue(row: row, columnName: "DIMENSIONS_RID"),  //dimension key
+                            " "  // name determined from list at presentation
+                            ),
+                        sizeRule: GetIntegerValue(row: row, columnName: "SIZE_RULE"),
+                        sizeQuantity: GetIntegerValue(row: row, columnName: "SIZE_QUANTITY"),
+                        children: new List<ROMethodSizeRuleProperties>()
+                        );
+
+                    BuildSizeRuleSizeProperties(
+                        tableName: sizeTableName,
+                        attributeSetKey: attributeSetKey,
+                        colorKey: colorKey,
+                        dimensionKey: dimensionSizeRule.SizeRuleItem.Key,
+                        sizeRuleProperties: dimensionSizeRule.Children,
+                        methodConstraints: methodConstraints
+                        );
+
+                    dimensionRuleProperties.Add(dimensionSizeRule);
+                }
+            }
+        }
+
+        private static void BuildSizeRuleSizeProperties(
+            string tableName,
+            int attributeSetKey,
+            int colorKey,
+            int dimensionKey,
+            List<ROMethodSizeRuleProperties> sizeRuleProperties,
+            DataSet methodConstraints
+            )
+        {
+            ROMethodSizeRuleProperties sizeSizeRule;
+            int ruleAttributeSetKey, ruleColorKey, ruleDimensionKey;
+
+            foreach (DataRow row in methodConstraints.Tables[tableName].Rows)
+            {
+                ruleAttributeSetKey = GetKeyValue(row: row, columnName: "SGL_RID");
+                ruleColorKey = GetKeyValue(row: row, columnName: "COLOR_CODE_RID");
+                ruleDimensionKey = GetKeyValue(row: row, columnName: "DIMENSIONS_RID");
+                if (ruleAttributeSetKey == attributeSetKey
+                    && ruleColorKey == colorKey
+                    && ruleDimensionKey == dimensionKey
+                    )
+                {
+                    sizeSizeRule = new ROMethodSizeRuleProperties(
+                        sizeRuleItem: new KeyValuePair<int, string>(
+                            GetKeyValue(row: row, columnName: "SIZE_CODE_RID"),  //size key
+                            " "  // name determined from list at presentation
+                            ),
+                        sizeRule: GetIntegerValue(row: row, columnName: "SIZE_RULE"),
+                        sizeQuantity: GetIntegerValue(row: row, columnName: "SIZE_QUANTITY"),
+                        children: null  // sizes do not children
+                        );
+
+                    sizeRuleProperties.Add(sizeSizeRule);
+                }
+            }
+        }
+
+        private static string GetStringValue(DataRow row, string columnName)
+        {
+            string value = null;
+
+            if (row[columnName] == DBNull.Value)
+            {
+                value = " ";
+            }
+            else
+            {
+                value = row[columnName].ToString();
+            }
+
+            return value;
+        }
+
+        private static int GetKeyValue(DataRow row, string columnName)
+        {
+            int value = Include.NoRID;
+
+            if (row[columnName] == DBNull.Value)
+            {
+                value = Include.NoRID;
+            }
+            else
+            {
+                value = Convert.ToInt32(row[columnName]);
+            }
+
+            return value;
+        }
+
+        private static int? GetIntegerValue(DataRow row, string columnName)
+        {
+            int? value = Include.NoRID;
+            bool success = false;
+            int number = 0;
+
+            if (row[columnName] == DBNull.Value)
+            {
+                value = null;
+            }
+            else
+            {
+                success = Int32.TryParse(row[columnName].ToString(), out number);
+                if (success)
+                {
+                    value = Convert.ToInt32(row[columnName]);
+                }
+                else
+                {
+                    value = 0;
+                }
+            }
+
+            return value;
+        }
+
+        private static double GetDoubleValue(DataRow row, string columnName)
+        {
+            double value = 0;
+
+            if (row[columnName] == DBNull.Value)
+            {
+                value = 0;
+            }
+            else
+            {
+                value = Convert.ToDouble(row[columnName]);
+            }
+
+            return value;
+        }
+
         /// <summary>
         /// Builds the MethodConstraints Dataset from the  RO Size Rule Attribute Set lists for the Size Methods' Rule Tab 
         /// </summary>
