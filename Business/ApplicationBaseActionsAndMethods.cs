@@ -700,6 +700,11 @@ namespace MIDRetail.Business
         }
         // End TT#3572 - JSmith - Security- Version set to Deny - Ran a velocity method with this version and receive a Null reference error.
 
+        virtual public bool CleanUp()
+        {
+            return true;
+        }
+
         //RO-642 - Generic classes for handling Allocation Methods
         abstract public FunctionSecurityProfile GetFunctionSecurity();
 

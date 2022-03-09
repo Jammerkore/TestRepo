@@ -4658,6 +4658,8 @@ namespace MIDRetail.Business.Allocation
 			}
 			finally
 			{
+                DataSetBackup = null;
+                ConstraintRollback = false;
 				//TO DO:  whatever has to be done after an update or exception.
 			}
 		}
@@ -4837,34 +4839,41 @@ namespace MIDRetail.Business.Allocation
             }
 
         }
+
+        
         override public ROMethodProperties MethodGetData(out bool successful, ref string message, bool processingApply = false)
         {
             successful = true;
 
+            if (DataSetBackup == null)
+            {
+                DataSetBackup = MethodConstraints.Copy();
+            }
+
             KeyValuePair<int, string> keyValuePair = new KeyValuePair<int, string>();
             ROMethodSizeNeedProperties method = new ROMethodSizeNeedProperties(  
                 method: GetName.GetMethod(method: this),
-                description: _methodData.Method_Description,
+                description: Method_Description,
                 userKey: User_RID,
-                merch_HN: GetName.GetLevelKeyValuePair(_methodData.MerchType, nodeRID: _methodData.MerchHnRid , merchPhRID: _methodData.MerchPhRid, merchPhlSequence: _methodData.MerchPhlSequence, SAB: SAB),
-                merch_PH_RID: _methodData.MerchPhRid,
-                merch_PHL_SEQ: _methodData.MerchPhlSequence,
-                merchandiseType: EnumTools.VerifyEnumValue(_methodData.MerchType),
-                normalizeSizeCurvesDefaultIsOverridden: _methodData.NormalizeSizeCurvesDefaultIsOverridden,
-                normalizeSizeCurves: _methodData.NormalizeSizeCurves,
-                sizeGroup: GetName.GetSizeGroup(_methodData.SizeGroupRid),
-                sizeAlternateModel: GetName.GetSizeAlternateModel(_methodData.SizeAlternateRid),
+                merch_HN: GetName.GetLevelKeyValuePair(MerchType, nodeRID: MerchHnRid , merchPhRID: MerchPhRid, merchPhlSequence: MerchPhlSequence, SAB: SAB),
+                merch_PH_RID: MerchPhRid,
+                merch_PHL_SEQ: MerchPhlSequence,
+                merchandiseType: EnumTools.VerifyEnumValue(MerchType),
+                normalizeSizeCurvesDefaultIsOverridden: NormalizeSizeCurvesDefaultIsOverridden,
+                normalizeSizeCurves: NormalizeSizeCurves,
+                sizeGroup: GetName.GetSizeGroup(SizeGroupRid),
+                sizeAlternateModel: GetName.GetSizeAlternateModel(SizeAlternateRid),
                 rOSizeCurveProperties: SizeCurveProperties.BuildSizeCurveProperties(
-                    sizeCurveGroupRID: _methodData.SizeCurveGroupRid,
-                    genCurveNsccdRID: _methodData.GenCurveNsccdRID,
-                    genCurveHcgRID: _methodData.GenCurveHcgRID,
-                    genCurveHnRID: _methodData.GenCurveHnRID,
-                    genCurvePhRID: _methodData.GenCurvePhRID,
-                    genCurvePhlSequence: _methodData.GenCurvePhlSequence,
-                    genCurveMerchType: _methodData.GenCurveMerchType,
-                    isUseDefault: _methodData.UseDefaultCurve,
-                    isApplyRulesOnly: _methodData.ApplyRulesOnly,
-                    isColorSelected: _methodData.GenConstraintColorInd,
+                    sizeCurveGroupRID: SizeCurveGroupRid,
+                    genCurveNsccdRID: GenCurveNsccdRID,
+                    genCurveHcgRID: GenCurveCharGroupRID,
+                    genCurveHnRID: GenCurveHnRID,
+                    genCurvePhRID: GenCurvePhRID,
+                    genCurvePhlSequence: GenCurvePhlSequence,
+                    genCurveMerchType: GenCurveMerchType,
+                    isUseDefault: UseDefaultCurve,
+                    isApplyRulesOnly: ApplyRulesOnly,
+                    isColorSelected: GenConstraintColorInd,
                     sizeCurve: keyValuePair,
                     sizeCurveGenericHierarchy: keyValuePair,
                     sizeCurveGenericNameExtension: keyValuePair,
@@ -4872,38 +4881,38 @@ namespace MIDRetail.Business.Allocation
                     SAB: SAB
                     ),
                 rOSizeConstraintProperties: SizeConstraintProperties.BuildSizeConstraintProperties(
-                    inventoryBasisMerchHnRID: _methodData.IB_MERCH_HN_RID,
-                    inventoryBasisMerchPhRID: _methodData.IB_MERCH_PH_RID,
-                    inventoryBasisMerchPhlSequence: _methodData.IB_MERCH_PHL_SEQ,
-                    inventoryBasisMerchType: _methodData.IB_MerchandiseType,
-                    sizeConstraintRID: _methodData.SizeConstraintRid,
-                    genConstraintHcgRID: _methodData.GenConstraintHcgRID,
-                    genConstraintHnRID: _methodData.GenConstraintHnRID,
-                    genConstraintPhRID: _methodData.GenConstraintPhRID,
-                    genConstraintPhlSequence: _methodData.GenConstraintPhlSequence,
-                    genConstraintMerchType: _methodData.GenConstraintMerchType,
-                    genConstraintColorInd: _methodData.GenConstraintColorInd,
+                    inventoryBasisMerchHnRID: IB_MERCH_HN_RID,
+                    inventoryBasisMerchPhRID: IB_MERCH_PH_RID,
+                    inventoryBasisMerchPhlSequence: IB_MERCH_PHL_SEQ,
+                    inventoryBasisMerchType: IB_MerchandiseType,
+                    sizeConstraintRID: SizeConstraintRid,
+                    genConstraintHcgRID: GenConstraintCharGroupRID,
+                    genConstraintHnRID: GenConstraintHnRID,
+                    genConstraintPhRID: GenConstraintPhRID,
+                    genConstraintPhlSequence: GenConstraintPhlSequence,
+                    genConstraintMerchType: GenConstraintMerchType,
+                    genConstraintColorInd: GenConstraintColorInd,
                     inventoryBasis: keyValuePair,
                     sizeConstraint: keyValuePair,
                     sizeConstraintGenericHierarchy: keyValuePair,
                     sizeConstraintGenericHeaderChar: keyValuePair,
                     SAB: SAB
                     ),
-                overrideVSWSizeConstraints: _methodData.OverrideVSWSizeConstraints,
-                vSWSizeConstraints: GetName.GetText(EnumTools.VerifyEnumValue(_methodData.VSWSizeConstraints).GetHashCode()),
-                overrideAvgPackDevTolerance: _methodData.OverrideAvgPackDevTolerance,
-                avgPackDeviationTolerance: _methodData.AvgPackDeviationTolerance,
-                overrideMaxPackNeedTolerance: _methodData.OverrideMaxPackNeedTolerance,
-                packToleranceStepped: _methodData.PackToleranceStepped,
-                packToleranceNoMaxStep: _methodData.PackToleranceNoMaxStep,
-                maxPackNeedTolerance: _methodData.MaxPackNeedTolerance,
-                attribute: GetName.GetAttributeName(_methodData.SG_RID),
+                overrideVSWSizeConstraints: OverrideVSWSizeConstraints,
+                vSWSizeConstraints: GetName.GetText(EnumTools.VerifyEnumValue(VSWSizeConstraints).GetHashCode()),
+                overrideAvgPackDevTolerance: OverrideAvgPackDevTolerance,
+                avgPackDeviationTolerance: AvgPackDeviationTolerance,
+                overrideMaxPackNeedTolerance: OverrideMaxPackNeedTolerance,
+                packToleranceStepped: PackToleranceStepped,
+                packToleranceNoMaxStep: PackToleranceNoMaxStep,
+                maxPackNeedTolerance: MaxPackNeedTolerance,
+                attribute: GetName.GetAttributeName(SG_RID),
                 sizeRuleAttributeSets: SizeRuleProperties.BuildSizeRuleProperties(
-                    methodRID: _methodData.Method_RID,
+                    methodRID: Key,
                     methodType: eMethodType.SizeNeedAllocation,
-                    attributeRID: _methodData.SG_RID,
-                    sizeGroupRID: _methodData.SizeGroupRid,
-                    sizeCurveGroupRID: _methodData.SizeCurveGroupRid,
+                    attributeRID: SG_RID,
+                    sizeGroupRID: SizeGroupRid,
+                    sizeCurveGroupRID: SizeCurveGroupRid,
                     getSizesUsing: GetSizesUsing,
                     getDimensionsUsing: GetDimensionsUsing,
                     methodConstraints: MethodConstraints,
@@ -4977,9 +4986,11 @@ namespace MIDRetail.Business.Allocation
                 }
                 NormalizeSizeCurvesDefaultIsOverridden = roMethodSizeNeedAllocationProperties.NormalizeSizeCurvesDefaultIsOverridden;
                 NormalizeSizeCurves = roMethodSizeNeedAllocationProperties.NormalizeSizeCurves;
-                SizeGroupRid  = roMethodSizeNeedAllocationProperties.SizeGroup.Key;
+                bool sizeGroupChanged = SizeGroupRid != roMethodSizeNeedAllocationProperties.SizeGroup.Key;
+                SizeGroupRid = roMethodSizeNeedAllocationProperties.SizeGroup.Key;
                 _sizeAlternateRid = roMethodSizeNeedAllocationProperties.SizeAlternateModel.Key;
                 //Size Curve Group Box 
+                bool sizeCurveChanged = SizeCurveGroupRid != roMethodSizeNeedAllocationProperties.ROSizeCurveProperties.SizeCurveGroupKey;
                 SizeCurveGroupRid = roMethodSizeNeedAllocationProperties.ROSizeCurveProperties.SizeCurveGroupKey;
                 if (SAB.ClientServerSession.GlobalOptions.GenericSizeCurveNameType == eGenericSizeCurveNameType.NodePropertiesName)
                 {
@@ -5045,15 +5056,40 @@ namespace MIDRetail.Business.Allocation
                     MaxPackNeedTolerance = roMethodSizeNeedAllocationProperties.MaxPackNeedTolerance;
                 }
                 //Rules Tab
+                bool attributeChanged = SG_RID != roMethodSizeNeedAllocationProperties.Attribute.Key;
                 SG_RID = roMethodSizeNeedAllocationProperties.Attribute.Key;
-                //MethodConstraints = SizeRuleAttributeSet.BuildMethodConstrainst(
-                //    methodRID: roMethodSizeNeedAllocationProperties.Method.Key,
-                //    attributeRID: roMethodSizeNeedAllocationProperties.Attribute.Key,
-                //    rOMethodSizeRuleAttributeSet: roMethodSizeNeedAllocationProperties.SizeRuleAttributeSet,
-                //    methodConstraintsSV: MethodConstraints,
-                //    SAB: SAB
-                //    ); // MethodConstraints will be regenerated based on above changes
-                
+
+                if (MethodConstraints == null
+                    || attributeChanged
+                    || sizeGroupChanged
+                    || sizeCurveChanged
+                    )
+                {
+                    base.GetSizesUsing = eGetSizes.SizeCurveGroupRID;
+                    base.GetDimensionsUsing = eGetDimensions.SizeCurveGroupRID;
+                    if (base.SizeGroupRid != Include.NoRID)
+                    {
+                        base.GetSizesUsing = eGetSizes.SizeGroupRID;
+                        base.GetDimensionsUsing = eGetDimensions.SizeGroupRID;
+                    }
+
+                    ConstraintRollback = true;
+                    DeleteMethodRules(new TransactionData());
+
+                    CreateConstraintData();
+                }
+                else
+                {
+                    MethodConstraints = SizeRuleProperties.BuildMethodConstrainst(
+                        methodRID: roMethodSizeNeedAllocationProperties.Method.Key,
+                        attributeRID: roMethodSizeNeedAllocationProperties.Attribute.Key,
+                        rOMethodSizeRuleAttributeSet: roMethodSizeNeedAllocationProperties.SizeRuleAttributeSets,
+                        methodConstraintsSV: MethodConstraints,
+                        SAB: SAB
+                        ); // MethodConstraints will be regenerated based on above changes
+                    SetSizeCodeSequences();
+                }
+
                 return true;
             }
             catch (Exception e)

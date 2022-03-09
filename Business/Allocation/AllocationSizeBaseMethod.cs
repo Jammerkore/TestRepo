@@ -61,6 +61,8 @@ namespace MIDRetail.Business.Allocation
         private string _genCurveNsccdCurveName = null;
         private MerchandiseHierarchyData _merchHierData;
         // End TT#413
+        private DataSet _dsBackup = null;
+        private bool _constraintRollback = false;
 
 		#region Properties
 		/// <summary>
@@ -389,6 +391,18 @@ namespace MIDRetail.Business.Allocation
         }
         // End Development TT#13
 		//////////////////////////////////////////
+
+        protected DataSet DataSetBackup
+        {
+            get { return _dsBackup; }
+            set { _dsBackup = value; }
+        }
+
+        protected bool ConstraintRollback
+        {
+            get { return _constraintRollback; }
+            set { _constraintRollback = value; }
+        }
 		#endregion
 
 		/// <summary>
@@ -410,6 +424,30 @@ namespace MIDRetail.Business.Allocation
 			_sizeModelData = new SizeModelData(); // MID Track 4372 Generic Size Contraints
             _merchHierData = new MerchandiseHierarchyData(); // TT#413 - add Node Curve Name 
 		}
+
+        // restore the saved rules if needed
+        override public bool CleanUp()
+        {
+            if (_dsBackup != null
+                && ConstraintRollback)
+            {
+                TransactionData td = new TransactionData();
+                if (!td.ConnectionIsOpen)
+                {
+                    td.OpenUpdateConnection();
+                }
+                MethodConstraints = DataSetBackup;
+                InsertUpdateMethodRules(td);
+
+                if (td.ConnectionIsOpen)
+                {
+                    td.CommitData();
+                    td.CloseUpdateConnection();
+                }
+            }
+
+            return true;
+        }
 
         // Begin TT#2080-MD - JSmith - User Method with User Header Filter may be copied to Global Method (user Header Filter is not valid in a Global Method)
         override internal bool CheckForUserData()
@@ -702,13 +740,74 @@ namespace MIDRetail.Business.Allocation
 
 		}
 
-		/// <summary>
-		/// Finds the sizeCodeRid on the dtSizes table and returns it size sequence
+        /// <summary>
+		/// Sets the size sequences in the MethodConstraints DataSet.
 		/// </summary>
-		/// <param name="dtSizes"></param>
-		/// <param name="sizeCodeRid"></param>
 		/// <returns></returns>
-		private int GetSizeCodeSequence(DataTable dtSizes, int sizeCodeRid)
+		public bool SetSizeCodeSequences()
+        {
+            bool Success = true;
+
+            try
+            {
+                int rid = Include.NoRID;  //will hold SizeGroupRID or SizeCurveGroupRID
+                switch (GetSizesUsing)
+                {
+                    case eGetSizes.SizeGroupRID:
+                        if (SizeGroupRid != Include.NoRID)
+                        {
+                            GetSizes = true;
+                            rid = SizeGroupRid;
+                        }
+                        else
+                        {
+                            GetSizes = false;
+                        }
+                        break;
+                    case eGetSizes.SizeCurveGroupRID:
+                        if (SizeCurveGroupRid != Include.NoRID)
+                        {
+                            GetSizes = true;
+                            rid = SizeCurveGroupRid;
+                        }
+                        else
+                        {
+                            GetSizes = false;
+                        }
+                        break;
+                }
+
+                if (GetSizes)
+                {
+                    DataTable dtSizes = GetSizesDataTable(rid, GetSizesUsing);
+
+                    DataTable dtSizeCollection = MethodConstraints.Tables["ColorSize"];
+                    SetSizeSequence(dtSizes, dtSizeCollection);
+                    dtSizeCollection = MethodConstraints.Tables["AllColorSize"];
+                    SetSizeSequence(dtSizes, dtSizeCollection);
+                    dtSizeCollection = MethodConstraints.Tables["AllColorSizeDimension"];
+                    SetSizeSequence(dtSizes, dtSizeCollection);
+                    dtSizeCollection = MethodConstraints.Tables["ColorSizeDimension"];
+                    SetSizeSequence(dtSizes, dtSizeCollection);
+                }
+
+            }
+            catch
+            {
+                Success = false;
+                throw;
+            }
+            return Success;
+
+        }
+
+        /// <summary>
+        /// Finds the sizeCodeRid on the dtSizes table and returns it size sequence
+        /// </summary>
+        /// <param name="dtSizes"></param>
+        /// <param name="sizeCodeRid"></param>
+        /// <returns></returns>
+        private int GetSizeCodeSequence(DataTable dtSizes, int sizeCodeRid)
 		{
 			int seq = int.MaxValue;
 			DataRow [] rows = dtSizes.Select("SIZE_CODE_RID = " + sizeCodeRid.ToString(CultureInfo.CurrentUICulture));

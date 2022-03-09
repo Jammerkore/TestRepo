@@ -2316,8 +2316,10 @@ namespace MIDRetail.Business.Allocation
 			}
 			finally
 			{
-				//TO DO:  whatever has to be done after an update or exception.
-			}
+                DataSetBackup = null;
+                ConstraintRollback = false;
+                //TO DO:  whatever has to be done after an update or exception.
+            }
 		}
 
 		#endregion
@@ -2437,31 +2439,37 @@ namespace MIDRetail.Business.Allocation
             }
 
         }
+
         override public ROMethodProperties MethodGetData(out bool successful, ref string message, bool processingApply = false)
         {
             successful = true;
 
+            if (DataSetBackup == null)
+            {
+                DataSetBackup = MethodConstraints.Copy();
+            }
+
+
             //RO-3886 Data Transport for Basis Size Method
-            //throw new NotImplementedException("MethodGetData is not implemented");
             KeyValuePair<int, string> keyValuePair = new KeyValuePair<int, string>();
             ROMethodBasisSizeSubstituteSet roBasisSizeSubstituteSet = new ROMethodBasisSizeSubstituteSet();
             ROMethodBasisSizeProperties method = new ROMethodBasisSizeProperties(
                 method: GetName.GetMethod(method: this),
-                description: _methodData.Method_Description,
+                description: Method_Description,
                 userKey: User_RID,
-                filter: GetName.GetFilterName(_methodData.StoreFilterRid),
-                sizeGroup: GetName.GetSizeGroup(_methodData.SizeGroupRid),
+                filter: GetName.GetFilterName(StoreFilterRid),
+                sizeGroup: GetName.GetSizeGroup(SizeGroupRid),
                 rOSizeCurveProperties: SizeCurveProperties.BuildSizeCurveProperties(
-                    sizeCurveGroupRID: _methodData.SizeCurveGroupRid,
-                    genCurveNsccdRID: _methodData.GenCurveNsccdRID,
-                    genCurveHcgRID: _methodData.GenCurveHcgRID,
-                    genCurveHnRID: _methodData.GenCurveHnRID,
-                    genCurvePhRID: _methodData.GenCurvePhRID,
-                    genCurvePhlSequence: _methodData.GenCurvePhlSequence,
-                    genCurveMerchType: _methodData.GenCurveMerchType,
-                    isUseDefault: _methodData.UseDefaultCurve,
-                    isApplyRulesOnly: _methodData.ApplyRulesOnly,
-                    isColorSelected: _methodData.GenConstraintColorInd,
+                    sizeCurveGroupRID: SizeCurveGroupRid,
+                    genCurveNsccdRID: GenCurveNsccdRID,
+                    genCurveHcgRID: GenCurveCharGroupRID,
+                    genCurveHnRID: GenCurveHnRID,
+                    genCurvePhRID: GenCurvePhRID,
+                    genCurvePhlSequence: GenCurvePhlSequence,
+                    genCurveMerchType: GenCurveMerchType,
+                    isUseDefault: UseDefaultCurve,
+                    isApplyRulesOnly: ApplyRulesOnly,
+                    isColorSelected: GenConstraintColorInd,
                     sizeCurve: keyValuePair,
                     sizeCurveGenericHierarchy: keyValuePair,
                     sizeCurveGenericNameExtension: keyValuePair,
@@ -2473,46 +2481,46 @@ namespace MIDRetail.Business.Allocation
                     inventoryBasisMerchPhRID: -1,
                     inventoryBasisMerchPhlSequence: 0,
                     inventoryBasisMerchType: 0,
-                    sizeConstraintRID: _methodData.SizeConstraintRid,
-                    genConstraintHcgRID: _methodData.GenConstraintHcgRID,
-                    genConstraintHnRID: _methodData.GenConstraintHnRID,
-                    genConstraintPhRID: _methodData.GenConstraintPhRID,
-                    genConstraintPhlSequence: _methodData.GenConstraintPhlSequence,
-                    genConstraintMerchType: _methodData.GenConstraintMerchType,
-                    genConstraintColorInd: _methodData.GenConstraintColorInd,
+                    sizeConstraintRID: SizeConstraintRid,
+                    genConstraintHcgRID: GenConstraintCharGroupRID,
+                    genConstraintHnRID: GenConstraintHnRID,
+                    genConstraintPhRID: GenConstraintPhRID,
+                    genConstraintPhlSequence: GenConstraintPhlSequence,
+                    genConstraintMerchType: GenConstraintMerchType,
+                    genConstraintColorInd: GenConstraintColorInd,
                     inventoryBasis: keyValuePair,
                     sizeConstraint: keyValuePair,
                     sizeConstraintGenericHierarchy: keyValuePair,
                     sizeConstraintGenericHeaderChar: keyValuePair,
                     SAB: SAB
                     ),
-                header:GetName.GetHeader(_methodData.BasisHdrRid, SAB),
-                includeReserve: _methodData.IncludeReserveInd, 
-                colorComponent: GetName.GetColorOrSizeComponent(_methodData.HeaderComponent),
-                color: GetName.GetColor(_methodData.BasisClrRid, SAB),
-                rule: GetName.GetBasisSizeMethodRuleType(_methodData.Rule),
-                ruleQuantity: _methodData.RuleQuantity,
-                attribute: GetName.GetAttributeName(_methodData.SG_RID),
+                header:GetName.GetHeader(BasisHdrRid, SAB),
+                includeReserve: IncludeReserve, 
+                colorComponent: GetName.GetColorOrSizeComponent(HeaderComponent),
+                color: GetName.GetColor(BasisClrRid, SAB),
+                rule: GetName.GetBasisSizeMethodRuleType(Rule),
+                ruleQuantity: RuleQuantity,
+                attribute: GetName.GetAttributeName(SG_RID),
                 sizeRuleAttributeSets: SizeRuleProperties.BuildSizeRuleProperties(
-                    methodRID: _methodData.Method_RID,
+                    methodRID: Key,
                     methodType: eMethodType.BasisSizeAllocation,
-                    attributeRID: _methodData.SG_RID,
-                    sizeGroupRID: _methodData.SizeGroupRid,
-                    sizeCurveGroupRID: _methodData.SizeCurveGroupRid,
+                    attributeRID: SG_RID,
+                    sizeGroupRID: SizeGroupRid,
+                    sizeCurveGroupRID: SizeCurveGroupRid,
                     getSizesUsing: GetSizesUsing,
                     getDimensionsUsing: GetDimensionsUsing,
                     methodConstraints: MethodConstraints,
                     SAB: SAB
                     ),
                 basisSizeSubstituteSet: BasisSizeSubstituteSet.BuildBasisSizeSubstituteSet(
-                    methodRID: _methodData.Method_RID,
+                    methodRID: Key,
                     methodType: eMethodType.BasisSizeAllocation,
-                    attributeRID: _methodData.SG_RID,
-                    sizeGroupRID: _methodData.SizeGroupRid,
-                    sizeCurveGroupRID: _methodData.SizeCurveGroupRid,
+                    attributeRID: SG_RID,
+                    sizeGroupRID: SizeGroupRid,
+                    sizeCurveGroupRID: SizeCurveGroupRid,
                     getSizesUsing: GetSizesUsing,
                     getDimensionsUsing: GetDimensionsUsing,
-                    substituteList: _methodData.SubstituteList,
+                    substituteList: SubstituteList,
                     SAB: SAB
                     ),
                 isTemplate: Template_IND
@@ -2539,8 +2547,10 @@ namespace MIDRetail.Business.Allocation
                 Method_Description = roMethodBasisSizeAllocationProperties.Description;
                 User_RID = roMethodBasisSizeAllocationProperties.UserKey;
                 _StoreFilterRid = roMethodBasisSizeAllocationProperties.Filter.Key;
+                bool sizeGroupChanged = SizeGroupRid != roMethodBasisSizeAllocationProperties.SizeGroup.Key;
                 SizeGroupRid = roMethodBasisSizeAllocationProperties.SizeGroup.Key;
                 //Size Curve Group Box 
+                bool sizeCurveChanged = SizeCurveGroupRid != roMethodBasisSizeAllocationProperties.ROSizeCurveProperties.SizeCurveGroupKey;
                 SizeCurveGroupRid = roMethodBasisSizeAllocationProperties.ROSizeCurveProperties.SizeCurveGroupKey;
 
                 if (SAB.ClientServerSession.GlobalOptions.GenericSizeCurveNameType == eGenericSizeCurveNameType.NodePropertiesName)
@@ -2579,17 +2589,47 @@ namespace MIDRetail.Business.Allocation
                 }
                 GenConstraintCharGroupRID = roMethodBasisSizeAllocationProperties.ROSizeConstraintProperties.GenericHeaderCharacteristicsKey;
                 GenConstraintColorInd = roMethodBasisSizeAllocationProperties.ROSizeConstraintProperties.IsColorSelected;
-                _methodData.HeaderComponent = roMethodBasisSizeAllocationProperties.ColorComponent.Key;
-                _methodData.IncludeReserveInd = roMethodBasisSizeAllocationProperties.IncludeReserve;
-                _methodData.BasisHdrRid = roMethodBasisSizeAllocationProperties.Header.Key;
-                _methodData.BasisClrRid = roMethodBasisSizeAllocationProperties.Color.Key;
-                _methodData.Rule = roMethodBasisSizeAllocationProperties.Rule.Key;
-                _methodData.RuleQuantity = roMethodBasisSizeAllocationProperties.RuleQuantity;
+                HeaderComponent = roMethodBasisSizeAllocationProperties.ColorComponent.Key;
+                IncludeReserve = roMethodBasisSizeAllocationProperties.IncludeReserve;
+                BasisHdrRid = roMethodBasisSizeAllocationProperties.Header.Key;
+                BasisClrRid = roMethodBasisSizeAllocationProperties.Color.Key;
+                Rule = roMethodBasisSizeAllocationProperties.Rule.Key;
+                RuleQuantity = roMethodBasisSizeAllocationProperties.RuleQuantity;
                 //Rules Tab
+                bool attributeChanged = SG_RID != roMethodBasisSizeAllocationProperties.Attribute.Key;
                 SG_RID = roMethodBasisSizeAllocationProperties.Attribute.Key;
-                //MethodConstraints = SizeRuleAttributeSet.BuildMethodConstrainst(roMethodBasisSizeAllocationProperties.Method.Key, roMethodBasisSizeAllocationProperties.Attribute.Key,
-                //roMethodBasisSizeAllocationProperties.SizeRuleAttributeSet, MethodConstraints, SAB); // MethodConstraints will be regenerated based on above changes
-                _methodData.SubstituteList = BasisSizeSubstituteSet.BuildBasisSizeSubstituteList(roMethodBasisSizeAllocationProperties.Method.Key, roMethodBasisSizeAllocationProperties.Attribute.Key, roMethodBasisSizeAllocationProperties.BasisSizeSubstituteSet);
+
+                if (MethodConstraints == null
+                    || attributeChanged
+                    || sizeGroupChanged
+                    || sizeCurveChanged
+                    )
+                {
+                    base.GetSizesUsing = eGetSizes.SizeCurveGroupRID;
+                    base.GetDimensionsUsing = eGetDimensions.SizeCurveGroupRID;
+                    if (base.SizeGroupRid != Include.NoRID)
+                    {
+                        base.GetSizesUsing = eGetSizes.SizeGroupRID;
+                        base.GetDimensionsUsing = eGetDimensions.SizeGroupRID;
+                    }
+
+                    ConstraintRollback = true;
+                    DeleteMethodRules(new TransactionData());
+
+                    CreateConstraintData();
+                }
+                else
+                {
+                    MethodConstraints = SizeRuleProperties.BuildMethodConstrainst(
+                    methodRID: roMethodBasisSizeAllocationProperties.Method.Key,
+                    attributeRID: roMethodBasisSizeAllocationProperties.Attribute.Key,
+                    rOMethodSizeRuleAttributeSet: roMethodBasisSizeAllocationProperties.SizeRuleAttributeSets,
+                    methodConstraintsSV: MethodConstraints,
+                    SAB: SAB
+                    ); // MethodConstraints will be regenerated based on above changes
+                    SetSizeCodeSequences();
+                }
+                SubstituteList = BasisSizeSubstituteSet.BuildBasisSizeSubstituteList(roMethodBasisSizeAllocationProperties.Method.Key, roMethodBasisSizeAllocationProperties.Attribute.Key, roMethodBasisSizeAllocationProperties.BasisSizeSubstituteSet);
                 return true;
             }
             catch (Exception e)

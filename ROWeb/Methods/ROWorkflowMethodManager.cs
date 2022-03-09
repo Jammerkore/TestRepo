@@ -225,19 +225,22 @@ namespace Logility.ROWeb
             foreach (KeyValuePair<int, ApplicationBaseMethod> entry in _workflowMethods)
             {
                 _ABM = entry.Value;
-                if (_ABM != null
-                    && _ABM.LockStatus == eLockStatus.Locked)
+                if (_ABM != null)
                 {
                     string message = null;
-                    _ABM.LockStatus = WorkflowMethodUtilities.UnlockWorkflowMethod(
-                        SAB: SAB,
-                        workflowMethodIND: eWorkflowMethodIND.Methods,
-                        Key: _ABM.Key,
-                        message: out message
-                        );
-                    if (_ABM.LockStatus == eLockStatus.Cancel)
+                    _ABM.CleanUp();
+                    if (_ABM.LockStatus == eLockStatus.Locked)
                     {
-                        MIDEnvironment.Message = message;
+                        _ABM.LockStatus = WorkflowMethodUtilities.UnlockWorkflowMethod(
+                            SAB: SAB,
+                            workflowMethodIND: eWorkflowMethodIND.Methods,
+                            Key: _ABM.Key,
+                            message: out message
+                            );
+                        if (_ABM.LockStatus == eLockStatus.Cancel)
+                        {
+                            MIDEnvironment.Message = message;
+                        }
                     }
                 }
             }

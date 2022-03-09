@@ -1913,6 +1913,7 @@ namespace Logility.ROWebSharedTypes
         public List<ROMethodSizeRuleProperties> Children
         {
             get { return _children; }
+            set { _children = value; }
         }
 
         public ROMethodSizeRuleProperties( 
@@ -1922,7 +1923,7 @@ namespace Logility.ROWebSharedTypes
             List<ROMethodSizeRuleProperties> children = null
             )
         {
-            _sizeRuleItem = sizeRuleItem;;
+            _sizeRuleItem = sizeRuleItem;
             _sizeRule = sizeRule;
             _sizeQuantity = sizeQuantity;
             _children = children;

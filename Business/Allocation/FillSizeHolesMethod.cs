@@ -1732,112 +1732,114 @@ namespace MIDRetail.Business.Allocation
 			}
 
 
-			override public void Update(TransactionData td)
-			{
-	 
-				if (_methodData == null || base.Key < 0 || base.Method_Change_Type == eChangeType.add)
-				{
-					_methodData = new MethodFillSizeHolesData(td);
+        override public void Update(TransactionData td)
+        {
 
-				}
-				_methodData.SizeCurveGroupRid = SizeCurveGroupRid; 
-				_methodData.SizeGroupRid = SizeGroupRid;       
-				_methodData.PercentInd = PercentInd;
-				_methodData.MerchPhRid = MerchPhRid;
-				_methodData.MerchPhlSequence = MerchPhlSequence;
-				_methodData.MerchHnRid = MerchHnRid;
-				_methodData.MerchandiseType = MerchandiseType;
-				_methodData.Available = Available;
-				_methodData.StoreFilterRid = StoreFilterRid;
-				_methodData.SizeAlternateRid = this.SizeAlternateRid;
-				_methodData.SizeConstraintRid = this.SizeConstraintRid;
-				// BEGIN MID Track #4826 - JSmith - Normalize Size Curves
-				_methodData.NormalizeSizeCurves = NormalizeSizeCurves;
-				_methodData.NormalizeSizeCurvesDefaultIsOverridden = NormalizeSizeCurvesDefaultIsOverridden;
-				// END MID Track #4826
-				// BEGIN MID Track #4921 - JSmith - A&F 666 - Size Modification
-				_methodData.FillSizesToType = FillSizesToType;
-				// End MID Track #4921
-				// begin Generic Size Curve data
-				_methodData.GenCurveHcgRID = base.GenCurveCharGroupRID;
-				_methodData.GenCurveHnRID = base.GenCurveHnRID;
-				_methodData.GenCurvePhRID = base.GenCurvePhRID;
-				_methodData.GenCurvePhlSequence = base.GenCurvePhlSequence;
-				_methodData.GenCurveColorInd = base.GenCurveColorInd;
-				_methodData.GenCurveMerchType = base.GenCurveMerchType; 
-				// end Generic Size Curve data
+            if (_methodData == null || base.Key < 0 || base.Method_Change_Type == eChangeType.add)
+            {
+                _methodData = new MethodFillSizeHolesData(td);
 
-                // Begin TT#413 - JSmith - Add new Generic Size Curve names to correspond with the new Size Curves being generated within Node Properties settings.
-                _methodData.UseDefaultCurve = base.UseDefaultCurve;
-                // End TT#413
+            }
+            _methodData.SizeCurveGroupRid = SizeCurveGroupRid;
+            _methodData.SizeGroupRid = SizeGroupRid;
+            _methodData.PercentInd = PercentInd;
+            _methodData.MerchPhRid = MerchPhRid;
+            _methodData.MerchPhlSequence = MerchPhlSequence;
+            _methodData.MerchHnRid = MerchHnRid;
+            _methodData.MerchandiseType = MerchandiseType;
+            _methodData.Available = Available;
+            _methodData.StoreFilterRid = StoreFilterRid;
+            _methodData.SizeAlternateRid = this.SizeAlternateRid;
+            _methodData.SizeConstraintRid = this.SizeConstraintRid;
+            // BEGIN MID Track #4826 - JSmith - Normalize Size Curves
+            _methodData.NormalizeSizeCurves = NormalizeSizeCurves;
+            _methodData.NormalizeSizeCurvesDefaultIsOverridden = NormalizeSizeCurvesDefaultIsOverridden;
+            // END MID Track #4826
+            // BEGIN MID Track #4921 - JSmith - A&F 666 - Size Modification
+            _methodData.FillSizesToType = FillSizesToType;
+            // End MID Track #4921
+            // begin Generic Size Curve data
+            _methodData.GenCurveHcgRID = base.GenCurveCharGroupRID;
+            _methodData.GenCurveHnRID = base.GenCurveHnRID;
+            _methodData.GenCurvePhRID = base.GenCurvePhRID;
+            _methodData.GenCurvePhlSequence = base.GenCurvePhlSequence;
+            _methodData.GenCurveColorInd = base.GenCurveColorInd;
+            _methodData.GenCurveMerchType = base.GenCurveMerchType;
+            // end Generic Size Curve data
 
-                // begin TT#2155 - JEllis - Fill Size Holes Null Reference
-                _methodData.ApplyRulesOnly = base.ApplyRulesOnly;
-                // end TT#2155 - JEllis - Fill Size Holes Null Reference
+            // Begin TT#413 - JSmith - Add new Generic Size Curve names to correspond with the new Size Curves being generated within Node Properties settings.
+            _methodData.UseDefaultCurve = base.UseDefaultCurve;
+            // End TT#413
 
-                // Begin TT#413 - RMatelic - Add new Generic Size Curve names to correspond with the new Size Curves being generated within Node Properties settings.
-                _methodData.GenCurveNsccdRID = base.GenCurveNsccdRID;
-                // End TT#413
-				
-				// begin Generic Size Constraint data
-				_methodData.GenConstraintHcgRID = base.GenConstraintCharGroupRID;
-				_methodData.GenConstraintHnRID = base.GenConstraintHnRID;
-				_methodData.GenConstraintPhRID = base.GenConstraintPhRID;
-				_methodData.GenConstraintPhlSequence = base.GenConstraintPhlSequence;
-				_methodData.GenConstraintColorInd = base.GenConstraintColorInd;
-				_methodData.GenConstraintMerchType = base.GenConstraintMerchType;
-				// end Generic Size Constraint data
-                // BEGIN TT#41-MD - GTaylor - UC#2
-                _methodData.IB_MERCH_HN_RID = IB_MERCH_HN_RID;
-                _methodData.IB_MERCH_PH_RID = IB_MERCH_PH_RID;
-                //_methodData.Inventory_Ind = Inventory_Ind;
-                _methodData.IB_MERCH_PHL_SEQ = IB_MERCH_PHL_SEQ;
-                _methodData.IB_MerchandiseType = IB_MerchandiseType;
-                // END TT#41-MD - GTaylor - UC#2
-                // BEGIN TT#246-MD - AGallagher - VSW Size - Add In-store Size Constraint options 
-                _methodData.OverrideVSWSizeConstraints = OverrideVSWSizeConstraints;
-                _methodData.VSWSizeConstraints = (eVSWSizeConstraints)VSWSizeConstraints;
-                // END TT#246-MD - AGallagher - VSW Size - Add In-store Size Constraint options 
+            // begin TT#2155 - JEllis - Fill Size Holes Null Reference
+            _methodData.ApplyRulesOnly = base.ApplyRulesOnly;
+            // end TT#2155 - JEllis - Fill Size Holes Null Reference
 
-                //Begin TT#1636-MD -jsobek -Pre-Pack Fill Size
-                _methodData.OverrideAvgPackDevTolerance = OverrideAvgPackDevTolerance;
-                _methodData.OverrideMaxPackNeedTolerance = OverrideMaxPackNeedTolerance;
-                _methodData.AvgPackDeviationTolerance = this._AvgPackDeviationTolerance;
-                _methodData.MaxPackNeedTolerance = this._MaxPackNeedTolerance;
-                _methodData.PackToleranceNoMaxStep = _packToleranceNoMaxStep;
-                _methodData.PackToleranceStepped = _packToleranceStepped;
-                //End TT#1636-MD -jsobek -Pre-Pack Fill Size
+            // Begin TT#413 - RMatelic - Add new Generic Size Curve names to correspond with the new Size Curves being generated within Node Properties settings.
+            _methodData.GenCurveNsccdRID = base.GenCurveNsccdRID;
+            // End TT#413
 
-				try
-				{
-					switch (base.Method_Change_Type)
-					{
-						case eChangeType.add:
-							base.Update(td);
-							_methodData.InsertMethod(base.Key, td);
-							InsertUpdateMethodRules(td);
-							break;
-						case eChangeType.update:
-							base.Update(td);
-							_methodData.UpdateMethod(base.Key, td);
-							InsertUpdateMethodRules(td);
-							break;
-						case eChangeType.delete:
-							_methodData.DeleteMethod(base.Key, td);
-							base.Update(td);
-							break;
+            // begin Generic Size Constraint data
+            _methodData.GenConstraintHcgRID = base.GenConstraintCharGroupRID;
+            _methodData.GenConstraintHnRID = base.GenConstraintHnRID;
+            _methodData.GenConstraintPhRID = base.GenConstraintPhRID;
+            _methodData.GenConstraintPhlSequence = base.GenConstraintPhlSequence;
+            _methodData.GenConstraintColorInd = base.GenConstraintColorInd;
+            _methodData.GenConstraintMerchType = base.GenConstraintMerchType;
+            // end Generic Size Constraint data
+            // BEGIN TT#41-MD - GTaylor - UC#2
+            _methodData.IB_MERCH_HN_RID = IB_MERCH_HN_RID;
+            _methodData.IB_MERCH_PH_RID = IB_MERCH_PH_RID;
+            //_methodData.Inventory_Ind = Inventory_Ind;
+            _methodData.IB_MERCH_PHL_SEQ = IB_MERCH_PHL_SEQ;
+            _methodData.IB_MerchandiseType = IB_MerchandiseType;
+            // END TT#41-MD - GTaylor - UC#2
+            // BEGIN TT#246-MD - AGallagher - VSW Size - Add In-store Size Constraint options 
+            _methodData.OverrideVSWSizeConstraints = OverrideVSWSizeConstraints;
+            _methodData.VSWSizeConstraints = (eVSWSizeConstraints)VSWSizeConstraints;
+            // END TT#246-MD - AGallagher - VSW Size - Add In-store Size Constraint options 
 
-					}
-				}
-				catch (Exception)
-				{
-					throw;
-				}
-				finally
-				{
-					//TO DO:  whatever has to be done after an update or exception.
-				}
-		}
+            //Begin TT#1636-MD -jsobek -Pre-Pack Fill Size
+            _methodData.OverrideAvgPackDevTolerance = OverrideAvgPackDevTolerance;
+            _methodData.OverrideMaxPackNeedTolerance = OverrideMaxPackNeedTolerance;
+            _methodData.AvgPackDeviationTolerance = this._AvgPackDeviationTolerance;
+            _methodData.MaxPackNeedTolerance = this._MaxPackNeedTolerance;
+            _methodData.PackToleranceNoMaxStep = _packToleranceNoMaxStep;
+            _methodData.PackToleranceStepped = _packToleranceStepped;
+            //End TT#1636-MD -jsobek -Pre-Pack Fill Size
+
+            try
+            {
+                switch (base.Method_Change_Type)
+                {
+                    case eChangeType.add:
+                        base.Update(td);
+                        _methodData.InsertMethod(base.Key, td);
+                        InsertUpdateMethodRules(td);
+                        break;
+                    case eChangeType.update:
+                        base.Update(td);
+                        _methodData.UpdateMethod(base.Key, td);
+                        InsertUpdateMethodRules(td);
+                        break;
+                    case eChangeType.delete:
+                        _methodData.DeleteMethod(base.Key, td);
+                        base.Update(td);
+                        break;
+
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                DataSetBackup = null;
+                ConstraintRollback = false;
+                //TO DO:  whatever has to be done after an update or exception.
+            }
+        }
 	 
 		#endregion
 
@@ -2020,41 +2022,47 @@ namespace MIDRetail.Business.Allocation
             }
 
         }
+
         override public ROMethodProperties MethodGetData(out bool successful, ref string message, bool processingApply = false)
         {
             successful = true;
 
+            if (DataSetBackup == null)
+            {
+                DataSetBackup = MethodConstraints.Copy();
+            }
+
+
             //RO-3884 Data Transport for Fill Size Method
-            //throw new NotImplementedException("MethodGetData is not implemented");
             KeyValuePair<int, string> keyValuePair = new KeyValuePair<int, string>();
 
             ROMethodFillSizeHolesProperties method = new ROMethodFillSizeHolesProperties(
                 method: GetName.GetMethod(method: this),
-                description: _methodData.Method_Description,
+                description: Method_Description,
                 userKey: User_RID,
-                filter: GetName.GetFilterName(_methodData.StoreFilterRid),
-                available: _methodData.Available,
-                percentInd: _methodData.PercentInd,
-                merch_HN: GetName.GetLevelKeyValuePair(_methodData.MerchandiseType, nodeRID: _methodData.MerchHnRid, merchPhRID: _methodData.MerchPhRid, merchPhlSequence: _methodData.MerchPhlSequence, SAB: SAB),
-                merch_PH_RID: _methodData.MerchPhRid,
-                merch_PHL_SEQ: _methodData.MerchPhlSequence,
-                merchandiseType: EnumTools.VerifyEnumValue(_methodData.MerchandiseType),
-                normalizeSizeCurvesDefaultIsOverridden: _methodData.NormalizeSizeCurvesDefaultIsOverridden,
-                normalizeSizeCurves: _methodData.NormalizeSizeCurves,
-                fillSizesToType: EnumTools.VerifyEnumValue(_methodData.FillSizesToType),
-                sizeGroup: GetName.GetSizeGroup(_methodData.SizeGroupRid),
-                sizeAlternateModel: GetName.GetSizeAlternateModel(_methodData.SizeAlternateRid),
+                filter: GetName.GetFilterName(StoreFilterRid),
+                available: Available,
+                percentInd: PercentInd,
+                merch_HN: GetName.GetLevelKeyValuePair(MerchandiseType, nodeRID: MerchHnRid, merchPhRID: MerchPhRid, merchPhlSequence: MerchPhlSequence, SAB: SAB),
+                merch_PH_RID: MerchPhRid,
+                merch_PHL_SEQ: MerchPhlSequence,
+                merchandiseType: EnumTools.VerifyEnumValue(MerchandiseType),
+                normalizeSizeCurvesDefaultIsOverridden: NormalizeSizeCurvesDefaultIsOverridden,
+                normalizeSizeCurves: NormalizeSizeCurves,
+                fillSizesToType: EnumTools.VerifyEnumValue(FillSizesToType),
+                sizeGroup: GetName.GetSizeGroup(SizeGroupRid),
+                sizeAlternateModel: GetName.GetSizeAlternateModel(SizeAlternateRid),
                 rOSizeCurveProperties: SizeCurveProperties.BuildSizeCurveProperties(
-                    sizeCurveGroupRID: _methodData.SizeCurveGroupRid,
-                    genCurveNsccdRID: _methodData.GenCurveNsccdRID,
-                    genCurveHcgRID: _methodData.GenCurveHcgRID,
-                    genCurveHnRID: _methodData.GenCurveHnRID,
-                    genCurvePhRID: _methodData.GenCurvePhRID,
-                    genCurvePhlSequence: _methodData.GenCurvePhlSequence,
-                    genCurveMerchType: _methodData.GenCurveMerchType,
-                    isUseDefault: _methodData.UseDefaultCurve,
-                    isApplyRulesOnly: _methodData.ApplyRulesOnly,
-                    isColorSelected: _methodData.GenConstraintColorInd,
+                    sizeCurveGroupRID: SizeCurveGroupRid,
+                    genCurveNsccdRID: GenCurveNsccdRID,
+                    genCurveHcgRID: GenCurveCharGroupRID,
+                    genCurveHnRID: GenCurveHnRID,
+                    genCurvePhRID: GenCurvePhRID,
+                    genCurvePhlSequence: GenCurvePhlSequence,
+                    genCurveMerchType: GenCurveMerchType,
+                    isUseDefault: UseDefaultCurve,
+                    isApplyRulesOnly: ApplyRulesOnly,
+                    isColorSelected: GenConstraintColorInd,
                     sizeCurve: keyValuePair,
                     sizeCurveGenericHierarchy: keyValuePair,
                     sizeCurveGenericNameExtension: keyValuePair,
@@ -2062,38 +2070,38 @@ namespace MIDRetail.Business.Allocation
                     SAB: SAB
                     ),
                 rOSizeConstraintProperties: SizeConstraintProperties.BuildSizeConstraintProperties(
-                    inventoryBasisMerchHnRID: _methodData.IB_MERCH_HN_RID,
-                    inventoryBasisMerchPhRID: _methodData.IB_MERCH_PH_RID,
-                    inventoryBasisMerchPhlSequence: _methodData.IB_MERCH_PHL_SEQ,
-                    inventoryBasisMerchType: _methodData.IB_MerchandiseType,
-                    sizeConstraintRID: _methodData.SizeConstraintRid,
-                    genConstraintHcgRID: _methodData.GenConstraintHcgRID,
-                    genConstraintHnRID: _methodData.GenConstraintHnRID,
-                    genConstraintPhRID: _methodData.GenConstraintPhRID,
-                    genConstraintPhlSequence: _methodData.GenConstraintPhlSequence,
-                    genConstraintMerchType: _methodData.GenConstraintMerchType,
-                    genConstraintColorInd: _methodData.GenConstraintColorInd,
+                    inventoryBasisMerchHnRID: IB_MERCH_HN_RID,
+                    inventoryBasisMerchPhRID: IB_MERCH_PH_RID,
+                    inventoryBasisMerchPhlSequence: IB_MERCH_PHL_SEQ,
+                    inventoryBasisMerchType: IB_MerchandiseType,
+                    sizeConstraintRID: SizeConstraintRid,
+                    genConstraintHcgRID: GenConstraintCharGroupRID,
+                    genConstraintHnRID: GenConstraintHnRID,
+                    genConstraintPhRID: GenConstraintPhRID,
+                    genConstraintPhlSequence: GenConstraintPhlSequence,
+                    genConstraintMerchType: GenConstraintMerchType,
+                    genConstraintColorInd: GenConstraintColorInd,
                     inventoryBasis: keyValuePair,
                     sizeConstraint: keyValuePair,
                     sizeConstraintGenericHierarchy: keyValuePair,
                     sizeConstraintGenericHeaderChar: keyValuePair,
                     SAB: SAB
                     ),
-                overrideVSWSizeConstraints: _methodData.OverrideVSWSizeConstraints,
-                vSWSizeConstraints: EnumTools.VerifyEnumValue(_methodData.VSWSizeConstraints),
-                overrideAvgPackDevTolerance: _methodData.OverrideAvgPackDevTolerance,
-                avgPackDeviationTolerance: _methodData.AvgPackDeviationTolerance,
-                overrideMaxPackNeedTolerance: _methodData.OverrideMaxPackNeedTolerance,
-                packToleranceStepped: _methodData.PackToleranceStepped,
-                packToleranceNoMaxStep: _methodData.PackToleranceNoMaxStep,
-                maxPackNeedTolerance: _methodData.MaxPackNeedTolerance,
-                attribute: GetName.GetAttributeName(_methodData.SG_RID),
+                overrideVSWSizeConstraints: OverrideVSWSizeConstraints,
+                vSWSizeConstraints: EnumTools.VerifyEnumValue(VSWSizeConstraints),
+                overrideAvgPackDevTolerance: OverrideAvgPackDevTolerance,
+                avgPackDeviationTolerance: AvgPackDeviationTolerance,
+                overrideMaxPackNeedTolerance: OverrideMaxPackNeedTolerance,
+                packToleranceStepped: PackToleranceStepped,
+                packToleranceNoMaxStep: PackToleranceNoMaxStep,
+                maxPackNeedTolerance: MaxPackNeedTolerance,
+                attribute: GetName.GetAttributeName(SG_RID),
                 sizeRuleAttributeSets: SizeRuleProperties.BuildSizeRuleProperties(
-                    methodRID: _methodData.Method_RID,
+                    methodRID: Key,
                     methodType: eMethodType.FillSizeHolesAllocation,
-                    attributeRID: _methodData.SG_RID,
-                    sizeGroupRID: _methodData.SizeGroupRid,
-                    sizeCurveGroupRID: _methodData.SizeCurveGroupRid,
+                    attributeRID: SG_RID,
+                    sizeGroupRID: SizeGroupRid,
+                    sizeCurveGroupRID: SizeCurveGroupRid,
                     getSizesUsing: GetSizesUsing,
                     getDimensionsUsing: GetDimensionsUsing,
                     methodConstraints: MethodConstraints,
@@ -2142,9 +2150,11 @@ namespace MIDRetail.Business.Allocation
                 NormalizeSizeCurvesDefaultIsOverridden = roMethodFillSizeAllocationProperties.NormalizeSizeCurvesDefaultIsOverridden;
                 NormalizeSizeCurves = roMethodFillSizeAllocationProperties.NormalizeSizeCurves;
                 _fillSizesToType = roMethodFillSizeAllocationProperties.FillSizesToType;
+                bool sizeGroupChanged = SizeGroupRid != roMethodFillSizeAllocationProperties.SizeGroup.Key;
                 SizeGroupRid = roMethodFillSizeAllocationProperties.SizeGroup.Key;
                 _sizeAlternateRid = roMethodFillSizeAllocationProperties.SizeAlternateModel.Key;
                 //Size Curve Group Box 
+                bool sizeCurveChanged = SizeCurveGroupRid != roMethodFillSizeAllocationProperties.ROSizeCurveProperties.SizeCurveGroupKey;
                 SizeCurveGroupRid = roMethodFillSizeAllocationProperties.ROSizeCurveProperties.SizeCurveGroupKey;
                 if (SAB.ClientServerSession.GlobalOptions.GenericSizeCurveNameType == eGenericSizeCurveNameType.NodePropertiesName)
                 {
@@ -2213,9 +2223,40 @@ namespace MIDRetail.Business.Allocation
                     MaxPackNeedTolerance = roMethodFillSizeAllocationProperties.MaxPackNeedTolerance;
                 }
                 //Rules Tab
+                bool attributeChanged = SG_RID != roMethodFillSizeAllocationProperties.Attribute.Key;
                 SG_RID = roMethodFillSizeAllocationProperties.Attribute.Key;
-                //MethodConstraints = SizeRuleAttributeSet.BuildMethodConstrainst(roMethodFillSizeAllocationProperties.Method.Key, roMethodFillSizeAllocationProperties.Attribute.Key,
-                //    roMethodFillSizeAllocationProperties.SizeRuleAttributeSet, MethodConstraints, SAB);
+
+                if (MethodConstraints == null
+                    || attributeChanged
+                    || sizeGroupChanged
+                    || sizeCurveChanged
+                    )
+                {
+                    base.GetSizesUsing = eGetSizes.SizeCurveGroupRID;
+                    base.GetDimensionsUsing = eGetDimensions.SizeCurveGroupRID;
+                    if (base.SizeGroupRid != Include.NoRID)
+                    {
+                        base.GetSizesUsing = eGetSizes.SizeGroupRID;
+                        base.GetDimensionsUsing = eGetDimensions.SizeGroupRID;
+                    }
+
+                    ConstraintRollback = true;
+                    DeleteMethodRules(new TransactionData());
+
+                    CreateConstraintData();
+                }
+                else
+                {
+                    MethodConstraints = SizeRuleProperties.BuildMethodConstrainst(
+                    methodRID: roMethodFillSizeAllocationProperties.Method.Key,
+                    attributeRID: roMethodFillSizeAllocationProperties.Attribute.Key,
+                    rOMethodSizeRuleAttributeSet: roMethodFillSizeAllocationProperties.SizeRuleAttributeSets,
+                    methodConstraintsSV: MethodConstraints,
+                    SAB: SAB
+                    ); // MethodConstraints will be regenerated based on above changes
+                    SetSizeCodeSequences();
+                }
+
                 return true;
             }
             catch (Exception e)
