@@ -428,20 +428,32 @@ namespace MIDRetail.Business.Allocation
         // restore the saved rules if needed
         override public bool CleanUp()
         {
-            if (_dsBackup != null
-                && ConstraintRollback)
+            TransactionData td = new TransactionData();
+            try
             {
-                TransactionData td = new TransactionData();
-                if (!td.ConnectionIsOpen)
+                if (_dsBackup != null
+                    && ConstraintRollback
+                   )
                 {
-                    td.OpenUpdateConnection();
-                }
-                MethodConstraints = DataSetBackup;
-                InsertUpdateMethodRules(td);
+                    if (!td.ConnectionIsOpen)
+                    {
+                        td.OpenUpdateConnection();
+                    }
+                    MethodConstraints = DataSetBackup;
+                    InsertUpdateMethodRules(td);
 
+                    if (td.ConnectionIsOpen)
+                    {
+                        td.CommitData();
+                        td.CloseUpdateConnection();
+                    }
+                }
+            }
+            catch (Exception)
+            {
                 if (td.ConnectionIsOpen)
                 {
-                    td.CommitData();
+                    td.Rollback();
                     td.CloseUpdateConnection();
                 }
             }

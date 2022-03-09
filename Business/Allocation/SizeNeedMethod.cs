@@ -4651,15 +4651,16 @@ namespace MIDRetail.Business.Allocation
 						base.Update(td);
 						break;
 				}
-			}
+                // reset values to not restore backup dataset if successful Update
+                DataSetBackup = null;
+                ConstraintRollback = false;
+            }
 			catch
 			{
 				throw;
 			}
 			finally
 			{
-                DataSetBackup = null;
-                ConstraintRollback = false;
 				//TO DO:  whatever has to be done after an update or exception.
 			}
 		}
@@ -4874,10 +4875,6 @@ namespace MIDRetail.Business.Allocation
                     isUseDefault: UseDefaultCurve,
                     isApplyRulesOnly: ApplyRulesOnly,
                     isColorSelected: GenConstraintColorInd,
-                    sizeCurve: keyValuePair,
-                    sizeCurveGenericHierarchy: keyValuePair,
-                    sizeCurveGenericNameExtension: keyValuePair,
-                    sizeCurveGenericHeaderCharacteristic: keyValuePair,
                     SAB: SAB
                     ),
                 rOSizeConstraintProperties: SizeConstraintProperties.BuildSizeConstraintProperties(
@@ -4973,15 +4970,21 @@ namespace MIDRetail.Business.Allocation
                 }
                 _MerchPhlSequence = roMethodSizeNeedAllocationProperties.MerchandiseHierarchy.Value;
                 MerchType = roMethodSizeNeedAllocationProperties.MerchandiseType;
+                MerchHnRid = Include.NoRID;
+                MerchPhRid = Include.NoRID;
+                MerchPhlSequence = Include.Undefined;
                 switch (MerchType)
                 {
                     case eMerchandiseType.HierarchyLevel:
+                        MerchPhRid = MainHierarchyProfile.Key;
+                        MerchPhlSequence = roMethodSizeNeedAllocationProperties.Merchandise.Key;
+                        break;
                     case eMerchandiseType.LevelOffset:
                     case eMerchandiseType.OTSPlanLevel:
                         _MerchHnRid = Include.Undefined;
                         break;
                     default: //eMerchandiseType.Node
-                        _MerchHnRid = roMethodSizeNeedAllocationProperties.Merchandise.Key;
+                        MerchHnRid = roMethodSizeNeedAllocationProperties.Merchandise.Key;
                         break;
                 }
                 NormalizeSizeCurvesDefaultIsOverridden = roMethodSizeNeedAllocationProperties.NormalizeSizeCurvesDefaultIsOverridden;
@@ -4992,20 +4995,29 @@ namespace MIDRetail.Business.Allocation
                 //Size Curve Group Box 
                 bool sizeCurveChanged = SizeCurveGroupRid != roMethodSizeNeedAllocationProperties.ROSizeCurveProperties.SizeCurveGroupKey;
                 SizeCurveGroupRid = roMethodSizeNeedAllocationProperties.ROSizeCurveProperties.SizeCurveGroupKey;
+                GenCurveNsccdRID = Include.NoRID;
                 if (SAB.ClientServerSession.GlobalOptions.GenericSizeCurveNameType == eGenericSizeCurveNameType.NodePropertiesName)
                 {
                     GenCurveNsccdRID = roMethodSizeNeedAllocationProperties.ROSizeCurveProperties.GenericHeaderCharacteristicsOrNameExtensionKey;
                 }
+                else
+                {
+                    GenCurveCharGroupRID = roMethodSizeNeedAllocationProperties.ROSizeCurveProperties.GenericHeaderCharacteristicsOrNameExtensionKey;
+                }
                 GenCurveMerchType = roMethodSizeNeedAllocationProperties.ROSizeCurveProperties.GenericMerchandiseType;
+                GenCurvePhRID = Include.NoRID;
+                GenCurvePhlSequence = Include.Undefined;
+                GenCurveHnRID = Include.NoRID;
                 switch (GenCurveMerchType)
                 {
                     case eMerchandiseType.HierarchyLevel:
+                        GenCurvePhRID = MainHierarchyProfile.Key;
+                        GenCurvePhlSequence = roMethodSizeNeedAllocationProperties.ROSizeCurveProperties.GenericHierarchyLevelKey;
+                        break;
                     case eMerchandiseType.LevelOffset:
                     case eMerchandiseType.OTSPlanLevel:
-                        GenCurveHnRID = Include.NoRID;
-                        break;
-                    default: //eMerchandiseType.Node
-                        GenCurveHnRID = Include.NoRID;
+                        break; 
+                    default: //eMerchandiseType.Node - not vaid to this field
                         break;
                 }
 
@@ -5014,28 +5026,37 @@ namespace MIDRetail.Business.Allocation
                 GenCurveColorInd = roMethodSizeNeedAllocationProperties.ROSizeCurveProperties.IsColorSelected;
                 // Constraints Group Box
                 IB_MerchandiseType = roMethodSizeNeedAllocationProperties.ROSizeConstraintProperties.InventoryBasisMerchandiseType;
+                IB_MERCH_PH_RID = Include.NoRID;
+                IB_MERCH_PHL_SEQ = Include.Undefined;
+                IB_MERCH_HN_RID = Include.NoRID;
                 switch (IB_MerchandiseType)
                 {
                     case eMerchandiseType.HierarchyLevel:
+                        IB_MERCH_PH_RID = MainHierarchyProfile.Key;
+                        IB_MERCH_PHL_SEQ = roMethodSizeNeedAllocationProperties.ROSizeConstraintProperties.InventoryBasisHierarchyLevelKey;
+                        break;
                     case eMerchandiseType.LevelOffset:
                     case eMerchandiseType.OTSPlanLevel:
-                        _IB_MERCH_HN_RID = Include.NoRID;
                         break;
                     default: //eMerchandiseType.Node
-                        _IB_MERCH_HN_RID = roMethodSizeNeedAllocationProperties.ROSizeConstraintProperties.InventoryBasisMerchandise.Key;
+                        IB_MERCH_HN_RID = roMethodSizeNeedAllocationProperties.ROSizeConstraintProperties.InventoryBasisMerchandise.Key;
                         break;
                 }
                 _sizeConstraintRid = roMethodSizeNeedAllocationProperties.ROSizeConstraintProperties.SizeConstraintKey;
                 GenConstraintMerchType = roMethodSizeNeedAllocationProperties.ROSizeConstraintProperties.GenericMerchandiseType;
+                GenConstraintPhRID = Include.NoRID;
+                GenConstraintPhlSequence = Include.Undefined;
+                GenConstraintHnRID = Include.NoRID;
                 switch (GenConstraintMerchType)
                 {
                     case eMerchandiseType.HierarchyLevel:
+                        GenConstraintPhRID = MainHierarchyProfile.Key;
+                        GenConstraintPhlSequence = roMethodSizeNeedAllocationProperties.ROSizeConstraintProperties.InventoryBasisHierarchyLevelKey;
+                        break;
                     case eMerchandiseType.LevelOffset:
                     case eMerchandiseType.OTSPlanLevel:
-                        GenConstraintHnRID = Include.NoRID; 
                         break;
-                    default: //eMerchandiseType.Node
-                        GenConstraintHnRID = Include.NoRID;
+                    default: //eMerchandiseType.Node - not vaid to this field
                         break;
                 }
                 GenConstraintCharGroupRID = roMethodSizeNeedAllocationProperties.ROSizeConstraintProperties.GenericHeaderCharacteristicsKey;

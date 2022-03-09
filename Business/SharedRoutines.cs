@@ -1325,10 +1325,6 @@ namespace MIDRetail.Business
         /// <param name="isUseDefault"></param> 
         /// <param name="isApplyRulesOnly"></param> 
         /// <param name="isColorSelected"></param> 
-        /// output parameters
-        /// <param name="sizeCurve"></param> 
-        /// <param name="sizeCurveGenericHierarchy"></param> 
-        /// <param name="sizeCurveGenericNameExtension"></param> 
         /// <param name="SAB"></param>
 
         public static ROSizeCurveProperties BuildSizeCurveProperties(
@@ -1342,24 +1338,17 @@ namespace MIDRetail.Business
             bool isUseDefault, 
             bool isApplyRulesOnly, 
             bool isColorSelected,
-            KeyValuePair<int, string> sizeCurve,
-            KeyValuePair<int, string> sizeCurveGenericHierarchy,
-            KeyValuePair<int, string> sizeCurveGenericNameExtension,
-            KeyValuePair<int, string> sizeCurveGenericHeaderCharacteristic,
             SessionAddressBlock SAB
             )
         {
-            sizeCurve =  GetName.GetSizeCurveGroupName(sizeCurveGroupRID);
-            sizeCurveGenericHierarchy = GetName.GetLevelKeyValuePair(genCurveMerchType, genCurveHnRID, genCurvePhRID, genCurvePhlSequence, SAB);
-            sizeCurveGenericNameExtension = GetName.GetSizeCurveName(genCurveNsccdRID);
             int headerCharacteristicsOrNameExtensionKey = Include.Undefined;
             if (SAB.ClientServerSession.GlobalOptions.GenericSizeCurveNameType == eGenericSizeCurveNameType.HeaderCharacteristic)
             {
-                headerCharacteristicsOrNameExtensionKey = sizeCurveGenericNameExtension.Key;
+                headerCharacteristicsOrNameExtensionKey = genCurveHcgRID;
             }
             else if (SAB.ClientServerSession.GlobalOptions.GenericSizeCurveNameType == eGenericSizeCurveNameType.NodePropertiesName)
             {
-                headerCharacteristicsOrNameExtensionKey = sizeCurveGenericNameExtension.Key;
+                headerCharacteristicsOrNameExtensionKey = genCurveNsccdRID;
             }
 
             ROSizeCurveProperties sizeCurveProperties = new ROSizeCurveProperties(

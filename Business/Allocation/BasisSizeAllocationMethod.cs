@@ -2309,15 +2309,16 @@ namespace MIDRetail.Business.Allocation
 						base.Update(td);
 						break;
 				}
-			}
+                // reset values to not restore backup dataset if successful Update
+                DataSetBackup = null;
+                ConstraintRollback = false;
+            }
 			catch (Exception)
 			{
 				throw;
 			}
 			finally
 			{
-                DataSetBackup = null;
-                ConstraintRollback = false;
                 //TO DO:  whatever has to be done after an update or exception.
             }
 		}
@@ -2470,10 +2471,6 @@ namespace MIDRetail.Business.Allocation
                     isUseDefault: UseDefaultCurve,
                     isApplyRulesOnly: ApplyRulesOnly,
                     isColorSelected: GenConstraintColorInd,
-                    sizeCurve: keyValuePair,
-                    sizeCurveGenericHierarchy: keyValuePair,
-                    sizeCurveGenericNameExtension: keyValuePair,
-                    sizeCurveGenericHeaderCharacteristic: keyValuePair,
                     SAB: SAB
                     ),
                 rOSizeConstraintProperties: SizeConstraintProperties.BuildSizeConstraintProperties(
