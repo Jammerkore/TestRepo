@@ -2033,6 +2033,10 @@ namespace MIDRetail.Business.Allocation
                 DataSetBackup = MethodConstraints.Copy();
             }
 
+            if (SG_RID == Include.NoRID)
+            {
+                SG_RID = GlobalOptions.AllocationStoreGroupRID;
+            }
 
             //RO-3884 Data Transport for Fill Size Method
             KeyValuePair<int, string> keyValuePair = new KeyValuePair<int, string>();
@@ -2159,6 +2163,8 @@ namespace MIDRetail.Business.Allocation
                 //Size Curve Group Box 
                 bool sizeCurveChanged = SizeCurveGroupRid != roMethodFillSizeAllocationProperties.ROSizeCurveProperties.SizeCurveGroupKey;
                 SizeCurveGroupRid = roMethodFillSizeAllocationProperties.ROSizeCurveProperties.SizeCurveGroupKey;
+                GenCurveNsccdRID = Include.NoRID;
+                GenCurveCharGroupRID = Include.NoRID;
                 if (SAB.ClientServerSession.GlobalOptions.GenericSizeCurveNameType == eGenericSizeCurveNameType.NodePropertiesName)
                 {
                     GenCurveNsccdRID = roMethodFillSizeAllocationProperties.ROSizeCurveProperties.GenericHeaderCharacteristicsOrNameExtensionKey;
@@ -2213,7 +2219,7 @@ namespace MIDRetail.Business.Allocation
                 {
                     case eMerchandiseType.HierarchyLevel:
                         GenConstraintPhRID = MainHierarchyProfile.Key;
-                        GenConstraintPhlSequence = roMethodFillSizeAllocationProperties.ROSizeConstraintProperties.InventoryBasisHierarchyLevelKey;
+                        GenConstraintPhlSequence = roMethodFillSizeAllocationProperties.ROSizeConstraintProperties.GenericHierarchyLevelKey;
                         break;
                     case eMerchandiseType.LevelOffset:
                     case eMerchandiseType.OTSPlanLevel:
