@@ -575,7 +575,7 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         bool _overrideAvgPackDevTolerance;
         [DataMember(IsRequired = true)]
-        double _avgPackDeviationTolerance;
+        double? _avgPackDeviationTolerance;
         [DataMember(IsRequired = true)]
         bool _overrideMaxPackNeedTolerance;
         [DataMember(IsRequired = true)]
@@ -583,7 +583,7 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         bool _packToleranceNoMaxStep;
         [DataMember(IsRequired = true)]
-        double _maxPackNeedTolerance;
+        double? _maxPackNeedTolerance;
         [DataMember(IsRequired = true)]
         List<KeyValuePair<int, string>> _merchandiseBasis;
         [DataMember(IsRequired = true)]
@@ -674,7 +674,7 @@ namespace Logility.ROWebSharedTypes
             get { return _overrideAvgPackDevTolerance; }
             set { _overrideAvgPackDevTolerance = value; }
         }
-        public double AvgPackDeviationTolerance
+        public double? AvgPackDeviationTolerance
         {
             get { return _avgPackDeviationTolerance; }
             set { _avgPackDeviationTolerance = value; }
@@ -694,7 +694,7 @@ namespace Logility.ROWebSharedTypes
             get { return _packToleranceNoMaxStep; }
             set { _packToleranceNoMaxStep = value; }
         }
-        public double MaxPackNeedTolerance
+        public double? MaxPackNeedTolerance
         {
             get { return _maxPackNeedTolerance; }
             set { _maxPackNeedTolerance = value; }
@@ -750,11 +750,11 @@ namespace Logility.ROWebSharedTypes
             bool overrideVSWSizeConstraints,
             KeyValuePair<int, string> vSWSizeConstraints, 
             bool overrideAvgPackDevTolerance, 
-            double avgPackDeviationTolerance,
+            double? avgPackDeviationTolerance,
             bool overrideMaxPackNeedTolerance, 
             bool packToleranceStepped, 
             bool packToleranceNoMaxStep, 
-            double maxPackNeedTolerance,
+            double? maxPackNeedTolerance,
             KeyValuePair<int, string> attribute, 
             List<ROMethodSizeRuleProperties> sizeRuleAttributeSets,
             bool isTemplate = false
