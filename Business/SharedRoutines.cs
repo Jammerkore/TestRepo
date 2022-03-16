@@ -611,7 +611,8 @@ namespace MIDRetail.Business
                     key = merchPhlSequence;
                     break;
                 case eMerchandiseType.OTSPlanLevel:
-                    name = MIDText.GetTextOnly(eMIDTextCode.lbl_OTSPlanLevel);
+                    //name = MIDText.GetTextOnly(eMIDTextCode.lbl_OTSPlanLevel);
+                    name = null;
                     key = Include.Undefined;
                     break;
                 default: //eMerchandiseType.Node
@@ -1413,7 +1414,7 @@ namespace MIDRetail.Business
             SessionAddressBlock SAB
             )
         {
-            if (genConstraintMerchType == eMerchandiseType.Node)
+            if (inventoryBasisMerchType == eMerchandiseType.Node)
             {
                 inventoryBasis = GetName.GetLevelKeyValuePair(
                     merchandiseType: inventoryBasisMerchType,
