@@ -170,7 +170,7 @@ namespace MIDRetail.CopyRelease
             }
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        internal void Form1_Load(object sender, EventArgs e)
         {
             TextReader r = null;
             XmlSerializer s;
@@ -425,10 +425,18 @@ namespace MIDRetail.CopyRelease
             }
         }
 
-        private void CopyToQA()
+        internal void CopyToQA(
+            bool quietMode = false,
+            string folderSuffix = " "
+            )
         {
             try
             {
+                if (!string.IsNullOrEmpty(folderSuffix))
+                {
+                    txtQAFolderName.Text += " " + folderSuffix.Trim();
+                }
+
                 UpdateStatus("Creating archives");
                 BuildArchives();
 
@@ -450,7 +458,10 @@ namespace MIDRetail.CopyRelease
 
                 UpdateStatus("Done");
                 btnClose.Focus();
-                MessageBox.Show("Release has been copied");
+                if (!quietMode)
+                {
+                    MessageBox.Show("Release has been copied");
+                }
             }
             catch (Exception exc)
             {
