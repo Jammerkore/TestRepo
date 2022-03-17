@@ -301,11 +301,11 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         bool _percentInd;
         [DataMember(IsRequired = true)]
-        KeyValuePair<int, string> _merch_HN;
-        [DataMember(IsRequired = true)]
-        KeyValuePair<int, int> _merch_PH;
-        [DataMember(IsRequired = true)]
         eMerchandiseType _merchandiseType;
+        [DataMember(IsRequired = true)]
+        KeyValuePair<int, string> _merchandise;
+        [DataMember(IsRequired = true)]
+        int _merchandiseHierarchyLevelKey;
         [DataMember(IsRequired = true)]
         bool _normalizeSizeCurvesDefaultIsOverridden;
         [DataMember(IsRequired = true)]
@@ -363,17 +363,6 @@ namespace Logility.ROWebSharedTypes
             set { _percentInd = value; }
         }
 
-        public KeyValuePair<int, string> Merch_HN
-        {
-            get { return _merch_HN; }
-            set { _merch_HN = value; }
-        }
-        public KeyValuePair<int, int> Merch_PH
-        {
-            get { return _merch_PH; }
-            set { _merch_PH = value; }
-        }
-
         public eMerchandiseType MerchandiseType
         {
             get { return _merchandiseType; }
@@ -381,6 +370,17 @@ namespace Logility.ROWebSharedTypes
             {
                 _merchandiseType = value;
             }
+        }
+
+        public KeyValuePair<int, string> Merchandise
+        {
+            get { return _merchandise; }
+            set { _merchandise = value; }
+        }
+        public int MerchandiseHierarchyLevelKey
+        {
+            get { return _merchandiseHierarchyLevelKey; }
+            set { _merchandiseHierarchyLevelKey = value; }
         }
 
         public bool NormalizeSizeCurvesDefaultIsOverridden
@@ -487,11 +487,10 @@ namespace Logility.ROWebSharedTypes
             int userKey, 
             KeyValuePair<int, string> filter,
             double available, 
-            bool percentInd, 
-            KeyValuePair<int, string> merch_HN, 
-            int merch_PH_RID, 
-            int merch_PHL_SEQ, 
+            bool percentInd,
             eMerchandiseType merchandiseType,
+            KeyValuePair<int, string> merchandise,
+            int merchandiseHierarchyLevelKey,
             bool normalizeSizeCurvesDefaultIsOverridden, 
             bool normalizeSizeCurves, 
             eFillSizesToType fillSizesToType, 
@@ -524,9 +523,9 @@ namespace Logility.ROWebSharedTypes
             _filter = filter;
             _available = available;
             _percentInd = percentInd;
-            _merch_HN = merch_HN;
-            _merch_PH = new KeyValuePair<int, int>(merch_PH_RID, merch_PHL_SEQ);
             _merchandiseType = merchandiseType;
+            _merchandise = merchandise;
+            _merchandiseHierarchyLevelKey = merchandiseHierarchyLevelKey;
             _normalizeSizeCurvesDefaultIsOverridden = normalizeSizeCurvesDefaultIsOverridden;
             _normalizeSizeCurves = normalizeSizeCurves;
             _fillSizesToType = fillSizesToType;
@@ -551,11 +550,11 @@ namespace Logility.ROWebSharedTypes
     {
         // fields specific to Size Need Method
         [DataMember(IsRequired = true)]
+        eMerchandiseType _merchandiseType;
+        [DataMember(IsRequired = true)]
         KeyValuePair<int, string> _merchandise;
         [DataMember(IsRequired = true)]
-        KeyValuePair<int, int> _merchandiseHierarchy;
-        [DataMember(IsRequired = true)]
-        eMerchandiseType _merchandiseType;
+        int _merchandiseHierarchyLevelKey;
         [DataMember(IsRequired = true)]
         bool _normalizeSizeCurvesDefaultIsOverridden;
         [DataMember(IsRequired = true)]
@@ -601,19 +600,7 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         List<ROMethodSizeRuleProperties> _sizeRuleAttributeSets;
 
-
         #region Public Properties
-        public KeyValuePair<int, string> Merchandise
-        {
-            get { return _merchandise; }
-            set { _merchandise = value; }
-        }
-        public KeyValuePair<int, int> MerchandiseHierarchy
-        {
-            get { return _merchandiseHierarchy; }
-            set { _merchandiseHierarchy = value; }
-        }
-
         public eMerchandiseType MerchandiseType
         {
             get { return _merchandiseType; }
@@ -621,6 +608,17 @@ namespace Logility.ROWebSharedTypes
             {
                 _merchandiseType = value;
             }
+        }
+
+        public KeyValuePair<int, string> Merchandise
+        {
+            get { return _merchandise; }
+            set { _merchandise = value; }
+        }
+        public int MerchandiseHierarchyLevelKey
+        {
+            get { return _merchandiseHierarchyLevelKey; }
+            set { _merchandiseHierarchyLevelKey = value; }
         }
 
         public bool NormalizeSizeCurvesDefaultIsOverridden
@@ -737,10 +735,9 @@ namespace Logility.ROWebSharedTypes
             KeyValuePair<int, string> method, 
             string description, 
             int userKey,
-            KeyValuePair<int, string> merch_HN, 
-            int merch_PH_RID, 
-            int merch_PHL_SEQ, 
             eMerchandiseType merchandiseType,
+            KeyValuePair<int, string> merchandise, 
+            int merchandiseHierarchyLevelKey, 
             bool normalizeSizeCurvesDefaultIsOverridden, 
             bool normalizeSizeCurves, 
             KeyValuePair<int, string> sizeGroup,
@@ -769,9 +766,9 @@ namespace Logility.ROWebSharedTypes
 
         {
             // fields specific to Size Need method
-            _merchandise = merch_HN;
-            _merchandiseHierarchy = new KeyValuePair<int, int>(merch_PH_RID, merch_PHL_SEQ);
             _merchandiseType = merchandiseType;
+            _merchandise = merchandise;
+            _merchandiseHierarchyLevelKey = merchandiseHierarchyLevelKey;
             _normalizeSizeCurvesDefaultIsOverridden = normalizeSizeCurvesDefaultIsOverridden;
             _normalizeSizeCurves = normalizeSizeCurves;
             _sizeGroup = sizeGroup;

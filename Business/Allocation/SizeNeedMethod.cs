@@ -582,6 +582,11 @@ namespace MIDRetail.Business.Allocation
 			}
 			// end MID Track 3781 Size Curve not required
 
+            if (SG_RID == Include.NoRID)
+            {
+                SG_RID = GlobalOptions.AllocationStoreGroupRID;
+            }
+
 			CreateConstraintData();
 
 		}
@@ -4857,14 +4862,26 @@ namespace MIDRetail.Business.Allocation
             }
 
             KeyValuePair<int, string> keyValuePair = new KeyValuePair<int, string>();
+            KeyValuePair<int, string> merchandise = new KeyValuePair<int, string>(-1, "");
+
+            if (MerchType == eMerchandiseType.Node)
+            {
+                merchandise = GetName.GetLevelKeyValuePair(
+                    merchandiseType: MerchType,
+                    nodeRID: MerchHnRid,
+                    merchPhRID: MerchPhRid,
+                    merchPhlSequence: MerchPhlSequence,
+                    SAB: SAB
+                    );
+            }
+
             ROMethodSizeNeedProperties method = new ROMethodSizeNeedProperties(  
                 method: GetName.GetMethod(method: this),
                 description: Method_Description,
                 userKey: User_RID,
-                merch_HN: GetName.GetLevelKeyValuePair(MerchType, nodeRID: MerchHnRid , merchPhRID: MerchPhRid, merchPhlSequence: MerchPhlSequence, SAB: SAB),
-                merch_PH_RID: MerchPhRid,
-                merch_PHL_SEQ: MerchPhlSequence,
                 merchandiseType: EnumTools.VerifyEnumValue(MerchType),
+                merchandise: merchandise,
+                merchandiseHierarchyLevelKey: MerchPhlSequence,
                 normalizeSizeCurvesDefaultIsOverridden: NormalizeSizeCurvesDefaultIsOverridden,
                 normalizeSizeCurves: NormalizeSizeCurves,
                 sizeGroup: GetName.GetSizeGroup(SizeGroupRid),
@@ -4973,7 +4990,6 @@ namespace MIDRetail.Business.Allocation
                 {
                     _MerchPhRid = Include.NoRID;
                 }
-                _MerchPhlSequence = roMethodSizeNeedAllocationProperties.MerchandiseHierarchy.Value;
                 MerchType = roMethodSizeNeedAllocationProperties.MerchandiseType;
                 MerchHnRid = Include.NoRID;
                 MerchPhRid = Include.NoRID;
@@ -4982,7 +4998,7 @@ namespace MIDRetail.Business.Allocation
                 {
                     case eMerchandiseType.HierarchyLevel:
                         MerchPhRid = MainHierarchyProfile.Key;
-                        MerchPhlSequence = roMethodSizeNeedAllocationProperties.Merchandise.Key;
+                        MerchPhlSequence = roMethodSizeNeedAllocationProperties.MerchandiseHierarchyLevelKey;
                         break;
                     case eMerchandiseType.LevelOffset:
                     case eMerchandiseType.OTSPlanLevel:

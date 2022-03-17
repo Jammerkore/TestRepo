@@ -441,6 +441,11 @@ namespace MIDRetail.Business.Allocation
 				}
 				// end MID Track 3781 Size Curve not required
 
+            if (SG_RID == Include.NoRID)
+            {
+                SG_RID = GlobalOptions.AllocationStoreGroupRID;
+            }
+
 				CreateConstraintData();
 	}
 
@@ -2040,6 +2045,18 @@ namespace MIDRetail.Business.Allocation
 
             //RO-3884 Data Transport for Fill Size Method
             KeyValuePair<int, string> keyValuePair = new KeyValuePair<int, string>();
+            KeyValuePair<int, string> merchandise = new KeyValuePair<int, string>(-1, "");
+
+            if (MerchandiseType == eMerchandiseType.Node)
+            {
+                merchandise = GetName.GetLevelKeyValuePair(
+                    merchandiseType: MerchandiseType,
+                    nodeRID: MerchHnRid,
+                    merchPhRID: MerchPhRid,
+                    merchPhlSequence: MerchPhlSequence,
+                    SAB: SAB
+                    );
+            }
 
             ROMethodFillSizeHolesProperties method = new ROMethodFillSizeHolesProperties(
                 method: GetName.GetMethod(method: this),
@@ -2048,10 +2065,9 @@ namespace MIDRetail.Business.Allocation
                 filter: GetName.GetFilterName(StoreFilterRid),
                 available: Available,
                 percentInd: PercentInd,
-                merch_HN: GetName.GetLevelKeyValuePair(MerchandiseType, nodeRID: MerchHnRid, merchPhRID: MerchPhRid, merchPhlSequence: MerchPhlSequence, SAB: SAB),
-                merch_PH_RID: MerchPhRid,
-                merch_PHL_SEQ: MerchPhlSequence,
                 merchandiseType: EnumTools.VerifyEnumValue(MerchandiseType),
+                merchandise: merchandise,
+                merchandiseHierarchyLevelKey: MerchPhlSequence,
                 normalizeSizeCurvesDefaultIsOverridden: NormalizeSizeCurvesDefaultIsOverridden,
                 normalizeSizeCurves: NormalizeSizeCurves,
                 fillSizesToType: EnumTools.VerifyEnumValue(FillSizesToType),
@@ -2134,8 +2150,6 @@ namespace MIDRetail.Business.Allocation
                 _StoreFilterRid = roMethodFillSizeAllocationProperties.Filter.Key;
                 _Available = roMethodFillSizeAllocationProperties.Available;
                 _PercentInd = roMethodFillSizeAllocationProperties.PercentInd;
-                _MerchPhRid = roMethodFillSizeAllocationProperties.Merch_PH.Key;
-                _MerchPhlSequence = roMethodFillSizeAllocationProperties.Merch_PH.Value;
                 _MerchandiseType = roMethodFillSizeAllocationProperties.MerchandiseType;
                 MerchHnRid = Include.NoRID;
                 MerchPhRid = Include.NoRID;
@@ -2144,14 +2158,14 @@ namespace MIDRetail.Business.Allocation
                 {
                     case eMerchandiseType.HierarchyLevel:
                         MerchPhRid = MainHierarchyProfile.Key;
-                        MerchPhlSequence = roMethodFillSizeAllocationProperties.Merch_HN.Key;
+                        MerchPhlSequence = roMethodFillSizeAllocationProperties.MerchandiseHierarchyLevelKey;
                         break;
                     case eMerchandiseType.LevelOffset:
                     case eMerchandiseType.OTSPlanLevel:
                         _MerchHnRid = Include.Undefined;
                         break;
                     default: //eMerchandiseType.Node
-                        MerchHnRid = roMethodFillSizeAllocationProperties.Merch_HN.Key;
+                        MerchHnRid = roMethodFillSizeAllocationProperties.Merchandise.Key;
                         break;
                 }
                 NormalizeSizeCurvesDefaultIsOverridden = roMethodFillSizeAllocationProperties.NormalizeSizeCurvesDefaultIsOverridden;
