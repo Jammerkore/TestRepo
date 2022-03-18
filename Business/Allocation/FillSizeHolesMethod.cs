@@ -2102,7 +2102,7 @@ namespace MIDRetail.Business.Allocation
                     genCurveMerchType: GenCurveMerchType,
                     isUseDefault: UseDefaultCurve,
                     isApplyRulesOnly: ApplyRulesOnly,
-                    isColorSelected: GenConstraintColorInd,
+                    isColorSelected: GenCurveColorInd,
                     SAB: SAB
                     ),
                 rOSizeConstraintProperties: SizeConstraintProperties.BuildSizeConstraintProperties(
