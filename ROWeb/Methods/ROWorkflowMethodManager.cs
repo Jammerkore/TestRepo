@@ -643,7 +643,8 @@ namespace Logility.ROWeb
                             _ABM = _ABM.Copy(
                                 aSession: SAB.ApplicationServerSession,
                                 aCloneDateRanges: true,
-                                aCloneCustomOverrideModels: true
+                                aCloneCustomOverrideModels: true,
+                                copyDetailValues: true
                                 );
                             _ABM.Method_Change_Type = saveChangeType;
 
@@ -856,7 +857,8 @@ namespace Logility.ROWeb
                             _ABM = _ABM.Copy(
                                 aSession: SAB.ApplicationServerSession,
                                 aCloneDateRanges: true,
-                                aCloneCustomOverrideModels: true
+                                aCloneCustomOverrideModels: true,
+                                copyDetailValues: true
                                 );
                             // Replace the key
                             _ABM.Key = key;
@@ -2031,7 +2033,8 @@ namespace Logility.ROWeb
                         applicationBaseMethod = applicationBaseMethod.Copy(
                             aSession: SAB.ClientServerSession,
                             aCloneDateRanges: true,
-                            aCloneCustomOverrideModels: true
+                            aCloneCustomOverrideModels: true,
+                            copyDetailValues: true
                             );
                         // modify method values so will add new method
                         applicationBaseMethod.Key = Include.NoRID;

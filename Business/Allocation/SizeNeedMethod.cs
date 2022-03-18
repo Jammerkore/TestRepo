@@ -4774,6 +4774,28 @@ namespace MIDRetail.Business.Allocation
 			}
 		}
 
+        override public ApplicationBaseMethod Copy(
+            Session aSession, 
+            bool aCloneDateRanges, 
+            bool aCloneCustomOverrideModels,
+            bool copyDetailValues = false
+            )
+        {
+            ApplicationBaseMethod applicationBaseMethod = Copy(
+                 aSession: aSession,
+                 aCloneDateRanges: aCloneDateRanges,
+                 aCloneCustomOverrideModels: aCloneCustomOverrideModels
+                 );
+
+            // include rule values in the copy
+            if (copyDetailValues)
+            {
+                ((SizeNeedMethod)applicationBaseMethod).MethodConstraints = MethodConstraints;
+            }
+
+            return applicationBaseMethod;
+        }
+
 		// Begin MID Track 4858 - JSmith - Security changes
 		/// <summary>
 		/// Returns a flag identifying if the user can update the data on the method.
@@ -5118,8 +5140,8 @@ namespace MIDRetail.Business.Allocation
 
                 if (MethodConstraints == null
                     || attributeChanged
-                    || sizeGroupChanged
-                    || sizeCurveChanged
+                    //|| sizeGroupChanged
+                    //|| sizeCurveChanged
                     )
                 {
                     base.GetSizesUsing = eGetSizes.SizeCurveGroupRID;

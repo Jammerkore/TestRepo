@@ -667,6 +667,37 @@ namespace MIDRetail.Business
         abstract public ApplicationBaseMethod Copy(Session aSession, bool aCloneDateRanges, bool aCloneCustomOverrideModels);
         // End Track #5912
 
+        /// <summary>
+        /// Returns a copy of this object.
+        /// </summary>
+        /// <param name="aSession">
+        /// The current session
+        /// </param>
+        /// <param name="aCloneDateRanges">
+        /// A flag identifying if date ranges are to be cloned or use the original</param>
+        /// <param name="aCloneCustomOverrideModels">
+        /// A flag identifying if custom override models are to be cloned or use the original
+        /// </param>
+		/// <param name="copyDetailValues">
+		/// A flag identifying if detail values are to be copied or initialized
+		/// </param>
+        /// <returns>
+        /// A copy of the object.
+        /// </returns>
+        virtual public ApplicationBaseMethod Copy(
+            Session aSession,
+            bool aCloneDateRanges,
+            bool aCloneCustomOverrideModels,
+            bool copyDetailValues
+            )
+        {
+            return Copy(
+                 aSession: aSession,
+                 aCloneDateRanges: aCloneDateRanges,
+                 aCloneCustomOverrideModels: aCloneCustomOverrideModels
+                 );
+        }
+
 		// Begin MID Track 4858 - JSmith - Security changes
 		/// <summary>
 		/// Returns a flag identifying if the user can update the data on the method.
