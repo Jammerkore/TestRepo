@@ -2126,11 +2126,11 @@ namespace MIDRetail.Business.Allocation
                 overrideVSWSizeConstraints: OverrideVSWSizeConstraints,
                 vSWSizeConstraints: EnumTools.VerifyEnumValue(VSWSizeConstraints),
                 overrideAvgPackDevTolerance: OverrideAvgPackDevTolerance,
-                avgPackDeviationTolerance: AvgPackDeviationTolerance,
+                avgPackDeviationTolerance: AvgPackDeviationTolerance == Include.DefaultMaxSizeErrorPercent ? (double?)null : AvgPackDeviationTolerance,
                 overrideMaxPackNeedTolerance: OverrideMaxPackNeedTolerance,
                 packToleranceStepped: PackToleranceStepped,
                 packToleranceNoMaxStep: PackToleranceNoMaxStep,
-                maxPackNeedTolerance: MaxPackNeedTolerance,
+                maxPackNeedTolerance: MaxPackNeedTolerance == Include.DefaultPackSizeErrorPercent ? (double?)null : MaxPackNeedTolerance,
                 attribute: GetName.GetAttributeName(SG_RID),
                 sizeRuleAttributeSets: SizeRuleProperties.BuildSizeRuleProperties(
                     methodRID: Key,
@@ -2268,14 +2268,28 @@ namespace MIDRetail.Business.Allocation
                 _overrideAvgPackDevTolerance = roMethodFillSizeAllocationProperties.OverrideAvgPackDevTolerance;
                 if (roMethodFillSizeAllocationProperties.OverrideAvgPackDevTolerance)
                 {
-                    AvgPackDeviationTolerance = roMethodFillSizeAllocationProperties.AvgPackDeviationTolerance;
+                    if (roMethodFillSizeAllocationProperties.AvgPackDeviationTolerance == null)
+                    {
+                        AvgPackDeviationTolerance = Include.DefaultMaxSizeErrorPercent;
+                    }
+                    else
+                    {
+                        AvgPackDeviationTolerance = Convert.ToDouble(roMethodFillSizeAllocationProperties.AvgPackDeviationTolerance);
+                    }
                 }
                 _packToleranceStepped = roMethodFillSizeAllocationProperties.PackToleranceStepped;
                 _packToleranceNoMaxStep = roMethodFillSizeAllocationProperties.PackToleranceNoMaxStep;
                 _overrideMaxPackNeedTolerance = roMethodFillSizeAllocationProperties.OverrideMaxPackNeedTolerance;
                 if (roMethodFillSizeAllocationProperties.OverrideMaxPackNeedTolerance)
                 {
-                    MaxPackNeedTolerance = roMethodFillSizeAllocationProperties.MaxPackNeedTolerance;
+                    if (roMethodFillSizeAllocationProperties.MaxPackNeedTolerance == null)
+                    {
+                        MaxPackNeedTolerance = Include.DefaultPackSizeErrorPercent;
+                    }
+                    else
+                    {
+                        MaxPackNeedTolerance = Convert.ToDouble(roMethodFillSizeAllocationProperties.MaxPackNeedTolerance);
+                    }
                 }
                 //Rules Tab
                 bool attributeChanged = SG_RID != roMethodFillSizeAllocationProperties.Attribute.Key;
