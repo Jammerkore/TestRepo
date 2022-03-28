@@ -158,7 +158,10 @@ namespace MIDRetail.Business
 				}
 
 //Begin Track #3879 - JScott - Null Reference Error
-				newBasis._modelBasisDetailProfile = (BasisDetailProfile)newBasis._basisDetailProfileList[_modelBasisDetailProfileIdx];
+				if (newBasis._basisDetailProfileList.Count > _modelBasisDetailProfileIdx)
+				{
+					newBasis._modelBasisDetailProfile = (BasisDetailProfile)newBasis._basisDetailProfileList[_modelBasisDetailProfileIdx];
+				}
 				newBasis._modelBasisDetailProfileIdx = _modelBasisDetailProfileIdx;
 
 //End Track #3879 - JScott - Null Reference Error
