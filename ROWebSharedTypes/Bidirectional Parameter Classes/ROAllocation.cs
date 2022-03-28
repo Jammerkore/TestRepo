@@ -323,7 +323,7 @@ namespace Logility.ROWebSharedTypes
         [DataMember(IsRequired = true)]
         bool _overrideVSWSizeConstraints;
         [DataMember(IsRequired = true)]
-        eVSWSizeConstraints _vSWSizeConstraints;
+        KeyValuePair<int, string> _vSWSizeConstraints;
         [DataMember(IsRequired = true)]
         bool _overrideAvgPackDevTolerance;
         [DataMember(IsRequired = true)]
@@ -336,6 +336,18 @@ namespace Logility.ROWebSharedTypes
         bool _packToleranceNoMaxStep;
         [DataMember(IsRequired = true)]
         double? _maxPackNeedTolerance;
+        [DataMember(IsRequired = true)]
+        List<KeyValuePair<int, string>> _filters;
+        [DataMember(IsRequired = true)]
+        List<KeyValuePair<int, string>> _merchandiseBasis;
+        [DataMember(IsRequired = true)]
+        List<KeyValuePair<int, string>> _sizeGroups;
+        [DataMember(IsRequired = true)]
+        List<KeyValuePair<int, string>> _vSWSizeConstraintRules;
+        [DataMember(IsRequired = true)]
+        List<KeyValuePair<int, string>> _sizeAlternateModels;
+        [DataMember(IsRequired = true)]
+        List<KeyValuePair<int, string>> _sizeConstraintRules;
         //Rule tab properties
         [DataMember(IsRequired = true)]
         KeyValuePair<int, string> _attribute;
@@ -431,7 +443,7 @@ namespace Logility.ROWebSharedTypes
             set { _overrideVSWSizeConstraints = value; }
         }
 
-        public eVSWSizeConstraints VSWSizeConstraints
+        public KeyValuePair<int, string> VSWSizeConstraints
         {
             get { return _vSWSizeConstraints; }
             set
@@ -469,6 +481,26 @@ namespace Logility.ROWebSharedTypes
             get { return _maxPackNeedTolerance; }
             set { _maxPackNeedTolerance = value; }
         }
+        public List<KeyValuePair<int, string>> Filters
+        {
+            get { return _filters; }
+        }
+        public List<KeyValuePair<int, string>> MerchandiseBasis
+        {
+            get { return _merchandiseBasis; }
+        }
+        public List<KeyValuePair<int, string>> SizeGroups
+        {
+            get { return _sizeGroups; }
+        }
+        public List<KeyValuePair<int, string>> VSWSizeConstraintRules
+        {
+            get { return _vSWSizeConstraintRules; }
+        }
+        public List<KeyValuePair<int, string>> SizeAlternateModels
+        {
+            get { return _sizeAlternateModels; }
+        }
         public KeyValuePair<int, string> Attribute
         {
             get { return _attribute; }
@@ -478,6 +510,10 @@ namespace Logility.ROWebSharedTypes
         {
             get { return _sizeRuleAttributeSets; }
             set { _sizeRuleAttributeSets = value; }
+        }
+        public List<KeyValuePair<int, string>> SizeConstraintRules
+        {
+            get { return _sizeConstraintRules; }
         }
 
         #endregion
@@ -498,8 +534,8 @@ namespace Logility.ROWebSharedTypes
             KeyValuePair<int, string> sizeAlternateModel, 
             ROSizeCurveProperties rOSizeCurveProperties, 
             ROSizeConstraintProperties rOSizeConstraintProperties,
-            bool overrideVSWSizeConstraints, 
-            eVSWSizeConstraints vSWSizeConstraints, 
+            bool overrideVSWSizeConstraints,
+            KeyValuePair<int, string> vSWSizeConstraints, 
             bool overrideAvgPackDevTolerance, 
             double? avgPackDeviationTolerance,
             bool overrideMaxPackNeedTolerance, 
@@ -543,6 +579,12 @@ namespace Logility.ROWebSharedTypes
             _maxPackNeedTolerance = maxPackNeedTolerance;
             _attribute = attribute;
             _sizeRuleAttributeSets = sizeRuleAttributeSets;
+            _filters = new List<KeyValuePair<int, string>>();
+            _merchandiseBasis = new List<KeyValuePair<int, string>>();
+            _sizeGroups = new List<KeyValuePair<int, string>>();
+            _vSWSizeConstraintRules = new List<KeyValuePair<int, string>>();
+            _sizeAlternateModels = new List<KeyValuePair<int, string>>();
+            _sizeConstraintRules = new List<KeyValuePair<int, string>>();
         }
     }
     [DataContract(Name = "ROMethodSizeNeedProperties", Namespace = "http://Logility.ROWeb/")]

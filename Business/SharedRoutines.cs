@@ -3629,37 +3629,44 @@ namespace MIDRetail.Business
             {
                 DataTable dataTableRules = MIDText.GetLabels((int)eSizeRuleType.Exclude, (int)eSizeRuleType.AbsoluteQuantity);
                 sizeConstraintRules.AddRange(DataTableTools.DataTableToKeyValues(dataTableRules, "TEXT_CODE", "TEXT_VALUE"));
-                //foreach (DataRow row in dtRules.Rows)
-                //{
-                //    int textCode = Convert.ToInt32(row["TEXT_CODE"], CultureInfo.CurrentUICulture);
-                //    sizeConstraintRules.Add(
-                //        new KeyValuePair<int, string>(textCode, row["TEXT_VALUE"].ToString())
-                //        );
-                //}
 
                 dataTableRules = MIDText.GetLabels((int)eSizeRuleType.SizeMinimum, (int)eSizeRuleType.SizeMaximum);
                 sizeConstraintRules.AddRange(DataTableTools.DataTableToKeyValues(dataTableRules, "TEXT_CODE", "TEXT_VALUE"));
-                //foreach (DataRow row in dtRules.Rows)
-                //{
-                //    int textCode = Convert.ToInt32(row["TEXT_CODE"], CultureInfo.CurrentUICulture);
-                //    sizeConstraintRules.Add(
-                //        new KeyValuePair<int, string>(textCode, row["TEXT_VALUE"].ToString())
-                //        );
-                //}
 
             }
             else
             {
                 DataTable dataTableRules = MIDText.GetLabels((int)eSizeRuleType.Exclude, (int)eSizeRuleType.Exclude);
                 sizeConstraintRules.AddRange(DataTableTools.DataTableToKeyValues(dataTableRules, "TEXT_CODE", "TEXT_VALUE"));
-                //foreach (DataRow row in dtRules.Rows)
-                //{
-                //    int textCode = Convert.ToInt32(row["TEXT_CODE"], CultureInfo.CurrentUICulture);
-                //    sizeConstraintRules.Add(
-                //        new KeyValuePair<int, string>(textCode, row["TEXT_VALUE"].ToString())
-                //        );
-                //}
 
+            }
+        }
+
+        /// <summary>
+		/// Fills class with allocation filters
+		/// </summary>
+		public static void FillStoreFilterList(
+            List<KeyValuePair<int, string>> filters,
+            int userKey
+            )
+        {
+            FilterData storeFilterData = new FilterData();
+
+            if (filters == null)
+            {
+                filters = new List<KeyValuePair<int, string>>();
+            }
+
+            ArrayList userRIDList = new ArrayList();
+            userRIDList.Add(Include.GlobalUserRID);
+            userRIDList.Add(userKey);
+
+            foreach (DataRow row in storeFilterData.FilterRead(filterTypes.StoreFilter, eProfileType.FilterStore, userRIDList).Rows)
+            {
+                filters.Add(new KeyValuePair<int, string>(
+                        Convert.ToInt32(row["FILTER_RID"]),
+                        Convert.ToString(row["FILTER_NAME"], CultureInfo.CurrentUICulture))
+                        );
             }
         }
     }

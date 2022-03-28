@@ -1967,7 +1967,7 @@ namespace MIDRetail.Business.Allocation
             // include rule values in the copy
             if (copyDetailValues)
             {
-                ((SizeNeedMethod)applicationBaseMethod).MethodConstraints = MethodConstraints;
+                ((FillSizeHolesMethod)applicationBaseMethod).MethodConstraints = MethodConstraints;
             }
 
             return applicationBaseMethod;
@@ -2124,7 +2124,7 @@ namespace MIDRetail.Business.Allocation
                     SAB: SAB
                     ),
                 overrideVSWSizeConstraints: OverrideVSWSizeConstraints,
-                vSWSizeConstraints: EnumTools.VerifyEnumValue(VSWSizeConstraints),
+                vSWSizeConstraints: GetName.GetText(EnumTools.VerifyEnumValue(VSWSizeConstraints).GetHashCode()),
                 overrideAvgPackDevTolerance: OverrideAvgPackDevTolerance,
                 avgPackDeviationTolerance: AvgPackDeviationTolerance == Include.DefaultMaxSizeErrorPercent ? (double?)null : AvgPackDeviationTolerance,
                 overrideMaxPackNeedTolerance: OverrideMaxPackNeedTolerance,
@@ -2144,6 +2144,33 @@ namespace MIDRetail.Business.Allocation
                     SAB: SAB
                     ),
                 isTemplate: Template_IND
+                );
+
+            ListGenerator.FillStoreFilterList(
+                filters: method.Filters,
+                userKey: SAB.ClientServerSession.UserRID
+                );
+
+            ListGenerator.FillOrganizationalHierarchyLevelList(
+                    hierarchyLevels: method.MerchandiseBasis,
+                    sessionAddressBlock: SAB,
+                    includeSizeLevel: false
+                    );
+
+            ListGenerator.FillSizeGroupList(
+                sizeGroups: method.SizeGroups
+                );
+
+            ListGenerator.FillSizeAlternateModelsList(
+                sizeAlternateModels: method.SizeAlternateModels
+                );
+
+            ListGenerator.FillVSWSizeConstraintRuleList(
+                VSWSizeConstraintRules: method.VSWSizeConstraintRules
+                );
+
+            ListGenerator.FillSizeConstraintRuleList(
+                sizeConstraintRules: method.SizeConstraintRules
                 );
 
             return method;
@@ -2169,11 +2196,11 @@ namespace MIDRetail.Business.Allocation
                 _StoreFilterRid = roMethodFillSizeAllocationProperties.Filter.Key;
                 _Available = roMethodFillSizeAllocationProperties.Available;
                 _PercentInd = roMethodFillSizeAllocationProperties.PercentInd;
-                _MerchandiseType = roMethodFillSizeAllocationProperties.MerchandiseType;
+                MerchandiseType = roMethodFillSizeAllocationProperties.MerchandiseType;
                 MerchHnRid = Include.NoRID;
                 MerchPhRid = Include.NoRID;
                 MerchPhlSequence = Include.Undefined;
-                switch (_MerchandiseType)
+                switch (MerchandiseType)
                 {
                     case eMerchandiseType.HierarchyLevel:
                         MerchPhRid = MainHierarchyProfile.Key;
@@ -2225,6 +2252,7 @@ namespace MIDRetail.Business.Allocation
 
                 UseDefaultCurve = roMethodFillSizeAllocationProperties.ROSizeCurveProperties.IsUseDefault;
                 ApplyRulesOnly = roMethodFillSizeAllocationProperties.ROSizeCurveProperties.IsApplyRulesOnly;
+                GenCurveColorInd = roMethodFillSizeAllocationProperties.ROSizeCurveProperties.IsColorSelected;
                 // Constraints Group Box
                 IB_MerchandiseType = roMethodFillSizeAllocationProperties.ROSizeConstraintProperties.InventoryBasisMerchandiseType;
                 IB_MERCH_PH_RID = Include.NoRID;
@@ -2264,7 +2292,7 @@ namespace MIDRetail.Business.Allocation
                 GenConstraintColorInd = roMethodFillSizeAllocationProperties.ROSizeConstraintProperties.IsColorSelected;
                 //VSW 
                 _overrideVSWSizeConstraints = roMethodFillSizeAllocationProperties.OverrideVSWSizeConstraints;
-                _vSWSizeConstraints = roMethodFillSizeAllocationProperties.VSWSizeConstraints;
+                _vSWSizeConstraints = (eVSWSizeConstraints)roMethodFillSizeAllocationProperties.VSWSizeConstraints.Key;
                 _overrideAvgPackDevTolerance = roMethodFillSizeAllocationProperties.OverrideAvgPackDevTolerance;
                 if (roMethodFillSizeAllocationProperties.OverrideAvgPackDevTolerance)
                 {
@@ -2277,9 +2305,9 @@ namespace MIDRetail.Business.Allocation
                         AvgPackDeviationTolerance = Convert.ToDouble(roMethodFillSizeAllocationProperties.AvgPackDeviationTolerance);
                     }
                 }
+                _overrideMaxPackNeedTolerance = roMethodFillSizeAllocationProperties.OverrideMaxPackNeedTolerance;
                 _packToleranceStepped = roMethodFillSizeAllocationProperties.PackToleranceStepped;
                 _packToleranceNoMaxStep = roMethodFillSizeAllocationProperties.PackToleranceNoMaxStep;
-                _overrideMaxPackNeedTolerance = roMethodFillSizeAllocationProperties.OverrideMaxPackNeedTolerance;
                 if (roMethodFillSizeAllocationProperties.OverrideMaxPackNeedTolerance)
                 {
                     if (roMethodFillSizeAllocationProperties.MaxPackNeedTolerance == null)
