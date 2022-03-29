@@ -14,9 +14,7 @@ namespace MIDRetail.Data
 
     public static class MIDEmail
     {
-        //public const string MIDEmailSupportTOAddress = "support@midretail.com";
-        // temporarily changed for testing.  Uncomment previous line before creating release.
-        public const string MIDEmailSupportTOAddress = "Andrea.Robinson@amsoftware.com";
+        public const string MIDEmailSupportTOAddress = "support@midretail.com";
         //public const string MIDEmailApplicationFromAddress = "app@midretail.com"; //TT#3600 -jsobek -Add a default email address on the global options screen...
 
         public enum emailReturnMessageTypes
