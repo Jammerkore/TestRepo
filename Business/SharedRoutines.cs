@@ -1368,7 +1368,8 @@ namespace MIDRetail.Business
                 );
             ListGenerator.FillOrganizationalHierarchyLevelList(
                 hierarchyLevels: sizeCurveProperties.GenericHierarchyLevels,
-                sessionAddressBlock: SAB
+                sessionAddressBlock: SAB,
+                includeColorLevel: false
                 );
             if (SAB.ClientServerSession.GlobalOptions.GenericSizeCurveNameType == eGenericSizeCurveNameType.HeaderCharacteristic)
             {
@@ -1452,7 +1453,8 @@ namespace MIDRetail.Business
                 );
             ListGenerator.FillOrganizationalHierarchyLevelList(
                 hierarchyLevels: sizeConstraintProperties.GenericHierarchyLevels,
-                sessionAddressBlock: SAB
+                sessionAddressBlock: SAB,
+                includeColorLevel: false
                 );
             ListGenerator.FillHeaderCharacteristicList(
                 headerCharacteristics: sizeConstraintProperties.GenericHeaderCharacteristics,
@@ -3518,6 +3520,7 @@ namespace MIDRetail.Business
 		public static void FillOrganizationalHierarchyLevelList(
             List<KeyValuePair<int, string>> hierarchyLevels,
             SessionAddressBlock sessionAddressBlock,
+            bool includeColorLevel = true,
             bool includeSizeLevel = false
             )
         {
@@ -3532,9 +3535,15 @@ namespace MIDRetail.Business
             {
                 HierarchyLevelProfile hlp = (HierarchyLevelProfile)hierarchyProfile.HierarchyLevels[levelIndex];
 
-                if (hlp.LevelType != eHierarchyLevelType.Size
-                    || includeSizeLevel
+                if ((hlp.LevelType == eHierarchyLevelType.Color
+                    && !includeColorLevel)
+                    || (hlp.LevelType == eHierarchyLevelType.Size
+                        && !includeSizeLevel)
                     )
+                {
+                    continue;
+                }
+                else
                 {
                     hierarchyLevels.Add(new KeyValuePair<int, string>(
                         hlp.Key,
