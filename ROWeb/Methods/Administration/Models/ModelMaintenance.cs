@@ -57,7 +57,10 @@ namespace Logility.ROWeb
                     }
                     foreach (int key in keys)
                     {
-                        CloseModel(key: key);
+                        CloseModel(
+                            key: key,
+                            modelClasses: modelClass
+                            );
                     }
                 }
             }
@@ -574,10 +577,14 @@ namespace Logility.ROWeb
         /// Closes are model resources and removes from the cache
         /// </summary>
         /// <param name="key">The key of the model to be closed</param>
-        private void CloseModel(int key)
+        /// <param name="modelClasses">The dictionary of class objects for the model type</param>
+        private void CloseModel(
+            int key,
+            Dictionary<int, ModelBase> modelClasses
+            )
         {
             ModelBase modelBase = null;
-            if (_modelClasses.TryGetValue(key, out modelBase))
+            if (modelClasses.TryGetValue(key, out modelBase))
             {
                 if (modelBase != null
                             && modelBase.CurrentModelProfile != null)
@@ -591,7 +598,7 @@ namespace Logility.ROWeb
                     }
                     modelBase.OnClosing();
 
-                    _modelClasses.Remove(key: key);
+                    modelClasses.Remove(key: key);
                 }
             }
         }
@@ -646,7 +653,10 @@ namespace Logility.ROWeb
             if (_modelClasses.Count > 0
                 && addToCache)
             {
-                CloseModel(_modelClasses.Keys.First());
+                CloseModel(
+                    key: _modelClasses.Keys.First(),
+                    modelClasses: _modelClasses
+                    );
                 _currentModelProfile = null;
             }
 
