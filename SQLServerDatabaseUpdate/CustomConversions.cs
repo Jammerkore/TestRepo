@@ -11156,6 +11156,32 @@ namespace MIDRetail.DatabaseUpdate
                 _dba.ExecuteNonQuery(sql);
                 // End TT#2131-MD - JSmith - Halo Integration
 
+                sql = @" /********************************************** ";
+                sql += @" NODE_STOCK_MIN_MAX - HN_RID ";
+                sql += @" Enum: 27.52 ";
+                sql += @" ***********************************************/ ";
+                sql = @" INSERT INTO DETAIL_INFO (APPLICATION_LABEL_TYPE, SEQUENCE, SEVERITY, REFERENCE_TEXT) ";
+                sql += @" VALUES	(27, 52, 'Reference', ";
+                sql += @" [dbo].[UDF_MID_ENC_DEC](" + cEncryptKey + @",'declare @nodeID varchar(200), @type varchar(100); ";
+                sql += @" set @nodeID = dbo.UDF_MID_GET_NODE_DISPLAY (@inUseRID); ";
+
+                sql += @" SELECT @type = ''Stock Min/Max - Merchandise Node''; ";
+
+                sql += @"INSERT INTO #TEMP (Severity, Header1, Header2, Header3, Header4, Header5, Header6, Header7, Header8, Header9) ";
+                sql += @" SELECT top 1 @severity as Severity, ";
+                sql += @" @nodeID as Header1, ";
+                sql += @" @type as Header2, ";
+                sql += @" '' '' as Heading3, ";
+                sql += @" '' '' as Heading4, ";
+                sql += @" '' '' as Header5, ";
+                sql += @" @severity AS Header6, ";
+                sql += @" '' '' AS Heading7, ";
+                sql += @" '' '' AS Heading8, ";
+                sql += @" '' '' AS Heading9 ";
+                sql += @" from NODE_STOCK_MIN_MAX t with (nolock) ";
+                sql += @" where t.HN_RID = @inUseRID')) ";
+                _dba.ExecuteNonQuery(sql);
+
                 sql = @" --============================================== ";
                 sql += @" -- 'Header Query' ";
                 sql += @" -- Enum 38.1 ";
@@ -11260,7 +11286,7 @@ namespace MIDRetail.DatabaseUpdate
                 sql += @" -- Enum 38.5 ";
                 sql += @" --============================================== ";
                 sql = @" INSERT INTO DETAIL_INFO (APPLICATION_LABEL_TYPE, SEQUENCE, SEVERITY, REFERENCE_TEXT) ";
-                sql += @" VALUES	(38, 5, 'Reference', ";
+                sql += @" VALUES	(38, 5, 'In Use', ";
                 sql += @" [dbo].[UDF_MID_ENC_DEC](" + cEncryptKey + @",'INSERT INTO #TEMP (Severity, Header1, Header2, Header3, Header4, Header5, Header6, Header7, Header8, Header9) ";
                 sql += @" SELECT @severity as Severity ";
                 sql += @" ,sg.SG_ID AS [Heading1] ";

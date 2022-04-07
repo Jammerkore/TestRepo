@@ -3878,6 +3878,7 @@
     <Content Include="UpgradeVersions\ver5.4.0.48.SQL" />
     <Content Include="UpgradeVersions\ver5.4.0.49.SQL" />
     <Content Include="UpgradeVersions\ver5.4.0.50.SQL" />
+    <Content Include="UpgradeVersions\ver21.03.0.02.SQL" />
     <Content Include="UpgradeVersions\ver5.4.0.51.SQL" />
     <Content Include="UpgradeVersions\ver5.4.0.52.SQL" />
     <Content Include="UpgradeVersions\ver5.4.0.53.SQL" />
