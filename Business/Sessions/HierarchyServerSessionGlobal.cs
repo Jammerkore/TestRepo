@@ -18637,7 +18637,11 @@ namespace MIDRetail.Business
 						}
 					}
 
-					if (newEntry)
+					if (nsgi.StoreGrades.Count == 0)
+                    {
+						_storeGradesByRID.Remove(nodeRID);
+					}
+					else if (newEntry)
 					{
 						_storeGradesByRID.Add(nodeRID, nsgi);
 					}
