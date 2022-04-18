@@ -1079,12 +1079,18 @@ namespace Logility.ROWeb
         {
             SAB.HierarchyServerSession.SizeCurveCriteriaUpdate(HierarchyNodeProfile.Key, _sizeCurvesCriteriaList);
 
+            // read to get inheritance
+            _sizeCurvesCriteriaList = GetSizeCurves(key: HierarchyNodeProfile.Key);
+
             return true;
         }
 
         private bool UpdateSizeCurveDefaultProfile(ref string message)
         {
             SAB.HierarchyServerSession.SizeCurveDefaultCriteriaUpdate(HierarchyNodeProfile.Key, _sizeCurveDefaultCriteriaProfile);
+
+            // read to get inheritance
+            _sizeCurveDefaultCriteriaProfile = GetSizeCurveDefaultCriteria(key: HierarchyNodeProfile.Key);
 
             return true;
         }
@@ -1093,12 +1099,18 @@ namespace Logility.ROWeb
         {
             SAB.HierarchyServerSession.SizeCurveToleranceUpdate(HierarchyNodeProfile.Key, _sizeCurveToleranceProfile);
 
+            // read to get inheritance
+            _sizeCurveToleranceProfile = GetSizeCurveTolerance(key: HierarchyNodeProfile.Key);
+
             return true;
         }
 
         private bool UpdateSizeCurveSimilarStores(ref string message)
         {
             SAB.HierarchyServerSession.SizeCurveSimilarStoreUpdate(HierarchyNodeProfile.Key, _sizeCurveSimilarStoreList);
+
+            // read to get inheritance
+            _sizeCurveSimilarStoreList = GetSizeCurveSimilarStores(key: HierarchyNodeProfile.Key);
 
             return true;
         }
