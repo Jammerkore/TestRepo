@@ -1382,6 +1382,23 @@ namespace Logility.ROWeb
             string message = null;
             bool WorkflowSaved = false;
 
+            if (rOWorkflow.ROWorkflow.Workflow.Key < 0
+                && _ABW != null
+                && _ABW.LockStatus == eLockStatus.Locked
+                )
+            {
+                _ABW.LockStatus = WorkflowMethodUtilities.UnlockWorkflowMethod(
+                    SAB: SAB,
+                    workflowMethodIND: eWorkflowMethodIND.Workflows,
+                    Key: _ABW.Key,
+                    message: out message
+                    );
+                if (_ABW.LockStatus == eLockStatus.Cancel)
+                {
+                    MIDEnvironment.Message = message;
+                }
+            }
+
             WorkflowSaved = SaveWorkflowData(rOWorkflow, ref message);
 
             return new ROIListOut(eROReturnCode.Successful, message, ROInstanceID,
