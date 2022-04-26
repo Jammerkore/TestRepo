@@ -2974,11 +2974,9 @@ namespace MIDRetail.Business.Allocation
                 {
                     _colorCodeRID = roMethodRuleAllocationProperties.Color.Key;
                 }
-                if (roMethodRuleAllocationProperties.IncludeRuleMethodIsSet)
-                {
-                    _includeRuleMethod = roMethodRuleAllocationProperties.IncludeRuleMethod;
-                }
-                _includeQuantity = roMethodRuleAllocationProperties.IncludeQuantity;
+
+				_includeRuleMethod = roMethodRuleAllocationProperties.IncludeRuleMethod;
+				_includeQuantity = roMethodRuleAllocationProperties.IncludeQuantity;
 				_excludeRuleMethod = roMethodRuleAllocationProperties.ExcludeRuleMethod;
 				_excludeQuantity = roMethodRuleAllocationProperties.ExcludeQuantity;
                 if (roMethodRuleAllocationProperties.Hdr_BCIsSet)
