@@ -2463,6 +2463,10 @@ namespace MIDRetail.Windows
                     {
                         SetIBComboToLevel(_fillSizeHolesMethod.IB_MERCH_PHL_SEQ);
                     }
+                    else if (_fillSizeHolesMethod.IB_MerchandiseType == eMerchandiseType.OTSPlanLevel)
+                    {
+                        cboInventoryBasis.SelectedIndex = 1;
+                    }
                     else
                     {
                         cboInventoryBasis.SelectedIndex = 0;

@@ -2493,7 +2493,11 @@ namespace MIDRetail.Windows
                         {
                             SetIBComboToLevel(_sizeNeedMethod.IB_MERCH_PHL_SEQ);
                         }
-                        else
+						else if (_sizeNeedMethod.IB_MerchandiseType == eMerchandiseType.OTSPlanLevel)
+						{
+							cboInventoryBasis.SelectedIndex = 1;
+						}
+						else
                         {
                             cboInventoryBasis.SelectedIndex = 0;
                             //this.cboInventoryBasis_SelectionChangeCommitted(source, new EventArgs()); // TT#301-MD - JSmith - Controls are not functioning properly
