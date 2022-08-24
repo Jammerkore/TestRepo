@@ -1,0 +1,571 @@
+<?xml version='1.0' encoding='utf-8'?>
+<project version='9' encrypted='1'>
+	<steps type='0'>
+		<step action='Delete Files'>
+			<Ext>*.log</Ext>
+			<LogDel type='11'>-1</LogDel>
+			<Path>%PROJDIR%\Logs</Path>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<continueonfail type='3'>1</continueonfail>
+			<name>Delete old Log Files</name>
+		</step>
+		<step action='Set Macro'>
+			<MacroName>LOGFILE</MacroName>
+			<MacroValue><![CDATA[%PROJDIR%\Logs\ROBUILD-[Year(Now) & "-" & Month(Now) & "-" & Day(Now)].log]]></MacroValue>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<name>Set Log File Path</name>
+		</step>
+		<step action='Set Macro'>
+			<MacroName>BUILD_START_TIME</MacroName>
+			<MacroType type='3'>1</MacroType>
+			<MacroValue>%DATETIME%</MacroValue>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<name>Set Build Start Time</name>
+		</step>
+		<step action='Send Mail'>
+			<From>LogilityBuildMachine@logility.com</From>
+			<Message><![CDATA[The RO_BE_BUILD has started.
+
+Start Time: %BUILD_START_TIME%]]></Message>
+			<Port>25</Port>
+			<Server>SMTPS</Server>
+			<Subject>RO_BE BUILD STARTED</Subject>
+			<Timeout>30</Timeout>
+			<To>aaron.crow@amsoftware.com</To>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<name>Notify RO_BE Build Started</name>
+		</step>
+		<step action='Group'>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<name>Initialize Build Variables</name>
+		</step>
+		<step action='Subroutine Call'>
+			<Expand type='11'>-1</Expand>
+			<SubName>Initialize Variables</SubName>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>Initialize Build Variables</name>
+		</step>
+		<step action='Delete Folder'>
+			<Path>%SCM_FOLDER%</Path>
+			<Recurse type='11'>-1</Recurse>
+			<ShowCmd type='11'>-1</ShowCmd>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<name>Delete SCM Folder</name>
+		</step>
+		<step action='Delete Folder'>
+			<Path>%BUILD_FOLDER%</Path>
+			<Recurse type='11'>-1</Recurse>
+			<ShowCmd type='11'>-1</ShowCmd>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<name>Delete Build Folder</name>
+		</step>
+		<step action='Group'>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<name>Clone Repo RO-Backend</name>
+		</step>
+		<step action='Set Macro'>
+			<MacroName>BRANCH_VERSION</MacroName>
+			<MacroType type='3'>1</MacroType>
+			<MacroValue>main</MacroValue>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>Set Branch Version</name>
+		</step>
+		<step action='Set Macro'>
+			<MacroName>REPO_LOCATION</MacroName>
+			<MacroType type='3'>1</MacroType>
+			<MacroValue>https://ASI-ALL@dev.azure.com/ASI-ALL/RD-PRODUCT/_git/RO-BackEnd</MacroValue>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>Set Repository Location</name>
+		</step>
+		<step action='Set Macro'>
+			<MacroName>LOCAL_WORK_FOLDER</MacroName>
+			<MacroType type='3'>1</MacroType>
+			<MacroValue>%SCM_FOLDER%\build</MacroValue>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>Set Default Local Work folder</name>
+		</step>
+		<step action='Read File'>
+			<FailNoMatch type='11'>-1</FailNoMatch>
+			<FileIn>%LOCAL_WORK_FOLDER%\.git\config</FileIn>
+			<Find>core</Find>
+			<NoModS type='11'>-1</NoModS>
+			<continueonfail type='3'>1</continueonfail>
+			<failsubroutine>Update code</failsubroutine>
+			<indent type='3'>1</indent>
+			<name>Read File</name>
+		</step>
+		<step action='Git'>
+			<Command>clean</Command>
+			<Options>-d -f</Options>
+			<ShowCmd type='11'>-1</ShowCmd>
+			<WorkDir>%LOCAL_WORK_FOLDER%</WorkDir>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>Git clean to remove files and directories</name>
+		</step>
+		<step action='Git'>
+			<Command>checkout</Command>
+			<Options>%BRANCH_VERSION% -f</Options>
+			<ShowCmd type='11'>-1</ShowCmd>
+			<WorkDir>%LOCAL_WORK_FOLDER%</WorkDir>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>Git checkout to update code</name>
+		</step>
+		<step action='Git'>
+			<Command>pull</Command>
+			<Options>--rebase</Options>
+			<ShowCmd type='11'>-1</ShowCmd>
+			<WorkDir>%LOCAL_WORK_FOLDER%</WorkDir>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>Git rebase to update code</name>
+		</step>
+		<step action='Group'>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<name>Detect if Build Needed.</name>
+		</step>
+		<step action='Git'>
+			<Command>log</Command>
+			<Options><![CDATA[--pretty=format:"%%an committed %%h - %%B (%%ad)<br/>" --date=local --since=yesterday.8:00am]]></Options>
+			<WorkDir>%LOCAL_WORK_FOLDER%</WorkDir>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>GIT - COMMITS SINCE 6PM - YESTERDAY</name>
+			<retries>3</retries>
+			<retrypause>5</retrypause>
+		</step>
+		<step action='Set Macro'>
+			<MacroName>COMMITS</MacroName>
+			<MacroValue>%LASTSTEP_OUTPUT%</MacroValue>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>Set Commit Macro</name>
+		</step>
+		<step action='Group'>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<condcompareto>committed</condcompareto>
+			<condcomparison type='3'>5</condcomparison>
+			<condexpr>%COMMITS%</condexpr>
+			<continueonfail type='3'>1</continueonfail>
+			<indent type='3'>1</indent>
+			<name>Stop Build If No Commits</name>
+		</step>
+		<step action='Send Mail'>
+			<Attachments><![CDATA[
+
+]]></Attachments>
+			<From>LogilityBuildMachine@logility.com</From>
+			<HTML type='11'>-1</HTML>
+			<Message><![CDATA[RO BR - Build Stopped: No Commits Since Yesterday @ 8:00AM</br>]]></Message>
+			<PopPort>110</PopPort>
+			<Port>25</Port>
+			<Server>SMTPS</Server>
+			<Subject>RO BE - Build Stopped: No Commits Since Yesterday @ 8:00AM</Subject>
+			<Timeout>60</Timeout>
+			<To>devops@amsoftware.com</To>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>2</indent>
+			<name>Notify Build Stopped</name>
+		</step>
+		<step action='Make VS 2017'>
+			<Attr type='11'>-1</Attr>
+			<Config>%BUILD_CONFIGURATION%</Config>
+			<FileVer type='11'>-1</FileVer>
+			<Filename>%SCM_FOLDER%\build\MIDRetail.sln</Filename>
+			<LogLevel type='3'>1</LogLevel>
+			<Options>/t:Restore,Build</Options>
+			<ShowCmd type='11'>-1</ShowCmd>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<name>Build MIDRetail.sln</name>
+			<retries>3</retries>
+			<retrypause>10</retrypause>
+		</step>
+		<step action='Run Program'>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<command>C:\SCMVS2017\build\CopyRelease\bin\Release\CopyRelease.exe "(Dev)"</command>
+			<name>Execute CopyRelease.exe</name>
+			<outputfrom type='3'>1</outputfrom>
+			<window type='11'>-1</window>
+		</step>
+		<step action='Group'>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<name>Clone Repo RO-Frontend</name>
+		</step>
+		<step action='Set Macro'>
+			<MacroName>BRANCH_VERSION</MacroName>
+			<MacroType type='3'>1</MacroType>
+			<MacroValue>main</MacroValue>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>Set Branch Version</name>
+		</step>
+		<step action='Set Macro'>
+			<MacroName>REPO_LOCATION</MacroName>
+			<MacroType type='3'>1</MacroType>
+			<MacroValue>https://ASI-ALL@dev.azure.com/ASI-ALL/RD-PRODUCT/_git/RO-FrontEnd</MacroValue>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>Set Repository Location</name>
+		</step>
+		<step action='Set Macro'>
+			<MacroName>LOCAL_WORK_FOLDER</MacroName>
+			<MacroType type='3'>1</MacroType>
+			<MacroValue>%BUILD_FOLDER%</MacroValue>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>Set Default Local Work folder</name>
+		</step>
+		<step action='Read File'>
+			<FailNoMatch type='11'>-1</FailNoMatch>
+			<FileIn>%LOCAL_WORK_FOLDER%\.git\config</FileIn>
+			<Find>core</Find>
+			<NoModS type='11'>-1</NoModS>
+			<continueonfail type='3'>1</continueonfail>
+			<failsubroutine>Update code</failsubroutine>
+			<indent type='3'>1</indent>
+			<name>Read File</name>
+		</step>
+		<step action='Git'>
+			<Command>clean</Command>
+			<Options>-d -f</Options>
+			<ShowCmd type='11'>-1</ShowCmd>
+			<WorkDir>%LOCAL_WORK_FOLDER%</WorkDir>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>Git clean to remove files and directories</name>
+		</step>
+		<step action='Git'>
+			<Command>checkout</Command>
+			<Options>%BRANCH_VERSION% -f</Options>
+			<ShowCmd type='11'>-1</ShowCmd>
+			<WorkDir>%LOCAL_WORK_FOLDER%</WorkDir>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>Git checkout to update code</name>
+		</step>
+		<step action='Git'>
+			<Command>pull</Command>
+			<Options>--rebase</Options>
+			<ShowCmd type='11'>-1</ShowCmd>
+			<WorkDir>%LOCAL_WORK_FOLDER%</WorkDir>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>Git rebase to update code</name>
+		</step>
+		<step action='Copy Files'>
+			<Delay>15</Delay>
+			<DestDir>C:\buildfolder\dependencies\RO\Dev\</DestDir>
+			<Ext><![CDATA[MIDRetail.DataCommon.dll
+MIDRetail.DataCommon.pd
+ROWebSharedTypes.dll
+ROWebSharedTypes.pdb
+Service.Jobs.Client.dll
+Service.Jobs.Client.pdb
+Service.Jobs.Interfaces.dll
+Service.Jobs.Interfaces.pdb
+]]></Ext>
+			<HideOn type='11'>-1</HideOn>
+			<LogCopied type='11'>-1</LogCopied>
+			<ReadOnly type='11'>-1</ReadOnly>
+			<Retries>10</Retries>
+			<SourceDir>C:\SCMVS2017\build\Service.Jobs.Client\bin\Release\</SourceDir>
+			<SysOn type='11'>-1</SysOn>
+			<TBD type='11'>-1</TBD>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>Copy Files</name>
+		</step>
+		<step action='PowerShell'>
+			<CmdStr><![CDATA[$dateToday = "{0:yyyy-MM-dd}" -f (get-date)
+Write-Host "Committing files to repo. Please wait..."
+Set-Location -Path "c:\buildfolder\dependencies\RO\Dev"
+git status
+git add .
+git status
+git commit --message "Update back-end PDBs and DLLs for $dateToday."
+git pull --rebase
+git push
+Write-Host "Commit complete..."]]></CmdStr>
+			<CmdType type='3'>1</CmdType>
+			<NoInteract type='11'>-1</NoInteract>
+			<NoLogo type='11'>-1</NoLogo>
+			<Policy type='3'>3</Policy>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>Commit Files to GIT</name>
+		</step>
+		<step action='Group'>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<name>GET LAST FOLDER CREATED</name>
+		</step>
+		<step action='PowerShell'>
+			<CmdStr><![CDATA[$lastFolder = Get-ChildItem -Path "\\midretail14\MIDRetail\QA Build\Base 22.03" -Directory | sort name | Select -Last 1
+Write-Output $lastFolder.name]]></CmdStr>
+			<CmdType type='3'>1</CmdType>
+			<NoInteract type='11'>-1</NoInteract>
+			<NoLogo type='11'>-1</NoLogo>
+			<Policy type='3'>3</Policy>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>Get Last Folder</name>
+		</step>
+		<step action='Set Macro'>
+			<MacroName>LAST_FOLDER</MacroName>
+			<MacroValue>%LASTSTEP_OUTPUT%</MacroValue>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>Set LAST_FOLDER Macro</name>
+		</step>
+		<step action='Group'>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<name>BLOB SETUP</name>
+		</step>
+		<step action='Read File'>
+			<FailNoMatch type='11'>-1</FailNoMatch>
+			<FileIn>C:\DevOps\blobkey.txt</FileIn>
+			<Macro>ACCOUNTKEY_ENC</Macro>
+			<NoModS type='11'>-1</NoModS>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>Read blobkey.txt</name>
+		</step>
+		<step action='Run Program'>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<command>C:\DevOps\EncDec\voyagered.exe d %ACCOUNTKEY_ENC%</command>
+			<indent type='3'>1</indent>
+			<name>Decrypt Codesign Password</name>
+			<nologging type='11'>-1</nologging>
+			<outputfrom type='3'>1</outputfrom>
+		</step>
+		<step action='Set Macro'>
+			<MacroName>BLOB_KEY</MacroName>
+			<MacroValue>%LASTSTEP_OUTPUT%</MacroValue>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>Set %CODESIGN_PASSWORD% Macro</name>
+			<nologging type='11'>-1</nologging>
+		</step>
+		<step action='Set Macro'>
+			<MacroName>BLOB_CONTAINER</MacroName>
+			<MacroValue>installautomation</MacroValue>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>Set Blob Container Macro</name>
+		</step>
+		<step action='Set Macro'>
+			<MacroName>BLOB_ACCOUNT</MacroName>
+			<MacroValue>stinstprod</MacroValue>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>Set Blob Account Macro</name>
+		</step>
+		<step action='Set Macro'>
+			<MacroName>BLOB_STORAGE</MacroName>
+			<MacroValue>main/InstallPackages/%LAST_FOLDER%.zip</MacroValue>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>Set Blob Account Macro</name>
+		</step>
+		<step action='Delete Files'>
+			<DelDirs type='11'>-1</DelDirs>
+			<Ext>*.*</Ext>
+			<HideOn type='11'>-1</HideOn>
+			<NoDelRoot type='11'>-1</NoDelRoot>
+			<Path>%PROJDIR%\BE_Build</Path>
+			<Recurse type='11'>-1</Recurse>
+			<SysOn type='11'>-1</SysOn>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<name>Delete Files</name>
+		</step>
+		<step action='Copy Files'>
+			<Delay>15</Delay>
+			<DestDir>c:\DevOps\BE_Build\%LAST_FOLDER%</DestDir>
+			<Empty type='11'>-1</Empty>
+			<Ext>*.*</Ext>
+			<HideOn type='11'>-1</HideOn>
+			<LogCopied type='11'>-1</LogCopied>
+			<ReadOnly type='11'>-1</ReadOnly>
+			<Recurse type='11'>-1</Recurse>
+			<Retries>10</Retries>
+			<SourceDir>\\midretail14\MIDRetail\QA Build\Base 22.03\%LAST_FOLDER%</SourceDir>
+			<SysOn type='11'>-1</SysOn>
+			<TBD type='11'>-1</TBD>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<name>Copy Files</name>
+		</step>
+		<step action='PowerShell'>
+			<CmdStr>Compress-Archive -Path "C:\DevOps\BE_Build\%LAST_FOLDER%" -DestinationPath "C:\DevOps\BE_Build\%LAST_FOLDER%.zip"</CmdStr>
+			<CmdType type='3'>1</CmdType>
+			<NoInteract type='11'>-1</NoInteract>
+			<NoLogo type='11'>-1</NoLogo>
+			<Policy type='3'>3</Policy>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<name>PowerShell</name>
+		</step>
+		<step action='PowerShell'>
+			<CmdStr><![CDATA[$fileToUpload = "C:\DevOps\BE_Build\%LAST_FOLDER%.zip"
+
+$storageAccountName = "%BLOB_ACCOUNT%"
+$sacontainer = "%BLOB_CONTAINER%"
+$saKey = "%BLOB_KEY%"
+$saBlob = "%BLOB_STORAGE%"
+
+$saKey = $saKey.Substring(0,$saKey.Length-1)
+
+$storageContext = New-AzStorageContext -StorageAccountName $storageAccountName -StorageAccountKey $saKey
+Set-AzStorageBlobContent -File $fileToUpload -Container $sacontainer -Blob $saBlob -Context $storageContext -Force]]></CmdStr>
+			<CmdType type='3'>1</CmdType>
+			<NoInteract type='11'>-1</NoInteract>
+			<NoLogo type='11'>-1</NoLogo>
+			<Policy type='3'>3</Policy>
+			<ShowCmd type='11'>-1</ShowCmd>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<name>COPY RO .ZIP TO BLOB STORAGE</name>
+		</step>
+		<step action='Subroutine Call'>
+			<Expand type='11'>-1</Expand>
+			<SubName>Set Build End Time</SubName>
+			<continueonfail type='3'>1</continueonfail>
+			<failsubroutine>Notify of Failure Status Without Attachments</failsubroutine>
+			<name>Set Build End Time</name>
+		</step>
+		<step action='Send Mail'>
+			<From>LogilityBuildMachine@logility.com</From>
+			<Message><![CDATA[The RO_BE_BUILD has finished.
+
+Start Time: %BUILD_START_TIME%
+End Time: %BUILD_END_TIME%
+Total Time: %BUILD_TOTAL_TIME%]]></Message>
+			<Port>25</Port>
+			<Server>SMTPS</Server>
+			<Subject>RO_BE BUILD COMPLETE</Subject>
+			<Timeout>30</Timeout>
+			<To>aaron.crow@amsoftware.com</To>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<name>Notify RO_BE Build Complete</name>
+		</step></steps>
+	<steps type='1'>
+		<step action='Group'>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<name>INITIALIZE VARIABLES</name>
+		</step>
+		<step action='Set Macro'>
+			<MacroName>BUILD_FOLDER</MacroName>
+			<MacroValue>C:\buildfolder</MacroValue>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>Set BUILD_FOLDER Macro</name>
+		</step>
+		<step action='Set Macro'>
+			<MacroName>SCM_FOLDER</MacroName>
+			<MacroValue>C:\SCMVS2017</MacroValue>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>Set SCM_FOLDER Macro</name>
+		</step>
+		<step action='Set Macro'>
+			<MacroName>NETWORK_FOLDER</MacroName>
+			<MacroValue>\\f250\shrdata\RO Daily CP QA releases\BE\</MacroValue>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>Set NETWORK_FOLDER Macro</name>
+		</step>
+		<step action='Set Macro'>
+			<MacroName>BUILD_CONFIGURATION</MacroName>
+			<MacroType type='3'>1</MacroType>
+			<MacroValue>Release|Any CPU</MacroValue>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>Set Release Mode</name>
+		</step>
+		<step action='Group'>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<description>Do not uncheck any of the items in this section.</description>
+			<name>SET BUILD END TIME</name>
+		</step>
+		<step action='Set Macro'>
+			<MacroName>BUILD_END_TIME</MacroName>
+			<MacroType type='3'>1</MacroType>
+			<MacroValue>%DATETIME%</MacroValue>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<continueonfail type='3'>1</continueonfail>
+			<indent type='3'>1</indent>
+			<name>Set Build End Time</name>
+			<retries>5</retries>
+			<retrypause>1</retrypause>
+		</step>
+		<step action='Run Script'>
+			<Language>VBScript</Language>
+			<Script><![CDATA[Option Explicit
+
+Wscript.Echo CalcTotalBuildTime
+
+public function CalcTotalBuildTime()
+	dim BuildSeconds, BuildMinutes, BuildHours
+	BuildSeconds = FormatNumber(DateDiff("s", "%BUILD_START_TIME%", "%BUILD_END_TIME%"))
+	BuildHours = Fix(BuildSeconds/3600)
+	BuildSeconds = BuildSeconds - (BuildHours * 3600)
+	BuildMinutes = Fix(BuildSeconds/60)
+	BuildSeconds = BuildSeconds - (BuildMinutes * 60)
+	CalcTotalBuildTime = BuildHours & " Hours " & BuildMinutes & " Minutes " & BuildSeconds & " Seconds"
+	exit function
+end function]]></Script>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<condcompareto>YES</condcompareto>
+			<condexpr>%INSTALLSHIELD%</condexpr>
+			<continueonfail type='3'>1</continueonfail>
+			<indent type='3'>2</indent>
+			<name>Calc Total Build Time</name>
+		</step>
+		<step action='Set Macro'>
+			<MacroName>BUILD_TOTAL_TIME</MacroName>
+			<MacroType type='3'>1</MacroType>
+			<MacroValue>%LASTSTEP_OUTPUT%</MacroValue>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<continueonfail type='3'>1</continueonfail>
+			<indent type='3'>3</indent>
+			<name>Set Build Total Time</name>
+		</step></steps>
+	<steps type='2'>
+		<step action='Group'>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<name>Update code</name>
+		</step>
+		<step action='Git'>
+			<Command>clone</Command>
+			<Options>-b %BRANCH_VERSION% %REPO_LOCATION% %LOCAL_WORK_FOLDER%</Options>
+			<ShowCmd type='11'>-1</ShowCmd>
+			<WorkDir>%PROJDIR%</WorkDir>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<continueonfail type='3'>1</continueonfail>
+			<indent type='3'>1</indent>
+			<name>Git Clone</name>
+		</step></steps>
+	<macros>
+		<macro name='BRANCH_VERSION'>
+			<value>main</value>
+		</macro>
+		<macro name='BUILD_CONFIGURATION'>
+			<value>Release|Any CPU</value>
+		</macro>
+		<macro name='BUILD_END_TIME'>
+			<value>8/22/2022 11:48:22 AM</value>
+		</macro>
+		<macro name='BUILD_START_TIME'>
+			<value>8/22/2022 11:37:32 AM</value>
+		</macro>
+		<macro name='BUILD_TOTAL_TIME'>
+			<value>0 Hours 10 Minutes 50 Seconds</value>
+		</macro>
+		<macro name='LOCAL_WORK_FOLDER'>
+			<value>C:\buildfolder</value>
+		</macro>
+		<macro name='REPO_LOCATION'>
+			<value>https://ASI-ALL@dev.azure.com/ASI-ALL/RD-PRODUCT/_git/RO-FrontEnd</value>
+		</macro></macros>
+</project>
