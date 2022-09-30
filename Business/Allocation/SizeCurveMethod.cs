@@ -2392,7 +2392,7 @@ namespace MIDRetail.Business.Allocation
 						sizeCode = Convert.ToInt32(row["SIZE_CODE_RID"]);
 						sales = Convert.ToInt32(row["SALES"]);
 
-						if (sales != 0 && aSzGrpProf.SizeCodeList.Contains(sizeCode))
+						if (aSzGrpProf.SizeCodeList.Contains(sizeCode))
 						{
 							if (storeRID != Include.NoRID)
 							{
