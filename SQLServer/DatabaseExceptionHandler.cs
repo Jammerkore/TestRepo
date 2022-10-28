@@ -185,13 +185,14 @@ namespace MIDRetail.Data
                     // determine the number of characters from delimiter to the end of the command
                     int length = parse1.Length - parsesecondStringPosition;
 
-                    string result1 = parse1.Substring(0, parsefirstStringPosition + 1);
+                    string result1 = parseSubString(parse1, 0, parsefirstStringPosition + 1);
+
                     string result2 = string.Empty;
                     // Only set result2 if found starting position and length
                     if (parsesecondStringPosition > -1
                         && length > 0)
                     {
-                        result2 = parse1.Substring(parsesecondStringPosition, length);
+                        result2 = parseSubString(parse1, parsesecondStringPosition, length);
                     }
                     string result3 = (result1 + "******** " + result2);
                     aMIDCommand = result3;
@@ -367,6 +368,20 @@ namespace MIDRetail.Data
             }
         }
         // End TT#3325 - JSmith - Event Log String Too Long - Error Message
-    }
 
+        // parsing string in a try catch to prevent possible String parsing error
+        // from being thrown in HandleDatabaseException instead of the appropriate SqlException error message
+        private string parseSubString(string stringToParse, int startIndex, int length)
+        {
+
+            try
+            {
+                return stringToParse.Substring(startIndex, length);
+            }
+            catch
+            {
+                return "";
+            }
+        }
+    }
 }
