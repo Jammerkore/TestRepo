@@ -469,6 +469,78 @@ namespace MIDRetail.DataCommon
 			}
 		}
 
+		public void RecalculateTotalsBySize()
+		{
+			try
+			{
+				// without having to rewrite how the different hashtables are calculated we will just
+				// recalculate size totals when called
+				// updating, _chnSzValHash, totals by size 
+				if (_strSzValHash != null)
+				{
+					//_chnSzValHash only stores Sales Value and SizeRID with a StoreRID of Include.NoRID so there is no need to organize by StoreRID at this point
+					Dictionary<int, decimal> sizeValueTotals = new Dictionary<int, decimal>(); 
+					foreach (DictionaryEntry storeSizeValueHash in _strSzValHash)
+					{
+						if(storeSizeValueHash.Value != null && storeSizeValueHash.Value is Hashtable)
+                        {
+							Hashtable sizeValues = (Hashtable)storeSizeValueHash.Value;
+							foreach (DictionaryEntry sizeValueObject in sizeValues)
+							{
+								if (sizeValueObject.Value != null && sizeValueObject.Value is StoreSizeValue)
+								{
+									StoreSizeValue storeSizeValue = (StoreSizeValue)sizeValueObject.Value;
+									if (!sizeValueTotals.ContainsKey(storeSizeValue.SizeCodeRID))
+									{
+										sizeValueTotals.Add(storeSizeValue.SizeCodeRID, storeSizeValue.SalesValue);
+									}
+									else
+									{
+										sizeValueTotals[storeSizeValue.SizeCodeRID] += storeSizeValue.SalesValue;
+									}
+								}
+							}
+						}
+					}
+
+					_chnSzValHash = new Hashtable();
+					foreach(var sizeValueTotal in sizeValueTotals)
+                    {
+						if (_chnSzValHash.ContainsKey(sizeValueTotal.Key))
+						{
+							_chnSzValHash[sizeValueTotal.Key] = new StoreSizeValue(Include.NoRID, sizeValueTotal.Key, sizeValueTotal.Value);
+						}
+						else
+						{
+							_chnSzValHash.Add(sizeValueTotal.Key, new StoreSizeValue(Include.NoRID, sizeValueTotal.Key, sizeValueTotal.Value));
+						}
+					}
+				}
+			}
+			catch (Exception exc)
+			{
+				string message = exc.ToString();
+				throw;
+			}
+		}
+
+		public void ReplaceStoreSizeTotalValues(int aStoreRID, decimal totalValue)
+		{
+			try
+			{
+				//updating/replacing totals by store id, _strSzTotValHash
+				if (_strSzTotValHash.ContainsKey(aStoreRID))
+				{
+					_strSzTotValHash[aStoreRID] = totalValue;
+				}
+			}
+			catch (Exception exc)
+			{
+				string message = exc.ToString();
+				throw;
+			}
+		}
+
 		public void ReplaceStoreSizeValues(int aStoreRID, Hashtable aValueHash)
 		{
 			try

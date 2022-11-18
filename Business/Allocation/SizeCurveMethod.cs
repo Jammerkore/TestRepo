@@ -1181,6 +1181,11 @@ namespace MIDRetail.Business.Allocation
 
 				if (_tolerMinAvgPerSize != Include.Undefined || _tolerSalesTolerance != Include.Undefined)
 				{
+					// used to indicate whether or not to update the totals by size
+					var recalculateSizeTotals = false;
+					// have to assign to null or you will get a compile error below
+					nodeRID = -1;
+					nodeList = null;
 					foreach (int storeRID in storeList)
 					{
 						tolerancePassed = false;
@@ -1203,8 +1208,13 @@ namespace MIDRetail.Business.Allocation
 								{
 									if (_tolerHighLvlLevelType != eLowLevelsType.None && _merchBasisProfileList.Count == 1)
 									{
-										nodeRID = ((SizeCurveMerchBasisProfile)_merchBasisProfileList[0]).Basis_HN_RID;
-										nodeList = SAB.HierarchyServerSession.GetAncestorPath(nodeRID, _tolerHighLvlHierarchyRID, _tolerHighLvlLevelType, _tolerHighLvlLevelRID, _tolerHighLvlOffset);
+										var basisHeirarchyNodeRID = ((SizeCurveMerchBasisProfile)_merchBasisProfileList[0]).Basis_HN_RID;
+										// only call GetAncestorPath if you you haven't called it already
+										if (nodeList == null || nodeRID != basisHeirarchyNodeRID)
+										{
+											nodeRID = basisHeirarchyNodeRID;
+											nodeList = SAB.HierarchyServerSession.GetAncestorPath(nodeRID, _tolerHighLvlHierarchyRID, _tolerHighLvlLevelType, _tolerHighLvlLevelRID, _tolerHighLvlOffset);
+										}
 
 										if (nodeList != null)
 										{
@@ -1228,19 +1238,27 @@ namespace MIDRetail.Business.Allocation
 
 													merchBasisProfileList.Add(scbp);
 													//Begin TT#1517-MD -jsobek -Store Service Optimization
-                                                    ProfileList activeStoreList = StoreMgmt.StoreProfiles_GetActiveStoresList();
-                                                    simStoreList = SAB.HierarchyServerSession.GetSizeCurveSimilarStoreList(activeStoreList, nodeList[i].Key, true, false); //SAB.HierarchyServerSession.GetSizeCurveSimilarStoreList(SAB.ApplicationServerSession.GetProfileList(eProfileType.Store), nodeList[i].Key, true, false);
-													//End TT#1517-MD -jsobek -Store Service Optimization
+													ProfileList activeStoreList = StoreMgmt.StoreProfiles_GetActiveStoresList();
+													simStoreList = SAB.HierarchyServerSession.GetSizeCurveSimilarStoreList(activeStoreList, nodeList[i].Key, true, false); //SAB.HierarchyServerSession.GetSizeCurveSimilarStoreList(SAB.ApplicationServerSession.GetProfileList(eProfileType.Store), nodeList[i].Key, true, false);
+																																										   //End TT#1517-MD -jsobek -Store Service Optimization
 
 													newBasisList = ReadMerchandiseBasis(aAppTran, merchBasisProfileList, _szGrpProf, simStoreList);
 													parentBasisHash[nodeList[i].Key] = newBasisList;
 												}
 
-												if (((MerchandiseBasisEntry)newBasisList[0]).GetStoreSizeTotalValue(storeRID) >= minAvg)
+												if (newBasisList != null && newBasisList.Count > 0)
 												{
-													combinedStrSizeValGrp.ReplaceStoreSizeValues(storeRID, ((MerchandiseBasisEntry)newBasisList[0]).GetStoreSizeValues(storeRID));
-													tolerancePassed = true;
-													break;
+													var merchandiseBasisData = (MerchandiseBasisEntry)newBasisList[0];
+													var merchandiseBasisDataSizeTotals = merchandiseBasisData.GetStoreSizeTotalValue(storeRID);
+													if (merchandiseBasisDataSizeTotals >= minAvg)
+													{
+														combinedStrSizeValGrp.ReplaceStoreSizeValues(storeRID, merchandiseBasisData.GetStoreSizeValues(storeRID));
+														// because we have changed the StoreSize values we need to update the store totals as well
+														combinedStrSizeValGrp.ReplaceStoreSizeTotalValues(storeRID, merchandiseBasisDataSizeTotals);
+														tolerancePassed = true;
+														recalculateSizeTotals = true;
+														break;
+													}
 												}
 											}
 										}
@@ -1302,6 +1320,12 @@ namespace MIDRetail.Business.Allocation
 						}
 
 						useDefault[storeRID] = !tolerancePassed;
+					}
+
+					// updating totals by size
+					if(recalculateSizeTotals)
+                    {
+						combinedStrSizeValGrp.RecalculateTotalsBySize();
 					}
 				}
 
