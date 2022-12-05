@@ -2490,7 +2490,7 @@ namespace MIDRetail.Windows
 					while (dictEnum.MoveNext())
 					{
 						sizeCodeProf = (SizeCodeProfile)dictEnum.Value;
-						_dtSizeCurve.Columns.Add(sizeCodeProf.SizeCodePrimary, typeof(double));
+						_dtSizeCurve.Columns.Add(sizeCodeProf.SizeCodePrimaryKey, typeof(double));
 					}
 				}
 
@@ -2505,7 +2505,7 @@ namespace MIDRetail.Windows
 						if (szCdPrf.SizeCodePercent > 0)
 						{
 							currRow = _dtSizeCurve.Rows.Find(new object[] { szCrvProf.Key, false, szCdPrf.SizeCodeSecondary });
-							currRow[szCdPrf.SizeCodePrimary] = (double)(decimal)szCdPrf.SizeCodePercent;
+							currRow[szCdPrf.SizeCodePrimaryKey] = (double)(decimal)szCdPrf.SizeCodePercent;
 						}
 					}
 				}
@@ -2550,7 +2550,7 @@ namespace MIDRetail.Windows
 					while (dictEnum.MoveNext())
 					{
 						sizeCodeProf = (SizeCodeProfile)dictEnum.Value;
-						_dtDefaultSizeCurve.Columns.Add(sizeCodeProf.SizeCodePrimary, typeof(double));
+						_dtDefaultSizeCurve.Columns.Add(sizeCodeProf.SizeCodePrimaryKey, typeof(double));
 					}
 				}
 	
@@ -2565,7 +2565,7 @@ namespace MIDRetail.Windows
 						if (szCdPrf.SizeCodePercent > 0)
 						{
 							currRow = _dtDefaultSizeCurve.Rows.Find(new object[] { _currSizeCurveGrpProf.DefaultSizeCurve.Key, false, szCdPrf.SizeCodeSecondary });
-							currRow[szCdPrf.SizeCodePrimary] =(double)(decimal)szCdPrf.SizeCodePercent;
+							currRow[szCdPrf.SizeCodePrimaryKey] =(double)(decimal)szCdPrf.SizeCodePercent;
 						}
 					}
 				}
@@ -2786,13 +2786,13 @@ namespace MIDRetail.Windows
 						while (dictEnum.MoveNext())
 						{
 							sizeCodeProf = (SizeCodeProfile)dictEnum.Value;
-					
-							ulgSizeCurve.DisplayLayout.Bands[2].Columns[sizeCodeProf.SizeCodePrimary].MaskDisplayMode = MaskMode.IncludePromptChars;
-							ulgSizeCurve.DisplayLayout.Bands[2].Columns[sizeCodeProf.SizeCodePrimary].Header.VisiblePosition = i++;
-							ulgSizeCurve.DisplayLayout.Bands[2].Columns[sizeCodeProf.SizeCodePrimary].Format = "##0.000";
-							ulgSizeCurve.DisplayLayout.Bands[2].Columns[sizeCodeProf.SizeCodePrimary].MinWidth = 60;
-							ulgSizeCurve.DisplayLayout.Bands[2].Columns[sizeCodeProf.SizeCodePrimary].PerformAutoResize(PerformAutoSizeType.AllRowsInBand);
-							ulgSizeCurve.DisplayLayout.Bands[2].Columns[sizeCodeProf.SizeCodePrimary].CellAppearance.TextHAlign = HAlign.Right;
+
+							ulgSizeCurve.DisplayLayout.Bands[2].Columns[sizeCodeProf.SizeCodePrimaryKey].MaskDisplayMode = MaskMode.IncludePromptChars;
+							ulgSizeCurve.DisplayLayout.Bands[2].Columns[sizeCodeProf.SizeCodePrimaryKey].Header.VisiblePosition = i++;
+							ulgSizeCurve.DisplayLayout.Bands[2].Columns[sizeCodeProf.SizeCodePrimaryKey].Format = "##0.000";
+							ulgSizeCurve.DisplayLayout.Bands[2].Columns[sizeCodeProf.SizeCodePrimaryKey].MinWidth = 60;
+							ulgSizeCurve.DisplayLayout.Bands[2].Columns[sizeCodeProf.SizeCodePrimaryKey].PerformAutoResize(PerformAutoSizeType.AllRowsInBand);
+							ulgSizeCurve.DisplayLayout.Bands[2].Columns[sizeCodeProf.SizeCodePrimaryKey].CellAppearance.TextHAlign = HAlign.Right;
 						}
 					}
 
@@ -2858,12 +2858,12 @@ namespace MIDRetail.Windows
 						{
 							sizeCodeProf = (SizeCodeProfile)dictEnum.Value;
 
-							ulgDefaultSizeCurve.DisplayLayout.Bands[0].Columns[sizeCodeProf.SizeCodePrimary].MaskDisplayMode = MaskMode.IncludePromptChars;
-							ulgDefaultSizeCurve.DisplayLayout.Bands[0].Columns[sizeCodeProf.SizeCodePrimary].Header.VisiblePosition = i++;
-							ulgDefaultSizeCurve.DisplayLayout.Bands[0].Columns[sizeCodeProf.SizeCodePrimary].Format = "##0.000";
-							ulgDefaultSizeCurve.DisplayLayout.Bands[0].Columns[sizeCodeProf.SizeCodePrimary].MinWidth = 60;
-							ulgDefaultSizeCurve.DisplayLayout.Bands[0].Columns[sizeCodeProf.SizeCodePrimary].PerformAutoResize(PerformAutoSizeType.AllRowsInBand);
-							ulgDefaultSizeCurve.DisplayLayout.Bands[0].Columns[sizeCodeProf.SizeCodePrimary].CellAppearance.TextHAlign = HAlign.Right;
+							ulgDefaultSizeCurve.DisplayLayout.Bands[0].Columns[sizeCodeProf.SizeCodePrimaryKey].MaskDisplayMode = MaskMode.IncludePromptChars;
+							ulgDefaultSizeCurve.DisplayLayout.Bands[0].Columns[sizeCodeProf.SizeCodePrimaryKey].Header.VisiblePosition = i++;
+							ulgDefaultSizeCurve.DisplayLayout.Bands[0].Columns[sizeCodeProf.SizeCodePrimaryKey].Format = "##0.000";
+							ulgDefaultSizeCurve.DisplayLayout.Bands[0].Columns[sizeCodeProf.SizeCodePrimaryKey].MinWidth = 60;
+							ulgDefaultSizeCurve.DisplayLayout.Bands[0].Columns[sizeCodeProf.SizeCodePrimaryKey].PerformAutoResize(PerformAutoSizeType.AllRowsInBand);
+							ulgDefaultSizeCurve.DisplayLayout.Bands[0].Columns[sizeCodeProf.SizeCodePrimaryKey].CellAppearance.TextHAlign = HAlign.Right;
 						}
 					}
 
@@ -2892,9 +2892,9 @@ namespace MIDRetail.Windows
 						_showSecondaryColumn = true;
 					}
 
-					if (!_primarySizeList.Contains(sizeCodeProf.PrimarySequence))
+					if (!_primarySizeList.Contains(sizeCodeProf.PrimarySequence + " - " + sizeCodeProf.SizeCodePrimaryKey))
 					{
-						_primarySizeList.Add(sizeCodeProf.PrimarySequence, sizeCodeProf);
+						_primarySizeList.Add(sizeCodeProf.PrimarySequence + " - " + sizeCodeProf.SizeCodePrimaryKey, sizeCodeProf);
 					}
 
 					if (!_secondarySizeList.Contains(sizeCodeProf.SecondarySequence))
@@ -2902,9 +2902,9 @@ namespace MIDRetail.Windows
 						_secondarySizeList.Add(sizeCodeProf.SecondarySequence, sizeCodeProf);
 					}
 
-					if (!_dtSizeCodeKeys.Columns.Contains(sizeCodeProf.SizeCodePrimary))
+					if (!_dtSizeCodeKeys.Columns.Contains(sizeCodeProf.SizeCodePrimaryKey))
 					{
-						_dtSizeCodeKeys.Columns.Add(sizeCodeProf.SizeCodePrimary, typeof(object));
+						_dtSizeCodeKeys.Columns.Add(sizeCodeProf.SizeCodePrimaryKey, typeof(object));
 					}
 
 					currRow = _dtSizeCodeKeys.Rows.Find(sizeCodeProf.SizeCodeSecondary);
@@ -2916,15 +2916,15 @@ namespace MIDRetail.Windows
 						_dtSizeCodeKeys.Rows.Add(currRow);
 					}
 
-					if (currRow[sizeCodeProf.SizeCodePrimary] == System.DBNull.Value)
+					if (currRow[sizeCodeProf.SizeCodePrimaryKey] == System.DBNull.Value)
 					{
-						currRow[sizeCodeProf.SizeCodePrimary] = sizeCodeProf;
+						currRow[sizeCodeProf.SizeCodePrimaryKey] = sizeCodeProf;
 					}
-					else if (((SizeCodeProfile)currRow[sizeCodeProf.SizeCodePrimary]).Key != sizeCodeProf.Key)
-					{
-						throw new MIDException(eErrorLevel.severe, (int)eMIDTextCode.msg_InvalidSizeCodeEncountered, MIDText.GetText(eMIDTextCode.msg_InvalidSizeCodeEncountered));
-					}
-				}
+                    else if (((SizeCodeProfile)currRow[sizeCodeProf.SizeCodePrimaryKey]).Key != sizeCodeProf.Key)
+                    {
+                        throw new MIDException(eErrorLevel.severe, (int)eMIDTextCode.msg_InvalidSizeCodeEncountered, MIDText.GetText(eMIDTextCode.msg_InvalidSizeCodeEncountered));
+                    }
+                }
 			}
 			catch (Exception exc)
 			{
@@ -3052,7 +3052,7 @@ namespace MIDRetail.Windows
 				while (dictEnum.MoveNext())
 				{
 					sizeCodeProf = (SizeCodeProfile)dictEnum.Value;
-					newRow[sizeCodeProf.SizeCodePrimary] = 0;
+					newRow[sizeCodeProf.SizeCodePrimaryKey] = 0;
 				}
 
 				aTable.Rows.Add(newRow);
@@ -3172,7 +3172,7 @@ namespace MIDRetail.Windows
 						while (secondaryEnum.MoveNext())
 						{
 							secSizeCodeProf = (SizeCodeProfile)secondaryEnum.Value;
-							sumCell = aSizeCurveTable.Rows.Find(new object[] { aSizeCurveRID, false, secSizeCodeProf.SizeCodeSecondary })[priSizeCodeProf.SizeCodePrimary];
+							sumCell = aSizeCurveTable.Rows.Find(new object[] { aSizeCurveRID, false, secSizeCodeProf.SizeCodeSecondary })[priSizeCodeProf.SizeCodePrimaryKey];
 
 							if (sumCell != System.DBNull.Value)
 							{
@@ -3185,7 +3185,7 @@ namespace MIDRetail.Windows
 
 						//Begin TT#1346 - JScott - Receiving "140020:Curve Percentage must sum to 100" error when saving Size Curve
 						//aSizeCurveTable.Rows.Find(new object[] { aSizeCurveRID, true, "Total" })[priSizeCodeProf.SizeCodePrimary] = sum;
-						aSizeCurveTable.Rows.Find(new object[] { aSizeCurveRID, true, "Total" })[priSizeCodeProf.SizeCodePrimary] = (double)sum;
+						aSizeCurveTable.Rows.Find(new object[] { aSizeCurveRID, true, "Total" })[priSizeCodeProf.SizeCodePrimaryKey] = (double)sum;
 						//End TT#1346 - JScott - Receiving "140020:Curve Percentage must sum to 100" error when saving Size Curve
 					}
 				}
@@ -3201,7 +3201,7 @@ namespace MIDRetail.Windows
 					while (primaryEnum.MoveNext())
 					{
 						priSizeCodeProf = (SizeCodeProfile)primaryEnum.Value;
-						sumCell = aSizeCurveTable.Rows.Find(new object[] { aSizeCurveRID, false, secSizeCodeProf.SizeCodeSecondary })[priSizeCodeProf.SizeCodePrimary];
+						sumCell = aSizeCurveTable.Rows.Find(new object[] { aSizeCurveRID, false, secSizeCodeProf.SizeCodeSecondary })[priSizeCodeProf.SizeCodePrimaryKey];
 
 						if (sumCell != System.DBNull.Value)
 						{
@@ -3228,7 +3228,7 @@ namespace MIDRetail.Windows
 						while (primaryEnum.MoveNext())
 						{
 							priSizeCodeProf = (SizeCodeProfile)primaryEnum.Value;
-							sumCell = aSizeCurveTable.Rows.Find(new object[] { aSizeCurveRID, true, "Total" })[priSizeCodeProf.SizeCodePrimary];
+							sumCell = aSizeCurveTable.Rows.Find(new object[] { aSizeCurveRID, true, "Total" })[priSizeCodeProf.SizeCodePrimaryKey];
 
 							if (sumCell != System.DBNull.Value)
 							{
@@ -3505,7 +3505,7 @@ namespace MIDRetail.Windows
 					while (primaryEnum.MoveNext())
 					{
 						priSizeCodeProf = (SizeCodeProfile)primaryEnum.Value;
-						SumColumnSizeCurvePercentages(aCell, priSizeCodeProf.SizeCodePrimary);
+						SumColumnSizeCurvePercentages(aCell, priSizeCodeProf.SizeCodePrimaryKey);
 					}
 				}
 
@@ -3585,7 +3585,7 @@ namespace MIDRetail.Windows
 					while (primaryEnum.MoveNext())
 					{
 						priSizeCodeProf = (SizeCodeProfile)primaryEnum.Value;
-						SumColumnSizeCurvePercentages(aCell, priSizeCodeProf.SizeCodePrimary);
+						SumColumnSizeCurvePercentages(aCell, priSizeCodeProf.SizeCodePrimaryKey);
 					}
 				}
 
@@ -3668,7 +3668,7 @@ namespace MIDRetail.Windows
 					priSizeCodeProf = (SizeCodeProfile)primaryEnum.Value;
 					//Begin TT#1346 - JScott - Receiving "140020:Curve Percentage must sum to 100" error when saving Size Curve
 					//sum += (double)(decimal)Convert.ToDouble(aRow.Cells[priSizeCodeProf.SizeCodePrimary].Value);
-					sum += (decimal)Convert.ToDouble(aRow.Cells[priSizeCodeProf.SizeCodePrimary].Value);
+					sum += (decimal)Convert.ToDouble(aRow.Cells[priSizeCodeProf.SizeCodePrimaryKey].Value);
 					//End TT#1346 - JScott - Receiving "140020:Curve Percentage must sum to 100" error when saving Size Curve
 				}
 
@@ -3711,10 +3711,9 @@ namespace MIDRetail.Windows
 						while (primaryEnum.MoveNext())
 						{
 							priSizeCodeProf = (SizeCodeProfile)primaryEnum.Value;
-
-							if (currRow[priSizeCodeProf.SizeCodePrimary] != System.DBNull.Value && Convert.ToString(currRow[priSizeCodeProf.SizeCodePrimary]) != string.Empty)
+							if (currRow[priSizeCodeProf.SizeCodePrimaryKey] != System.DBNull.Value && Convert.ToString(currRow[priSizeCodeProf.SizeCodePrimaryKey]) != string.Empty)
 							{
-								inValues.Add((double)(decimal)Convert.ToDouble(row.Cells[priSizeCodeProf.SizeCodePrimary].Value));
+								inValues.Add((double)(decimal)Convert.ToDouble(row.Cells[priSizeCodeProf.SizeCodePrimaryKey].Value));
 							}
 						}
 					}
@@ -3734,16 +3733,16 @@ namespace MIDRetail.Windows
 						while (primaryEnum.MoveNext())
 						{
 							priSizeCodeProf = (SizeCodeProfile)primaryEnum.Value;
-
-							if (currRow[priSizeCodeProf.SizeCodePrimary] != System.DBNull.Value && Convert.ToString(currRow[priSizeCodeProf.SizeCodePrimary]) != string.Empty)
+							if (currRow[priSizeCodeProf.SizeCodePrimaryKey] != System.DBNull.Value && Convert.ToString(currRow[priSizeCodeProf.SizeCodePrimaryKey]) != string.Empty)
 							{
-								if ((double)(decimal)Convert.ToDouble(row.Cells[priSizeCodeProf.SizeCodePrimary].Value) != (double)(decimal)Convert.ToDouble(outValues[i]))
+								if ((double)(decimal)Convert.ToDouble(row.Cells[priSizeCodeProf.SizeCodePrimaryKey].Value) != (double)(decimal)Convert.ToDouble(outValues[i]))
 								{
-									SetCellValue(row.Cells[priSizeCodeProf.SizeCodePrimary], (double)(decimal)Convert.ToDouble(outValues[i]));
+									SetCellValue(row.Cells[priSizeCodeProf.SizeCodePrimaryKey], (double)(decimal)Convert.ToDouble(outValues[i]));
 
-									if (priSizeCodeProf.SizeCodePrimary != cTotalColName && !Convert.ToBoolean(row.Cells["isTotalRow"].Value))
+									if (priSizeCodeProf.SizeCodePrimaryKey != cTotalColName && !Convert.ToBoolean(row.Cells["isTotalRow"].Value))
 									{
-										UpdateCellValue(Convert.ToInt32(chgRow.Cells["SizeCurveRID"].Value), priSizeCodeProf.SizeCodePrimary, Convert.ToString(row.Cells["Secondary"].Value), (double)(decimal)Convert.ToDouble(outValues[i]));
+										UpdateCellValue(Convert.ToInt32(chgRow.Cells["SizeCurveRID"].Value), priSizeCodeProf.SizeCodePrimaryKey, 
+											Convert.ToString(row.Cells["Secondary"].Value), (double)(decimal)Convert.ToDouble(outValues[i]));
 									}
 								}
 
@@ -3784,9 +3783,9 @@ namespace MIDRetail.Windows
 				{
 					priSizeCodeProf = (SizeCodeProfile)primaryEnum.Value;
 
-					if (currRow[priSizeCodeProf.SizeCodePrimary] != System.DBNull.Value && Convert.ToString(currRow[priSizeCodeProf.SizeCodePrimary]) != string.Empty)
+					if (currRow[priSizeCodeProf.SizeCodePrimaryKey] != System.DBNull.Value && Convert.ToString(currRow[priSizeCodeProf.SizeCodePrimaryKey]) != string.Empty)
 					{
-						inValues.Add((double)(decimal)Convert.ToDouble(chgRow.Cells[priSizeCodeProf.SizeCodePrimary].Value));
+						inValues.Add((double)(decimal)Convert.ToDouble(chgRow.Cells[priSizeCodeProf.SizeCodePrimaryKey].Value));
 					}
 				}
 
@@ -3800,16 +3799,15 @@ namespace MIDRetail.Windows
 				while (primaryEnum.MoveNext())
 				{
 					priSizeCodeProf = (SizeCodeProfile)primaryEnum.Value;
-
-					if (currRow[priSizeCodeProf.SizeCodePrimary] != System.DBNull.Value && Convert.ToString(currRow[priSizeCodeProf.SizeCodePrimary]) != string.Empty)
+					if (currRow[priSizeCodeProf.SizeCodePrimaryKey] != System.DBNull.Value && Convert.ToString(currRow[priSizeCodeProf.SizeCodePrimaryKey]) != string.Empty)
 					{
-						if ((double)(decimal)Convert.ToDouble(chgRow.Cells[priSizeCodeProf.SizeCodePrimary].Value) != (double)(decimal)Convert.ToDouble(outValues[i]))
+						if ((double)(decimal)Convert.ToDouble(chgRow.Cells[priSizeCodeProf.SizeCodePrimaryKey].Value) != (double)(decimal)Convert.ToDouble(outValues[i]))
 						{
-							SetCellValue(chgRow.Cells[priSizeCodeProf.SizeCodePrimary], (double)(decimal)Convert.ToDouble(outValues[i]));
+							SetCellValue(chgRow.Cells[priSizeCodeProf.SizeCodePrimaryKey], (double)(decimal)Convert.ToDouble(outValues[i]));
 
-							if (priSizeCodeProf.SizeCodePrimary != cTotalColName && !Convert.ToBoolean(chgRow.Cells["isTotalRow"].Value))
+							if (priSizeCodeProf.SizeCodePrimaryKey != cTotalColName && !Convert.ToBoolean(chgRow.Cells["isTotalRow"].Value))
 							{
-								UpdateCellValue(Convert.ToInt32(chgRow.Cells["SizeCurveRID"].Value), priSizeCodeProf.SizeCodePrimary, Convert.ToString(chgRow.Cells["Secondary"].Value), (double)(decimal)Convert.ToDouble(outValues[i]));
+								UpdateCellValue(Convert.ToInt32(chgRow.Cells["SizeCurveRID"].Value), priSizeCodeProf.SizeCodePrimaryKey, Convert.ToString(chgRow.Cells["Secondary"].Value), (double)(decimal)Convert.ToDouble(outValues[i]));
 							}
 						}
 
@@ -4678,7 +4676,7 @@ namespace MIDRetail.Windows
             ShowInUse();
         }
 
-        public bool inQuiry2
+		public bool inQuiry2
         {
             get { return _isInQuiry; }
             set { _isInQuiry = value; }

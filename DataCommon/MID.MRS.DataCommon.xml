@@ -2915,6 +2915,11 @@
             Gets or sets the ID of the size.
             </summary>
         </member>
+        <member name="P:MIDRetail.DataCommon.SizeCodeProfile.SizeCodePrimaryKey">
+            <summary>
+            Used for the Key for Hashtables and is associated with the table column name
+            </summary>
+        </member>
         <member name="P:MIDRetail.DataCommon.SizeCodeProfile.SizeCodeName">
             <summary>
             Gets or sets the name of the size.

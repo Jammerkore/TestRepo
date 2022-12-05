@@ -3007,6 +3007,15 @@ namespace MIDRetail.DataCommon
 			get { return _sizeCodeID ; }
 			set { _sizeCodeID = (value == null) ? value : value.Trim(); }
 		}
+
+		/// <summary>
+		/// Used for the Key for Hashtables and is associated with the table column name
+		/// </summary>
+		public string SizeCodePrimaryKey
+		{
+			get { return SizeCodePrimary + " [" + SizeCodeID + "]"; }
+		}
+		
 		/// <summary>
 		/// Gets or sets the name of the size.
 		/// </summary>
