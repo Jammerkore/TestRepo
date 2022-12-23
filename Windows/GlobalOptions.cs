@@ -4632,16 +4632,43 @@ namespace MIDRetail.Windows
                         
                         opts.OpenUpdateConnection();
                     }
+
+                    // converting cboVSWSizeContraints.SelectedValue to eVSWSizeConstraints value
+                    eVSWSizeConstraints selectedVSWSizeConstraints = eVSWSizeConstraints.None;
+                    int selectedIntVSWSizeConstraints;
+                    if(cboVSWSizeContraints != null && cboVSWSizeContraints.SelectedValue != null &&
+                        int.TryParse(cboVSWSizeContraints.SelectedValue.ToString(), out selectedIntVSWSizeConstraints))
+                    {
+                        if (Enum.IsDefined(typeof(eVSWSizeConstraints), selectedIntVSWSizeConstraints))
+                        {
+                            selectedVSWSizeConstraints = (eVSWSizeConstraints)selectedIntVSWSizeConstraints;
+                        }
+                    }
+
                     // END TT#1966-MD - AGallagher - DC Fulfillment
-					opts.UpdateGlobalOptions(
-						txtCompany.Text,txtStreet.Text,txtCity.Text, _cboStateValue,
-						txtZip.Value,txtPhone.Value,txtFax.Value,txtEmail.Text,
+                    opts.UpdateGlobalOptions(
+						txtCompany.Text,
+                        txtStreet.Text,
+                        txtCity.Text,
+                        _cboStateValue,
+						txtZip.Value,
+                        txtPhone.Value,
+                        txtFax.Value,
+                        txtEmail.Text,
 						0,
-						_cboStoreValue, _cboPlanStoreAttrValue, _cboAllocStoreAttrValue,
-						txtNewStorePeriodBegin.Text.Trim(), txtNewStorePeriodEnd.Text.Trim(), txtNonCompPeriodBegin.Text.Trim(), txtNonCompPeriodEnd.Text.Trim(), 
+						_cboStoreValue,
+                        _cboPlanStoreAttrValue,
+                        _cboAllocStoreAttrValue,
+						txtNewStorePeriodBegin.Text.Trim(), 
+                        txtNewStorePeriodEnd.Text.Trim(), 
+                        txtNonCompPeriodBegin.Text.Trim(), 
+                        txtNonCompPeriodEnd.Text.Trim(), 
 						_cboProductValue,
-						txtPctNeedLimit.Text.Trim(),txtPctBalTolerance.Text.Trim(),txtPackDevTolerance.Text.Trim(),
-						txtPackNeedTolerance.Text.Trim(),txtFillSizeHoles.Text.Trim(),
+						txtPctNeedLimit.Text.Trim(),
+                        txtPctBalTolerance.Text.Trim(),
+                        txtPackDevTolerance.Text.Trim(),
+						txtPackNeedTolerance.Text.Trim(),
+                        txtFillSizeHoles.Text.Trim(),
                         // BEGIN TT#616 - AGallagher - Allocation - Pack Rounding (#67)
                         txtPct1stPackRoundUpFrom.Text.Trim(),
                         txtPctNthPackRoundUpFrom.Text.Trim(),
@@ -4667,7 +4694,7 @@ namespace MIDRetail.Windows
 						// BEGIN MID Track #4921 - JSmith - A&F 666 - Size Modification
 						this.radNormalizeSizeCurves_Yes.Checked,
 						// BEGIN MID Track #6335 Option to not Release Hdr with all units in reserve
-						fillSizesToType,
+						Convert.ToInt32(fillSizesToType),
                       	!this.cboDoNotReleaseIfAllInReserve.Checked,
 						// END MID Track #6335 Option to not Release Hdr with all units in reserve
 						// End MID Track #4921
@@ -4684,7 +4711,7 @@ namespace MIDRetail.Windows
 						//cbxDefaultGradesByBasis.Checked
 						// End TT # 91 - stodd
 						// End Track #6074
-                        genericSizeCurveNameType,
+                        genericSizeCurveNameType.GetHashCode(),
                         // End TT#413
    						_generateSizeCurveUsing, // TT#1365 - JEllis - FL Detail Pack Size Need Enhancement
                         cbxNoMaxStep.Checked,    // TT#1365 - JEllis - FL Detail Pack Size Need Enhancement
@@ -4694,9 +4721,9 @@ namespace MIDRetail.Windows
                         true,  // default value since field is no longer used
                         // End TT#3899 - JSmith - Remove the “Expand Headers When Intransit is Relieved” option on Headers Tab.
                         // BEGIN TT#1401 - AGallagher - Reservation Stores
-                        _maxItemOverride,        
+                        _maxItemOverride,
                         // END TT#1401 - AGallagher - Reservation Stores
-                        (eVSWSizeConstraints) cboVSWSizeContraints.SelectedValue,  // TT#246-MD - AGallagher - VSW Size - Add In-store Size Constraint options 
+                        selectedVSWSizeConstraints.GetHashCode(),  // TT#246-MD - AGallagher - VSW Size - Add In-store Size Constraint options 
                         //BEGIN TT#46-MD -jsobek -Develop My Activity Log
                         _myActivityMessageUpperLimit,
                         //END TT#46-MD -jsobek -Develop My Activity Log
@@ -4711,24 +4738,24 @@ namespace MIDRetail.Windows
                         this.radActiveDirectoryWithDomain.Checked, 
                         this.cbxEnableRemoteSystemOptions.Checked, //TT#901-MD -jsobek -Batch Only Mode
                         this.cbxControlServiceDefaultBatchOnlyModeOn.Checked, //TT#901-MD -jsobek -Batch Only Mode
-                        _vswItemFWOSMax ,  // TT#933-MD - AGallagher - Item Max vs. FWOS Max
+                        _vswItemFWOSMax.GetHashCode(),  // TT#933-MD - AGallagher - Item Max vs. FWOS Max
                         this.chkPriorHeaderIncludeReserve.Checked,
 						_cboDCCartonRoundDfltAttrValue,  // TT#1652-MD - RMatelic - DC Carton Rounding
-                        _split_Option,
+                        _split_Option.GetHashCode(),
                         _apply_Minimums_Ind,
                         _prioritize_Type,
                         _header_Field,
                         _hcg_Rid,
-                        _header_Order,
-                        _store_Order,
-                        _split_By_Option,
-                        _split_By_Reserve,
-                        _apply_By,
-                        _within_Dc,
+                        _header_Order.GetHashCode(),
+                        _store_Order.GetHashCode(),
+                        _split_By_Option.GetHashCode(),
+                        _split_By_Reserve.GetHashCode(),
+                        _apply_By.GetHashCode(),
+                        _within_Dc.GetHashCode(),
                         _useExternalEligibilityAllocation,
                         _useExternalEligibilityPlanning,
-                        _externalEligibilityProductIdentifier,
-                        _externalEligibilityChannelIdentifier,
+                        _externalEligibilityProductIdentifier.GetHashCode(),
+                        _externalEligibilityChannelIdentifier.GetHashCode(),
                         _externalEligibilityURL
                         );
 

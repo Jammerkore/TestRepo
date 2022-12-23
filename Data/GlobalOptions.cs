@@ -244,8 +244,8 @@ namespace MIDRetail.Data
             string companyEmail,
             int purgeAllocationsPeriod, 
             int storeDisplayOptionId, 
-            int defaultOtsSgRid, 
-            int defaultAllocSgRid,
+            int? defaultOtsSgRid, 
+            int? defaultAllocSgRid,
             string newStorePeriodBegin, 
             string newStorePeriodEnd, 
             string nonCompStorePeriodBegin, 
@@ -265,27 +265,27 @@ namespace MIDRetail.Data
             bool protectInterfaceHeadersInd, 
             string reserveStoreRid,
             bool useWindowsLogin, 
-            int shippingHorizonWeeks, 
-            char productLevelDelimiter, 
-            int headerLinkCharacteristic,
+            int? shippingHorizonWeeks, 
+            char? productLevelDelimiter, 
+            int? headerLinkCharacteristic,
             string sizeCurveCharMask, 
             string sizeGroupCharMask, 
             string sizeAlternateCharMask,
             string sizeConstraintCharMask, 
             bool aNormalizeSizeCurves, 
-            eFillSizesToType aFillSizesToType, 
+            int? aFillSizesToType, 
             bool aAllowRlseIfAllInReserve,  
-            int numberOfWeeksWithZeroSales,
-            int maximumChainWOS,
+            int? numberOfWeeksWithZeroSales,
+            int? maximumChainWOS,
             bool prorateChainStock, 
-            eGenericSizeCurveNameType aGenericSizeCurveNameType,
+            int? aGenericSizeCurveNameType,
             eGenerateSizeCurveUsing aGenerateSizeCurveUsing, 
             bool aPackToleranceNoMaxStep,
             bool aPackToleranceStepped,
             bool aRIExpandInd,  
             bool allowStoreMaxValueModification,
-            eVSWSizeConstraints aVSWSizeConstraints, 
-            int aMyActivityMessageUpperLimit,
+            int? aVSWSizeConstraints, 
+            int? aMyActivityMessageUpperLimit,
             GlobalOptions_SMTP_BL SMTP_Options,
             bool storeDeleteInProgress,
             bool enableVelocityGradeOptions,
@@ -295,35 +295,36 @@ namespace MIDRetail.Data
             bool useActiveDirectoryAuthenticationWithDomain,
             bool useBatchOnlyMode,
             bool controlServiceDefaultBatchOnlyModeOn,
-            eVSWItemFWOSMax aVSWItemFWOSMax,   // TT#933-MD - AGallagher - Item Max vs. FWOS Max
+            int? aVSWItemFWOSMax,   // TT#933-MD - AGallagher - Item Max vs. FWOS Max
 			bool priorHeaderIncludeReserveInd,   // TT#1609-MD - stodd - data layer change - prior header
-			int cartonRoundingSgRid,		// TT#1652-MD - stodd - DC Carton Rounding
-            eDCFulfillmentSplitOption split_option,               // TT#1966-MD - AGallagher - DC Fulfillment
-            char apply_minimums_ind,        // TT#1966-MD - AGallagher - DC Fulfillment
-            char prioritize_type,           // TT#1966-MD - AGallagher - DC Fulfillment
-            int header_field,               // TT#1966-MD - AGallagher - DC Fulfillment
-            int hcg_rid,                    // TT#1966-MD - AGallagher - DC Fulfillment
-            eDCFulfillmentHeadersOrder header_order,              // TT#1966-MD - AGallagher - DC Fulfillment
-            eDCFulfillmentStoresOrder store_order,                // TT#1966-MD - AGallagher - DC Fulfillment
-            eDCFulfillmentSplitByOption split_by_option,          // TT#1966-MD - AGallagher - DC Fulfillment
-            eDCFulfillmentReserve split_by_reserve,               // TT#1966-MD - AGallagher - DC Fulfillment
-            eDCFulfillmentMinimums apply_by,                      // TT#1966-MD - AGallagher - DC Fulfillment
-            eDCFulfillmentWithinDC within_dc,                     // TT#1966-MD - AGallagher - DC Fulfillment
+			int? cartonRoundingSgRid,		// TT#1652-MD - stodd - DC Carton Rounding
+            int? split_option,               // TT#1966-MD - AGallagher - DC Fulfillment
+            char? apply_minimums_ind,        // TT#1966-MD - AGallagher - DC Fulfillment
+            char? prioritize_type,           // TT#1966-MD - AGallagher - DC Fulfillment
+            int? header_field,               // TT#1966-MD - AGallagher - DC Fulfillment
+            int? hcg_rid,                    // TT#1966-MD - AGallagher - DC Fulfillment
+            int? header_order,              // TT#1966-MD - AGallagher - DC Fulfillment
+            int? store_order,                // TT#1966-MD - AGallagher - DC Fulfillment
+            int? split_by_option,          // TT#1966-MD - AGallagher - DC Fulfillment
+            int? split_by_reserve,               // TT#1966-MD - AGallagher - DC Fulfillment
+            int? apply_by,                      // TT#1966-MD - AGallagher - DC Fulfillment
+            int? within_dc,                     // TT#1966-MD - AGallagher - DC Fulfillment
             bool useExternalEligibilityAllocation,
             bool useExternalEligibilityPlanning,
-            eExternalEligibilityProductIdentifier externalEligibilityProductIdentifier,
-            eExternalEligibilityChannelIdentifier externalEligibilityChannelIdentifier,
+            int? externalEligibilityProductIdentifier,
+            int? externalEligibilityChannelIdentifier,
             string externalEligibilityURL
             )
         {
             try
             {
                 int DO_UPDATE_RESERVE_STORE = 0;
+                int reserveStoreRidParsed = 0;
                 int? RESERVE_ST_RID = null;
-                if (reserveStoreRid.Length > 0)
+                if (int.TryParse(reserveStoreRid, NumberStyles.Integer, CultureInfo.CurrentUICulture, out reserveStoreRidParsed))
                 {
                     DO_UPDATE_RESERVE_STORE = 1;
-                    RESERVE_ST_RID = Convert.ToInt32(reserveStoreRid, CultureInfo.CurrentUICulture);
+                    RESERVE_ST_RID = reserveStoreRidParsed;
                 }
 
                 char SIZE_BREAKOUT_IND;
@@ -362,50 +363,106 @@ namespace MIDRetail.Data
                 else
                     PRORATE_CHAIN_STOCK = '0';
 
+                int newStorePeriodBeginParsed = 0;
                 int? NEW_STORE_TIMEFRAME_BEGIN = null;
-                if (newStorePeriodBegin.Length != 0) NEW_STORE_TIMEFRAME_BEGIN = Convert.ToInt32(newStorePeriodBegin, CultureInfo.CurrentUICulture);
+                if (int.TryParse(newStorePeriodBegin, NumberStyles.Integer, CultureInfo.CurrentUICulture, out newStorePeriodBeginParsed))
+                {
+                    NEW_STORE_TIMEFRAME_BEGIN = newStorePeriodBeginParsed;
+                }
 
+                int newStorePeriodEndParsed = 0;
                 int? NEW_STORE_TIMEFRAME_END = null;
-                if (newStorePeriodEnd.Length != 0) NEW_STORE_TIMEFRAME_END = Convert.ToInt32(newStorePeriodEnd, CultureInfo.CurrentUICulture);
+                if (int.TryParse(newStorePeriodEnd, NumberStyles.Integer, CultureInfo.CurrentUICulture, out newStorePeriodEndParsed))
+                {
+                    NEW_STORE_TIMEFRAME_END = newStorePeriodEndParsed;
+                }
 
+                int nonCompStorePeriodBeginParsed = 0;
                 int? NON_COMP_STORE_TIMEFRAME_BEGIN = null;
-                if (nonCompStorePeriodBegin.Length != 0) NON_COMP_STORE_TIMEFRAME_BEGIN = Convert.ToInt32(nonCompStorePeriodBegin, CultureInfo.CurrentUICulture);
+                if (int.TryParse(nonCompStorePeriodBegin, NumberStyles.Integer, CultureInfo.CurrentUICulture, out nonCompStorePeriodBeginParsed))
+                {
+                    NON_COMP_STORE_TIMEFRAME_BEGIN = nonCompStorePeriodBeginParsed;
+                }
 
+                int nonCompStorePeriodEndParsed = 0;
                 int? NON_COMP_STORE_TIMEFRAME_END = null;
-                if (nonCompStorePeriodEnd.Length != 0) NON_COMP_STORE_TIMEFRAME_END = Convert.ToInt32(nonCompStorePeriodEnd, CultureInfo.CurrentUICulture);
+                if (int.TryParse(nonCompStorePeriodEnd, NumberStyles.Integer, CultureInfo.CurrentUICulture, out nonCompStorePeriodEndParsed))
+                {
+                    NON_COMP_STORE_TIMEFRAME_END = nonCompStorePeriodEndParsed;
+                }
 
+                double defaultPercentNeedLimitParsed = 0;
                 double? DEFAULT_PCT_NEED_LIMIT = null;
-                if (defaultPercentNeedLimit.Length != 0) DEFAULT_PCT_NEED_LIMIT = Convert.ToDouble(defaultPercentNeedLimit, CultureInfo.CurrentUICulture);
+                if (double.TryParse(defaultPercentNeedLimit, NumberStyles.Number, CultureInfo.CurrentUICulture, out defaultPercentNeedLimitParsed))
+                {
+                    DEFAULT_PCT_NEED_LIMIT = defaultPercentNeedLimitParsed;
+                }
 
+                double defaultBalanceToleranceParsed = 0;
                 double? DEFAULT_BALANCE_TOLERANCE = null;
-                if (defaultBalanceTolerance.Length != 0) DEFAULT_BALANCE_TOLERANCE = Convert.ToDouble(defaultBalanceTolerance, CultureInfo.CurrentUICulture);
+                if (double.TryParse(defaultBalanceTolerance, NumberStyles.Number, CultureInfo.CurrentUICulture, out defaultBalanceToleranceParsed))
+                {
+                    DEFAULT_BALANCE_TOLERANCE = defaultBalanceToleranceParsed;
+                }
 
+                double defaultPackSizeErrorPercentParsed = 0;
                 double? DEFAULT_PACK_SIZE_ERROR_PCT = null;
-                if (defaultPackSizeErrorPercent.Length != 0) DEFAULT_PACK_SIZE_ERROR_PCT = Convert.ToDouble(defaultPackSizeErrorPercent, CultureInfo.CurrentUICulture);
+                if (double.TryParse(defaultPackSizeErrorPercent, NumberStyles.Number, CultureInfo.CurrentUICulture, out defaultPackSizeErrorPercentParsed))
+                {
+                    DEFAULT_PACK_SIZE_ERROR_PCT = defaultPackSizeErrorPercentParsed;
+                }
 
+                double defaultMaxSizeErrorPercentParsed = 0;
                 double? DEFAULT_MAX_SIZE_ERROR_PCT = null;
-                if (defaultMaxSizeErrorPercent.Length != 0) DEFAULT_MAX_SIZE_ERROR_PCT = Convert.ToDouble(defaultMaxSizeErrorPercent, CultureInfo.CurrentUICulture);
+                if (double.TryParse(defaultMaxSizeErrorPercent, NumberStyles.Number, CultureInfo.CurrentUICulture, out defaultMaxSizeErrorPercentParsed))
+                {
+                    DEFAULT_MAX_SIZE_ERROR_PCT = defaultMaxSizeErrorPercentParsed;
+                }
 
+                double defaultFillSizeHolesPercentParsed = 0;
                 double? DEFAULT_FILL_SIZE_HOLES_PCT = null;
-                if (defaultFillSizeHolesPercent.Length != 0) DEFAULT_FILL_SIZE_HOLES_PCT = Convert.ToDouble(defaultFillSizeHolesPercent, CultureInfo.CurrentUICulture);
+                if (double.TryParse(defaultFillSizeHolesPercent, NumberStyles.Number, CultureInfo.CurrentUICulture, out defaultFillSizeHolesPercentParsed))
+                {
+                    DEFAULT_FILL_SIZE_HOLES_PCT = defaultFillSizeHolesPercentParsed;
+                }
 
+                double genericPackRounding1stPackPctParsed = 0;
                 double? GENERIC_PACK_ROUNDING_1ST_PACK_PCT = null;
-                if (genericPackRounding1stPackPct.Length != 0) GENERIC_PACK_ROUNDING_1ST_PACK_PCT = Convert.ToDouble(genericPackRounding1stPackPct, CultureInfo.CurrentUICulture);
+                if (double.TryParse(genericPackRounding1stPackPct, NumberStyles.Number, CultureInfo.CurrentUICulture, out genericPackRounding1stPackPctParsed))
+                {
+                    GENERIC_PACK_ROUNDING_1ST_PACK_PCT = genericPackRounding1stPackPctParsed;
+                }
 
+                double genericPackRoundingNthPackPctParsed = 0;
                 double? GENERIC_PACK_ROUNDING_NTH_PACK_PCT = null;
-                if (genericPackRoundingNthPackPct.Length != 0) GENERIC_PACK_ROUNDING_NTH_PACK_PCT = Convert.ToDouble(genericPackRoundingNthPackPct, CultureInfo.CurrentUICulture);
+                if (double.TryParse(genericPackRoundingNthPackPct, NumberStyles.Number, CultureInfo.CurrentUICulture, out genericPackRoundingNthPackPctParsed))
+                {
+                    GENERIC_PACK_ROUNDING_NTH_PACK_PCT = genericPackRoundingNthPackPctParsed;
+                }
 
                 string SIZE_CURVE_CHARMASK = Include.NullForStringValue;  //TT#1310-MD -jsobek -Error when adding a new Store
-                if (sizeCurveCharMask.Trim() != string.Empty) SIZE_CURVE_CHARMASK = sizeCurveCharMask;
+                if (!String.IsNullOrWhiteSpace(sizeCurveCharMask))
+                {
+                    SIZE_CURVE_CHARMASK = sizeCurveCharMask.Trim();
+                }
 
                 string SIZE_GROUP_CHARMASK = Include.NullForStringValue;  //TT#1310-MD -jsobek -Error when adding a new Store
-                if (sizeGroupCharMask.Trim() != string.Empty) SIZE_GROUP_CHARMASK = sizeGroupCharMask;
+                if (!String.IsNullOrWhiteSpace(sizeGroupCharMask))
+                {
+                    SIZE_GROUP_CHARMASK = sizeGroupCharMask.Trim();
+                }
 
                 string SIZE_ALTERNATE_CHARMASK = Include.NullForStringValue;  //TT#1310-MD -jsobek -Error when adding a new Store
-                if (sizeAlternateCharMask.Trim() != string.Empty) SIZE_ALTERNATE_CHARMASK = sizeAlternateCharMask;
+                if (!String.IsNullOrWhiteSpace(sizeAlternateCharMask))
+                {
+                    SIZE_ALTERNATE_CHARMASK = sizeAlternateCharMask.Trim();
+                }
 
                 string SIZE_CONSTRAINT_CHARMASK = Include.NullForStringValue;  //TT#1310-MD -jsobek -Error when adding a new Store
-                if (sizeConstraintCharMask.Trim() != string.Empty) SIZE_CONSTRAINT_CHARMASK = sizeConstraintCharMask;
+                if (!String.IsNullOrWhiteSpace(sizeConstraintCharMask))
+                {
+                    SIZE_CONSTRAINT_CHARMASK = sizeConstraintCharMask.Trim();
+                }
 
                 int ALLOW_STORE_MAX_VALUE_MODIFICATION = 0;
                 if (allowStoreMaxValueModification) ALLOW_STORE_MAX_VALUE_MODIFICATION = 1;
@@ -454,8 +511,6 @@ namespace MIDRetail.Data
                 else
                     CONTROL_SERVICE_DEFAULT_BATCH_ONLY_MODE_ON = '0';
 
-                int VSW_ITEM_FWOS_MAX_IND = aVSWItemFWOSMax.GetHashCode(); //TT#933-MD - AGallagher - Item Max vs. FWOS Max
-
                 // Begin TT#1609-MD - stodd - data layer change - prior header
                 char PRIOR_HEADER_INCLUDE_RESERVE_IND;
                 if (priorHeaderIncludeReserveInd)
@@ -468,43 +523,40 @@ namespace MIDRetail.Data
                 // Begin TT#1689-MD - stodd - DC Carton Rounding Default Attribute should be blank if not selected 
                 //int DC_CARTON_ROUNDING_SG_RID = cartonRoundingSgRid;	// TT#1652-MD - stodd - DC Carton Rounding
                 int? DC_CARTON_ROUNDING_SG_RID = null;
-                if (cartonRoundingSgRid > 0)
+                if (cartonRoundingSgRid != null && cartonRoundingSgRid > 0)
                 {
                     DC_CARTON_ROUNDING_SG_RID = cartonRoundingSgRid;
                 }
                 // End TT#1689-MD - stodd - DC Carton Rounding Default Attribute should be blank if not selected
 
                 // BEGIN TT#1966-MD - AGallagher - DC Fulfillment
-                int SPLIT_OPTION = split_option.GetHashCode();
                 char? APPLY_MINIMUMS_IND = apply_minimums_ind;
                 char? PRIORITIZE_TYPE = prioritize_type;
                 int? HEADER_FIELD = header_field;
                 int? HCG_RID = hcg_rid;
-                int? HEADERS_ORDER = header_order.GetHashCode();
-                int STORES_ORDER = store_order.GetHashCode();
-                int SPLIT_BY_OPTION = split_by_option.GetHashCode();
-                int SPLIT_BY_RESERVE = split_by_reserve.GetHashCode();
-                int APPLY_BY = apply_by.GetHashCode();
-                int WITHIN_DC = within_dc.GetHashCode();
+
+                // checking if int is null then converting to int values
+                int? HEADERS_ORDER = header_order != null ? (int?)(header_order.GetHashCode()) : null;
+                int? STORES_ORDER = store_order != null ? (int?)(store_order.GetHashCode()) : null;
+                int? SPLIT_BY_OPTION = split_by_option != null ? (int?)(split_by_option.GetHashCode()) : null;
+                int? SPLIT_BY_RESERVE = split_by_reserve != null ? (int?)(split_by_reserve.GetHashCode()) : null;
+                int? APPLY_BY = apply_by != null ? (int?)(apply_by.GetHashCode()) : null;
+                int? WITHIN_DC = within_dc != null ? (int?)(within_dc.GetHashCode()) : null;
                 // END TT#1966-MD - AGallagher - DC Fulfillment
 
-                char USE_EXTERNAL_ELIGIBILITY_ALLOCATION;
-                if (useExternalEligibilityAllocation)
-                    USE_EXTERNAL_ELIGIBILITY_ALLOCATION = '1';
-                else
-                    USE_EXTERNAL_ELIGIBILITY_ALLOCATION = '0';
+                char USE_EXTERNAL_ELIGIBILITY_ALLOCATION = useExternalEligibilityAllocation ? '1' : '0';
+                char USE_EXTERNAL_ELIGIBILITY_PLANNING = useExternalEligibilityPlanning ? '1' : '0';
 
-                char USE_EXTERNAL_ELIGIBILITY_PLANNING;
-                if (useExternalEligibilityPlanning)
-                    USE_EXTERNAL_ELIGIBILITY_PLANNING = '1';
-                else
-                    USE_EXTERNAL_ELIGIBILITY_PLANNING = '0';
+                int? EXTERNAL_ELIGIBILITY_PRODUCT_IDENTIFIER = externalEligibilityProductIdentifier != null ? 
+                    (int?)(externalEligibilityProductIdentifier.GetHashCode()) : null;
+                int? EXTERNAL_ELIGIBILITY_CHANNEL_IDENTIFIER = externalEligibilityChannelIdentifier != null ? 
+                    (int?)(externalEligibilityChannelIdentifier.GetHashCode()) : null;
 
-                int EXTERNAL_ELIGIBILITY_PRODUCT_IDENTIFIER = externalEligibilityProductIdentifier.GetHashCode();
-                int EXTERNAL_ELIGIBILITY_CHANNEL_IDENTIFIER = externalEligibilityChannelIdentifier.GetHashCode();
-
-                string EXTERNAL_ELIGIBILITY_URL = Include.NullForStringValue;  
-                if (externalEligibilityURL.Trim() != string.Empty) EXTERNAL_ELIGIBILITY_URL = externalEligibilityURL;
+                string EXTERNAL_ELIGIBILITY_URL = Include.NullForStringValue;
+                if (!String.IsNullOrWhiteSpace(externalEligibilityURL))
+                {
+                    EXTERNAL_ELIGIBILITY_URL = externalEligibilityURL.Trim();
+                }
 
                 int rowsUpdated = StoredProcedures.MID_SYSTEM_OPTIONS_UPDATE.Update(_dba,
                                                                   DO_UPDATE_RESERVE_STORE: DO_UPDATE_RESERVE_STORE,
@@ -549,10 +601,10 @@ namespace MIDRetail.Data
                                                                   USE_WINDOWS_LOGIN: USE_WINDOWS_LOGIN,
                                                                   STORE_GRADE_TIMEFRAME: storeGradePeriod,
                                                                   NORMALIZE_SIZE_CURVES_IND: Include.ConvertBoolToChar(aNormalizeSizeCurves),
-                                                                  FILL_SIZES_TO_TYPE: Convert.ToInt32(aFillSizesToType),
+                                                                  FILL_SIZES_TO_TYPE: aFillSizesToType,
                                                                   GENERIC_PACK_ROUNDING_1ST_PACK_PCT: GENERIC_PACK_ROUNDING_1ST_PACK_PCT,
                                                                   GENERIC_PACK_ROUNDING_NTH_PACK_PCT: GENERIC_PACK_ROUNDING_NTH_PACK_PCT,
-                                                                  ACTIVITY_MESSAGE_UPPER_LIMIT: Convert.ToInt32(aMyActivityMessageUpperLimit),
+                                                                  ACTIVITY_MESSAGE_UPPER_LIMIT: aMyActivityMessageUpperLimit,
                                                                   SHIPPING_HORIZON_WEEKS: shippingHorizonWeeks,
                                                                   HEADER_LINK_CHARACTERISTIC: headerLinkCharacteristic,
                                                                   SIZE_CURVE_CHARMASK: SIZE_CURVE_CHARMASK,
@@ -560,7 +612,7 @@ namespace MIDRetail.Data
                                                                   SIZE_ALTERNATE_CHARMASK: SIZE_ALTERNATE_CHARMASK,
                                                                   SIZE_CONSTRAINT_CHARMASK: SIZE_CONSTRAINT_CHARMASK,
                                                                   ALLOW_RLSE_IF_ALL_IN_RSRV_IND: Include.ConvertBoolToChar(aAllowRlseIfAllInReserve),
-                                                                  GENERIC_SIZE_CURVE_NAME_TYPE: aGenericSizeCurveNameType.GetHashCode(),
+                                                                  GENERIC_SIZE_CURVE_NAME_TYPE: aGenericSizeCurveNameType != null ? (int?)(aGenericSizeCurveNameType.GetHashCode()) : null,
                                                                   NUMBER_OF_WEEKS_WITH_ZERO_SALES: numberOfWeeksWithZeroSales,
                                                                   MAXIMUM_CHAIN_WOS: maximumChainWOS,
                                                                   PRORATE_CHAIN_STOCK: PRORATE_CHAIN_STOCK,
@@ -569,7 +621,7 @@ namespace MIDRetail.Data
                                                                   PACK_TOLERANCE_STEPPED_IND: Include.ConvertBoolToChar(aPackToleranceStepped),
                                                                   RI_EXPAND_IND: Include.ConvertBoolToChar(aRIExpandInd),
                                                                   ALLOW_STORE_MAX_VALUE_MODIFICATION: ALLOW_STORE_MAX_VALUE_MODIFICATION,
-                                                                  VSW_SIZE_CONSTRAINTS: aVSWSizeConstraints.GetHashCode(),
+                                                                  VSW_SIZE_CONSTRAINTS: aVSWSizeConstraints,
                                                                   ENABLE_VELOCITY_GRADE_OPTIONS: ENABLE_VELOCITY_GRADE_OPTIONS,
                                                                   FORCE_SINGLE_CLIENT_INSTANCE: FORCE_SINGLE_CLIENT_INSTANCE,
                                                                   FORCE_SINGLE_USER_INSTANCE: FORCE_SINGLE_USER_INSTANCE,
@@ -577,10 +629,10 @@ namespace MIDRetail.Data
                                                                   USE_ACTIVE_DIRECTORY_AUTHENTICATION_WITH_DOMAIN: USE_ACTIVE_DIRECTORY_AUTHENTICATION_WITH_DOMAIN,
                                                                   USE_BATCH_ONLY_MODE: USE_BATCH_ONLY_MODE,
                                                                   CONTROL_SERVICE_DEFAULT_BATCH_ONLY_MODE_ON: CONTROL_SERVICE_DEFAULT_BATCH_ONLY_MODE_ON,
-                                                                  VSW_ITEM_FWOS_MAX_IND: VSW_ITEM_FWOS_MAX_IND,
+                                                                  VSW_ITEM_FWOS_MAX_IND: aVSWItemFWOSMax,
                                                                   PRIOR_HEADER_INCLUDE_RESERVE_IND: PRIOR_HEADER_INCLUDE_RESERVE_IND,  // TT#1609-MD - stodd - data layer change - prior header
                                                                   DC_CARTON_ROUNDING_SG_RID: DC_CARTON_ROUNDING_SG_RID,	// TT#1652-MD - stodd - DC Carton Rounding
-                                                                  SPLIT_OPTION: SPLIT_OPTION,                           // TT#1966-MD - AGallagher - DC Fulfillment
+                                                                  SPLIT_OPTION: split_option,                           // TT#1966-MD - AGallagher - DC Fulfillment
                                                                   APPLY_MINIMUMS_IND: APPLY_MINIMUMS_IND,               // TT#1966-MD - AGallagher - DC Fulfillment
                                                                   PRIORITIZE_TYPE: PRIORITIZE_TYPE,                     // TT#1966-MD - AGallagher - DC Fulfillment
                                                                   HEADER_FIELD: HEADER_FIELD,                           // TT#1966-MD - AGallagher - DC Fulfillment
@@ -611,11 +663,11 @@ namespace MIDRetail.Data
 
 
 
-		/// <summary>
-		/// returns the contents of the STATE_PROVINCE table as an array.
-		/// </summary>
-		/// <returns></returns>
-		public string[] GetStateAbbreviationsArray()
+        /// <summary>
+        /// returns the contents of the STATE_PROVINCE table as an array.
+        /// </summary>
+        /// <returns></returns>
+        public string[] GetStateAbbreviationsArray()
 		{
 			try
 			{

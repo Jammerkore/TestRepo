@@ -187,87 +187,302 @@ namespace Logility.ROWeb
 
         private void SaveGlobalOptionsToDB(GlobalOptions opts)
         {
-            string sNewStorePeriodBegin = Convert.ToString(_GlobalOptionsProfile.NewStorePeriodBegin, CultureInfo.CurrentUICulture);
-            string sNewStorePeriodEnd = Convert.ToString(_GlobalOptionsProfile.NewStorePeriodEnd, CultureInfo.CurrentUICulture);
-            string sNonCompStorePeriodBegin = Convert.ToString(_GlobalOptionsProfile.NonCompStorePeriodBegin, CultureInfo.CurrentUICulture);
-            string sNonCompStorePeriodEnd = Convert.ToString(_GlobalOptionsProfile.NonCompStorePeriodEnd, CultureInfo.CurrentUICulture);
-            int iProductLevelDisplay = Convert.ToInt32(_GlobalOptionsProfile.ProductLevelDisplay, CultureInfo.CurrentUICulture);
-            string sPercentNeedLimit = ConvertDoubleToString(_GlobalOptionsProfile.PercentNeedLimit);
-            string sBalanceTolerancePercent = ConvertDoubleToString(_GlobalOptionsProfile.BalanceTolerancePercent);
-            string sPackSizeErrorPercent = ConvertDoubleToString(_GlobalOptionsProfile.PackSizeErrorPercent);
-            string sMaxSizeErrorPercent = ConvertDoubleToString(_GlobalOptionsProfile.MaxSizeErrorPercent);
-            string sFillSizeHolesPercent = ConvertDoubleToString(_GlobalOptionsProfile.FillSizeHolesPercent);
-            string sGenericPackRounding1stPackPct = ConvertDoubleToString(_GlobalOptionsProfile.GenericPackRounding1stPackPct);
-            string sGenericPackRoundingNthPackPct = ConvertDoubleToString(_GlobalOptionsProfile.GenericPackRoundingNthPackPct);
-            // BEGIN STUBBED VALUES - MUST FILL IN FROM UI
-            eDCFulfillmentSplitOption split_option = eDCFulfillmentSplitOption.DCFulfillment;
-            char apply_minimums_ind = '0';
-            char prioritize_type = 'H';
-            int header_field = Include.NoRID;
-            int hcg_rid = Include.NoRID;
-            eDCFulfillmentHeadersOrder header_order = eDCFulfillmentHeadersOrder.Ascending;
-            eDCFulfillmentStoresOrder store_order = eDCFulfillmentStoresOrder.Ascending;
-            eDCFulfillmentSplitByOption split_by_option = eDCFulfillmentSplitByOption.SplitByDC;
-            eDCFulfillmentReserve split_by_reserve = eDCFulfillmentReserve.ReservePostSplit;
-            eDCFulfillmentMinimums apply_by = eDCFulfillmentMinimums.ApplyByQty;
-            eDCFulfillmentWithinDC within_dc = eDCFulfillmentWithinDC.Fill;
-            // END STUBBED VALUES
+            // grabbing current Global options values from the database
+            // using _GlobalOptionsProfile for these values can create issues due to
+            // some of the defaults being values that you cannot properly compensate for
+            DataTable dt = opts.GetGlobalOptions();
+            DataRow dr = dt.Rows[0];
 
-            opts.UpdateGlobalOptions
-                    (_GlobalOptionsProfile.CompanyName, 
-                     _GlobalOptionsProfile.Street, _GlobalOptionsProfile.City, _GlobalOptionsProfile.State, _GlobalOptionsProfile.Zip, 
-                     _GlobalOptionsProfile.Telephone, _GlobalOptionsProfile.Fax, _GlobalOptionsProfile.Email,
-                     _GlobalOptionsProfile.PurgeAllocationsPeriod, Convert.ToInt32(_GlobalOptionsProfile.StoreDisplay), 
-                     _GlobalOptionsProfile.OTSPlanStoreGroupRID, _GlobalOptionsProfile.AllocationStoreGroupRID,
-                     sNewStorePeriodBegin,
-                     sNewStorePeriodEnd,
-                     sNonCompStorePeriodBegin,
-                     sNonCompStorePeriodEnd,
-                     iProductLevelDisplay,
-                     sPercentNeedLimit,
-                     sBalanceTolerancePercent,
-                     sPackSizeErrorPercent,
-                     sMaxSizeErrorPercent,
-                     sFillSizeHolesPercent,
-                     sGenericPackRounding1stPackPct,
-                     sGenericPackRoundingNthPackPct,
-                     _GlobalOptionsProfile.SizeBreakoutInd, _GlobalOptionsProfile.AppConfig.SizeInstalled,
-                     _GlobalOptionsProfile.BulkIsDetail, _GlobalOptionsProfile.StoreGradePeriod, 
-                     _GlobalOptionsProfile.ProtectInterfacedHeadersInd, _GlobalOptionsProfile.ReserveStoreRID.ToString(),
-                     _GlobalOptionsProfile.UseWindowsLogin, _GlobalOptionsProfile.ShippingHorizonWeeks,
-                     _GlobalOptionsProfile.ProductLevelDelimiter, _GlobalOptionsProfile.HeaderLinkCharacteristicKey, 
-                     _GlobalOptionsProfile.SizeCurveCharMask, _GlobalOptionsProfile.SizeGroupCharMask, 
-                     _GlobalOptionsProfile.SizeAlternateCharMask, _GlobalOptionsProfile.SizeConstraintCharMask,
-                     _GlobalOptionsProfile.NormalizeSizeCurves,
-                     _GlobalOptionsProfile.FillSizesToType, _GlobalOptionsProfile.AllowReleaseIfAllUnitsInReserve, 
-                     _GlobalOptionsProfile.NumberOfWeeksWithZeroSales, _GlobalOptionsProfile.MaximumChainWOS, 
-                     _GlobalOptionsProfile.ProrateChainStock, _GlobalOptionsProfile.GenericSizeCurveNameType,
-                     _GlobalOptionsProfile.GenerateSizeCurveUsing, _GlobalOptionsProfile.PackToleranceNoMaxStep, 
-                     _GlobalOptionsProfile.PackToleranceStepped,
-                     true, _GlobalOptionsProfile.AllowStoreMaxValueModification, _GlobalOptionsProfile.VSWSizeConstraints,
-                     _iActivityMsgUpperLimit, _SmtpOptions,
-                     _GlobalOptionsProfile.IsStoreDeleteInProgress, _GlobalOptionsProfile.EnableVelocityGradeOptions,
-                     _GlobalOptionsProfile.ForceSingleClientInstance, _GlobalOptionsProfile.ForceSingleUserInstance, 
-                     _GlobalOptionsProfile.UseActiveDirectoryAuthentication, _GlobalOptionsProfile.UseActiveDirectoryAuthenticationWithDomain, 
-                     _bUseBatchOnlyMode, _bStartWithBatchOnlyModeOn, _GlobalOptionsProfile.VSWItemFWOSMax,
-                     _GlobalOptionsProfile.PriorHeaderIncludeReserve, _GlobalOptionsProfile.DCCartonRoundingSGRid,
-                     split_option,
-                     apply_minimums_ind,
-                     prioritize_type,
-                     header_field,
-                     hcg_rid,
-                     header_order,
-                     store_order,
-                     split_by_option,
-                     split_by_reserve,
-                     apply_by,
-                     within_dc,
-                     _GlobalOptionsProfile.UseExternalEligibilityAllocation,
-                     _GlobalOptionsProfile.UseExternalEligibilityPlanning,
-                     _GlobalOptionsProfile.ExternalEligibilityProductIdentifier,
-                     _GlobalOptionsProfile.ExternalEligibilityChannelIdentifier,
-                     _GlobalOptionsProfile.ExternalEligibilityURL
-                    );
+            string companyStreet = dr["COMPANY_STREET"] != DBNull.Value ? 
+                dr["COMPANY_STREET"].ToString() : null;
+
+            string companyCity = dr["COMPANY_CITY"] != DBNull.Value ? 
+                dr["COMPANY_CITY"].ToString() : null;
+
+            string companyState = dr["COMPANY_SP_ABBREVIATION"] != DBNull.Value ? 
+                dr["COMPANY_SP_ABBREVIATION"].ToString() : null;
+
+            string companyZip = dr["COMPANY_POSTAL_CODE"] != DBNull.Value ? 
+                dr["COMPANY_POSTAL_CODE"].ToString() : null;
+
+            string companyPhone = dr["COMPANY_TELEPHONE"] != DBNull.Value ? 
+                dr["COMPANY_TELEPHONE"].ToString() : null;
+
+            string companyFax = dr["COMPANY_FAX"] != DBNull.Value ? 
+                dr["COMPANY_FAX"].ToString() : null;
+
+            string companyEmail = dr["COMPANY_EMAIL"] != DBNull.Value ? 
+                dr["COMPANY_EMAIL"].ToString() : null;
+
+            int purgeAllocationsPeriod = Convert.ToInt32(dr["PURGE_ALLOCATIONS"], CultureInfo.CurrentUICulture);
+
+            int storeDisplayOptionId = Convert.ToInt32(dr["STORE_DISPLAY_OPTION_ID"], CultureInfo.CurrentUICulture);
+
+            int? defaultOtsSgRid = dr["DEFAULT_OTS_SG_RID"] != DBNull.Value ?
+                (int?)Convert.ToInt32(dr["DEFAULT_OTS_SG_RID"], CultureInfo.CurrentUICulture) : null;
+
+            int? defaultAllocSgRid = dr["DEFAULT_ALLOC_SG_RID"] != DBNull.Value ?
+                (int?)Convert.ToInt32(dr["DEFAULT_ALLOC_SG_RID"], CultureInfo.CurrentUICulture) : null;
+
+            string newStorePeriodBegin = dr["NEW_STORE_TIMEFRAME_BEGIN"] != DBNull.Value ?
+                dr["NEW_STORE_TIMEFRAME_BEGIN"].ToString() : null;
+
+            string newStorePeriodEnd = dr["NEW_STORE_TIMEFRAME_END"] != DBNull.Value ?
+                dr["NEW_STORE_TIMEFRAME_END"].ToString() : null;
+
+            string nonCompStorePeriodBegin = dr["NON_COMP_STORE_TIMEFRAME_BEGIN"] != DBNull.Value ?
+                dr["NON_COMP_STORE_TIMEFRAME_BEGIN"].ToString() : null;
+
+            string nonCompStorePeriodEnd = dr["NON_COMP_STORE_TIMEFRAME_END"] != DBNull.Value ?
+                dr["NON_COMP_STORE_TIMEFRAME_END"].ToString() : null;
+
+            int productLevelDisplayId = Convert.ToInt32(dr["PRODUCT_LEVEL_DISPLAY_ID"], CultureInfo.CurrentUICulture);
+
+            string defaultPercentNeedLimit = dr["DEFAULT_PCT_NEED_LIMIT"] != DBNull.Value ?
+                dr["DEFAULT_PCT_NEED_LIMIT"].ToString() : null;
+    
+            string defaultBalanceTolerance = dr["DEFAULT_BALANCE_TOLERANCE"] != DBNull.Value ?
+                dr["DEFAULT_BALANCE_TOLERANCE"].ToString() : null;
+    
+            string defaultPackSizeErrorPercent = dr["DEFAULT_PACK_SIZE_ERROR_PCT"] != DBNull.Value ?
+                dr["DEFAULT_PACK_SIZE_ERROR_PCT"].ToString() : null;
+    
+            string defaultMaxSizeErrorPercent = dr["DEFAULT_MAX_SIZE_ERROR_PCT"] != DBNull.Value ?
+                dr["DEFAULT_MAX_SIZE_ERROR_PCT"].ToString() : null;
+    
+            string defaultFillSizeHolesPercent = dr["DEFAULT_FILL_SIZE_HOLES_PCT"] != DBNull.Value ?
+                dr["DEFAULT_FILL_SIZE_HOLES_PCT"].ToString() : null;
+
+            string genericPackRounding1stPackPct = dr["GENERIC_PACK_ROUNDING_1ST_PACK_PCT"] != DBNull.Value ?
+                dr["GENERIC_PACK_ROUNDING_1ST_PACK_PCT"].ToString() : null;
+    
+            string genericPackRoundingNthPackPct = dr["GENERIC_PACK_ROUNDING_NTH_PACK_PCT"] != DBNull.Value ?
+                dr["GENERIC_PACK_ROUNDING_NTH_PACK_PCT"].ToString() : null;
+
+            bool sizeBreakoutInd = Convert.ToChar(dr["SIZE_BREAKOUT_IND"]) == '1';
+    
+            bool sizeNeedInd = Convert.ToChar(dr["SIZE_NEED_IND"]) == '1';
+    
+            bool bulkIsDetailInd = Convert.ToChar(dr["BULK_IS_DETAIL_IND"]) == '1';
+    
+            int storeGradePeriod = Convert.ToInt32(dr["STORE_GRADE_TIMEFRAME"], CultureInfo.CurrentUICulture);
+    
+            bool protectInterfaceHeadersInd = Convert.ToChar(dr["PROTECT_IF_HDRS_IND"]) == '1';
+
+            string reserveStoreRid = dr["RESERVE_ST_RID"] != DBNull.Value ?
+                dr["RESERVE_ST_RID"].ToString() : null;
+
+            bool useWindowsLogin = dr["USE_WINDOWS_LOGIN"] != DBNull.Value ?
+                Convert.ToChar(dr["USE_WINDOWS_LOGIN"]) == '1' : false;
+
+            int? shippingHorizonWeeks = dr["SHIPPING_HORIZON_WEEKS"] != DBNull.Value ?
+                (int?)Convert.ToInt32(dr["SHIPPING_HORIZON_WEEKS"], CultureInfo.CurrentUICulture) : null;
+
+            char? productLevelDelimiter = dr["PRODUCT_LEVEL_DELIMITER"] != DBNull.Value ? 
+                (char?)Convert.ToChar(dr["PRODUCT_LEVEL_DELIMITER"]) : null;
+
+            int? headerLinkCharacteristic = dr["HEADER_LINK_CHARACTERISTIC"] != DBNull.Value ?
+                (int?)Convert.ToInt32(dr["HEADER_LINK_CHARACTERISTIC"], CultureInfo.CurrentUICulture) : null;
+    
+            string sizeCurveCharMask = dr["SIZE_CURVE_CHARMASK"] != DBNull.Value ?
+                dr["SIZE_CURVE_CHARMASK"].ToString() : null;
+    
+            string sizeGroupCharMask = dr["SIZE_GROUP_CHARMASK"] != DBNull.Value ?
+                dr["SIZE_GROUP_CHARMASK"].ToString() : null;
+    
+            string sizeAlternateCharMask = dr["SIZE_ALTERNATE_CHARMASK"] != DBNull.Value ?
+                dr["SIZE_ALTERNATE_CHARMASK"].ToString() : null;
+    
+            string sizeConstraintCharMask = dr["SIZE_CONSTRAINT_CHARMASK"] != DBNull.Value ?
+                dr["SIZE_CONSTRAINT_CHARMASK"].ToString() : null;
+    
+            bool aNormalizeSizeCurves = dr["NORMALIZE_SIZE_CURVES_IND"] != DBNull.Value ? 
+                Convert.ToChar(dr["NORMALIZE_SIZE_CURVES_IND"]) == '1' : false;
+
+            int? aFillSizesToType = dr["FILL_SIZES_TO_TYPE"] != DBNull.Value ?
+                (int?)Convert.ToInt32(dr["FILL_SIZES_TO_TYPE"], CultureInfo.CurrentUICulture) : null;
+
+            bool aAllowRlseIfAllInReserve = dr["ALLOW_RLSE_IF_ALL_IN_RSRV_IND"] != DBNull.Value ? 
+                Convert.ToChar(dr["ALLOW_RLSE_IF_ALL_IN_RSRV_IND"]) == '1' : false;
+
+            int? numberOfWeeksWithZeroSales = dr["NUMBER_OF_WEEKS_WITH_ZERO_SALES"] != DBNull.Value ?
+                (int?)Convert.ToInt32(dr["NUMBER_OF_WEEKS_WITH_ZERO_SALES"], CultureInfo.CurrentUICulture) : null;
+
+            int? maximumChainWOS = dr["MAXIMUM_CHAIN_WOS"] != DBNull.Value ?
+                (int?)Convert.ToInt32(dr["MAXIMUM_CHAIN_WOS"], CultureInfo.CurrentUICulture) : null;
+
+            bool prorateChainStock = dr["PRORATE_CHAIN_STOCK"] != DBNull.Value ? 
+                Convert.ToChar(dr["PRORATE_CHAIN_STOCK"]) == '1' :  false;
+
+            int? aGenericSizeCurveNameType = dr["GENERIC_SIZE_CURVE_NAME_TYPE"] != DBNull.Value ?
+                (int?)Convert.ToInt32(dr["GENERIC_SIZE_CURVE_NAME_TYPE"], CultureInfo.CurrentUICulture) : null;
+
+            eGenerateSizeCurveUsing aGenerateSizeCurveUsing = (eGenerateSizeCurveUsing)Convert.ToInt32(dr["GEN_SIZE_CURVE_USING"], CultureInfo.CurrentUICulture);
+
+            bool aPackToleranceNoMaxStep = dr["PACK_TOLERANCE_NO_MAX_STEP_IND"] != DBNull.Value ? 
+                Convert.ToChar(dr["PACK_TOLERANCE_NO_MAX_STEP_IND"]) == '1' : false;
+
+            bool aPackToleranceStepped = dr["PACK_TOLERANCE_STEPPED_IND"] != DBNull.Value ? 
+                Convert.ToChar(dr["PACK_TOLERANCE_STEPPED_IND"]) == '1' : false;
+
+            bool aRIExpandInd = Convert.ToChar(dr["RI_EXPAND_IND"]) == '1';            
+
+            bool allowStoreMaxValueModification = dr["ALLOW_STORE_MAX_VALUE_MODIFICATION"] != DBNull.Value ?
+                Convert.ToBoolean(dr["ALLOW_STORE_MAX_VALUE_MODIFICATION"], CultureInfo.CurrentUICulture) : false;
+
+            int? aVSWSizeConstraints = dr["VSW_SIZE_CONSTRAINTS"] != DBNull.Value ?
+                (int?)Convert.ToInt32(dr["VSW_SIZE_CONSTRAINTS"], CultureInfo.CurrentUICulture) : null;
+
+            int? aMyActivityMessageUpperLimit = dr["ACTIVITY_MESSAGE_UPPER_LIMIT"] != DBNull.Value ?
+                (int?)Convert.ToInt32(dr["ACTIVITY_MESSAGE_UPPER_LIMIT"], CultureInfo.CurrentUICulture) : null;
+
+            bool storeDeleteInProgress = dr["STORE_DELETE_IN_PROGRESS_IND"] != DBNull.Value ?
+                Include.ConvertCharToBool(Convert.ToChar(dr["STORE_DELETE_IN_PROGRESS_IND"])) : false;
+
+            bool enableVelocityGradeOptions = dr["ENABLE_VELOCITY_GRADE_OPTIONS"] != DBNull.Value ? 
+                Convert.ToChar(dr["ENABLE_VELOCITY_GRADE_OPTIONS"]) == '1' : false;
+
+            bool forceSingleClientInstance = dr["FORCE_SINGLE_CLIENT_INSTANCE"] != DBNull.Value ? 
+                Convert.ToChar(dr["FORCE_SINGLE_CLIENT_INSTANCE"]) == '1' : false;
+
+            bool forceSingleUserInstance = dr["FORCE_SINGLE_USER_INSTANCE"] != DBNull.Value ? 
+                Convert.ToChar(dr["FORCE_SINGLE_USER_INSTANCE"]) == '1' : false;
+
+            bool useActiveDirectoryAuthentication = dr["USE_ACTIVE_DIRECTORY_AUTHENTICATION"] != DBNull.Value ? 
+                Convert.ToChar(dr["USE_ACTIVE_DIRECTORY_AUTHENTICATION"]) == '1' : false;
+
+            bool useActiveDirectoryAuthenticationWithDomain = dr["USE_ACTIVE_DIRECTORY_AUTHENTICATION_WITH_DOMAIN"] != DBNull.Value ? 
+                Convert.ToChar(dr["USE_ACTIVE_DIRECTORY_AUTHENTICATION_WITH_DOMAIN"]) == '1' : false;
+
+            bool useBatchOnlyMode = dr["USE_BATCH_ONLY_MODE"] != DBNull.Value ? 
+                Convert.ToChar(dr["USE_BATCH_ONLY_MODE"]) == '1' : false;
+
+            bool controlServiceDefaultBatchOnlyModeOn = dr["CONTROL_SERVICE_DEFAULT_BATCH_ONLY_MODE_ON"] != DBNull.Value ? 
+                Convert.ToChar(dr["CONTROL_SERVICE_DEFAULT_BATCH_ONLY_MODE_ON"]) == '1' : false;
+
+            int? aVSWItemFWOSMax = dr["VSW_ITEM_FWOS_MAX_IND"] != DBNull.Value ?
+                (int?)Convert.ToInt32(dr["VSW_ITEM_FWOS_MAX_IND"], CultureInfo.CurrentUICulture) : null;
+
+            bool priorHeaderIncludeReserveInd = dr["PRIOR_HEADER_INCLUDE_RESERVE_IND"] != DBNull.Value ? 
+                Convert.ToChar(dr["PRIOR_HEADER_INCLUDE_RESERVE_IND"]) == '1' : false;
+
+            int? cartonRoundingSgRid = dr["DC_CARTON_ROUNDING_SG_RID"] != DBNull.Value ?
+                (int?)Convert.ToInt32(dr["DC_CARTON_ROUNDING_SG_RID"], CultureInfo.CurrentUICulture) : null;
+
+            int? split_option = dr["SPLIT_OPTION"] != DBNull.Value ?
+                (int?)Convert.ToInt32(dr["SPLIT_OPTION"], CultureInfo.CurrentUICulture) : null;
+
+            char? apply_minimums_ind = dr["APPLY_MINIMUMS_IND"] != DBNull.Value ?
+                (char?)Convert.ToChar(dr["APPLY_MINIMUMS_IND"]) : null;
+
+            char? prioritize_type = dr["PRIORITIZE_TYPE"] != DBNull.Value ?
+                (char?)Convert.ToChar(dr["PRIORITIZE_TYPE"]) : null;
+
+            int? header_field = dr["HEADER_FIELD"] != DBNull.Value ?
+                (int?)Convert.ToInt32(dr["HEADER_FIELD"], CultureInfo.CurrentUICulture) : null;
+
+            int? hcg_rid = dr["HCG_RID"] != DBNull.Value ?
+                (int?)Convert.ToInt32(dr["HCG_RID"], CultureInfo.CurrentUICulture) : null;
+
+            int? header_order = dr["HEADERS_ORDER"] != DBNull.Value ?
+                (int?)Convert.ToInt32(dr["HEADERS_ORDER"], CultureInfo.CurrentUICulture) : null;
+
+            int? store_order = dr["STORES_ORDER"] != DBNull.Value ?
+                (int?)Convert.ToInt32(dr["STORES_ORDER"], CultureInfo.CurrentUICulture) : null;
+
+            int? split_by_option = dr["SPLIT_BY_OPTION"] != DBNull.Value ?
+                (int?)Convert.ToInt32(dr["SPLIT_BY_OPTION"], CultureInfo.CurrentUICulture) : null;
+
+            int? split_by_reserve = dr["SPLIT_BY_RESERVE"] != DBNull.Value ?
+                (int?)Convert.ToInt32(dr["SPLIT_BY_RESERVE"], CultureInfo.CurrentUICulture) : null;
+
+            int? apply_by = dr["APPLY_BY"] != DBNull.Value ?
+                (int?)Convert.ToInt32(dr["APPLY_BY"], CultureInfo.CurrentUICulture) : null;
+
+            int? within_dc = dr["WITHIN_DC"] != DBNull.Value ?
+                (int?)Convert.ToInt32(dr["WITHIN_DC"], CultureInfo.CurrentUICulture) : null;
+
+            opts.UpdateGlobalOptions(
+                _GlobalOptionsProfile.CompanyName,
+                companyStreet,
+                companyCity,
+                companyState,
+                companyZip,
+                companyPhone,
+                companyFax,
+                companyEmail,
+                purgeAllocationsPeriod,
+                storeDisplayOptionId,
+                defaultOtsSgRid,
+                defaultAllocSgRid,
+                newStorePeriodBegin,
+                newStorePeriodEnd,
+                nonCompStorePeriodBegin,
+                nonCompStorePeriodEnd,
+                productLevelDisplayId,
+                defaultPercentNeedLimit,
+                defaultBalanceTolerance,
+                defaultPackSizeErrorPercent,
+                defaultMaxSizeErrorPercent,
+                defaultFillSizeHolesPercent,
+                genericPackRounding1stPackPct,
+                genericPackRoundingNthPackPct,
+                sizeBreakoutInd,
+                sizeNeedInd,
+                bulkIsDetailInd,
+                storeGradePeriod,
+                protectInterfaceHeadersInd,
+                reserveStoreRid,
+                useWindowsLogin,
+                shippingHorizonWeeks,
+                productLevelDelimiter,
+                headerLinkCharacteristic,
+                sizeCurveCharMask,
+                sizeGroupCharMask,
+                sizeAlternateCharMask,
+                sizeConstraintCharMask,
+                aNormalizeSizeCurves,
+                aFillSizesToType,
+                aAllowRlseIfAllInReserve,
+                numberOfWeeksWithZeroSales,
+                maximumChainWOS,
+                prorateChainStock,
+                aGenericSizeCurveNameType,
+                aGenerateSizeCurveUsing,
+                aPackToleranceNoMaxStep,
+                aPackToleranceStepped,
+                aRIExpandInd,
+                allowStoreMaxValueModification,
+                aVSWSizeConstraints,
+                aMyActivityMessageUpperLimit,
+                _SmtpOptions,
+                storeDeleteInProgress,
+                enableVelocityGradeOptions,
+                forceSingleClientInstance,
+                forceSingleUserInstance,
+                useActiveDirectoryAuthentication,
+                useActiveDirectoryAuthenticationWithDomain,
+                useBatchOnlyMode,
+                controlServiceDefaultBatchOnlyModeOn,
+                aVSWItemFWOSMax,
+                priorHeaderIncludeReserveInd,
+                cartonRoundingSgRid,
+                split_option,
+                apply_minimums_ind,
+                prioritize_type,
+                header_field,
+                hcg_rid,
+                header_order,
+                store_order,
+                split_by_option,
+                split_by_reserve,
+                apply_by,
+                within_dc,
+                _GlobalOptionsProfile.UseExternalEligibilityAllocation,
+                _GlobalOptionsProfile.UseExternalEligibilityPlanning,
+                _GlobalOptionsProfile.ExternalEligibilityProductIdentifier.GetHashCode(),
+                _GlobalOptionsProfile.ExternalEligibilityChannelIdentifier.GetHashCode(),
+                _GlobalOptionsProfile.ExternalEligibilityURL);
         }
 
         private string ConvertDoubleToString(double val)
