@@ -9,6 +9,7 @@ using System.Diagnostics;
 using MIDRetail.Common;
 using MIDRetail.DataCommon;
 using MIDRetail.Data;
+using System.Windows.Forms;
 
 namespace MIDRetail.Business
 {
@@ -1069,6 +1070,7 @@ namespace MIDRetail.Business
 
                     foreach (storeCharInfo charInfo in charList)
                     {
+                        bool isCharValBlank = false;
                         if (charInfo.isDirty && charInfo.stRID == store.Key)
                         {
                             int scRID = Include.NoRID;
@@ -1097,8 +1099,18 @@ namespace MIDRetail.Business
                                     else
                                     {
                                         stringVal = charInfo.anyValue;
+                                        // BEGIN MERCH-4766 - This insert should only take place if the value is not blank/empty
+                                        if (charInfo.anyValue != String.Empty && charInfo.anyValue != null && charInfo.anyValue != "")
+                                        {
+                                        
+                                            scRID = StoreCharValue_Insert(charInfo.scgRID, stringVal, dateVal, numericVal, dollarVal);
+                                        }
+                                        else
+                                        {
+                                            isCharValBlank = true;
+                                        }
+                                        // END MERCH-4766 - This insert should only take place if the value is not blank/empty 
                                     }
-                                    scRID = StoreCharValue_Insert(charInfo.scgRID, stringVal, dateVal, numericVal, dollarVal);
                                 }
                                 else
                                 {
@@ -1110,8 +1122,9 @@ namespace MIDRetail.Business
                             {
                                 scRID = charInfo.scRID;
                             }
-
-                            if (charInfo.action != storeCharInfoAction.Skip)
+                            // BEGIN MERCH-4766 if the char val is blank/empty instead of doing the Insert, the Delete should be done
+                            if (charInfo.action != storeCharInfoAction.Skip && !isCharValBlank)
+                            // END MERCH-4766 Only if the char val is NOT blank/empty
                             {
                                 //insert the join for the new store
                                 StoreCharMaint storeCharMaint = new StoreCharMaint();
