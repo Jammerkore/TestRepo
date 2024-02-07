@@ -60,7 +60,7 @@ BEGIN
 			(child.HN_TYPE < 800203)
 			OR (
 				child.HN_TYPE = 800203
-				AND @PH_TYPE <> 800000
+				AND @PH_TYPE = 800000    -- MERCH-4010  Changed to '=' from '<>'
 				)
 			)
 		AND hnj.NODE_DELETE_IND = '0' -- TT#3630 - JSmith - Delete My Hierarchy
