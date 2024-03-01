@@ -2011,6 +2011,7 @@ namespace MIDRetail.Windows
             this.cboMerchandise.Margin = new System.Windows.Forms.Padding(0);
             this.cboMerchandise.Name = "cboMerchandise";
             this.cboMerchandise.Size = new System.Drawing.Size(321, 21);
+			this.cboMerchandise.Sorted = true;  
             this.cboMerchandise.TabIndex = 1;
             this.cboMerchandise.Tag = null;
             this.cboMerchandise.SelectionChangeCommitted += new System.EventHandler(this.cboMerchandise_SelectionChangeCommitted);
@@ -2974,7 +2975,7 @@ namespace MIDRetail.Windows
 			{
 				cboMerchandise.Items.Clear();
 
-				cboMerchandise.Items.Add(new ComboObject(_OTSPlanMethod.Plan_HN_RID, txtOTSHNDesc.Text));
+				cboMerchandise.Items.Add(new ComboObject(_OTSPlanMethod.Plan_HN_RID, " " + txtOTSHNDesc.Text));  
 
 				_OTSPlanMethod.PopulateOverrideList();
 
