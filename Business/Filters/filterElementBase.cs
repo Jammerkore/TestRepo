@@ -31,7 +31,7 @@ namespace MIDRetail.Business
 		// Begin TT#2134-MD - JSmith - Assortment Filter conditions need to be limited to Assortment fields only
 		public bool isOperatorCalendarDate;
 		public bool loadFromCalendarDate = false;
-        public bool RestrictToSingleDate = true;
+        public bool RestrictToSingleDate = false; //MERCH-4765
         public bool RestrictToOnlyWeeks = false;
         public bool AllowDynamic = true;
         public bool AllowDynamicToPlan = true;
