@@ -2329,11 +2329,11 @@ namespace MIDRetail.Windows.Controls
             }
         }
 
-        public MIDTreeNode GetTreeNode(TreeNodeClipboardProfile aClipboardProfile)
+        public MIDTreeNode GetTreeNode(TreeNodeClipboardProfile aClipboardProfile) 
 		{
 			try
 			{
-				MIDTreeNode treeNode = (MIDTreeNode)FindTreeNode(this.Nodes, aClipboardProfile.Node.Profile.ProfileType, aClipboardProfile.Key);
+				MIDTreeNode treeNode = (MIDTreeNode)FindTreeNode(this.Nodes, aClipboardProfile.Node.Profile.ProfileType, aClipboardProfile.Key, false);
 				if (treeNode == null)
 				{
 					return BuildNode(string.Empty, aClipboardProfile.Key);
